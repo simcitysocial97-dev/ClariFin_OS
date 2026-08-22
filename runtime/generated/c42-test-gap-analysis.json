@@ -1,0 +1,763 @@
+{
+  "phase": "C42 Phase 2 - Survivor Forensic Mapping",
+  "timestamp": "2026-08-22T09:45:28+05:30",
+  "repository_sha": "34d22cb763ec05da24f02a420905047afdc64b7f",
+  "summary": {
+    "total_surviving_mutants": 4315,
+    "total_no_test_mutants": 7439,
+    "p0_survivors": 1199,
+    "p0_no_tests": 339,
+    "p1_survivors": 2834,
+    "p1_no_tests": 5876,
+    "p2_survivors": 282,
+    "p2_no_tests": 1030
+  },
+  "p0_survivor_mapping": [
+    {
+      "engine": "reconciliation_engine",
+      "mutants_survived": 97,
+      "mutants_no_tests": 54,
+      "functions": [
+        {
+          "function": "_parse_date_iso",
+          "survivors": 8,
+          "mutation_types": ["arithmetic", "conditional", "constant"],
+          "existing_tests": ["test_date_difference_days in unit test", "property test test_date_difference_days"],
+          "missing_invariants": [
+            "Invalid date format handling (empty string, None, malformed)",
+            "Date parsing must be deterministic and idempotent"
+          ],
+          "appropriate_test_type": "property-based test + unit test",
+          "test_location": "tests/properties/reconciliation/test_engine_properties.py",
+          "why_kills": "Property tests with invalid/malformed date strings would exercise error paths"
+        },
+        {
+          "function": "_date_difference_days",
+          "survivors": 9,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": ["test_date_difference_days in unit test", "property test test_date_difference_days"],
+          "missing_invariants": [
+            "None handling when date parsing fails",
+            "Absolute difference regardless of order",
+            "Date boundary conditions (leap years, month ends)"
+          ],
+          "appropriate_test_type": "property-based test + unit test",
+          "test_location": "tests/properties/reconciliation/test_engine_properties.py",
+          "why_kills": "Property tests with edge case dates would kill arithmetic mutations"
+        },
+        {
+          "function": "_calculate_confidence",
+          "survivors": 31,
+          "mutation_types": ["arithmetic", "conditional", "constant"],
+          "existing_tests": ["test_calculate_confidence in unit test", "property test test_confidence_calculation_bounds"],
+          "missing_invariants": [
+            "Date diff > 1 should only give amount factor (0.4)",
+            "Description similarity > 0.7 adds 0.2",
+            "Confidence capped at 1.0",
+            "Rounded to 4 decimal places"
+          ],
+          "appropriate_test_type": "property-based test (boundary values)",
+          "test_location": "tests/properties/reconciliation/test_engine_properties.py",
+          "why_kills": "Property tests with boundary values (0, 1, >1, 0.7, 1.0) kill conditional/arithmetic mutations"
+        },
+        {
+          "function": "_simple_description_similarity",
+          "survivors": 18,
+          "mutation_types": ["conditional", "constant"],
+          "existing_tests": ["property test test_description_similarity_bounds"],
+          "missing_invariants": [
+            "Returns 1.0 only when BOTH descriptions have transfer keywords",
+            "Returns 0.0 for empty/None descriptions",
+            "Case-insensitive keyword matching",
+            "Keywords: transfer, neft, imps, rtgs, upi, paytm, gpay"
+          ],
+          "appropriate_test_type": "property-based test + unit test",
+          "test_location": "tests/properties/reconciliation/test_engine_properties.py",
+          "why_kills": "Property tests with keyword variations kill conditional mutations"
+        },
+        {
+          "function": "_check_match",
+          "survivors": 24,
+          "mutation_types": ["conditional", "arithmetic"],
+          "existing_tests": ["test_check_match_valid", "test_check_match_same_account", "test_check_match_different_amounts", "test_check_match_date_window", "test_check_match_outside_window"],
+          "missing_invariants": [
+            "Same account rejection",
+            "Exact amount matching (debit == credit)",
+            "Date window boundary (3 days)",
+            "Opposite sign requirement",
+            "Deterministic key generation (min_id:max_id)"
+          ],
+          "appropriate_test_type": "property-based test + integration test",
+          "test_location": "tests/properties/reconciliation/test_engine_properties.py",
+          "why_kills": "Property tests with amount/date/account variations kill conditional mutations"
+        },
+        {
+          "function": "_generate_explanation",
+          "survivors": 37,
+          "mutation_types": ["constant", "conditional"],
+          "existing_tests": "None directly",
+          "missing_invariants": [
+            "Exact match format with same date",
+            "Window match format with date_diff_days",
+            "Amount in rupees (not paise)",
+            "Account IDs in explanation"
+          ],
+          "appropriate_test_type": "unit test",
+          "test_location": "tests/unit/engines/reconciliation/test_reconciliation.py",
+          "why_kills": "Unit tests checking exact explanation strings kill constant mutations"
+        },
+        {
+          "function": "find_potential_matches",
+          "survivors": 25,
+          "mutation_types": ["conditional", "arithmetic"],
+          "existing_tests": ["test_exact_match_detection", "test_date_window_detection", "test_no_false_positives_different_amounts"],
+          "missing_invariants": [
+            "Duplicate prevention via deterministic_key",
+            "Ordering by (debit+credit) ASC, date_iso ASC, id ASC",
+            "Empty database handling",
+            "No transactions with matching amount"
+          ],
+          "appropriate_test_type": "integration test",
+          "test_location": "tests/unit/engines/reconciliation/test_reconciliation.py",
+          "why_kills": "Integration tests with multiple transactions kill conditional mutations"
+        }
+      ],
+      "priority": "P0",
+      "domain": "Financial reconciliation, cross-account matching, ledger integrity"
+    },
+    {
+      "engine": "credit_card_engine",
+      "mutants_survived": 314,
+      "mutants_no_tests": 0,
+      "functions": [
+        {
+          "function": "billing.compute_due_date",
+          "survivors": 7,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "tests/properties/credit_card_engine/test_billing_properties.py",
+          "missing_invariants": [
+            "Due date calculation from statement date + grace period",
+            "Month-end handling (Jan 31 -> Feb 28)",
+            "Leap year handling"
+          ],
+          "appropriate_test_type": "property-based test",
+          "test_location": "tests/properties/credit_card_engine/test_billing_properties.py",
+          "why_kills": "Property tests with various statement dates kill arithmetic mutations"
+        },
+        {
+          "function": "billing.compute_next_statement_date",
+          "survivors": 24,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "tests/properties/credit_card_engine/test_billing_properties.py",
+          "missing_invariants": [
+            "Statement date + 1 month with proper month-end handling",
+            "Consistent with _add_months logic"
+          ],
+          "appropriate_test_type": "property-based test",
+          "test_location": "tests/properties/credit_card_engine/test_billing_properties.py",
+          "why_kills": "Property tests with edge case dates kill arithmetic mutations"
+        },
+        {
+          "function": "metrics.compute_financial_metrics",
+          "survivors": 64,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "tests/properties/credit_card_engine/test_billing_properties.py",
+          "missing_invariants": [
+            "Revolving balance calculation",
+            "Minimum due calculation (5% or fixed amount)",
+            "Interest accrual on revolving balance",
+            "Utilization ratio"
+          ],
+          "appropriate_test_type": "property-based test + unit test",
+          "test_location": "tests/properties/credit_card_engine/test_billing_properties.py, tests/unit/engines/credit_card/test_credit_card_engine.py",
+          "why_kills": "Property tests with boundary balances kill arithmetic mutations"
+        },
+        {
+          "function": "foreclosure.compute_card_foreclosure",
+          "survivors": 55,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "tests/properties/credit_card_engine/test_billing_properties.py",
+          "missing_invariants": [
+            "Foreclosure amount = outstanding + interest + fees",
+            "No foreclosure if balance is zero",
+            "Interest calculated to foreclosure date"
+          ],
+          "appropriate_test_type": "property-based test + unit test",
+          "test_location": "tests/properties/credit_card_engine/test_billing_properties.py, tests/unit/engines/credit_card/test_credit_card_engine.py",
+          "why_kills": "Property tests with various outstanding balances kill arithmetic mutations"
+        },
+        {
+          "function": "emi.compute_emi",
+          "survivors": 12,
+          "mutation_types": ["arithmetic"],
+          "existing_tests": "tests/properties/credit_card_engine/test_emi_properties.py",
+          "missing_invariants": [
+            "EMI formula: P * r * (1+r)^n / ((1+r)^n - 1)",
+            "Rounding up (ceiling) to whole paise",
+            "Zero interest edge case"
+          ],
+          "appropriate_test_type": "property-based test",
+          "test_location": "tests/properties/credit_card_engine/test_emi_properties.py",
+          "why_kills": "Property tests with varying principal/rate/tenure kill arithmetic mutations"
+        },
+        {
+          "function": "interest.compute_interest",
+          "survivors": 12,
+          "mutation_types": ["arithmetic"],
+          "existing_tests": "tests/properties/credit_card_engine/test_interest_properties.py",
+          "missing_invariants": [
+            "Daily interest = balance * daily_rate",
+            "Monthly interest compounding",
+            "Transaction-level interest allocation"
+          ],
+          "appropriate_test_type": "property-based test",
+          "test_location": "tests/properties/credit_card_engine/test_interest_properties.py",
+          "why_kills": "Property tests with boundary values kill arithmetic mutations"
+        },
+        {
+          "function": "outstanding.compute_outstanding",
+          "survivors": 8,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "tests/properties/credit_card_engine/test_billing_properties.py",
+          "missing_invariants": [
+            "Outstanding = previous_balance + new_charges - payments + interest",
+            "Cannot be negative"
+          ],
+          "appropriate_test_type": "property-based test",
+          "test_location": "tests/properties/credit_card_engine/test_billing_properties.py",
+          "why_kills": "Property tests with boundary values kill arithmetic mutations"
+        },
+        {
+          "function": "utilization.compute_utilization",
+          "survivors": 8,
+          "mutation_types": ["arithmetic"],
+          "existing_tests": "tests/properties/credit_card_engine/test_billing_properties.py",
+          "missing_invariants": [
+            "Utilization = outstanding / credit_limit",
+            "Capped at 1.0 (100%)",
+            "Zero credit limit handling"
+          ],
+          "appropriate_test_type": "property-based test",
+          "test_location": "tests/properties/credit_card_engine/test_billing_properties.py",
+          "why_kills": "Property tests with edge cases (zero limit, over limit) kill arithmetic mutations"
+        }
+      ],
+      "priority": "P0",
+      "domain": "Credit card billing, EMI, interest, foreclosure, utilization"
+    },
+    {
+      "engine": "loan_engine",
+      "mutants_survived": 625,
+      "mutants_no_tests": 4,
+      "functions": [
+        {
+          "function": "amortization._add_months",
+          "survivors": 0,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "tests/unit/engines/loan/test_amortization.py::TestDateEdgeCases (7 tests)",
+          "missing_invariants": "Covered by existing tests",
+          "appropriate_test_type": "unit test (already covered)",
+          "test_location": "tests/unit/engines/loan/test_amortization.py",
+          "why_kills": "Already tested - survivors may be in untested branches"
+        },
+        {
+          "function": "amortization._required_emi",
+          "survivors": 0,
+          "mutation_types": ["arithmetic"],
+          "existing_tests": "Covered indirectly via generate_schedule",
+          "missing_invariants": [
+            "Ceiling rounding ensures EMI never short",
+            "Zero interest edge case",
+            "Single month edge case"
+          ],
+          "appropriate_test_type": "property-based test",
+          "test_location": "tests/properties/loan_engine/test_amortization_properties.py",
+          "why_kills": "Property tests with boundary rates/tenures kill arithmetic mutations"
+        },
+        {
+          "function": "amortization.generate_schedule",
+          "survivors": 180,
+          "mutation_types": ["arithmetic", "conditional", "constant"],
+          "existing_tests": "tests/unit/engines/loan/test_amortization.py (15 tests), tests/properties/loan_engine/test_amortization_properties.py",
+          "missing_invariants": [
+            "Ill-conditioned loan detection (annuity_factor / 2 > principal / 100)",
+            "Monthly re-anchoring for ill-conditioned loans",
+            "Last month balance settlement (absorbs drift)",
+            "Interest rounding (ROUND_HALF_EVEN)",
+            "Principal component bounds (0 to emi_paise)",
+            "Cumulative interest monotonic non-decreasing",
+            "Month numbers sequential",
+            "Payment dates via _add_months"
+          ],
+          "appropriate_test_type": "property-based test + integration test",
+          "test_location": "tests/properties/loan_engine/test_amortization_properties.py, tests/unit/engines/loan/test_amortization.py",
+          "why_kills": "Property tests with high-rate/small-principal/long-tenure loans kill ill-conditioned branch mutations"
+        },
+        {
+          "function": "amortization.find_schedule_row",
+          "survivors": 1,
+          "mutation_types": ["conditional"],
+          "existing_tests": "None directly",
+          "missing_invariants": [
+            "Returns row for valid month_number",
+            "Returns None for invalid month_number"
+          ],
+          "appropriate_test_type": "unit test",
+          "test_location": "tests/unit/engines/loan/test_amortization.py",
+          "why_kills": "Unit tests with valid/invalid month numbers kill conditional mutations"
+        },
+        {
+          "function": "amortization.total_payment_paise",
+          "survivors": 3,
+          "mutation_types": ["arithmetic"],
+          "existing_tests": "None directly",
+          "missing_invariants": [
+            "Sum of all EMI payments",
+            "Empty schedule returns 0"
+          ],
+          "appropriate_test_type": "unit test",
+          "test_location": "tests/unit/engines/loan/test_amortization.py",
+          "why_kills": "Unit tests with empty/non-empty schedules kill arithmetic mutations"
+        },
+        {
+          "function": "amortization.total_principal_paise",
+          "survivors": 3,
+          "mutation_types": ["arithmetic"],
+          "existing_tests": "test_principal_sum_equals_original",
+          "missing_invariants": [
+            "Sum of all principal components",
+            "Equals original principal"
+          ],
+          "appropriate_test_type": "unit test (already partially covered)",
+          "test_location": "tests/unit/engines/loan/test_amortization.py",
+          "why_kills": "Additional edge case tests (empty schedule) kill remaining mutations"
+        },
+        {
+          "function": "amortization.validate_schedule_invariants",
+          "survivors": 10,
+          "mutation_types": ["conditional", "arithmetic"],
+          "existing_tests": "test_validate_schedule_passes, test_validate_schedule_negative_balance_raises",
+          "missing_invariants": [
+            "Principal sum mismatch detection",
+            "Negative balance detection",
+            "Raises ValueError with descriptive message"
+          ],
+          "appropriate_test_type": "unit test",
+          "test_location": "tests/unit/engines/loan/test_amortization.py",
+          "why_kills": "Unit tests with invalid schedules kill conditional mutations"
+        },
+        {
+          "function": "amortization.validate_schedule",
+          "survivors": 40,
+          "mutation_types": ["conditional", "arithmetic"],
+          "existing_tests": "None directly",
+          "missing_invariants": [
+            "Balance never negative",
+            "Total principal == original principal",
+            "Final balance zero",
+            "EMI consistency (all but last equal)",
+            "Cumulative interest monotonic",
+            "Month numbers sequential",
+            "Tenure length validation (optional)",
+            "debug_mode raises ValueError"
+          ],
+          "appropriate_test_type": "property-based test + unit test",
+          "test_location": "tests/properties/loan_engine/test_amortization_properties.py, tests/unit/engines/loan/test_amortization.py",
+          "why_kills": "Property tests generating valid/invalid schedules kill conditional mutations"
+        },
+        {
+          "function": "prepayment.compute_remaining_months",
+          "survivors": 6,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "tests/properties/loan_engine/test_prepayment_properties.py",
+          "missing_invariants": [
+            "Remaining months = original_tenure - months_elapsed",
+            "Handles partial prepayments",
+            "Cannot be negative"
+          ],
+          "appropriate_test_type": "property-based test",
+          "test_location": "tests/properties/loan_engine/test_prepayment_properties.py",
+          "why_kills": "Property tests with various prepayment amounts kill arithmetic mutations"
+        },
+        {
+          "function": "prepayment.apply_multiple_prepayments",
+          "survivors": 29,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "tests/properties/loan_engine/test_prepayment_properties.py",
+          "missing_invariants": [
+            "Prepayments reduce principal immediately",
+            "Interest recalculated on reduced balance",
+            "Multiple prepayments in same month aggregated",
+            "Cannot prepay more than outstanding"
+          ],
+          "appropriate_test_type": "property-based test + integration test",
+          "test_location": "tests/properties/loan_engine/test_prepayment_properties.py, tests/unit/engines/loan/test_loan_engine.py",
+          "why_kills": "Property tests with various prepayment schedules kill arithmetic mutations"
+        },
+        {
+          "function": "floating_rate.simulate_floating_rate_schedule",
+          "survivors": 55,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "tests/properties/loan_engine/test_floating_rate_properties.py",
+          "missing_invariants": [
+            "Rate changes at specified months",
+            "EMI recalculated for remaining term",
+            "Schedule reflects new rate from change month",
+            "Handles multiple rate changes"
+          ],
+          "appropriate_test_type": "property-based test + integration test",
+          "test_location": "tests/properties/loan_engine/test_floating_rate_properties.py, tests/unit/engines/loan/test_loan_engine.py",
+          "why_kills": "Property tests with rate change scenarios kill arithmetic mutations"
+        }
+      ],
+      "priority": "P0",
+      "domain": "Loan amortization, prepayment, floating rate, schedule validation"
+    },
+    {
+      "engine": "account_engine",
+      "mutants_survived": 163,
+      "mutants_no_tests": 0,
+      "functions": [
+        {
+          "function": "dormant.x_compute_days_since_activity",
+          "survivors": 7,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "tests/unit/engines/behaviour/test_metrics.py",
+          "missing_invariants": [
+            "Days since last transaction date",
+            "Returns None for no transactions",
+            "Date parsing consistency"
+          ],
+          "appropriate_test_type": "property-based test + unit test",
+          "test_location": "tests/unit/engines/account/test_account_engine.py",
+          "why_kills": "Property tests with various transaction dates kill arithmetic mutations"
+        },
+        {
+          "function": "dormant.x_is_account_dormant",
+          "survivors": 7,
+          "mutation_types": ["conditional"],
+          "existing_tests": "tests/unit/engines/behaviour/test_metrics.py",
+          "missing_invariants": [
+            "Dormant if days_since_activity > threshold (default 180)",
+            "Not dormant if recent activity",
+            "No transactions = dormant"
+          ],
+          "appropriate_test_type": "property-based test + unit test",
+          "test_location": "tests/unit/engines/account/test_account_engine.py",
+          "why_kills": "Property tests with boundary days kill conditional mutations"
+        },
+        {
+          "function": "cashflow.x_compute_net_cash_flow",
+          "survivors": 1,
+          "mutation_types": ["arithmetic"],
+          "existing_tests": "tests/unit/engines/behaviour/test_metrics.py",
+          "missing_invariants": [
+            "Net cash flow = total_credit - total_debit",
+            "Per-period calculation"
+          ],
+          "appropriate_test_type": "property-based test",
+          "test_location": "tests/unit/engines/account/test_account_engine.py",
+          "why_kills": "Property tests with various credit/debit combinations kill arithmetic mutations"
+        },
+        {
+          "function": "cashflow.x_compute_cash_flow_rate",
+          "survivors": 16,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "tests/unit/engines/behaviour/test_metrics.py",
+          "missing_invariants": [
+            "Cash flow rate = net_cash_flow / average_balance",
+            "Zero balance handling",
+            "Annualized rate calculation"
+          ],
+          "appropriate_test_type": "property-based test",
+          "test_location": "tests/unit/engines/account/test_account_engine.py",
+          "why_kills": "Property tests with boundary balances kill arithmetic mutations"
+        },
+        {
+          "function": "cashflow.x_compute_income_expense_ratio",
+          "survivors": 17,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "tests/unit/engines/behaviour/test_metrics.py",
+          "missing_invariants": [
+            "Ratio = total_income / total_expense",
+            "Zero expense handling (infinite/large ratio)",
+            "Income/expense categorization"
+          ],
+          "appropriate_test_type": "property-based test",
+          "test_location": "tests/unit/engines/account/test_account_engine.py",
+          "why_kills": "Property tests with zero expense kill division mutations"
+        },
+        {
+          "function": "balance.x_compute_balance_growth_percentage",
+          "survivors": 19,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "tests/unit/engines/behaviour/test_metrics.py",
+          "missing_invariants": [
+            "Growth % = (end_balance - start_balance) / start_balance * 100",
+            "Zero start balance handling",
+            "Negative growth for balance decrease"
+          ],
+          "appropriate_test_type": "property-based test",
+          "test_location": "tests/unit/engines/account/test_account_engine.py",
+          "why_kills": "Property tests with zero start balance kill division mutations"
+        },
+        {
+          "function": "lifecycle.x_compute_account_status",
+          "survivors": 20,
+          "mutation_types": ["conditional"],
+          "existing_tests": "tests/unit/engines/behaviour/test_metrics.py",
+          "missing_invariants": [
+            "Status: active, dormant, closed",
+            "Active: recent transactions and positive balance",
+            "Dormant: no recent transactions",
+            "Closed: explicit closure flag"
+          ],
+          "appropriate_test_type": "property-based test + unit test",
+          "test_location": "tests/unit/engines/account/test_account_engine.py",
+          "why_kills": "Property tests with various account states kill conditional mutations"
+        },
+        {
+          "function": "lifecycle.x_is_account_closed",
+          "survivors": 3,
+          "mutation_types": ["conditional"],
+          "existing_tests": "tests/unit/engines/behaviour/test_metrics.py",
+          "missing_invariants": [
+            "Returns True for explicitly closed accounts",
+            "Returns False for active/dormant accounts"
+          ],
+          "appropriate_test_type": "unit test",
+          "test_location": "tests/unit/engines/account/test_account_engine.py",
+          "why_kills": "Unit tests with closed/open accounts kill conditional mutations"
+        },
+        {
+          "function": "history.x_compute_balance_trend",
+          "survivors": 21,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "tests/unit/engines/behaviour/test_metrics.py",
+          "missing_invariants": [
+            "Trend: increasing, decreasing, stable",
+            "Based on balance velocity over window",
+            "Minimum window size for trend detection"
+          ],
+          "appropriate_test_type": "property-based test",
+          "test_location": "tests/unit/engines/account/test_account_engine.py",
+          "why_kills": "Property tests with various balance histories kill arithmetic mutations"
+        },
+        {
+          "function": "history.x_compute_balance_velocity",
+          "survivors": 18,
+          "mutation_types": ["arithmetic"],
+          "existing_tests": "tests/unit/engines/behaviour/test_metrics.py",
+          "missing_invariants": [
+            "Velocity = balance_change / time_period",
+            "Per-month velocity",
+            "Zero time period handling"
+          ],
+          "appropriate_test_type": "property-based test",
+          "test_location": "tests/unit/engines/account/test_account_engine.py",
+          "why_kills": "Property tests with various time periods kill arithmetic mutations"
+        },
+        {
+          "function": "metrics.x_compute_account_metrics",
+          "survivors": 34,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "tests/unit/engines/behaviour/test_metrics.py",
+          "missing_invariants": [
+            "Aggregates all metrics for account",
+            "Includes: balance, cash_flow, growth, trend, dormant status",
+            "Consistent with individual metric functions"
+          ],
+          "appropriate_test_type": "integration test",
+          "test_location": "tests/unit/engines/account/test_account_engine.py",
+          "why_kills": "Integration tests with full account data kill conditional mutations"
+        }
+      ],
+      "priority": "P0",
+      "domain": "Account lifecycle, cash flow metrics, balance trends, dormancy detection"
+    },
+    {
+      "engine": "balance_engine",
+      "mutants_survived": 0,
+      "mutants_no_tests": 285,
+      "functions": [
+        {
+          "function": "_parse_date_to_ymd",
+          "survivors": 0,
+          "no_tests": 38,
+          "mutation_types": ["conditional", "constant"],
+          "existing_tests": "None",
+          "missing_invariants": [
+            "Parses Indian date formats: DD/MM/YYYY, DD-MM-YYYY, DD/MM/YY, DD-MM-YY",
+            "Parses month names: DD MMM YYYY, DD-MMM-YYYY",
+            "Parses ISO format: YYYY-MM-DD",
+            "Returns empty string for unparseable dates",
+            "Strips whitespace before parsing"
+          ],
+          "appropriate_test_type": "property-based test + unit test",
+          "test_location": "tests/unit/engines/balance_engine.py (NEW)",
+          "why_kills": "Property tests with all supported formats kill conditional mutations; unit tests with edge cases kill constant mutations"
+        },
+        {
+          "function": "_parse_date_for_sort",
+          "survivors": 0,
+          "no_tests": 3,
+          "mutation_types": ["conditional"],
+          "existing_tests": "None",
+          "missing_invariants": [
+            "Returns YMD string for valid dates",
+            "Returns '0000-00-00' for unparseable dates",
+            "Used for chronological sorting"
+          ],
+          "appropriate_test_type": "unit test",
+          "test_location": "tests/unit/engines/balance_engine.py (NEW)",
+          "why_kills": "Unit tests with valid/invalid dates kill conditional mutations"
+        },
+        {
+          "function": "compute_running_balance",
+          "survivors": 0,
+          "no_tests": 59,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "None",
+          "missing_invariants": [
+            "Running balance = starting_balance + sum(credit - debit)",
+            "Transactions ordered by date_iso ASC, id ASC (database-enforced)",
+            "Account-scoped when account_id provided",
+            "Returns all fields: transaction_id, date, date_iso, description, debit_paise, credit_paise, balance_paise, bank",
+            "Falls back to _parse_date_to_ymd if date_iso missing"
+          ],
+          "appropriate_test_type": "integration test + property-based test",
+          "test_location": "tests/unit/engines/balance_engine.py (NEW)",
+          "why_kills": "Integration tests with database kill arithmetic mutations; property tests with various transaction patterns kill conditional mutations"
+        },
+        {
+          "function": "compute_account_balance",
+          "survivors": 0,
+          "no_tests": 41,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "None",
+          "missing_invariants": [
+            "Balance = starting_balance + total_credit - total_debit",
+            "Returns formatted display string",
+            "Aggregates via SQL SUM (database-enforced)"
+          ],
+          "appropriate_test_type": "integration test + unit test",
+          "test_location": "tests/unit/engines/balance_engine.py (NEW)",
+          "why_kills": "Integration tests with database kill arithmetic mutations"
+        },
+        {
+          "function": "validate_statement_balance",
+          "survivors": 0,
+          "no_tests": 57,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "None",
+          "missing_invariants": [
+            "Computed balance = sum(credit - debit) for statement",
+            "Status: 'match' if difference == 0 else 'mismatch'",
+            "Returns difference in paise and display format",
+            "Transaction count for statement"
+          ],
+          "appropriate_test_type": "integration test + unit test",
+          "test_location": "tests/unit/engines/balance_engine.py (NEW)",
+          "why_kills": "Integration tests with matching/mismatching statements kill conditional mutations"
+        },
+        {
+          "function": "get_accounts_list",
+          "survivors": 0,
+          "no_tests": 42,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "None",
+          "missing_invariants": [
+            "Lists all accounts with transaction counts and balances",
+            "Balance = total_credit - total_debit (0 starting balance)",
+            "Ordered by bank name"
+          ],
+          "appropriate_test_type": "integration test",
+          "test_location": "tests/unit/engines/balance_engine.py (NEW)",
+          "why_kills": "Integration tests with multiple accounts kill conditional mutations"
+        },
+        {
+          "function": "_format_paise",
+          "survivors": 0,
+          "no_tests": 41,
+          "mutation_types": ["arithmetic", "conditional", "constant"],
+          "existing_tests": "None",
+          "missing_invariants": [
+            "Indian number formatting: lakhs (1,00,000) and crores (1,00,00,000)",
+            "Negative values with minus prefix",
+            "Paise portion always 2 digits",
+            "Zero handling"
+          ],
+          "appropriate_test_type": "property-based test + unit test",
+          "test_location": "tests/unit/engines/balance_engine.py (NEW)",
+          "why_kills": "Property tests with various amounts (small, lakhs, crores, negative) kill arithmetic/constant mutations"
+        }
+      ],
+      "priority": "P0",
+      "domain": "Balance computation, statement validation, ledger formatting",
+      "note": "ALL 285 mutants are 'no tests' - this engine has ZERO test coverage despite being P0 financial critical"
+    },
+    {
+      "engine": "ledger_audit_engine",
+      "mutants_survived": 0,
+      "mutants_no_tests": 190,
+      "functions": [
+        {
+          "function": "validate_ledger_integrity",
+          "survivors": 0,
+          "no_tests": 95,
+          "mutation_types": ["conditional", "constant"],
+          "existing_tests": "None",
+          "missing_invariants": [
+            "account_id NOT NULL/empty",
+            "debit >= 0",
+            "credit >= 0",
+            "NOT (debit > 0 AND credit > 0) - no dual entry",
+            "hash_signature NOT NULL/empty",
+            "hash_signature uniqueness"
+          ],
+          "appropriate_test_type": "integration test",
+          "test_location": "tests/unit/engines/ledger_audit_engine.py (NEW)",
+          "why_kills": "Integration tests with violating/valid transactions kill conditional mutations"
+        },
+        {
+          "function": "verify_hash_signatures",
+          "survivors": 0,
+          "no_tests": 95,
+          "mutation_types": ["arithmetic", "conditional"],
+          "existing_tests": "None",
+          "missing_invariants": [
+            "Hash formula: SHA256(account_id | date_iso | description | debit | credit)",
+            "Case-insensitive comparison",
+            "Detects tampered transactions",
+            "Only checks transactions with non-empty hash_signature"
+          ],
+          "appropriate_test_type": "integration test + property-based test",
+          "test_location": "tests/unit/engines/ledger_audit_engine.py (NEW)",
+          "why_kills": "Integration tests with matching/mismatching hashes kill conditional mutations; property tests with various inputs kill arithmetic mutations"
+        },
+        {
+          "function": "run_full_audit",
+          "survivors": 0,
+          "no_tests": 0,
+          "mutation_types": ["conditional"],
+          "existing_tests": "None",
+          "missing_invariants": [
+            "Combines integrity and hash verification",
+            "Overall PASS only if both PASS"
+          ],
+          "appropriate_test_type": "integration test",
+          "test_location": "tests/unit/engines/ledger_audit_engine.py (NEW)",
+          "why_kills": "Integration tests with various audit states kill conditional mutations"
+        }
+      ],
+      "priority": "P0",
+      "domain": "Ledger integrity validation, hash signature verification, tamper detection",
+      "note": "ALL 190 mutants are 'no tests' - this engine has ZERO test coverage despite being P0 financial critical"
+    }
+  ],
+  "test_scope_gap": {
+    "current_mutation_test_selection": ["tests/unit/", "tests/properties/"],
+    "missing_from_mutation": ["tests/invariants/", "tests/contract/", "tests/integration/"],
+    "impact": "Many 'survived' mutants would be killed if invariant/contract/integration tests ran during mutation. The mutmut config in backend/pyproject.toml only runs unit and property tests."
+  }
+}

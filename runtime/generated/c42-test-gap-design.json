@@ -1,0 +1,660 @@
+{
+  "phase": "C42 Phase 3 - Test Gap Design",
+  "timestamp": "2026-08-22T09:53:11+05:30",
+  "repository_sha": "34d22cb763ec05da24f02a420905047afdc64b7f",
+  "test_designs": [
+    {
+      "engine": "balance_engine",
+      "function": "_parse_date_to_ymd",
+      "mutant_ids": ["mutmut_1" through "mutmut_38"],
+      "why_existing_tests_fail": "NO tests exist for balance_engine at all. The function parses 10+ Indian date formats but has zero test coverage.",
+      "expected_domain_behavior": "Parse Indian bank statement date formats (DD/MM/YYYY, DD-MM-YYYY, DD/MM/YY, DD-MM-YY, DD MMM YYYY, DD-MMM-YYYY, XXDD-MMM-YYXX, YYYY-MM-DD) to canonical YYYY-MM-DD for sorting. Return empty string for unparseable. Strip whitespace.",
+      "missing_invariant": "All supported formats produce valid YYYY-MM-DD; unparseable returns empty string; parsing is idempotent (parse(parse(x)) == parse(x))",
+      "proposed_tests": [
+        {
+          "test_name": "test_parse_date_to_ymd_all_formats",
+          "test_type": "property-based",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Property test generating valid dates in each supported format, asserting parse returns valid YYYY-MM-DD",
+          "kills_mutants": "All 38 conditional/constant mutants (format selection branches, return value constants)"
+        },
+        {
+          "test_name": "test_parse_date_to_ymd_unparseable",
+          "test_type": "unit",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Unit test with empty string, None, garbage input asserting empty string return",
+          "kills_mutants": "Constant mutants on return value, conditional mutants on format loop"
+        },
+        {
+          "test_name": "test_parse_date_to_ymd_idempotent",
+          "test_type": "property-based",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Property test: parse(parse(date)) == parse(date) for all valid formats",
+          "kills_mutants": "Conditional mutants that might double-parse incorrectly"
+        },
+        {
+          "test_name": "test_parse_date_to_ymd_whitespace",
+          "test_type": "unit",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Unit test with leading/trailing whitespace asserting stripped parsing works",
+          "kills_mutants": "Conditional mutants on strip() call"
+        }
+      ],
+      "neighboring_mutants_also_killed": "All 38 mutants in this function"
+    },
+    {
+      "engine": "balance_engine",
+      "function": "_parse_date_for_sort",
+      "mutant_ids": ["mutmut_1", "mutmut_2", "mutmut_3"],
+      "why_existing_tests_fail": "NO tests exist for balance_engine at all.",
+      "expected_domain_behavior": "Delegate to _parse_date_to_ymd; return YMD for valid dates; return '0000-00-00' for unparseable (sorts first). Used for chronological ordering.",
+      "missing_invariant": "Valid date → valid YMD; invalid date → '0000-00-00'; output usable for string sorting",
+      "proposed_tests": [
+        {
+          "test_name": "test_parse_date_for_sort_valid",
+          "test_type": "unit",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Unit test with valid date asserting YMD returned",
+          "kills_mutants": "mutmut_1 (conditional on _parse_date_to_ymd result)"
+        },
+        {
+          "test_name": "test_parse_date_for_sort_invalid",
+          "test_type": "unit",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Unit test with invalid date asserting '0000-00-00' returned",
+          "kills_mutants": "mutmut_2, mutmut_3 (constant mutants on fallback value)"
+        },
+        {
+          "test_name": "test_parse_date_for_sort_ordering",
+          "test_type": "property-based",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Property test: sorted output of _parse_date_for_sort matches chronological order",
+          "kills_mutants": "All 3 mutants"
+        }
+      ],
+      "neighboring_mutants_also_killed": "All 3 mutants in this function"
+    },
+    {
+      "engine": "balance_engine",
+      "function": "compute_running_balance",
+      "mutant_ids": ["mutmut_1" through "mutmut_59"],
+      "why_existing_tests_fail": "NO tests exist for balance_engine at all. This is the core balance computation function.",
+      "expected_domain_behavior": "Replay transactions chronologically (SQL ORDER BY date_iso ASC, id ASC). Running balance = starting_balance + Σ(credit - debit). Account-scoped when account_id provided. Falls back to _parse_date_to_ymd if date_iso missing. Returns all fields.",
+      "missing_invariant": "Balance = starting + sum(credit-debit) in chronological order; account filtering works; all output fields present; fallback parsing works",
+      "proposed_tests": [
+        {
+          "test_name": "test_compute_running_balance_basic",
+          "test_type": "integration",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Integration test with temp DB: insert transactions, verify running balance matches manual calculation",
+          "kills_mutants": "Arithmetic mutants on balance += credit - debit, conditional mutants on account filtering"
+        },
+        {
+          "test_name": "test_compute_running_balance_account_scoped",
+          "test_type": "integration",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Integration test with multiple accounts: verify account_id filter isolates transactions",
+          "kills_mutants": "Conditional mutants on account_id WHERE clause"
+        },
+        {
+          "test_name": "test_compute_running_balance_date_ordering",
+          "test_type": "integration",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Integration test: insert transactions out of order, verify SQL ORDER BY enforces chronological replay",
+          "kills_mutants": "Conditional mutants on ORDER BY clause"
+        },
+        {
+          "test_name": "test_compute_running_balance_fallback_parsing",
+          "test_type": "integration",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Integration test: transactions with missing date_iso but valid date field, verify _parse_date_to_ymd fallback",
+          "kills_mutants": "Conditional mutants on fallback logic"
+        },
+        {
+          "test_name": "test_compute_running_balance_starting_balance",
+          "test_type": "unit",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Unit test with mock: verify starting_balance_paise added to first transaction",
+          "kills_mutants": "Arithmetic mutants on starting balance"
+        },
+        {
+          "test_name": "test_compute_running_balance_output_fields",
+          "test_type": "unit",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Unit test: verify all 7 output fields present with correct types",
+          "kills_mutants": "Constant mutants on dict keys/values"
+        }
+      ],
+      "neighboring_mutants_also_killed": "All 59 mutants in this function, plus some in _parse_date_to_ymd via fallback"
+    },
+    {
+      "engine": "balance_engine",
+      "function": "compute_account_balance",
+      "mutant_ids": ["mutmut_1" through "mutmut_41"],
+      "why_existing_tests_fail": "NO tests exist for balance_engine at all.",
+      "expected_domain_behavior": "Single account balance via SQL aggregation: balance = starting + SUM(credit) - SUM(debit). Returns formatted display string.",
+      "missing_invariant": "SQL aggregation matches manual sum; formatted display matches _format_paise; starting balance added",
+      "proposed_tests": [
+        {
+          "test_name": "test_compute_account_balance_aggregation",
+          "test_type": "integration",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Integration test: verify SQL SUM matches manual iteration over transactions",
+          "kills_mutants": "Arithmetic mutants on balance calculation, conditional on account_id filter"
+        },
+        {
+          "test_name": "test_compute_account_balance_display_format",
+          "test_type": "unit",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Unit test: verify balance_display matches _format_paise(balance_paise)",
+          "kills_mutants": "Constant mutants on display field, conditional on formatting"
+        },
+        {
+          "test_name": "test_compute_account_balance_zero_transactions",
+          "test_type": "integration",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Integration test: account with no transactions returns starting balance",
+          "kills_mutants": "Conditional mutants on COALESCE/SUM handling"
+        }
+      ],
+      "neighboring_mutants_also_killed": "All 41 mutants in this function"
+    },
+    {
+      "engine": "balance_engine",
+      "function": "validate_statement_balance",
+      "mutant_ids": ["mutmut_1" through "mutmut_57"],
+      "why_existing_tests_fail": "NO tests exist for balance_engine at all.",
+      "expected_domain_behavior": "Compute statement balance from transactions (JOIN statements). Status: 'match' if computed == claimed else 'mismatch'. Returns difference in paise and display format. Transaction count.",
+      "missing_invariant": "Computed balance = Σ(credit-debit) for statement; status correct; difference = abs(computed-claimed); display matches formatting",
+      "proposed_tests": [
+        {
+          "test_name": "test_validate_statement_balance_match",
+          "test_type": "integration",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Integration test: statement with matching claimed balance returns 'match' status",
+          "kills_mutants": "Conditional mutants on status logic, arithmetic on difference"
+        },
+        {
+          "test_name": "test_validate_statement_balance_mismatch",
+          "test_type": "integration",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Integration test: statement with mismatched claimed balance returns 'mismatch' with correct difference",
+          "kills_mutants": "Arithmetic mutants on difference calculation, conditional on status"
+        },
+        {
+          "test_name": "test_validate_statement_balance_display",
+          "test_type": "unit",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Unit test: verify computed/claimed/difference display fields match _format_paise",
+          "kills_mutants": "Constant mutants on display fields"
+        },
+        {
+          "test_name": "test_validate_statement_balance_txn_count",
+          "test_type": "integration",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Integration test: transaction_count matches number of transactions in statement",
+          "kills_mutants": "Conditional mutants on COUNT query"
+        }
+      ],
+      "neighboring_mutants_also_killed": "All 57 mutants in this function"
+    },
+    {
+      "engine": "balance_engine",
+      "function": "get_accounts_list",
+      "mutant_ids": ["mutmut_1" through "mutmut_42"],
+      "why_existing_tests_fail": "NO tests exist for balance_engine at all.",
+      "expected_domain_behavior": "List all accounts via LEFT JOIN statements→transactions. Balance = SUM(credit) - SUM(debit) (0 starting). Ordered by bank name. Returns all fields.",
+      "missing_invariant": "All accounts returned; balance = credit-debit per account; ordered by bank; transaction counts correct",
+      "proposed_tests": [
+        {
+          "test_name": "test_get_accounts_list_multiple_accounts",
+          "test_type": "integration",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Integration test: multiple accounts with transactions, verify all returned with correct balances",
+          "kills_mutants": "Arithmetic mutants on balance, conditional on LEFT JOIN/GROUP BY"
+        },
+        {
+          "test_name": "test_get_accounts_list_empty_account",
+          "test_type": "integration",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Integration test: account with statement but no transactions returns zero balance",
+          "kills_mutants": "Conditional mutants on COALESCE for SUM"
+        },
+        {
+          "test_name": "test_get_accounts_list_ordering",
+          "test_type": "integration",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Integration test: results ordered by bank name alphabetically",
+          "kills_mutants": "Conditional mutants on ORDER BY clause"
+        }
+      ],
+      "neighboring_mutants_also_killed": "All 42 mutants in this function"
+    },
+    {
+      "engine": "balance_engine",
+      "function": "_format_paise",
+      "mutant_ids": ["mutmut_1" through "mutmut_41"],
+      "why_existing_tests_fail": "NO tests exist for balance_engine at all.",
+      "expected_domain_behavior": "Indian number formatting: lakhs (1,00,000), crores (1,00,00,000). Negative prefix. Paise always 2 digits. Zero handling.",
+      "missing_invariant": "Formatting follows Indian grouping; negative prefix; 2-digit paise; zero→'₹0.00'",
+      "proposed_tests": [
+        {
+          "test_name": "test_format_paise_indian_grouping",
+          "test_type": "property-based",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Property test: generate amounts from 0 to 10 crores, verify grouping matches Indian format (3-2-2...)",
+          "kills_mutants": "Arithmetic mutants on grouping logic, conditional on magnitude branches"
+        },
+        {
+          "test_name": "test_format_paise_negative",
+          "test_type": "unit",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Unit test: negative paise returns string with leading minus",
+          "kills_mutants": "Conditional mutants on negative branch"
+        },
+        {
+          "test_name": "test_format_paise_zero",
+          "test_type": "unit",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Unit test: zero paise returns '₹0.00'",
+          "kills_mutants": "Constant mutants on zero handling"
+        },
+        {
+          "test_name": "test_format_paise_paise_portion",
+          "test_type": "property-based",
+          "location": "tests/unit/engines/balance_engine.py",
+          "description": "Property test: paise portion always 2 digits (00-99)",
+          "kills_mutants": "Arithmetic mutants on paise extraction"
+        }
+      ],
+      "neighboring_mutants_also_killed": "All 41 mutants in this function"
+    },
+    {
+      "engine": "ledger_audit_engine",
+      "function": "validate_ledger_integrity",
+      "mutant_ids": ["mutmut_1" through "mutmut_95"],
+      "why_existing_tests_fail": "NO tests exist for ledger_audit_engine at all. This is a P0 audit engine.",
+      "expected_domain_behavior": "Check 6 integrity constraints: account_id NOT NULL, debit≥0, credit≥0, no dual entry (debit>0 AND credit>0), hash_signature NOT NULL, hash uniqueness. Returns PASS/FAIL with violation details.",
+      "missing_invariant": "All 6 constraints checked; violation details include transaction_id and message; PASS only if zero violations",
+      "proposed_tests": [
+        {
+          "test_name": "test_validate_ledger_integrity_pass",
+          "test_type": "integration",
+          "location": "tests/unit/engines/ledger_audit_engine.py",
+          "description": "Integration test: clean database returns PASS with zero violations",
+          "kills_mutants": "Conditional mutants on violation collection, constant on PASS status"
+        },
+        {
+          "test_name": "test_validate_ledger_integrity_null_account_id",
+          "test_type": "integration",
+          "location": "tests/unit/engines/ledger_audit_engine.py",
+          "description": "Integration test: transaction with NULL/empty account_id returns FAIL with NULL_ACCOUNT_ID violation",
+          "kills_mutants": "Conditional mutants on account_id check, constant on violation type"
+        },
+        {
+          "test_name": "test_validate_ledger_integrity_negative_debit",
+          "test_type": "integration",
+          "location": "tests/unit/engines/ledger_audit_engine.py",
+          "description": "Integration test: transaction with negative debit returns FAIL with NEGATIVE_DEBIT violation",
+          "kills_mutants": "Conditional mutants on debit<0 check"
+        },
+        {
+          "test_name": "test_validate_ledger_integrity_negative_credit",
+          "test_type": "integration",
+          "location": "tests/unit/engines/ledger_audit_engine.py",
+          "description": "Integration test: transaction with negative credit returns FAIL with NEGATIVE_CREDIT violation",
+          "kills_mutants": "Conditional mutants on credit<0 check"
+        },
+        {
+          "test_name": "test_validate_ledger_integrity_dual_entry",
+          "test_type": "integration",
+          "location": "tests/unit/engines/ledger_audit_engine.py",
+          "description": "Integration test: transaction with both debit>0 and credit>0 returns FAIL with DUAL_ENTRY violation",
+          "kills_mutants": "Conditional mutants on dual entry check"
+        },
+        {
+          "test_name": "test_validate_ledger_integrity_null_hash",
+          "test_type": "integration",
+          "location": "tests/unit/engines/ledger_audit_engine.py",
+          "description": "Integration test: transaction with NULL/empty hash_signature returns FAIL with NULL_HASH violation",
+          "kills_mutants": "Conditional mutants on hash check"
+        },
+        {
+          "test_name": "test_validate_ledger_integrity_duplicate_hash",
+          "test_type": "integration",
+          "location": "tests/unit/engines/ledger_audit_engine.py",
+          "description": "Integration test: duplicate hash_signature returns FAIL with DUPLICATE_HASH violation listing all transaction IDs",
+          "kills_mutants": "Conditional mutants on GROUP BY/HAVING, constant on violation message"
+        }
+      ],
+      "neighboring_mutants_also_killed": "All 95 mutants in this function"
+    },
+    {
+      "engine": "ledger_audit_engine",
+      "function": "verify_hash_signatures",
+      "mutant_ids": ["mutmut_1" through "mutmut_95"],
+      "why_existing_tests_fail": "NO tests exist for ledger_audit_engine at all.",
+      "expected_domain_behavior": "Recompute hash for each transaction: SHA256(account_id|date_iso|description|debit|credit). Compare with stored hash_signature (case-insensitive). Returns tampered transactions. Only checks non-empty hashes.",
+      "missing_invariant": "Hash formula correct; case-insensitive comparison; only non-empty hashes checked; tampered list includes transaction_id, stored, computed",
+      "proposed_tests": [
+        {
+          "test_name": "test_verify_hash_signatures_pass",
+          "test_type": "integration",
+          "location": "tests/unit/engines/ledger_audit_engine.py",
+          "description": "Integration test: transactions with correct hashes return PASS with zero tampered",
+          "kills_mutants": "Conditional mutants on comparison, constant on PASS status"
+        },
+        {
+          "test_name": "test_verify_hash_signatures_tampered",
+          "test_type": "integration",
+          "location": "tests/unit/engines/ledger_audit_engine.py",
+          "description": "Integration test: transaction with modified data returns FAIL with tampered entry showing transaction_id, stored_hash, computed_hash",
+          "kills_mutants": "Arithmetic mutants on hash computation, conditional on comparison"
+        },
+        {
+          "test_name": "test_verify_hash_signatures_empty_hash_skipped",
+          "test_type": "integration",
+          "location": "tests/unit/engines/ledger_audit_engine.py",
+          "description": "Integration test: transaction with empty hash_signature is skipped (not in tampered list)",
+          "kills_mutants": "Conditional mutants on WHERE clause filtering empty hashes"
+        },
+        {
+          "test_name": "test_verify_hash_signatures_case_insensitive",
+          "test_type": "unit",
+          "location": "tests/unit/engines/ledger_audit_engine.py",
+          "description": "Unit test: stored hash uppercase vs computed lowercase still matches",
+          "kills_mutants": "Conditional mutants on .lower() comparison"
+        }
+      ],
+      "neighboring_mutants_also_killed": "All 95 mutants in this function"
+    },
+    {
+      "engine": "ledger_audit_engine",
+      "function": "run_full_audit",
+      "mutant_ids": ["mutmut_1" through "mutmut_N"],
+      "why_existing_tests_fail": "NO tests exist for ledger_audit_engine at all.",
+      "expected_domain_behavior": "Combines validate_ledger_integrity and verify_hash_signatures. Overall PASS only if both PASS. Returns combined report.",
+      "missing_invariant": "Overall = PASS iff integrity=PASS AND hashes=PASS; returns both sub-reports",
+      "proposed_tests": [
+        {
+          "test_name": "test_run_full_audit_both_pass",
+          "test_type": "integration",
+          "location": "tests/unit/engines/ledger_audit_engine.py",
+          "description": "Integration test: clean DB returns overall PASS with both sub-reports PASS",
+          "kills_mutants": "Conditional mutants on overall status logic"
+        },
+        {
+          "test_name": "test_run_full_audit_integrity_fail",
+          "test_type": "integration",
+          "location": "tests/unit/engines/ledger_audit_engine.py",
+          "description": "Integration test: integrity FAIL + hashes PASS returns overall FAIL",
+          "kills_mutants": "Conditional mutants on AND logic"
+        },
+        {
+          "test_name": "test_run_full_audit_hashes_fail",
+          "test_type": "integration",
+          "location": "tests/unit/engines/ledger_audit_engine.py",
+          "description": "Integration test: integrity PASS + hashes FAIL returns overall FAIL",
+          "kills_mutants": "Conditional mutants on AND logic"
+        },
+        {
+          "test_name": "test_run_full_audit_both_fail",
+          "test_type": "integration",
+          "location": "tests/unit/engines/ledger_audit_engine.py",
+          "description": "Integration test: both FAIL returns overall FAIL",
+          "kills_mutants": "Conditional mutants on AND logic"
+        }
+      ],
+      "neighboring_mutants_also_killed": "All mutants in this function"
+    },
+    {
+      "engine": "reconciliation_engine",
+      "function": "_generate_explanation",
+      "mutant_ids": ["mutmut_1" through "mutmut_37"],
+      "why_existing_tests_fail": "Existing tests check match detection but NOT the explanation string generation. The 37 surviving mutants are in string formatting logic.",
+      "expected_domain_behavior": "Exact match: 'Exact match: ₹{amount:.2f} transferred from {debit_account} to {credit_account} on {date}'. Window match: 'Window match: ₹{amount:.2f} transferred from {debit_account} ({date_debit}) to {credit_account} ({date_credit}), {date_diff} days apart'. Amount in rupees (paise/100).",
+      "missing_invariant": "Exact match format with same date; window match format with both dates and day diff; amount in rupees with 2 decimals; account IDs included",
+      "proposed_tests": [
+        {
+          "test_name": "test_generate_explanation_exact_match",
+          "test_type": "unit",
+          "location": "tests/unit/engines/reconciliation/test_reconciliation.py",
+          "description": "Unit test: exact match (date_diff=0) produces correct explanation string with rupees, same date, account IDs",
+          "kills_mutants": "All 19 constant/conditional mutants in exact match branch (string constants, date formatting)"
+        },
+        {
+          "test_name": "test_generate_explanation_window_match",
+          "test_type": "unit",
+          "location": "tests/unit/engines/reconciliation/test_reconciliation.py",
+          "description": "Unit test: window match (date_diff>0) produces correct explanation with both dates and day count",
+          "kills_mutants": "All 18 constant/conditional mutants in window match branch"
+        },
+        {
+          "test_name": "test_generate_explanation_amount_in_rupees",
+          "test_type": "unit",
+          "location": "tests/unit/engines/reconciliation/test_reconciliation.py",
+          "description": "Unit test: amount_paise correctly converted to rupees with 2 decimal places",
+          "kills_mutants": "Arithmetic mutants on paise/100 conversion"
+        }
+      ],
+      "neighboring_mutants_also_killed": "All 37 mutants in _generate_explanation"
+    },
+    {
+      "engine": "reconciliation_engine",
+      "function": "_calculate_confidence",
+      "mutant_ids": ["mutmut_1" through "mutmut_31"],
+      "why_existing_tests_fail": "Property test test_confidence_calculation_bounds only checks bounds [0,1]. Unit test test_calculate_confidence checks 3 specific cases. Missing boundary value tests for date_diff=1, date_diff>1, description_similarity=0.7 boundary.",
+      "expected_domain_behavior": "date_diff=0 → +0.4; date_diff=1 → +0.3; date_diff>1 → +0.0; amount_exact=True → +0.4; description_similarity>0.7 → +0.2; cap at 1.0; round to 4 decimals.",
+      "missing_invariant": "Date factor: 0→0.4, 1→0.3, >1→0.0; Amount factor: 0.4 if exact; Description factor: 0.2 if >0.7; Cap at 1.0; 4 decimal precision",
+      "proposed_tests": [
+        {
+          "test_name": "test_calculate_confidence_date_diff_boundaries",
+          "test_type": "property-based",
+          "location": "tests/properties/reconciliation/test_engine_properties.py",
+          "description": "Property test: date_diff=0 gives 0.4, date_diff=1 gives 0.3, date_diff>=2 gives 0.0 (with amount_exact=True, desc_sim=0)",
+          "kills_mutants": "Conditional mutants on date_diff branches (mutmut_1-10 approx)"
+        },
+        {
+          "test_name": "test_calculate_confidence_description_boundary",
+          "test_type": "property-based",
+          "location": "tests/properties/reconciliation/test_engine_properties.py",
+          "description": "Property test: description_similarity=0.7 gives 0.8, description_similarity=0.7001 gives 1.0 (with date_diff=0, amount_exact=True)",
+          "kills_mutants": "Conditional mutants on >0.7 boundary (mutmut_11-20 approx)"
+        },
+        {
+          "test_name": "test_calculate_confidence_capping",
+          "test_type": "unit",
+          "location": "tests/properties/reconciliation/test_engine_properties.py",
+          "description": "Unit test: all factors maxed (date_diff=0, amount_exact=True, desc_sim=1.0) gives exactly 1.0",
+          "kills_mutants": "Constant mutants on cap value, conditional on capping logic"
+        },
+        {
+          "test_name": "test_calculate_confidence_precision",
+          "test_type": "unit",
+          "location": "tests/properties/reconciliation/test_engine_properties.py",
+          "description": "Unit test: result rounded to exactly 4 decimal places",
+          "kills_mutants": "Arithmetic mutants on rounding"
+        }
+      ],
+      "neighboring_mutants_also_killed": "All 31 mutants in _calculate_confidence, plus some in _check_match that calls it"
+    },
+    {
+      "engine": "reconciliation_engine",
+      "function": "_simple_description_similarity",
+      "mutant_ids": ["mutmut_1" through "mutmut_18"],
+      "why_existing_tests_fail": "Property test test_description_similarity_bounds only checks [0,1] range. Missing tests for keyword logic: both must have keywords for 1.0, empty returns 0.0, case-insensitive, 7 specific keywords.",
+      "expected_domain_behavior": "Returns 1.0 if BOTH descriptions contain any of ['transfer','neft','imps','rtgs','upi','paytm','gpay'] (case-insensitive). Returns 0.0 otherwise. Empty/None returns 0.0.",
+      "missing_invariant": "Both must have keywords for 1.0; empty/None→0.0; case-insensitive; 7 keywords exact",
+      "proposed_tests": [
+        {
+          "test_name": "test_simple_description_similarity_both_keywords",
+          "test_type": "property-based",
+          "location": "tests/properties/reconciliation/test_engine_properties.py",
+          "description": "Property test: both descriptions with any of 7 keywords (various cases) returns 1.0",
+          "kills_mutants": "Conditional mutants on keyword detection, constant on 1.0 return"
+        },
+        {
+          "test_name": "test_simple_description_similarity_one_keyword",
+          "test_type": "unit",
+          "location": "tests/properties/reconciliation/test_engine_properties.py",
+          "description": "Unit test: only one description has keyword returns 0.0",
+          "kills_mutants": "Conditional mutants on both-have-keywords logic"
+        },
+        {
+          "test_name": "test_simple_description_similarity_empty",
+          "test_type": "unit",
+          "location": "tests/properties/reconciliation/test_engine_properties.py",
+          "description": "Unit test: empty/None descriptions return 0.0",
+          "kills_mutants": "Conditional mutants on empty check"
+        },
+        {
+          "test_name": "test_simple_description_similarity_case_insensitive",
+          "test_type": "property-based",
+          "location": "tests/properties/reconciliation/test_engine_properties.py",
+          "description": "Property test: keywords in any case (UPPER, lower, Mixed) detected",
+          "kills_mutants": "Conditional mutants on .lower() call"
+        }
+      ],
+      "neighboring_mutants_also_killed": "All 18 mutants in _simple_description_similarity, plus some in _calculate_confidence that uses it"
+    },
+    {
+      "engine": "loan_engine",
+      "function": "amortization.generate_schedule",
+      "mutant_ids": ["mutmut_1" through "mutmut_180"],
+      "why_existing_tests_fail": "Existing unit tests cover basic schedule generation but miss the ill-conditioned loan branch (annuity_factor/2 > principal/100), monthly re-anchoring, last-month settlement logic, and ROUND_HALF_EVEN interest rounding. Property tests don't generate ill-conditioned loans.",
+      "expected_domain_behavior": "Generate immutable amortization schedule. INVARIANT: Money in integer paise. INVARIANT: Rates as basis points. INVARIANT: Banker's rounding (ROUND_HALF_EVEN). INVARIANT: Ill-conditioned loans (high rate, small principal, long tenure) re-anchor EMI monthly. INVARIANT: Last month settles exact remaining balance. INVARIANT: Payment dates via _add_months with month-end handling.",
+      "missing_invariant": "Ill-conditioned detection triggers re-anchoring; monthly re-anchoring recalculates EMI; last month absorbs drift; interest rounded HALF_EVEN; principal component bounded; cumulative interest monotonic; dates ISO format",
+      "proposed_tests": [
+        {
+          "test_name": "test_generate_schedule_ill_conditioned_detection",
+          "test_type": "property-based",
+          "location": "tests/properties/loan_engine/test_amortization_properties.py",
+          "description": "Property test: generate loans with high rate (e.g., 20%+), small principal (e.g., ₹1000), long tenure (120+ months) — verify ill-conditioned branch triggers and EMI re-anchors monthly",
+          "kills_mutants": "Conditional mutants on ill_conditioned detection (mutmut_1-30 approx), arithmetic on re-anchoring EMI calculation"
+        },
+        {
+          "test_name": "test_generate_schedule_last_month_settlement",
+          "test_type": "unit",
+          "location": "tests/unit/engines/loan/test_amortization.py",
+          "description": "Unit test: last month balance_paise=0, principal_component=reported_balance, interest=rounded, actual_emi=principal+interest",
+          "kills_mutants": "Conditional mutants on month==tenure_months branch, arithmetic on settlement logic"
+        },
+        {
+          "test_name": "test_generate_schedule_interest_rounding_half_even",
+          "test_type": "property-based",
+          "location": "tests/properties/loan_engine/test_amortization_properties.py",
+          "description": "Property test: interest_exact values at 0.5 paise boundaries round to even (ROUND_HALF_EVEN)",
+          "kills_mutants": "Arithmetic mutants on quantize rounding mode"
+        },
+        {
+          "test_name": "test_generate_schedule_principal_bounds",
+          "test_type": "property-based",
+          "location": "tests/properties/loan_engine/test_amortization_properties.py",
+          "description": "Property test: principal_component_paise always in [0, emi_paise], never negative, never exceeds EMI",
+          "kills_mutants": "Conditional mutants on principal_exact<=0, balance-principal_exact<=0 branches"
+        },
+        {
+          "test_name": "test_generate_schedule_cumulative_interest_monotonic",
+          "test_type": "property-based",
+          "location": "tests/properties/loan_engine/test_amortization_properties.py",
+          "description": "Property test: cumulative_interest_paise never decreases across months",
+          "kills_mutants": "Conditional mutants on cumulative_interest += interest_paise"
+        },
+        {
+          "test_name": "test_generate_schedule_payment_dates",
+          "test_type": "property-based",
+          "location": "tests/properties/loan_engine/test_amortization_properties.py",
+          "description": "Property test: payment_date = _add_months(start, month-1) with month-end handling (Jan 31→Feb 28)",
+          "kills_mutants": "Arithmetic mutants on _add_months, conditional on month-end fallback"
+        }
+      ],
+      "neighboring_mutants_also_killed": "All 180 mutants in generate_schedule, plus some in validate_schedule that checks same invariants"
+    },
+    {
+      "engine": "loan_engine",
+      "function": "amortization.validate_schedule",
+      "mutant_ids": ["mutmut_1" through "mutmut_40"],
+      "why_existing_tests_fail": "NO tests directly call validate_schedule. Existing tests validate via validate_schedule_invariants (subset) but miss: EMI consistency, tenure length, debug_mode raise behavior.",
+      "expected_domain_behavior": "Comprehensive validation: 1) balance≥0, 2) total_principal≤original, 3) total_principal=original, 4) EMI consistency (all but last equal), 5) cumulative interest monotonic, 6) month numbers sequential, 7) optional tenure length. debug_mode=True raises ValueError with details; False returns False.",
+      "missing_invariant": "All 7 invariants checked; EMI consistency excludes last row; debug_mode raises; non-debug returns bool",
+      "proposed_tests": [
+        {
+          "test_name": "test_validate_schedule_emi_consistency",
+          "test_type": "unit",
+          "location": "tests/unit/engines/loan/test_amortization.py",
+          "description": "Unit test: schedule with varying EMI (except last) returns False/raises; consistent EMI passes",
+          "kills_mutants": "Conditional mutants on EMI consistency loop (mutmut_1-10)"
+        },
+        {
+          "test_name": "test_validate_schedule_tenure_length",
+          "test_type": "unit",
+          "location": "tests/unit/engines/loan/test_amortization.py",
+          "description": "Unit test: schedule length != original_tenure_months returns False/raises",
+          "kills_mutants": "Conditional mutants on tenure length check"
+        },
+        {
+          "test_name": "test_validate_schedule_debug_mode_raises",
+          "test_type": "unit",
+          "location": "tests/unit/engines/loan/test_amortization.py",
+          "description": "Unit test: debug_mode=True raises ValueError with all violations; debug_mode=False returns False",
+          "kills_mutants": "Conditional mutants on debug_mode branch"
+        },
+        {
+          "test_name": "test_validate_schedule_all_invariants",
+          "test_type": "property-based",
+          "location": "tests/properties/loan_engine/test_amortization_properties.py",
+          "description": "Property test: generate valid/invalid schedules, verify all 7 invariants correctly detected",
+          "kills_mutants": "All 40 mutants across all invariant checks"
+        }
+      ],
+      "neighboring_mutants_also_killed": "All 40 mutants in validate_schedule, plus some in generate_schedule that produces invalid schedules"
+    },
+    {
+      "engine": "credit_card_engine",
+      "function": "metrics.compute_financial_metrics",
+      "mutant_ids": ["mutmut_1" through "mutmut_64"],
+      "why_existing_tests_fail": "Property tests exist but don't cover revolving balance edge cases, minimum due calculation (5% vs fixed), interest accrual on revolving balance, utilization boundary conditions.",
+      "expected_domain_behavior": "Compute revolving balance, minimum due (max of 5% of outstanding or fixed minimum), interest on revolving balance, utilization ratio. All in paise.",
+      "missing_invariant": "Revolving balance = outstanding - payment; minimum due = max(5% outstanding, fixed_min); interest = revolving × daily_rate × days; utilization = outstanding/limit capped at 1.0",
+      "proposed_tests": [
+        {
+          "test_name": "test_compute_financial_metrics_revolving_balance",
+          "test_type": "property-based",
+          "location": "tests/properties/credit_card_engine/test_billing_properties.py",
+          "description": "Property test: revolving balance = max(0, outstanding - payment) for various payment amounts",
+          "kills_mutants": "Arithmetic mutants on revolving calculation, conditional on payment>outstanding"
+        },
+        {
+          "test_name": "test_compute_financial_metrics_minimum_due",
+          "test_type": "property-based",
+          "location": "tests/properties/credit_card_engine/test_billing_properties.py",
+          "description": "Property test: minimum due = max(5% of outstanding, fixed_minimum) across boundary where 5% crosses fixed",
+          "kills_mutants": "Conditional mutants on max() branch, arithmetic on 5% calculation"
+        },
+        {
+          "test_name": "test_compute_financial_metrics_interest_accrual",
+          "test_type": "property-based",
+          "location": "tests/properties/credit_card_engine/test_interest_properties.py",
+          "description": "Property test: interest = revolving_balance × daily_rate × days, zero if revolving=0",
+          "kills_mutants": "Arithmetic mutants on interest calculation, conditional on zero revolving"
+        },
+        {
+          "test_name": "test_compute_financial_metrics_utilization_capped",
+          "test_type": "property-based",
+          "location": "tests/properties/credit_card_engine/test_billing_properties.py",
+          "description": "Property test: utilization = outstanding/credit_limit, capped at 1.0, zero limit handled",
+          "kills_mutants": "Conditional mutants on cap, division by zero handling"
+        }
+      ],
+      "neighboring_mutants_also_killed": "All 64 mutants in compute_financial_metrics, plus some in foreclosure/billing that use these metrics"
+    }
+  ],
+  "configuration_changes": [
+    {
+      "file": "backend/pyproject.toml",
+      "section": "[tool.mutmut]",
+      "change": "Add tests/invariants/, tests/contract/, tests/integration/ to pytest_add_cli_args_test_selection",
+      "rationale": "These test suites exercise code paths that kill currently surviving mutants but don't run during mutation"
+    }
+  ]
+}

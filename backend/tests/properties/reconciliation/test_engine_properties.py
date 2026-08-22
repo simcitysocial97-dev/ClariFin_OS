@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from hypothesis import given, settings
 from hypothesis import strategies as st
+from hypothesis import HealthCheck
 
 from src.engines.reconciliation_engine import (
     _calculate_confidence,
@@ -240,3 +241,120 @@ def test_confidence_capping():
         description_similarity=1.0,  # Should trigger all factors
     )
     assert confidence == 1.0  # Capped at 1.0
+
+
+# --- Additional Boundary Tests for Confidence ---
+
+
+@settings(max_examples=50)
+@given(st.integers(min_value=0, max_value=30))
+def test_confidence_date_diff_zero_returns_08(date_diff_days):
+    """date_diff=0 with amount_exact=True and desc_sim=0 should give 0.8."""
+    confidence = _calculate_confidence(
+        date_diff_days=date_diff_days,
+        amount_exact=True,
+        description_similarity=0.0,
+    )
+    if date_diff_days == 0:
+        assert confidence == 0.8
+
+
+@settings(max_examples=50)
+@given(st.floats(min_value=0.0, max_value=1.0))
+def test_confidence_desc_sim_boundary_07(description_similarity):
+    """Test boundary at description_similarity = 0.7."""
+    confidence = _calculate_confidence(
+        date_diff_days=0,
+        amount_exact=True,
+        description_similarity=description_similarity,
+    )
+    # At exactly 0.7, should NOT add the 0.2 bonus (strictly > 0.7)
+    if description_similarity <= 0.7:
+        assert confidence == 0.8
+    else:
+        assert confidence == 1.0
+
+
+# --- Additional Tests for Description Similarity ---
+
+
+@st.composite
+def desc_with_keyword(draw):
+    """Generate a description that contains at least one keyword."""
+    keyword = draw(st.sampled_from(["transfer", "neft", "imps", "rtgs", "upi", "paytm", "gpay"]))
+    prefix = draw(st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=0, max_size=20))
+    suffix = draw(st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=0, max_size=20))
+    case_variant = draw(st.sampled_from([str.lower, str.upper, str.capitalize, lambda x: x]))
+    keyword = case_variant(keyword)
+    return f"{prefix}{keyword}{suffix}"
+
+
+@st.composite
+def desc_without_keyword(draw):
+    """Generate a description with NO keywords."""
+    return draw(st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=1, max_size=50).filter(
+        lambda x: not any(kw in x.lower() for kw in ["transfer", "neft", "imps", "rtgs", "upi", "paytm", "gpay"])
+    ))
+
+
+@st.composite
+def desc_with_keyword_mixed_case(draw):
+    """Generate a description with keyword in mixed case."""
+    keyword = draw(st.sampled_from(["TRANSFER", "NEFT", "IMPS", "RTGS", "UPI", "PAYTM", "GPAY",
+                                     "transfer", "neft", "imps", "rtgs", "upi", "paytm", "gpay",
+                                     "Transfer", "Neft", "Imps", "Rtgs", "Upi", "Paytm", "Gpay"]))
+    prefix = draw(st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=0, max_size=20))
+    suffix = draw(st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=0, max_size=20))
+    return f"{prefix}{keyword}{suffix}"
+
+
+@settings(max_examples=50, suppress_health_check=[HealthCheck.filter_too_much])
+@given(desc_with_keyword(), desc_with_keyword())
+def test_simple_description_similarity_both_keywords(desc_a, desc_b):
+    """Both descriptions with any of 7 keywords (case-insensitive) returns 1.0."""
+    similarity = _simple_description_similarity(desc_a, desc_b)
+    assert similarity == 1.0
+
+
+@settings(max_examples=50, suppress_health_check=[HealthCheck.filter_too_much])
+@given(desc_with_keyword(), desc_without_keyword())
+def test_simple_description_similarity_one_keyword(desc_a, desc_b):
+    """Only one description has keyword returns 0.0."""
+    similarity = _simple_description_similarity(desc_a, desc_b)
+    assert similarity == 0.0
+
+
+@settings(max_examples=50)
+@given(st.text(), st.text())
+def test_simple_description_similarity_empty(desc_a, desc_b):
+    """Empty/None descriptions return 0.0."""
+    # Test empty strings
+    assert _simple_description_similarity("", "") == 0.0
+    assert _simple_description_similarity("", "something") == 0.0
+    assert _simple_description_similarity("something", "") == 0.0
+
+
+@settings(max_examples=50, suppress_health_check=[HealthCheck.filter_too_much])
+@given(desc_with_keyword_mixed_case(), desc_with_keyword_mixed_case())
+def test_simple_description_similarity_case_insensitive(desc_a, desc_b):
+    """Keywords in any case (UPPER, lower, Mixed) detected."""
+    similarity = _simple_description_similarity(desc_a, desc_b)
+    assert similarity == 1.0
+
+
+@settings(max_examples=50)
+@given(st.integers(min_value=0, max_value=30))
+def test_confidence_date_factors_all_branches(date_diff_days):
+    """Test all date_diff branches: 0, 1, >=2."""
+    confidence = _calculate_confidence(
+        date_diff_days=date_diff_days,
+        amount_exact=True,
+        description_similarity=0.0,
+    )
+
+    if date_diff_days == 0:
+        assert confidence == 0.8  # 0.4 + 0.4
+    elif date_diff_days == 1:
+        assert confidence == 0.7  # 0.3 + 0.4
+    else:
+        assert confidence == 0.4  # 0.0 + 0.4

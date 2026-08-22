@@ -25,6 +25,7 @@ from src.engines.reconciliation_engine import (
     _calculate_confidence,
     _check_match,
     _date_difference_days,
+    _generate_explanation,
     find_potential_matches,
 )
 
@@ -559,6 +560,85 @@ def test_date_difference_days():
 
     diff = _date_difference_days("2025-01-01", "invalid")
     assert diff is None
+
+
+# ============================================================
+# Tests for _generate_explanation
+# ============================================================
+
+
+def test_generate_explanation_exact_match():
+    """Exact match (date_diff=0) produces correct explanation with rupees, same date, account IDs."""
+    debit_txn = {
+        "id": 1,
+        "account_id": "Account_A",
+        "date_iso": "2025-01-01",
+        "description": "Transfer",
+    }
+    credit_txn = {
+        "id": 2,
+        "account_id": "Account_B",
+        "date_iso": "2025-01-01",
+        "description": "Transfer",
+    }
+    amount_paise = 100000  # ₹1000.00
+    date_diff = 0
+
+    explanation = _generate_explanation(debit_txn, credit_txn, amount_paise, date_diff)
+
+    assert "Exact match" in explanation
+    assert "1000.00" in explanation  # Simple float formatting, not Indian grouping
+    assert "Account_A" in explanation
+    assert "Account_B" in explanation
+    assert "2025-01-01" in explanation
+    assert "days apart" not in explanation
+
+
+def test_generate_explanation_window_match():
+    """Window match (date_diff>0) produces correct explanation with both dates and day count."""
+    debit_txn = {
+        "id": 1,
+        "account_id": "Account_A",
+        "date_iso": "2025-01-01",
+        "description": "Transfer",
+    }
+    credit_txn = {
+        "id": 2,
+        "account_id": "Account_B",
+        "date_iso": "2025-01-03",
+        "description": "Transfer",
+    }
+    amount_paise = 200000  # ₹2000.00
+    date_diff = 2
+
+    explanation = _generate_explanation(debit_txn, credit_txn, amount_paise, date_diff)
+
+    assert "Window match" in explanation
+    assert "2000.00" in explanation  # Simple float formatting
+    assert "Account_A" in explanation
+    assert "Account_B" in explanation
+    assert "2025-01-01" in explanation
+    assert "2025-01-03" in explanation
+    assert "2 days apart" in explanation
+
+
+def test_generate_explanation_amount_in_rupees():
+    """Amount in paise correctly converted to rupees with 2 decimal places."""
+    debit_txn = {"id": 1, "account_id": "A", "date_iso": "2025-01-01", "description": "T"}
+    credit_txn = {"id": 2, "account_id": "B", "date_iso": "2025-01-01", "description": "T"}
+
+    # Test various paise amounts - uses simple float formatting
+    explanation = _generate_explanation(debit_txn, credit_txn, 1, 0)
+    assert "0.01" in explanation
+
+    explanation = _generate_explanation(debit_txn, credit_txn, 100, 0)
+    assert "1.00" in explanation
+
+    explanation = _generate_explanation(debit_txn, credit_txn, 12345, 0)
+    assert "123.45" in explanation
+
+    explanation = _generate_explanation(debit_txn, credit_txn, 10000000, 0)
+    assert "100000.00" in explanation  # Simple float, no Indian grouping
 
 
 # ============================================================

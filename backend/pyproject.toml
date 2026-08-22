@@ -97,7 +97,14 @@ also_copy = ["src"]
 # `python3`, never bare `python`).
 runner = "python3 -m pytest"
 # Which tests to run per mutant. Both local smoke and CI share this selection.
-pytest_add_cli_args_test_selection = ["tests/unit/", "tests/properties/"]
+# Includes unit, properties, invariants, contract, and integration tests.
+pytest_add_cli_args_test_selection = [
+    "tests/unit/",
+    "tests/properties/",
+    "tests/invariants/",
+    "tests/contract/",
+    "tests/integration/",
+]
 # Disable progress bar (cleaner CI output).
 no_progress = true
 # Note: mutmut only mutates `*.py` files, so stray artifacts such as

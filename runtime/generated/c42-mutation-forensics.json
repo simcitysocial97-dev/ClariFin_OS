@@ -1,0 +1,163 @@
+{
+  "phase": "C42 Phase 0 & 1 - Mutation CI Forensic Report",
+  "timestamp": "2026-08-22T09:30:29+05:30",
+  "repository_identity": {
+    "head_sha": "34d22cb763ec05da24f02a420905047afdc64b7f",
+    "tree_sha": "d603339af3876064483b9dc418bd60b2fb5946c7",
+    "active_branch": "m9c9-merge-authorization-resolution",
+    "working_tree_status": "clean (1 untracked file: .kilo/plans/1787318429130-mutation-testing-green-plan.md)",
+    "latest_c41_certification_commit": "5777ee31 (C41.9 — Commit generated artifact updates from C41 test runs)",
+    "mutation_workflow_commit": "34d22cb7 (Fix: Typo in mutation workflow - mutation-summary-summary.json -> mutation-summary.json)",
+    "mutation_config_hash": "sha256:backend/pyproject.toml[tool.mutmut]",
+    "test_config_hash": "sha256:backend/pyproject.toml[pytest]",
+    "coverage_config_hash": "N/A (no explicit coverage config)"
+  },
+  "verification_policy": {
+    "mutation_threshold": {
+      "authoritative_source": "backend/tests/mutation/mutation_config.toml [thresholds] and .github/scripts/run_mutation_selective.sh",
+      "required_value": "80%",
+      "current_value": "50.6%",
+      "gate": "Mutation Testing workflow"
+    },
+    "line_coverage": {
+      "authoritative_source": "Not explicitly defined in repository",
+      "required_value": "Not defined",
+      "current_value": "Not measured",
+      "gate": "N/A"
+    },
+    "branch_coverage": {
+      "authoritative_source": "Not explicitly defined in repository",
+      "required_value": "Not defined",
+      "current_value": "Not measured",
+      "gate": "N/A"
+    },
+    "property_coverage": {
+      "authoritative_source": "Not explicitly defined",
+      "required_value": "Not defined",
+      "current_value": "Not measured",
+      "gate": "N/A"
+    },
+    "contract_coverage": {
+      "authoritative_source": "Not explicitly defined",
+      "required_value": "Not defined",
+      "current_value": "Not measured",
+      "gate": "N/A"
+    },
+    "mutation_source_paths": {
+      "authoritative_source": "backend/pyproject.toml [tool.mutmut]",
+      "value": "src/engines/"
+    },
+    "mutation_test_command": {
+      "authoritative_source": "backend/pyproject.toml [tool.mutmut]",
+      "value": "python3 -m pytest"
+    },
+    "pytest_test_selection": {
+      "authoritative_source": "backend/pyproject.toml [tool.mutmut]",
+      "value": "tests/unit/, tests/properties/"
+    },
+    "ci_timeout": {
+      "authoritative_source": ".github/workflows/mutation.yml",
+      "value": "90 minutes"
+    },
+    "mutation_artifact_generation": {
+      "authoritative_source": ".github/scripts/run_mutation_selective.sh",
+      "artifacts": ["mutation-summary.json", "mutation-results.txt", "surviving-mutants.txt", "mutation-junit.xml", "mutation-report.md"]
+    },
+    "test_result_aggregation": {
+      "authoritative_source": "runtime/foundation/verification/profiles.py",
+      "method": "VerificationOrchestrator with EvidenceAggregator"
+    },
+    "quality_gate_enforcement": {
+      "authoritative_source": ".github/workflows/mutation.yml",
+      "method": "Fail if mutation_exit_code != '0'"
+    }
+  },
+  "ci_mutation_forensics": {
+    "workflow_run_id": 32547817936,
+    "failing_job": "Mutation Testing",
+    "failing_step": "step-0002 (bash .github/scripts/run_mutation_selective.sh)",
+    "mutmut_command": "mutmut run (from backend/pyproject.toml config)",
+    "python_environment": "Python 3.12.14",
+    "mutmut_version": "3.7.0",
+    "mutation_source_paths": "src/engines/",
+    "mutants_generated": 16427,
+    "mutants_killed": 4418,
+    "mutants_survived": 4315,
+    "mutants_no_tests": 7439,
+    "mutants_not_checked": 217,
+    "mutants_timeout": 38,
+    "mutation_score": 50.6,
+    "threshold": 80,
+    "threshold_met": false,
+    "failure_classification": "GENUINE_SURVIVING_MUTANTS",
+    "artifact_locations": "backend/tests/generated/mutation/ (not uploaded due to workflow failure)",
+    "duration_seconds": 694
+  },
+  "survivor_classification": {
+    "genuine_test_gaps": {
+      "count": 4315,
+      "description": "Mutants in code covered by tests but tests don't detect the mutation",
+      "engines": {
+        "behaviour_engine": 2159,
+        "loan_engine": 625,
+        "financial_events": 675,
+        "credit_card_engine": 314,
+        "recommendation_engine": 282,
+        "account_engine": 163,
+        "reconciliation_engine": 97
+      }
+    },
+    "no_test_coverage": {
+      "count": 7439,
+      "description": "Mutants in code with zero test coverage",
+      "engines": {
+        "financial_intelligence": 3050,
+        "behaviour_engine": 2797,
+        "transaction_intelligence": 1030,
+        "balance_engine": 285,
+        "ledger_audit_engine": 190,
+        "reconciliation_engine": 54,
+        "financial_events": 29,
+        "loan_engine": 4
+      }
+    },
+    "equivalent_mutants": {
+      "count": "TBD (requires manual review)",
+      "description": "Mutants that are semantically equivalent to original code"
+    },
+    "timeout_mutants": {
+      "count": 38,
+      "description": "Mutants causing test timeout (infrastructure)"
+    },
+    "not_checked": {
+      "count": 217,
+      "description": "Mutants not evaluated (likely due to early termination)"
+    }
+  },
+  "priority_mapping": {
+    "P0_financial_critical": {
+      "engines": ["loan_engine", "credit_card_engine", "reconciliation_engine", "account_engine"],
+      "survivors": 1199,
+      "no_tests": 339,
+      "rationale": "Monetary calculations, ledger integrity, loan calculations, interest, reconciliation correctness"
+    },
+    "P1_business_rules": {
+      "engines": ["behaviour_engine", "financial_events"],
+      "survivors": 2834,
+      "no_tests": 2826,
+      "rationale": "Business rules, validation, aggregation, forecasting, financial intelligence"
+    },
+    "P2_utility_presentation": {
+      "engines": ["recommendation_engine", "balance_engine", "ledger_audit_engine", "transaction_intelligence", "financial_intelligence"],
+      "survivors": 282,
+      "no_tests": 4555,
+      "rationale": "Defensive branches, presentation-support logic, low-risk utility behavior"
+    }
+  },
+  "evidence_artifacts": {
+    "mutation_run_log": "backend/tests/generated/mutation/mutation-run.log",
+    "mutation_summary": "backend/tests/generated/mutation/mutation-summary.json (empty - workflow failed before generation)",
+    "mutation_results": "backend/tests/generated/mutation/mutation-results.txt (not generated)",
+    "surviving_mutants": "backend/tests/generated/mutation/surviving-mutants.txt (not generated)"
+  }
+}
