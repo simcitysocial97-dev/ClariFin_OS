@@ -108,7 +108,7 @@ export default defineConfig({
       stderr: 'pipe',
     },
     {
-      command: 'python3 -m uvicorn src.api:app --host 0.0.0.0 --port 8000',
+      command: 'cd ../backend && python3 -m uvicorn src.api:app --host 0.0.0.0 --port 8000',
       url: 'http://localhost:8000/ready',
       reuseExistingServer: false,
       timeout: 60000,
