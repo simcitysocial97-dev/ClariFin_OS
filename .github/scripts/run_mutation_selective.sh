@@ -17,7 +17,8 @@
 #
 # IMPORTANT: Output is streamed to stdout AND logged to file so CI logs show progress.
 
-set -euo pipefail
+# Allow partial results on infrastructure failures
+set -eo pipefail
 
 BACKEND_DIR="${1:-backend}"
 TARGET_PATH="${2:-src/engines/}"
