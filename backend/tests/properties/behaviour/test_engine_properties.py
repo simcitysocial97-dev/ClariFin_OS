@@ -82,7 +82,7 @@ class TestBehaviourEngineProperties:
             min_value=-1.0, max_value=1.0, allow_nan=False, allow_infinity=False
         ),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_debt_cycle_score_range(
         self,
         credit_advances_count: int,
@@ -104,7 +104,7 @@ class TestBehaviourEngineProperties:
         min_val=st.floats(min_value=-100.0, max_value=100.0),
         max_val=st.floats(min_value=-100.0, max_value=100.0).filter(lambda x: x > 0),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_normalize_score_bounds(
         self, value: float, min_val: float, max_val: float
     ) -> None:
@@ -117,7 +117,7 @@ class TestBehaviourEngineProperties:
     @given(
         value=st.floats(min_value=-1000.0, max_value=1000.0),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_normalize_score_default_bounds(self, value: float) -> None:
         """Normalize score with default bounds must return values in [0, 1] range."""
         from src.engines.behaviour_engine.core import _normalize_score
@@ -130,7 +130,7 @@ class TestBehaviourEngineProperties:
             st.floats(min_value=0.1, max_value=100.0), min_size=2, max_size=20
         ),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_coefficient_of_variation_non_negative(self, values: list[float]) -> None:
         """Coefficient of variation must be non-negative."""
         from src.engines.behaviour_engine.core import _coefficient_of_variation
@@ -143,7 +143,7 @@ class TestBehaviourEngineProperties:
             st.floats(min_value=0.0, max_value=100.0), min_size=1, max_size=1
         ),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_coefficient_of_variation_single_value(self, values: list[float]) -> None:
         """Coefficient of variation with single value must be 0."""
         from src.engines.behaviour_engine.core import _coefficient_of_variation
@@ -157,7 +157,7 @@ class TestBehaviourEngineProperties:
         ),
         window=st.integers(min_value=1, max_value=10),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_moving_average_length(self, values: list[float], window: int) -> None:
         """Moving average must return list of same length as input."""
         from src.engines.behaviour_engine.core import _moving_average
@@ -169,7 +169,7 @@ class TestBehaviourEngineProperties:
     # --- Tests for Core Behaviour Functions ---
 
     @given(transaction_list())
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_impulsivity_score_bounds(self, transactions: list[dict]) -> None:
         """Impulsivity score must be in [0, 1] range."""
         from src.engines.behaviour_engine.core import _compute_impulsivity_score
@@ -179,7 +179,7 @@ class TestBehaviourEngineProperties:
         assert 0.0 <= score <= 1.0
 
     @given(transaction_list())
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_habit_stability_score_bounds(self, transactions: list[dict]) -> None:
         """Habit stability score must be in [0, 1] range."""
         from src.engines.behaviour_engine.core import _compute_habit_stability_score
@@ -189,7 +189,7 @@ class TestBehaviourEngineProperties:
         assert 0.0 <= score <= 1.0
 
     @given(transaction_list())
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_loss_aversion_index_bounds(self, transactions: list[dict]) -> None:
         """Loss aversion index must be in [0, 1] range."""
         from src.engines.behaviour_engine.core import _compute_loss_aversion_index
@@ -199,7 +199,7 @@ class TestBehaviourEngineProperties:
         assert 0.0 <= index <= 1.0
 
     @given(transaction_list())
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_financial_stress_index_bounds(self, transactions: list[dict]) -> None:
         """Financial stress index must be in [0, 1] range."""
         from src.engines.behaviour_engine.core import _compute_financial_stress_index
@@ -209,7 +209,7 @@ class TestBehaviourEngineProperties:
         assert 0.0 <= index <= 1.0
 
     @given(transaction_list())
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_savings_discipline_score_bounds(self, transactions: list[dict]) -> None:
         """Savings discipline score must be in [0, 1] range."""
         from src.engines.behaviour_engine.core import _compute_savings_discipline_score
@@ -219,7 +219,7 @@ class TestBehaviourEngineProperties:
         assert 0.0 <= score <= 1.0
 
     @given(transaction_list())
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_temporal_patterns_deterministic(self, transactions: list[dict]) -> None:
         """Temporal patterns computation must be deterministic."""
         from src.engines.behaviour_engine.core import _compute_temporal_patterns
@@ -231,7 +231,7 @@ class TestBehaviourEngineProperties:
         assert result1 == result2
 
     @given(transaction_list())
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_india_risk_patterns_deterministic(self, transactions: list[dict]) -> None:
         """India risk patterns detection must be deterministic."""
         from src.engines.behaviour_engine.core import detect_india_risk_patterns
@@ -251,7 +251,7 @@ class TestAccountEngineProperties:
             st.integers(min_value=0, max_value=10000000), min_size=1, max_size=100
         ),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_average_balance_integer(self, balances: list[int]) -> None:
         """Average balance must be an integer (paise)."""
         from src.engines.account_engine.balance import compute_average_balance
@@ -263,7 +263,7 @@ class TestAccountEngineProperties:
         opening=st.integers(min_value=0, max_value=10000000),
         closing=st.integers(min_value=0, max_value=10000000),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_balance_change_identity(self, opening: int, closing: int) -> None:
         """Balance change = closing - opening."""
         from src.engines.account_engine.balance import compute_balance_change
