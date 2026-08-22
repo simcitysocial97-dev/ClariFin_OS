@@ -49,7 +49,7 @@ jobs:
           python-version: "3.12"
 
       - name: Run mutation testing
-        run: python runtime/verify.py mutation
+        run: python .github/scripts/run_mutation_comprehensive.py
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
