@@ -15,8 +15,7 @@
 #   8 — Mutation failure: one or more mutants caused tests to take 2x longer.
 #   bit-OR combinations of 2/4/8 are also possible for mutation failures.
 #
-# IMPORTANT: `tee` is used ONLY for logging; the actual mutmut exit code is
-# captured via PIPESTATUS so failures are never masked.
+# IMPORTANT: Output is streamed to stdout AND logged to file so CI logs show progress.
 
 set -euo pipefail
 
@@ -41,14 +40,15 @@ mkdir -p "$MUTATION_OUTPUT_DIR"
 # Uses config from backend/pyproject.toml [tool.mutmut]:
 #   source_paths = ["src/engines/"]
 #   runner = "python3 -m pytest"
-#   pytest_add_cli_args_test_selection = ["tests/unit/", "tests/properties/"]
+#   pytest_add_cli_args_test_selection = ["tests/unit/", "tests/properties/", "tests/invariants/", "tests/contract/", "tests/integration/"]
 #   no_progress = true
 #
 # NO deprecated CLI flags (--python, --tests-dir, etc.).
 # Exit code preserved via PIPESTATUS, never hidden by tee.
 echo "Starting canonical mutation run ..."
 START_TIME=$(date +%s)
-mutmut run > "$MUTATION_OUTPUT_DIR/mutation-run.log" 2>&1
+# Stream output to both stdout (for CI logs) and log file
+mutmut run 2>&1 | tee "$MUTATION_OUTPUT_DIR/mutation-run.log"
 MUTMUT_RC=${PIPESTATUS[0]}
 END_TIME=$(date +%s)
 DURATION=$((END_TIME - START_TIME))
@@ -59,6 +59,8 @@ echo ""
 echo "Collecting mutation evidence ..."
 
 mutmut results > "$MUTATION_OUTPUT_DIR/mutation-results.txt" 2>&1 || true
+cat "$MUTATION_OUTPUT_DIR/mutation-results.txt"
+
 mutmut show   > "$MUTATION_OUTPUT_DIR/surviving-mutants.txt" 2>&1 || true
 mutmut junitxml 2>/dev/null > "$MUTATION_OUTPUT_DIR/mutation-junit.xml" || true
 
@@ -77,7 +79,7 @@ cat > "$MUTATION_OUTPUT_DIR/mutation-summary.json" <<EOF
 {
   "mutmut_version": "$(mutmut --version 2>/dev/null || echo 'unknown')",
   "source_scope": "$TARGET_PATH",
-  "test_scope": "tests/unit/, tests/properties/",
+  "test_scope": "tests/unit/, tests/properties/, tests/invariants/, tests/contract/, tests/integration/",
   "git_commit_sha": "$(git rev-parse HEAD 2>/dev/null || echo 'unknown')",
   "git_tree_hash": "$(git rev-parse HEAD^{tree} 2>/dev/null || echo 'unknown')",
   "dependency_lock_hash": "$(sha256sum backend/requirements.lock 2>/dev/null | cut -d' ' -f1 || echo 'unknown')",
@@ -108,6 +110,15 @@ echo "  Score    : ${SCORE}%"
 echo "  Duration : ${DURATION}s"
 echo "  RC       : $MUTMUT_RC"
 echo ""
+
+# ── Print surviving mutants for debugging ────────────────────────────────────
+if [ -f "$MUTATION_OUTPUT_DIR/surviving-mutants.txt" ] && [ -s "$MUTATION_OUTPUT_DIR/surviving-mutants.txt" ]; then
+    echo "================================================"
+    echo "  SURVIVING MUTANTS (first 50 lines)"
+    echo "================================================"
+    head -50 "$MUTATION_OUTPUT_DIR/surviving-mutants.txt"
+    echo ""
+fi
 
 # ── Classify result for CI ──────────────────────────────────────────────────
 case $MUTMUT_RC in
