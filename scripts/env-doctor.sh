@@ -65,4 +65,31 @@ echo "[ Reproducibility contract ]"
 [ -f frontend/package-lock.json ] && v "frontend/package-lock.json" "present" || v "frontend/package-lock.json" "MISSING"
 
 echo ""
+echo "[ Canonical environment guard (M9-C42.5) ]"
+# The ONLY allowed Python environment is the repository-root .venv. Any other
+# virtualenv (e.g. backend/venv) causes mutmut/pytest path inconsistency.
+guard_fail=0
+if [ -d backend/venv ]; then
+  echo "  !! backend/venv present — forbidden. Remove it; use repo-root .venv only." >&2
+  guard_fail=1
+fi
+if [ -d backend/.venv ]; then
+  echo "  !! backend/.venv present — forbidden. Remove it; use repo-root .venv only." >&2
+  guard_fail=1
+fi
+if [ -x "$ROOT_DIR/.venv/bin/mutmut" ]; then
+  MV="$("$ROOT_DIR/.venv/bin/mutmut" --version 2>&1 | head -1)"
+  case "$MV" in
+    *3.7.0*) v "mutmut (pinned 3.7.0)" "$MV";;
+    Traceback*) v "mutmut --version" "unavailable outside config dir (OK in CI)";;
+    *) echo "  !! mutmut version mismatch: $MV (expected 3.7.0)" >&2; guard_fail=1;;
+  esac
+fi
+[ "$guard_fail" -eq 0 ] && v "environment guard" "PASS" || v "environment guard" "FAIL"
+
+echo ""
+if [ "$guard_fail" -ne 0 ]; then
+  echo "  Diagnostic FAILED — environment inconsistency detected." >&2
+  exit 1
+fi
 echo "  Diagnostic complete."

@@ -47,6 +47,9 @@ coverage/
 backend/tests/generated/
 
 Python virtual environments
+# CANONICAL ENVIRONMENT: ONLY the repository-root .venv is allowed.
+# backend/venv and backend/.venv are forbidden — they caused a
+# mutmut/pytest path-inconsistency defect (M9-C42.5). Never recreate them.
 backend/venv/
 backend/.venv/
 .venv/
@@ -107,3 +110,6 @@ target/
 .coverage
 .venv
 .memory-cache/
+
+# Mutation cache (mutmut working state)
+.mutmut-cache/

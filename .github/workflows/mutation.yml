@@ -6,8 +6,12 @@
 # delegate to runtime/verify.py. Rule 9: append `verify.py status` summary.
 # Concurrency: never cancel (mutation is in the Rule 6 exception list).
 #
-# The selective-mutation logic (run_mutation_selective.sh) owns discovery,
-# execution and aggregate-report generation. The workflow only orchestrates.
+# Two jobs:
+#   mutation-smoke — bounded infrastructure health check (seconds). MUST pass
+#                    before the expensive full campaign. Proves the mutation
+#                    pipeline can distinguish killed/survived/no-test.
+#   mutation       — authoritative full campaign (80% gate). needs: mutation-smoke.
+# Both delegate to runtime/verify.py; no mutation logic lives in YAML.
 
 name: Mutation Testing
 
@@ -33,8 +37,30 @@ permissions:
   contents: read
 
 jobs:
+  mutation-smoke:
+    name: Mutation Smoke (infra health)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      - name: Verify canonical environment
+        run: python runtime/verify.py env-check
+
+      - name: Run bounded mutation smoke
+        run: python runtime/verify.py mutation --smoke
+
   mutation:
-    name: Mutation Testing
+    name: Mutation Testing (authoritative)
+    needs: mutation-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
@@ -47,6 +73,9 @@ jobs:
         uses: ./.github/actions/bootstrap-runtime
         with:
           python-version: "3.12"
+
+      - name: Verify canonical environment
+        run: python runtime/verify.py env-check
 
       - name: Run mutation testing
         run: python runtime/verify.py mutation
@@ -99,26 +128,45 @@ jobs:
         id: mutation
         if: always()
         run: |
-          if [ -f "backend/tests/generated/mutation/mutation-summary.json" ]; then
-            EXIT_CODE=$(jq -r '.mutmut_rc' backend/tests/generated/mutation/mutation-summary.json)
-            SCORE=$(jq -r '.score_percent' backend/tests/generated/mutation/mutation-summary.json)
-            THRESHOLD=$(jq -r '.threshold_percent' backend/tests/generated/mutation/mutation-summary.json)
-            KILLED=$(jq -r '.killed' backend/tests/generated/mutation/mutation-summary.json)
-            SURVIVED=$(jq -r '.survived' backend/tests/generated/mutation/mutation-summary.json)
-            TIMEOUT=$(jq -r '.timeout' backend/tests/generated/mutation/mutation-summary.json)
-            echo "mutation_exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
-            echo "mutation_score=$SCORE" >> $GITHUB_OUTPUT
-            echo "mutation_threshold=$THRESHOLD" >> $GITHUB_OUTPUT
-            echo "mutation_killed=$KILLED" >> $GITHUB_OUTPUT
-            echo "mutation_survived=$SURVIVED" >> $GITHUB_OUTPUT
-            echo "mutation_timeout=$TIMEOUT" >> $GITHUB_OUTPUT
-          else
-            echo "mutation_exit_code=1" >> $GITHUB_OUTPUT
+          SUMMARY="backend/tests/generated/mutation/mutation-summary.json"
+          if [ ! -f "$SUMMARY" ]; then
+            echo "mutation_execution_status=INFRASTRUCTURE_FAILURE" >> $GITHUB_OUTPUT
+            echo "mutation_evaluated=false" >> $GITHUB_OUTPUT
             echo "mutation_score=N/A" >> $GITHUB_OUTPUT
-            echo "mutation_threshold=80" >> $GITHUB_OUTPUT
             echo "mutation_killed=0" >> $GITHUB_OUTPUT
             echo "mutation_survived=0" >> $GITHUB_OUTPUT
-            echo "mutation_timeout=0" >> $GITHUB_OUTPUT
+            echo "mutation_threshold=80" >> $GITHUB_OUTPUT
+            echo "mutation_exit_code=1" >> $GITHUB_OUTPUT
+            echo "mutation_reason=mutation-summary.json was not produced (execution did not complete)" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          EXEC=$(jq -r '.execution_status' "$SUMMARY")
+          CLSS=$(jq -r '.classification_status' "$SUMMARY")
+          EVID=$(jq -r '.evidence_complete' "$SUMMARY")
+          SCORE=$(jq -r '.mutation_score' "$SUMMARY")
+          KILLED=$(jq -r '.killed' "$SUMMARY")
+          SURVIVED=$(jq -r '.survived' "$SUMMARY")
+          THRESH=$(jq -r '.threshold_percent' "$SUMMARY")
+          echo "mutation_execution_status=$EXEC" >> $GITHUB_OUTPUT
+          echo "mutation_killed=$KILLED" >> $GITHUB_OUTPUT
+          echo "mutation_survived=$SURVIVED" >> $GITHUB_OUTPUT
+          echo "mutation_threshold=$THRESH" >> $GITHUB_OUTPUT
+          if [ "$EXEC" = "PASS" ] && [ "$CLSS" = "PASS" ] && [ "$EVID" = "true" ]; then
+            echo "mutation_evaluated=true" >> $GITHUB_OUTPUT
+            echo "mutation_score=$SCORE" >> $GITHUB_OUTPUT
+            if [ "$SCORE" != "null" ] && [ "$(echo "$SCORE >= $THRESH" | bc)" -eq 1 ]; then
+              echo "mutation_exit_code=0" >> $GITHUB_OUTPUT
+              echo "mutation_reason=Mutation score meets threshold" >> $GITHUB_OUTPUT
+            else
+              echo "mutation_exit_code=2" >> $GITHUB_OUTPUT
+              echo "mutation_reason=Mutation score below threshold" >> $GITHUB_OUTPUT
+            fi
+          else
+            # Gate A or B failed: mutation was NOT evaluated. Never a 0% score.
+            echo "mutation_evaluated=false" >> $GITHUB_OUTPUT
+            echo "mutation_score=N/A" >> $GITHUB_OUTPUT
+            echo "mutation_exit_code=1" >> $GITHUB_OUTPUT
+            echo "mutation_reason=Mutation testing was not evaluated — execution/evidence integrity failed (no score computed)" >> $GITHUB_OUTPUT
           fi
 
       - name: Job Summary
@@ -131,25 +179,39 @@ jobs:
           echo "| Metric       | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|--------------|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| Score        | ${{ steps.mutation.outputs.mutation_score }}% |" >> $GITHUB_STEP_SUMMARY
-          echo "| Threshold    | ${{ steps.mutation.outputs.mutation_threshold }}% |" >> $GITHUB_STEP_SUMMARY
+          echo "| Evaluated    | ${{ steps.mutation.outputs.mutation_evaluated }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Killed       | ${{ steps.mutation.outputs.mutation_killed }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Survived     | ${{ steps.mutation.outputs.mutation_survived }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Timeout      | ${{ steps.mutation.outputs.mutation_timeout }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Exit Code    | ${{ steps.mutation.outputs.mutation_exit_code }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Threshold    | ${{ steps.mutation.outputs.mutation_threshold }}% |" >> $GITHUB_STEP_SUMMARY
+          echo "| Exec status  | ${{ steps.mutation.outputs.mutation_execution_status }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
-          if [ "${{ steps.mutation.outputs.mutation_exit_code }}" = "0" ]; then
+
+          if [ "${{ steps.mutation.outputs.mutation_evaluated }}" = "true" ] && [ "${{ steps.mutation.outputs.mutation_exit_code }}" = "0" ]; then
             echo "✅ Mutation score meets threshold" >> $GITHUB_STEP_SUMMARY
-          elif [ "${{ steps.mutation.outputs.mutation_exit_code }}" = "1" ]; then
-            echo "❌ Infrastructure failure (check logs)" >> $GITHUB_STEP_SUMMARY
-          else
+          elif [ "${{ steps.mutation.outputs.mutation_evaluated }}" = "true" ]; then
             echo "❌ Mutation score below threshold" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ MUTATION NOT EVALUATED — ${{ steps.mutation.outputs.mutation_reason }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "No mutation score was computed. This is an infrastructure/evidence" >> $GITHUB_STEP_SUMMARY
+            echo "failure, NOT a 0% quality result." >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           python runtime/verify.py status >> $GITHUB_STEP_SUMMARY
         shell: bash
 
-      - name: Fail if mutation score below threshold
-        if: steps.mutation.outputs.mutation_exit_code != '0'
-        run: exit 1
+      - name: Fail if mutation gate not satisfied
+        if: always()
+        run: |
+          CODE="${{ steps.mutation.outputs.mutation_exit_code }}"
+          if [ "$CODE" = "0" ]; then
+            echo "✅ Mutation quality gate passed"
+            exit 0
+          elif [ "${{ steps.mutation.outputs.mutation_evaluated }}" = "true" ]; then
+            echo "❌ Mutation score below threshold (${{ steps.mutation.outputs.mutation_score }}% < ${{ steps.mutation.outputs.mutation_threshold }}%)"
+            exit 2
+          else
+            echo "❌ ${{ steps.mutation.outputs.mutation_reason }}"
+            exit 1
+          fi

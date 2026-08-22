@@ -43,7 +43,7 @@ case "$CMD" in
   golden)         exec "$ROOT_DIR/.venv/bin/python" runtime/verify.py golden "$@";;
   e2e)            exec "$ROOT_DIR/.venv/bin/python" runtime/verify.py playwright "$@";;
   mutation-smoke)
-    exec bash "$ROOT_DIR/.github/scripts/run_mutation_local_smoke.sh" "$@";;
+    exec "$ROOT_DIR/.venv/bin/python" runtime/verify.py mutation --smoke "$@";;
   mutation)       exec "$ROOT_DIR/.venv/bin/python" runtime/verify.py mutation "$@";;
   help|--help|-h)
     sed -n '1,32p' "$0";;

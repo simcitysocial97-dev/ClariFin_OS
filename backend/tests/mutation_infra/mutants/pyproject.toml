@@ -1,0 +1,20 @@
+# backend/tests/mutation_infra/pyproject.toml
+#
+# M9-C42.5 — Canonical mutation configuration for the INFRASTRUCTURE SMOKE.
+#
+# This is a SEPARATE, tiny, deterministic scope used only to prove the
+# mutation pipeline is healthy (killed / survived / no-tests). It is NOT the
+# authoritative repository mutation scope. The authoritative scope is the
+# `[tool.mutmut]` section in backend/pyproject.toml (source_paths=src/engines/).
+#
+# NOTE: `runner` uses `python3 -m pytest`. The runner prepends
+# REPO_ROOT/.venv/bin to PATH so `python3` resolves to the canonical
+# environment both locally and in CI.
+
+[tool.mutmut]
+# Single, flat, top-level-importable module (mutmut trampoline requires this).
+source_paths = ["probe.py"]
+# Run only the smoke test against the probe.
+runner = "python3 -m pytest test_probe.py"
+# Disable the progress bar for clean CI output.
+no_progress = true

@@ -1,0 +1,29 @@
+{
+    "exit_code_by_key": {
+        "probe.x_mutation_probe__mutmut_1": 0,
+        "probe.x_mutation_probe__mutmut_2": 0,
+        "probe.x_mutation_probe__mutmut_3": 1,
+        "probe.x_mutation_probe__mutmut_4": 1,
+        "probe.x_unused_probe__mutmut_1": 33,
+        "probe.x_unused_probe__mutmut_2": 33
+    },
+    "hash_by_function_name": {
+        "x_mutation_probe": "17e16df8189a",
+        "x_unused_probe": "0b9b0ca629ad"
+    },
+    "type_check_error_by_key": {},
+    "durations_by_key": {
+        "probe.x_mutation_probe__mutmut_1": 0.110907,
+        "probe.x_mutation_probe__mutmut_3": 0.115822,
+        "probe.x_mutation_probe__mutmut_2": 0.144472,
+        "probe.x_mutation_probe__mutmut_4": 0.138737
+    },
+    "estimated_durations_by_key": {
+        "probe.x_unused_probe__mutmut_1": 0,
+        "probe.x_unused_probe__mutmut_2": 0,
+        "probe.x_mutation_probe__mutmut_1": 0.0028015789575874805,
+        "probe.x_mutation_probe__mutmut_2": 0.0028015789575874805,
+        "probe.x_mutation_probe__mutmut_3": 0.0028015789575874805,
+        "probe.x_mutation_probe__mutmut_4": 0.0028015789575874805
+    }
+}

@@ -1224,13 +1224,20 @@ def main() -> int:
             file=sys.stderr,
         )
         print(
-            "Profiles: quick, backend, frontend, contracts, graph, full, runtime, golden, mutation, playwright",
+            "Profiles: quick, backend, frontend, contracts, graph, full, runtime, golden, playwright",
             file=sys.stderr,
         )
         print(
             "Commands: status, metrics, history, deps, verify-status, analytics, health, doctor, ci-doctor, diagnose, diagnose-failures, plan, reconcile, exec-evidence, deep-contract, local-gate, affected, repair, risk, integrity, knowledge, knowledge endpoint, knowledge capability, knowledge workspace, knowledge rule, knowledge component, dashboard, intelligence, intelligence-audit, certify-v4, certify-v5, audit, api-contracts, contract-governance",
             file=sys.stderr,
         )
+        print(
+            "Mutation: mutation (authoritative full campaign) | mutation --smoke "
+            "(bounded infra health) | mutation --target <engine> (incremental) | "
+            "mutation --restore (restore mutated source)",
+            file=sys.stderr,
+        )
+        print("Env: env-check (verify canonical .venv environment)", file=sys.stderr)
         return 1
 
     command = sys.argv[1]
@@ -1304,6 +1311,16 @@ def main() -> int:
         return cmd_api_contracts()
     if command == "contract-governance":
         return cmd_contract_governance()
+
+    if command == "mutation":
+        from runtime.foundation.verification.mutation_runner import run_mutation_cli
+
+        return run_mutation_cli(sys.argv[2:])
+
+    if command == "env-check":
+        from runtime.foundation.verification.env import main_env_check
+
+        return main_env_check(sys.argv[2:])
 
     profile_name = command
 
