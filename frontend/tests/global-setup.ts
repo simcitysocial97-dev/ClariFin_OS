@@ -49,37 +49,6 @@ async function isPortInUse(port: number): Promise<boolean> {
 }
 
 /**
- * Install backend dependencies
- */
-async function installBackendDependencies(backendPath: string, pythonCmd: string): Promise<boolean> {
-  console.log('🔧 Installing backend dependencies...');
-  return new Promise((resolve) => {
-    const installProcess = spawn(pythonCmd, ['-m', 'pip', 'install', '-r', 'requirements.txt'], {
-      cwd: backendPath,
-      stdio: 'pipe',
-    });
-
-    installProcess.stdout?.on('data', (data) => {
-      console.log(`[Backend Install] ${data.toString().trim()}`);
-    });
-
-    installProcess.stderr?.on('data', (data) => {
-      console.error(`[Backend Install Error] ${data.toString().trim()}`);
-    });
-
-    installProcess.on('close', (code) => {
-      if (code === 0) {
-        console.log('✅ Backend dependencies installed successfully');
-        resolve(true);
-      } else {
-        console.log('⚠️  Failed to install backend dependencies');
-        resolve(false);
-      }
-    });
-  });
-}
-
-/**
  * Start FastAPI backend server using virtual environment
  */
 async function startBackend(): Promise<boolean> {
@@ -91,18 +60,10 @@ async function startBackend(): Promise<boolean> {
     return false;
   }
 
-  // Use virtual environment Python
-  const venvPython = resolve(backendPath, 'venv', 'bin', 'python');
-  const pythonCmd = existsSync(venvPython) ? venvPython : 'python3';
+  // Use system Python (dependencies already installed via bootstrap-runtime)
+  const pythonCmd = 'python3';
   
   console.log(`Using Python: ${pythonCmd}`);
-
-  // Install dependencies before starting the backend
-  const depsInstalled = await installBackendDependencies(backendPath, pythonCmd);
-  if (!depsInstalled) {
-    console.log('⚠️  Skipping backend startup due to dependency installation failure');
-    return false;
-  }
 
   try {
     // Use src.api:app as the entry point (src/api.py contains the FastAPI app)
@@ -204,9 +165,7 @@ print(f'Seeded {db_path}')
 `;
     
     return new Promise((resolve) => {
-      const pythonCmd = existsSync(resolve(backendPath, 'venv', 'bin', 'python')) 
-        ? resolve(backendPath, 'venv', 'bin', 'python') 
-        : 'python3';
+      const pythonCmd = 'python3';
       
       const proc = spawn(pythonCmd, ['-c', seedScript], { cwd: backendPath });
       let stdout = '';
