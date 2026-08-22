@@ -20,6 +20,9 @@
 # Allow partial results on infrastructure failures
 set -eo pipefail
 
+# Save original directory for later use
+ORIGINAL_DIR="$(pwd)"
+
 BACKEND_DIR="${1:-backend}"
 TARGET_PATH="${2:-src/engines/}"
 
