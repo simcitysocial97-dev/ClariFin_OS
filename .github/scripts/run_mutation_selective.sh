@@ -22,7 +22,7 @@ set -eo pipefail
 
 # Get absolute paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 BACKEND_DIR="${1:-$REPO_ROOT/backend}"
 TARGET_PATH="${2:-src/engines/}"
 

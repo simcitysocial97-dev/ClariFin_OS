@@ -2,15 +2,16 @@
   "phase": "C42 Phase 0 & 1 - Mutation CI Forensic Report",
   "timestamp": "2026-08-22T09:30:29+05:30",
   "repository_identity": {
-    "head_sha": "34d22cb763ec05da24f02a420905047afdc64b7f",
-    "tree_sha": "d603339af3876064483b9dc418bd60b2fb5946c7",
+    "head_sha": "a95ecfb0e338404b5a9109dd08b747ccc9bcdd45",
+    "tree_sha": "9f7bccb75a60aa430064c4ceba0f162959b440a3",
     "active_branch": "m9c9-merge-authorization-resolution",
-    "working_tree_status": "clean (1 untracked file: .kilo/plans/1787318429130-mutation-testing-green-plan.md)",
-    "latest_c41_certification_commit": "5777ee31 (C41.9 — Commit generated artifact updates from C41 test runs)",
+    "working_tree_status": "clean",
+    "latest_c41_certification_commit": "5777ee31 (C41.9 \u2014 Commit generated artifact updates from C41 test runs)",
     "mutation_workflow_commit": "34d22cb7 (Fix: Typo in mutation workflow - mutation-summary-summary.json -> mutation-summary.json)",
     "mutation_config_hash": "sha256:backend/pyproject.toml[tool.mutmut]",
     "test_config_hash": "sha256:backend/pyproject.toml[pytest]",
-    "coverage_config_hash": "N/A (no explicit coverage config)"
+    "coverage_config_hash": "N/A (no explicit coverage config)",
+    "latest_commit": "a95ecfb0 - M9-C42: Fix mutation script path handling"
   },
   "verification_policy": {
     "mutation_threshold": {
@@ -61,7 +62,13 @@
     },
     "mutation_artifact_generation": {
       "authoritative_source": ".github/scripts/run_mutation_selective.sh",
-      "artifacts": ["mutation-summary.json", "mutation-results.txt", "surviving-mutants.txt", "mutation-junit.xml", "mutation-report.md"]
+      "artifacts": [
+        "mutation-summary.json",
+        "mutation-results.txt",
+        "surviving-mutants.txt",
+        "mutation-junit.xml",
+        "mutation-report.md"
+      ]
     },
     "test_result_aggregation": {
       "authoritative_source": "runtime/foundation/verification/profiles.py",
@@ -89,9 +96,11 @@
     "mutation_score": 50.6,
     "threshold": 80,
     "threshold_met": false,
-    "failure_classification": "GENUINE_SURVIVING_MUTANTS",
+    "failure_classification": "INFRASTRUCTURE_FAILURE",
     "artifact_locations": "backend/tests/generated/mutation/ (not uploaded due to workflow failure)",
-    "duration_seconds": 694
+    "duration_seconds": 694,
+    "infrastructure_issue": "REPO_ROOT off-by-one directory: SCRIPT_DIR/.. resolves to .github/ not repo root",
+    "fixed_in_commit": "a95ecfb0"
   },
   "survivor_classification": {
     "genuine_test_gaps": {
@@ -136,19 +145,33 @@
   },
   "priority_mapping": {
     "P0_financial_critical": {
-      "engines": ["loan_engine", "credit_card_engine", "reconciliation_engine", "account_engine"],
+      "engines": [
+        "loan_engine",
+        "credit_card_engine",
+        "reconciliation_engine",
+        "account_engine"
+      ],
       "survivors": 1199,
       "no_tests": 339,
       "rationale": "Monetary calculations, ledger integrity, loan calculations, interest, reconciliation correctness"
     },
     "P1_business_rules": {
-      "engines": ["behaviour_engine", "financial_events"],
+      "engines": [
+        "behaviour_engine",
+        "financial_events"
+      ],
       "survivors": 2834,
       "no_tests": 2826,
       "rationale": "Business rules, validation, aggregation, forecasting, financial intelligence"
     },
     "P2_utility_presentation": {
-      "engines": ["recommendation_engine", "balance_engine", "ledger_audit_engine", "transaction_intelligence", "financial_intelligence"],
+      "engines": [
+        "recommendation_engine",
+        "balance_engine",
+        "ledger_audit_engine",
+        "transaction_intelligence",
+        "financial_intelligence"
+      ],
       "survivors": 282,
       "no_tests": 4555,
       "rationale": "Defensive branches, presentation-support logic, low-risk utility behavior"
@@ -159,5 +182,14 @@
     "mutation_summary": "backend/tests/generated/mutation/mutation-summary.json (empty - workflow failed before generation)",
     "mutation_results": "backend/tests/generated/mutation/mutation-results.txt (not generated)",
     "surviving_mutants": "backend/tests/generated/mutation/surviving-mutants.txt (not generated)"
+  },
+  "root_cause_analysis": {
+    "issue": "Incorrect REPO_ROOT path resolution in run_mutation_selective.sh",
+    "root_cause": "REPO_ROOT computed as SCRIPT_DIR/.. (one level up from .github/scripts/) which resolves to .github/ instead of repo root. Should be SCRIPT_DIR/../..",
+    "script_location": ".github/scripts/run_mutation_selective.sh",
+    "fix_applied": "Changed REPO_ROOT to SCRIPT_DIR/../.. matching all other CI scripts",
+    "also_fixed": "generate_mutation_report.py used hardcoded Path('backend/tests/generated/mutation') relative to cwd; now computes absolute paths from __file__",
+    "cascade_failure": "Wrong REPO_ROOT -> cd //backend fails silently due to set -eo pipefail interaction -> mutmut runs from repo root -> FileNotFoundError: src/engines/ not found -> workflow reports infrastructure failure, not genuine mutation score",
+    "consistency_check": "All other CI scripts (run_backend_verification.sh, run_frontend_verification.sh, run_golden_tests.sh, etc.) correctly use SCRIPT_DIR/../.. for REPO_ROOT. Only run_mutation_selective.sh had the incorrect single-level traversal."
   }
 }

@@ -12,15 +12,21 @@ Usage:
 import json
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
-OUTPUT_DIR = Path("backend/tests/generated/mutation")
+# Resolve paths relative to repository root, not script location or cwd.
+# The script may be invoked from backend/, repo root, or any directory.
+_SCRIPT_DIR = Path(__file__).resolve().parent  # .github/scripts/
+_REPO_ROOT = _SCRIPT_DIR.parent.parent  # repo root
+_OUTPUT_DIR = _REPO_ROOT / "backend" / "tests" / "generated" / "mutation"
 
 
 def run_command(cmd: list[str]) -> tuple[str, int]:
     """Run a shell command and return output + exit code."""
-    result = subprocess.run(cmd, capture_output=True, text=True, cwd="backend")
+    result = subprocess.run(
+        cmd, capture_output=True, text=True, cwd=str(_REPO_ROOT / "backend")
+    )
     return result.stdout + result.stderr, result.returncode
 
 
@@ -69,7 +75,7 @@ def get_surviving_mutants() -> list[str]:
 
 def generate_report(results: dict, survivors: list[str]) -> str:
     """Generate markdown report."""
-    timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
     score = results["score"]
 
@@ -145,7 +151,7 @@ Each one represents a gap in test effectiveness.
 
 
 def main():
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    _OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     print("Gathering mutation results...")
     results = get_mutation_results()
@@ -157,12 +163,12 @@ def main():
     report = generate_report(results, survivors)
 
     # Save markdown report
-    report_path = OUTPUT_DIR / "mutation-report.md"
+    report_path = _OUTPUT_DIR / "mutation-report.md"
     report_path.write_text(report)
     print(f"Report saved: {report_path}")
 
     # Save JSON for downstream processing
-    json_path = OUTPUT_DIR / "mutation-summary.json"
+    json_path = _OUTPUT_DIR / "mutation-summary.json"
     json_path.write_text(json.dumps(results, indent=2))
     print(f"JSON saved: {json_path}")
 
