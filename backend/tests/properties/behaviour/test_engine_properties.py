@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 from tests.invariants import assert_behaviour_score_valid
@@ -55,7 +55,7 @@ class TestBehaviourEngineProperties:
             st.integers(min_value=50000, max_value=1500000), min_size=3, max_size=24
         ),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_income_stability_range(
         self, monthly_incomes: list[int], monthly_expenses: list[int]
     ) -> None:
@@ -68,8 +68,12 @@ class TestBehaviourEngineProperties:
 
         stability = compute_income_stability(incomes)
         # Defensive: ensure result is Decimal and in valid range
-        assert isinstance(stability, Decimal), f"Expected Decimal, got {type(stability)}"
-        assert 0 <= stability <= 1, f"Stability {stability} not in [0, 1] for incomes={incomes}"
+        assert isinstance(
+            stability, Decimal
+        ), f"Expected Decimal, got {type(stability)}"
+        assert (
+            0 <= stability <= 1
+        ), f"Stability {stability} not in [0, 1] for incomes={incomes}"
 
     @given(
         credit_advances_count=st.integers(min_value=0, max_value=10),
