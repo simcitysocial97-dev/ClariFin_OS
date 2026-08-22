@@ -56,35 +56,35 @@ def parse_mutmut_output(output: str) -> dict:
                     if idx + 1 < len(parts):
                         try:
                             stats['killed'] = int(parts[idx + 1])
-                        except:
+                        except Exception:
                             pass
                 elif part == '🫥':
                     idx = parts.index(part)
                     if idx + 1 < len(parts):
                         try:
                             stats['survived'] = int(parts[idx + 1])
-                        except:
+                        except Exception:
                             pass
                 elif part == '⏰':
                     idx = parts.index(part)
                     if idx + 1 < len(parts):
                         try:
                             stats['timeout'] = int(parts[idx + 1])
-                        except:
+                        except Exception:
                             pass
                 elif part == '🤔':
                     idx = parts.index(part)
                     if idx + 1 < len(parts):
                         try:
                             stats['not_checked'] = int(parts[idx + 1])
-                        except:
+                        except Exception:
                             pass
                 elif part == '🙁':
                     idx = parts.index(part)
                     if idx + 1 < len(parts):
                         try:
                             stats['no_tests'] = int(parts[idx + 1])
-                        except:
+                        except Exception:
                             pass
     
     # Calculate total from components
