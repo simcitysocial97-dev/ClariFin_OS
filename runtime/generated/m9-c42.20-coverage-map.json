@@ -1,0 +1,382 @@
+{
+  "title": "M9-C42.20 \u2014 Coverage Map",
+  "generated_at": "2026-08-24T18:15:36.161742+00:00",
+  "overall_coverage_baseline_pct": 65.56,
+  "note": "Per-component coverage from the canonical full-suite run (65.56%). 'n/a' = omitted from coverage measurement by .coveragerc (infra/entry-point/PDF).",
+  "rows": [
+    {
+      "component": "credit_card_engine",
+      "source_paths": [
+        "src/engines/credit_card_engine"
+      ],
+      "statements_covered_pct": 93.1,
+      "branch_covered_pct": 86.5,
+      "test_funcs": 250,
+      "test_paths": [
+        "tests/unit/engines/credit_card",
+        "tests/properties/credit_card_engine",
+        "tests/capability/credit_cards"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "account_engine",
+      "source_paths": [
+        "src/engines/account_engine"
+      ],
+      "statements_covered_pct": 98.9,
+      "branch_covered_pct": 96.4,
+      "test_funcs": 119,
+      "test_paths": [
+        "tests/unit/engines/account",
+        "tests/capability/account_management"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "loan_engine",
+      "source_paths": [
+        "src/engines/loan_engine"
+      ],
+      "statements_covered_pct": 98.7,
+      "branch_covered_pct": 95.7,
+      "test_funcs": 258,
+      "test_paths": [
+        "tests/unit/engines/loan",
+        "tests/properties/loan_engine"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "reconciliation_engine",
+      "source_paths": [
+        "src/engines/reconciliation_engine.py"
+      ],
+      "statements_covered_pct": 95.4,
+      "branch_covered_pct": 88.5,
+      "test_funcs": 51,
+      "test_paths": [
+        "tests/unit/engines/reconciliation",
+        "tests/properties/reconciliation",
+        "tests/capability/reconciliation"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "behaviour_engine",
+      "source_paths": [
+        "src/engines/behaviour_engine"
+      ],
+      "statements_covered_pct": 70.4,
+      "branch_covered_pct": 60.4,
+      "test_funcs": 213,
+      "test_paths": [
+        "tests/unit/engines/behaviour",
+        "tests/properties/behaviour"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "balance_engine",
+      "source_paths": [
+        "src/engines/balance_engine.py"
+      ],
+      "statements_covered_pct": 58.9,
+      "branch_covered_pct": 55.6,
+      "test_funcs": 0,
+      "test_paths": [
+        "tests/unit/engines/balance_engine.py"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "ledger_audit_engine",
+      "source_paths": [
+        "src/engines/ledger_audit_engine.py"
+      ],
+      "statements_covered_pct": 93.5,
+      "branch_covered_pct": 81.2,
+      "test_funcs": 0,
+      "test_paths": [
+        "tests/unit/engines/ledger_audit_engine.py"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "cashflow_engine",
+      "source_paths": [
+        "src/engines/cashflow_engine.py"
+      ],
+      "statements_covered_pct": 97.6,
+      "branch_covered_pct": 85.7,
+      "test_funcs": 4,
+      "test_paths": [
+        "tests/properties/cashflow"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "financial_events (lineage_walker)",
+      "source_paths": [
+        "src/engines/financial_events"
+      ],
+      "statements_covered_pct": 88.0,
+      "branch_covered_pct": 82.1,
+      "test_funcs": 50,
+      "test_paths": [
+        "tests/unit/engines/financial_events",
+        "tests/properties/financial_events",
+        "tests/capability/financial_events"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "recommendation_engine",
+      "source_paths": [
+        "src/engines/recommendation_engine"
+      ],
+      "statements_covered_pct": 95.9,
+      "branch_covered_pct": 86.7,
+      "test_funcs": 37,
+      "test_paths": [
+        "tests/unit/engines/recommendation",
+        "tests/properties/recommendations",
+        "tests/capability/recommendations"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "transaction_intelligence",
+      "source_paths": [
+        "src/engines/transaction_intelligence"
+      ],
+      "statements_covered_pct": 24.3,
+      "branch_covered_pct": 0.7,
+      "test_funcs": 5,
+      "test_paths": [
+        "tests/capability/transaction_intelligence",
+        "tests/properties/transaction_intelligence"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "financial_intelligence",
+      "source_paths": [
+        "src/engines/financial_intelligence"
+      ],
+      "statements_covered_pct": 35.2,
+      "branch_covered_pct": 18.1,
+      "test_funcs": 9,
+      "test_paths": [
+        "tests/properties/forecasting"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "core/domain (Money)",
+      "source_paths": [
+        "src/core/domain"
+      ],
+      "statements_covered_pct": 100.0,
+      "branch_covered_pct": 100.0,
+      "test_funcs": 96,
+      "test_paths": [
+        "tests/unit/test_money.py",
+        "tests/properties/test_money_invariants.py",
+        "tests/invariants/test_money.py"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "common/calculations",
+      "source_paths": [
+        "src/common/calculations.py"
+      ],
+      "statements_covered_pct": 99.4,
+      "branch_covered_pct": 85.3,
+      "test_funcs": 34,
+      "test_paths": [
+        "tests/unit/test_calculations.py"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "services (financial orchestration)",
+      "source_paths": [
+        "src/services"
+      ],
+      "statements_covered_pct": 66.3,
+      "branch_covered_pct": 42.7,
+      "test_funcs": 45,
+      "test_paths": [
+        "tests/unit/services",
+        "tests/integration"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "core/mappers",
+      "source_paths": [
+        "src/core/mappers"
+      ],
+      "statements_covered_pct": 35.9,
+      "branch_covered_pct": 7.7,
+      "test_funcs": 0,
+      "test_paths": [],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "core/dtos",
+      "source_paths": [
+        "src/core/dtos"
+      ],
+      "statements_covered_pct": 92.8,
+      "branch_covered_pct": 0.0,
+      "test_funcs": 0,
+      "test_paths": [],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "core/db",
+      "source_paths": [
+        "src/core/db"
+      ],
+      "statements_covered_pct": 73.8,
+      "branch_covered_pct": 60.0,
+      "test_funcs": 0,
+      "test_paths": [],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "models (ORM)",
+      "source_paths": [
+        "src/models"
+      ],
+      "statements_covered_pct": 88.6,
+      "branch_covered_pct": 0.0,
+      "test_funcs": 0,
+      "test_paths": [],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "repositories (data access)",
+      "source_paths": [
+        "src/repositories"
+      ],
+      "statements_covered_pct": 55.4,
+      "branch_covered_pct": 31.1,
+      "test_funcs": 58,
+      "test_paths": [
+        "tests/unit/repositories"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "orchestration (statement_orchestrator)",
+      "source_paths": [
+        "src/orchestration"
+      ],
+      "statements_covered_pct": 80.3,
+      "branch_covered_pct": 50.0,
+      "test_funcs": 8,
+      "test_paths": [
+        "tests/integration/orchestration"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "routers (HTTP layer)",
+      "source_paths": [
+        "src/routers"
+      ],
+      "statements_covered_pct": null,
+      "branch_covered_pct": null,
+      "test_funcs": 0,
+      "test_paths": [],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "extraction (PDF/parsing)",
+      "source_paths": [
+        "src/extraction"
+      ],
+      "statements_covered_pct": null,
+      "branch_covered_pct": null,
+      "test_funcs": 0,
+      "test_paths": [],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "structural (layout analysis)",
+      "source_paths": [
+        "src/structural"
+      ],
+      "statements_covered_pct": null,
+      "branch_covered_pct": null,
+      "test_funcs": 0,
+      "test_paths": [],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "api.py / health.py / ingest.py / startup.py",
+      "source_paths": [
+        "src/api.py",
+        "src/health.py",
+        "src/ingest.py",
+        "src/startup.py"
+      ],
+      "statements_covered_pct": null,
+      "branch_covered_pct": null,
+      "test_funcs": 0,
+      "test_paths": [],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "config.py",
+      "source_paths": [
+        "src/config.py"
+      ],
+      "statements_covered_pct": 72.0,
+      "branch_covered_pct": 50.0,
+      "test_funcs": 0,
+      "test_paths": [],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "errors.py",
+      "source_paths": [
+        "src/errors.py"
+      ],
+      "statements_covered_pct": 90.3,
+      "branch_covered_pct": 66.7,
+      "test_funcs": 26,
+      "test_paths": [
+        "tests/unit/test_errors.py"
+      ],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "logger.py",
+      "source_paths": [
+        "src/logger.py"
+      ],
+      "statements_covered_pct": 71.4,
+      "branch_covered_pct": 50.0,
+      "test_funcs": 0,
+      "test_paths": [],
+      "canonical_coverage_baseline_pct": 65.56
+    },
+    {
+      "component": "utils/__init__ / data/",
+      "source_paths": [
+        "src/utils",
+        "src/data"
+      ],
+      "statements_covered_pct": 100.0,
+      "branch_covered_pct": 0.0,
+      "test_funcs": 0,
+      "test_paths": [],
+      "canonical_coverage_baseline_pct": 65.56
+    }
+  ]
+}

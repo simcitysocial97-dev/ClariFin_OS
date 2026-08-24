@@ -1,0 +1,220 @@
+{
+  "phase": "M9-C42.19",
+  "title": "Mutation Completion — not_checked Root Cause & Run Completion",
+  "timestamp": "2026-08-24T20:20:00+05:30",
+  "repository_sha": "5170e0b30ef5e308f2055661a0839e2966a721d4",
+  "full_campaign_started": false,
+
+  "not_checked_root_cause": {
+    "verdict": "WALL_CLOCK_TIMEOUT_TRUNCATION_OF_THE_MUTATION_RUN",
+    "one_line": "not_checked meant 'never executed'. The mutation subprocess was killed by the runner's own max_runtime before the slowest-scheduled mutants were reached. It was NOT a missing-test, fixture, import, cache, PYTHONPATH, test-selection, or mutation-generation problem.",
+    "is_infrastructure_defect": true,
+    "defect_class": "execution_time_and_resource_limit_configuration (not a code defect in the runner logic)",
+    "resolution_required_code_change": false,
+    "resolution": "Re-run using the runner's already-supported --max-runtime and --max-children flags. Parallelism (--max-children 4 on a 4-CPU host) reduced loan wall-clock from >1800s (truncated) to 653s (complete).",
+
+    "authoritative_semantics": {
+      "source": "mutmut 3.7.0 — site-packages/mutmut/__main__.py",
+      "status_by_exit_code_line_91": "None: \"not checked\"",
+      "meaning": "not_checked is the status when a mutant has NO recorded exit code, i.e. it was never executed at all.",
+      "critical_disambiguation": "mutmut/__main__.py lines 1461-1464 assign exit code 33 ('no tests') when a mutant's function has NO associated tests. Therefore 'no covering tests' produces status 'no tests', NEVER 'not checked'. Any claim that not_checked means 'no covering tests' is provably false for mutmut 3.7.0."
+    },
+
+    "evidence_chain": [
+      {
+        "step": 1,
+        "finding": "Reproduced the M9-C42.18 loan population exactly from the live cache: 1273 = 834 killed + 152 survived + 3 timeout + 4 no_tests + 280 not_checked.",
+        "conclusion": "Prior evidence is reproducible; investigation starts from a trustworthy base."
+      },
+      {
+        "step": 2,
+        "finding": "The 280 not_checked mutants are NOT randomly distributed. They cluster into exactly 6 functions: x_generate_schedule (171/171), x__add_months (58/58), x__required_emi (27/27), x_total_interest_paise (4/4), x_bps_to_monthly_rate (4/4) — all FULLY unevaluated — plus x_regenerate_schedule (16/67) PARTIALLY unevaluated.",
+        "conclusion": "A single partially-evaluated function is the signature of a run that STOPPED, not of a rule that SKIPS."
+      },
+      {
+        "step": 3,
+        "finding": "All 6 affected functions HAVE associated tests in mutants/mutmut-stats.json: generate_schedule 167 tests, _add_months 176, _required_emi 36, total_interest_paise 76, bps_to_monthly_rate 193, regenerate_schedule 66.",
+        "conclusion": "The 'no covering tests' hypothesis is DISPROVEN. Combined with exit code 33 semantics, missing tests cannot produce not_checked."
+      },
+      {
+        "step": 4,
+        "finding": "Mutant source code for representative not_checked mutants (x_regenerate_schedule__mutmut_37, __mutmut_54) was inspected in mutants/src/engines/loan_engine/prepayment.py and is well-formed, complete, and syntactically valid.",
+        "conclusion": "Mutation GENERATION succeeded. The defect is in EXECUTION/scheduling, not generation."
+      },
+      {
+        "step": 5,
+        "finding": "mutmut/__main__.py line 1441 sorts the mutant queue by estimated_worst_case_time ASCENDING (fastest first). Correlating every mutant's status against its estimated execution time yields a perfectly monotonic cutoff.",
+        "decile_table": [
+          {"decile": 1,  "n": 127, "est_range_s": "0.00-0.09", "not_checked": 0,   "evaluated": 127},
+          {"decile": 2,  "n": 127, "est_range_s": "0.09-0.38", "not_checked": 0,   "evaluated": 127},
+          {"decile": 3,  "n": 127, "est_range_s": "0.38-0.48", "not_checked": 0,   "evaluated": 127},
+          {"decile": 4,  "n": 128, "est_range_s": "0.48-1.03", "not_checked": 0,   "evaluated": 128},
+          {"decile": 5,  "n": 127, "est_range_s": "1.03-1.91", "not_checked": 0,   "evaluated": 127},
+          {"decile": 6,  "n": 127, "est_range_s": "1.91-2.30", "not_checked": 0,   "evaluated": 127},
+          {"decile": 7,  "n": 128, "est_range_s": "2.30-2.30", "not_checked": 0,   "evaluated": 128},
+          {"decile": 8,  "n": 127, "est_range_s": "2.30-4.89", "not_checked": 25,  "evaluated": 102},
+          {"decile": 9,  "n": 127, "est_range_s": "4.89-7.95", "not_checked": 127, "evaluated": 0},
+          {"decile": 10, "n": 128, "est_range_s": "7.95-9.44", "not_checked": 128, "evaluated": 0}
+        ],
+        "evaluated_est_time_range_s": "0.00-4.10",
+        "not_checked_est_time_range_s": "4.10-9.44",
+        "conclusion": "not_checked status is a PURE FUNCTION of estimated execution time, with a single clean cutoff at ~4.1s. Deciles 1-7 are 100% evaluated; deciles 9-10 are 100% not_checked. This is the exact signature of wall-clock truncation against mutmut's fastest-first schedule. No test-selection, fixture, import, or generation hypothesis can produce a monotonic time-ordered cutoff."
+      },
+      {
+        "step": 6,
+        "finding": "Runner mutation_runner.py line 531: timeout = max_runtime or DEFAULT_RUNTIME.get(mode, 5400); DEFAULT_RUNTIME['target'] = 1800. Lines 564-575: on TimeoutExpired the ENTIRE process group is SIGTERM+SIGKILLed. Default --max-children = 0 (serial execution). Total estimated serial time for the full loan population = 3409s, which EXCEEDS the 1800s target budget.",
+        "conclusion": "The arithmetic is conclusive: 3409s of work cannot fit in an 1800s budget when run serially. Truncation was inevitable and deterministic."
+      },
+      {
+        "step": 7,
+        "finding": "Cross-engine control: credit_card_engine evaluated all 582 mutants in 93 seconds (M9-C42.17 reproduction artifact) and account_engine 183 mutants quickly — both far inside 1800s, both with not_checked = 0.",
+        "conclusion": "Explains precisely why the two 'complete' engines had zero not_checked while loan and reconciliation had hundreds: population size x per-mutant cost vs a fixed wall-clock budget. Nothing about those engines' fixtures or configuration differed in a way that mattered."
+      }
+    ],
+
+    "hypotheses_explicitly_tested_and_rejected": {
+      "no_covering_tests": "REJECTED — all 6 affected functions have 36-193 associated tests; mutmut emits exit code 33 ('no tests') for that case, not not_checked.",
+      "intentionally_skipped": "REJECTED — mutmut emits exit code 34 ('skipped') for skips; zero skipped observed.",
+      "mutation_generation_failure": "REJECTED — mutant source inspected and well-formed; full population of 1273 was generated.",
+      "test_selection_defect": "REJECTED — pytest_add_cli_args_test_selection resolved correctly; 993 mutants in the same scope were evaluated successfully by the same selection.",
+      "fixture_or_pytest_plugins_defect": "REJECTED — same fixtures served the 993 evaluated mutants in the identical run.",
+      "pythonpath_defect": "REJECTED — same PYTHONPATH served the 993 evaluated mutants.",
+      "also_copy_defect": "REJECTED for loan (also_copy=['src'] sufficed for 993 evaluations); VERIFIED PRESENT AND WORKING for reconciliation (mutants/tests/unit/engines/reconciliation/test_reconciliation.py confirmed copied).",
+      "cache_corruption": "REJECTED — runner deletes mutants/ and .mutmut-cache before each target run (lines 489-496); cache provenance validated.",
+      "timeout_cascade": "REJECTED as PRIMARY cause — only 3-4 genuine per-mutant 'timeout' statuses exist, which are separately and correctly classified.",
+      "resource_limitation_memory": "NOT the cause — 4 CPUs / 7GB sufficed; the completed parallel re-run succeeded on the same host.",
+      "unsupported_mutation_locations": "REJECTED — the same functions produced killed/survived results in the completed re-run."
+    },
+
+    "m9_c42_18_stated_cause_correction": {
+      "m9_c42_18_claim": "\"Run incomplete; 280 mutants not checked (no covering tests)\" and \"280/1,273 mutants not checked (no covering tests)\"",
+      "verdict": "FACTUALLY INCORRECT",
+      "disproof": "All 6 affected functions have 36-193 associated tests recorded in mutmut-stats.json. mutmut 3.7.0 assigns exit code 33 -> status 'no tests' when tests are absent, so 'no covering tests' can never yield 'not checked'. The true cause is wall-clock truncation.",
+      "impact_of_the_error": "M9-C42.18's stated remediation ('Add tests covering loan_engine not_checked mutants (280)' and the same for reconciliation) would have added ~546 unnecessary tests to chase mutants that already had ample test coverage and merely needed to be executed. This phase's correction avoids that wasted and metric-driven work entirely."
+    }
+  },
+
+  "secondary_defect_found": {
+    "name": "post_run_reporting_context_defect",
+    "severity": "MEDIUM — evidence-reporting integrity, no data loss",
+    "symptom": "After ANY successful `mutation --target <engine>` run, the runner prints and persists killed=survived=...=0, mutants_generated=0, mutation_score=None, evidence_complete=false, while still reporting execution_status=PASS and exit code 0.",
+    "reproduced_on": ["reconciliation_engine", "credit_card_engine", "account_engine"],
+    "reproducible": true,
+    "root_cause": "mutation_runner.py restores the PRE-RUN [tool.mutmut] block in the `finally` block (lines 605-608) BEFORE collecting evidence via `mutmut results --all true` (lines 638-646). The restored block usually names a DIFFERENT engine's source_paths. `mutmut results` resolves the mutant population from the CURRENT config's source_paths, finds no mutants matching the wrong scope, and returns an empty result set. parse_mutmut_results() therefore parses zero lines and returns an all-zero MutationCounts.",
+    "data_loss": false,
+    "authoritative_data_location": "mutants/src/**/<file>.py.meta -> exit_code_by_key (one entry per mutant, with mutmut's raw exit code)",
+    "why_gate_b_caught_it": "reconcile_counts() + evidence_complete requires counts.generated > 0, so the zero population correctly produced Gate B (Evidence Integrity) FAIL rather than a fake 0% score. The runner's no-fake-score guarantee held.",
+    "explains_baseline_anomaly": "This is the origin of the stale mutation-summary.json found in Phase 1 (credit_card_engine, mutants_generated=0, execution_status=PASS).",
+    "remediation_applied_this_phase": "NONE (no code change). Authoritative counts were recovered from the .meta files and independently re-verified by reinstalling the correct per-engine config and re-running `mutmut results --all true`, which returned the full population. Recommended fix is deferred as an explicit, evidence-supported recommendation.",
+    "recommended_fix": "In mutation_runner.py, collect evidence (`mutmut results --all true`) BEFORE restoring the pre-run [tool.mutmut] block; or pass the engine-scoped config explicitly to the results invocation. Smallest correct change: move the results collection above the config restoration in the finally-block ordering."
+  },
+
+  "runs_executed_this_phase": [
+    {
+      "engine": "loan_engine",
+      "command": "python3 runtime/verify.py mutation --target loan_engine --max-runtime 7200 --max-children 4 --allow-dirty",
+      "duration_seconds": 653,
+      "mutmut_rc": 0,
+      "execution_status": "PASS",
+      "evidence_complete": true,
+      "gate_a": "PASS",
+      "gate_b": "PASS",
+      "total": 1273, "killed": 1066, "survived": 199, "timeout": 4, "no_tests": 4, "not_checked": 0, "suspicious": 0,
+      "score": 84.0,
+      "identity": "1273 = 1066 + 199 + 4 + 4 + 0 + 0",
+      "identity_holds": true,
+      "verification": "Independently re-tallied from `mutmut results --all true` (1273 lines) — matched the runner exactly.",
+      "not_checked_resolved": "280 -> 0"
+    },
+    {
+      "engine": "reconciliation_engine",
+      "command": "python3 runtime/verify.py mutation --target reconciliation_engine --max-runtime 7200 --max-children 4 --allow-dirty",
+      "mutmut_rc": 0,
+      "execution_status": "PASS",
+      "runner_reported_zero": true,
+      "runner_zero_cause": "post_run_reporting_context_defect (see above)",
+      "total": 368, "killed": 296, "survived": 72, "timeout": 0, "no_tests": 0, "not_checked": 0, "suspicious": 0,
+      "score": 80.4,
+      "identity": "368 = 296 + 72 + 0 + 0 + 0 + 0",
+      "identity_holds": true,
+      "evidence_sources": [
+        "mutants/src/engines/reconciliation_engine.py.meta -> exit_code_by_key (368 entries; raw exit codes {1: 296, 0: 72})",
+        "`mutmut results --all true` with the reconciliation config reinstalled -> 368 lines",
+        "runtime.foundation.verification.mutation_contract.parse_mutmut_results() -> killed=296 survived=72 not_checked=0, reconcile_counts()=True, compute_score()=80.4"
+      ],
+      "corroboration": "The 72 survivors EXACTLY match the 72 survivors independently catalogued in m9-c42.17-reconciliation_engine-survivor-inventory.json, cross-validating the result.",
+      "also_copy_fix_verified": "M9-C42.17's EngineSelection.also_copy=('src','tests') confirmed ACTIVE and WORKING: mutants/tests/unit/engines/reconciliation/test_reconciliation.py present in the mutant tree; all three test selections (unit, properties, capability) configured.",
+      "also_copy_eliminated_not_checked": "NO — the also_copy fix was necessary but NOT the cause of the 266 not_checked. The cause was wall-clock truncation; parallel re-execution with adequate budget eliminated it.",
+      "not_checked_resolved": "266 -> 0"
+    },
+    {
+      "engine": "credit_card_engine",
+      "command": "python3 runtime/verify.py mutation --target credit_card_engine --max-runtime 3600 --max-children 4 --allow-dirty",
+      "purpose": "Phase 13 verification that credit_card is unaffected by this phase",
+      "runner_reported_zero": true,
+      "total": 582, "killed": 440, "survived": 142, "timeout": 0, "no_tests": 0, "not_checked": 0, "suspicious": 0,
+      "score": 75.6,
+      "identity": "582 = 440 + 142 + 0 + 0 + 0 + 0",
+      "identity_holds": true,
+      "evidence_source": "8 per-module .meta files under mutants/src/engines/credit_card_engine/",
+      "per_module": {
+        "billing.py": {"killed": 152, "survived": 43},
+        "emi.py": {"killed": 94, "survived": 14},
+        "foreclosure.py": {"killed": 39, "survived": 16},
+        "interest.py": {"killed": 53, "survived": 26},
+        "metrics.py": {"killed": 48, "survived": 16},
+        "outstanding.py": {"killed": 17, "survived": 12},
+        "utilization.py": {"killed": 37, "survived": 15}
+      },
+      "matches_m9_c42_18": true,
+      "conclusion": "UNCHANGED and REPRODUCIBLE."
+    },
+    {
+      "engine": "account_engine",
+      "command": "python3 runtime/verify.py mutation --target account_engine --max-runtime 3600 --max-children 4 --allow-dirty",
+      "purpose": "Phase 13 verification that account is unaffected by this phase",
+      "runner_reported_zero": true,
+      "total": 183, "killed": 163, "survived": 20, "timeout": 0, "no_tests": 0, "not_checked": 0, "suspicious": 0,
+      "score": 89.1,
+      "identity": "183 = 163 + 20 + 0 + 0 + 0 + 0",
+      "identity_holds": true,
+      "evidence_source": "7 per-module .meta files under mutants/src/engines/account_engine/",
+      "per_module": {
+        "balance.py": {"killed": 34, "survived": 5},
+        "cashflow.py": {"killed": 27, "survived": 7},
+        "dormant.py": {"killed": 12, "survived": 2},
+        "history.py": {"killed": 35, "survived": 4},
+        "lifecycle.py": {"killed": 22, "survived": 1},
+        "metrics.py": {"killed": 33, "survived": 1}
+      },
+      "matches_m9_c42_18": true,
+      "conclusion": "UNCHANGED and REPRODUCIBLE."
+    },
+    {
+      "mode": "smoke",
+      "command": "python3 runtime/verify.py mutation --smoke",
+      "total": 6, "killed": 2, "survived": 2, "no_tests": 2, "timeout": 0, "not_checked": 0, "suspicious": 0,
+      "score": 50.0,
+      "gate_a": "PASS",
+      "gate_b": "PASS",
+      "conclusion": "Mutation infrastructure HEALTHY. Smoke fixture deliberately includes a surviving mutant, so 50.0 is the expected value."
+    }
+  ],
+
+  "infrastructure_changes_made": {
+    "count": 0,
+    "code_files_modified": [],
+    "rationale": "The root cause was a resource-budget configuration issue, fully addressable via the runner's existing --max-runtime and --max-children CLI flags. No mutation-runner or contract code was modified. In particular, nothing was changed to hide, reclassify, or suppress not_checked."
+  },
+
+  "constraints_honored": {
+    "full_campaign_not_started": true,
+    "not_checked_never_classified_as_killed": true,
+    "not_checked_never_classified_as_survived_without_evidence": true,
+    "raw_status_information_preserved": true,
+    "mutation_thresholds_unchanged": true,
+    "runner_not_modified_to_hide_not_checked": true,
+    "no_tests_manufactured": true,
+    "no_mutation_gap_tests_deleted": true
+  }
+}

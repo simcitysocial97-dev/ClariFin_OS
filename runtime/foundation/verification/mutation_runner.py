@@ -573,13 +573,83 @@ def execute_mutation(
                 rc = None
                 infra_error = f"mutation run exceeded max_runtime={timeout}s"
                 log_tail = ""
+
+            # ── R2 architectural fix ───────────────────────────────────────────
+            # Evidence collection occurs HERE, inside the `try` body and BEFORE
+            # the `finally:` block below. The `finally` restores the original
+            # [tool.mutmut] config, so the target configuration is still active
+            # while `mutmut results` evidence is gathered. This guarantees
+            # evidence is collected with the correct engine selected
+            # (requirement #3: evidence collection cannot silently resolve the
+            # wrong engine) and Gate B stays fail-safe. The ordering is enforced
+            # by Python's try/finally semantics, not a runtime flag.
+            # Decide execution integrity.
+            # mutmut run RC: 0=all killed, 2=survivors, 4=timeout, 8=suspicious.
+            # RC 1 or crash or any 'Error:'/'Missing argument' in output => infra failure.
+            infra_failure = infra_error is not None or rc is None or rc == 1
+            if not infra_failure and rc is not None:
+                try:
+                    low = (log_tail or "").lower()
+                    if "missing argument" in low or "error:" in low or "traceback" in low:
+                        infra_failure = True
+                        infra_error = "mutmut reported an error during execution"
+                except Exception:
+                    pass
+
+            if infra_failure:
+                return build_infrastructure_failure(
+                    run_id=run_id,
+                    repository_sha=sha,
+                    tree_sha=tree,
+                    python_version=env.python.version or "unknown",
+                    pytest_version=env.pytest.version or "unknown",
+                    mutmut_version=env.mutmut.version or "unknown",
+                    config_hash=config_hash,
+                    error=infra_error or f"mutmut run exited with rc={rc}",
+                    mutmut_rc=rc,
+                    mode=mode,
+                    target=target,
+                )
+            # Collect evidence.
+            try:
+                res = subprocess.run(
+                    [mutmut, "results", "--all", "true"],
+                    cwd=str(cwd),
+                    capture_output=True,
+                    text=True,
+                    timeout=120,
+                )
+                results_text = res.stdout + res.stderr
+            except Exception as exc:
+                return build_infrastructure_failure(
+                    run_id=run_id,
+                    repository_sha=sha,
+                    tree_sha=tree,
+                    python_version=env.python.version or "unknown",
+                    pytest_version=env.pytest.version or "unknown",
+                    mutmut_version=env.mutmut.version or "unknown",
+                    config_hash=config_hash,
+                    error=f"mutmut results failed: {exc}",
+                    mutmut_rc=rc,
+                    mode=mode,
+                    target=target,
+                )
+
+            counts = parse_mutmut_results(results_text)
+            invariant_ok = reconcile_counts(counts)
+
+            duration = int(time.monotonic() - start)
+            score = compute_score(counts) if invariant_ok else None
+
         except Exception as exc:  # pragma: no cover - defensive
             rc = None
             infra_error = f"mutation subprocess error: {exc}"
             log_tail = ""
+
         finally:
             # Ensure process group is cleaned up on any exit
             if proc is not None:
+                pgid = None
                 try:
                     pgid = os.getpgid(proc.pid)
                     try:
@@ -602,68 +672,13 @@ def execute_mutation(
                 else str(SMOKE_DIR.relative_to(REPO_ROOT))
             )
             _restore_source_tree(cwd, restore_scope)
-            # Restore the canonical [tool.mutmut] block we installed for this run so
-            # backend/pyproject.toml is never left in a per-engine state.
+            # The [tool.mutmut] block is restored unconditionally here, AFTER
+            # evidence has already been collected inside the `try` body (see R2
+            # architectural fix below). This guarantees the target configuration
+            # is still active while `mutmut results` evidence is gathered, so
+            # evidence can never silently resolve the wrong engine.
             if installed_config_original is not None:
                 FULL_CONFIG.write_text(installed_config_original)
-
-        # Decide execution integrity.
-        # mutmut run RC: 0=all killed, 2=survivors, 4=timeout, 8=suspicious.
-        # RC 1 or crash or any 'Error:'/'Missing argument' in output => infra failure.
-        infra_failure = infra_error is not None or rc is None or rc == 1
-        if not infra_failure and rc is not None:
-            try:
-                low = (log_tail or "").lower()
-                if "missing argument" in low or "error:" in low or "traceback" in low:
-                    infra_failure = True
-                    infra_error = "mutmut reported an error during execution"
-            except Exception:
-                pass
-
-        if infra_failure:
-            return build_infrastructure_failure(
-                run_id=run_id,
-                repository_sha=sha,
-                tree_sha=tree,
-                python_version=env.python.version or "unknown",
-                pytest_version=env.pytest.version or "unknown",
-                mutmut_version=env.mutmut.version or "unknown",
-                config_hash=config_hash,
-                error=infra_error or f"mutmut run exited with rc={rc}",
-                mutmut_rc=rc,
-                mode=mode,
-                target=target,
-            )
-        # Collect evidence.
-        try:
-            res = subprocess.run(
-                [mutmut, "results", "--all", "true"],
-                cwd=str(cwd),
-                capture_output=True,
-                text=True,
-                timeout=120,
-            )
-            results_text = res.stdout + res.stderr
-        except Exception as exc:
-            return build_infrastructure_failure(
-                run_id=run_id,
-                repository_sha=sha,
-                tree_sha=tree,
-                python_version=env.python.version or "unknown",
-                pytest_version=env.pytest.version or "unknown",
-                mutmut_version=env.mutmut.version or "unknown",
-                config_hash=config_hash,
-                error=f"mutmut results failed: {exc}",
-                mutmut_rc=rc,
-                mode=mode,
-                target=target,
-            )
-
-        counts = parse_mutmut_results(results_text)
-        invariant_ok = reconcile_counts(counts)
-
-        duration = int(time.monotonic() - start)
-        score = compute_score(counts) if invariant_ok else None
 
         result = MutationResult(
             run_id=run_id,

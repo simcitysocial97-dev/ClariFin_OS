@@ -266,3 +266,75 @@ def test_smoke_end_to_end_distinguishes_classifications():
         + result.suspicious
         + result.not_checked
     )
+
+
+# ── 15. R2: evidence is collected with the TARGET config still active ──────
+def test_r2_evidence_collected_with_target_config_active(monkeypatch, tmp_path):
+    """M9-C42.20 Phase 8 (defect R2) — permanent architectural fix.
+
+    The runner must collect `mutmut results` evidence while the correct *target*
+    [tool.mutmut] configuration is still active, never after it has been restored
+    to the original (different-scope) config. The fix is structural: evidence is
+    collected inside the `try` body, *before* the `finally` block that restores
+    the original config — so the ordering is guaranteed by Python's try/finally
+    semantics, not a runtime flag.
+
+    The test intercepts the single stable seam `FULL_CONFIG.write_text` to capture
+    the [tool.mutmut] scope that is *active* at the moment `mutmut results` reads
+    evidence. It asserts (a) evidence was collected with the target scope, and
+    (b) the config was restored to the original afterward.
+    """
+    import re
+
+    from runtime.foundation.verification import mutation_runner as mr
+
+    backend_pyproject = mr.FULL_CONFIG
+    original_text = backend_pyproject.read_text()
+
+    def extract_source_paths(text: str) -> list[str] | None:
+        m = re.search(r"source_paths\s*=\s*\[(.*?)\]", text, re.S)
+        if not m:
+            return None
+        return re.findall(r'"([^"]+)"', m.group(1))
+
+    # Before the run we record the active scope whenever evidence is read. The
+    # runner calls `subprocess.run([..., "mutmut", "results", ...])`; we capture
+    # the config scope at that exact instant by snapshotting the live file.
+    active_scope_at_results: dict[str, list[str] | None] = {"scope": None}
+    real_run = mr.subprocess.run
+
+    def patched_run(args, **kwargs):
+        if (
+            args
+            and str(args[0]).endswith("mutmut")
+            and len(args) > 1
+            and args[1] == "results"
+        ):
+            active_scope_at_results["scope"] = extract_source_paths(
+                backend_pyproject.read_text()
+            )
+        return real_run(args, **kwargs)
+
+    monkeypatch.setattr(mr.subprocess, "run", patched_run)
+
+    try:
+        result = execute_mutation(
+            mode="target", target="credit_card_engine", allow_dirty=True
+        )
+    finally:
+        # Always restore the canonical backend config regardless of outcome.
+        backend_pyproject.write_text(original_text)
+
+    assert result.execution_status == "PASS", result.error
+    # Evidence must have been collected while the TARGET (credit_card_engine)
+    # config was active — NOT the original (reconciliation_engine) config.
+    assert active_scope_at_results["scope"] == [
+        "src/engines/credit_card_engine"
+    ], (
+        "evidence collected with wrong config scope: "
+        f"{active_scope_at_results['scope']}"
+    )
+    # And the config must be restored to the original afterward.
+    assert extract_source_paths(backend_pyproject.read_text()) == [
+        "src/engines/reconciliation_engine.py"
+    ]

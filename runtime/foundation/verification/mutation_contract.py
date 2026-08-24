@@ -329,6 +329,42 @@ ENGINE_SELECTION: dict[str, EngineSelection] = {
         ),
         tier="P1",
     ),
+    # ── M9-C42.20 additions: eligible production logic previously outside the
+    # pilot scope but certified for the full campaign (high-coverage, deterministic,
+    # financially critical). transaction_intelligence / financial_intelligence are
+    # deliberately WITHHELD until their test suites are strengthened (Phase 6 gate).
+    "cashflow_engine": EngineSelection(
+        engine="cashflow_engine",
+        source_paths=("src/engines/cashflow_engine.py",),
+        test_selection=("tests/properties/cashflow",),
+        tier="P0",
+    ),
+    "financial_events": EngineSelection(
+        engine="financial_events",
+        source_paths=("src/engines/financial_events",),
+        test_selection=(
+            "tests/unit/engines/financial_events",
+            "tests/properties/financial_events",
+            "tests/capability/financial_events",
+        ),
+        tier="P1",
+    ),
+    "core_domain_money": EngineSelection(
+        engine="core_domain_money",
+        source_paths=("src/core/domain",),
+        test_selection=(
+            "tests/unit/test_money.py",
+            "tests/properties/test_money_invariants.py",
+            "tests/invariants/test_money.py",
+        ),
+        tier="P0",
+    ),
+    "common_calculations": EngineSelection(
+        engine="common_calculations",
+        source_paths=("src/common/calculations.py",),
+        test_selection=("tests/unit/test_calculations.py",),
+        tier="P0",
+    ),
 }
 
 # Selection method is fixed and deterministic for the whole contract.

@@ -1,0 +1,197 @@
+{
+  "phase": "M9-C42.19",
+  "title": "Mutation Completion & Coverage Gate Reconciliation — Final Certification",
+  "timestamp": "2026-08-24T20:32:00+05:30",
+  "repository_sha": "5170e0b30ef5e308f2055661a0839e2966a721d4",
+  "predecessor_certification": "M9-C42.18 — CONDITIONAL — SPECIFIC BLOCKERS REMAIN",
+
+  "decision": "CERTIFIED — READY FOR FULL MUTATION CAMPAIGN",
+  "full_campaign_started_this_phase": false,
+
+  "decision_logic_evaluation": {
+    "loan_mutation_run_complete": {
+      "required": "complete OR every residual non-evaluated mutant has a documented infrastructure-independent reason",
+      "result": "COMPLETE — not_checked = 0",
+      "pass": true
+    },
+    "reconciliation_mutation_run_complete": {
+      "required": "complete OR every residual non-evaluated mutant has a documented infrastructure-independent reason",
+      "result": "COMPLETE — not_checked = 0",
+      "pass": true
+    },
+    "mutation_accounting_reconciles": {
+      "required": "TOTAL = KILLED + SURVIVED + TIMEOUT + NO_TESTS + NOT_CHECKED + SUSPICIOUS for every engine and aggregate",
+      "result": "HOLDS EXACTLY for all four engines and the aggregate; asserted programmatically",
+      "pass": true
+    },
+    "authoritative_scoring_policy_established": {
+      "required": "existing policy documented, not invented",
+      "result": "DOCUMENTED from mutation_contract.compute_score() (killed/(killed+survived+timeout)); two ambiguities disclosed with smallest recommended clarifications; NO policy change made",
+      "pass": true
+    },
+    "coverage_scope_understood": {
+      "required": "coverage scope established with per-area attribution",
+      "result": "ESTABLISHED — full-suite 65.59% vs engine-subset 36.63% reconciled; 15 source areas attributed from actual repository data; both measurements reproduced exactly",
+      "pass": true
+    },
+    "coverage_threshold_semantics_understood": {
+      "required": "all eight Phase-10 questions answered",
+      "result": "ANSWERED — origin commit f0e28f0b identified; backend-wide aggregate intent confirmed; engines have a SEPARATE 70% intended threshold; enforced by pytest via .coveragerc, NOT by CI; correctly calibrated but was incorrectly applied by M9-C42.18",
+      "pass": true
+    },
+    "no_evidence_integrity_blockers_remain": {
+      "required": "no unresolved evidence-integrity blockers",
+      "result": "NONE REMAIN — every engine independently reproduced; one reporting defect found, root-caused, proven non-data-losing, and worked around without code change",
+      "pass": true
+    },
+    "all_criteria_met": true
+  },
+
+  "mutation_completion_table": [
+    {"engine": "credit_card_engine",    "total": 582,  "killed": 440,  "survived": 142, "timeout": 0, "no_tests": 0, "not_checked": 0, "suspicious": 0, "evaluated": 582,  "final_score": 75.6, "completeness": "COMPLETE", "gate_c": "BELOW GATE (80%)"},
+    {"engine": "account_engine",        "total": 183,  "killed": 163,  "survived": 20,  "timeout": 0, "no_tests": 0, "not_checked": 0, "suspicious": 0, "evaluated": 183,  "final_score": 89.1, "completeness": "COMPLETE", "gate_c": "PASS"},
+    {"engine": "loan_engine",           "total": 1273, "killed": 1066, "survived": 199, "timeout": 4, "no_tests": 4, "not_checked": 0, "suspicious": 0, "evaluated": 1269, "final_score": 84.0, "completeness": "COMPLETE", "gate_c": "PASS"},
+    {"engine": "reconciliation_engine", "total": 368,  "killed": 296,  "survived": 72,  "timeout": 0, "no_tests": 0, "not_checked": 0, "suspicious": 0, "evaluated": 368,  "final_score": 80.4, "completeness": "COMPLETE", "gate_c": "PASS"}
+  ],
+
+  "aggregate": {
+    "total": 2406, "killed": 1965, "survived": 433, "timeout": 4, "no_tests": 4,
+    "not_checked": 0, "suspicious": 0, "evaluated": 2402,
+    "score_percent": 81.8, "completeness": "COMPLETE",
+    "threshold_percent": 80, "gate_c": "PASS",
+    "identity": "2406 = 1965 + 433 + 4 + 4 + 0 + 0",
+    "score_arithmetic": "1965 / 2402 = 81.8068% -> 81.8%",
+    "method": "population-weighted (engine percentages NOT averaged)"
+  },
+
+  "coverage": {
+    "canonical_full_suite_percent": 65.59,
+    "threshold_percent": 40,
+    "gate_result": "PASS",
+    "tests_passed": 1745,
+    "tests_collected": 1746,
+    "engine_subset_percent": 36.63,
+    "engine_subset_gate_result": "FAIL",
+    "verdict": "The 36.63% was a SCOPE MISMATCH artifact. The gate PASSES under the canonical full-suite command.",
+    "threshold_changed": false,
+    "source_files_excluded": false,
+    "tests_excluded": false,
+    "tests_added_for_coverage": 0
+  },
+
+  "root_causes_established": {
+    "not_checked": {
+      "cause": "Wall-clock timeout truncation of the mutation run. DEFAULT_RUNTIME['target'] = 1800s with default serial execution (--max-children 0), against ~3409s of estimated serial work for loan. mutmut schedules mutants fastest-first, so the slowest were never reached and received no exit code (mutmut maps None -> 'not checked').",
+      "proof": "Status is a pure monotonic function of estimated execution time: deciles 1-7 (est <= 2.30s) are 100% evaluated; deciles 9-10 (est >= 4.89s) are 100% not_checked; a single clean cutoff at ~4.1s.",
+      "resolution": "Re-ran with existing CLI flags --max-runtime 7200 --max-children 4. Loan completed in 653s with not_checked = 0.",
+      "code_changed": false,
+      "m9_c42_18_stated_cause": "'no covering tests' — FACTUALLY INCORRECT; all 6 affected functions had 36-193 associated tests, and mutmut maps missing tests to exit code 33 ('no tests'), never to 'not checked'."
+    },
+    "post_run_reporting_context_defect": {
+      "severity": "MEDIUM (evidence reporting)",
+      "data_loss": false,
+      "cause": "mutation_runner.py restores the pre-run [tool.mutmut] block (lines 605-608) BEFORE collecting evidence via `mutmut results` (lines 638-646). The restored block names a different engine, so mutmut resolves an empty population and the runner reports all zeros with evidence_complete=false.",
+      "reproduced_on": ["reconciliation_engine", "credit_card_engine", "account_engine"],
+      "explains_baseline_anomaly": true,
+      "code_changed": false,
+      "recommended_fix": "Collect `mutmut results` BEFORE restoring the pre-run config, or pass the engine-scoped config explicitly to the results invocation."
+    }
+  },
+
+  "verification_performed": {
+    "normal_test_collection": {"result": "PASS", "detail": "tests/ collects 1746 tests; mutation-gap files collect 268 tests"},
+    "relevant_unit_tests": {"result": "PASS", "detail": "tests/unit/engines/ -> 843 passed"},
+    "canonical_coverage_verification": {"result": "PASS", "detail": "1745 passed, 1 xfailed, 65.59% >= 40%"},
+    "completed_loan_mutation_run": {"result": "PASS", "detail": "1273 mutants, not_checked=0, 84.0%, Gate A+B PASS"},
+    "completed_reconciliation_mutation_run": {"result": "PASS", "detail": "368 mutants, not_checked=0, 80.4%"},
+    "credit_card_mutation_verification": {"result": "PASS", "detail": "582 = 440 + 142, 75.6%, matches M9-C42.18 exactly"},
+    "account_mutation_verification": {"result": "PASS", "detail": "183 = 163 + 20, 89.1%, matches M9-C42.18 exactly"},
+    "mutation_smoke_test": {"result": "PASS", "detail": "6 mutants, Gate A PASS, Gate B PASS"},
+    "source_tree_restored": {"result": "PASS", "detail": "git status --porcelain backend/src is EMPTY after all mutation runs"},
+    "full_campaign_started": false
+  },
+
+  "changes_made_this_phase": {
+    "production_source_files_modified": 0,
+    "test_files_modified": 0,
+    "tests_added": 0,
+    "tests_deleted": 0,
+    "infrastructure_code_modified": 0,
+    "coverage_threshold_changed": false,
+    "mutation_threshold_changed": false,
+    "scoring_rules_changed": false,
+    "files_restored_to_committed_state": ["backend/pyproject.toml"],
+    "artifacts_generated": 14,
+    "note": "This phase was purely forensic. The ONLY repository mutation is the regenerated evidence artifact backend/tests/generated/mutation/mutation-summary.json plus new runtime/generated/ artifacts and progress.md. No code, tests, thresholds, or scoring rules were changed."
+  },
+
+  "residual_items_not_blocking": [
+    {
+      "id": "R1",
+      "item": "credit_card_engine mutation score 75.6% < 80% quality gate",
+      "blocking_full_campaign": false,
+      "rationale": "This is a QUALITY finding on complete, reproducible evidence — not an evidence-integrity or infrastructure blocker. Analysis shows ~43 genuine class-A behavioral gaps against 26 kills needed for 80%, with a ~83.0% equivalent-mutant ceiling, so 80% is reachable through genuine behavioral repairs. Gate C for a per-engine target run is explicitly non-gating in the runner ('smoke/target: infrastructure-validation only').",
+      "recommended_action": "Dedicated targeted phase closing class-A survivors in billing.py (43), interest.py (26), foreclosure.py (16), metrics.py (16)."
+    },
+    {
+      "id": "R2",
+      "item": "Post-run reporting-context defect in mutation_runner.py",
+      "blocking_full_campaign": false,
+      "rationale": "Affects per-engine `--target` runs only. The full campaign renders the FULL-scope config (engine=None), and no per-engine restoration mismatch arises in the same way. Crucially, the defect is fail-safe: it produces Gate B FAIL rather than a fake score, and causes no data loss (authoritative results persist in .meta files).",
+      "recommended_action": "Move evidence collection above config restoration. Small, well-understood, evidence-supported fix."
+    },
+    {
+      "id": "R3",
+      "item": "Duplicated rendered comment banners accumulate in backend/pyproject.toml",
+      "blocking_full_campaign": false,
+      "rationale": "Cosmetic only; TOML semantics unaffected. Restored to committed state this phase.",
+      "recommended_action": "Anchor the substitution regex to include the rendered comment header."
+    },
+    {
+      "id": "R4",
+      "item": "Loan survivor inventory (308 catalogued) is stale versus authoritative 199 survivors",
+      "blocking_full_campaign": false,
+      "rationale": "The inventory METHOD is sound; only the snapshot COUNT is stale because the loan run is now complete and its survivor population changed.",
+      "recommended_action": "Re-generate the loan survivor inventory from the completed run."
+    },
+    {
+      "id": "R5",
+      "item": "Genuine coverage weakness in transaction_intelligence (24.25%) and financial_intelligence (34.82%)",
+      "blocking_full_campaign": false,
+      "rationale": "Outside the four-engine campaign. The 40% aggregate gate PASSES at 65.59%.",
+      "recommended_action": "Future coverage phase; documented, not optimized here."
+    },
+    {
+      "id": "R6",
+      "item": "Two non-asserting placeholder tests in test_mutation_gap_repairs.py",
+      "blocking_full_campaign": false,
+      "rationale": "Not tautological and not harmful; they document equivalent mutants. No effect on any metric.",
+      "recommended_action": "Convert to comments or documented xfail in housekeeping."
+    }
+  ],
+
+  "recommendation_for_full_campaign": {
+    "authorized": true,
+    "critical_operational_guidance": "The full campaign MUST be given an adequate time budget and parallelism, or it WILL reproduce the not_checked truncation at larger scale. The full-scope population is roughly 2406+ mutants across all engines in ENGINE_SELECTION, while DEFAULT_RUNTIME['full'] is 5400s with default serial execution.",
+    "required_invocation_guidance": "Use --max-children (>=4 on a 4-CPU host) and an explicit --max-runtime sized to the population. Loan alone needed ~3409s of serial work and completed in 653s with 4 children.",
+    "post_run_evidence_guidance": "Verify not_checked = 0 in the final summary. If the runner reports an all-zero population, this is the known reporting-context defect (R2) — recover authoritative counts from mutants/src/**/*.meta exit_code_by_key rather than trusting the zero report.",
+    "gate_expectations": "Aggregate is currently 81.8% (COMPLETE) against the 80% threshold. credit_card_engine at 75.6% is the only engine below gate."
+  },
+
+  "artifacts": [
+    "runtime/generated/m9-c42.19-baseline.json",
+    "runtime/generated/m9-c42.19-baseline.md",
+    "runtime/generated/m9-c42.19-mutation-completion.json",
+    "runtime/generated/m9-c42.19-mutation-completion.md",
+    "runtime/generated/m9-c42.19-mutation-scoring.json",
+    "runtime/generated/m9-c42.19-mutation-scoring.md",
+    "runtime/generated/m9-c42.19-coverage-scope.json",
+    "runtime/generated/m9-c42.19-coverage-scope.md",
+    "runtime/generated/m9-c42.19-coverage-analysis.json",
+    "runtime/generated/m9-c42.19-coverage-analysis.md",
+    "runtime/generated/m9-c42.19-test-effectiveness.json",
+    "runtime/generated/m9-c42.19-test-effectiveness.md",
+    "runtime/generated/m9-c42.19-certification.json",
+    "runtime/generated/m9-c42.19-certification.md"
+  ]
+}

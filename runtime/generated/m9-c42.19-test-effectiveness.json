@@ -1,0 +1,150 @@
+{
+  "phase": "M9-C42.19",
+  "title": "Test Effectiveness — M9-C42.17 Test Contribution & Credit-Card Survivor Analysis",
+  "timestamp": "2026-08-24T20:28:00+05:30",
+  "repository_sha": "5170e0b30ef5e308f2055661a0839e2966a721d4",
+  "tests_added_this_phase": 0,
+  "tests_deleted_this_phase": 0,
+  "tests_weakened_this_phase": 0,
+
+  "phase_12_m9_c42_17_test_contribution": {
+    "verdict": "ALL PRESERVED AND VALID",
+    "files_audited": [
+      {
+        "path": "backend/tests/unit/engines/credit_card/test_mutation_gap_repairs.py",
+        "size_bytes": 30379,
+        "tracked_in_git": true,
+        "committed_at": "5170e0b3 (M9-C42.17)",
+        "test_functions": 124,
+        "assert_statements": 132,
+        "deleted_this_phase": false,
+        "weakened_this_phase": false
+      },
+      {
+        "path": "backend/tests/unit/engines/loan/test_loan_engine.py",
+        "tracked_in_git": true,
+        "test_functions": 159,
+        "assert_statements": 263,
+        "survivor_test_classes": ["TestForeclosureSurvivors", "TestEMISurvivors", "TestPrepaymentSurvivors"],
+        "deleted_this_phase": false,
+        "weakened_this_phase": false
+      }
+    ],
+    "checks": {
+      "remain_ordinary_tests": {
+        "result": "PASS",
+        "evidence": "Both files live under backend/tests/ in ordinary pytest module layout, require no special runner, carry no custom marks, and are collected by plain `pytest`."
+      },
+      "normal_pytest_collection": {
+        "result": "PASS",
+        "evidence": "`pytest tests/unit/engines/credit_card/test_mutation_gap_repairs.py tests/unit/engines/loan/test_loan_engine.py --collect-only -q` => '268 tests collected in 0.92s'. No collection errors."
+      },
+      "participate_in_coverage": {
+        "result": "PASS",
+        "evidence": "Both directories are inside `tests/`, which the canonical coverage command executes. Under coverage the engines they target report credit_card 93.65% and loan 98.73%. Neither file is named in the .coveragerc omit list (which omits only */tests/* from being MEASURED as source — a normal, correct setting that does not stop tests from EXECUTING and generating coverage)."
+      },
+      "not_excluded": {
+        "result": "PASS",
+        "evidence": "No skip markers (0), no xfail markers (0), no `pragma: no cover` (0), no entries in pytest norecursedirs or ignore lists, no exclusion in .coveragerc."
+      },
+      "not_implementation_dependent": {
+        "result": "PASS",
+        "evidence": "Zero private-attribute access (`._x` pattern: 0 matches in both files). Zero mock/patch/MagicMock usage (0 matches in both files). Tests assert on public function return values and raised exceptions only."
+      },
+      "not_tautological": {
+        "result": "PASS with one documented minor observation",
+        "evidence": "Zero literal self-equality asserts (0). Zero bare `assert True` (0). credit_card: 132 asserts across 124 tests. loan: 263 asserts across 159 tests.",
+        "minor_observation": {
+          "count": 2,
+          "functions": ["test_metrics_outstanding_ge_zero", "test_metrics_outstanding_ge0"],
+          "file": "backend/tests/unit/engines/credit_card/test_mutation_gap_repairs.py",
+          "lines": [378, 677],
+          "nature": "Non-asserting placeholder tests whose bodies are a comment plus `pass`. Both carry an explicit inline rationale: '`outstanding_paise > 0` -> `>= 0` is equivalent (guarded by <0 check)' — i.e. they document an EQUIVALENT (unkillable) mutant rather than assert behavior.",
+          "classification": "NOT tautological (they assert nothing at all, rather than asserting a trivial truth) and NOT harmful (they cannot produce a false pass signal for production behavior). They are, however, non-contributing tests.",
+          "recommended_action": "Convert to a module-level comment or an explicit documented xfail in a future housekeeping pass. NOT changed in this phase (out of scope; would constitute touching M9-C42.17 test work without mutation evidence).",
+          "impact_on_conclusions": "NONE — neither test affects any mutation score or coverage figure materially."
+        }
+      },
+      "assert_production_behavior": {
+        "result": "PASS",
+        "evidence": "Tests exercise public engine APIs and assert returned financial values, schedule structures, and raised exceptions. Corroborated behaviorally: the loan engine's completed mutation run kills 1,066 of 1,269 evaluated mutants (84.0%) and credit_card kills 440 of 582 (75.6%) — a test suite that did not assert real production behavior could not kill mutants at these rates."
+      }
+    }
+  },
+
+  "phase_14_credit_card_survivor_analysis": {
+    "current_score_percent": 75.6,
+    "threshold_percent": 80,
+    "gap_points": 4.4,
+    "population": {"total": 582, "killed": 440, "survived": 142, "timeout": 0, "no_tests": 0, "not_checked": 0, "suspicious": 0},
+    "completeness": "COMPLETE",
+    "tests_added_this_phase_to_chase_80": 0,
+
+    "survivor_classification_source": {
+      "artifact": "runtime/generated/m9-c42.17-credit_card_engine-survivor-inventory.json",
+      "total_survivors_catalogued": 144,
+      "counts": {"A_real_test_gap": 44, "B_equivalent_mutant": 99, "C_invalid_unreachable": 0, "D_infrastructure_anomaly": 0, "E_unknown": 1},
+      "legend": {"A": "REAL TEST GAP", "B": "EQUIVALENT MUTANT", "C": "INVALID/UNREACHABLE", "D": "INFRASTRUCTURE/EXECUTION ANOMALY", "E": "UNKNOWN"}
+    },
+
+    "comparison_against_m9_c42_17": {
+      "m9_c42_17_survivors_catalogued": 144,
+      "m9_c42_19_authoritative_survivors": 142,
+      "delta": -2,
+      "explanation": "The M9-C42.17 inventory (144) was generated from a slightly earlier survivor snapshot than the authoritative 142-survivor population reproduced in M9-C42.18 and re-verified in M9-C42.19. The 2-mutant difference is a snapshot-timing artifact, not a classification disagreement. The A/B proportion is unaffected for analytical purposes.",
+      "classification_stability": "STABLE — the same modules dominate survivors in both snapshots."
+    },
+
+    "genuine_vs_unavoidable": {
+      "proportion_basis": "A = 44/144 = 30.6% real gap; B+E = 100/144 = 69.4% equivalent/unknown",
+      "estimated_on_authoritative_142": {"real_gap_A": 43, "equivalent_or_unknown_BE": 99},
+      "how_many_are_genuine_behavioral_gaps": 43,
+      "how_many_are_equivalent_unavoidable": 99,
+      "note": "Counts on the 142-survivor population are proportional estimates derived from the M9-C42.17 per-survivor classification; the classification itself is per-mutant and evidence-backed in that artifact."
+    },
+
+    "ceiling_analysis": {
+      "equivalent_mutants_are_unkillable_by_definition": true,
+      "max_achievable_score_if_every_real_gap_killed": 83.0,
+      "max_achievable_arithmetic": "(440 + 43) / 582 = 483/582 = 83.0%",
+      "kills_required_to_reach_80_percent": 26,
+      "kills_required_arithmetic": "ceil(0.80 * 582) = 466 killed required; 466 - 440 = 26 additional kills",
+      "genuine_gaps_available": 43,
+      "is_80_percent_reachable_without_metric_manipulation": true,
+      "headroom": "26 required vs ~43 genuine behavioral gaps available => 80% is reachable using ONLY real behavioral-gap repairs, with 17 gaps of margin. No equivalent mutant needs to be chased and no test needs to be manufactured."
+    },
+
+    "are_additional_tests_justified": {
+      "answer": "YES — but on behavioral-gap grounds, NOT on percentage grounds.",
+      "justification": "The M9-C42.17 inventory identifies ~43 survivors as class A 'REAL TEST GAP', each with a recorded source file, line, mutation operator, original vs mutated expression, and an explicit affected-behavior statement. Those are genuine, documented behavioral gaps in production code and are worth closing on their own merits.",
+      "explicit_caveat": "The justification is the documented existence of real behavioral gaps. It is NOT 'the number is below 80'. If the inventory had shown 142 equivalent mutants and 0 real gaps, the correct action would be to raise the equivalent-mutant ceiling issue, not to add tests.",
+      "action_taken_this_phase": "NONE. No tests were added. Per the phase mandate ('Do not manufacture tests to manipulate the mutation percentage' and 'establish the metrics, do not optimize them'), the gaps are DOCUMENTED for a future targeted phase.",
+      "recommended_future_scope": "Close class-A survivors in the highest-survivor modules first: billing.py (43 survivors), interest.py (26), foreclosure.py (16), metrics.py (16), utilization.py (15), emi.py (14), outstanding.py (12)."
+    },
+
+    "per_module_survivors": {
+      "billing.py": {"killed": 152, "survived": 43},
+      "interest.py": {"killed": 53, "survived": 26},
+      "foreclosure.py": {"killed": 39, "survived": 16},
+      "metrics.py": {"killed": 48, "survived": 16},
+      "utilization.py": {"killed": 37, "survived": 15},
+      "emi.py": {"killed": 94, "survived": 14},
+      "outstanding.py": {"killed": 17, "survived": 12}
+    }
+  },
+
+  "other_engine_survivor_classifications": {
+    "note": "Provided for context from M9-C42.17 inventories. Loan and reconciliation survivor populations GREW when their runs were completed in this phase, so their inventories are now stale in COUNT (not in method).",
+    "account_engine": {"catalogued": 20, "A": 17, "B": 3, "E": 0, "authoritative_survivors": 20, "status": "MATCHES"},
+    "loan_engine": {"catalogued": 308, "A": 258, "B": 39, "E": 11, "authoritative_survivors": 199, "status": "INVENTORY STALE — catalogued from a different snapshot; re-inventory recommended in a future phase"},
+    "reconciliation_engine": {"catalogued": 72, "A": 69, "B": 0, "E": 3, "authoritative_survivors": 72, "status": "MATCHES EXACTLY — independently corroborates this phase's completed reconciliation run"}
+  },
+
+  "constraints_honored": {
+    "no_mutation_gap_tests_deleted": true,
+    "no_tests_weakened": true,
+    "no_tests_manufactured_to_hit_a_percentage": true,
+    "no_tests_excluded_from_coverage": true,
+    "additional_gap_tests_added_without_mutation_evidence": false
+  }
+}

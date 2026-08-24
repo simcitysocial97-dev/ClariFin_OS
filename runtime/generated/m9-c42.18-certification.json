@@ -1,0 +1,37 @@
+{
+  "phase": "M9-C42.18",
+  "title": "Coverage & Mutation Evidence Reconciliation — Certification",
+  "timestamp": "2026-08-24T18:51:00+05:30",
+  "repository_sha": "5170e0b30ef5e308f2055661a0839e2966a721d4",
+  "decision": "CONDITIONAL",
+  "verdict": "CONDITIONAL — SPECIFIC BLOCKERS REMAIN",
+  "rationale": "Coverage architecture verified and functional (36.63% baseline, below 40% threshold). Mutation accounting reconciled: 7 unaccounted loan mutants identified as 'timeout' status omitted from M9-C42.17 killed/survived summary. Mutation-gap tests verified as normal production tests participating in coverage. Infrastructure fixes from M9-C42.17 remain valid. However, loan_engine and reconciliation_engine mutation runs incomplete (high not_checked counts). Full mutation campaign not yet authorized.",
+  "blockers": [
+    "Loan engine mutation run incomplete (280/1273 not checked)",
+    "Reconciliation engine mutation run incomplete (266/368 not checked)",
+    "Coverage baseline below 40% threshold (36.63%)",
+    "Credit_card_engine mutation score below 80% (75.6%)"
+  ],
+  "ready_for_full_mutation_campaign": false,
+  "next_action": "Complete loan_engine and reconciliation_engine mutation runs to reduce not_checked counts; strengthen credit_card_engine tests to reach 80% threshold; consider whether coverage threshold should be adjusted or more tests added",
+  "evidence_chain_verified": {
+    "normal_tests": true,
+    "pytest_cov_coverage": true,
+    "mutation_testing": true,
+    "killed_survived_timeout_no_tests_not_checked": true,
+    "test_quality_audit": true,
+    "cross_engine_reconciliation": true
+  },
+  "artifacts": {
+    "baseline_json": "runtime/generated/m9-c42.18-baseline.json",
+    "baseline_md": "runtime/generated/m9-c42.18-baseline.md",
+    "coverage_reconciliation_json": "runtime/generated/m9-c42.18-coverage-reconciliation.json",
+    "coverage_reconciliation_md": "runtime/generated/m9-c42.18-coverage-reconciliation.md",
+    "mutation_accounting_json": "runtime/generated/m9-c42.18-mutation-accounting.json",
+    "mutation_accounting_md": "runtime/generated/m9-c42.18-mutation-accounting.md",
+    "test_effectiveness_json": "runtime/generated/m9-c42.18-test-effectiveness-reconciliation.json",
+    "test_effectiveness_md": "runtime/generated/m9-c42.18-test-effectiveness-reconciliation.md",
+    "certification_json": "runtime/generated/m9-c42.18-certification.json",
+    "certification_md": "runtime/generated/m9-c42.18-certification.md"
+  }
+}

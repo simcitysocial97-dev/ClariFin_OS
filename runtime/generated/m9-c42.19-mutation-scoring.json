@@ -1,0 +1,144 @@
+{
+  "phase": "M9-C42.19",
+  "title": "Authoritative Mutation Scoring Policy & Aggregate Recalculation",
+  "timestamp": "2026-08-24T20:22:00+05:30",
+  "repository_sha": "5170e0b30ef5e308f2055661a0839e2966a721d4",
+
+  "existing_policy_documented": {
+    "policy_invented_by_this_phase": false,
+    "authoritative_source": "runtime/foundation/verification/mutation_contract.py :: compute_score() (lines 192-204)",
+    "formula": "mutation_score = killed / (killed + survived + timeout)",
+    "verbatim_docstring": "Mutation score = killed / (killed + survived + timeout). Denominator excludes no_tests (no relevant test) and not_checked/suspicious (not evaluated). This matches the C42 baseline computation (4418 / (4418 + 4315 + 38) ~= 50.6%). Returns None when no mutant was scored (cannot claim a score).",
+    "status_treatment": {
+      "killed":      {"in_numerator": true,  "in_denominator": true,  "rationale": "Mutant detected by the test suite — the definition of success."},
+      "survived":    {"in_numerator": false, "in_denominator": true,  "rationale": "Mutant executed and NOT detected — a genuine scored failure."},
+      "timeout":     {"in_numerator": false, "in_denominator": true,  "rationale": "Mutant executed and produced a decisive (non-terminating) outcome; counted as an evaluated non-kill. Included via SCORED_STATUSES."},
+      "no_tests":    {"in_numerator": false, "in_denominator": false, "rationale": "No relevant test exists, so the suite cannot be credited or blamed. Explicitly excluded by the docstring."},
+      "not_checked": {"in_numerator": false, "in_denominator": false, "rationale": "Never executed — no authoritative result exists. Explicitly excluded as 'not evaluated'."},
+      "suspicious":  {"in_numerator": false, "in_denominator": false, "rationale": "Non-decisive outcome. Explicitly excluded as 'not evaluated'."}
+    },
+    "scored_statuses_constant": {
+      "location": "mutation_contract.py line 30",
+      "value": ["killed", "survived", "timeout"],
+      "comment": "Statuses that represent a mutant that was actually executed and decided."
+    },
+    "accounting_invariant": {
+      "location": "mutation_contract.py :: MutationCounts.generated + reconcile_counts()",
+      "identity": "TOTAL = killed + survived + timeout + no_tests + not_checked + suspicious",
+      "enforced": true
+    },
+    "returns_none_when_no_scored_mutants": true,
+    "threshold_percent": 80,
+    "threshold_changed_by_this_phase": false,
+    "gate_model": {
+      "gate_a": "Execution Integrity — did mutation testing actually execute?",
+      "gate_b": "Evidence Integrity — are all classifications accounted for (reconcile_counts + generated > 0)?",
+      "gate_c": "Quality Threshold — evaluated ONLY if A and B pass; otherwise 'NOT EVALUABLE'"
+    }
+  },
+
+  "policy_ambiguity_assessment": {
+    "is_existing_policy_ambiguous": true,
+    "ambiguity_is_material_to_this_phase": false,
+    "reason_not_material": "All four engines now have not_checked = 0 and suspicious = 0, so every excluded-from-denominator category is either zero or negligible (no_tests = 4 across 2406 mutants). The score is therefore insensitive to the ambiguity.",
+    "identified_ambiguities": [
+      {
+        "id": "AMB-1",
+        "topic": "Completeness is not encoded in the score itself",
+        "detail": "compute_score() returns a number whenever killed+survived+timeout > 0, even if a large not_checked population exists. A partial run therefore yields a plausible-looking score indistinguishable from a complete one. This is precisely how loan 84.2% and reconciliation 72.5% were previously reported alongside complete engines.",
+        "smallest_recommended_clarification": "Record an explicit completeness flag alongside every score, e.g. mutation_complete = (not_checked == 0 and suspicious == 0), and require any reported score to be labelled COMPLETE or PARTIAL. This adds a label; it does NOT change the formula or the threshold.",
+        "note": "MutationResult.evidence_complete already exists but is defined as (invariant_ok and generated > 0), which is TRUE for a truncated run. The recommendation is to strengthen the reported label, not to alter scoring."
+      },
+      {
+        "id": "AMB-2",
+        "topic": "timeout is scored but no_tests is not",
+        "detail": "timeout sits in the denominator while no_tests does not. This is a defensible and documented choice (timeout = executed-and-decided; no_tests = nothing to credit), but it is asserted in a docstring rather than in a project policy document.",
+        "smallest_recommended_clarification": "Promote the docstring rule to an explicit written policy statement. No numeric change."
+      }
+    ],
+    "policy_changes_made_this_phase": "NONE. The existing documented policy was applied verbatim via mutation_contract.compute_score()."
+  },
+
+  "definitions": {
+    "raw_mutation_population": "Every mutant generated for the engine's source scope (TOTAL).",
+    "evaluated_population": "killed + survived + timeout — mutants that received an authoritative, decisive result.",
+    "complete_mutation_score": "A score where EVERY eligible mutant received an authoritative result (not_checked = 0 AND suspicious = 0).",
+    "partial_mutation_score": "A score computed while some mutants remain not_checked or otherwise unevaluated. Must never be presented as equivalent to a complete score."
+  },
+
+  "per_engine": {
+    "credit_card_engine": {
+      "raw_population": 582, "evaluated_population": 582,
+      "killed": 440, "survived": 142, "timeout": 0, "no_tests": 0, "not_checked": 0, "suspicious": 0,
+      "identity": "582 = 440 + 142 + 0 + 0 + 0 + 0", "identity_holds": true,
+      "score_percent": 75.6, "score_arithmetic": "440 / (440 + 142 + 0) = 440/582 = 75.60%",
+      "completeness": "COMPLETE", "threshold_percent": 80, "gate_c": "BELOW GATE",
+      "delta_vs_m9_c42_18": "none (reproduced exactly)"
+    },
+    "account_engine": {
+      "raw_population": 183, "evaluated_population": 183,
+      "killed": 163, "survived": 20, "timeout": 0, "no_tests": 0, "not_checked": 0, "suspicious": 0,
+      "identity": "183 = 163 + 20 + 0 + 0 + 0 + 0", "identity_holds": true,
+      "score_percent": 89.1, "score_arithmetic": "163 / (163 + 20 + 0) = 163/183 = 89.07%",
+      "completeness": "COMPLETE", "threshold_percent": 80, "gate_c": "PASS",
+      "delta_vs_m9_c42_18": "none (reproduced exactly)"
+    },
+    "loan_engine": {
+      "raw_population": 1273, "evaluated_population": 1269,
+      "killed": 1066, "survived": 199, "timeout": 4, "no_tests": 4, "not_checked": 0, "suspicious": 0,
+      "identity": "1273 = 1066 + 199 + 4 + 4 + 0 + 0", "identity_holds": true,
+      "score_percent": 84.0, "score_arithmetic": "1066 / (1066 + 199 + 4) = 1066/1269 = 84.00%",
+      "completeness": "COMPLETE", "threshold_percent": 80, "gate_c": "PASS",
+      "delta_vs_m9_c42_18": "not_checked 280 -> 0; killed 834 -> 1066; survived 152 -> 199; timeout 3 -> 4; score 84.2 (PARTIAL) -> 84.0 (COMPLETE)"
+    },
+    "reconciliation_engine": {
+      "raw_population": 368, "evaluated_population": 368,
+      "killed": 296, "survived": 72, "timeout": 0, "no_tests": 0, "not_checked": 0, "suspicious": 0,
+      "identity": "368 = 296 + 72 + 0 + 0 + 0 + 0", "identity_holds": true,
+      "score_percent": 80.4, "score_arithmetic": "296 / (296 + 72 + 0) = 296/368 = 80.43%",
+      "completeness": "COMPLETE", "threshold_percent": 80, "gate_c": "PASS",
+      "delta_vs_m9_c42_18": "not_checked 266 -> 0; killed 74 -> 296; survived 28 -> 72; score 72.5 (PARTIAL) -> 80.4 (COMPLETE, now PASSES)"
+    }
+  },
+
+  "aggregate": {
+    "method": "population-weighted using authoritative counts; engine percentages were NOT averaged",
+    "total": 2406,
+    "killed": 1965,
+    "survived": 433,
+    "timeout": 4,
+    "no_tests": 4,
+    "not_checked": 0,
+    "suspicious": 0,
+    "evaluated_population": 2402,
+    "identity": "2406 = 1965 + 433 + 4 + 4 + 0 + 0 = 2406",
+    "identity_holds": true,
+    "evaluated_arithmetic": "1965 + 433 + 4 = 2402",
+    "score_percent": 81.8,
+    "score_arithmetic": "1965 / 2402 = 81.8068% -> 81.8%",
+    "completeness": "COMPLETE",
+    "completeness_justification": "not_checked = 0 and suspicious = 0 for ALL FOUR engines. Every eligible mutant received an authoritative result.",
+    "threshold_percent": 80,
+    "gate_c": "PASS",
+    "naive_mean_of_engine_percentages": 82.3,
+    "naive_mean_used": false,
+    "naive_mean_note": "Reported only to demonstrate it was NOT used; the population-weighted figure 81.8% is authoritative."
+  },
+
+  "partial_vs_complete_ledger": {
+    "phase_6_requirement": "Do not use partial scores as final scores",
+    "previously_partial_now_superseded": {
+      "loan_84_2_percent": {"status": "SUPERSEDED", "was": "PARTIAL (280 not_checked)", "now": "84.0% COMPLETE"},
+      "reconciliation_72_5_percent": {"status": "SUPERSEDED", "was": "PARTIAL (266 not_checked)", "now": "80.4% COMPLETE"},
+      "aggregate_81_6_percent": {"status": "SUPERSEDED", "was": "PARTIAL (546 not_checked)", "now": "81.8% COMPLETE"}
+    },
+    "any_engine_still_partial": false,
+    "aggregate_must_be_labelled_partial": false
+  },
+
+  "verification": {
+    "computed_with": "runtime.foundation.verification.mutation_contract.compute_score() and reconcile_counts() — the project's own canonical implementations",
+    "all_identities_asserted_programmatically": true,
+    "all_identities_hold": true
+  }
+}
