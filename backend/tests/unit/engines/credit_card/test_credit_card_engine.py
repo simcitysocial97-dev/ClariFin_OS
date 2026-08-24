@@ -6,7 +6,6 @@ from datetime import date
 from decimal import Decimal
 
 import pytest
-
 from src.engines.credit_card_engine import billing, interest, metrics, utilization
 from src.engines.credit_card_engine.emi import compute_emi_conversion
 from src.engines.credit_card_engine.foreclosure import compute_card_foreclosure
@@ -181,9 +180,14 @@ class TestForeclosureEngine:
     def test_foreclosure_with_penalty(self):
         """Foreclosure with prepayment penalty returns higher amount."""
         result_no_penalty = compute_card_foreclosure(1000000, 2400, 6, penalty_bps=0)
-        result_with_penalty = compute_card_foreclosure(1000000, 2400, 6, penalty_bps=500)
+        result_with_penalty = compute_card_foreclosure(
+            1000000, 2400, 6, penalty_bps=500
+        )
         assert result_with_penalty["penalty_paise"] > 0
-        assert result_with_penalty["foreclosure_amount_paise"] > result_no_penalty["foreclosure_amount_paise"]
+        assert (
+            result_with_penalty["foreclosure_amount_paise"]
+            > result_no_penalty["foreclosure_amount_paise"]
+        )
 
     def test_foreclosure_zero_remaining_months(self):
         """Zero remaining months still owes principal (no penalty, but full amount)."""
@@ -299,10 +303,9 @@ class TestInterestPrecision:
         """Monthly charge aggregates multiple daily balances correctly."""
         balances = [("2025-01-01", 100000), ("2025-01-02", 200000)]
         result = interest.compute_monthly_interest_charge(balances, 2400)
-        expected = (
-            interest.compute_daily_interest(100000, 2400)
-            + interest.compute_daily_interest(200000, 2400)
-        )
+        expected = interest.compute_daily_interest(
+            100000, 2400
+        ) + interest.compute_daily_interest(200000, 2400)
         assert result == expected
 
     def test_compute_monthly_interest_charge_large_cycle(self):
@@ -436,6 +439,7 @@ class TestEmiPrecision:
         """Zero rate EMI is exact division (ceiling-adjusted)."""
         result = billing._next_billing_day_after  # trigger import
         from src.engines.credit_card_engine.emi import compute_emi_fixed
+
         result = compute_emi_fixed(100000, 0, 3)
         # 100000 / 3 = 33333.33... → ceiling to 33334
         assert result == 33334
@@ -444,6 +448,7 @@ class TestEmiPrecision:
     def test_compute_emi_fixed_positive_rate(self):
         """Positive rate EMI is greater than simple division."""
         from src.engines.credit_card_engine.emi import compute_emi_fixed
+
         zero_rate = compute_emi_fixed(100000, 0, 12)
         positive_rate = compute_emi_fixed(100000, 2400, 12)
         assert positive_rate > zero_rate
@@ -469,6 +474,7 @@ class TestEmiPrecision:
     def test_compute_monthly_interest_edge_cases(self):
         """Monthly interest handles edge cases correctly."""
         from src.engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest(0, 2400) == 0
         assert compute_monthly_interest(100000, 0) == 0
         assert compute_monthly_interest(-1, 2400) == 0

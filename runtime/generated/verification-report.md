@@ -1,16 +1,31 @@
 # Verification Report
 
-**Profile:** backend
-**Generated:** 2026-08-21T18:00:36.019702+00:00
-**Overall Status:** passed
+**Profile:** quick
+**Generated:** 2026-08-23T15:31:49.087911+00:00
+**Overall Status:** failed
 
 ## Changed Files
 
+- `.github/backend/tests/generated/mutation/mutation-run.log`
+- `.github/backend/tests/generated/mutation/mutation-summary.json`
+- `.github/scripts/aggregate_evidence.py`
+- `.github/scripts/generate_mutation_report.py`
+- `.github/scripts/generate_plan.py`
 - `.github/scripts/run_api_contracts.sh`
+- `.github/scripts/run_mutation_local_smoke.sh`
+- `.github/scripts/run_mutation_selective.sh`
 - `.github/scripts/run_playwright_tests.sh`
+- `.github/scripts/validate_actions.py`
 - `.github/workflows/api-contracts.yml`
+- `.github/workflows/mutation.yml`
+- `.github/workflows/playwright.yml`
+- `.gitignore`
 - `.kilo/plans/1787137122047-health-check-timeout-fix.md`
+- `.kilo/plans/1787286911071-c43-remaining-issues-plan.md`
+- `.kilo/plans/1787318429130-mutation-testing-green-plan.md`
+- `_probe_emi_up.py`
 - `activeContext.md`
+- `backend/pyproject.toml`
 - `backend/src/api.py`
 - `backend/src/core/dtos/dashboard_dto.py`
 - `backend/src/core/dtos/reconciliation_dto.py`
@@ -25,9 +40,54 @@
 - `backend/src/services/dashboard_service.py`
 - `backend/src/services/transaction_service.py`
 - `backend/src/startup.py`
+- `backend/tests/generated/mutation/mutation-summary.json`
 - `backend/tests/generated/openapi-current.json`
+- `backend/tests/mutation/mutation_config.toml`
+- `backend/tests/mutation/run_mutation_baseline.sh`
+- `backend/tests/mutation_infra/mutants/mutmut-stats.json`
+- `backend/tests/mutation_infra/mutants/probe.py`
+- `backend/tests/mutation_infra/mutants/probe.py.meta`
+- `backend/tests/mutation_infra/mutants/probe.py.spans`
+- `backend/tests/mutation_infra/mutants/pyproject.toml`
+- `backend/tests/mutation_infra/mutants/test_probe.py`
+- `backend/tests/mutation_infra/probe.py`
+- `backend/tests/mutation_infra/pyproject.toml`
+- `backend/tests/mutation_infra/test_probe.py`
+- `backend/tests/probes/test_m4_exit_probe.py`
+- `backend/tests/properties/behaviour/test_engine_properties.py`
+- `backend/tests/properties/cashflow/test_engine_properties.py`
+- `backend/tests/properties/credit_card_engine/test_billing_properties.py`
+- `backend/tests/properties/credit_card_engine/test_emi_properties.py`
+- `backend/tests/properties/credit_card_engine/test_interest_properties.py`
+- `backend/tests/properties/credit_cards/test_engine_properties.py`
+- `backend/tests/properties/financial_events/test_engine_properties.py`
+- `backend/tests/properties/financial_events/test_lineage_properties.py`
+- `backend/tests/properties/forecasting/test_engine_properties.py`
+- `backend/tests/properties/investment/test_engine_properties.py`
+- `backend/tests/properties/lending/test_engine_properties.py`
+- `backend/tests/properties/loan_engine/test_amortization_properties.py`
+- `backend/tests/properties/loan_engine/test_emi_properties.py`
+- `backend/tests/properties/loan_engine/test_floating_rate_properties.py`
+- `backend/tests/properties/loan_engine/test_foreclosure_properties.py`
+- `backend/tests/properties/loan_engine/test_metrics_properties.py`
+- `backend/tests/properties/loan_engine/test_prepayment_properties.py`
+- `backend/tests/properties/recommendations/test_engine_properties.py`
+- `backend/tests/properties/reconciliation/test_engine_properties.py`
+- `backend/tests/properties/transaction_intelligence/test_engine_properties.py`
+- `backend/tests/unit/engines/account/test_account_engine.py`
+- `backend/tests/unit/engines/balance_engine.py`
+- `backend/tests/unit/engines/behavior/test_behavior_engine.py`
+- `backend/tests/unit/engines/behavior/test_stress.py`
+- `backend/tests/unit/engines/credit_card/test_credit_card_engine.py`
+- `backend/tests/unit/engines/ledger_audit_engine.py`
+- `backend/tests/unit/engines/loan/test_amortization.py`
 - `backend/tests/unit/engines/loan/test_c39_regression.py`
+- `backend/tests/unit/engines/reconciliation/test_reconciliation.py`
 - `backend/tests/unit/services/test_behaviour_service.py`
+- `dependency-reports/dependency-health.md`
+- `dependency-reports/npm-audit.txt`
+- `dependency-reports/npm-outdated.json`
+- `dependency-reports/python-audit.txt`
 - `docs/M9-C10-forensic-report.md`
 - `docs/architecture/FRONTEND_BACKEND_RUNTIME_INTEGRATION.md`
 - `docs/evidence/m9-c32-preflight/api-contract-evidence-committed.json`
@@ -91,65 +151,6 @@
 - `frontend/proxy.ts`
 - `frontend/tests/e2e/fixtures/css-helpers.ts`
 - `frontend/tests/e2e/fixtures/test-fixtures.ts`
-- `frontend/tests/e2e/specs/behavior-scoring.spec.ts`
-- `frontend/tests/e2e/specs/behavior.spec.ts`
-- `frontend/tests/e2e/specs/dashboard.spec.ts`
-- `frontend/tests/e2e/specs/e2e-financial-logic.spec.ts`
-- `frontend/tests/e2e/specs/edge-cases.spec.ts`
-- `frontend/tests/e2e/specs/health-check.spec.ts`
-- `frontend/tests/e2e/specs/navigation.spec.ts`
-- `frontend/tests/e2e/specs/performance.spec.ts`
-- `frontend/tests/e2e/specs/reconciliation.spec.ts`
-- `frontend/tests/e2e/specs/transactions.spec.ts`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-mobile-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-page-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/behavior-page-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/cards-page-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-mobile-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-page-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dark-mode-dashboard-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-mobile-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-page-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/family-mode-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/header-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-mobile-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-page-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/import-page-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/personal-mode-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/reconciliation-page-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/settings-page-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/sidebar-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-mobile-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-page-chromium-linux.png`
-- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/upload-button-chromium-linux.png`
-- `frontend/tests/global-setup.ts`
-- `frontend/types/api-generated.ts`
-- `frontend/types/transaction.ts`
-- `memory-bank/activeContext.md`
-- `progress.md`
-- `runtime/foundation/verification/api_contracts/__init__.py`
-- `runtime/foundation/verification/api_contracts/c30_certification.py`
-- `runtime/foundation/verification/api_contracts/fixture.py`
-- `runtime/foundation/verification/api_contracts/gate.py`
-- `runtime/foundation/verification/api_contracts/inventory.py`
-- `runtime/foundation/verification/api_contracts/mutations.py`
-- `runtime/foundation/verification/api_contracts/normalize.py`
-- `runtime/foundation/verification/api_contracts/taxonomy.py`
-- `runtime/foundation/verification/models/model.py`
-- `runtime/foundation/verification/totals.py`
-- `runtime/system/evidence/collectors/test_results.py`
-- `runtime/tests/test_backend_evidence.py`
-- `runtime/tests/test_c37_certification_arithmetic.py`
-- `runtime/verify.py`
-- `test-results/.last-run.json`
-- `tools/e2e_seed.py`
-- `.kilo/plans/1787286911071-c43-remaining-issues-plan.md`
-- `backend/tests/probes/test_m4_exit_probe.py`
-- `dependency-reports/dependency-health.md`
-- `dependency-reports/npm-audit.txt`
-- `dependency-reports/npm-outdated.json`
-- `dependency-reports/python-audit.txt`
 - `frontend/tests/e2e/snapshots/historical/analytics-mobile-firefox-linux.png`
 - `frontend/tests/e2e/snapshots/historical/analytics-mobile-tablet-linux.png`
 - `frontend/tests/e2e/snapshots/historical/analytics-page-firefox-linux.png`
@@ -194,46 +195,263 @@
 - `frontend/tests/e2e/snapshots/historical/transactions-page-tablet-linux.png`
 - `frontend/tests/e2e/snapshots/historical/upload-button-firefox-linux.png`
 - `frontend/tests/e2e/snapshots/historical/upload-button-tablet-linux.png`
+- `frontend/tests/e2e/specs/behavior-scoring.spec.ts`
+- `frontend/tests/e2e/specs/behavior.spec.ts`
+- `frontend/tests/e2e/specs/dashboard.spec.ts`
+- `frontend/tests/e2e/specs/e2e-financial-logic.spec.ts`
+- `frontend/tests/e2e/specs/edge-cases.spec.ts`
+- `frontend/tests/e2e/specs/health-check.spec.ts`
+- `frontend/tests/e2e/specs/navigation.spec.ts`
+- `frontend/tests/e2e/specs/performance.spec.ts`
+- `frontend/tests/e2e/specs/reconciliation.spec.ts`
+- `frontend/tests/e2e/specs/transactions.spec.ts`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-mobile-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-mobile-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-page-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-page-firefox-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/behavior-page-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/behavior-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/cards-page-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/cards-page-firefox-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/cards-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-mobile-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-mobile-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-page-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-page-firefox-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dark-mode-dashboard-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dark-mode-dashboard-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-mobile-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-mobile-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-page-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-page-firefox-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/family-mode-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/family-mode-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/header-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/header-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-mobile-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-mobile-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-page-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-page-firefox-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/import-page-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/import-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/personal-mode-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/personal-mode-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/reconciliation-page-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/reconciliation-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/settings-page-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/settings-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/sidebar-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/sidebar-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-mobile-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-mobile-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-page-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-page-firefox-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/upload-button-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/upload-button-mobile-chrome-linux.png`
+- `frontend/tests/global-setup.ts`
+- `frontend/types/api-generated.ts`
+- `frontend/types/transaction.ts`
+- `frontend/vitest.config.ts`
+- `memory-bank/activeContext.md`
+- `progress.md`
+- `pyproject.toml`
+- `runtime/analyze_architecture.py`
+- `runtime/analyze_artifacts.py`
+- `runtime/analyze_engine_normalization.py`
+- `runtime/analyze_engine_topology.py`
+- `runtime/analyze_execution.py`
+- `runtime/analyze_gap.py`
+- `runtime/analyze_knowledge.py`
+- `runtime/analyze_ownership.py`
+- `runtime/foundation/architecture/chains.py`
+- `runtime/foundation/architecture/cross_layer.py`
+- `runtime/foundation/architecture/migration_reports.py`
+- `runtime/foundation/architecture/models.py`
+- `runtime/foundation/architecture/provider.py`
+- `runtime/foundation/architecture/sources.py`
+- `runtime/foundation/audit/artifact_ownership.py`
+- `runtime/foundation/audit/certification.py`
+- `runtime/foundation/audit/cluster.py`
+- `runtime/foundation/audit/cross_layer.py`
+- `runtime/foundation/audit/dependency_graph.py`
+- `runtime/foundation/audit/evidence.py`
+- `runtime/foundation/audit/executor.py`
+- `runtime/foundation/audit/failure_injection.py`
+- `runtime/foundation/audit/github_actions.py`
+- `runtime/foundation/audit/github_runtime.py`
+- `runtime/foundation/audit/integrity.py`
+- `runtime/foundation/audit/knowledge.py`
+- `runtime/foundation/audit/normalize.py`
+- `runtime/foundation/audit/observability.py`
+- `runtime/foundation/audit/performance.py`
+- `runtime/foundation/audit/pipeline.py`
+- `runtime/foundation/audit/planner.py`
+- `runtime/foundation/audit/remediation.py`
+- `runtime/foundation/audit/repair_order.py`
+- `runtime/foundation/audit/reporter.py`
+- `runtime/foundation/audit/repository.py`
+- `runtime/foundation/audit/roi.py`
+- `runtime/foundation/audit/runner.py`
+- `runtime/foundation/audit/runtime_cli.py`
+- `runtime/foundation/audit/verification_profiles.py`
+- `runtime/foundation/audit/workspace.py`
+- `runtime/foundation/integrity/__init__.py`
+- `runtime/foundation/integrity/engine.py`
+- `runtime/foundation/integrity/formatter.py`
+- `runtime/foundation/integrity/registry.py`
+- `runtime/foundation/integrity/rules.py`
+- `runtime/foundation/integrity/scanner.py`
+- `runtime/foundation/intelligence/platform/api.py`
+- `runtime/foundation/intelligence/platform/attribution.py`
+- `runtime/foundation/intelligence/platform/blast.py`
+- `runtime/foundation/intelligence/platform/certification.py`
+- `runtime/foundation/intelligence/platform/changeset.py`
+- `runtime/foundation/intelligence/platform/ci.py`
+- `runtime/foundation/intelligence/platform/cli_format.py`
+- `runtime/foundation/intelligence/platform/migration.py`
+- `runtime/foundation/intelligence/platform/optimizer.py`
+- `runtime/foundation/intelligence/platform/pipeline.py`
+- `runtime/foundation/intelligence/platform/repair.py`
+- `runtime/foundation/intelligence/platform/resolver.py`
+- `runtime/foundation/intelligence/platform/risk.py`
+- `runtime/foundation/knowledge/__init__.py`
+- `runtime/foundation/knowledge/catalog.py`
+- `runtime/foundation/knowledge/formatter.py`
+- `runtime/foundation/knowledge/indexer.py`
+- `runtime/foundation/knowledge/models.py`
+- `runtime/foundation/knowledge/query.py`
+- `runtime/foundation/knowledge/references.py`
+- `runtime/foundation/repository/builder/builder.py`
+- `runtime/foundation/repository/scanner/metadata_scanner.py`
+- `runtime/foundation/verification/__init__.py`
+- `runtime/foundation/verification/api_contracts/__init__.py`
+- `runtime/foundation/verification/api_contracts/c30_certification.py`
+- `runtime/foundation/verification/api_contracts/fixture.py`
+- `runtime/foundation/verification/api_contracts/gate.py`
+- `runtime/foundation/verification/api_contracts/inventory.py`
+- `runtime/foundation/verification/api_contracts/mutations.py`
+- `runtime/foundation/verification/api_contracts/normalize.py`
+- `runtime/foundation/verification/api_contracts/taxonomy.py`
+- `runtime/foundation/verification/cache.py`
+- `runtime/foundation/verification/cli/cli.py`
+- `runtime/foundation/verification/env.py`
+- `runtime/foundation/verification/evidence_contract.py`
+- `runtime/foundation/verification/executor.py`
+- `runtime/foundation/verification/failure_report.py`
+- `runtime/foundation/verification/models/model.py`
+- `runtime/foundation/verification/mutation_contract.py`
+- `runtime/foundation/verification/mutation_runner.py`
+- `runtime/foundation/verification/orchestrator.py`
+- `runtime/foundation/verification/planner/impact_rules.py`
+- `runtime/foundation/verification/planner/plan_models.py`
+- `runtime/foundation/verification/planner/planner.py`
 - `runtime/foundation/verification/product-support.md`
+- `runtime/foundation/verification/profiles.py`
+- `runtime/foundation/verification/reconciliation.py`
+- `runtime/foundation/verification/tier.py`
+- `runtime/foundation/verification/totals.py`
+- `runtime/foundation/workspace/dependencies.py`
+- `runtime/foundation/workspace/formatter.py`
+- `runtime/foundation/workspace/history.py`
+- `runtime/foundation/workspace/metrics.py`
+- `runtime/foundation/workspace/status.py`
+- `runtime/foundation/workspace/verification.py`
+- `runtime/foundation/workspace/workspace.py`
+- `runtime/program16_analysis.py`
+- `runtime/system/evidence/aggregator.py`
+- `runtime/system/evidence/collectors/contract.py`
+- `runtime/system/evidence/collectors/coverage.py`
+- `runtime/system/evidence/collectors/mutation.py`
+- `runtime/system/evidence/collectors/test_results.py`
+- `runtime/system/observability/analytics.py`
+- `runtime/system/observability/cost_analysis.py`
+- `runtime/system/observability/dashboard.py`
+- `runtime/system/observability/dependency_growth.py`
+- `runtime/system/observability/event_store.py`
+- `runtime/system/observability/flaky_tests.py`
+- `runtime/system/observability/health_report.py`
+- `runtime/system/observability/repository.py`
+- `runtime/tests/conftest.py`
+- `runtime/tests/test_backend_evidence.py`
+- `runtime/tests/test_c37_certification_arithmetic.py`
+- `runtime/tests/test_cross_layer_planner.py`
+- `runtime/tests/test_dependencies.py`
+- `runtime/tests/test_diagnose_failures.py`
+- `runtime/tests/test_diagnostics.py`
+- `runtime/tests/test_e4_graph_attribution.py`
+- `runtime/tests/test_engineering_intelligence.py`
+- `runtime/tests/test_evidence_aggregator.py`
+- `runtime/tests/test_evidence_frontend_units.py`
+- `runtime/tests/test_executor_artifact_persistence.py`
+- `runtime/tests/test_failure_attribution.py`
+- `runtime/tests/test_false_positive_rate.py`
+- `runtime/tests/test_integrity_engine.py`
+- `runtime/tests/test_integrity_formatter.py`
+- `runtime/tests/test_integrity_registry.py`
+- `runtime/tests/test_integrity_rules.py`
+- `runtime/tests/test_integrity_scanner.py`
+- `runtime/tests/test_knowledge_catalog.py`
+- `runtime/tests/test_knowledge_formatter.py`
+- `runtime/tests/test_knowledge_indexer.py`
+- `runtime/tests/test_knowledge_queries.py`
+- `runtime/tests/test_knowledge_references.py`
+- `runtime/tests/test_m9c3_verification_gate.py`
+- `runtime/tests/test_m9c5_gate_topology.py`
+- `runtime/tests/test_metrics.py`
+- `runtime/tests/test_mutation_infra.py`
+- `runtime/tests/test_orchestrator.py`
+- `runtime/tests/test_repair.py`
+- `runtime/tests/test_risk.py`
+- `runtime/tests/test_runtime_performance.py`
+- `runtime/tests/test_snapshots.py`
+- `runtime/tests/test_status.py`
+- `runtime/tests/test_vea5_m5_ci_integration.py`
+- `runtime/tests/test_vea5_m6_evidence_contract.py`
+- `runtime/tests/test_vea5_m8_merge_enforcement.py`
+- `runtime/tests/test_vea5_m8r_cache_observability.py`
+- `runtime/tests/test_vea5_m8r_cli_reconcile.py`
+- `runtime/tests/test_vea5_m9_security_codeql.py`
+- `runtime/tests/test_vea5_plan_reconciliation.py`
+- `runtime/tests/test_vea5_tier_plan.py`
+- `runtime/tests/test_vea5_verification_cache.py`
+- `runtime/tests/test_verification_identity.py`
+- `runtime/tests/test_verification_identity_execution.py`
+- `runtime/tests/test_verification_module_paths.py`
+- `runtime/tests/test_verification_unit_mapping.py`
+- `runtime/tests/test_verify_status.py`
+- `runtime/tests/test_workspace.py`
+- `runtime/verify.py`
+- `scripts/env-doctor.sh`
+- `scripts/verify.sh`
+- `test-results/.last-run.json`
+- `testing/runtime/foundation/verification/test_aggregator.py`
+- `testing/runtime/foundation/verification/test_evidence_collectors.py`
+- `testing/runtime/foundation/verification/test_plan_models.py`
+- `tools/development/check_coverage.py`
+- `tools/development/selective_verify.py`
+- `tools/development/validation_orchestrator.py`
+- `tools/e2e_seed.py`
+- `tools/generators/build_consumer_migration.py`
+- `tools/generators/build_cross_layer_map.py`
+- `AGENTS.md`
 
 ## Blast Radius
 
-- **affected_engines**: ['backend/src/engines/loan_engine', 'backend/src/engines/reconciliation_engine.py', 'backend/src/engines/behaviour_engine', 'backend/src/engines/account_engine', 'backend/src/engines/credit_card_engine']
-- **affected_services**: ['backend/src/services/loan_analysis_service.py', 'backend/src/services/loan_service.py', 'backend/src/services/loan_simulation_service.py', 'backend/src/services/transaction_intelligence_service.py', 'backend/src/services/reconciliation_service.py', 'backend/src/services/behaviour_service.py', 'backend/src/services/dashboard_service.py', 'backend/src/services/import_service.py', 'backend/src/services/account_service.py', 'backend/src/services/credit_card_service.py', 'service:backend/src/services/transaction_service.py', 'service:backend/src/services/dashboard_service.py', 'service:backend/src/services/import_service.py', 'service:backend/src/services/__init__.py']
-- **affected_capabilities**: ['useLoansCapability', 'useReconciliationCapability', 'useBehaviourCapability', 'useAccountsCapability', 'useCreditCardsCapability', 'capability:useCashflowCapability', 'capability:useForecastCapability', 'capability:useInvestmentsCapability', 'capability:useNetWorthCapability', 'capability:useTransactionCapability', 'capability:useBehaviourCapability', 'capability:useReconciliationCapability', 'capability:useLoansCapability']
-- **affected_tests**: ['backend/tests/properties/lending/test_engine_properties.py', 'backend/tests/properties/loan_engine/__init__.py', 'backend/tests/properties/loan_engine/test_amortization_properties.py', 'backend/tests/properties/loan_engine/test_emi_properties.py', 'backend/tests/properties/loan_engine/test_floating_rate_properties.py', 'backend/tests/properties/loan_engine/test_foreclosure_properties.py', 'backend/tests/properties/loan_engine/test_metrics_properties.py', 'backend/tests/properties/loan_engine/test_prepayment_properties.py', 'backend/tests/unit/engines/loan/test_amortization.py', 'backend/tests/unit/engines/loan/test_loan_engine.py', 'backend/tests/invariants/test_reconciliation_determinism.py', 'backend/tests/invariants/test_reconciliation_properties.py', 'backend/tests/properties/reconciliation/test_engine_properties.py', 'backend/tests/unit/engines/reconciliation/test_reconciliation.py', 'backend/tests/capability/pattern_analysis/test_capability.py', 'backend/tests/properties/behaviour/test_engine_properties.py', 'backend/tests/properties/recommendations/test_engine_properties.py', 'backend/tests/unit/engines/behavior/test_behavior_engine.py', 'backend/tests/unit/engines/behaviour/test_core.py', 'backend/tests/unit/engines/behaviour/test_integration.py', 'backend/tests/unit/engines/behaviour/test_metrics.py', 'backend/tests/unit/engines/behaviour/test_patterns.py', 'backend/tests/unit/engines/account/test_account_engine.py', 'backend/tests/properties/credit_card_engine/__init__.py', 'backend/tests/properties/credit_card_engine/test_billing_properties.py', 'backend/tests/properties/credit_card_engine/test_emi_properties.py', 'backend/tests/properties/credit_card_engine/test_interest_properties.py', 'backend/tests/properties/credit_cards/test_engine_properties.py', 'backend/tests/unit/engines/credit_card/test_credit_card_engine.py']
+- **affected_engines**: ['backend/src/engines/loan_engine', 'backend/src/engines/reconciliation_engine.py', 'backend/src/engines/behaviour_engine', 'backend/src/engines/account_engine', 'backend/src/engines/credit_card_engine', 'engine:account_engine', 'engine:behaviour_engine', 'engine:cashflow_engine', 'engine:credit_card_engine', 'engine:financial_events', 'engine:financial_intelligence', 'engine:loan_engine', 'engine:reconciliation_engine', 'engine:transaction_intelligence', 'test:backend/tests/capability/financial_events/__init__.py', 'test:backend/tests/capability/financial_events/test_capability.py', 'test:backend/tests/capability/financial_events/test_revocation.py', 'test:backend/tests/capability/household_cashflow/test_capability.py', 'test:backend/tests/capability/pattern_analysis/test_capability.py', 'test:backend/tests/capability/transaction_intelligence/__init__.py', 'test:backend/tests/capability/transaction_intelligence/test_capability.py', 'test:backend/tests/contract/generated/test_financial_events.py', 'test:backend/tests/invariants/financial_events.py', 'test:backend/tests/invariants/test_reconciliation_determinism.py', 'test:backend/tests/invariants/test_reconciliation_properties.py', 'test:backend/tests/properties/behaviour/test_engine_properties.py', 'test:backend/tests/properties/cashflow/test_engine_properties.py', 'test:backend/tests/properties/credit_card_engine/__init__.py', 'test:backend/tests/properties/credit_card_engine/test_billing_properties.py', 'test:backend/tests/properties/credit_card_engine/test_emi_properties.py', 'test:backend/tests/properties/credit_card_engine/test_interest_properties.py', 'test:backend/tests/properties/credit_cards/test_engine_properties.py', 'test:backend/tests/properties/financial_events/__init__.py', 'test:backend/tests/properties/financial_events/test_engine_properties.py', 'test:backend/tests/properties/financial_events/test_lineage_properties.py', 'test:backend/tests/properties/forecasting/test_engine_properties.py', 'test:backend/tests/properties/lending/test_engine_properties.py', 'test:backend/tests/properties/loan_engine/__init__.py', 'test:backend/tests/properties/loan_engine/test_amortization_properties.py', 'test:backend/tests/properties/loan_engine/test_emi_properties.py', 'test:backend/tests/properties/loan_engine/test_floating_rate_properties.py', 'test:backend/tests/properties/loan_engine/test_foreclosure_properties.py', 'test:backend/tests/properties/loan_engine/test_metrics_properties.py', 'test:backend/tests/properties/loan_engine/test_prepayment_properties.py', 'test:backend/tests/properties/recommendations/test_engine_properties.py', 'test:backend/tests/properties/reconciliation/test_engine_properties.py', 'test:backend/tests/properties/transaction_intelligence/__init__.py', 'test:backend/tests/properties/transaction_intelligence/test_engine_properties.py', 'test:backend/tests/unit/engines/account/test_account_engine.py', 'test:backend/tests/unit/engines/behavior/test_behavior_engine.py', 'test:backend/tests/unit/engines/behaviour/test_core.py', 'test:backend/tests/unit/engines/behaviour/test_integration.py', 'test:backend/tests/unit/engines/behaviour/test_metrics.py', 'test:backend/tests/unit/engines/behaviour/test_patterns.py', 'test:backend/tests/unit/engines/credit_card/test_credit_card_engine.py', 'test:backend/tests/unit/engines/financial_events/__init__.py', 'test:backend/tests/unit/engines/financial_events/test_financial_events.py', 'test:backend/tests/unit/engines/loan/test_amortization.py', 'test:backend/tests/unit/engines/loan/test_loan_engine.py', 'test:backend/tests/unit/engines/reconciliation/test_reconciliation.py', 'test:backend/tests/unit/engines/transaction_intelligence/__init__.py']
+- **affected_services**: ['backend/src/services/loan_analysis_service.py', 'backend/src/services/loan_service.py', 'backend/src/services/loan_simulation_service.py', 'backend/src/services/transaction_intelligence_service.py', 'backend/src/services/reconciliation_service.py', 'backend/src/services/behaviour_service.py', 'backend/src/services/dashboard_service.py', 'backend/src/services/import_service.py', 'backend/src/services/account_service.py', 'backend/src/services/credit_card_service.py', 'service:backend/src/services/transaction_service.py', 'service:backend/src/services/dashboard_service.py', 'service:backend/src/services/import_service.py', 'service:backend/src/services/__init__.py', 'service:backend/src/services/account_service.py', 'service:backend/src/services/behaviour_service.py', 'service:backend/src/services/credit_card_service.py', 'service:backend/src/services/financial_events_service.py', 'service:backend/src/services/financial_intelligence_service.py', 'service:backend/src/services/loan_analysis_service.py', 'service:backend/src/services/loan_service.py', 'service:backend/src/services/loan_simulation_service.py', 'service:backend/src/services/reconciliation_service.py', 'service:backend/src/services/transaction_intelligence_service.py']
+- **affected_capabilities**: ['useLoansCapability', 'useReconciliationCapability', 'useBehaviourCapability', 'useAccountsCapability', 'useCreditCardsCapability', 'capability:useCashflowCapability', 'capability:useForecastCapability', 'capability:useInvestmentsCapability', 'capability:useNetWorthCapability', 'capability:useTransactionCapability', 'capability:useBehaviourCapability', 'capability:useAccountsCapability', 'capability:useCreditCardsCapability', 'capability:useLoansCapability', 'capability:useReconciliationCapability']
+- **affected_tests**: ['backend/tests/properties/lending/test_engine_properties.py', 'backend/tests/properties/loan_engine/__init__.py', 'backend/tests/properties/loan_engine/test_amortization_properties.py', 'backend/tests/properties/loan_engine/test_emi_properties.py', 'backend/tests/properties/loan_engine/test_floating_rate_properties.py', 'backend/tests/properties/loan_engine/test_foreclosure_properties.py', 'backend/tests/properties/loan_engine/test_metrics_properties.py', 'backend/tests/properties/loan_engine/test_prepayment_properties.py', 'backend/tests/unit/engines/loan/test_amortization.py', 'backend/tests/unit/engines/loan/test_loan_engine.py', 'backend/tests/invariants/test_reconciliation_determinism.py', 'backend/tests/invariants/test_reconciliation_properties.py', 'backend/tests/properties/reconciliation/test_engine_properties.py', 'backend/tests/unit/engines/reconciliation/test_reconciliation.py', 'backend/tests/capability/pattern_analysis/test_capability.py', 'backend/tests/properties/behaviour/test_engine_properties.py', 'backend/tests/properties/recommendations/test_engine_properties.py', 'backend/tests/unit/engines/behavior/test_behavior_engine.py', 'backend/tests/unit/engines/behaviour/test_core.py', 'backend/tests/unit/engines/behaviour/test_integration.py', 'backend/tests/unit/engines/behaviour/test_metrics.py', 'backend/tests/unit/engines/behaviour/test_patterns.py', 'backend/tests/unit/engines/account/test_account_engine.py', 'backend/tests/properties/credit_card_engine/__init__.py', 'backend/tests/properties/credit_card_engine/test_billing_properties.py', 'backend/tests/properties/credit_card_engine/test_emi_properties.py', 'backend/tests/properties/credit_card_engine/test_interest_properties.py', 'backend/tests/properties/credit_cards/test_engine_properties.py', 'backend/tests/unit/engines/credit_card/test_credit_card_engine.py', 'backend/tests/properties/cashflow/test_engine_properties.py', 'backend/tests/properties/financial_events/test_engine_properties.py', 'backend/tests/properties/financial_events/test_lineage_properties.py', 'backend/tests/properties/forecasting/test_engine_properties.py', 'backend/tests/properties/transaction_intelligence/test_engine_properties.py', 'backend/tests/capability/financial_events/__init__.py', 'backend/tests/capability/financial_events/test_capability.py', 'backend/tests/capability/financial_events/test_revocation.py', 'backend/tests/capability/household_cashflow/test_capability.py', 'backend/tests/capability/transaction_intelligence/__init__.py', 'backend/tests/capability/transaction_intelligence/test_capability.py', 'backend/tests/contract/generated/test_financial_events.py', 'backend/tests/invariants/financial_events.py', 'backend/tests/properties/financial_events/__init__.py', 'backend/tests/properties/transaction_intelligence/__init__.py', 'backend/tests/unit/engines/financial_events/__init__.py', 'backend/tests/unit/engines/financial_events/test_financial_events.py', 'backend/tests/unit/engines/transaction_intelligence/__init__.py']
 
 ## Verification Plan
 
-- **Plan ID:** plan-20260821-175234
-- **Scope:** backend
+- **Plan ID:** plan-20260823-151956
+- **Scope:** quick
 - **Targets:** 10
 - **Steps:** 4
 - **Estimated Duration:** 660s
@@ -242,17 +460,38 @@
 
 | Task ID | Command | Status | Exit | Duration | Error | Stdout | Stderr |
 |---------|---------|--------|------|----------|-------|--------|--------|
-| step-0001 | bash .github/scripts/run_backend_verification.sh | VerificationStatus.PASSED | 0 | 83.9s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stderr.txt |
-| step-0002 | bash .github/scripts/run_fast_checks.sh | VerificationStatus.PASSED | 0 | 61.3s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0002-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0002-stderr.txt |
-| step-0003 | bash .github/scripts/run_frontend_verification.sh | VerificationStatus.PASSED | 0 | 173.8s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0003-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0003-stderr.txt |
-| step-0004 | bash .github/scripts/run_runtime_verification.sh | VerificationStatus.PASSED | 0 | 163.0s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0004-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0004-stderr.txt |
+| step-0001 | bash .github/scripts/run_backend_verification.sh | VerificationStatus.PASSED | 0 | 86.5s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stderr.txt |
+| step-0002 | bash .github/scripts/run_runtime_verification.sh | VerificationStatus.FAILED | 1 | 328.2s | /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.   from st... | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0002-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0002-stderr.txt |
+| step-0003 | bash .github/scripts/run_frontend_verification.sh | VerificationStatus.PASSED | 0 | 213.0s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0003-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0003-stderr.txt |
+| step-0004 | bash .github/scripts/run_fast_checks.sh | VerificationStatus.FAILED | 1 | 84.8s | All done! ✨ 🍰 ✨ 460 files would be left unchanged. would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/mutation_infra/mutants/probe.py would reformat /home/vasantha/AI-Projects/Clar... | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0004-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0004-stderr.txt |
 
 ## Results Summary
 
-- **Passed:** 4
-- **Failed:** 0
+- **Passed:** 2
+- **Failed:** 2
 - **Skipped:** 0
-- **Total Duration:** 482.0s
+- **Total Duration:** 712.5s
+
+## Failure Details
+
+### step-0002
+- Unit: `runtime-self-test`
+- Classification: TEST_FAILURE
+- Command: `bash .github/scripts/run_runtime_verification.sh`
+- Exit code: 1
+- Result: 760 passed, 3 warnings in 35.12s
+- First/root failure: `runtime/tests/test_backend_evidence.py::TestMutationRunnerPortability::test_mutation_runner_uses_python3_not_python`
+- Reason: /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.   from starlette.testclient import TestClient as TestClient  # noqa /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.   from starlette.testclient import TestClient as Test...
+- Full evidence: `/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0002-stderr.txt`
+
+### step-0004
+- Classification: TEST_FAILURE
+- Command: `bash .github/scripts/run_fast_checks.sh`
+- Exit code: 1
+- Result: ❯ components/loading/__tests__/loading-performance.test.tsx (4 tests | 1 failed) 61586ms
+- First/root failure: `runtime/tests/test_verification_identity_execution.py::TestDedupPreservesIdentity::test_step_unit_id_is_one_of_its_contributing_units`
+- Reason: All done! ✨ 🍰 ✨ 460 files would be left unchanged. would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/mutation_infra/mutants/probe.py would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/properties/loan_engine/test_floating_rate_properties.py would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/behavior/test_behavior_engine.py would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/behavior/test_stress.py wou...
+- Full evidence: `/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0004-stderr.txt`
 
 
 ## Dependency Chains (Program 7A)
@@ -333,4 +572,6 @@ No evidence files generated.
 
 ## Recommendations
 
-- Review changes in affected engines: backend/src/engines/loan_engine, backend/src/engines/reconciliation_engine.py, backend/src/engines/behaviour_engine, backend/src/engines/account_engine, backend/src/engines/credit_card_engine
+- Investigate failing task: bash .github/scripts/run_runtime_verification.sh
+- Investigate failing task: bash .github/scripts/run_fast_checks.sh
+- Review changes in affected engines: backend/src/engines/loan_engine, backend/src/engines/reconciliation_engine.py, backend/src/engines/behaviour_engine, backend/src/engines/account_engine, backend/src/engines/credit_card_engine, engine:account_engine, engine:behaviour_engine, engine:cashflow_engine, engine:credit_card_engine, engine:financial_events, engine:financial_intelligence, engine:loan_engine, engine:reconciliation_engine, engine:transaction_intelligence, test:backend/tests/capability/financial_events/__init__.py, test:backend/tests/capability/financial_events/test_capability.py, test:backend/tests/capability/financial_events/test_revocation.py, test:backend/tests/capability/household_cashflow/test_capability.py, test:backend/tests/capability/pattern_analysis/test_capability.py, test:backend/tests/capability/transaction_intelligence/__init__.py, test:backend/tests/capability/transaction_intelligence/test_capability.py, test:backend/tests/contract/generated/test_financial_events.py, test:backend/tests/invariants/financial_events.py, test:backend/tests/invariants/test_reconciliation_determinism.py, test:backend/tests/invariants/test_reconciliation_properties.py, test:backend/tests/properties/behaviour/test_engine_properties.py, test:backend/tests/properties/cashflow/test_engine_properties.py, test:backend/tests/properties/credit_card_engine/__init__.py, test:backend/tests/properties/credit_card_engine/test_billing_properties.py, test:backend/tests/properties/credit_card_engine/test_emi_properties.py, test:backend/tests/properties/credit_card_engine/test_interest_properties.py, test:backend/tests/properties/credit_cards/test_engine_properties.py, test:backend/tests/properties/financial_events/__init__.py, test:backend/tests/properties/financial_events/test_engine_properties.py, test:backend/tests/properties/financial_events/test_lineage_properties.py, test:backend/tests/properties/forecasting/test_engine_properties.py, test:backend/tests/properties/lending/test_engine_properties.py, test:backend/tests/properties/loan_engine/__init__.py, test:backend/tests/properties/loan_engine/test_amortization_properties.py, test:backend/tests/properties/loan_engine/test_emi_properties.py, test:backend/tests/properties/loan_engine/test_floating_rate_properties.py, test:backend/tests/properties/loan_engine/test_foreclosure_properties.py, test:backend/tests/properties/loan_engine/test_metrics_properties.py, test:backend/tests/properties/loan_engine/test_prepayment_properties.py, test:backend/tests/properties/recommendations/test_engine_properties.py, test:backend/tests/properties/reconciliation/test_engine_properties.py, test:backend/tests/properties/transaction_intelligence/__init__.py, test:backend/tests/properties/transaction_intelligence/test_engine_properties.py, test:backend/tests/unit/engines/account/test_account_engine.py, test:backend/tests/unit/engines/behavior/test_behavior_engine.py, test:backend/tests/unit/engines/behaviour/test_core.py, test:backend/tests/unit/engines/behaviour/test_integration.py, test:backend/tests/unit/engines/behaviour/test_metrics.py, test:backend/tests/unit/engines/behaviour/test_patterns.py, test:backend/tests/unit/engines/credit_card/test_credit_card_engine.py, test:backend/tests/unit/engines/financial_events/__init__.py, test:backend/tests/unit/engines/financial_events/test_financial_events.py, test:backend/tests/unit/engines/loan/test_amortization.py, test:backend/tests/unit/engines/loan/test_loan_engine.py, test:backend/tests/unit/engines/reconciliation/test_reconciliation.py, test:backend/tests/unit/engines/transaction_intelligence/__init__.py

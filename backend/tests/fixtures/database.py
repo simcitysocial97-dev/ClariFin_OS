@@ -28,7 +28,6 @@ from pathlib import Path
 from typing import Any, Literal
 
 import pytest
-
 from src.core.db.connection import get_connection
 from src.core.db.schema import create_all, run_migrations, verify_schema
 

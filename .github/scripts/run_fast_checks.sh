@@ -12,6 +12,17 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+cd "$REPO_ROOT"
+
+# Canonical Python resolver (venv-first)
+if [ -x "$REPO_ROOT/.venv/bin/python" ]; then
+  PY="$REPO_ROOT/.venv/bin/python"
+else
+  PY="$(command -v python3 || command -v python)"
+fi
+
 BACKEND_DIR="${1:-backend}"
 FAILED_CHECKS=()
 
@@ -31,7 +42,7 @@ cd "$BACKEND_DIR"
 # reproducible from a clean checkout. No-op when the registry already exists.
 if [ ! -f tests/generated/capability-registry.yaml ]; then
   echo -e "\n${YELLOW}[0/6] Generating verification seed artifacts...${NC}"
-  if python3 ../tools/development/check_coverage.py; then
+  if "$PY" ../tools/development/check_coverage.py; then
     echo -e "${GREEN}✓ Verification artifacts generated${NC}\n"
   else
     echo -e "${RED}✗ Failed to generate verification artifacts${NC}\n"
@@ -41,7 +52,7 @@ fi
 
 # ── Check 1: Ruff linting ─────────────────────────
 echo -e "\n${YELLOW}[1/5] Ruff lint check...${NC}"
-if ruff check . --output-format=github; then
+if "$PY" -m ruff check . --output-format=github; then
   echo -e "${GREEN}✓ Ruff passed${NC}"
 else
   echo -e "${RED}✗ Ruff failed${NC}"
@@ -50,7 +61,7 @@ fi
 
 # ── Check 2: Black formatting ─────────────────────
 echo -e "\n${YELLOW}[2/5] Black format check...${NC}"
-if black --check --diff .; then
+if "$PY" -m black --check --diff .; then
   echo -e "${GREEN}✓ Black passed${NC}"
 else
   echo -e "${RED}✗ Black failed${NC}"
@@ -60,7 +71,7 @@ fi
 # ── Check 3: Mypy type checking ───────────────────
 echo -e "\n${YELLOW}[3/5] Mypy type check...${NC}"
 # Only check src directory, not tests (tests are harder to type)
-if mypy src/ --ignore-missing-imports --no-error-summary 2>/dev/null; then
+if "$PY" -m mypy src/ --ignore-missing-imports --no-error-summary 2>/dev/null; then
   echo -e "${GREEN}✓ Mypy passed${NC}"
 else
   echo -e "${YELLOW}⚠ Mypy had issues (non-blocking for now)${NC}"
@@ -69,7 +80,7 @@ fi
 
 # ── Check 4: Unit tests ───────────────────────────
 echo -e "\n${YELLOW}[4/5] Unit tests...${NC}"
-if pytest tests/unit/ \
+if "$PY" -m pytest tests/unit/ \
     -x \
     --timeout=30 \
     --tb=short \
@@ -84,7 +95,7 @@ fi
 
 # ── Check 5: Architecture boundaries ─────────────
 echo -e "\n${YELLOW}[5/6] Architecture boundary tests...${NC}"
-if pytest tests/architecture/ \
+if "$PY" -m pytest tests/architecture/ \
     --timeout=30 \
     --tb=short \
     -q \
@@ -97,7 +108,7 @@ fi
 
 # ── Check 6: Meta / registry tests ───────────────────
 echo -e "\n${YELLOW}[6/6] Meta / registry tests...${NC}"
-if pytest tests/meta/ \
+if "$PY" -m pytest tests/meta/ \
     --timeout=30 \
     --tb=short \
     -q \

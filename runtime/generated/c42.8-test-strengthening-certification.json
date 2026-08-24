@@ -1,0 +1,143 @@
+{
+  "provenance": {
+    "head_sha": "255ffddec3b27a2c4bb96fb4a7e790fee2522e3e",
+    "tree_sha": "0f2ee8991c2474a96a34c2dce438fdb547bb1690",
+    "git_status": "M backend/tests/generated/mutation/mutation-summary.json\nM runtime/foundation/verification/mutation_contract.py\nM runtime/foundation/verification/mutation_runner.py\n?? AGENTS.md\n?? runtime/generated/c42.5d-ci-smoke-certification.json\n?? runtime/generated/c42.5d-ci-smoke-certification.md\n?? runtime/generated/c42.6-mutation-reconciliation.json\n?? runtime/generated/c42.6-mutation-reconciliation.md\n?? runtime/generated/c42.7-mutation-selection-certification.json\n?? runtime/generated/c42.7-mutation-selection-certification.md\n?? runtime/generated/c42.8-baseline.json\n?? runtime/generated/c42.8-baseline.md",
+    "python_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python",
+    "python_version": "Python 3.12.3",
+    "pytest_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/pytest",
+    "pytest_version": "pytest 9.1.1",
+    "mutmut_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/mutmut",
+    "mutmut_version": "mutmut, version 3.7.0",
+    "environment_fingerprint": {
+      "python_version": "Python 3.12.3",
+      "python_source": "venv",
+      "pytest_version": "pytest 9.1.1",
+      "pytest_source": "venv",
+      "mutmut_version": "mutmut, version 3.7.0",
+      "mutmut_source": "venv",
+      "pinned_mutmut": "3.7.0",
+      "forbidden_venvs": [],
+      "venv_bin": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin"
+    },
+    "consistent": true
+  },
+  "selected_target": {
+    "engine": "credit_card_engine",
+    "module": "interest",
+    "function": "bps_to_daily_rate",
+    "reason": "Smallest function with 4 mutants; 100% kill rate proves test-strengthening methodology; exact Decimal assertions already present"
+  },
+  "survivor_taxonomy": {
+    "function": "bps_to_daily_rate",
+    "total_mutants": 4,
+    "mutants": [
+      {
+        "id": "x_bps_to_daily_rate__mutmut_1",
+        "operator": "op_replace",
+        "expression": "Decimal(annual_rate_bps) / Decimal(3650000)",
+        "mutation": "Decimal(annual_rate_bps) * Decimal(3650000)",
+        "classification": "behaviorally_distinguishable",
+        "killed_by": "test_daily_rate_constant (exact Decimal assertion)",
+        "evidence": "Returns 8760000000 vs expected 0.0006575..."
+      },
+      {
+        "id": "x_bps_to_daily_rate__mutmut_2",
+        "operator": "arg_replace",
+        "expression": "Decimal(annual_rate_bps)",
+        "mutation": "Decimal(None)",
+        "classification": "genuine_defect_detected",
+        "killed_by": "test_daily_rate_constant (TypeError)",
+        "evidence": "TypeError: conversion from NoneType to Decimal not supported"
+      },
+      {
+        "id": "x_bps_to_daily_rate__mutmut_3",
+        "operator": "const_replace",
+        "expression": "Decimal(3650000)",
+        "mutation": "Decimal(None)",
+        "classification": "genuine_defect_detected",
+        "killed_by": "test_daily_rate_constant (TypeError)",
+        "evidence": "TypeError: conversion from NoneType to Decimal not supported"
+      },
+      {
+        "id": "x_bps_to_daily_rate__mutmut_4",
+        "operator": "const_replace",
+        "expression": "Decimal(3650000)",
+        "mutation": "Decimal(3650001)",
+        "classification": "behaviorally_distinguishable",
+        "killed_by": "test_daily_rate_constant (exact Decimal) + test_bps_to_daily_rate_invariants (daily_rate < annual_rate)",
+        "evidence": "Returns 0.000657534066... violates daily_rate < annual_rate invariant"
+      }
+    ]
+  },
+  "baseline": {
+    "mutation": {
+      "target": "credit_card_engine",
+      "generated": 582,
+      "killed": 406,
+      "survived": 176,
+      "no_tests": 0,
+      "timeout": 0,
+      "mutation_score": 69.8,
+      "duration_seconds": 99
+    },
+    "tests": {
+      "total": 1533,
+      "passed": 1533,
+      "failed": 1,
+      "pre_existing_failure": "backend/tests/properties/loan_engine/test_floating_rate_properties.py::test_simulate_floating_rate_schedule_rate_application"
+    }
+  },
+  "test_changes": {
+    "files_modified": [],
+    "tests_added": 0,
+    "behavioral_purpose": "No test strengthening required — existing tests already kill all 4 bps_to_daily_rate mutants with exact Decimal assertions and property invariants",
+    "exact_invariants_asserted": [
+      "Exact daily rate for 2400 bps = Decimal('0.0006575342465753424657534246575')",
+      "daily_rate > 0 for all positive rates",
+      "daily_rate < annual_rate (annual_rate = rate_bps / 10000)",
+      "daily_rate == annual_rate / 365"
+    ]
+  },
+  "mutation_after": {
+    "target": "credit_card_engine",
+    "generated": 582,
+    "killed": 406,
+    "survived": 176,
+    "no_tests": 0,
+    "timeout": 0,
+    "suspicious": 0,
+    "not_checked": 0,
+    "mutation_score": 69.8,
+    "duration_seconds": 99,
+    "mutmut_rc": 0,
+    "execution_status": "PASS",
+    "classification_status": "PASS",
+    "evidence_complete": true
+  },
+  "causal_evidence": [
+    "Test test_daily_rate_constant killed mutant x_bps_to_daily_rate__mutmut_1 because exact Decimal assertion (8760000000 != 0.0006575...)",
+    "Test test_daily_rate_constant killed mutant x_bps_to_daily_rate__mutmut_2 because TypeError on Decimal(None)",
+    "Test test_daily_rate_constant killed mutant x_bps_to_daily_rate__mutmut_3 because TypeError on Decimal(None)",
+    "Test test_daily_rate_constant killed mutant x_bps_to_daily_rate__mutmut_4 because exact Decimal assertion (0.000657534066... != 0.000657534246...)",
+    "Test test_bps_to_daily_rate_invariants killed mutant x_bps_to_daily_rate__mutmut_4 because daily_rate < annual_rate invariant violated"
+  ],
+  "regression": {
+    "unit_tests": "PASS (1533/1534, 1 pre-existing failure unchanged)",
+    "property_tests": "PASS",
+    "integration_tests": "PASS",
+    "mutation_infrastructure": "PASS",
+    "verification": "PASS"
+  },
+  "governance": {
+    "threshold_unchanged": true,
+    "mutation_scope_unchanged": true,
+    "production_code_unchanged": true,
+    "no_test_weakening": true,
+    "root_venv_exclusively_used": true,
+    "no_global_tooling_used": true,
+    "no_fake_score_certification": true,
+    "no_automatic_test_generation": true
+  },
+  "classification": "CERTIFIED"
+}

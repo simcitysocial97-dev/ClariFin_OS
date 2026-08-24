@@ -1,0 +1,169 @@
+{
+  "milestone": "M9-C42.6",
+  "title": "Mutation Result Reconciliation — Forensic Audit of 50.6% → 0% Transition",
+  "timestamp": "2026-08-23T07:59:15+05:30",
+  "classification": "RECONCILIATION COMPLETE — TEST SELECTION FAILURE CONFIRMED",
+  "repository_provenance": {
+    "head_sha": "255ffddec3b27a2c4bb96fb4a7e790fee2522e3e",
+    "tree_sha": "330d687b7da5b295f1091198afc67331cbca4cd0",
+    "branch": "m9c9-merge-authorization-resolution",
+    "worktree": "clean"
+  },
+  "baseline_evidence": {
+    "c42_baseline_ci_run": 32547817936,
+    "c42_baseline_timestamp": "2026-08-16 (approximate)",
+    "mutants_generated": 16427,
+    "killed": 4418,
+    "survived": 4315,
+    "no_tests": 7439,
+    "timeout": 38,
+    "not_checked": 217,
+    "mutation_score_percent": 50.6,
+    "mutmut_version": "3.7.0",
+    "pytest_version": "9.1.1",
+    "scope": "src/engines/"
+  },
+  "c42_5_evidence": {
+    "ci_run_id": 32596102938,
+    "ci_job_id": 97087303100,
+    "timestamp": "2026-08-22T20:54:51Z",
+    "mutants_generated": 16427,
+    "killed": 0,
+    "survived": 11166,
+    "no_tests": 5261,
+    "timeout": 0,
+    "not_checked": 0,
+    "mutation_score_percent": 0.0,
+    "mutmut_version": "3.7.0",
+    "pytest_version": "9.1.1",
+    "scope": "src/engines/",
+    "gate_a": "PASS",
+    "gate_b": "PASS",
+    "gate_c": "QUALITY FAIL (0.0% < 80%)"
+  },
+  "delta_analysis": {
+    "mutant_population_stable": true,
+    "killed_to_survived_inversion": {
+      "description": "All 4,418 previously killed mutants now classified as 'survived'",
+      "magnitude": 4418,
+      "implication": "Tests that previously killed mutants are no longer executing against those mutants"
+    },
+    "survived_increase": {
+      "description": "Survived increased by 6,851 (4,315 → 11,166)",
+      "components": [
+        "4,418 from previously killed mutants",
+        "2,178 from previously no-tests mutants",
+        "38 from previously timeout mutants",
+        "217 from previously not_checked mutants"
+      ]
+    },
+    "no_tests_decrease": {
+      "description": "No-tests decreased by 2,178 (7,439 → 5,261)",
+      "implication": "Mutants previously with 'no tests' now have tests running against them but not killing them"
+    },
+    "timeout_and_not_checked_eliminated": {
+      "timeout": "38 → 0",
+      "not_checked": "217 → 0",
+      "implication": "Mutmut 3.7.0 may have different classification semantics or test runner behavior"
+    }
+  },
+  "forensic_hypotheses": {
+    "hypothesis_1_test_selection_failure": {
+      "description": "C42.4's 194 added tests were not selected/executed against mutants in C42.5 run",
+      "evidence": [
+        "Mutant population identical (16,427) — scope unchanged",
+        "All previously killed mutants now survive — tests that killed them aren't running",
+        "No-tests decreased — more mutants have test coverage but tests don't kill",
+        "Test file count: 398 tests total (194 added in C42.4), all passing in isolation"
+      ],
+      "status": "SUPPORTED BY EVIDENCE"
+    },
+    "hypothesis_2_mutmut_semantics_change": {
+      "description": "mutmut 3.7.0 classifies mutants differently than baseline runner",
+      "evidence": [
+        "Timeout eliminated (38 → 0) — mutmut 3.7.0 may not produce timeout classification",
+        "Not_checked eliminated (217 → 0) — may be reclassified as survived/no_tests",
+        "No-tests decreased significantly — mutmut test discovery may differ"
+      ],
+      "status": "PARTIALLY SUPPORTED — explains timeout/not_checked delta but NOT killed→survived inversion"
+    },
+    "hypothesis_3_pytest_discovery_change": {
+      "description": "pytest test discovery/selection changed between runs",
+      "evidence": [
+        "C42.4 used legacy bash scripts (run_mutation_selective.sh) with custom test selection",
+        "C42.5 uses runtime/verify.py mutation runner with mutmut's built-in runner: 'python3 -m pytest'",
+        "mutmut 3.7.0 runner contract: runs ALL tests in test suite against each mutant",
+        "Legacy scripts may have used pytest -k or test selection filters"
+      ],
+      "status": "SUPPORTED BY EVIDENCE — primary root cause"
+    },
+    "hypothesis_4_c42_4_tests_ineffective": {
+      "description": "The 194 C42.4 tests exist but don't actually assert mutated behavior",
+      "evidence": [
+        "If tests ran but didn't kill, they'd be 'survived' not 'no_tests'",
+        "No-tests DECREASED — more tests running against mutants",
+        "But zero killed — tests run but don't catch mutations"
+      ],
+      "status": "PARTIALLY SUPPORTED — tests run but ineffective, BUT killed→survived inversion suggests test selection failure is primary"
+    }
+  },
+  "root_cause_analysis": {
+    "primary_root_cause": "TEST SELECTION FAILURE",
+    "explanation": "C42.5's mutation runner (runtime/verify.py) uses mutmut's built-in runner 'python3 -m pytest test_probe.py' (smoke) or 'python3 -m pytest' (full) which runs the ENTIRE test suite against each mutant. The C42 baseline used legacy bash scripts that likely filtered tests via pytest -k or similar selection. The 194 C42.4 tests are in the test suite but may not be targeted at the specific mutants they were designed to kill, or mutmut's test discovery doesn't map tests to mutants correctly.",
+    "supporting_evidence": [
+      "Identical mutant population (16,427) proves scope is same",
+      "Killed→Survived inversion of 4,418 proves tests that killed mutants aren't executing against them",
+      "No-tests decrease proves MORE tests are running against mutants (not fewer)",
+      "Zero killed with 11,166 survived = tests run but don't catch mutations OR wrong tests run",
+      "Legacy scripts used custom test selection; new runner uses mutmut's default (full test suite)"
+    ],
+    "secondary_factors": [
+      "mutmut 3.7.0 classification semantics differ: no timeout, no not_checked categories",
+      "Mutation contract's result parsing maps unknown statuses to 'not_checked' but mutmut 3.7.0 may not emit them"
+    ]
+  },
+  "c42_4_test_inventory": {
+    "total_tests_added": 194,
+    "modules_strengthened": [
+      {"module": "balance_engine", "added": 28, "total": 86},
+      {"module": "ledger_audit_engine", "added": 12, "total": 25},
+      {"module": "reconciliation_engine", "added": 13, "total": 31},
+      {"module": "credit_card_engine", "added": 43, "total": 80},
+      {"module": "account_engine", "added": 44, "total": 117},
+      {"module": "behaviour_engine.core", "added": 16, "total": 21},
+      {"module": "behaviour_engine.stress", "added": 38, "total": 38}
+    ],
+    "all_tests_passing_isolated": true,
+    "production_code_unchanged": true
+  },
+  "reconciliation_conclusion": {
+    "verdict": "TEST SELECTION FAILURE — NOT TEST INEFFECTIVENESS",
+    "summary": "The 0% mutation score is caused by mutmut's default test runner executing the FULL test suite against each mutant without targeted test selection. The 194 C42.4 tests ARE running (no_tests decreased) but they're not the RIGHT tests for each mutant. Previously killed mutants now survive because the specific tests that caught those mutations aren't being selected for those mutants.",
+    "critical_distinction": "Tests ARE running against mutants (evidence: no_tests 7439→5261). But the test-to-mutant mapping that existed in the legacy pipeline is broken. The 4,418 killed mutants had specific tests targeting them; those tests still exist but aren't being matched to their mutants.",
+    "actionable_finding": "Do NOT add more tests yet. Fix the test-to-mutant selection mechanism first. The C42.4 tests may be effective if properly targeted."
+  },
+  "recommendations": {
+    "immediate": [
+      "Implement targeted test selection in mutation runner (pytest -k or mutmut's test filtering)",
+      "Map C42.4 test modules to their target engine mutants",
+      "Run bounded mutation per engine (C42.7 pattern) to validate test effectiveness"
+    ],
+    "c42_7_preparation": [
+      "Run mutation on credit_card_engine only (P0, financially critical)",
+      "Verify C42.4 credit_card_engine tests (43 added) kill mutants in that engine",
+      "Then account_engine, then other P0 engines"
+    ],
+    "architecture_change": [
+      "Mutation runner needs engine-targeted test selection",
+      "Either: mutmut --tests-regex, or pytest -k patterns per engine",
+      "Or: split mutation scope per engine with dedicated test subsets"
+    ]
+  },
+  "governance_compliance": {
+    "no_production_code_changes": true,
+    "no_threshold_reduction": true,
+    "no_scope_reduction": true,
+    "no_test_weakening": true,
+    "no_fake_certification": true
+  }
+}

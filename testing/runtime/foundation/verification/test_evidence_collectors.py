@@ -18,7 +18,7 @@ from runtime.system.evidence.collectors.mutation import (
     MutationCollector,
 )
 from runtime.system.evidence.collectors.test_results import (
-    TestResultCollector,
+    ResultsCollector,
 )
 
 
@@ -159,8 +159,8 @@ class TestMutationCollector:
             assert evidence.score_pct == 0.0
 
 
-class TestTestResultCollector:
-    """Tests for TestResultCollector — reads JUnit XML from pytest."""
+class TestResultsCollector:
+    """Tests for ResultsCollector — reads JUnit XML from pytest."""
 
     SYNTAX_JUNIT_XML = """<?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
@@ -178,7 +178,7 @@ class TestTestResultCollector:
             tmpdir = Path(tmpdir)
             xml_file = tmpdir / "synth_results.xml"
             xml_file.write_text(self.SYNTAX_JUNIT_XML)
-            evidence = TestResultCollector(tmpdir).collect(xml_file)
+            evidence = ResultsCollector(tmpdir).collect(xml_file)
             assert evidence.passed == 7
 
     def test_failed_is_2(self):
@@ -186,7 +186,7 @@ class TestTestResultCollector:
             tmpdir = Path(tmpdir)
             xml_file = tmpdir / "synth_results.xml"
             xml_file.write_text(self.SYNTAX_JUNIT_XML)
-            evidence = TestResultCollector(tmpdir).collect(xml_file)
+            evidence = ResultsCollector(tmpdir).collect(xml_file)
             assert evidence.failed == 2
 
     def test_skipped_is_1(self):
@@ -194,7 +194,7 @@ class TestTestResultCollector:
             tmpdir = Path(tmpdir)
             xml_file = tmpdir / "synth_results.xml"
             xml_file.write_text(self.SYNTAX_JUNIT_XML)
-            evidence = TestResultCollector(tmpdir).collect(xml_file)
+            evidence = ResultsCollector(tmpdir).collect(xml_file)
             assert evidence.skipped == 1
 
     def test_failed_test_names_contains_test_fail_1(self):
@@ -202,7 +202,7 @@ class TestTestResultCollector:
             tmpdir = Path(tmpdir)
             xml_file = tmpdir / "synth_results.xml"
             xml_file.write_text(self.SYNTAX_JUNIT_XML)
-            evidence = TestResultCollector(tmpdir).collect(xml_file)
+            evidence = ResultsCollector(tmpdir).collect(xml_file)
             assert "test_fail_1" in evidence.failed_test_names
 
     def test_passed_is_not_negative(self):
@@ -211,13 +211,13 @@ class TestTestResultCollector:
             tmpdir = Path(tmpdir)
             xml_file = tmpdir / "synth_results.xml"
             xml_file.write_text(self.SYNTAX_JUNIT_XML)
-            evidence = TestResultCollector(tmpdir).collect(xml_file)
+            evidence = ResultsCollector(tmpdir).collect(xml_file)
             assert evidence.passed >= 0
 
     def test_missing_file_returns_empty_evidence(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             tmpdir = Path(tmpdir)
-            evidence = TestResultCollector(tmpdir).collect(tmpdir / "nonexistent.xml")
+            evidence = ResultsCollector(tmpdir).collect(tmpdir / "nonexistent.xml")
             assert evidence.passed == 0
             assert evidence.failed == 0
             assert evidence.skipped == 0
@@ -228,7 +228,7 @@ class TestTestResultCollector:
             tmpdir = Path(tmpdir)
             xml_file = tmpdir / "synth_results.xml"
             xml_file.write_text("not xml at all <<<")
-            evidence = TestResultCollector(tmpdir).collect(xml_file)
+            evidence = ResultsCollector(tmpdir).collect(xml_file)
             assert evidence.passed == 0
             assert evidence.failed == 0
 

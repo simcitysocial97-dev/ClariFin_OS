@@ -10,7 +10,6 @@ from decimal import Decimal
 
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
-
 from src.engines.credit_card_engine.interest import (
     bps_to_daily_rate,
     compute_daily_interest,

@@ -10,7 +10,6 @@ from decimal import ROUND_HALF_EVEN, Decimal
 
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
-
 from src.engines.loan_engine.amortization import generate_schedule, total_interest_paise
 from src.engines.loan_engine.foreclosure import (
     compute_foreclosure_amount,

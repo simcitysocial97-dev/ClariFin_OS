@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import pytest
-
 from src.engines.financial_events.lineage_walker import (
     DEFAULT_ROLLOVER_LOOKBACK_DAYS,
     detect_rollover_scenarios,

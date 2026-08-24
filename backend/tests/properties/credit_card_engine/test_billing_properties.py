@@ -11,7 +11,6 @@ from decimal import Decimal
 
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
-
 from src.engines.credit_card_engine.billing import (
     compute_due_date,
     compute_minimum_due,

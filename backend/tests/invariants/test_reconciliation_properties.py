@@ -18,7 +18,6 @@ from datetime import datetime
 import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
-
 from repositories.statement_repository import StatementRepository
 from src.engines.reconciliation_engine import find_potential_matches
 

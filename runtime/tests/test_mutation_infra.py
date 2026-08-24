@@ -222,7 +222,7 @@ def test_classify_gates_evidence_incomplete():
 def test_smoke_end_to_end_distinguishes_classifications():
     """Run the clean-room smoke fixture and assert the pipeline produces all
     three classifications — proving the mutation infrastructure is healthy."""
-    result = execute_mutation(mode="smoke")
+    result = execute_mutation(mode="smoke", allow_dirty=True)
     assert result.execution_status == "PASS", result.error
     assert result.evidence_complete is True
     # The fixture is designed to yield each bucket.

@@ -11,7 +11,6 @@ Run: python -m pytest backend/tests/unit/engines/ledger_audit_engine.py -v
 import hashlib
 
 import pytest
-
 from src.engines.ledger_audit_engine import (
     run_full_audit,
     validate_ledger_integrity,
@@ -201,7 +200,9 @@ class TestValidateLedgerIntegrity:
         conn.close()
 
         result = validate_ledger_integrity(temp_db)
-        null_account_violations = [v for v in result["violations"] if v["type"] == "NULL_ACCOUNT_ID"]
+        null_account_violations = [
+            v for v in result["violations"] if v["type"] == "NULL_ACCOUNT_ID"
+        ]
         assert len(null_account_violations) == 3
         txn_ids = {v["transaction_id"] for v in null_account_violations}
         assert len(txn_ids) == 3
@@ -222,7 +223,8 @@ class TestValidateLedgerIntegrity:
 
         result = validate_ledger_integrity(temp_db)
         empty_account_violations = [
-            v for v in result["violations"]
+            v
+            for v in result["violations"]
             if v["type"] == "NULL_ACCOUNT_ID" and "empty" in v["message"].lower()
         ]
         assert len(empty_account_violations) == 2
@@ -256,7 +258,8 @@ class TestValidateLedgerIntegrity:
 
         result = validate_ledger_integrity(temp_db)
         null_hash_violations = [
-            v for v in result["violations"]
+            v
+            for v in result["violations"]
             if v["type"] == "NULL_HASH" and "null" in v["message"].lower()
         ]
         assert len(null_hash_violations) == 2
@@ -279,7 +282,8 @@ class TestValidateLedgerIntegrity:
 
         result = validate_ledger_integrity(temp_db)
         null_hash_violations = [
-            v for v in result["violations"]
+            v
+            for v in result["violations"]
             if v["type"] == "NULL_HASH" and "null" in v["message"].lower()
         ]
         assert len(null_hash_violations) >= 1
@@ -299,7 +303,9 @@ class TestValidateLedgerIntegrity:
         conn.close()
 
         result = validate_ledger_integrity(temp_db)
-        dup_violations = [v for v in result["violations"] if v["type"] == "DUPLICATE_HASH"]
+        dup_violations = [
+            v for v in result["violations"] if v["type"] == "DUPLICATE_HASH"
+        ]
         assert len(dup_violations) == 0
 
     def test_validate_ledger_integrity_all_detectable_violation_types(self, temp_db):
@@ -365,12 +371,24 @@ class TestValidateLedgerIntegrity:
         from src.core.db.connection import get_connection
 
         conn = get_connection(temp_db)
-        conn.execute("INSERT INTO statements (id, bank, file_name) VALUES (1, 'HDFC', 'stmt1.pdf')")
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (1, 'HDFC', 'stmt1.pdf')"
+        )
         # Insert 100 transactions
         for i in range(100):
             conn.execute(
                 "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (1, f'{i+1:02d}/01/2025', f'2025-01-{i+1:02d}', f'Txn{i}', 10000, 'debit', 'HDFC', f'hash_{i}', i),
+                (
+                    1,
+                    f"{i+1:02d}/01/2025",
+                    f"2025-01-{i+1:02d}",
+                    f"Txn{i}",
+                    10000,
+                    "debit",
+                    "HDFC",
+                    f"hash_{i}",
+                    i,
+                ),
             )
         conn.commit()
         conn.close()

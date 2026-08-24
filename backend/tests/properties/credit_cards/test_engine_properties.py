@@ -256,7 +256,6 @@ class TestCreditCardInterestProperties:
     ) -> None:
         """Invalid inputs (negative values) must raise ValueError."""
         from hypothesis import reject
-
         from src.engines.credit_card_engine.interest import compute_daily_interest
 
         try:
@@ -279,7 +278,6 @@ class TestCreditCardInterestProperties:
     ) -> None:
         """Simplified monthly interest must reject invalid inputs."""
         from hypothesis import reject
-
         from src.engines.credit_card_engine.interest import (
             compute_monthly_interest_simple,
         )

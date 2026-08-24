@@ -17,7 +17,6 @@ from collections.abc import Generator
 from typing import Any
 
 import pytest
-
 from src.core.db.connection import get_connection_context
 
 _BASELINE_SEED_SQL = [

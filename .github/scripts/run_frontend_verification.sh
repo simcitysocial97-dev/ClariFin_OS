@@ -19,6 +19,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_ROOT/frontend" || { echo "frontend/ not found"; exit 1; }
 
+# Canonical Python resolver (venv-first) - for final JSON summary
+if [ -x "$REPO_ROOT/.venv/bin/python" ]; then
+  PY="$REPO_ROOT/.venv/bin/python"
+else
+  PY="$(command -v python3 || command -v python)"
+fi
+
 EVIDENCE_DIR="${FRONTEND_EVIDENCE_DIR:-$REPO_ROOT/runtime/generated/evidence/frontend}"
 mkdir -p "$EVIDENCE_DIR"
 
@@ -85,7 +92,7 @@ JSON
 
 echo
 echo "Phase summary: $EVIDENCE_DIR/frontend-verification.json"
-python3 - "$EVIDENCE_DIR/frontend-verification.json" <<'PY' 2>/dev/null || true
+"$PY" - "$EVIDENCE_DIR/frontend-verification.json" <<'PY' 2>/dev/null || true
 import json, sys
 with open(sys.argv[1], encoding="utf-8") as fh:
     data = json.load(fh)

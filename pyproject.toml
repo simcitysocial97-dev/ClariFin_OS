@@ -51,8 +51,8 @@ dependencies = [
     "cachetools==7.1.4",
     "httpx==0.28.1",
     "jsonschema==4.26.0",
-    "pyyaml>=6.0",
-    "uvicorn==0.35.0",
+    "pyyaml==6.0.3",
+    "uvicorn==0.51.0",
 ]
 
 [project.optional-dependencies]
@@ -70,7 +70,11 @@ verification = [
     "mypy==2.1.0",
     "mutmut==3.7.0",
 ]
-all = ["clarinfin-verification[verification]"]
+# Contract testing (schemathesis) - optional, install via `pip install -e ".[contract]"`
+contract = [
+    "schemathesis==4.17.0",
+]
+all = ["clarinfin-verification[verification]", "clarinfin-verification[contract]"]
 
 [project.scripts]
 verify = "runtime.foundation.verification.cli.cli:cli"
@@ -85,8 +89,43 @@ include = ["runtime*"]
 # remain in backend/pyproject.toml (their scoped authority — backend rootdir).
 
 [tool.ruff]
-line-length = 100
+line-length = 88
 target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings  
+    "F",      # pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear (common bugs)
+    "C4",     # flake8-comprehensions
+    "UP",     # pyupgrade (modern Python syntax)
+    "SIM",    # flake8-simplify
+]
+
+ignore = [
+    "E501",   # line too long — Black/ruff format handles this
+    "E402",   # module level import not at top of file (common in scripts/tests)
+    "B008",   # do not perform function calls in default arguments (FastAPI uses this)
+    "SIM108", # ternary operator — sometimes less readable
+]
+
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "backend/tests/generated",
+    "backend/mutants",
+    "*.pyc",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Test files can use assert, magic values, etc.
+"backend/tests/**" = ["S101", "S105", "S106", "PLR2004"]
+# Migration files may have long strings
+"backend/migrations/**" = ["E501"]
 
 [tool.black]
 line-length = 88
@@ -107,5 +146,35 @@ extend-exclude = '''
 
 [tool.mypy]
 python_version = "3.12"
-exclude = ['servers/src/fetch/tests/']
+exclude = ['servers/src/fetch/tests/', 'backend/mutants/']
+
+[tool.pytest.ini_options]
+norecursedirs = ["backend/mutants", "backend/tests/mutation_infra/mutants", ".git", "__pycache__", ".venv", "venv", "node_modules", "frontend/node_modules"]
+pythonpath = ["backend/src", "backend/tests"]
+markers = [
+    "capability: mark test as capability smoke test",
+    "contract: mark test as contract test",
+    "property: mark test as property test",
+    "invariant: mark test as invariant test",
+    "golden: mark test as golden dataset test",
+    "meta: mark test as meta test",
+    "slow: marks tests as slow (deselect with '-m not slow')",
+    "mutation: marks tests specifically for mutation testing",
+    "integration: marks integration tests",
+    "unit: marks unit tests",
+    "performance: marks performance tests",
+]
+
+[tool.mutmut]
+source_paths = ["backend/src/engines/"]
+also_copy = ["backend/src"]
+runner = "python3 -m pytest"
+pytest_add_cli_args_test_selection = [
+    "backend/tests/unit/",
+    "backend/tests/properties/",
+    "backend/tests/invariants/",
+    "backend/tests/contract/",
+    "backend/tests/integration/",
+]
+no_progress = true
 

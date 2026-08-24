@@ -1,0 +1,378 @@
+{
+  "artifact": "m9-c42.10-environment-architecture-discovery",
+  "type": "forensic-discovery",
+  "status": "read-only-no-implementation",
+  "date": "2026-08-23",
+  "repository": "/home/vasantha/AI-Projects/ClariFin_OS",
+  "predecessor_report": "M9-C42.9",
+  "classification_standard": ["VERIFIED", "LIKELY", "UNVERIFIED", "CONTRADICTED"],
+
+  "executive_determination": {
+    "one_coherent_model": false,
+    "summary": "Strongly converging model with intentional multi-project boundaries (Architecture C) plus bounded accidental inconsistencies and latent parity risks. Sound boundary topology; defects are in configuration authority clarity and command-resolution determinism, not boundary topology.",
+    "must_fix_before_coherent": [
+      "RC-1: Ruff two physical configs conflicting line-length (100 vs 88); root has no rule set",
+      "RC-4: bare python3 fallbacks in scripts can resolve to user-site Python instead of pinned .venv",
+      "RC-2: mutation config dynamically rewritten in-tree (backend/pyproject.toml) without hard-kill safety"
+    ]
+  },
+
+  "architecture_classification": {
+    "determined": "Architecture C variant (monorepo with explicit subsystems)",
+    "components": [
+      "root verification package clarinfin-verification (runtime/)",
+      "backend source-only tree (backend/src, imported as src.*)",
+      "separate frontend Node project (frontend/)",
+      "single shared Python toolchain in root .venv"
+    ],
+    "verdict": "CONFIRMED as best long-term architecture"
+  },
+
+  "configuration_authority_matrix": [
+    {
+      "tool": "pytest-backend",
+      "authority": "backend/pyproject.toml [tool.pytest.ini_options]",
+      "working_dir": "backend/",
+      "path_base": "backend/",
+      "interpreter": ".venv/bin/python -m pytest",
+      "deterministic": true,
+      "drift": false,
+      "duplicate": false,
+      "generated_dynamically": false,
+      "risk": "LOW"
+    },
+    {
+      "tool": "ruff",
+      "authority": "CONFLICT: root [tool.ruff] (line-length=100, no rules) vs backend/ruff.toml (line-length=88, full rules)",
+      "working_dir": "varies (cwd-dependent)",
+      "interpreter": ".venv/bin/ruff",
+      "deterministic": false,
+      "drift": true,
+      "duplicate": true,
+      "generated_dynamically": false,
+      "risk": "HIGH",
+      "finding": "RC-1"
+    },
+    {
+      "tool": "black",
+      "authority": "root pyproject.toml [tool.black] (line-length=88)",
+      "working_dir": "repo root",
+      "interpreter": ".venv/bin/black",
+      "deterministic": "partial",
+      "drift": false,
+      "duplicate": false,
+      "generated_dynamically": false,
+      "risk": "MED",
+      "note": "Not enforced in CI workflows (only legacy run_fast_checks)"
+    },
+    {
+      "tool": "mypy",
+      "authority": "dual: root [tool.mypy] basic + backend [tool.mypy] strict=true (intentional)",
+      "working_dir": "backend/ (backend), repo root (runtime)",
+      "interpreter": ".venv/bin/mypy",
+      "deterministic": true,
+      "drift": false,
+      "duplicate": false,
+      "generated_dynamically": false,
+      "risk": "MED",
+      "note": "Runs as profile task in CI (refines M9-C42.9 'no mypy gate')"
+    },
+    {
+      "tool": "mutmut",
+      "authority": "mutation_contract.ENGINE_SELECTION (source of truth) rendered to backend/pyproject.toml [tool.mutmut]",
+      "working_dir": "backend/ (full) or backend/tests/mutation_infra/ (smoke)",
+      "interpreter": ".venv/bin/mutmut",
+      "deterministic": true,
+      "drift": true,
+      "duplicate": true,
+      "generated_dynamically": true,
+      "dynamic_safe": false,
+      "risk": "HIGH",
+      "finding": "RC-2"
+    },
+    {
+      "tool": "coverage",
+      "authority": "backend/.coveragerc (source=src, fail_under=40); ad-hoc --cov in run_contract_tests.sh",
+      "working_dir": "backend/",
+      "deterministic": "partial",
+      "drift": false,
+      "risk": "MED"
+    },
+    {
+      "tool": "node",
+      "authority": "frontend/package.json + setup-node-runtime (node 20)",
+      "deterministic": true,
+      "drift": false,
+      "risk": "LOW",
+      "note": "Node version NOT pinned in frontend/package.json engines (RC-7)"
+    },
+    {
+      "tool": "vitest",
+      "authority": "frontend/vitest.config.ts",
+      "deterministic": true,
+      "risk": "LOW"
+    },
+    {
+      "tool": "playwright",
+      "authority": "frontend/playwright.config.ts + setup-playwright action",
+      "deterministic": true,
+      "risk": "LOW",
+      "note": "Backend launch uses bare python3, cwd=backend, no venv PATH (RC-6)"
+    },
+    {
+      "tool": "eslint",
+      "authority": "frontend/eslint.config.mjs",
+      "deterministic": true,
+      "risk": "LOW"
+    },
+    {
+      "tool": "shell-orchestration",
+      "authority": "per-script; verify.sh canonical launcher",
+      "deterministic": "partial (bare python3 in .github/scripts/*)",
+      "drift": true,
+      "duplicate": true,
+      "risk": "MED",
+      "finding": "RC-4, RC-9"
+    },
+    {
+      "tool": "ci",
+      "authority": "11 workflows + 5 composite actions; all delegate to verify.py",
+      "deterministic": true,
+      "risk": "LOW"
+    }
+  ],
+
+  "python_project_boundaries": {
+    "root_package": "clarinfin-verification (runtime/)",
+    "backend": "source-only tree at backend/src imported as src.* via pytest pythonpath; NOT a package",
+    "frontend": "independent Node project",
+    "toolchain": "single root .venv",
+    "evaluation": {
+      "architecture_a_current": "CONFIRMED correct",
+      "architecture_b_package_backend": "REJECTED (reintroduces M10 dual-authority; hundreds of import rewrites)",
+      "architecture_c_monorepo": "CONFIRMED as classification"
+    }
+  },
+
+  "venv_facts": {
+    "isolated": true,
+    "pyvenv_cfg": "include-system-site-packages = false",
+    "python3_symlink": ".venv/bin/python3 -> /usr/bin/python3 (normal venv; sys.prefix=.venv)",
+    "system_user_site_pytest": "9.1.1 (coincident with venv; NOT guaranteed)",
+    "forbidden_venvs": ["backend/venv", "backend/.venv"]
+  },
+
+  "local_ci_parity": {
+    "equivalent_stages": ["bootstrap contract", "python version", "dependency resolution", "installed versions (from pyproject pins)", "working dir", "pytest pythonpath"],
+    "material_differences": [
+      "CI does NOT enforce requirements.lock (RC-5)",
+      "Local Playwright/Node may be absent if not bootstrapped",
+      "Bare python3 in .github/scripts/*.sh resolves to runner python in CI but system python3 locally when not via verify.sh (RC-4)",
+      "Playwright/global-setup backend launch uses bare python3, never venv PATH (RC-6)",
+      "OS/locale/tz not pinned (unvalidated)"
+    ],
+    "formal_definition": "Every verify.py <profile> run locally via verify.sh and in CI via bootstrap-runtime must resolve same tool versions, same cwd/config discovery, produce bit-comparable evidence, require no manual setup beyond scripts/bootstrap.sh."
+  },
+
+  "dependency_governance": {
+    "authority": "root pyproject.toml [project] + [optional-dependencies]",
+    "lock_file": "requirements.lock (76 pkgs, regenerable, NOT enforced in CI)",
+    "unpinned": ["pyyaml>=6.0 (RC: should exact-pin)"],
+    "must_remain_pinned": ["mutmut==3.7.0 (C42.5 known behavior)"],
+    "compat_risk_on_upgrade": ["ruff 0.15->0.16 (config schema)", "mypy 2.1->2.2 (strictness)"],
+    "arch_review_before_upgrade": ["hypothesis", "fastapi", "pydantic", "pandas", "pdfplumber/camelot"]
+  },
+
+  "mutation_infrastructure": {
+    "dynamic_rewrite": "backend/pyproject.toml [tool.mutmut] rewritten from ENGINE_SELECTION (mutation_runner.py:279)",
+    "restore_mechanism": "finally block only (mutation_runner.py:369-370)",
+    "safe_against_sigkill": false,
+    "parallel_run_safe": false,
+    "trampoline_patch": {
+      "location": "backend/tests/conftest.py:33-61 (NOT in site-packages)",
+      "trigger": "mutmut 3.7.0 record_trampoline_hit asserts not name.startswith('src.')",
+      "root_cause": "backend src. import prefix",
+      "classification": "legitimate compatibility adapter; KEEP",
+      "eliminable_via_architecture": true,
+      "elimination_cost": "high (rename src -> package; hundreds of import rewrites)"
+    },
+    "smoke_vs_full": "intentionally different semantics (infra-health vs 80% score); not a defect",
+    "isolated_config_possible": true,
+    "recommendation": "isolate mutation config to temp dir; never mutate in-tree"
+  },
+
+  "test_discovery": {
+    "pytest_from_root_no_ini": "rootdir=root, no testpaths, no pythonpath",
+    "pytest_from_backend": "rootdir=backend, testpaths=tests, pythonpath=[src,tests]",
+    "verify_py_backend": "equivalent to backend/ via explicit path arg + rootdir discovery",
+    "runtime_tests": "no pytest ini; relies on runtime package + absolute imports",
+    "single_interface_recommended": true
+  },
+
+  "lint_typecheck": {
+    "ruff_conflict": "root line-length=100 (no rules) vs backend line-length=88 (full rules)",
+    "black_line_length": 88,
+    "black_in_ci": false,
+    "mypy_dual": "intentional (root basic, backend strict)",
+    "pyright": "backend/pyrightconfig.json extraPaths=[src]; optional, not installed"
+  },
+
+  "frontend_toolchain": {
+    "authority": "frontend/ package.json, tsconfig.json, vitest.config.ts, playwright.config.ts, eslint.config.mjs",
+    "node_pinned_in_manifest": false,
+    "generated_api_types": "frontend/types/api-generated.ts (requires running backend; dev-only)",
+    "cross_language_alias": "@clarifin/runtime/foundation/* -> ../runtime/foundation/*/src",
+    "isolated_correctly": true,
+    "backend_launch_risk": "bare python3 in playwright.config.ts:111 and global-setup.ts:70"
+  },
+
+  "script_orchestration": {
+    "duplication": [
+      "env resolution: verify.sh vs verify-fast.sh vs env.py vs .github/scripts/*",
+      "mutation: mutation_runner.py + run_mutation_selective.sh + profiles.py (3-layer indirection)",
+      "test execution: profiles.py + run_*.sh + run_fast_checks.sh"
+    ],
+    "canonical_launcher": "scripts/verify.sh (sets PATH=.venv/bin)",
+    "redundant_scripts": ".github/scripts/run_*.sh (deprecate; profiles should call env.py-resolved binaries)"
+  },
+
+  "warnings_suppressions": {
+    "all_necessary": true,
+    "mask_architectural_problem": false,
+    "removal_recommended": false,
+    "note": "src.core.dtos deprecation ignore worth periodic review"
+  },
+
+  "generated_cache_state": {
+    "git_ignored_dirs": ["runtime/generated", "backend/.mutmut-cache", "backend/mutants", "backend/tests/generated", "frontend/test-results", "frontend/dist", "*.egg-info"],
+    "accidental_influence_risk": "backend/tests/generated/capability-registry.yaml regenerated only by legacy run_fast_checks.sh, not verify.py profiles (RC-8)"
+  },
+
+  "root_cause_taxonomy": [
+    {"id": "RC-1", "cause": "Two Ruff configs conflicting line-length (100 vs 88); root has no rule set", "confidence": "VERIFIED"},
+    {"id": "RC-2", "cause": "Mutation config dynamically rewritten in-tree without hard-kill safety", "confidence": "VERIFIED"},
+    {"id": "RC-3", "cause": "mutmut trampoline rejects src. prefix -> conftest patch", "confidence": "VERIFIED"},
+    {"id": "RC-4", "cause": "Bare python3 fallbacks in scripts can hit user-site Python", "confidence": "VERIFIED (latent)"},
+    {"id": "RC-5", "cause": "requirements.lock not consumed/enforced in CI", "confidence": "VERIFIED"},
+    {"id": "RC-6", "cause": "Playwright/global-setup launches backend with bare python3, no venv PATH", "confidence": "VERIFIED"},
+    {"id": "RC-7", "cause": "Node version not pinned in frontend/package.json engines", "confidence": "VERIFIED"},
+    {"id": "RC-8", "cause": "capability-registry.yaml regenerated only by legacy script, not verify.py", "confidence": "VERIFIED"},
+    {"id": "RC-9", "cause": "Redundant 3-layer mutation orchestration", "confidence": "VERIFIED"},
+    {"id": "RC-10", "cause": "Black not enforced in CI workflows", "confidence": "VERIFIED"}
+  ],
+
+  "legitimate_exceptions": [
+    "Root package + backend source-only (M10 single authority)",
+    "Frontend as separate Node project",
+    "Dual mypy config (root basic, backend strict)",
+    "Smoke vs full mutation (different semantics)",
+    "Trampoline patch in conftest (correct, scoped, project-owned)",
+    "src. import prefix (deliberate backend convention)",
+    "CI delegates to verify.py (single-entry-point)",
+    ".venv/bin/python3 symlink (normal venv; sys.prefix isolated)",
+    "runtime/tests has no pytest ini (installed package, absolute imports)",
+    "backend/ruff.toml as scoped lint config (defect is only root stub line-length)"
+  ],
+
+  "target_architecture": {
+    "root": "REPO_ROOT",
+    "boundaries": ["clarinfin-verification (root pkg)", "backend source-only", "frontend Node project", "single .venv"],
+    "python_env": "one .venv, include-system-site-packages=false, no backend venv",
+    "node_env": "frontend npm ci, node 20 pinned in engines",
+    "dependency_authority": "root pyproject.toml only",
+    "lock_authority": "requirements.lock (CI must regenerate+diff)",
+    "config_authority": "pytest=backend/pyproject; ruff=canonical base root + backend scoped override; black=root; mypy=dual; mutmut=ENGINE_SELECTION->isolated temp config; coverage=backend/.coveragerc",
+    "command_authority": "runtime/verify.py only; scripts/verify.sh only local launcher",
+    "path_authority": "explicit backend/src, backend/tests, runtime/, frontend/",
+    "import_authority": "backend: from src.*; runtime: from runtime.*; frontend: @/* aliases",
+    "test_authority": "pytest with rootdir discovery; single interface verify.py <profile>",
+    "lint_authority": "ruff (canonical base + backend override, both 88); black root 88",
+    "typecheck_authority": "mypy dual; pyright optional",
+    "mutation_authority": "ENGINE_SELECTION -> temp isolated config; no in-tree rewrite",
+    "ci_authority": "11 workflows + 5 actions delegate to verify.py",
+    "generated_authority": "runtime/generated, frontend/test-results, frontend/dist (all git-ignored)",
+    "parity_guarantee": "NO bare python3/pytest/ruff/mypy in scripts outside verify.sh/env.py; subprocesses use env.py-resolved absolute binaries + env PATH=VENV_BIN",
+    "drift_prevention": ["pre-commit forbids bare python", "env-doctor guards forbidden venvs + mutmut pin", "CI env-check step", "requirements.lock diff gate (proposed)", "no bare-tool grep gate (proposed)"]
+  },
+
+  "m9_c42_9_findings": {
+    "confirmed": [
+      "Repository is monorepo (root pkg + backend source)",
+      "Single dependency authority at root",
+      "Backend source-only",
+      ".venv canonical (isolated)",
+      "CI delegates to verify.py",
+      "Mutation runner rewrites backend/pyproject.toml",
+      "Trampoline patch in conftest (not .venv)",
+      "Ruff conflict root 100 vs backend 88",
+      "verify-fast.sh unsafe fallback",
+      "Bare tool invocations in CI scripts",
+      "mutmut pinned 3.7.0 correct"
+    ],
+    "refined": [
+      "No mypy gate in CI -> REFINED: mypy IS a profile task (profiles.py) running in CI via verify.py; not a separate workflow step but gated"
+    ],
+    "rejected": [],
+    "new_findings": [
+      ".venv/bin/python3 symlink to /usr/bin/python3 with isolated site-packages (normal venv)",
+      "System /usr/bin/python3 has user-site pytest 9.1.1 (coincident, not guaranteed)",
+      "Playwright/global-setup launches backend with bare python3, cwd=backend, no venv PATH",
+      "requirements.lock never consumed/enforced in CI",
+      "Node version not pinned in frontend/package.json engines",
+      "capability-registry.yaml regenerated only by legacy run_fast_checks.sh, not verify.py profiles",
+      "Three-layer mutation indirection: profiles.py -> run_mutation_selective.sh -> mutation_runner.py",
+      "Black not in CI workflows (only legacy run_fast_checks)",
+      "runtime/system/context/ has own package.json + tsconfig.json (second TS sub-project)",
+      "Ruff root config has NO rule set (incomplete stub, not legitimate dual-authority)"
+    ]
+  },
+
+  "decisions_requiring_approval": [
+    "Ruff line-length alignment (root 88 + explicit rules; backend scoped override)",
+    "Mutation config isolation approach (temp dir vs in-tree+stronger restore)",
+    "Deprecate/delete redundant .github/scripts/run_*.sh",
+    "Pin node engines in frontend/package.json",
+    "Enforce requirements.lock in CI (freeze+diff)",
+    "Add Black to CI profiles",
+    "Exact-pin pyyaml"
+  ],
+
+  "proposed_remediation_phases": [
+    {"phase": "P1", "scope": "Mutmut config isolation (temp dir, no in-tree rewrite)", "files": ["mutation_runner.py", "mutation_contract.py"]},
+    {"phase": "P2", "scope": "Ruff canonical config (root 88 + explicit rules; backend scoped override)", "files": ["pyproject.toml", "backend/ruff.toml"]},
+    {"phase": "P3", "scope": "Eliminate bare-python fallbacks; route all scripts through env.py/verify.sh", "files": ["scripts/verify-fast.sh", ".github/scripts/*.sh", "profiles.py"]},
+    {"phase": "P4", "scope": "Deprecate/delete redundant .github/scripts/run_*.sh", "files": ["profiles.py", ".github/scripts/*"]},
+    {"phase": "P5", "scope": "Enforce requirements.lock in CI", "files": ["setup-python-runtime or new step"]},
+    {"phase": "P6", "scope": "Pin node engines + add Black to CI", "files": ["frontend/package.json", "profiles.py"]},
+    {"phase": "P7", "scope": "Generate capability-registry in verify.py", "files": ["profiles.py/verify.py", "run_fast_checks.sh"]},
+    {"phase": "P8", "scope": "Harden mutation restore (atexit + signal handler) if P1 not chosen", "files": ["mutation_runner.py"]},
+    {"phase": "P9", "scope": "Document src. convention + trampoline as intended", "files": ["ARCHITECTURE docs"]}
+  ],
+
+  "validation_gates": [
+    "verify.sh env (env-doctor): no forbidden venv, mutmut 3.7.0",
+    "verify.sh mutation --smoke: infra distinguishes killed/survived/no-tests",
+    "git status --porcelain clean after full verify.py mutation run (no in-tree leftovers)",
+    "verify.sh backend and verify.sh frontend green",
+    "clean-machine verify.py backend produces identical tool versions to CI",
+    "ruff check backend/src AND ruff check . (root) both resolve canonical config (no cwd-dependent line-length)",
+    "grep for bare python3 -m/pytest/ruff/mypy in .github/scripts/ scripts/ returns none outside verify.sh/env.py"
+  ],
+
+  "risks": [
+    {"risk": "In-tree mutation config left corrupted on SIGKILL/parallel", "likelihood": "MEDIUM", "impact": "HIGH", "mitigation": "P1 temp-dir isolation"},
+    {"risk": "Ruff drift between local and CI (cwd-dependent)", "likelihood": "HIGH", "impact": "MEDIUM", "mitigation": "P2 canonical config"},
+    {"risk": "mypy regressions undetected (non-blocking legacy)", "likelihood": "HIGH", "impact": "HIGH", "mitigation": "profile task already gates; verify blocking"},
+    {"risk": "Trampoline patch breaks on mutmut upgrade", "likelihood": "HIGH if upgraded", "impact": "HIGH", "mitigation": "mutmut pinned 3.7.0 (correct)"},
+    {"risk": "verify-fast.sh uses forbidden venv", "likelihood": "LOW (venv doesn't exist)", "impact": "HIGH if created", "mitigation": "P3 remove fallback"},
+    {"risk": "Backend source path assumption breaks", "likelihood": "LOW", "impact": "MEDIUM", "mitigation": "hardcoded src/ in multiple places (documented)"}
+  ],
+
+  "final_determination": {
+    "verdict": "Architecture C confirmed sound; bounded defects RC-1..RC-10 with file/line evidence",
+    "no_implementation_performed": true,
+    "trampoline_patch": "correct, keep",
+    "src_convention": "intentional, keep",
+    "in_tree_mutation_rewrite": "only fragile element; isolate (P1), do not remove"
+  }
+}

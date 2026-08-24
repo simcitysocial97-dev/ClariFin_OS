@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
-
 from src.engines.reconciliation_engine import (
     _calculate_confidence,
     _check_match,

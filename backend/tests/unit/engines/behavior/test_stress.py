@@ -1,7 +1,5 @@
 """Unit tests for behaviour_engine/stress.py."""
 
-import pytest
-
 
 class TestStressUtilityFunctions:
     """Tests for utility functions in stress.py."""
@@ -123,7 +121,11 @@ class TestLossAversionIndex:
             {"type": "credit", "date_iso": "2025-01-01", "amount_paise": 1000000},
             {"type": "debit", "date_iso": "2025-01-01", "amount_paise": 100000},
             {"type": "debit", "date_iso": "2025-01-02", "amount_paise": 100000},
-            {"type": "debit", "date_iso": "2025-01-03", "amount_paise": 500000},  # Large expense
+            {
+                "type": "debit",
+                "date_iso": "2025-01-03",
+                "amount_paise": 500000,
+            },  # Large expense
         ]
         result = loss_aversion_index(transactions)
         assert result["large_expense_count"] >= 1
@@ -138,7 +140,11 @@ class TestLossAversionIndex:
             {"type": "credit", "date_iso": "2025-01-01", "amount_paise": 100000},
             {"type": "debit", "date_iso": "2025-01-01", "amount_paise": 1000},
             {"type": "debit", "date_iso": "2025-01-02", "amount_paise": 1000},
-            {"type": "debit", "date_iso": "2025-01-03", "amount_paise": 1000000},  # Huge expense
+            {
+                "type": "debit",
+                "date_iso": "2025-01-03",
+                "amount_paise": 1000000,
+            },  # Huge expense
         ]
         result = loss_aversion_index(transactions)
         assert result["recovery_time_days"] <= 30
@@ -169,9 +175,24 @@ class TestImpulsivityScore:
         from src.engines.behaviour_engine.stress import impulsivity_score
 
         transactions = [
-            {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 10000, "category": "Food"},
-            {"type": "debit", "date_iso": "2025-01-16", "amount_paise": 5000, "category": "Transport"},
-            {"type": "debit", "date_iso": "2025-01-17", "amount_paise": 100000, "category": "Rent"},
+            {
+                "type": "debit",
+                "date_iso": "2025-01-15",
+                "amount_paise": 10000,
+                "category": "Food",
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-01-16",
+                "amount_paise": 5000,
+                "category": "Transport",
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-01-17",
+                "amount_paise": 100000,
+                "category": "Rent",
+            },
         ]
         result = impulsivity_score(transactions)
         assert result["micro_txn_ratio"] > 0
@@ -182,9 +203,21 @@ class TestImpulsivityScore:
         from src.engines.behaviour_engine.stress import impulsivity_score
 
         transactions = [
-            {"type": "debit", "date_iso": "2025-01-11", "amount_paise": 100000},  # Saturday
-            {"type": "debit", "date_iso": "2025-01-12", "amount_paise": 100000},  # Sunday
-            {"type": "debit", "date_iso": "2025-01-13", "amount_paise": 50000},   # Monday
+            {
+                "type": "debit",
+                "date_iso": "2025-01-11",
+                "amount_paise": 100000,
+            },  # Saturday
+            {
+                "type": "debit",
+                "date_iso": "2025-01-12",
+                "amount_paise": 100000,
+            },  # Sunday
+            {
+                "type": "debit",
+                "date_iso": "2025-01-13",
+                "amount_paise": 50000,
+            },  # Monday
         ]
         result = impulsivity_score(transactions)
         assert result["weekend_ratio"] >= 1.0  # Weekend spend >= weekday
@@ -194,9 +227,24 @@ class TestImpulsivityScore:
         from src.engines.behaviour_engine.stress import impulsivity_score
 
         transactions = [
-            {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 100000, "category": "Food & Dining"},
-            {"type": "debit", "date_iso": "2025-01-16", "amount_paise": 50000, "category": "Entertainment"},
-            {"type": "debit", "date_iso": "2025-01-17", "amount_paise": 200000, "category": "Salary"},
+            {
+                "type": "debit",
+                "date_iso": "2025-01-15",
+                "amount_paise": 100000,
+                "category": "Food & Dining",
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-01-16",
+                "amount_paise": 50000,
+                "category": "Entertainment",
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-01-17",
+                "amount_paise": 200000,
+                "category": "Salary",
+            },
         ]
         result = impulsivity_score(transactions)
         assert result["discretionary_ratio"] > 0
@@ -228,10 +276,34 @@ class TestHabitStabilityScore:
         from src.engines.behaviour_engine.stress import habit_stability_score
 
         transactions = [
-            {"type": "debit", "date_iso": "2025-01-01", "amount_paise": 100000, "description": "Netflix", "category": "Entertainment"},
-            {"type": "debit", "date_iso": "2025-02-01", "amount_paise": 100000, "description": "Netflix", "category": "Entertainment"},
-            {"type": "debit", "date_iso": "2025-03-01", "amount_paise": 100000, "description": "Netflix", "category": "Entertainment"},
-            {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 50000, "description": "Groceries", "category": "Groceries"},
+            {
+                "type": "debit",
+                "date_iso": "2025-01-01",
+                "amount_paise": 100000,
+                "description": "Netflix",
+                "category": "Entertainment",
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-02-01",
+                "amount_paise": 100000,
+                "description": "Netflix",
+                "category": "Entertainment",
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-03-01",
+                "amount_paise": 100000,
+                "description": "Netflix",
+                "category": "Entertainment",
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-01-15",
+                "amount_paise": 50000,
+                "description": "Groceries",
+                "category": "Groceries",
+            },
         ]
         result = habit_stability_score(transactions)
         assert result["recurring_count"] >= 1
@@ -242,9 +314,24 @@ class TestHabitStabilityScore:
         from src.engines.behaviour_engine.stress import habit_stability_score
 
         transactions = [
-            {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 100000, "category": "Food"},
-            {"type": "debit", "date_iso": "2025-02-15", "amount_paise": 120000, "category": "Food"},
-            {"type": "debit", "date_iso": "2025-03-15", "amount_paise": 110000, "category": "Food"},
+            {
+                "type": "debit",
+                "date_iso": "2025-01-15",
+                "amount_paise": 100000,
+                "category": "Food",
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-02-15",
+                "amount_paise": 120000,
+                "category": "Food",
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-03-15",
+                "amount_paise": 110000,
+                "category": "Food",
+            },
         ]
         result = habit_stability_score(transactions)
         assert isinstance(result["category_cv"], float)
@@ -380,13 +467,15 @@ class TestDetectRiskPatterns:
 
         transactions = []
         # Create 11 micro transactions on same day
-        for i in range(11):
-            transactions.append({
-                "type": "debit",
-                "date_iso": "2025-01-15",
-                "amount_paise": 10000,  # ₹100
-                "description": "UPI Payment"
-            })
+        for _i in range(11):
+            transactions.append(
+                {
+                    "type": "debit",
+                    "date_iso": "2025-01-15",
+                    "amount_paise": 10000,  # ₹100
+                    "description": "UPI Payment",
+                }
+            )
         result = detect_risk_patterns(transactions)
         assert result["upi_micro_spend_flag"] is True
 
@@ -395,8 +484,18 @@ class TestDetectRiskPatterns:
         from src.engines.behaviour_engine.stress import detect_risk_patterns
 
         transactions = [
-            {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 50000, "description": "Dream11 deposit"},
-            {"type": "debit", "date_iso": "2025-01-16", "amount_paise": 100000, "description": "Rummy circle"},
+            {
+                "type": "debit",
+                "date_iso": "2025-01-15",
+                "amount_paise": 50000,
+                "description": "Dream11 deposit",
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-01-16",
+                "amount_paise": 100000,
+                "description": "Rummy circle",
+            },
         ]
         result = detect_risk_patterns(transactions)
         assert result["gambling_flag"] is True
@@ -407,8 +506,18 @@ class TestDetectRiskPatterns:
         from src.engines.behaviour_engine.stress import detect_risk_patterns
 
         transactions = [
-            {"type": "credit", "date_iso": "2025-01-10", "amount_paise": 10000, "description": "Instant loan credit"},
-            {"type": "credit", "date_iso": "2025-01-12", "amount_paise": 15000, "description": "NBFC cash advance"},
+            {
+                "type": "credit",
+                "date_iso": "2025-01-10",
+                "amount_paise": 10000,
+                "description": "Instant loan credit",
+            },
+            {
+                "type": "credit",
+                "date_iso": "2025-01-12",
+                "amount_paise": 15000,
+                "description": "NBFC cash advance",
+            },
         ]
         result = detect_risk_patterns(transactions)
         assert result["loan_app_pattern_flag"] is True
@@ -419,10 +528,30 @@ class TestDetectRiskPatterns:
         from src.engines.behaviour_engine.stress import detect_risk_patterns
 
         transactions = [
-            {"type": "credit", "date_iso": "2025-01-01", "amount_paise": 1000000, "description": "Salary"},
-            {"type": "debit", "date_iso": "2025-01-05", "amount_paise": 200000, "description": "EMI payment"},
-            {"type": "debit", "date_iso": "2025-02-01", "amount_paise": 1000000, "description": "Salary"},
-            {"type": "debit", "date_iso": "2025-02-05", "amount_paise": 200000, "description": "Loan repayment"},
+            {
+                "type": "credit",
+                "date_iso": "2025-01-01",
+                "amount_paise": 1000000,
+                "description": "Salary",
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-01-05",
+                "amount_paise": 200000,
+                "description": "EMI payment",
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-02-01",
+                "amount_paise": 1000000,
+                "description": "Salary",
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-02-05",
+                "amount_paise": 200000,
+                "description": "Loan repayment",
+            },
         ]
         result = detect_risk_patterns(transactions)
         assert result["emi_ratio"] > 0
@@ -433,9 +562,24 @@ class TestDetectRiskPatterns:
         from src.engines.behaviour_engine.stress import detect_risk_patterns
 
         transactions = [
-            {"type": "credit", "date_iso": "2025-01-01", "amount_paise": 1000000, "description": "Salary"},
-            {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 50000, "description": "Grocery shopping"},
-            {"type": "debit", "date_iso": "2025-01-20", "amount_paise": 100000, "description": "Electricity bill"},
+            {
+                "type": "credit",
+                "date_iso": "2025-01-01",
+                "amount_paise": 1000000,
+                "description": "Salary",
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-01-15",
+                "amount_paise": 50000,
+                "description": "Grocery shopping",
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-01-20",
+                "amount_paise": 100000,
+                "description": "Electricity bill",
+            },
         ]
         result = detect_risk_patterns(transactions)
         assert result["upi_micro_spend_flag"] is False

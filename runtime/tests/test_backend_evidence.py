@@ -291,14 +291,14 @@ class TestJUnitEmission:
         that counts are internally consistent.
         """
         from runtime.system.evidence.collectors.test_results import (
-            TestResultCollector,
+            ResultsCollector,
         )
 
         merged = REPO_ROOT / "backend/tests/generated/junit.xml"
         if not merged.exists():
             pytest.skip("merged junit.xml not present")
 
-        evidence = TestResultCollector(REPO_ROOT).collect()
+        evidence = ResultsCollector(REPO_ROOT).collect()
         assert evidence.passed > 0, "collector parsed no tests; E-1 would still be open"
         assert evidence.duration_seconds > 0
         # Failure names must be reported whenever failures are counted — a count
@@ -422,18 +422,24 @@ class TestExitCodeContractLightweight:
 
 class TestMutationRunnerPortability:
     """M3-B — the mutation execution unit must not depend on an executable
-    named ``python``; the repository convention is ``python3``."""
+    named ``python``; the repository convention is ``python3`` via canonical .venv."""
 
     _MUTATION_SCRIPT = REPO_ROOT / ".github/scripts/run_mutation_selective.sh"
 
-    def test_mutation_runner_uses_python3_not_python(self):
+    def test_mutation_runner_uses_canonical_python(self):
         source = _script(self._MUTATION_SCRIPT)
-        assert (
-            "python3 -m pytest" in source
-        ), "mutation runner must use python3 per repository convention"
+        # Must use canonical .venv python (resolves to python3) or explicit python3
+        assert (".venv/bin/python" in source) or ("python3" in source), (
+            "mutation runner must use canonical .venv python or python3 per repository convention"
+        )
+        # Must NOT use bare `python` (CI portability defect; ubuntu-latest only ships python3)
         assert "python -m pytest" not in source, (
             "bare `python -m pytest` is a CI portability defect; "
             "ubuntu-latest only ships `python3`"
+        )
+        # Must invoke the canonical mutation runner
+        assert "runtime/verify.py mutation" in source, (
+            "mutation runner must invoke canonical runtime/verify.py mutation"
         )
 
     def test_mutation_script_is_syntactically_valid(self):

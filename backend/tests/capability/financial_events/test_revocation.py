@@ -10,7 +10,6 @@ Tests revocation logic with smart defaults:
 from datetime import datetime, timedelta
 
 import pytest
-
 from src.engines.financial_events.lineage_walker import (
     DEFAULT_REVOCATION_LOOKBACK_DAYS,
     walk_lineage,

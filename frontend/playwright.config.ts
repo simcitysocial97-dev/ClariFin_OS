@@ -108,7 +108,8 @@ export default defineConfig({
       stderr: 'pipe',
     },
     {
-      command: 'cd ../backend && PYTHONPATH=. python3 -m uvicorn src.api:app --host 0.0.0.0 --port 8000',
+      // Resolve Python via CLARIFIN_PYTHON env var (set by CI/bootstrap) or venv-first ladder
+      command: 'cd ../backend && PYTHONPATH=. "${CLARIFIN_PYTHON:-$(if [ -x ../../.venv/bin/python ]; then echo ../../.venv/bin/python; else command -v python3 || command -v python; fi)}" -m uvicorn src.api:app --host 0.0.0.0 --port 8000',
       url: 'http://localhost:8000/ready',
       reuseExistingServer: false,
       timeout: 60000,

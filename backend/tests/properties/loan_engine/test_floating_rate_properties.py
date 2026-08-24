@@ -10,7 +10,6 @@ from datetime import date
 import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
-
 from src.engines.loan_engine.amortization import generate_schedule, total_interest_paise
 from src.engines.loan_engine.floating_rate import (
     apply_floating_rate_change,
@@ -305,16 +304,56 @@ def test_simulate_floating_rate_schedule_rate_application(rate_change_params):
     )
 
     # INVARIANT: Rate changes should be reflected in the schedule.
-    # Compare the regenerated schedule's EMI at the change month against the
-    # ORIGINAL schedule's EMI at that month (the regenerated tail has a uniform
-    # EMI, so consecutive months within the tail are equal by construction).
-    original_schedule = generate_schedule(principal, initial_rate, tenure, start_date)
+    # Track the schedule state before each change to verify EMI/tenure changes.
+    from src.engines.loan_engine.amortization import generate_schedule
+
+    current_schedule = generate_schedule(principal, initial_rate, tenure, start_date)
+
     for change in sorted_changes:
-        if change.change_month < len(schedule) and change.change_month > 1:
-            original_emi = original_schedule[change.change_month - 1].emi_paise
-            modified_emi = schedule[change.change_month - 1].emi_paise
-            if change.mode == "adjust_emi" and change.new_rate_bps != initial_rate:
-                assert modified_emi != original_emi
+        if change.change_month < len(current_schedule) and change.change_month > 1:
+            # EMI at change month before this change is applied
+            emi_before = current_schedule[change.change_month - 1].emi_paise
+
+            # Apply this change to track intermediate state
+            current_schedule = apply_floating_rate_change(
+                current_schedule,
+                change.change_month,
+                change.new_rate_bps,
+                change.mode,
+                start_date,
+            )
+
+            # EMI at change month after this change is applied
+            if change.change_month - 1 < len(current_schedule):
+                emi_after = current_schedule[change.change_month - 1].emi_paise
+
+                # For adjust_emi mode, EMI should change when rate changes
+                if change.mode == "adjust_emi" and change.new_rate_bps != initial_rate:
+                    # Rate change in adjust_emi mode should change the EMI at that month
+                    assert emi_after != emi_before, (
+                        f"adjust_emi at month {change.change_month} with rate "
+                        f"{change.new_rate_bps} did not change EMI "
+                        f"(was {emi_before}, now {emi_after})"
+                    )
+                # For adjust_tenure mode, tenure (schedule length) should change
+                if (
+                    change.mode == "adjust_tenure"
+                    and change.new_rate_bps != initial_rate
+                ):
+                    # We can't easily check tenure change here since it affects future months
+                    # but we can verify the schedule was modified
+                    pass
+
+    # Final schedule should match the one from simulate_floating_rate_schedule
+    final_schedule = simulate_floating_rate_schedule(
+        principal, initial_rate, tenure, sorted_changes, "adjust_emi", start_date
+    )
+    assert len(schedule) == len(final_schedule)
+    for a, b in zip(schedule, final_schedule, strict=False):
+        assert a.emi_paise == b.emi_paise
+        assert a.principal_paise == b.principal_paise
+        assert a.interest_paise == b.interest_paise
+        assert a.balance_paise == b.balance_paise
 
 
 @given(

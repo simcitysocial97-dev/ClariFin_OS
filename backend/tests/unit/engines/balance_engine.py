@@ -10,7 +10,6 @@ Run: python -m pytest backend/tests/unit/engines/balance_engine.py -v
 """
 
 import pytest
-
 from src.engines.balance_engine import (
     _format_paise,
     _parse_date_for_sort,
@@ -494,11 +493,17 @@ class TestComputeAccountBalance:
         conn.commit()
         conn.close()
 
-        result_zero = compute_account_balance(temp_db_with_data, "START_BAL", starting_balance_paise=0)
-        result_custom = compute_account_balance(temp_db_with_data, "START_BAL", starting_balance_paise=500000)
+        result_zero = compute_account_balance(
+            temp_db_with_data, "START_BAL", starting_balance_paise=0
+        )
+        result_custom = compute_account_balance(
+            temp_db_with_data, "START_BAL", starting_balance_paise=500000
+        )
 
         assert result_custom["balance_paise"] == result_zero["balance_paise"] + 500000
-        assert result_custom["balance_display"] == _format_paise(result_custom["balance_paise"])
+        assert result_custom["balance_display"] == _format_paise(
+            result_custom["balance_paise"]
+        )
 
     def test_compute_account_balance_account_isolation(self, temp_db_with_data):
         """Account balance is isolated per account_id."""
@@ -751,7 +756,9 @@ class TestGetAccountsList:
             assert "bank" in r and isinstance(r["bank"], str)
             assert "transaction_count" in r and isinstance(r["transaction_count"], int)
             assert "total_debit_paise" in r and isinstance(r["total_debit_paise"], int)
-            assert "total_credit_paise" in r and isinstance(r["total_credit_paise"], int)
+            assert "total_credit_paise" in r and isinstance(
+                r["total_credit_paise"], int
+            )
             assert "balance_paise" in r and isinstance(r["balance_paise"], int)
             assert "balance_display" in r and isinstance(r["balance_display"], str)
 

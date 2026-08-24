@@ -8,7 +8,6 @@ Tests for _parse_amount_paise function to verify integer paise parsing.
 import sqlite3
 
 import pytest
-
 from repositories.statement_repository import StatementRepository
 from repositories.transaction_repository import TransactionRepository
 from src.common.calculations import _parse_amount_paise

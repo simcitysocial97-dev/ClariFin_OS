@@ -9,6 +9,15 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_ROOT"
 
+# Canonical Python resolver (venv-first)
+if [ -x "$REPO_ROOT/.venv/bin/python" ]; then
+  PY="$REPO_ROOT/.venv/bin/python"
+  PIP="$REPO_ROOT/.venv/bin/pip"
+else
+  PY="$(command -v python3 || command -v python)"
+  PIP="$(command -v pip3 || command -v pip)"
+fi
+
 echo "================================================"
 echo "  ClariFin OS — Dependency Health Check"
 echo "================================================"
@@ -17,13 +26,13 @@ mkdir -p dependency-reports
 
 # ── Python dependency audit ───────────────────────
 echo -e "\n[1/2] Python dependency security audit..."
-pip install --quiet pip-audit 2>/dev/null || true
+"$PIP" install --quiet pip-audit 2>/dev/null || true
 # M10: the single dependency authority is root pyproject.toml (no more
 # backend/requirements.txt). Audit the resolved environment lock/deps directly.
 if [ -f requirements.lock ]; then
-  pip-audit -r requirements.lock 2>&1 | tee dependency-reports/python-audit.txt || echo "python audit completed with findings"
+  "$PY" -m pip_audit -r requirements.lock 2>&1 | tee dependency-reports/python-audit.txt || echo "python audit completed with findings"
 elif [ -f pyproject.toml ]; then
-  pip-audit 2>&1 | tee dependency-reports/python-audit.txt || echo "python audit completed with findings"
+  "$PY" -m pip_audit 2>&1 | tee dependency-reports/python-audit.txt || echo "python audit completed with findings"
 else
   echo "No dependency authority found — skipping pip-audit" > dependency-reports/python-audit.txt
 fi

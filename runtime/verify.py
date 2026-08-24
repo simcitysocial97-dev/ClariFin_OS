@@ -1367,9 +1367,13 @@ def main() -> int:
         ReplayResult,
         VerificationCache,
     )
+    from runtime.foundation.verification.env import resolve_environment
 
     cache = VerificationCache(VERIFICATION_CACHE_PATH)
-    replay: ReplayResult = cache.replay(commit, changed_files, profile_name)
+    # Get execution fingerprint for cache invalidation (R11)
+    fp_report = resolve_environment(profile=profile_name)
+    fingerprint = fp_report.fingerprint
+    replay: ReplayResult = cache.replay(commit, changed_files, profile_name, fingerprint)
 
     if replay.reusable:
         verdict_status = replay.overall_status or "unknown"
@@ -1412,6 +1416,7 @@ def main() -> int:
     # legitimate run is never killed prematurely by the executor.
     orchestrator = VerificationOrchestrator(
         profile=profile,
+        repo_root=REPO_ROOT,
         log_callback=_stream_log,
         per_step_timeout=5400,
     )
@@ -1444,7 +1449,7 @@ def main() -> int:
         skipped=report.summary.skipped,
         unit_statuses=unit_statuses,
     )
-    cache.save(profile_name, commit, changed_files, verdict, elapsed)
+    cache.save(profile_name, commit, changed_files, verdict, elapsed, fingerprint)
     _record_verification_event(report, profile_name, elapsed, cache_hit=False)
 
     print(f"\nVerification Report: {report_path}")

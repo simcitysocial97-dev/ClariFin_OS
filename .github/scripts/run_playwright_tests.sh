@@ -20,6 +20,15 @@ echo "================================================"
 echo "  ClariFin OS — Playwright E2E Tests"
 echo "================================================"
 
+# ED6: Pre-flight browser availability check — fail fast if browser not available
+echo -e "\n${YELLOW}Checking browser availability...${NC}"
+if ! npx playwright install --dry-run chromium 2>/dev/null | grep -q "chromium"; then
+  echo -e "${RED}✗ Browser 'chromium' not available. Run 'npx playwright install chromium' first.${NC}"
+  echo "================================================"
+  exit 1
+fi
+echo -e "${GREEN}✓ Browser 'chromium' available${NC}"
+
 mkdir -p test-results playwright-report
 
 # Build the frontend first — Playwright's webServer (`npm start` = `next start`)

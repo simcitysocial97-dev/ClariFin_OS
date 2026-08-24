@@ -9,7 +9,6 @@ Covers: amortization, prepayment, foreclosure, floating rate, metrics, edge case
 from __future__ import annotations
 
 import pytest
-
 from src.engines.loan_engine import (
     apply_floating_rate_change,
     apply_prepayment,

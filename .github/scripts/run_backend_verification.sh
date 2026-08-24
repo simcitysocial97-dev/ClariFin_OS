@@ -31,6 +31,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_ROOT/backend" || { echo "backend/ not found"; exit 1; }
 
+# Canonical Python resolver (venv-first)
+if [ -x "$REPO_ROOT/.venv/bin/python" ]; then
+  PY="$REPO_ROOT/.venv/bin/python"
+else
+  PY="$(command -v python3 || command -v python)"
+fi
+
 EVIDENCE_DIR="${BACKEND_EVIDENCE_DIR:-$REPO_ROOT/runtime/generated/evidence/backend}"
 mkdir -p "$EVIDENCE_DIR"
 
@@ -71,7 +78,7 @@ for tdir in tests/contract tests/invariants tests/properties tests/unit/engines;
     echo ">> pytest $tdir (parallel, phase=$name)"
     starts+=("$(date +%s)")
     # --junitxml is additive: it changes no selection, no assertion, no exit code.
-    python3 -m pytest "$tdir" -q --no-header --tb=short \
+    "$PY" -m pytest "$tdir" -q --no-header --tb=short \
       --junitxml="$junit" > "$out" 2>&1 &
     pids+=($!)
     names+=("$name")
@@ -117,7 +124,7 @@ for i in "${!names[@]}"; do
 done
 
 # Merge per-suite JUnit into the single file the existing collector expects.
-python3 - "$EVIDENCE_DIR" "$LEGACY_JUNIT_DIR/junit.xml" <<'PY' 2>/dev/null || true
+"$PY" - "$EVIDENCE_DIR" "$LEGACY_JUNIT_DIR/junit.xml" <<'PY' 2>/dev/null || true
 import sys, glob, os
 import xml.etree.ElementTree as ET
 
@@ -153,7 +160,7 @@ JSON
 
 echo
 echo "Phase summary: $EVIDENCE_DIR/backend-verification.json"
-python3 - "$EVIDENCE_DIR/backend-verification.json" <<'PY' 2>/dev/null || true
+"$PY" - "$EVIDENCE_DIR/backend-verification.json" <<'PY' 2>/dev/null || true
 import json, sys
 with open(sys.argv[1], encoding="utf-8") as fh:
     data = json.load(fh)

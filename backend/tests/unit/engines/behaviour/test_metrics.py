@@ -15,7 +15,6 @@ from decimal import Decimal
 from typing import Any
 
 import pytest
-
 from src.engines.behaviour_engine import (
     classify_income_source,
     compute_account_concentration,

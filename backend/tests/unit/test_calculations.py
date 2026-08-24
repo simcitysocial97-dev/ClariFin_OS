@@ -6,7 +6,6 @@ and behavioral insight generation — all pure functions with no DB dependency.
 """
 
 import pytest
-
 from src.common.calculations import (
     _parse_amount_paise,
     compute_behavioral_insights,

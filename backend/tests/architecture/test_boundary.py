@@ -9,7 +9,6 @@ Run: python -m pytest tests/test_boundary.py -v
 """
 
 import pytest
-from fastapi import HTTPException
 
 # Add src to path
 from errors import (
@@ -19,6 +18,7 @@ from errors import (
     ValidationError,
     format_error_response,
 )
+from fastapi import HTTPException
 from src.extraction.validator import (
     validate_category,
     validate_date,

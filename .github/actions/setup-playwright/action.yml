@@ -9,6 +9,10 @@ inputs:
     description: "Browsers to install"
     required: false
     default: "chromium"
+  browser-version:
+    description: "Browser version to install (for deterministic provisioning)"
+    required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -31,11 +35,16 @@ runs:
       uses: actions/cache@v4
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-${{ runner.os }}-${{ hashFiles(format('{0}/package-lock.json', inputs.working-directory)) }}-${{ steps.cachekey.outputs.key }}
+        key: playwright-${{ runner.os }}-${{ inputs.browser-version }}-${{ hashFiles(format('{0}/package-lock.json', inputs.working-directory)) }}-${{ steps.cachekey.outputs.key }}
         restore-keys: |
-          playwright-${{ runner.os }}-
+          playwright-${{ runner.os }}-${{ inputs.browser-version }}-
 
     - name: Install Playwright browsers
       shell: bash
       working-directory: ${{ inputs.working-directory }}
-      run: npx playwright install --with-deps ${{ inputs.browsers }}
+      run: |
+        if [ -n "${{ inputs.browser-version }}" ]; then
+          npx playwright install --with-deps ${{ inputs.browsers }}@${{ inputs.browser-version }}
+        else
+          npx playwright install --with-deps ${{ inputs.browsers }}
+        fi

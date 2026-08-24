@@ -18,7 +18,6 @@ Run: python -m pytest tests/test_reconciliation.py -v
 import sqlite3
 
 import pytest
-
 from repositories.reconciliation_repository import ReconciliationRepository
 from repositories.statement_repository import StatementRepository
 from src.engines.reconciliation_engine import (
@@ -661,7 +660,6 @@ def test_generate_explanation_amount_in_rupees():
 
 def test_parse_date_iso_valid():
     """Valid ISO date strings parse correctly."""
-    from src.engines.reconciliation_engine import _parse_date_iso
 
     result = _parse_date_iso("2025-01-01")
     assert result is not None
@@ -677,7 +675,6 @@ def test_parse_date_iso_valid():
 
 def test_parse_date_iso_invalid():
     """Invalid or empty date strings return None."""
-    from src.engines.reconciliation_engine import _parse_date_iso
 
     assert _parse_date_iso("") is None
     assert _parse_date_iso(None) is None  # type: ignore
@@ -687,19 +684,19 @@ def test_parse_date_iso_invalid():
 
 def test_simple_description_similarity_with_keywords():
     """Descriptions containing transfer keywords return similarity 1.0."""
-    from src.engines.reconciliation_engine import _simple_description_similarity
 
     assert _simple_description_similarity("NEFT Transfer", "Transfer via NEFT") == 1.0
     assert _simple_description_similarity("IMPS payment", "Received via IMPS") == 1.0
     assert _simple_description_similarity("UPI transfer", "Payment via UPI") == 1.0
     assert _simple_description_similarity("RTGS credit", "RTGS debit") == 1.0
-    assert _simple_description_similarity("Paytm transfer", "Transfer from Paytm") == 1.0
+    assert (
+        _simple_description_similarity("Paytm transfer", "Transfer from Paytm") == 1.0
+    )
     assert _simple_description_similarity("GPay payment", "Payment via GPay") == 1.0
 
 
 def test_simple_description_similarity_no_keywords():
     """Descriptions without transfer keywords return similarity 0.0."""
-    from src.engines.reconciliation_engine import _simple_description_similarity
 
     assert _simple_description_similarity("Salary Credit", "Bank Fee") == 0.0
     assert _simple_description_similarity("Grocery Purchase", "Restaurant Bill") == 0.0
@@ -713,11 +710,15 @@ def test_calculate_confidence_caps_at_one():
     from src.engines.reconciliation_engine import _calculate_confidence
 
     # All factors present: date_diff=0 (+0.4), amount_exact (+0.4), sim>0.7 (+0.2) = 1.0
-    conf = _calculate_confidence(date_diff_days=0, amount_exact=True, description_similarity=1.0)
+    conf = _calculate_confidence(
+        date_diff_days=0, amount_exact=True, description_similarity=1.0
+    )
     assert conf == 1.0
 
     # Edge case: slight above threshold still caps
-    conf = _calculate_confidence(date_diff_days=0, amount_exact=True, description_similarity=0.99)
+    conf = _calculate_confidence(
+        date_diff_days=0, amount_exact=True, description_similarity=0.99
+    )
     assert conf == 1.0
 
 
@@ -728,9 +729,9 @@ def test_calculate_confidence_rounds_to_four_decimals():
     # Base confidence should have at most 4 decimal places
     conf = _calculate_confidence(date_diff_days=0, amount_exact=True)
     assert conf == round(conf, 4)
-    assert str(conf).count('.') <= 1
-    if '.' in str(conf):
-        assert len(str(conf).split('.')[1]) <= 4
+    assert str(conf).count(".") <= 1
+    if "." in str(conf):
+        assert len(str(conf).split(".")[1]) <= 4
 
 
 def test_check_match_with_description_similarity():
@@ -859,7 +860,6 @@ def test_generate_explanation_edge_cases():
 
 def test_find_matches_for_transaction_existing(populated_db):
     """find_matches_for_transaction returns matches for valid transaction ID."""
-    from src.engines.reconciliation_engine import find_matches_for_transaction
 
     matches = find_matches_for_transaction(populated_db, 1)
     # Transaction 1 is debit in Account_A, should match transaction 5 (credit in Account_B)
@@ -870,7 +870,6 @@ def test_find_matches_for_transaction_existing(populated_db):
 
 def test_find_matches_for_transaction_not_found(populated_db):
     """find_matches_for_transaction returns empty list for non-existent transaction ID."""
-    from src.engines.reconciliation_engine import find_matches_for_transaction
 
     matches = find_matches_for_transaction(populated_db, 99999)
     assert matches == []

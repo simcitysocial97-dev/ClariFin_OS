@@ -50,6 +50,15 @@ _VERIFY_QUICK_TASKS = (
         estimated_duration_seconds=30,
     ),
     VerificationTask(
+        id="quick-black",
+        name="Black format check",
+        profile="quick",
+        commands=["python3 -m black --check backend/src/ runtime/"],
+        category=VerificationCategory.CAPABILITY,
+        scope=VerificationScope.QUICK,
+        estimated_duration_seconds=30,
+    ),
+    VerificationTask(
         id="quick-mypy",
         name="MyPy type check",
         profile="quick",
@@ -75,6 +84,15 @@ _VERIFY_BACKEND_TASKS = (
         name="Ruff lint check",
         profile="backend",
         commands=["python3 -m ruff check backend/src/"],
+        category=VerificationCategory.CAPABILITY,
+        scope=VerificationScope.BACKEND,
+        estimated_duration_seconds=30,
+    ),
+    VerificationTask(
+        id="backend-black",
+        name="Black format check",
+        profile="backend",
+        commands=["python3 -m black --check backend/src/"],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.BACKEND,
         estimated_duration_seconds=30,
@@ -111,7 +129,7 @@ _VERIFY_BACKEND_TASKS = (
         name="Schemathesis contract tests",
         profile="backend",
         commands=[
-            "python3 -m schemathesis run --hypothesis-max-examples=50 backend/tests/contract/"
+            "schemathesis run backend/tests/contract/"
         ],
         category=VerificationCategory.CONTRACT,
         scope=VerificationScope.BACKEND,
@@ -186,7 +204,7 @@ _VERIFY_CONTRACTS_TASKS = (
         name="Schemathesis contract validation",
         profile="contracts",
         commands=[
-            "python3 -m schemathesis run --hypothesis-max-examples=50 backend/tests/contract/"
+            "schemathesis run backend/tests/contract/"
         ],
         category=VerificationCategory.CONTRACT,
         scope=VerificationScope.CONTRACTS,
@@ -292,7 +310,7 @@ _VERIFY_FULL_TASKS = (
         name="Schemathesis contract tests",
         profile="full",
         commands=[
-            "python3 -m schemathesis run --hypothesis-max-examples=50 backend/tests/contract/"
+            "schemathesis run backend/tests/contract/"
         ],
         category=VerificationCategory.CONTRACT,
         scope=VerificationScope.FULL,

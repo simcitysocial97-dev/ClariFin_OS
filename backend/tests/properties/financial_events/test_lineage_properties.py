@@ -13,7 +13,6 @@ from typing import Any
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 from hypothesis.strategies import DrawFn, composite
-
 from src.engines.financial_events.lineage_walker import (
     LineageProposal,
     walk_lineage,

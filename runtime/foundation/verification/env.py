@@ -20,6 +20,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import shutil
 import subprocess
@@ -114,6 +115,8 @@ def _resolve_tool(name: str, *, config_dir: Optional[Path] = None) -> Tool:
 def resolve_environment(
     *,
     config_dir: Optional[Path] = None,
+    profile: Optional[str] = None,
+    capability_selection: Optional[list[str]] = None,
 ) -> EnvironmentReport:
     """Resolve and validate the canonical mutation environment."""
     errors: list[str] = []
@@ -167,7 +170,7 @@ def resolve_environment(
             + ", ".join(forbidden)
         )
 
-    fingerprint = build_fingerprint(py, pytest, mutmut, forbidden)
+    fingerprint = build_fingerprint(py, pytest, mutmut, forbidden, profile=profile, capability_selection=capability_selection)
 
     return EnvironmentReport(
         python=py,
@@ -181,9 +184,101 @@ def resolve_environment(
 
 
 def build_fingerprint(
+    py: Tool, pytest: Tool, mutmut: Tool, forbidden: list[str],
+    *,
+    profile: Optional[str] = None,
+    capability_selection: Optional[list[str]] = None,
+) -> dict:
+    """Machine-readable environment fingerprint for drift visibility.
+    
+    Extended fingerprint includes:
+    - Tool versions (python, pytest, ruff, black, mypy, coverage, mutmut)
+    - Config hashes (pyproject.toml, ruff config, black config, mypy config)
+    - Dependency lock fingerprint
+    - Verification profile
+    - Capability selection
+    - Repository revision
+    """
+    repo_root = REPO_ROOT
+    
+    # Core tool versions
+    ruff_tool = _resolve_tool("ruff")
+    black_tool = _resolve_tool("black")
+    mypy_tool = _resolve_tool("mypy")
+    coverage_tool = _resolve_tool("coverage")
+    
+    # Config hashes
+    pyproject_hash = hash_file(repo_root / "pyproject.toml")
+    ruff_config_hash = hash_file(repo_root / "backend" / "ruff.toml") if (repo_root / "backend" / "ruff.toml").exists() else "missing"
+    black_config_hash = "embedded_in_pyproject"  # black config is in pyproject.toml
+    mypy_config_hash = hash_file(repo_root / "backend" / "pyproject.toml")
+    
+    # Dependency lock fingerprint
+    lock_hash = hash_file(repo_root / "requirements.lock")
+    
+    # Repository revision
+    repo_sha = "unknown"
+    try:
+        repo_sha = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(repo_root),
+            capture_output=True,
+            text=True,
+            timeout=10,
+        ).stdout.strip() or "unknown"
+    except Exception:
+        pass
+    
+    return {
+        # Core tools
+        "python_version": py.version,
+        "python_source": py.source,
+        "python_path": py.path,
+        "pytest_version": pytest.version,
+        "pytest_source": pytest.source,
+        "mutmut_version": mutmut.version,
+        "mutmut_source": mutmut.source,
+        "pinned_mutmut": PINNED_MUTMUT,
+        "forbidden_venvs": forbidden,
+        "venv_bin": str(VENV_BIN),
+        
+        # Extended toolchain
+        "ruff_version": ruff_tool.version,
+        "ruff_source": ruff_tool.source,
+        "black_version": black_tool.version,
+        "black_source": black_tool.source,
+        "mypy_version": mypy_tool.version,
+        "mypy_source": mypy_tool.source,
+        "coverage_version": coverage_tool.version,
+        "coverage_source": coverage_tool.source,
+        
+        # Config hashes
+        "config_hashes": {
+            "pyproject_toml": pyproject_hash,
+            "ruff_toml": ruff_config_hash,
+            "black": black_config_hash,
+            "mypy": mypy_config_hash,
+        },
+        
+        # Dependency lock
+        "requirements_lock_hash": lock_hash,
+        
+        # Repository state
+        "repository_sha": repo_sha,
+        
+        # Profile & capability
+        "verification_profile": profile,
+        "capability_selection": capability_selection or [],
+        
+        # Fingerprint version for future compatibility
+        "fingerprint_version": "1.0",
+    }
+
+
+def _build_minimal_fingerprint(
     py: Tool, pytest: Tool, mutmut: Tool, forbidden: list[str]
 ) -> dict:
-    """Machine-readable environment fingerprint for drift visibility."""
+    """Minimal fingerprint for env-check (backward compatible)."""
     return {
         "python_version": py.version,
         "python_source": py.source,
@@ -206,9 +301,31 @@ def hash_file(path: Path) -> str:
 
 
 def main_env_check(argv: list[str]) -> int:
-    """`verify.py env-check` — print fingerprint, exit non-zero if inconsistent."""
+    """`verify.py env-check` — print fingerprint, exit non-zero if inconsistent.
+    
+    Flags:
+        --full    Include extended fingerprint (tool versions, config hashes, lock hash, repo SHA)
+    """
+    full = "--full" in argv
     report = resolve_environment()
-    print(json.dumps(report.to_dict(), indent=2))
+    
+    if full:
+        # Print extended fingerprint
+        print(json.dumps(report.fingerprint, indent=2))
+    else:
+        # Print minimal fingerprint (backward compatible)
+        print(json.dumps({
+            "python": asdict(report.python),
+            "pytest": asdict(report.pytest),
+            "mutmut": asdict(report.mutmut),
+            "forbidden_venvs": list(report.forbidden_venvs),
+            "fingerprint": _build_minimal_fingerprint(
+                report.python, report.pytest, report.mutmut, list(report.forbidden_venvs)
+            ),
+            "consistent": report.consistent,
+            "errors": list(report.errors),
+        }, indent=2))
+    
     if report.consistent:
         print("\nENVIRONMENT CONSISTENT — canonical .venv is the only environment.")
         return 0

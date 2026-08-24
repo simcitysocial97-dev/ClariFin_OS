@@ -9,7 +9,6 @@ from datetime import date
 
 from hypothesis import HealthCheck, assume, given, settings
 from hypothesis import strategies as st
-
 from src.engines.loan_engine.amortization import generate_schedule, total_interest_paise
 from src.engines.loan_engine.models import (
     AmortizationRow,

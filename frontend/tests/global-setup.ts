@@ -21,6 +21,25 @@ const HEALTH_CHECK_RETRY_DELAY = 1000;
 const HEALTH_CHECK_ENDPOINT = `${API_BASE}/ready`;
 
 /**
+ * Resolve the canonical Python interpreter.
+ * Priority: CLARIFIN_PYTHON env var > repo-root .venv/bin/python > python3 from PATH
+ */
+function resolvePython(): string {
+  // Check for explicit override (set by CI/local bootstrap)
+  if (process.env.CLARIFIN_PYTHON) {
+    return process.env.CLARIFIN_PYTHON;
+  }
+  // Repo root is two levels up from frontend/tests/
+  const repoRoot = resolve(process.cwd(), '..', '..');
+  const venvPython = resolve(repoRoot, '.venv', 'bin', 'python');
+  if (existsSync(venvPython)) {
+    return venvPython;
+  }
+  // Fallback to PATH python3
+  return 'python3';
+}
+
+/**
  * Check if backend is running using the /ready endpoint
  */
 async function checkBackendHealth(): Promise<boolean> {
@@ -60,9 +79,7 @@ async function startBackend(): Promise<boolean> {
     return false;
   }
 
-  // Use system Python (dependencies already installed via bootstrap-runtime)
-  const pythonCmd = 'python3';
-  
+  const pythonCmd = resolvePython();
   console.log(`Using Python: ${pythonCmd}`);
 
   try {
@@ -165,7 +182,7 @@ print(f'Seeded {db_path}')
 `;
     
     return new Promise((resolve) => {
-      const pythonCmd = 'python3';
+      const pythonCmd = resolvePython();
       
       const proc = spawn(pythonCmd, ['-c', seedScript], { cwd: backendPath });
       let stdout = '';

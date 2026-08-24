@@ -11,7 +11,6 @@ from decimal import Decimal
 
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
-
 from src.engines.loan_engine.amortization import (
     generate_schedule,
     generate_schedule_fixed,

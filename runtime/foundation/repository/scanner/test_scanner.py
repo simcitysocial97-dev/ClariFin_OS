@@ -37,7 +37,7 @@ _BACKEND_TEST_TYPES: dict[str, str] = {
 _FRONTEND_TEST_DIRS: list[str] = ["__tests__", "tests"]
 
 
-class TestScanner(BaseScanner):
+class SuiteDiscovery(BaseScanner):
     """Discover test suites and map them to capabilities."""
 
     def scan(self) -> ScanResult:

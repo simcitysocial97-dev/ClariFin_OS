@@ -7,7 +7,6 @@ from typing import Any
 
 from hypothesis import HealthCheck, assume, given, settings
 from hypothesis import strategies as st
-
 from src.engines.financial_intelligence.forecasting import (
     forecast_cashflow,
     forecast_credit_utilization,
@@ -15,6 +14,7 @@ from src.engines.financial_intelligence.forecasting import (
 )
 from src.engines.financial_intelligence.goal_planner import calculate_goal_projection
 from src.engines.financial_intelligence.utils import project_running_balance
+
 from tests.invariants import assert_forecast_invariants
 
 

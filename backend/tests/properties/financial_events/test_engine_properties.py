@@ -11,7 +11,6 @@ from datetime import date
 
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
-
 from src.engines.financial_events.lineage_walker import (
     LineageProposal,
     detect_rollover_scenarios,

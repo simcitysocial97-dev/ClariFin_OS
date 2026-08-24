@@ -11,7 +11,7 @@ from typing import Any
 
 from .collectors.coverage import CoverageCollector, CoverageEvidence
 from .collectors.mutation import MutationCollector, MutationEvidence
-from .collectors.test_results import TestResultCollector, TestResultEvidence
+from .collectors.test_results import ResultsCollector, ResultData
 from .collectors.contract import ContractCollector, ContractEvidence
 
 # Program 7A: Cross-layer dependency chain enrichment
@@ -835,7 +835,7 @@ class EvidenceAggregator:
         collector = MutationCollector(self.workspace_root)
         return collector.collect()
 
-    def _collect_test_results(self, evidence_dir: Path) -> TestResultEvidence:
+    def _collect_test_results(self, evidence_dir: Path) -> ResultData:
         candidate_files = []
         test_dir = evidence_dir / "test-results"
         if test_dir.exists():
@@ -849,13 +849,13 @@ class EvidenceAggregator:
                     candidate_files.append(f)
 
         for xml_file in candidate_files:
-            collector = TestResultCollector(self.workspace_root)
+            collector = ResultsCollector(self.workspace_root)
             return collector.collect(xml_file)
 
-        collector = TestResultCollector(self.workspace_root)
+        collector = ResultsCollector(self.workspace_root)
         return collector.collect()
 
-    def _collect_property_tests(self, evidence_dir: Path) -> TestResultEvidence:
+    def _collect_property_tests(self, evidence_dir: Path) -> ResultData:
         candidate_files = []
         repo_test_dir = evidence_dir / "backend" / "tests" / "generated"
         if repo_test_dir.exists():
@@ -869,10 +869,10 @@ class EvidenceAggregator:
             candidate_files.extend(sorted(prop_dir.rglob("*.xml")))
 
         for xml_file in candidate_files:
-            collector = TestResultCollector(self.workspace_root)
+            collector = ResultsCollector(self.workspace_root)
             return collector.collect(xml_file)
 
-        return TestResultEvidence(
+        return ResultData(
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
 
@@ -886,7 +886,7 @@ class EvidenceAggregator:
         collector = ContractCollector(self.workspace_root)
         return collector.collect()
 
-    def _test_status(self, evidence: TestResultEvidence) -> str:
+    def _test_status(self, evidence: ResultData) -> str:
         if evidence.failed > 0 or evidence.error > 0:
             return "fail"
         if evidence.passed > 0:

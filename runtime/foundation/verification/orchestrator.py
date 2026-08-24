@@ -34,22 +34,26 @@ from runtime.foundation.verification.profiles import VerificationProfile, get_pr
 from runtime.foundation.verification.planner import VerificationPlanner, PlanningContext
 from runtime.foundation.verification.registry import UNMAPPED
 from runtime.foundation.verification.failure_report import build_failure_report
-from runtime.system.evidence.aggregator import EvidenceAggregator
 
 VERIFICATION_CACHE_PATH = Path("runtime/generated/verification-cache.json")
 VERIFICATION_REPORT_PATH = Path("runtime/generated/verification-report.md")
 
 
 def _find_repo_root() -> Path:
-    candidates = [
-        Path(__file__).resolve().parents[5],
-        Path.cwd(),
-    ]
-    for candidate in candidates:
-        if (candidate / "backend" / "pyproject.toml").exists() or (
-            candidate / "runtime"
-        ).exists():
-            return candidate
+    """Resolve repository root by walking up from this file to find a known marker.
+
+    Uses backend/pyproject.toml as the anchor since it exists in the canonical
+    repository structure and is stable. Falls back to cwd only as last resort.
+    """
+    current = Path(__file__).resolve()
+    for parent in [current.parent] + list(current.parents):
+        if (parent / "backend" / "pyproject.toml").exists():
+            return parent
+    # Fallback: if running from a different context, try cwd
+    cwd = Path.cwd()
+    if (cwd / "backend" / "pyproject.toml").exists():
+        return cwd
+    # Ultimate fallback (should not occur in normal operation)
     return Path.cwd()
 
 
@@ -91,14 +95,39 @@ def _merge_base_with_default() -> str | None:
 
     The default branch ref is fetched first to ensure it is not stale, so the
     merge-base is computed against the true remote tip (P0-1).
+
+    F26: Fetch failures now fail closed — stale remote refs cannot be silently used.
+    Offline mode can be enabled via VERIFICATION_OFFLINE=1 to skip fetch.
     """
+    import os
+    
+    # Offline mode: skip fetch entirely (for local verification without network)
+    if os.environ.get("VERIFICATION_OFFLINE") == "1":
+        default = _default_branch()
+        if not default:
+            return None
+        repo_root = _find_repo_root()
+        try:
+            r = subprocess.run(
+                ["git", "merge-base", "HEAD", default],
+                capture_output=True,
+                text=True,
+                cwd=str(repo_root),
+                timeout=10,
+            )
+            if r.returncode == 0 and r.stdout.strip():
+                return r.stdout.strip()
+        except Exception:
+            pass
+        return None
+
     default = _default_branch()
     if not default:
         return None
     repo_root = _find_repo_root()
     # Extract branch name from ref (e.g., "origin/main" -> "main") for fetch.
     branch_name = default.replace("origin/", "")
-    # Refresh the default branch to avoid a stale cached ref (P0-1).
+    # Refresh the default branch to avoid a stale cached ref (P0-1 / F26).
     fetch_result = subprocess.run(
         ["git", "fetch", "origin", branch_name],
         capture_output=True,
@@ -107,8 +136,25 @@ def _merge_base_with_default() -> str | None:
         timeout=30,
     )
     if fetch_result.returncode != 0:
-        # Fetch failed; continue with potentially stale ref rather than failing.
-        pass
+        # F26: Fetch failed — fail closed. Do not silently use stale ref.
+        # Record the failure for evidence.
+        _record_git_fetch_evidence(
+            success=False,
+            branch=branch_name,
+            error=fetch_result.stderr.strip() or fetch_result.stdout.strip(),
+            returncode=fetch_result.returncode,
+        )
+        raise RuntimeError(
+            f"git fetch origin {branch_name} failed (exit {fetch_result.returncode}). "
+            f"Set VERIFICATION_OFFLINE=1 to skip fetch for local-only verification. "
+            f"Error: {fetch_result.stderr.strip() or fetch_result.stdout.strip()}"
+        )
+    # Record successful fetch
+    _record_git_fetch_evidence(
+        success=True,
+        branch=branch_name,
+        output=fetch_result.stdout.strip(),
+    )
     try:
         r = subprocess.run(
             ["git", "merge-base", "HEAD", default],
@@ -122,6 +168,38 @@ def _merge_base_with_default() -> str | None:
     if r.returncode == 0 and r.stdout.strip():
         return r.stdout.strip()
     return None
+
+
+def _record_git_fetch_evidence(
+    *,
+    success: bool,
+    branch: str,
+    error: str | None = None,
+    output: str | None = None,
+    returncode: int | None = None,
+) -> None:
+    """Record git fetch result for forensic reproducibility."""
+    import json
+    from datetime import datetime, timezone
+    
+    event = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "event": "git_fetch",
+        "details": {
+            "branch": branch,
+            "success": success,
+            "returncode": returncode,
+            "error": error,
+            "output": output,
+        },
+    }
+    log_file = Path("runtime/generated/git-fetch-events.jsonl")
+    try:
+        log_file.parent.mkdir(parents=True, exist_ok=True)
+        with log_file.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(event) + "\n")
+    except Exception:
+        pass  # Non-critical
 
 
 def _github_pr_refs() -> tuple[str | None, str | None]:
@@ -678,6 +756,7 @@ class VerificationOrchestrator:
             log_callback=log_callback,
             per_step_timeout=per_step_timeout,
         )
+        from runtime.system.evidence.aggregator import EvidenceAggregator
         self._aggregator = EvidenceAggregator(self._repo_root)
         self._map_path = map_path
         self._changed_files: list[str] = []

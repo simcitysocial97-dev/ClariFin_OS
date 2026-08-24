@@ -6,7 +6,6 @@ on the Money class, which represents monetary values in integer paise.
 """
 
 import pytest
-
 from src.core.domain.money import Money
 
 # ============================================================================

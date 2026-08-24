@@ -7,8 +7,8 @@ from runtime.system.evidence.collectors.mutation import (
     MutationEvidence,
 )
 from runtime.system.evidence.collectors.test_results import (
-    TestResultCollector,
-    TestResultEvidence,
+    ResultsCollector,
+    ResultData,
 )
 from runtime.system.evidence.collectors.contract import (
     ContractCollector,
@@ -26,8 +26,8 @@ __all__ = [
     "CoverageEvidence",
     "MutationCollector",
     "MutationEvidence",
-    "TestResultCollector",
-    "TestResultEvidence",
+    "ResultsCollector",
+    "ResultData",
     "ContractCollector",
     "ContractEvidence",
     "PropertyTestCollector",

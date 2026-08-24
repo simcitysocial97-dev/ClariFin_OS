@@ -67,7 +67,7 @@ class VerificationCache:
             json.dumps(data, indent=2, default=str) + "\n", encoding="utf-8"
         )
 
-    def is_valid(self, commit: str, changed_files: list[str], profile: str) -> bool:
+    def is_valid(self, commit: str, changed_files: list[str], profile: str, fingerprint: dict | None = None) -> bool:
         cache = self._load()
         if cache.get("last_commit") != commit:
             return False
@@ -77,8 +77,16 @@ class VerificationCache:
             return False
         profile_changed = raw.get("changed_files")
         if profile_changed is not None:
-            return profile_changed == changed_files
-        return cache.get("changed_files") == changed_files
+            if profile_changed != changed_files:
+                return False
+        elif cache.get("changed_files") != changed_files:
+            return False
+        # Check fingerprint if provided (R11: cache invalidation on tool version/config changes)
+        if fingerprint is not None:
+            cached_fp = raw.get("fingerprint")
+            if cached_fp is not None and cached_fp != fingerprint:
+                return False
+        return True
 
     def get_verdict(self, profile: str) -> CachedVerdict | None:
         cache = self._load()
@@ -98,14 +106,14 @@ class VerificationCache:
         )
 
     def replay(
-        self, commit: str, changed_files: list[str], profile: str
+        self, commit: str, changed_files: list[str], profile: str, fingerprint: dict | None = None
     ) -> ReplayResult:
         """Return the cache replay verdict.
 
         The ``exit_code`` is derived from the stored ``overall_status`` and
         can never be 0 when the stored status is ``"fail"``.
         """
-        if not self.is_valid(commit, changed_files, profile):
+        if not self.is_valid(commit, changed_files, profile, fingerprint):
             return ReplayResult(
                 reusable=False,
                 overall_status=None,
@@ -135,6 +143,7 @@ class VerificationCache:
         changed_files: list[str],
         verdict: CachedVerdict,
         duration: float = 0.0,
+        fingerprint: dict | None = None,
     ) -> None:
         cache = self._load()
         cache.setdefault("profiles", {})
@@ -156,5 +165,6 @@ class VerificationCache:
             "skipped": verdict.skipped,
             "unit_statuses": list(verdict.unit_statuses),
             "changed_files": changed_files,
+            "fingerprint": fingerprint,
         }
         self._save(cache)

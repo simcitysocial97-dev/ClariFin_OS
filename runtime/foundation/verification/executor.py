@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import json
 import os
+import signal
 import subprocess
 import threading
+import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
 
 from runtime.foundation.verification.models import (
     ExecutionResult,
@@ -30,6 +33,8 @@ class Executor:
     - Cancellation of long-running commands
     - Parallel execution of multiple commands
     - Streaming output to both durable artifacts and the console (C5.2)
+    - Process-group ownership: every command runs in its own process group;
+      timeout/cancellation kills the entire group (F19 fix).
 
     Returns structured ExecutionResult objects.
     """
@@ -51,6 +56,90 @@ class Executor:
         # surface progress to the CI log in real time instead of waiting for the
         # subprocess to finish (the original capture_output=True behaviour).
         self._log_callback = log_callback
+        # Canonical execution environment: prepend .venv/bin when it exists
+        self._exec_env = self._build_exec_env()
+        # Process-group tracking for F19
+        self._current_pgid: Optional[int] = None
+        self._proc: Optional[subprocess.Popen] = None
+        self._proc_lock = threading.Lock()
+
+    def _build_exec_env(self) -> dict[str, str]:
+        """Build the canonical execution environment (called once at init).
+
+        Locally: ensures .venv/bin tools (python, pytest, ruff, black, mypy, mutmut, etc.)
+        are resolved before any system installations.
+        CI: .venv absent at repo_root; falls through to runner-provided PATH (equivalent semantics).
+
+        ED7: Explicit locale/TZ policy for deterministic execution:
+        - TZ=UTC: All date/time operations use UTC
+        - LC_ALL=C.UTF-8: C locale with UTF-8 encoding for consistent sorting/formatting
+        - LANG=C.UTF-8: Base locale for applications that don't set LC_ALL
+        - PYTHONUNBUFFERED=1: Unbuffered Python output for real-time logging
+        """
+        env = dict(os.environ)
+        env["PYTHONUNBUFFERED"] = "1"
+        # ED7: Deterministic locale/TZ policy
+        env["TZ"] = "UTC"
+        env["LC_ALL"] = "C.UTF-8"
+        env["LANG"] = "C.UTF-8"
+        venv_bin = self._repo_root / ".venv" / "bin"
+        if venv_bin.exists():
+            env["PATH"] = f"{venv_bin}{os.pathsep}{env.get('PATH', '')}"
+        return env
+
+    def _kill_process_group(self) -> None:
+        """Kill the entire process group associated with the current command.
+        
+        This ensures no orphaned descendants survive timeout or cancellation (F19).
+        """
+        with self._proc_lock:
+            pgid = self._current_pgid
+            proc = self._proc
+            self._current_pgid = None
+            self._proc = None
+        
+        if pgid is not None:
+            try:
+                os.killpg(pgid, signal.SIGTERM)
+                # Give processes a moment to terminate gracefully
+                time.sleep(0.5)
+                # Force kill any remaining
+                try:
+                    os.killpg(pgid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass  # Already gone
+            except ProcessLookupError:
+                pass  # Process group already gone
+            except PermissionError:
+                pass  # No permission (shouldn't happen for our children)
+            # Evidence: record process group termination
+            self._record_lifecycle_event("process_group_killed", {"pgid": pgid, "signal": "SIGTERM+SIGKILL"})
+        
+        # Also try direct proc kill as fallback
+        if proc is not None:
+            try:
+                proc.kill()
+            except Exception:
+                pass
+
+    def _record_lifecycle_event(self, event_type: str, details: dict) -> None:
+        """Record a lifecycle event for evidence tracking."""
+        event = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "event": event_type,
+            "details": details,
+        }
+        # Append to lifecycle log
+        log_file = self._results_dir / "lifecycle-events.jsonl"
+        try:
+            with log_file.open("a", encoding="utf-8") as f:
+                f.write(json.dumps(event) + "\n")
+        except Exception:
+            pass  # Non-critical
+
+    def _set_process_group(self) -> None:
+        """Called in child process to create new process group."""
+        os.setsid()
 
     def execute(
         self,
@@ -87,7 +176,11 @@ class Executor:
         C5.2: uses ``Popen`` with line-buffered pipe readers so output is written
         to durable evidence files and surfaced via ``_log_callback`` as soon as
         each line is produced — the CI log is no longer silent for hours.
+        
+        F19: Command runs in its own process group (start_new_session=True).
+        Timeout/cancellation kills the entire process group via os.killpg().
         """
+        import time
         start_time = datetime.now(timezone.utc)
         task_label = task_id or "step"
 
@@ -116,6 +209,9 @@ class Executor:
                         self._log_callback(f"[{tag}] {line}")
 
         try:
+            # F19: start_new_session=True creates a new process group (setsid).
+            # The process group ID equals the PID of the session leader.
+            # This ensures we can kill the entire tree on timeout/cancellation.
             proc = subprocess.Popen(
                 command,
                 shell=True,
@@ -124,11 +220,14 @@ class Executor:
                 text=True,
                 bufsize=1,
                 cwd=str(self._repo_root),
-                env={
-                    **os.environ,
-                    "PYTHONUNBUFFERED": "1",
-                },
+                env=self._exec_env,
+                start_new_session=True,  # F19: creates new session + process group
             )
+
+            # Track process group for cleanup on timeout/cancellation
+            with self._proc_lock:
+                self._proc = proc
+                self._current_pgid = os.getpgid(proc.pid)
 
             stdout_thread = threading.Thread(
                 target=_tee, args=(proc.stdout, stdout_persistent, "OUT"), daemon=True
@@ -142,8 +241,8 @@ class Executor:
             try:
                 rc = proc.wait(timeout=self._per_step_timeout)
             except subprocess.TimeoutExpired:
-                proc.kill()
-                proc.wait(timeout=5)
+                # F19: Kill entire process group, not just the shell
+                self._kill_process_group()
                 rc = -1
 
             stdout_thread.join(timeout=3)
@@ -182,6 +281,8 @@ class Executor:
                 classification=classification,
             )
         except subprocess.TimeoutExpired:
+            # Fallback: ensure process group is killed
+            self._kill_process_group()
             duration = (datetime.now(timezone.utc) - start_time).total_seconds()
             return ExecutionResult(
                 task_id=task_id,
@@ -199,6 +300,8 @@ class Executor:
                 classification=FailureClassification.TIMEOUT,
             )
         except Exception as exc:
+            # Fallback: ensure process group is killed
+            self._kill_process_group()
             duration = (datetime.now(timezone.utc) - start_time).total_seconds()
             return ExecutionResult(
                 task_id=task_id,
@@ -211,106 +314,17 @@ class Executor:
                 error=str(exc),
                 classification=FailureClassification.ENVIRONMENT_FAILURE,
             )
-
-    def retry(
-        self, command: str, task_id: str = "", max_retries: int = 3
-    ) -> ExecutionResult:
-        """Execute a command with retry logic for transient failures."""
-        return self.execute(command, task_id=task_id, max_retries=max_retries)
+        finally:
+            # Clear process group tracking
+            with self._proc_lock:
+                self._proc = None
+                self._current_pgid = None
 
     def cancel(self) -> None:
-        """Cancel any currently running commands."""
+        """Cancel any currently running commands by killing the process group."""
         self._cancel_flag.set()
+        self._kill_process_group()
 
     def reset_cancel(self) -> None:
         """Reset the cancel flag to allow new commands."""
         self._cancel_flag.clear()
-
-    def execute_parallel(
-        self, commands: list[str], task_id: str = ""
-    ) -> list[ExecutionResult]:
-        """Execute multiple commands in parallel using a thread pool."""
-        self._cancel_flag.clear()
-        results: list[ExecutionResult] = []
-        from concurrent.futures import ThreadPoolExecutor, as_completed
-
-        with ThreadPoolExecutor(max_workers=min(len(commands), 4)) as executor:
-            future_to_cmd = {
-                executor.submit(self.execute, cmd, f"{task_id}-{i}"): cmd
-                for i, cmd in enumerate(commands)
-            }
-            for future in as_completed(future_to_cmd):
-                try:
-                    result = future.result()
-                    results.append(result)
-                except Exception as exc:
-                    results.append(
-                        ExecutionResult(
-                            task_id=task_id,
-                            command=future_to_cmd[future],
-                            status=VerificationStatus.FAILED,
-                            exit_code=-1,
-                            duration_seconds=0.0,
-                            stdout_path="",
-                            stderr_path="",
-                            error=str(exc),
-                        )
-                    )
-        return results
-
-    def execute_python(
-        self, module: str, args: list[str] | None = None
-    ) -> ExecutionResult:
-        """Execute a Python module command."""
-        cmd = f"python3 -m {module}"
-        if args:
-            cmd += " " + " ".join(args)
-        return self.execute(cmd)
-
-    def execute_npm(self, command: str, cwd: str | None = None) -> ExecutionResult:
-        """Execute an npm command."""
-        full_command = f"cd frontend && npm {command}"
-        if cwd:
-            full_command = f"cd {cwd} && npm {command}"
-        return self.execute(full_command)
-
-    def execute_pytest(
-        self,
-        paths: list[str] | None = None,
-        extra_args: list[str] | None = None,
-    ) -> ExecutionResult:
-        """Execute pytest with optional paths and arguments."""
-        cmd = "python3 -m pytest"
-        if paths:
-            cmd += " " + " ".join(paths)
-        if extra_args:
-            cmd += " " + " ".join(extra_args)
-        return self.execute(cmd)
-
-    def execute_vitest(self, args: list[str] | None = None) -> ExecutionResult:
-        """Execute vitest."""
-        cmd = "cd frontend && npx vitest run"
-        if args:
-            cmd += " " + " ".join(args)
-        return self.execute(cmd)
-
-    def execute_playwright(self, args: list[str] | None = None) -> ExecutionResult:
-        """Execute Playwright tests."""
-        cmd = "cd frontend && npx playwright test"
-        if args:
-            cmd += " " + " ".join(args)
-        return self.execute(cmd)
-
-    def execute_schemathesis(
-        self,
-        target: str,
-        max_examples: int = 50,
-    ) -> ExecutionResult:
-        """Execute schemathesis contract tests."""
-        command = (
-            f"python3 -m schemathesis run "
-            f"--hypothesis-max-examples={max_examples} "
-            f"--hypothesis-database=none "
-            f"{target}"
-        )
-        return self.execute(command)

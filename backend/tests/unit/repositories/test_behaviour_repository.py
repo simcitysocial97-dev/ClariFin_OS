@@ -5,7 +5,6 @@ import tempfile
 from decimal import Decimal
 
 import pytest
-
 from src.repositories.behaviour_repository import BehaviourRepository
 
 

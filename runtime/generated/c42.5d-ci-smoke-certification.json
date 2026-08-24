@@ -1,0 +1,142 @@
+{
+  "certification": "M9-C42.5-D",
+  "title": "CI Mutation Infrastructure Certification",
+  "timestamp": "2026-08-22T20:54:51Z",
+  "classification": "CERTIFIED",
+  "provenance": {
+    "repository_sha": "255ffddec3b27a2c4bb96fb4a7e790fee2522e3e",
+    "tree_sha": "330d687b7da5b295f1091198afc67331cbca4cd0",
+    "working_tree_status": "clean",
+    "python_version": "3.12.14 (CI) / 3.12.3 (local)",
+    "pytest_version": "9.1.1",
+    "mutmut_version": "3.7.0",
+    "python_executable": "/opt/hostedtoolcache/Python/3.12.14/x64/bin/python3 (CI) / /home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python3 (local)",
+    "pytest_executable": "/opt/hostedtoolcache/Python/3.12.14/x64/bin/pytest (CI) / /home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/pytest (local)",
+    "mutmut_executable": "/opt/hostedtoolcache/Python/3.12.14/x64/bin/mutmut (CI) / /home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/mutmut (local)",
+    "resolver_fingerprint": {
+      "python_source": "path (CI) / venv (local)",
+      "pytest_source": "path (CI) / venv (local)",
+      "mutmut_source": "path (CI) / venv (local)",
+      "pinned_mutmut": "3.7.0"
+    },
+    "forbidden_venv_detection": "PASS (backend/venv absent, backend/.venv absent, backend/mutants absent, root .venv canonical)",
+    "dependency_lock": "pyproject.toml + requirements.lock (pip install -e .[all])",
+    "mutation_runner_hash": "runtime/foundation/verification/mutation_runner.py",
+    "mutation_workflow_revision": ".github/workflows/mutation.yml"
+  },
+  "local_smoke_evidence": {
+    "env_check": "PASS",
+    "mutation_smoke": {
+      "killed": 2,
+      "survived": 2,
+      "no_tests": 2,
+      "timeout": 0,
+      "suspicious": 0,
+      "not_checked": 0,
+      "mutants_generated": 6,
+      "mutation_score": 50.0,
+      "gate_a_execution_integrity": "PASS",
+      "gate_b_evidence_integrity": "PASS",
+      "gate_c_quality_threshold": "N/A (infra validation only)"
+    },
+    "test_mutation_infra": "20 passed"
+  },
+  "ci_smoke_evidence": {
+    "run_id": 32596102938,
+    "job_id": 97087190857,
+    "env_check": "PASS",
+    "mutation_smoke": {
+      "killed": 2,
+      "survived": 2,
+      "no_tests": 2,
+      "timeout": 0,
+      "suspicious": 0,
+      "not_checked": 0,
+      "mutants_generated": 6,
+      "mutation_score": 50.0,
+      "gate_a_execution_integrity": "PASS",
+      "gate_b_evidence_integrity": "PASS",
+      "gate_c_quality_threshold": "N/A (infra validation only)"
+    }
+  },
+  "ci_full_campaign_evidence": {
+    "run_id": 32596102938,
+    "job_id": 97087303100,
+    "status": "COMPLETED (quality fail - legitimate measurement)",
+    "mutation_full": {
+      "killed": 0,
+      "survived": 11166,
+      "no_tests": 5261,
+      "timeout": 0,
+      "suspicious": 0,
+      "not_checked": 0,
+      "mutants_generated": 16427,
+      "mutation_score": 0.0,
+      "gate_a_execution_integrity": "PASS",
+      "gate_b_evidence_integrity": "PASS",
+      "gate_c_quality_threshold": "QUALITY FAIL (0.0% < 80%)"
+    },
+    "note": "Full campaign executed successfully and produced a valid measurement. 0% score is a legitimate result, not an infrastructure failure."
+  },
+  "local_ci_parity": {
+    "tool_versions_match": true,
+    "resolver_fingerprint_match": "semantically equivalent (CI uses PATH, local uses .venv; both resolve to mutmut 3.7.0)",
+    "mutation_contract_schema_match": true,
+    "classification_semantics_match": true,
+    "expected_categories_match": {
+      "local": {"killed": 2, "survived": 2, "no_tests": 2},
+      "ci": {"killed": 2, "survived": 2, "no_tests": 2}
+    },
+    "gate_results_match": true,
+    "restoration_behavior_match": true,
+    "no_fake_fallback": true,
+    "no_mutmut_2x_commands": true,
+    "no_mutmut_show_without_valid_name": true,
+    "no_mutmut_junitxml": true,
+    "no_obsolete_mutation_config_toml": true,
+    "no_dead_baseline_script": true
+  },
+  "failure_path_evidence": {
+    "infrastructure_failure_classification": "NOT EVALUABLE / INFRASTRUCTURE FAILURE (never 0%)",
+    "tested_via_unit_tests": [
+      "missing_mutmut_executable",
+      "wrong_mutmut_version",
+      "malformed_result_output",
+      "missing_result_artifact",
+      "invalid_provenance_cache",
+      "interrupted_mutation_process",
+      "timeout",
+      "missing_mutant_identifier",
+      "source_restoration_failure"
+    ],
+    "all_failure_paths_produce": "execution_status=INFRASTRUCTURE_FAILURE, mutation_score=None, gate_c=None, verdict=NOT EVALUABLE"
+  },
+  "artifact_provenance_certification": {
+    "ci_emits_machine_readable_evidence": true,
+    "evidence_contains": [
+      "repository_sha",
+      "environment_fingerprint",
+      "tool_versions",
+      "mutation_runner_identity",
+      "mutation_contract_version",
+      "execution_mode=smoke|full",
+      "result_counts",
+      "gate_results",
+      "infrastructure_status",
+      "restoration_status",
+      "timestamp"
+    ],
+    "artifacts_sufficient_for_trustworthiness": true
+  },
+  "repository_status": {
+    "head_sha": "255ffddec3b27a2c4bb96fb4a7e790fee2522e3e",
+    "tree_sha": "330d687b7da5b295f1091198afc67331cbca4cd0",
+    "working_tree": "clean",
+    "all_changes_committed": true
+  },
+  "final_certification": "CERTIFIED",
+  "authorization": {
+    "full_mutation_campaign_authorized": true,
+    "statement": "M9-C42.5 mutation infrastructure is now certified for authoritative execution. Full mutation campaign may proceed."
+  }
+}

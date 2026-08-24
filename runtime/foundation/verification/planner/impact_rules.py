@@ -61,6 +61,7 @@ def config_changed(file_path: str) -> bool:
     """Rule 6: Returns True if file is a config file (pyproject.toml, .coveragerc, ruff.toml, or *.cfg)"""
     return (
         file_path == "backend/pyproject.toml"
+        or file_path == "pyproject.toml"
         or file_path == "backend/.coveragerc"
         or file_path == "backend/ruff.toml"
         or (file_path.endswith(".cfg") and file_path.startswith("backend/"))

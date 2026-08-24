@@ -10,7 +10,6 @@ from decimal import Decimal
 import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
-
 from src.engines.credit_card_engine.emi import compute_emi_conversion
 
 # Constants for testing

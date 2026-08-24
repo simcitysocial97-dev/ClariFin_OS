@@ -24,6 +24,13 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
 
+    - name: Set deterministic locale/TZ (ED7)
+      shell: bash
+      run: |
+        echo "TZ=UTC" >> $GITHUB_ENV
+        echo "LC_ALL=C.UTF-8" >> $GITHUB_ENV
+        echo "LANG=C.UTF-8" >> $GITHUB_ENV
+
     - name: Cache pip packages
       uses: actions/cache@v4
       with:

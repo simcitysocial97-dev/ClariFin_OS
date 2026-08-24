@@ -214,7 +214,7 @@ class TestFileScanner(ast.NodeVisitor):
 
 def find_test_files(root: Path) -> list[Path]:
     """Find all Python test files."""
-    test_files = []
+    test_files: list[Path] = []
     for pattern in ["tests/**/*.py", "tests/*.py"]:
         test_files.extend(root.glob(pattern))
     return sorted(set(test_files))
@@ -298,7 +298,7 @@ def main() -> int:
     print("=" * 70)
 
     # Group by pattern type
-    by_type: dict[str, list] = {}
+    by_type: dict[str, list[AntiPattern]] = {}
     for file_issues in all_issues.values():
         for issue in file_issues:
             by_type.setdefault(issue.pattern_type, []).append(issue)
@@ -317,8 +317,8 @@ def main() -> int:
     print("DETAILED FILE REPORT:")
     print("=" * 70)
 
-    for file_path, issues in sorted(all_issues.items()):
-        print(f"\n{file_path} ({len(issues)} issues):")
+    for file_path_str, issues in sorted(all_issues.items()):
+        print(f"\n{file_path_str} ({len(issues)} issues):")
         for issue in issues:
             print(
                 f"  Line {issue.line_number}: [{issue.severity}] {issue.pattern_type}"

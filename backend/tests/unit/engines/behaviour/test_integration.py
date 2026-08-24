@@ -18,7 +18,6 @@ All monetary values are in paise (₹1.00 = 100 paise).
 from decimal import Decimal
 
 import pytest
-
 from src.engines.behaviour_engine import (
     classify_financial_personality,
     compute_borrowed_lifestyle_ratio,

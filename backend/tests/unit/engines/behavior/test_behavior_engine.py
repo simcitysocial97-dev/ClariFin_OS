@@ -5,7 +5,6 @@ and exercises its key utility functions.
 """
 
 import pytest
-
 from src.engines.behaviour_engine.core import (
     _coefficient_of_variation,
     _moving_average,
@@ -176,8 +175,16 @@ class TestBehaviorEngineCore:
             {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 100000},
             {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 50000},
             {"type": "debit", "date_iso": "2025-01-16", "amount_paise": 75000},
-            {"type": "credit", "date_iso": "2025-01-15", "amount_paise": 500000},  # Should be ignored
-            {"type": "debit", "date_iso": "2025-01-14", "amount_paise": 10000},  # Before cutoff
+            {
+                "type": "credit",
+                "date_iso": "2025-01-15",
+                "amount_paise": 500000,
+            },  # Should be ignored
+            {
+                "type": "debit",
+                "date_iso": "2025-01-14",
+                "amount_paise": 10000,
+            },  # Before cutoff
         ]
 
         result = _get_daily_spending_data(transactions, "2025-01-15")
@@ -187,13 +194,35 @@ class TestBehaviorEngineCore:
 
     def test_get_monthly_category_spending(self) -> None:
         """Test monthly category spending aggregation."""
-        from src.engines.behaviour_engine.core import _get_monthly_category_spending_data
+        from src.engines.behaviour_engine.core import (
+            _get_monthly_category_spending_data,
+        )
 
         transactions = [
-            {"type": "debit", "date_iso": "2025-01-15", "category": "Food", "amount_paise": 100000},
-            {"type": "debit", "date_iso": "2025-01-16", "category": "Transport", "amount_paise": 50000},
-            {"type": "debit", "date_iso": "2025-02-01", "category": "Food", "amount_paise": 80000},
-            {"type": "credit", "date_iso": "2025-01-15", "category": "Salary", "amount_paise": 500000},
+            {
+                "type": "debit",
+                "date_iso": "2025-01-15",
+                "category": "Food",
+                "amount_paise": 100000,
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-01-16",
+                "category": "Transport",
+                "amount_paise": 50000,
+            },
+            {
+                "type": "debit",
+                "date_iso": "2025-02-01",
+                "category": "Food",
+                "amount_paise": 80000,
+            },
+            {
+                "type": "credit",
+                "date_iso": "2025-01-15",
+                "category": "Salary",
+                "amount_paise": 500000,
+            },
         ]
 
         result = _get_monthly_category_spending_data(transactions, "2025-01-01")
@@ -207,9 +236,17 @@ class TestBehaviorEngineCore:
 
         transactions = [
             {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 100000},
-            {"type": "debit", "date_iso": "2025-01-16", "amount_paise": 5000},  # micro txn
+            {
+                "type": "debit",
+                "date_iso": "2025-01-16",
+                "amount_paise": 5000,
+            },  # micro txn
             {"type": "credit", "date_iso": "2025-01-15", "amount_paise": 500000},
-            {"type": "debit", "date_iso": "2025-01-14", "amount_paise": 50000},  # Before cutoff
+            {
+                "type": "debit",
+                "date_iso": "2025-01-14",
+                "amount_paise": 50000,
+            },  # Before cutoff
         ]
 
         result = _get_transaction_stats_data(transactions, "2025-01-15")
@@ -223,6 +260,7 @@ class TestBehaviorEngineCore:
     def test_get_transactions_90_days(self) -> None:
         """Test 90-day transaction filtering."""
         from datetime import datetime, timedelta
+
         from src.engines.behaviour_engine.core import _get_transactions_90_days
 
         now = datetime.now()

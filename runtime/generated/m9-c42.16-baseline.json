@@ -1,0 +1,151 @@
+{
+  "phase": "0",
+  "capture_timestamp": "2026-08-24T01:11:17+05:30",
+  "repository": {
+    "sha": "255ffddec3b27a2c4bb96fb4a7e790fee2522e3e",
+    "tree_sha": "0f2ee8991c2474a96a34c2dce438fdb547bb1690",
+    "branch": "unknown",
+    "status_short": "M .github/actions/setup-playwright/action.yml\nM .github/actions/setup-python-runtime/action.yml\nM .github/scripts/run_backend_verification.sh\nM .github/scripts/run_dependency_checks.sh\nM .github/scripts/run_fast_checks.sh\nM .github/scripts/run_frontend_verification.sh\nM .github/scripts/run_golden_tests.sh\nM .github/scripts/run_integration_tests.sh\nM .github/scripts/run_playwright_tests.sh\nM .github/scripts/run_runtime_verification.sh\nM .github/workflows/playwright.yml\nD backend/ruff.toml\nM backend/scripts/scan_test_anti_patterns.py\nM backend/tests/generated/mutation/mutation-summary.json\nM backend/tests/properties/loan_engine/test_floating_rate_properties.py\nM backend/tests/unit/engines/behavior/test_behavior_engine.py\nM backend/tests/unit/engines/behavior/test_stress.py\nM backend/tests/unit/engines/reconciliation/test_reconciliation.py\nM docs/progress.md\nM frontend/package.json\nM frontend/playwright.config.ts\nM frontend/tests/global-setup.ts\nM progress.md\nM pyproject.toml\nM requirements.lock\nM runtime/foundation/verification/cache.py\nM runtime/foundation/verification/env.py\nM runtime/foundation/verification/executor.py\nM runtime/foundation/verification/mutation_contract.py\nM runtime/foundation/verification/mutation_runner.py\nM runtime/foundation/verification/orchestrator.py\nM runtime/foundation/verification/planner/impact_rules.py\nM runtime/foundation/verification/profiles.py\nM runtime/generated/engineering-events.jsonl\nM runtime/generated/engineering-history.json\nM runtime/generated/knowledge-index.json\nM runtime/generated/verification-cache.json\nM runtime/generated/verification-report.md\nM runtime/verify.py\nM scripts/verify-fast.sh\nM scripts/verify.sh\n?? AGENTS.md\n?? backend/runtime/\n?? frontend/.nvmrc\n?? runtime/generated/M9-C42.12-enterprise-execution-forensic-report.md\n?? runtime/generated/c42.5d-ci-smoke-certification.json\n?? runtime/generated/c42.5d-ci-smoke-certification.md\n?? runtime/generated/c42.6-mutation-reconciliation.json\n?? runtime/generated/c42.6-mutation-reconciliation.md\n?? runtime/generated/c42.7-mutation-selection-certification.json\n?? runtime/generated/c42.7-mutation-selection-certification.md\n?? runtime/generated/c42.8-baseline.json\n?? runtime/generated/c42.8-baseline.md\n?? runtime/generated/c42.8-test-strengthening-certification.json\n?? runtime/generated/c42.8-test-strengthening-certification.md\n?? runtime/generated/git-fetch-events.jsonl\n?? runtime/generated/m9-c42-14-grandchild.py\n?? runtime/generated/m9-c42.10-environment-architecture-discovery.json\n?? runtime/generated/m9-c42.10-environment-architecture-discovery.md\n?? runtime/generated/m9-c42.11-toolchain-reconciliation-report.md\n?? runtime/generated/m9-c42.13-baseline.json\n?? runtime/generated/m9-c42.13-baseline.md\n?? runtime/generated/m9-c42.13-enterprise-execution-certification.json\n?? runtime/generated/m9-c42.13-enterprise-execution-certification.md\n?? runtime/generated/m9-c42.14-baseline.py\n?? runtime/generated/m9-c42.14-baseline.sh\n?? runtime/generated/m9-c42.14-execution-reliability-certification.json\n?? runtime/generated/m9-c42.14-execution-reliability-certification.md\n?? runtime/generated/m9-c42.14-executor-test.py\n?? runtime/generated/m9-c42.14-mutation-test.py\n?? runtime/generated/m9-c42.14-signal-test.py\n?? runtime/generated/m9-c42.15-baseline.py\n?? runtime/generated/m9-c42.15-external-state-reproducibility-certification.json\n?? runtime/generated/m9-c42.15-external-state-reproducibility-certification.md\n?? runtime/generated/toolchain-verification-policy.md"
+  },
+  "toolchain": {
+    "python": {
+      "executable": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python3",
+      "version": "Python 3.12.3"
+    },
+    "pytest": {
+      "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/pytest",
+      "version": "pytest 9.1.1"
+    },
+    "mutmut": {
+      "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/mutmut",
+      "version": "mutmut, version 3.7.0",
+      "note": "Requires source_paths config in pyproject.toml to run"
+    },
+    "ruff": {
+      "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/ruff",
+      "version": "ruff 0.15.20"
+    },
+    "black": {
+      "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/black",
+      "version": "black, 26.5.1 (compiled: yes)"
+    },
+    "mypy": {
+      "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/mypy",
+      "version": "mypy 2.1.0 (compiled: yes)"
+    },
+    "node": {
+      "version": "v20.20.2"
+    },
+    "npm": {
+      "version": "10.8.2"
+    }
+  },
+  "lockfiles": {
+    "package_lock": {
+      "path": "frontend/package-lock.json",
+      "version": 3,
+      "name": "nextjs-app"
+    },
+    "requirements_lock": {
+      "path": "requirements.lock",
+      "sample_packages": ["annotated-doc==0.0.5", "annotated-types==0.8.0", "anyio==4.14.2", "ast_serialize==0.8.0", "attrs==26.1.0", "black==26.5.1"]
+    }
+  },
+  "verification": {
+    "env_check": {
+      "python": {"name": "python3", "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python3", "version": "Python 3.12.3", "source": "venv"},
+      "pytest": {"name": "pytest", "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/pytest", "version": "pytest 9.1.1", "source": "venv"},
+      "mutmut": {"name": "mutmut", "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/mutmut", "version": "mutmut, version 3.7.0", "source": "venv"},
+      "forbidden_venvs": [],
+      "fingerprint": {
+        "python_version": "Python 3.12.3",
+        "python_source": "venv",
+        "pytest_version": "pytest 9.1.1",
+        "pytest_source": "venv",
+        "mutmut_version": "mutmut, version 3.7.0",
+        "mutmut_source": "venv",
+        "pinned_mutmut": "3.7.0",
+        "forbidden_venvs": [],
+        "venv_bin": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin"
+      },
+      "consistent": true,
+      "errors": []
+    },
+    "status": {
+      "last_profile": "quick",
+      "last_status": "fail",
+      "last_timestamp": "2026-08-23T15:52:27.879728+00:00",
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "duration_ms": 0
+    },
+    "cache": {
+      "last_commit": "255ffddec3b27a2c4bb96fb4a7e790fee2522e3e",
+      "changed_files": 0,
+      "executed_profiles": ["quick"],
+      "duration": 10.0,
+      "timestamp": "2026-08-23T19:09:51.112452+00:00",
+      "valid": true
+    },
+    "recent_failures": [
+      {"run_id": "3d3ce9e7-6f4", "timestamp": "2026-08-23T15:31:50.098693+00:00", "profile": "quick", "failed": 2, "env": "local"},
+      {"run_id": "4b9072c7-1e7", "timestamp": "2026-08-21T17:45:24.864034+00:00", "profile": "frontend", "failed": 1, "env": "local"},
+      {"run_id": "4049132a-875", "timestamp": "2026-08-21T17:45:05.245776+00:00", "profile": "backend", "failed": 1, "env": "local"}
+    ],
+    "risk_summary": {"high": 3, "medium": 3, "low": 1, "total_files": 12}
+  },
+  "test_collection": {
+    "total_collected": 695,
+    "collection_errors": 3,
+    "errors": [
+      "ERROR backend/mutants/tests - Failed: Defining 'pytest_plugins' in a non-top-...",
+      "ERROR backend/tests - _pytest.pathlib.ImportPathMismatchError: ('tests.confte...",
+      "ERROR runtime/system/evidence/collectors/test_results.py"
+    ],
+    "backend_collected": 1537,
+    "backend_errors": 1,
+    "backend_error_detail": "backend/tests/mutation_infra/mutants/test_probe.py - FileNotFoundError: Could not figure out where the code to mutate is. Please specify it by adding \"source_paths=code_dir\" in setup.cfg to the [mutmut] section.",
+    "runtime_collected": 629
+  },
+  "mutation": {
+    "last_run": {
+      "run_id": "mut-3ee833ff1f7a",
+      "repository_sha": "255ffddec3b27a2c4bb96fb4a7e790fee2522e3e",
+      "tree_sha": "0f2ee8991c2474a96a34c2dce438fdb547bb1690",
+      "killed": 406,
+      "survived": 176,
+      "no_tests": 0,
+      "timeout": 0,
+      "suspicious": 0,
+      "not_checked": 0,
+      "mutants_generated": 582,
+      "mutation_score": 69.8,
+      "threshold_percent": 80,
+      "execution_status": "PASS",
+      "classification_status": "PASS",
+      "evidence_complete": true,
+      "mode": "target",
+      "target": "credit_card_engine",
+      "duration_seconds": 104,
+      "mutmut_rc": 0,
+      "selected_test_scope": "tests/unit/engines/credit_card tests/properties/credit_card_engine tests/capability/credit_cards",
+      "source_scope": "src/engines/credit_card_engine"
+    }
+  },
+  "classification": {
+    "A_committed_repository_state": "Clean commit 255ffddec3b27a2c4bb96fb4a7e790fee2522e3e",
+    "B_intentional_uncommitted_changes": "41 modified files, 1 deleted (backend/ruff.toml), various generated artifacts",
+    "C_generated_artifacts": "runtime/generated/*.json, *.md, *.jsonl, mutation-summary.json, engineering-history.json, verification-cache.json",
+    "D_ignored_residue": "backend/runtime/, frontend/.nvmrc, various C42.x generated reports in runtime/generated/",
+    "E_actual_defects": [
+      "55 Ruff I001 import formatting errors in backend tests",
+      "8 Black formatting issues in backend tests",
+      "1 mypy error: Duplicate module named \"src\" (backend/src/__init__.py and backend/mutants/src/__init__.py)",
+      "1 test collection error in backend/tests/mutation_infra/mutants/test_probe.py (mutmut config missing source_paths)",
+      "2 pytest collection warnings for test classes with __init__ constructors",
+      "Runtime verification test failure: test_mutation_runner_uses_python3_not_python (test expects 'python3 -m pytest' in script but script uses $PY)",
+      "Frontend ESLint warnings (no errors): ~50 warnings for @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-imports, jsx-a11y/role-has-required-aria-props, no-console, @typescript-eslint/no-unused-vars"
+    ]
+  }
+}

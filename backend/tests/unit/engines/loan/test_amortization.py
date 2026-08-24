@@ -8,7 +8,6 @@ Run: python -m pytest tests/test_amortization.py -v
 """
 
 import pytest
-
 from src.engines.loan_engine import generate_schedule, validate_schedule_invariants
 from src.engines.loan_engine.amortization import _add_months
 from src.engines.loan_engine.emi import compute_emi_fixed

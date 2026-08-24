@@ -76,10 +76,12 @@ jobs:
         with:
           working-directory: "frontend"
           browsers: chromium
+          browser-version: "1.58.2"
 
       - name: Run playwright verification
         env:
           PLAYWRIGHT_PROJECT: ${{ matrix.project }}
+          CLARIFIN_PYTHON: python3
         run: python runtime/verify.py playwright
 
       - name: Upload shared artifact — cross-layer-map

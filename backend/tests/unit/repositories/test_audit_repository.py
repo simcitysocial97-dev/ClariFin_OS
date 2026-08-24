@@ -10,7 +10,6 @@ Run: python -m pytest tests/test_audit_repository.py -v
 import sqlite3
 
 import pytest
-
 from repositories.reconciliation_audit_repository import ReconciliationAuditRepository
 
 

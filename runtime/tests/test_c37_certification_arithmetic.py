@@ -22,7 +22,7 @@ from runtime.foundation.verification.totals import (
     compute_totals_from_junit,
     verify_junit_consistency,
 )
-from runtime.system.evidence.collectors.test_results import TestResultCollector
+from runtime.system.evidence.collectors.test_results import ResultsCollector
 
 
 def _summary(**overrides):
@@ -121,7 +121,7 @@ class TestJunitEnumeration:
         backend = tmp_path / "backend" / "tests" / "generated"
         backend.mkdir(parents=True)
         (backend / "junit.xml").write_text(_JUNIT_OK, encoding="utf-8")
-        collector = TestResultCollector(workspace_root=tmp_path)
+        collector = ResultsCollector(workspace_root=tmp_path)
         evidence = collector.collect()
         assert evidence.passed == 1
         assert evidence.failed == 1

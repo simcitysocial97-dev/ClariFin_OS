@@ -29,6 +29,8 @@ CMD="${1:-help}"
 shift 1 || true
 
 export PATH="$ROOT_DIR/.venv/bin:$PATH"
+# Canonical Python for Playwright/backend subprocesses
+export CLARIFIN_PYTHON="$ROOT_DIR/.venv/bin/python"
 
 case "$CMD" in
   bootstrap)

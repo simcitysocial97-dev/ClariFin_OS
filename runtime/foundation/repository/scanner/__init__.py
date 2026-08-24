@@ -17,7 +17,7 @@ from runtime.foundation.repository.scanner.base import BaseScanner, ScanResult
 from runtime.foundation.repository.scanner.backend_scanner import BackendScanner
 from runtime.foundation.repository.scanner.frontend_scanner import FrontendScanner
 from runtime.foundation.repository.scanner.api_scanner import ApiScanner
-from runtime.foundation.repository.scanner.test_scanner import TestScanner
+from runtime.foundation.repository.scanner.test_scanner import SuiteDiscovery
 from runtime.foundation.repository.scanner.docs_scanner import DocsScanner
 from runtime.foundation.repository.scanner.workflow_scanner import WorkflowScanner
 from runtime.foundation.repository.scanner.script_scanner import ScriptScanner
@@ -30,7 +30,7 @@ __all__ = [
     "BackendScanner",
     "FrontendScanner",
     "ApiScanner",
-    "TestScanner",
+    "SuiteDiscovery",
     "DocsScanner",
     "WorkflowScanner",
     "ScriptScanner",

@@ -6,7 +6,6 @@ behavior_engine.py file.
 """
 
 import pytest
-
 from src.engines.behaviour_engine.core import (
     _coefficient_of_variation,
     _compute_financial_stress_index,

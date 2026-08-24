@@ -9,7 +9,6 @@ from decimal import Decimal
 
 from hypothesis import HealthCheck, assume, given, settings
 from hypothesis import strategies as st
-
 from src.engines.loan_engine.emi import (
     compute_emi_fixed,
     compute_emi_floating,

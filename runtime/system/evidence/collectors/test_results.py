@@ -15,7 +15,7 @@ from .base import EvidenceCollector, EvidenceArtifact
 
 
 @dataclass(frozen=True, slots=True)
-class TestResultEvidence:
+class ResultData:
     passed: int = 0
     failed: int = 0
     error: int = 0
@@ -38,7 +38,7 @@ class TestResultEvidence:
             )
 
 
-class TestResultCollector(EvidenceCollector):
+class ResultsCollector(EvidenceCollector):
     """Collects test result evidence from JUnit XML output."""
 
     @property
@@ -49,7 +49,7 @@ class TestResultCollector(EvidenceCollector):
     def name(self) -> str:
         return "Test Results Collector"
 
-    def collect(self, artifact_path: Path | None = None) -> TestResultEvidence:
+    def collect(self, artifact_path: Path | None = None) -> ResultData:
         if artifact_path is None:
             candidate_paths = [
                 self.workspace_root / "backend" / "tests" / "generated" / "junit.xml",
@@ -70,11 +70,11 @@ class TestResultCollector(EvidenceCollector):
                     artifact_path = candidate
                     break
             if artifact_path is None:
-                return TestResultEvidence(
+                return ResultData(
                     timestamp=datetime.now(timezone.utc).isoformat(),
                 )
         elif not artifact_path.exists():
-            return TestResultEvidence(
+            return ResultData(
                 timestamp=datetime.now(timezone.utc).isoformat(),
             )
 
@@ -82,7 +82,7 @@ class TestResultCollector(EvidenceCollector):
             tree = ET.parse(artifact_path)
             root = tree.getroot()
         except ET.ParseError:
-            return TestResultEvidence(
+            return ResultData(
                 timestamp=datetime.now(timezone.utc).isoformat(),
             )
 
@@ -128,7 +128,7 @@ class TestResultCollector(EvidenceCollector):
             context="test_results junit enumeration",
         )
 
-        return TestResultEvidence(
+        return ResultData(
             passed=passed,
             failed=failed,
             error=errors,

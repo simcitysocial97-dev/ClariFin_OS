@@ -99,6 +99,10 @@ class MutationResult:
     mutmut_rc: Optional[int] = None
     error: Optional[str] = None
     note: str = ""
+    # ── Canonical selection provenance (C42.7) ───────────────────────────────
+    selected_test_scope: str = ""  # engine-specific test paths actually used
+    source_scope: str = ""  # source paths actually mutated
+    selection_method: str = ""
 
     @property
     def mutants_generated(self) -> int:
@@ -138,6 +142,9 @@ class MutationResult:
             "mutmut_rc": self.mutmut_rc,
             "error": self.error,
             "note": self.note,
+            "selected_test_scope": self.selected_test_scope,
+            "source_scope": self.source_scope,
+            "selection_method": self.selection_method,
         }
 
 
@@ -229,6 +236,172 @@ def classify_gates(
     gate_c = score >= result.threshold_percent
     verdict = "PASS" if gate_c else "QUALITY FAIL"
     return True, True, gate_c, verdict
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# M9-C42.7 — Canonical test-selection contract (single source of truth).
+#
+# One mapping defines, for every mutation target:
+#   SOURCE MODULE(S)  -> the code under test
+#   ENGINE            -> the logical engine name
+#   TEST SELECTION    -> the engine-specific test directories / files
+#   SELECTION METHOD  -> explicit pytest path selection (no silent full-suite
+#                        fallback; mutmut 3.7.0 runs these via
+#                        `pytest_add_cli_args_test_selection`).
+#
+# The mutation runner consumes ONLY this mapping to render the per-engine
+# `[tool.mutmut]` configuration. Selection rules are never duplicated in bash,
+# YAML, or ad-hoc commands.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# P0 engines are ordered per M9-C42 decisions (credit_card first, then account).
+P0_ENGINES = ("credit_card_engine", "account_engine")
+
+
+@dataclass(frozen=True, slots=True)
+class EngineSelection:
+    """Canonical test-selection rule for one mutation target."""
+
+    engine: str
+    source_paths: tuple[str, ...]  # mutmut source_paths (relative to backend/)
+    test_selection: tuple[str, ...]  # pytest path args (relative to backend/)
+    tier: str = "P0"  # P0 | P1 | P2 — provenance only
+
+
+# Single source of truth. Adding an engine == one entry here.
+ENGINE_SELECTION: dict[str, EngineSelection] = {
+    "credit_card_engine": EngineSelection(
+        engine="credit_card_engine",
+        source_paths=("src/engines/credit_card_engine",),
+        test_selection=(
+            "tests/unit/engines/credit_card",
+            "tests/properties/credit_card_engine",
+            "tests/capability/credit_cards",
+        ),
+        tier="P0",
+    ),
+    "account_engine": EngineSelection(
+        engine="account_engine",
+        source_paths=("src/engines/account_engine",),
+        test_selection=(
+            "tests/unit/engines/account",
+            "tests/capability/account_management",
+        ),
+        tier="P0",
+    ),
+    "balance_engine": EngineSelection(
+        engine="balance_engine",
+        source_paths=("src/engines/balance_engine.py",),
+        test_selection=("tests/unit/engines/balance_engine.py",),
+        tier="P0",
+    ),
+    "ledger_audit_engine": EngineSelection(
+        engine="ledger_audit_engine",
+        source_paths=("src/engines/ledger_audit_engine.py",),
+        test_selection=("tests/unit/engines/ledger_audit_engine.py",),
+        tier="P0",
+    ),
+    "reconciliation_engine": EngineSelection(
+        engine="reconciliation_engine",
+        source_paths=("src/engines/reconciliation_engine.py",),
+        test_selection=(
+            "tests/unit/engines/reconciliation",
+            "tests/properties/reconciliation",
+            "tests/capability/reconciliation",
+        ),
+        tier="P0",
+    ),
+    "loan_engine": EngineSelection(
+        engine="loan_engine",
+        source_paths=("src/engines/loan_engine",),
+        test_selection=(
+            "tests/unit/engines/loan",
+            "tests/properties/loan_engine",
+        ),
+        tier="P1",
+    ),
+    "behaviour_engine": EngineSelection(
+        engine="behaviour_engine",
+        source_paths=("src/engines/behaviour_engine",),
+        test_selection=(
+            "tests/unit/engines/behaviour",
+            "tests/properties/behaviour",
+        ),
+        tier="P1",
+    ),
+}
+
+# Selection method is fixed and deterministic for the whole contract.
+SELECTION_METHOD = "explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)"
+
+# The full authoritative scope = every engine's source + every engine's tests.
+# Used only by the CI full campaign; never reduced and never a silent full-suite
+# fallback (every path below is enumerated from ENGINE_SELECTION).
+_FULL_SOURCE_PATHS = sorted({p for s in ENGINE_SELECTION.values() for p in s.source_paths})
+_FULL_TEST_SELECTION = sorted({p for s in ENGINE_SELECTION.values() for p in s.test_selection})
+
+
+def engine_names() -> list[str]:
+    return sorted(ENGINE_SELECTION.keys())
+
+
+def is_valid_engine(engine: Optional[str]) -> bool:
+    return engine in ENGINE_SELECTION
+
+
+def render_mutmut_config_block(engine: Optional[str]) -> str:
+    """Render the `[tool.mutmut]` TOML block from the canonical mapping.
+
+    `engine` is one key of ENGINE_SELECTION (per-engine bounded campaign) or
+    None/"all"/"full" (authoritative full scope). The result is explicit and
+    engine-aware: mutmut runs ONLY the listed test paths for the listed source
+    paths — it can never silently fall back to the entire test suite.
+    """
+    if engine in (None, "all", "full"):
+        source_paths = _FULL_SOURCE_PATHS
+        test_selection = _FULL_TEST_SELECTION
+        scope = "full (all engines)"
+    else:
+        sel = ENGINE_SELECTION[engine]
+        source_paths = list(sel.source_paths)
+        test_selection = list(sel.test_selection)
+        scope = engine
+
+    src = ", ".join(f'"{p}"' for p in source_paths)
+    tests = ",\n    ".join(f'"{p}"' for p in test_selection)
+    return (
+        "# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — "
+        "single source of truth.\n"
+        f"# Scope: {scope}\n"
+        f"# Selection method: {SELECTION_METHOD}\n"
+        "[tool.mutmut]\n"
+        f"source_paths = [{src}]\n"
+        'also_copy = ["src"]\n'
+        'runner = "python3 -m pytest"\n'
+        "pytest_add_cli_args_test_selection = [\n"
+        f"    {tests}\n"
+        "]\n"
+        "no_progress = true\n"
+    )
+
+
+def write_backend_mutmut_config(engine: Optional[str], backend_pyproject: Path) -> str:
+    """Install the canonical per-engine/full `[tool.mutmut]` config into
+    backend/pyproject.toml, preserving all other sections.
+
+    Returns the original `[tool.mutmut]` block text so the caller can restore it.
+    """
+    import re
+
+    text = backend_pyproject.read_text()
+    block = render_mutmut_config_block(engine)
+    # Match the [tool.mutmut] section up to the next top-level [section] or EOF.
+    pattern = re.compile(r"\[tool\.mutmut\].*?(?=\n\[[^\s]|\Z)", re.S)
+    if not pattern.search(text):
+        raise RuntimeError("backend/pyproject.toml has no [tool.mutmut] section")
+    new_text = pattern.sub(block.rstrip("\n") + "\n", text, count=1)
+    backend_pyproject.write_text(new_text)
+    return text
 
 
 def build_infrastructure_failure(

@@ -10,7 +10,6 @@ Run with: python -m pytest tests/test_determinism.py -v
 import sqlite3
 
 import pytest
-
 from repositories.statement_repository import StatementRepository
 from repositories.transaction_repository import TransactionRepository
 from src.engines.balance_engine import compute_running_balance

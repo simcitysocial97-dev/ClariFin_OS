@@ -12,6 +12,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_ROOT"
 
+# Canonical Python resolver (venv-first, like run_mutation_selective.sh)
+if [ -x "$REPO_ROOT/.venv/bin/python" ]; then
+  PY="$REPO_ROOT/.venv/bin/python"
+else
+  PY="$(command -v python3 || command -v python)"
+fi
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -25,7 +32,7 @@ echo "================================================"
 
 # ── Runtime unit tests ───────────────────────────
 echo -e "\n${YELLOW}[1/2] Runtime test suite...${NC}"
-if python3 -m pytest runtime/tests/ -q --timeout=30; then
+if "$PY" -m pytest runtime/tests/ -q --timeout=30; then
   echo -e "${GREEN}✓ Runtime tests passed${NC}"
 else
   echo -e "${RED}✗ Runtime tests failed${NC}"
@@ -34,7 +41,7 @@ fi
 
 # ── Integrity engine scan ─────────────────────────
 echo -e "\n${YELLOW}[2/2] Architectural integrity...${NC}"
-if python3 runtime/verify.py integrity; then
+if "$PY" runtime/verify.py integrity; then
   echo -e "${GREEN}✓ Integrity scan passed${NC}"
 else
   echo -e "${RED}✗ Integrity scan failed${NC}"

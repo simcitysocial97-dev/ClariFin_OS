@@ -8,7 +8,6 @@ All rates in basis points (integer).
 """
 
 import pytest
-
 from src.engines.account_engine import (
     compute_account_metrics,
     compute_account_status,
