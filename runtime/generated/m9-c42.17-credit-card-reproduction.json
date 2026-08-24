@@ -1,0 +1,44 @@
+{
+  "phase": 1,
+  "engine": "credit_card_engine",
+  "generated_at": "2026-08-24T05:10:01.309200+00:00",
+  "repository_sha": "d6d3624ba033a0d089bca6bbf046d46eb9739411",
+  "tree_sha": "80f7d60cee7fe592c19bc7dfb92b1de422e3ed13",
+  "python_version": "Python 3.12.3",
+  "pytest_version": "pytest 9.1.1",
+  "mutmut_version": "mutmut, version 3.7.0",
+  "config_hash": "3226e1503d04ff8e",
+  "mutants_generated": 582,
+  "killed": 406,
+  "survived": 176,
+  "no_tests": 0,
+  "timeout": 0,
+  "suspicious": 0,
+  "not_checked": 0,
+  "mutation_score": 69.8,
+  "threshold_percent": 80,
+  "execution_status": "PASS",
+  "duration_seconds": 93,
+  "mutmut_rc": 0,
+  "test_command": "python runtime/verify.py mutation --target credit_card_engine",
+  "selected_test_scope": "tests/unit/engines/credit_card tests/properties/credit_card_engine tests/capability/credit_cards",
+  "source_scope": "src/engines/credit_card_engine",
+  "selection_method": "explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)",
+  "execution_fingerprint": {
+    "run_id": "mut-d657109fbfdb",
+    "config_hash": "3226e1503d04ff8e",
+    "tree_sha": "80f7d60cee7fe592c19bc7dfb92b1de422e3ed13"
+  },
+  "expected_historical_baseline": {
+    "mutants": 582,
+    "killed": 406,
+    "survived": 176,
+    "score": 69.8
+  },
+  "discrepancy_analysis": "Exact reproduction \u2014 no discrepancy from M9-C42.16.",
+  "gate_g1": {
+    "reproducible": true,
+    "discrepancies_classified": true,
+    "verdict": "PASS"
+  }
+}

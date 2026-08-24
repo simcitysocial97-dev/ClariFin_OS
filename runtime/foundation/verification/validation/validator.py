@@ -58,7 +58,7 @@ class ValidationFinding:
 
 def verify_config(config_path: Path) -> list[ValidationFinding]:
     """Verify verification.yaml configuration."""
-    import yaml
+    import yaml  # type: ignore[import-untyped]
 
     findings = []
 

@@ -1317,6 +1317,13 @@ def main() -> int:
 
         return run_mutation_cli(sys.argv[2:])
 
+    if command == "mutation-inventory":
+        from runtime.foundation.verification.mutation_inventory import (
+            run_mutation_inventory_cli,
+        )
+
+        return run_mutation_inventory_cli(sys.argv[2:])
+
     if command == "env-check":
         from runtime.foundation.verification.env import main_env_check
 

@@ -717,11 +717,11 @@ class VerificationPlanner:
         # onto one command, the surviving step must record **all** contributing unit IDs
         # — dropping the second would make its failures unattributable, which is exactly
         # the evidence gap Phase 2 exists to close.
-        seen_commands: dict[str, str] = {}
+        seen_commands: dict[str | None, str] = {}
         old_to_new_id: dict[str, str] = {}
         unique_steps: list[VerificationStep] = []
         # command -> ordered, de-duplicated list of contributing unit IDs
-        merged_units: dict[str, list[str]] = {}
+        merged_units: dict[str | None, list[str]] = {}
 
         def _record_units(command: str | None, step: VerificationStep) -> None:
             """Accumulate contributing unit IDs for a command, preserving order."""
@@ -1105,24 +1105,24 @@ class CrossLayerImpactPlanner:
         for ws in arch.workspaces.values():
             if ws.path and ws.path == norm:
                 for cap_name in ws.capabilities:
-                    cap = arch.capabilities.get(cap_name)
-                    if cap is None:
+                    cap_found = arch.capabilities.get(cap_name)
+                    if cap_found is None:
                         continue
-                    found = chain_for_engines(cap.engines)
+                    found = chain_for_engines(cap_found.engines)
                     if found is not None:
                         return found
 
         component = arch.components.get(norm)
         if component is not None:
             for ws_name in component.workspaces:
-                ws = arch.workspaces.get(ws_name)
-                if ws is None:
+                ws_found = arch.workspaces.get(ws_name)
+                if ws_found is None:
                     continue
-                for cap_name in ws.capabilities:
-                    cap = arch.capabilities.get(cap_name)
-                    if cap is None:
+                for cap_name in ws_found.capabilities:
+                    cap_found = arch.capabilities.get(cap_name)
+                    if cap_found is None:
                         continue
-                    found = chain_for_engines(cap.engines)
+                    found = chain_for_engines(cap_found.engines)
                     if found is not None:
                         return found
 

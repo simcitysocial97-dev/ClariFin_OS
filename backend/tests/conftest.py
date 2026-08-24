@@ -61,17 +61,17 @@ if __import__("os").environ.get("MUTANT_UNDER_TEST"):
         pass
 
 # ============================================================
-# Plugin Registration (moved to root pyproject.toml for pytest 9.x)
+# Plugin Registration
 # ============================================================
-# pytest_plugins = [
-#     "tests.fixtures.pytest_config",
-#     "tests.fixtures.hypothesis",
-#     "tests.fixtures.database",
-#     "tests.fixtures.seed",
-#     "tests.fixtures.client",
-#     "tests.fixtures.builders",
-#     "tests.fixtures.factories",
-# ]
+pytest_plugins = [
+    "tests.fixtures.pytest_config",
+    "tests.fixtures.hypothesis",
+    "tests.fixtures.database",
+    "tests.fixtures.seed",
+    "tests.fixtures.client",
+    "tests.fixtures.builders",
+    "tests.fixtures.factories",
+]
 
 # ============================================================
 # Backward-Compatible Re-Exports

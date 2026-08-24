@@ -370,7 +370,7 @@ def _collect_changed_files() -> _ChangedFilesResult:
             return result.stdout
         return ""
 
-    def _resolve_remote_ref(ref: str) -> str:
+    def _resolve_remote_ref(ref: str | None) -> str:
         """Resolve a ref to a form usable by git diff.
 
         A full 40-character SHA is returned as-is (no network). For a branch name
@@ -378,6 +378,8 @@ def _collect_changed_files() -> _ChangedFilesResult:
         ``origin/main`` cannot produce an inflated changed-file diff (P0-1); then we
         return the first resolvable candidate.
         """
+        if ref is None:
+            return ""
         # A full commit SHA needs no resolution or network access.
         if len(ref) == 40 and all(c in "0123456789abcdef" for c in ref):
             return ref

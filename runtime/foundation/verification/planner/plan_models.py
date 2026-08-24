@@ -117,7 +117,12 @@ class VerificationPlan:
         routers = set()
         max_blast_rank = 0
 
-        blast_rank = {"low": 0, "medium": 1, "high": 2, "full": 3}
+        blast_rank: dict[Literal["low", "medium", "high", "full"], int] = {
+            "low": 0,
+            "medium": 1,
+            "high": 2,
+            "full": 3,
+        }
 
         unit_paths = set()
         property_paths = set()
@@ -198,7 +203,7 @@ class VerificationPlan:
         if has_test_change:
             unit_paths.add("tests/unit/")
 
-        blast_radius = "low"
+        blast_radius: Literal["low", "medium", "high", "full"] = "low"
         for name, rank in blast_rank.items():
             if max_blast_rank >= rank:
                 blast_radius = name

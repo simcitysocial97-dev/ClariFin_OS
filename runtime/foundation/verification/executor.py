@@ -170,6 +170,7 @@ class Executor:
                 or attempt == attempts - 1
             ):
                 break
+        assert last_result is not None
         return last_result
 
     def _execute_once(self, command: str, task_id: str = "") -> ExecutionResult:

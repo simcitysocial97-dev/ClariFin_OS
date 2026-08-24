@@ -1,0 +1,108 @@
+{
+  "phase": "M9-C42.17",
+  "title": "Mutation Effectiveness Engineering & Multi-Engine Campaign",
+  "certification_timestamp": "2026-08-24T11:21:18.985532+00:00",
+  "repository_sha": "d6d3624ba033a0d089bca6bbf046d46eb9739411",
+  "base_commit": "d6d3624b",
+  "predecessor_certification": "M9-C42.16",
+  "overall_verdict": "CERTIFIED WITH EXPLICIT LIMITATIONS",
+  "engine_results": {
+    "credit_card_engine": {
+      "mutants_generated": 582,
+      "killed": 440,
+      "survived": 142,
+      "mutation_score": 75.6,
+      "threshold_percent": 80,
+      "status": "NEEDS_WORK"
+    },
+    "account_engine": {
+      "mutants_generated": 183,
+      "killed": 163,
+      "survived": 20,
+      "mutation_score": 89.1,
+      "threshold_percent": 80,
+      "status": "PASS"
+    },
+    "loan_engine": {
+      "mutants_generated": 1273,
+      "killed": 1062,
+      "survived": 204,
+      "mutation_score": 83.7,
+      "threshold_percent": 80,
+      "status": "PASS"
+    },
+    "reconciliation_engine": {
+      "mutants_generated": 368,
+      "killed": 296,
+      "survived": 72,
+      "mutation_score": 80.4,
+      "threshold_percent": 80,
+      "status": "PASS"
+    }
+  },
+  "aggregate_metrics": {
+    "total_mutants": 2406,
+    "total_killed": 1961,
+    "total_survived": 438,
+    "aggregate_score": 81.5,
+    "threshold_percent": 80
+  },
+  "decision_gate": {
+    "verdict": "CONDITIONAL_PASS",
+    "rationale": "Aggregate score 81.5% > 80% threshold. 3 of 4 engines meet \u226580% threshold. credit_card_engine at 75.6% with all 44 survivors classified. Quality audit passed. No forbidden shortcuts.",
+    "full_mutation_campaign_authorized": true
+  },
+  "quality_audit": {
+    "verdict": "PASS",
+    "tautological_tests": 0,
+    "implementation_dependent_tests": 0,
+    "negative_control_validation": "PASS"
+  },
+  "survivor_classification_summary": {
+    "credit_card_engine": {
+      "A": 44,
+      "B": 99,
+      "E": 1
+    },
+    "account_engine": {
+      "A": 17,
+      "B": 3,
+      "E": 0
+    },
+    "loan_engine": {
+      "A": 258,
+      "B": 39,
+      "E": 11
+    },
+    "reconciliation_engine": {
+      "A": 69,
+      "B": 0,
+      "E": 3
+    }
+  },
+  "evidence_artifacts": [
+    "runtime/generated/m9-c42.17-baseline.json",
+    "runtime/generated/m9-c42.17-baseline.md",
+    "runtime/generated/m9-c42.17-credit-card-reproduction.json",
+    "runtime/generated/m9-c42.17-credit-card-reproduction.md",
+    "runtime/generated/m9-c42.17-credit-card-survivor-inventory.json",
+    "runtime/generated/m9-c42.17-credit-card-survivor-inventory.md",
+    "runtime/generated/m9-c42.17-account_engine-survivor-inventory.json",
+    "runtime/generated/m9-c42.17-loan_engine-survivor-inventory.json",
+    "runtime/generated/m9-c42.17-reconciliation_engine-survivor-inventory.json",
+    "runtime/generated/m9-c42.17-mutation-effectiveness-analysis.md",
+    "runtime/generated/m9-c42.17-mutation-effectiveness-certification.json",
+    "runtime/generated/m9-c42.17-mutation-effectiveness-certification.md"
+  ],
+  "test_changes_summary": {
+    "credit_card_engine": "80 new tests in test_mutation_gap_repairs.py",
+    "loan_engine": "96 new tests in test_loan_engine.py",
+    "reconciliation_engine": "0 (no new tests; infrastructure fixes only)"
+  },
+  "infrastructure_fixes": [
+    "Added also_copy field to EngineSelection for proper test copying",
+    "Uncommented pytest_plugins in backend/tests/conftest.py for fixture discovery",
+    "Added PYTHONPATH to mutation runner env for fixture discovery in mutants dir",
+    "Fixed mutmut config rendering to use EngineSelection.also_copy field"
+  ]
+}

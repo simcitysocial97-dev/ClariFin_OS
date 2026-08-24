@@ -537,6 +537,10 @@ def execute_mutation(
         proc = None
         try:
             # F19: Run mutmut in its own process group so timeout kills entire tree
+            # Mutmut changes cwd to `mutants/` before invoking pytest; set PYTHONPATH
+            # so that test-fixture plugins (e.g. tests.fixtures.database) remain
+            # importable from that working directory.
+            _pytest_pythonpath = f"{REPO_ROOT / 'backend' / 'src'}:{REPO_ROOT / 'backend' / 'tests'}"
             proc = subprocess.Popen(
                 cmd,
                 cwd=str(cwd),
@@ -545,7 +549,11 @@ def execute_mutation(
                 text=True,
                 bufsize=1,
                 start_new_session=True,
-                env={**os.environ, "PATH": f"{VENV_BIN}:{os.environ.get('PATH','')}"},
+                env={
+                    **os.environ,
+                    "PATH": f"{VENV_BIN}:{os.environ.get('PATH','')}",
+                    "PYTHONPATH": _pytest_pythonpath,
+                },
             )
             pgid = os.getpgid(proc.pid)
 

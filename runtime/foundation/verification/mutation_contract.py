@@ -263,6 +263,7 @@ class EngineSelection:
     engine: str
     source_paths: tuple[str, ...]  # mutmut source_paths (relative to backend/)
     test_selection: tuple[str, ...]  # pytest path args (relative to backend/)
+    also_copy: tuple[str, ...] = ("src",)  # mutmut also_copy (relative to backend/)
     tier: str = "P0"  # P0 | P1 | P2 — provenance only
 
 
@@ -307,6 +308,7 @@ ENGINE_SELECTION: dict[str, EngineSelection] = {
             "tests/properties/reconciliation",
             "tests/capability/reconciliation",
         ),
+        also_copy=("src", "tests"),
         tier="P0",
     ),
     "loan_engine": EngineSelection(
@@ -362,15 +364,18 @@ def render_mutmut_config_block(engine: str | None) -> str:
     if engine in (None, "all", "full"):
         source_paths = _FULL_SOURCE_PATHS
         test_selection = _FULL_TEST_SELECTION
+        also_copy = ["src"]
         scope = "full (all engines)"
     else:
         sel = ENGINE_SELECTION[engine]
         source_paths = list(sel.source_paths)
         test_selection = list(sel.test_selection)
+        also_copy = list(sel.also_copy)
         scope = engine
 
     src = ", ".join(f'"{p}"' for p in source_paths)
     tests = ",\n    ".join(f'"{p}"' for p in test_selection)
+    copy = ", ".join(f'"{p}"' for p in also_copy)
     return (
         "# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — "
         "single source of truth.\n"
@@ -378,7 +383,7 @@ def render_mutmut_config_block(engine: str | None) -> str:
         f"# Selection method: {SELECTION_METHOD}\n"
         "[tool.mutmut]\n"
         f"source_paths = [{src}]\n"
-        'also_copy = ["src"]\n'
+        f"also_copy = [{copy}]\n"
         'runner = "python3 -m pytest"\n'
         "pytest_add_cli_args_test_selection = [\n"
         f"    {tests}\n"

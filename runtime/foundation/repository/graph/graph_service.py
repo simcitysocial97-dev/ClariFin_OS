@@ -66,7 +66,7 @@ class RepositoryGraphService:
     """
 
     def __init__(
-        self, graph: RepositoryGraph | None = None, index_path: Path | None = None
+        self, graph: RepositoryGraph | None = None, index_path: Path | str | None = None
     ):
         """Construct from an existing RepositoryGraph or load from index path.
 
@@ -93,6 +93,7 @@ class RepositoryGraphService:
 
         # Lazily load when first method is called
         self._ensure_loaded()
+        assert self._graph is not None
 
     def _ensure_loaded(self) -> None:
         """Load the index from disk if constructed with index_path.
@@ -251,6 +252,7 @@ class RepositoryGraphService:
         Returns the node if found, otherwise None.
         """
         self._ensure_loaded()
+        assert self._graph is not None
         return self._cache.node_cache.get(node_id)
 
     def get_nodes(self, node_type: str | None = None) -> list[GraphNode]:
@@ -263,6 +265,7 @@ class RepositoryGraphService:
             List of matching GraphNode objects (empty list if none match).
         """
         self._ensure_loaded()
+        assert self._graph is not None
         if node_type is None:
             return list(self._cache.node_cache.values())
         return [n for n in self._cache.node_cache.values() if n.type == node_type]
@@ -277,6 +280,7 @@ class RepositoryGraphService:
             List of all nodes for which predicate returns True.
         """
         self._ensure_loaded()
+        assert self._graph is not None
         return [n for n in self._cache.node_cache.values() if predicate(n)]
 
     def get_edge(self, edge_id: str) -> GraphEdge | None:
@@ -286,6 +290,7 @@ class RepositoryGraphService:
         source:target:relationship triplet. Returns None if not found.
         """
         self._ensure_loaded()
+        assert self._graph is not None
         parts = edge_id.split(":", 2)
         if len(parts) != 3:
             return None
@@ -311,6 +316,7 @@ class RepositoryGraphService:
             List of unique successor node IDs (sorted for determinism).
         """
         self._ensure_loaded()
+        assert self._graph is not None
 
         cache_key = (node_id, edge_type)
         if cache_key in self._cache.successor_cache:
@@ -337,6 +343,7 @@ class RepositoryGraphService:
             List of unique predecessor node IDs (sorted for determinism).
         """
         self._ensure_loaded()
+        assert self._graph is not None
 
         cache_key = (node_id, edge_type)
         if cache_key in self._cache.predecessor_cache:
@@ -363,6 +370,7 @@ class RepositoryGraphService:
             List of unique neighbor node IDs (sorted for determinism).
         """
         self._ensure_loaded()
+        assert self._graph is not None
         succ = self.successors(node_id)
         pred = self.predecessors(node_id)
         # Combine and deduplicate while preserving sorted order
@@ -391,6 +399,7 @@ class RepositoryGraphService:
             determinism.
         """
         self._ensure_loaded()
+        assert self._graph is not None
 
         if source not in self._cache.node_cache or target not in self._cache.node_cache:
             return []
@@ -438,6 +447,7 @@ class RepositoryGraphService:
             lists are sorted by relationship then target/source for determinism.
         """
         self._ensure_loaded()
+        assert self._graph is not None
 
         outgoing = [e for e in self._graph.edges if e.source == node_id]
         incoming = [e for e in self._graph.edges if e.target == node_id]
@@ -457,6 +467,7 @@ class RepositoryGraphService:
             Empty dict if no gaps data is available.
         """
         self._ensure_loaded()
+        assert self._graph is not None
         if self._cache is None:
             return {}
         return self._cache.gaps.copy()
@@ -469,6 +480,7 @@ class RepositoryGraphService:
             relationship types, and distribution of ownership classes.
         """
         self._ensure_loaded()
+        assert self._graph is not None
 
         if self._graph is None:
             return {}
@@ -510,6 +522,7 @@ class RepositoryGraphService:
             "warnings" (list of strings).
         """
         self._ensure_loaded()
+        assert self._graph is not None
 
         errors: list[str] = []
         warnings: list[str] = []

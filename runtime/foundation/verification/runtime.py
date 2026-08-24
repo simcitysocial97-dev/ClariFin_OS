@@ -90,6 +90,7 @@ class VerificationRuntime:
         """Get the verification registry."""
         if not self._loaded:
             self.load()
+        assert self._registry is not None
         return self._registry
 
     @property
@@ -97,6 +98,7 @@ class VerificationRuntime:
         """Get the scope resolver."""
         if not self._loaded:
             self.load()
+        assert self._scope_resolver is not None
         return self._scope_resolver
 
     @property
@@ -104,6 +106,7 @@ class VerificationRuntime:
         """Get the verification planner."""
         if not self._loaded:
             self.load()
+        assert self._planner is not None
         return self._planner
 
     @property

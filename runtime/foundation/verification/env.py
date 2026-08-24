@@ -136,7 +136,7 @@ def resolve_environment(
             ).stdout.strip()
             major, minor = (int(x) for x in out.split("."))
             py_ok = (major, minor) >= MIN_PYTHON
-            py_version = out
+            py_version: str | None = out
         except Exception:
             py_version = py.version
     else:

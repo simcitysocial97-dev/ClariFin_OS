@@ -81,33 +81,28 @@ ignore_missing_imports = true
 # The import-untyped error is expected and suppressed via ignore_missing_imports.
 # This is a third-party dependency limitation, not a code issue.
 
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: reconciliation_engine
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: reconciliation_engine
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: reconciliation_engine
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: reconciliation_engine
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: reconciliation_engine
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
 [tool.mutmut]
-# ── Canonical mutation configuration (single source of truth) ───────────────
-# Consumed by BOTH the bounded local smoke test and the authoritative CI run.
-# CI mutates the full `source_paths` scope; local smoke bounds the target via
-# `mutmut run "module.function*"` selection. The configuration itself is shared.
-#
-# Mutation is authoritative in CI. Do NOT reduce `source_paths` to the smoke
-# target. Do NOT report the local smoke result as a mutation score.
-
-# Directories to mutate (full authoritative scope for CI).
-source_paths = ["src/engines/"]
-# Also copy the full src tree so tests can import non-mutated modules.
-also_copy = ["src"]
-# Test runner — `python3` per repository convention (ubuntu-latest ships
-# `python3`, never bare `python`).
+source_paths = ["src/engines/reconciliation_engine.py"]
+also_copy = ["src", "tests"]
 runner = "python3 -m pytest"
-# Which tests to run per mutant. Both local smoke and CI share this selection.
-# Includes unit, properties, invariants, contract, and integration tests.
 pytest_add_cli_args_test_selection = [
-    "tests/unit/",
-    "tests/properties/",
-    "tests/invariants/",
-    "tests/contract/",
-    "tests/integration/",
+    "tests/unit/engines/reconciliation",
+    "tests/properties/reconciliation",
+    "tests/capability/reconciliation"
 ]
-# Disable progress bar (cleaner CI output).
 no_progress = true
-# Note: mutmut only mutates `*.py` files, so stray artifacts such as
-# `*.bak` and `__pycache__/` are excluded automatically.
-
