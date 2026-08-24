@@ -8,16 +8,16 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from runtime.system.evidence.collectors import (
+    ContractTestCollector,
     CoverageCollector,
     MutationCollector,
     PropertyTestCollector,
-    ContractTestCollector,
 )
 from runtime.system.evidence.models import (
     CoverageEvidence,
+    EvidenceCollectionResult,
     MutationEvidence,
     VerificationEvidence,
-    EvidenceCollectionResult,
 )
 
 # All available collectors
@@ -62,8 +62,8 @@ def collect_all_evidence(workspace_root: Path) -> EvidenceCollectionResult:
 
 
 def extract_coverage_evidence(
-    artifacts: List[Dict[str, Any]],
-) -> Optional[CoverageEvidence]:
+    artifacts: list[dict[str, Any]],
+) -> CoverageEvidence | None:
     """Extract CoverageEvidence from collected artifacts."""
     for artifact in artifacts:
         if artifact.get("artifact_type") == "coverage":
@@ -80,8 +80,8 @@ def extract_coverage_evidence(
 
 
 def extract_mutation_evidence(
-    artifacts: List[Dict[str, Any]],
-) -> Optional[MutationEvidence]:
+    artifacts: list[dict[str, Any]],
+) -> MutationEvidence | None:
     """Extract MutationEvidence from collected artifacts."""
     for artifact in artifacts:
         if artifact.get("artifact_type") == "mutation":
@@ -104,9 +104,9 @@ def extract_mutation_evidence(
 def build_verification_evidence(
     commit_sha: str,
     branch: str,
-    artifacts: List[Dict[str, Any]],
-    property_tests: Dict[str, Any] | None = None,
-    contract_tests: Dict[str, Any] | None = None,
+    artifacts: list[dict[str, Any]],
+    property_tests: dict[str, Any] | None = None,
+    contract_tests: dict[str, Any] | None = None,
     status: str = "partial",
 ) -> VerificationEvidence:
     """Build a VerificationEvidence object from collected artifacts.

@@ -4,14 +4,15 @@ from __future__ import annotations
 
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from runtime.foundation.verification.totals import (
     TotalsInconsistentError,
     assert_totals_consistent,
 )
-from .base import EvidenceCollector, EvidenceArtifact
+
+from .base import EvidenceArtifact, EvidenceCollector
 
 
 @dataclass(frozen=True, slots=True)
@@ -71,11 +72,11 @@ class ResultsCollector(EvidenceCollector):
                     break
             if artifact_path is None:
                 return ResultData(
-                    timestamp=datetime.now(timezone.utc).isoformat(),
+                    timestamp=datetime.now(UTC).isoformat(),
                 )
         elif not artifact_path.exists():
             return ResultData(
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
 
         try:
@@ -83,7 +84,7 @@ class ResultsCollector(EvidenceCollector):
             root = tree.getroot()
         except ET.ParseError:
             return ResultData(
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
 
         passed = 0
@@ -136,7 +137,7 @@ class ResultsCollector(EvidenceCollector):
             failed_test_names=failed_names,
             error_test_names=error_names,
             duration_seconds=duration,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
     def collect_artifacts(self) -> list[EvidenceArtifact]:

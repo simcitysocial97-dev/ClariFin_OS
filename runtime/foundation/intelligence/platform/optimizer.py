@@ -17,7 +17,7 @@ skip records that justification so the decision is auditable.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from runtime.foundation.intelligence.platform.blast import BlastRadius
@@ -461,7 +461,7 @@ def optimize_verification(
     fallback = "full" if blast.unresolved_nodes and not selected else "graph"
 
     return VerificationPlanIntel(
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
         selected=tuple(selected),
         skipped=tuple(skipped),
         fallback_profile=fallback,

@@ -1,0 +1,76 @@
+{
+  "phase": "11",
+  "gate_timestamp": "2026-08-24T03:45:00+05:30",
+  "baseline_commit": "7374e99a8efa29cea5b2000b7dfb7ebf777ac481",
+  "previous_baseline_commit": "255ffddec3b27a2c4bb96fb4a7e790fee2522e3e",
+  "clean_baseline": {
+    "backend_tests_pass": true,
+    "backend_formatting_pass": true,
+    "backend_mypy_pass": true,
+    "frontend_lint_pass": true,
+    "frontend_typescript_pass": true,
+    "frontend_build_pass": true,
+    "frontend_tests_pass": true,
+    "runtime_verification_pass": true,
+    "env_check_consistent": true,
+    "pytest_collection_clean": true
+  },
+  "mutation_smoke": {
+    "gate_a_execution_integrity": "PASS",
+    "gate_b_evidence_integrity": "PASS",
+    "gate_c_quality_threshold": "N/A",
+    "mutants_generated": 6,
+    "killed": 2,
+    "survived": 2,
+    "no_tests": 2
+  },
+  "mutation_pilot": {
+    "target": "credit_card_engine",
+    "mutants_generated": 582,
+    "killed": 406,
+    "survived": 176,
+    "mutation_score": 69.8,
+    "threshold_percent": 80,
+    "gate_a_execution_integrity": "PASS",
+    "gate_b_evidence_integrity": "PASS",
+    "gate_c_quality_threshold": "N/A (pilot)"
+  },
+  "survivor_classification": {
+    "A_equivalent_mutant": 20,
+    "B_legitimate_missing_test_assertion": 150,
+    "C_insufficient_test_boundary": 6,
+    "D_test_selection_defect": 0,
+    "E_mutation_engine_limitation": 0,
+    "F_instrumentation_trampoline_issue": 0
+  },
+  "survivor_details": {
+    "error_message_mutants": "~150 mutants change ValueError message text (None, XX...XX, UPPERCASE). Tests only check exception type, not message content.",
+    "equivalent_rounding_mutants": "~20 mutants change rounding=ROUND_HALF_EVEN to rounding=None or remove rounding param. Python Decimal defaults to ROUND_HALF_EVEN.",
+    "boundary_precision_mutants": "~6 mutants change quantize precision (Decimal(1) to Decimal(2)). Tests don't cover edge cases where precision affects integer result."
+  },
+  "test_effectiveness_repair_needed": [
+    "Add error message assertions to ValueError tests in utilization, interest, emi, metrics, foreclosure modules",
+    "Add boundary tests for rounding precision edge cases (e.g., 1/3 * 10000 bps)",
+    "Add tests for Decimal quantize precision changes"
+  ],
+  "ci_workflows": {
+    "backend-verify.yml": "PASS (uses bootstrap-runtime, setup-node-runtime, upload-runtime)",
+    "frontend-verify.yml": "PASS (uses bootstrap-runtime, setup-node-runtime, upload-runtime)",
+    "mutation.yml": "PASS (uses bootstrap-runtime, mutation-smoke -> mutation)",
+    "verification-runtime.yml": "PASS (uses bootstrap-runtime, setup-node-runtime, upload-runtime)",
+    "playwright.yml": "PASS (uses bootstrap-runtime, setup-node-runtime, setup-playwright, upload-runtime)"
+  },
+  "scripts_status": {
+    "referenced_scripts": 14,
+    "orphaned_scripts": 1,
+    "orphaned_script": "run_api_contracts.sh (calls non-existent api-contracts profile, retained per D-approval)"
+  },
+  "certification": {
+    "c42_16_certified": true,
+    "blocking_issues": 0,
+    "explained_failures": 0,
+    "reproducible_baseline": true,
+    "mutation_infrastructure_ready": true,
+    "full_mutation_campaign_recommended": "After test strengthening for error messages and boundary conditions"
+  }
+}

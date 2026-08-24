@@ -89,8 +89,8 @@ def main() -> int:
 
     # Import after path setup
     from runtime.system.evidence.api import (
-        collect_all_evidence,
         build_verification_evidence,
+        collect_all_evidence,
         write_verification_summary,
     )
 
@@ -134,9 +134,9 @@ def main() -> int:
 
     # Print summary
     print("\nVerification Summary:")
-    print("  Commit: {}".format(commit_sha[:8]))
-    print("  Branch: {}".format(branch))
-    print("  Status: {}".format(evidence.status))
+    print(f"  Commit: {commit_sha[:8]}")
+    print(f"  Branch: {branch}")
+    print(f"  Status: {evidence.status}")
     if evidence.coverage:
         print(f"  Coverage: {evidence.coverage.percentage:.1f}%")
     if evidence.mutation:

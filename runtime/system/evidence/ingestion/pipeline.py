@@ -6,14 +6,14 @@ import json
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 
 @dataclass
 class IngestConfig:
     """Configuration for evidence ingestion."""
 
-    artifact_dirs: List[str] = field(
+    artifact_dirs: list[str] = field(
         default_factory=lambda: [
             "backend/tests/generated",
             "frontend/coverage",
@@ -33,7 +33,7 @@ class EvidenceIngestionPipeline:
         self.output_dir = Path(config.output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-    def discover_artifacts(self, workspace_root: Path) -> List[Path]:
+    def discover_artifacts(self, workspace_root: Path) -> list[Path]:
         """Discover all relevant artifact files."""
         artifacts = []
         for artifact_dir in self.config.artifact_dirs:
@@ -44,7 +44,7 @@ class EvidenceIngestionPipeline:
                 artifacts.extend(dir_path.rglob("*.md"))
         return artifacts
 
-    def ingest_coverage(self, artifacts: List[Path]) -> Dict[str, Any]:
+    def ingest_coverage(self, artifacts: list[Path]) -> dict[str, Any]:
         """Extract and normalize coverage data."""
         coverage_data = {
             "backend": None,
@@ -75,7 +75,7 @@ class EvidenceIngestionPipeline:
 
         return coverage_data
 
-    def _normalize_coverage(self, data: Dict[str, Any], source: str) -> Dict[str, Any]:
+    def _normalize_coverage(self, data: dict[str, Any], source: str) -> dict[str, Any]:
         """Normalize coverage data to standard format."""
         if "totals" in data:  # pytest-cov raw format
             totals = data["totals"]
@@ -95,7 +95,7 @@ class EvidenceIngestionPipeline:
             "lines_total": 0,
         }
 
-    def _combine_coverage(self, backend: Dict, frontend: Dict) -> Dict:
+    def _combine_coverage(self, backend: dict, frontend: dict) -> dict:
         """Combine backend and frontend coverage."""
         b_cov = backend.get("total_coverage", 0) if backend else 0
         f_cov = frontend.get("total_coverage", 0) if frontend else 0
@@ -107,7 +107,7 @@ class EvidenceIngestionPipeline:
             "frontend_coverage": f_cov,
         }
 
-    def ingest_mutation(self, artifacts: List[Path]) -> Dict[str, Any]:
+    def ingest_mutation(self, artifacts: list[Path]) -> dict[str, Any]:
         """Extract and normalize mutation testing data."""
         mutation_data = {
             "score": 0.0,
@@ -138,7 +138,7 @@ class EvidenceIngestionPipeline:
 
         return mutation_data
 
-    def ingest_contract_tests(self, artifacts: List[Path]) -> Dict[str, Any]:
+    def ingest_contract_tests(self, artifacts: list[Path]) -> dict[str, Any]:
         """Extract contract test evidence."""
         contract_data = {
             "total_contracts": 0,
@@ -160,7 +160,7 @@ class EvidenceIngestionPipeline:
 
         return contract_data
 
-    def ingest_property_tests(self, artifacts: List[Path]) -> Dict[str, Any]:
+    def ingest_property_tests(self, artifacts: list[Path]) -> dict[str, Any]:
         """Extract property-based testing evidence."""
         property_data = {
             "total_tests": 0,
@@ -181,7 +181,7 @@ class EvidenceIngestionPipeline:
 
         return property_data
 
-    def run(self, workspace_root: Path) -> Dict[str, Any]:
+    def run(self, workspace_root: Path) -> dict[str, Any]:
         """Run the full ingestion pipeline."""
         print(f"Discovering artifacts in {workspace_root}...")
         artifacts = self.discover_artifacts(workspace_root)

@@ -15,13 +15,13 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
-from runtime.foundation.intelligence.platform.changeset import ChangeSet, ChangedFile
-from runtime.foundation.intelligence.platform.change import analyze_changes
 from runtime.foundation.intelligence.platform.blast import compute_blast_radius
-from runtime.foundation.intelligence.platform.repair import build_repair_intelligence
-from runtime.foundation.intelligence.platform.risk import assess_risk
+from runtime.foundation.intelligence.platform.change import analyze_changes
+from runtime.foundation.intelligence.platform.changeset import ChangedFile, ChangeSet
 from runtime.foundation.intelligence.platform.optimizer import optimize_verification
+from runtime.foundation.intelligence.platform.repair import build_repair_intelligence
 from runtime.foundation.intelligence.platform.resolver import get_resolver
+from runtime.foundation.intelligence.platform.risk import assess_risk
 
 WORKFLOWS = {
     "modify_backend_engine": ["backend/src/engines/account_engine.py"],

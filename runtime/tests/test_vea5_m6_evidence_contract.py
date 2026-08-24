@@ -11,7 +11,6 @@ Run:
 
 from __future__ import annotations
 
-
 from runtime.foundation.verification.evidence_contract import (
     EVIDENCE_V2_SCHEMA,
     DeepVerificationDomain,

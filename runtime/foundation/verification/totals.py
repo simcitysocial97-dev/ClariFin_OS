@@ -37,7 +37,7 @@ class TestTotals:
     def consistent(self) -> bool:
         return self.passed + self.failed + self.skipped == self.total
 
-    def assert_consistent(self, context: str = "") -> "TestTotals":
+    def assert_consistent(self, context: str = "") -> TestTotals:
         assert_totals_consistent(
             self.total, self.passed, self.failed, self.skipped, context=context
         )
@@ -67,9 +67,7 @@ def compute_totals_from_junit(path: Path) -> TestTotals:
     total = passed = failed = skipped = 0
     for testcase in tree.iter("testcase"):
         total += 1
-        if testcase.find("failure") is not None:
-            failed += 1
-        elif testcase.find("error") is not None:
+        if testcase.find("failure") is not None or testcase.find("error") is not None:
             failed += 1
         elif testcase.find("skipped") is not None:
             skipped += 1

@@ -307,7 +307,7 @@ def _verify_no_cycles(svc) -> dict[str, Any]:
             graph[n.id] = list(svc.successors(n.id))
 
         WHITE, GRAY, BLACK = 0, 1, 2
-        color = {nid: WHITE for nid in graph}
+        color = dict.fromkeys(graph, WHITE)
         cycles_found = []
 
         def dfs(node, path):

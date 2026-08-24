@@ -11,7 +11,7 @@ appends an evidence string that names the entities responsible.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from runtime.foundation.intelligence.platform.blast import BlastRadius
@@ -290,7 +290,7 @@ def assess_risk(
         basis.append("git unavailable: no change input could be observed")
 
     return EngineeringRisk(
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
         dimensions=tuple(dims),
         overall_level=overall_level,
         overall_score=overall_score,

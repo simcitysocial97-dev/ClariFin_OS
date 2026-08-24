@@ -27,10 +27,11 @@ from __future__ import annotations
 import importlib.util
 import io
 import sys
+from collections.abc import Callable
 from contextlib import redirect_stdout
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 RUNTIME_DIR = REPO_ROOT / "runtime"

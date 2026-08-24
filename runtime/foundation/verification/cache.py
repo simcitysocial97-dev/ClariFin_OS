@@ -67,7 +67,13 @@ class VerificationCache:
             json.dumps(data, indent=2, default=str) + "\n", encoding="utf-8"
         )
 
-    def is_valid(self, commit: str, changed_files: list[str], profile: str, fingerprint: dict | None = None) -> bool:
+    def is_valid(
+        self,
+        commit: str,
+        changed_files: list[str],
+        profile: str,
+        fingerprint: dict | None = None,
+    ) -> bool:
         cache = self._load()
         if cache.get("last_commit") != commit:
             return False
@@ -106,7 +112,11 @@ class VerificationCache:
         )
 
     def replay(
-        self, commit: str, changed_files: list[str], profile: str, fingerprint: dict | None = None
+        self,
+        commit: str,
+        changed_files: list[str],
+        profile: str,
+        fingerprint: dict | None = None,
     ) -> ReplayResult:
         """Return the cache replay verdict.
 

@@ -14,8 +14,6 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import Optional
-
 
 # Canonical mutmut 3.7.0 status vocabulary -> our bucket.
 _STATUS_MAP = {
@@ -91,13 +89,13 @@ class MutationResult:
     classification_status: str = "UNKNOWN"  # PASS | FAIL
     evidence_complete: bool = False
     # ── Derived ──────────────────────────────────────────────────────────────
-    mutation_score: Optional[float] = None
+    mutation_score: float | None = None
     # ── Meta ─────────────────────────────────────────────────────────────────
     mode: str = "full"  # full | smoke | target
-    target: Optional[str] = None
+    target: str | None = None
     duration_seconds: int = 0
-    mutmut_rc: Optional[int] = None
-    error: Optional[str] = None
+    mutmut_rc: int | None = None
+    error: str | None = None
     note: str = ""
     # ── Canonical selection provenance (C42.7) ───────────────────────────────
     selected_test_scope: str = ""  # engine-specific test paths actually used
@@ -181,7 +179,7 @@ def parse_mutmut_results(text: str) -> MutationCounts:
     )
 
 
-def reconcile_counts(counts: MutationCounts, generated: Optional[int] = None) -> bool:
+def reconcile_counts(counts: MutationCounts, generated: int | None = None) -> bool:
     """Arithmetic invariant: every generated mutant must be accounted for.
 
     generated == killed + survived + no_tests + timeout + suspicious + not_checked
@@ -191,7 +189,7 @@ def reconcile_counts(counts: MutationCounts, generated: Optional[int] = None) ->
     return counts.generated >= 0
 
 
-def compute_score(counts: MutationCounts) -> Optional[float]:
+def compute_score(counts: MutationCounts) -> float | None:
     """Mutation score = killed / (killed + survived + timeout).
 
     Denominator excludes no_tests (no relevant test) and not_checked/suspicious
@@ -208,7 +206,7 @@ def compute_score(counts: MutationCounts) -> Optional[float]:
 
 def classify_gates(
     result: MutationResult,
-) -> tuple[bool, bool, Optional[bool], str]:
+) -> tuple[bool, bool, bool | None, str]:
     """Three-gate classification.
 
     Returns (gate_a_pass, gate_b_pass, gate_c_pass_or_none, quality_verdict).
@@ -337,19 +335,23 @@ SELECTION_METHOD = "explicit-pytest-path (mutmut pytest_add_cli_args_test_select
 # The full authoritative scope = every engine's source + every engine's tests.
 # Used only by the CI full campaign; never reduced and never a silent full-suite
 # fallback (every path below is enumerated from ENGINE_SELECTION).
-_FULL_SOURCE_PATHS = sorted({p for s in ENGINE_SELECTION.values() for p in s.source_paths})
-_FULL_TEST_SELECTION = sorted({p for s in ENGINE_SELECTION.values() for p in s.test_selection})
+_FULL_SOURCE_PATHS = sorted(
+    {p for s in ENGINE_SELECTION.values() for p in s.source_paths}
+)
+_FULL_TEST_SELECTION = sorted(
+    {p for s in ENGINE_SELECTION.values() for p in s.test_selection}
+)
 
 
 def engine_names() -> list[str]:
     return sorted(ENGINE_SELECTION.keys())
 
 
-def is_valid_engine(engine: Optional[str]) -> bool:
+def is_valid_engine(engine: str | None) -> bool:
     return engine in ENGINE_SELECTION
 
 
-def render_mutmut_config_block(engine: Optional[str]) -> str:
+def render_mutmut_config_block(engine: str | None) -> str:
     """Render the `[tool.mutmut]` TOML block from the canonical mapping.
 
     `engine` is one key of ENGINE_SELECTION (per-engine bounded campaign) or
@@ -385,7 +387,7 @@ def render_mutmut_config_block(engine: Optional[str]) -> str:
     )
 
 
-def write_backend_mutmut_config(engine: Optional[str], backend_pyproject: Path) -> str:
+def write_backend_mutmut_config(engine: str | None, backend_pyproject: Path) -> str:
     """Install the canonical per-engine/full `[tool.mutmut]` config into
     backend/pyproject.toml, preserving all other sections.
 
@@ -414,9 +416,9 @@ def build_infrastructure_failure(
     mutmut_version: str,
     config_hash: str,
     error: str,
-    mutmut_rc: Optional[int] = None,
+    mutmut_rc: int | None = None,
     mode: str = "full",
-    target: Optional[str] = None,
+    target: str | None = None,
 ) -> MutationResult:
     """Construct a result that NEVER pretends to have a mutation score."""
     return MutationResult(

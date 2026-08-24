@@ -7,11 +7,11 @@ from pathlib import Path
 
 import pytest
 
+from runtime.foundation.verification.planner import CrossLayerImpactPlanner
 from runtime.foundation.verification.registry import (
     VerificationRegistry,
     reset_registry,
 )
-from runtime.foundation.verification.planner import CrossLayerImpactPlanner
 
 
 @pytest.fixture

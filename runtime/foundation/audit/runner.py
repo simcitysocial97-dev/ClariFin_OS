@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -25,7 +25,7 @@ AUDIT_OUTPUT_DIR = REPO_ROOT / "runtime" / "generated"
 
 
 def _now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 @dataclass
@@ -96,7 +96,7 @@ class AuditRunner:
         self._repo_root = repo_root or REPO_ROOT
         self._sections: list[_SectionRunner] = []
 
-    def register(self, name: str, fn: Any) -> "AuditRunner":
+    def register(self, name: str, fn: Any) -> AuditRunner:
         self._sections.append(_SectionRunner(name=name, fn=fn))
         return self
 

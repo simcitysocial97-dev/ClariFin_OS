@@ -11,7 +11,6 @@ Creates ``script`` nodes. Migration scripts are handled by
 
 from __future__ import annotations
 
-
 from runtime.foundation.repository.scanner.base import BaseScanner, ScanResult
 
 # Script directories to scan

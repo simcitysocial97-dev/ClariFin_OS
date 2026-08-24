@@ -6,7 +6,7 @@ Generates runtime/generated/engineering-health.md from analytics.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -41,7 +41,7 @@ class EngineeringHealthReport:
         lines: list[str] = []
         lines.append("# Engineering Health Report")
         lines.append("")
-        lines.append(f"**Generated:** {datetime.now(timezone.utc).isoformat()}")
+        lines.append(f"**Generated:** {datetime.now(UTC).isoformat()}")
         lines.append("")
 
         lines.append("## Verification Success")

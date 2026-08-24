@@ -27,7 +27,7 @@ reachability, never duplicate ownership.
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -162,7 +162,7 @@ def build_cross_layer_map_v2(arch: Architecture | None = None) -> dict[str, Any]
     )
 
     return {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "schema": SCHEMA,
         "generator": "runtime.foundation.architecture.cross_layer.build_cross_layer_map_v2",
         "basis": [f"runtime/generated/{n}" for n in architecture.source_artifacts],

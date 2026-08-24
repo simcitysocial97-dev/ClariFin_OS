@@ -16,18 +16,19 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from runtime.foundation.repository.graph.graph_service import RepositoryGraphService
 from runtime.foundation.verification.models import (
     VerificationCategory,
+    VerificationDependency,
     VerificationPlan,
     VerificationScope,
+    VerificationStatus,
     VerificationStep,
     VerificationTarget,
-    VerificationDependency,
-    VerificationStatus,
 )
 from runtime.foundation.verification.registry import (
     VerificationRegistry,
@@ -35,7 +36,6 @@ from runtime.foundation.verification.registry import (
     get_registry,
     units_for_workflow,
 )
-from runtime.foundation.repository.graph.graph_service import RepositoryGraphService
 
 
 @dataclass(frozen=True, slots=True)
@@ -159,7 +159,7 @@ class VerificationPlanner:
 
         # Create plan
         plan = VerificationPlan(
-            id=f"plan-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
+            id=f"plan-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
             name=f"Verification Plan - {scope.value}",
             scope=scope,
             targets=targets_with_deps,
@@ -177,7 +177,7 @@ class VerificationPlanner:
                 "include_dependencies": context.include_dependencies,
                 "include_dependents": context.include_dependents,
                 "max_depth": context.max_depth,
-                "generated_at": datetime.now(timezone.utc).isoformat(),
+                "generated_at": datetime.now(UTC).isoformat(),
             },
         )
 
@@ -953,11 +953,11 @@ class CrossLayerImpactPlanner:
         their downstream impact to the report.
         """
         try:
-            from runtime.foundation.intelligence.platform.change import (
-                analyze_changes,
-            )
             from runtime.foundation.intelligence.platform.blast import (
                 compute_blast_radius,
+            )
+            from runtime.foundation.intelligence.platform.change import (
+                analyze_changes,
             )
 
             change = analyze_changes(paths=unresolved_files)

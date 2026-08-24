@@ -6,7 +6,6 @@ through the canonical provider and never fabricates targets.
 
 from __future__ import annotations
 
-
 from runtime.foundation.intelligence import format_repair, repair_plan
 from runtime.foundation.intelligence.platform.repair import Defect
 

@@ -10,9 +10,10 @@ Produces a comprehensive health summary including:
 
 import json
 from pathlib import Path
-from repo_intelligence.validator import Validator
-from repo_intelligence.metrics import calculate_metrics
+
 from repo_intelligence.index import RepositoryIndexer
+from repo_intelligence.metrics import calculate_metrics
+from repo_intelligence.validator import Validator
 
 
 def main() -> None:
@@ -28,7 +29,7 @@ def main() -> None:
         print(f"Using existing index: {index_path}")
 
     # Load data
-    with open(index_path, "r", encoding="utf-8") as f:
+    with open(index_path, encoding="utf-8") as f:
         data = json.load(f)
 
     # Calculate metrics

@@ -43,19 +43,19 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
     findings: list[AuditFinding] = []
     metrics: dict[str, Any] = {}
 
-    from runtime.system.observability.event_store import (
-        EngineeringEventStore,
-    )
     from runtime.system.observability.analytics import (
         AnalyticsEngine,
         AnalyticsReport,
     )
-    from runtime.system.observability.dashboard import DashboardGenerator
-    from runtime.system.observability.flaky_tests import FlakyTestIntelligence
     from runtime.system.observability.cost_analysis import CostAnalysis
+    from runtime.system.observability.dashboard import DashboardGenerator
     from runtime.system.observability.dependency_growth import (
         DependencyGrowthIntelligence,
     )
+    from runtime.system.observability.event_store import (
+        EngineeringEventStore,
+    )
+    from runtime.system.observability.flaky_tests import FlakyTestIntelligence
 
     event_store = EngineeringEventStore()
 

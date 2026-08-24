@@ -14,7 +14,7 @@ graph access.
 from __future__ import annotations
 
 from collections import deque
-from typing import Any, Dict, List, Set
+from typing import Any
 
 from runtime.foundation.repository.graph.graph_service import RepositoryGraphService
 from runtime.foundation.repository.graph.schema import GraphNode
@@ -62,7 +62,7 @@ class ImpactAnalyzer:
             return matching[0]
         return None
 
-    def analyze_file(self, path: str) -> Dict[str, Any]:
+    def analyze_file(self, path: str) -> dict[str, Any]:
         """Analyze the impact of changes to a repository file.
 
         Args:
@@ -79,13 +79,13 @@ class ImpactAnalyzer:
         start_node_id = start_node_obj.id
 
         # BFS traversal tracking cumulative reasons
-        visited: Set[str] = {start_node_id}
+        visited: set[str] = {start_node_id}
         queue: deque = deque(
             [(start_node_id, "", 0)]
         )  # (node_id, incoming_reason, depth)
 
         # Accumulate findings per entity type
-        results: Dict[str, List[Dict[str, Any]]] = {
+        results: dict[str, list[dict[str, Any]]] = {
             "capabilities": [],
             "endpoints": [],
             "frontend_consumers": [],
@@ -243,7 +243,7 @@ class ImpactAnalyzer:
 
         return results
 
-    def _empty_result(self) -> Dict[str, Any]:
+    def _empty_result(self) -> dict[str, Any]:
         """Return empty structure when no matching start node is found."""
         return {
             "capabilities": [],
@@ -262,12 +262,13 @@ class ImpactAnalyzer:
 
 
 # Convenience wrapper
-def compute_impact(path: str, max_depth: int = 8) -> Dict[str, Any]:
+def compute_impact(path: str, max_depth: int = 8) -> dict[str, Any]:
     """Quick impact analysis entry point.
 
     Loads the default index and runs impact analysis on the given path.
     """
     from pathlib import Path
+
     from runtime.foundation.repository.graph.graph_service import (
         load_graph_service as load_service,
     )

@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 @dataclass(frozen=True, slots=True)
@@ -15,11 +15,11 @@ class CoverageEvidence:
     percentage: float
     covered_lines: int
     total_lines: int
-    gaps: List[str] = field(default_factory=list)
+    gaps: list[str] = field(default_factory=list)
     source: str = "backend"
     artifact_path: str = ""
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
     def to_json(self) -> str:
@@ -36,11 +36,11 @@ class MutationEvidence:
     timeout: int = 0
     error: int = 0
     skipped: int = 0
-    survivor_details: List[Dict[str, Any]] = field(default_factory=list)
+    survivor_details: list[dict[str, Any]] = field(default_factory=list)
     source: str = "backend"
     artifact_path: str = ""
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
     def to_json(self) -> str:
@@ -55,11 +55,11 @@ class TestResultEvidence:
     failed: int = 0
     errors: int = 0
     skipped: int = 0
-    failed_test_names: List[str] = field(default_factory=list)
+    failed_test_names: list[str] = field(default_factory=list)
     duration_seconds: float = 0.0
     source: str = "backend"
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
     def to_json(self) -> str:
@@ -71,12 +71,12 @@ class ContractEvidence:
     """Contract test evidence from Schemathesis."""
 
     endpoints_tested: int = 0
-    failures: List[Dict[str, Any]] = field(default_factory=list)
+    failures: list[dict[str, Any]] = field(default_factory=list)
     schema_violations: int = 0
     status: str = "not_run"
     source: str = "backend"
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
     def to_json(self) -> str:
@@ -91,13 +91,13 @@ class VerificationEvidence:
     branch: str
     timestamp: str
     status: str  # "pass", "fail", "partial"
-    coverage: Optional[CoverageEvidence] = None
-    mutation: Optional[MutationEvidence] = None
-    property_tests: Dict[str, Any] = field(default_factory=dict)
-    contract_tests: Dict[str, Any] = field(default_factory=dict)
-    artifacts: List[Dict[str, Any]] = field(default_factory=list)
+    coverage: CoverageEvidence | None = None
+    mutation: MutationEvidence | None = None
+    property_tests: dict[str, Any] = field(default_factory=dict)
+    contract_tests: dict[str, Any] = field(default_factory=dict)
+    artifacts: list[dict[str, Any]] = field(default_factory=list)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         data = asdict(self)
         if self.coverage:
             data["coverage"] = self.coverage.to_dict()
@@ -109,7 +109,7 @@ class VerificationEvidence:
         return json.dumps(self.to_dict(), indent=2)
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "VerificationEvidence":
+    def from_dict(cls, data: dict[str, Any]) -> VerificationEvidence:
         coverage_data = data.get("coverage")
         mutation_data = data.get("mutation")
         coverage = CoverageEvidence(**coverage_data) if coverage_data else None
@@ -127,7 +127,7 @@ class VerificationEvidence:
         )
 
     @classmethod
-    def from_json(cls, json_str: str) -> "VerificationEvidence":
+    def from_json(cls, json_str: str) -> VerificationEvidence:
         return cls.from_dict(json.loads(json_str))
 
     def write(self, path: Path) -> None:
@@ -142,10 +142,10 @@ class EvidenceCollectionResult:
 
     workspace_root: str
     collected_at: str
-    artifacts: List[Dict[str, Any]]
-    collectors: Dict[str, Dict[str, Any]]
+    artifacts: list[dict[str, Any]]
+    collectors: dict[str, dict[str, Any]]
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
     def to_json(self) -> str:

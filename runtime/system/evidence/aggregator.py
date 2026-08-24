@@ -4,15 +4,15 @@ from __future__ import annotations
 
 import json
 import os
-from dataclasses import dataclass, field, asdict
-from datetime import datetime, timezone
+from dataclasses import asdict, dataclass, field
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from .collectors.contract import ContractCollector, ContractEvidence
 from .collectors.coverage import CoverageCollector, CoverageEvidence
 from .collectors.mutation import MutationCollector, MutationEvidence
-from .collectors.test_results import ResultsCollector, ResultData
-from .collectors.contract import ContractCollector, ContractEvidence
+from .collectors.test_results import ResultData, ResultsCollector
 
 # Program 7A: Cross-layer dependency chain enrichment
 # Program 13.3: chains come from the canonical architecture provider, never
@@ -391,8 +391,8 @@ class EvidenceAggregator:
             overall_status = "pass"
 
         summary = EvidenceSummary(
-            summary_id=f"run-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
-            generated_at=datetime.now(timezone.utc).isoformat(),
+            summary_id=f"run-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
+            generated_at=datetime.now(UTC).isoformat(),
             commit=self._get_git_ref("HEAD"),
             branch=self._get_branch(),
             overall_status=overall_status,
@@ -873,7 +873,7 @@ class EvidenceAggregator:
             return collector.collect(xml_file)
 
         return ResultData(
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
     def _collect_contract(self, evidence_dir: Path) -> ContractEvidence:

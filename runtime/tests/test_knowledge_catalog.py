@@ -5,7 +5,6 @@ Deterministic tests. No network. No repository mutation.
 
 from __future__ import annotations
 
-
 from runtime.foundation.knowledge.catalog import (
     KnowledgeCatalog,
     get_catalog,

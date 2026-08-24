@@ -16,8 +16,8 @@ from __future__ import annotations
 
 import ast
 from pathlib import Path
-
 from typing import Any
+
 from runtime.foundation.repository.scanner.base import BaseScanner, ScanResult
 
 # Directories under src/ that map to a module type
@@ -311,10 +311,13 @@ class BackendScanner(BaseScanner):
                     ):
                         func = node.value.func
                         is_router = False
-                        if isinstance(func, ast.Name) and func.id == "APIRouter":
-                            is_router = True
-                        elif (
-                            isinstance(func, ast.Attribute) and func.attr == "APIRouter"
+                        if (
+                            isinstance(func, ast.Name)
+                            and func.id == "APIRouter"
+                            or (
+                                isinstance(func, ast.Attribute)
+                                and func.attr == "APIRouter"
+                            )
                         ):
                             is_router = True
 

@@ -5,11 +5,11 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from .base import EvidenceCollector, EvidenceArtifact
+from .base import EvidenceArtifact, EvidenceCollector
 
 
 @dataclass(frozen=True, slots=True)
@@ -47,7 +47,7 @@ class MutationCollector(EvidenceCollector):
                 score_pct=0.0,
                 killed=0,
                 survived=0,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
 
         per_engine: dict[str, dict[str, Any]] = {}
@@ -111,7 +111,7 @@ class MutationCollector(EvidenceCollector):
             killed=total_killed,
             survived=total_survived,
             per_engine=per_engine,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
     def _parse_survivors(self, survivors_path: Path) -> list[str]:

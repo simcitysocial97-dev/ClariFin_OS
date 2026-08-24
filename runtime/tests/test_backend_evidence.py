@@ -429,18 +429,18 @@ class TestMutationRunnerPortability:
     def test_mutation_runner_uses_canonical_python(self):
         source = _script(self._MUTATION_SCRIPT)
         # Must use canonical .venv python (resolves to python3) or explicit python3
-        assert (".venv/bin/python" in source) or ("python3" in source), (
-            "mutation runner must use canonical .venv python or python3 per repository convention"
-        )
+        assert (".venv/bin/python" in source) or (
+            "python3" in source
+        ), "mutation runner must use canonical .venv python or python3 per repository convention"
         # Must NOT use bare `python` (CI portability defect; ubuntu-latest only ships python3)
         assert "python -m pytest" not in source, (
             "bare `python -m pytest` is a CI portability defect; "
             "ubuntu-latest only ships `python3`"
         )
         # Must invoke the canonical mutation runner
-        assert "runtime/verify.py mutation" in source, (
-            "mutation runner must invoke canonical runtime/verify.py mutation"
-        )
+        assert (
+            "runtime/verify.py mutation" in source
+        ), "mutation runner must invoke canonical runtime/verify.py mutation"
 
     def test_mutation_script_is_syntactically_valid(self):
         result = subprocess.run(

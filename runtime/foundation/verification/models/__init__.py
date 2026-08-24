@@ -1,9 +1,9 @@
 from runtime.foundation.verification.models.model import (
+    ExecutionResult,
+    FailureClassification,
     VerificationCategory,
     VerificationDependency,
     VerificationEvidence,
-    ExecutionResult,
-    FailureClassification,
     VerificationPlan,
     VerificationRequirement,
     VerificationResult,

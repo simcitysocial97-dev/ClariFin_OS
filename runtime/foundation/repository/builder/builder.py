@@ -19,23 +19,23 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 from runtime.foundation.repository.graph.schema import (
+    OWNERSHIP_CLASSES,
     GraphNode,
     RepositoryGraph,
-    OWNERSHIP_CLASSES,
 )
 from runtime.foundation.repository.scanner import (
+    ApiScanner,
     BackendScanner,
     DocsScanner,
     FrontendScanner,
-    ApiScanner,
+    MetadataScanner,
+    MigrationScanner,
+    ScriptScanner,
     TestScanner,
     WorkflowScanner,
-    ScriptScanner,
-    MigrationScanner,
-    MetadataScanner,
 )
 
 
@@ -71,7 +71,7 @@ class RepositoryBuilder:
             repo_root = Path(repo_root)
         self.repo_root = repo_root
         self.graph = RepositoryGraph(repository_root=str(repo_root))
-        self.gaps: Dict[str, Any] = {}
+        self.gaps: dict[str, Any] = {}
 
     def build(self) -> RepositoryGraph:
         """Run all scanners and merge results into a single graph.
@@ -215,7 +215,7 @@ class RepositoryBuilder:
         # Everything else defaults to unknown
         return "unknown"
 
-    def _detect_gaps(self) -> Dict[str, Any]:
+    def _detect_gaps(self) -> dict[str, Any]:
         """Detect missing relationships and unknown files."""
         # Build sets for quick lookup
         all_node_ids: set[str] = {n.id for n in self.graph.nodes}
@@ -389,7 +389,7 @@ class RepositoryBuilder:
 
         return summary
 
-    def to_index_dict(self, include_gaps: bool = True) -> Dict[str, Any]:
+    def to_index_dict(self, include_gaps: bool = True) -> dict[str, Any]:
         """Build the full index dictionary including metadata and optionally gaps.
 
         Args:
@@ -399,12 +399,12 @@ class RepositoryBuilder:
             A dictionary suitable for JSON serialization.
         """
         # Compute per-type counts
-        node_counts: Dict[str, int] = {}
+        node_counts: dict[str, int] = {}
         for n in self.graph.nodes:
             node_counts[n.type] = node_counts.get(n.type, 0) + 1
 
         unique_edges = self._unique_edges_as_dicts()
-        edge_counts: Dict[str, int] = {}
+        edge_counts: dict[str, int] = {}
         for e in unique_edges:
             rel = e.get("relationship", "unknown")
             edge_counts[rel] = edge_counts.get(rel, 0) + 1
@@ -431,7 +431,7 @@ class RepositoryBuilder:
                 "edge_count": len(unique_edges),
                 "node_types": dict(sorted(node_counts.items())),
                 "edge_relationships": dict(sorted(edge_counts.items())),
-                "ownership_classes": list(sorted(OWNERSHIP_CLASSES)),
+                "ownership_classes": sorted(OWNERSHIP_CLASSES),
                 "validation_summary": {
                     "total_nodes": len(self.graph.nodes),
                     "total_edges": len(unique_edges),
@@ -452,10 +452,10 @@ class RepositoryBuilder:
 
         return index_data
 
-    def _unique_edges_as_dicts(self) -> List[Dict[str, Any]]:
+    def _unique_edges_as_dicts(self) -> list[dict[str, Any]]:
         """Return de-duplicated edges as dicts (source/target/relationship unique)."""
         seen: set[tuple[str, str, str]] = set()
-        unique_edges: List[Dict[str, Any]] = []
+        unique_edges: list[dict[str, Any]] = []
         for e in self.graph.edges:
             key = (e.source, e.target, e.relationship)
             if key not in seen:
@@ -492,7 +492,7 @@ class RepositoryBuilder:
 
         return output_path
 
-    def get_builder_metrics(self) -> Dict[str, Any]:
+    def get_builder_metrics(self) -> dict[str, Any]:
         """Get summary statistics about what the builder discovered.
 
         Returns:
@@ -503,17 +503,17 @@ class RepositoryBuilder:
             return {"error": "No graph built yet"}
 
         # Ownership distribution
-        ownership_dist: Dict[str, int] = {}
+        ownership_dist: dict[str, int] = {}
         for n in self.graph.nodes:
             ownership_dist[n.ownership] = ownership_dist.get(n.ownership, 0) + 1
 
         # Per-type node counts
-        node_counts: Dict[str, int] = {}
+        node_counts: dict[str, int] = {}
         for n in self.graph.nodes:
             node_counts[n.type] = node_counts.get(n.type, 0) + 1
 
         # Per-edge relationship counts
-        edge_counts: Dict[str, int] = {}
+        edge_counts: dict[str, int] = {}
         for e in self.graph.edges:
             edge_counts[e.relationship] = edge_counts.get(e.relationship, 0) + 1
 

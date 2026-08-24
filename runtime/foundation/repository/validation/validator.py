@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, List, Dict, Set, Optional
+from typing import Any
 
 
 class ValidationFinding:
@@ -22,9 +22,9 @@ class ValidationFinding:
         severity: str,
         code: str,
         message: str,
-        node_id: Optional[str] = None,
-        related_nodes: Optional[List[str]] = None,
-        edge: Optional[Dict[str, str]] = None,
+        node_id: str | None = None,
+        related_nodes: list[str] | None = None,
+        edge: dict[str, str] | None = None,
         evidence: str = "",
     ) -> None:
         self.severity = severity  # ERROR, WARNING, or INFO
@@ -37,7 +37,7 @@ class ValidationFinding:
         )  # {"source": "...", "target": "...", "relationship": "..."}
         self.evidence = evidence  # Why this finding exists
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         result = {
             "severity": self.severity,
             "code": self.code,
@@ -66,10 +66,10 @@ class Validator:
 
     def load(self) -> None:
         """Load the index from disk."""
-        with open(self._index_path, "r", encoding="utf-8") as f:
+        with open(self._index_path, encoding="utf-8") as f:
             self._data = json.load(f)
 
-    def find_all(self) -> List[ValidationFinding]:
+    def find_all(self) -> list[ValidationFinding]:
         """Run all validation checks and collect findings.
 
         Returns a list of ValidationFinding objects categorized by severity.
@@ -77,15 +77,15 @@ class Validator:
         if self._data is None:
             self.load()
 
-        findings: List[ValidationFinding] = []
+        findings: list[ValidationFinding] = []
         nodes = self._data.get("nodes", [])
         edges = self._data.get("edges", [])
-        all_node_ids: Set[str] = {n["id"] for n in nodes}
+        all_node_ids: set[str] = {n["id"] for n in nodes}
 
         # --- ERROR-level: Critical structural issues ---
 
         # Duplicate node IDs (should never happen but validate anyway)
-        seen_id: Dict[str, int] = {}
+        seen_id: dict[str, int] = {}
         for node in nodes:
             nid = node["id"]
             seen_id[nid] = seen_id.get(nid, 0) + 1
@@ -157,7 +157,7 @@ class Validator:
                 )
 
         # Endpoints with no verification evidence
-        verified_ep_ids: Set[str] = set()
+        verified_ep_ids: set[str] = set()
         for edge in edges:
             if edge["relationship"] == "verifies" and edge["source"].startswith(
                 "capability:"
@@ -177,7 +177,7 @@ class Validator:
                 )
 
         # Capabilities with no documentation evidence
-        documented_cap_ids: Set[str] = set()
+        documented_cap_ids: set[str] = set()
         for edge in edges:
             if edge["relationship"] == "documents":
                 documented_cap_ids.add(edge["source"])
@@ -198,7 +198,7 @@ class Validator:
         # --- INFO-level: Observational data ---
 
         # Node type distribution summary
-        type_counts: Dict[str, int] = {}
+        type_counts: dict[str, int] = {}
         for node in nodes:
             t = node["type"]
             type_counts[t] = type_counts.get(t, 0) + 1
@@ -214,7 +214,7 @@ class Validator:
             )
 
         # Edge relationship count summary
-        edge_counts: Dict[str, int] = {}
+        edge_counts: dict[str, int] = {}
         for edge in edges:
             r = edge["relationship"]
             edge_counts[r] = edge_counts.get(r, 0) + 1
@@ -231,21 +231,21 @@ class Validator:
 
         return findings
 
-    def summarize(self) -> Dict[str, Any]:
+    def summarize(self) -> dict[str, Any]:
         """Summarize findings by severity and code."""
         findings = self.find_all()
 
-        errors: List[ValidationFinding] = [f for f in findings if f.severity == "ERROR"]
-        warnings: List[ValidationFinding] = [
+        errors: list[ValidationFinding] = [f for f in findings if f.severity == "ERROR"]
+        warnings: list[ValidationFinding] = [
             f for f in findings if f.severity == "WARNING"
         ]
-        infos: List[ValidationFinding] = [f for f in findings if f.severity == "INFO"]
+        infos: list[ValidationFinding] = [f for f in findings if f.severity == "INFO"]
 
         # Group by code within each severity, converting findings to dicts first
         def group_by_code_items(
-            items: List[ValidationFinding],
-        ) -> Dict[str, List[Dict[str, Any]]]:
-            grouped: Dict[str, List[Dict[str, Any]]] = {}
+            items: list[ValidationFinding],
+        ) -> dict[str, list[dict[str, Any]]]:
+            grouped: dict[str, list[dict[str, Any]]] = {}
             for item in items:
                 grouped.setdefault(item.code, []).append(item.to_dict())
             return grouped
@@ -261,7 +261,7 @@ class Validator:
             "findings": [f.to_dict() for f in findings],
         }
 
-    def generate_report(self) -> Dict[str, Any]:
+    def generate_report(self) -> dict[str, Any]:
         """Generate a complete validation report."""
         summary = self.summarize()
         return {
@@ -270,7 +270,7 @@ class Validator:
         }
 
 
-def validate_index(index_path: Path | None = None) -> Dict[str, Any]:
+def validate_index(index_path: Path | None = None) -> dict[str, Any]:
     """Convenience function to validate the canonical repository index.
 
     Returns a dictionary containing findings distributed by severity, grouped

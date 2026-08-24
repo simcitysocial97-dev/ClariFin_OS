@@ -12,11 +12,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 from runtime.foundation.verification import mutation_contract as mc
 from runtime.foundation.verification.env import (
-    FORBIDDEN_VENV_DIRS,
     resolve_environment,
 )
 from runtime.foundation.verification.mutation_runner import (
@@ -93,7 +90,9 @@ def test_parse_mutmut_results_empty():
 
 # ── 9. Arithmetic reconciliation ────────────────────────────────────────────
 def test_reconcile_counts_invariant():
-    c = mc.MutationCounts(killed=4, survived=3, no_tests=2, timeout=1, suspicious=0, not_checked=1)
+    c = mc.MutationCounts(
+        killed=4, survived=3, no_tests=2, timeout=1, suspicious=0, not_checked=1
+    )
     assert mc.reconcile_counts(c) is True
     assert c.generated == 11
 
@@ -180,11 +179,21 @@ def test_infrastructure_failure_has_no_score():
 # ── 13. Quality gate cannot execute without valid evidence ──────────────────
 def test_classify_gates_quality_pass():
     r = mc.MutationResult(
-        run_id="r", repository_sha="s", tree_sha="t",
-        python_version="3.12", pytest_version="9.1.1", mutmut_version="3.7.0",
-        config_hash="h", killed=90, survived=10, timeout=0,
-        execution_status="PASS", classification_status="PASS",
-        evidence_complete=True, mutation_score=90.0, threshold_percent=80,
+        run_id="r",
+        repository_sha="s",
+        tree_sha="t",
+        python_version="3.12",
+        pytest_version="9.1.1",
+        mutmut_version="3.7.0",
+        config_hash="h",
+        killed=90,
+        survived=10,
+        timeout=0,
+        execution_status="PASS",
+        classification_status="PASS",
+        evidence_complete=True,
+        mutation_score=90.0,
+        threshold_percent=80,
     )
     ga, gb, gc, verdict = mc.classify_gates(r)
     assert (ga, gb, gc) == (True, True, True)
@@ -192,11 +201,21 @@ def test_classify_gates_quality_pass():
 
 def test_classify_gates_quality_fail():
     r = mc.MutationResult(
-        run_id="r", repository_sha="s", tree_sha="t",
-        python_version="3.12", pytest_version="9.1.1", mutmut_version="3.7.0",
-        config_hash="h", killed=50, survived=50, timeout=0,
-        execution_status="PASS", classification_status="PASS",
-        evidence_complete=True, mutation_score=50.0, threshold_percent=80,
+        run_id="r",
+        repository_sha="s",
+        tree_sha="t",
+        python_version="3.12",
+        pytest_version="9.1.1",
+        mutmut_version="3.7.0",
+        config_hash="h",
+        killed=50,
+        survived=50,
+        timeout=0,
+        execution_status="PASS",
+        classification_status="PASS",
+        evidence_complete=True,
+        mutation_score=50.0,
+        threshold_percent=80,
     )
     ga, gb, gc, verdict = mc.classify_gates(r)
     assert (ga, gb) == (True, True)
@@ -206,11 +225,21 @@ def test_classify_gates_quality_fail():
 
 def test_classify_gates_evidence_incomplete():
     r = mc.MutationResult(
-        run_id="r", repository_sha="s", tree_sha="t",
-        python_version="3.12", pytest_version="9.1.1", mutmut_version="3.7.0",
-        config_hash="h", killed=1, survived=0, timeout=0,
-        execution_status="PASS", classification_status="FAIL",
-        evidence_complete=False, mutation_score=100.0, threshold_percent=80,
+        run_id="r",
+        repository_sha="s",
+        tree_sha="t",
+        python_version="3.12",
+        pytest_version="9.1.1",
+        mutmut_version="3.7.0",
+        config_hash="h",
+        killed=1,
+        survived=0,
+        timeout=0,
+        execution_status="PASS",
+        classification_status="FAIL",
+        evidence_complete=False,
+        mutation_score=100.0,
+        threshold_percent=80,
     )
     ga, gb, gc, verdict = mc.classify_gates(r)
     assert gb is False
@@ -230,6 +259,10 @@ def test_smoke_end_to_end_distinguishes_classifications():
     assert result.survived > 0, "smoke must detect at least one surviving mutant"
     assert result.no_tests > 0, "smoke must detect at least one no-test mutant"
     assert result.mutants_generated == (
-        result.killed + result.survived + result.no_tests
-        + result.timeout + result.suspicious + result.not_checked
+        result.killed
+        + result.survived
+        + result.no_tests
+        + result.timeout
+        + result.suspicious
+        + result.not_checked
     )

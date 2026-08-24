@@ -65,11 +65,11 @@ def _measure_planner_performance(repo_root: Path) -> dict[str, Any]:
     metrics: dict[str, Any] = {}
 
     try:
-        from runtime.foundation.verification.planner.planner import (
-            VerificationPlanner,
-            PlanningContext,
-        )
         from runtime.foundation.verification.models import VerificationScope
+        from runtime.foundation.verification.planner.planner import (
+            PlanningContext,
+            VerificationPlanner,
+        )
 
         planner = VerificationPlanner()
 

@@ -10,8 +10,8 @@ repair through this package and its single internal :mod:`api`.
 from __future__ import annotations
 
 from runtime.foundation.intelligence.platform.api import (  # noqa: F401
-    analyze,
     affected_entities,
+    analyze,
     blast_radius,
     engineering_risk,
     repair_plan,

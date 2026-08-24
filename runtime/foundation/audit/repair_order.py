@@ -6,7 +6,7 @@ Generates the repair DAG based on root cause clusters.
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -89,7 +89,7 @@ REPAIR_DAG = [
 
 def generate_repair_order() -> dict[str, Any]:
     return {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "repair_dag": REPAIR_DAG,
         "total_clusters": len(REPAIR_DAG),
         "execution_phases": [

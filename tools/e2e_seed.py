@@ -76,6 +76,7 @@ def seed():
 2025-03-01,Salary Credit,52000,credit,salary
 """
     import io
+
     from fastapi import UploadFile
 
     csv_file = UploadFile(filename="e2e_seed.csv", file=io.BytesIO(csv_data.encode()))

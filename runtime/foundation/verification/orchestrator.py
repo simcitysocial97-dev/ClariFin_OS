@@ -17,23 +17,25 @@ from __future__ import annotations
 import json
 import subprocess
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from runtime.foundation.verification.executor import Executor
+from runtime.foundation.verification.failure_report import build_failure_report
 from runtime.foundation.verification.models import (
     ExecutionResult as ExecutionResultModel,
+)
+from runtime.foundation.verification.models import (
     FailureClassification,
     VerificationPlan,
     VerificationScope,
     VerificationStatus,
     VerificationSummary,
 )
+from runtime.foundation.verification.planner import PlanningContext, VerificationPlanner
 from runtime.foundation.verification.profiles import VerificationProfile, get_profile
-from runtime.foundation.verification.planner import VerificationPlanner, PlanningContext
 from runtime.foundation.verification.registry import UNMAPPED
-from runtime.foundation.verification.failure_report import build_failure_report
 
 VERIFICATION_CACHE_PATH = Path("runtime/generated/verification-cache.json")
 VERIFICATION_REPORT_PATH = Path("runtime/generated/verification-report.md")
@@ -100,7 +102,7 @@ def _merge_base_with_default() -> str | None:
     Offline mode can be enabled via VERIFICATION_OFFLINE=1 to skip fetch.
     """
     import os
-    
+
     # Offline mode: skip fetch entirely (for local verification without network)
     if os.environ.get("VERIFICATION_OFFLINE") == "1":
         default = _default_branch()
@@ -180,10 +182,10 @@ def _record_git_fetch_evidence(
 ) -> None:
     """Record git fetch result for forensic reproducibility."""
     import json
-    from datetime import datetime, timezone
-    
+    from datetime import datetime
+
     event = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "event": "git_fetch",
         "details": {
             "branch": branch,
@@ -223,7 +225,7 @@ def _github_pr_refs() -> tuple[str | None, str | None]:
     if not event_path or not os.path.isfile(event_path):
         return (None, None)
     try:
-        with open(event_path, "r", encoding="utf-8") as fh:
+        with open(event_path, encoding="utf-8") as fh:
             payload = json.load(fh)
     except Exception:
         return (None, None)
@@ -548,9 +550,7 @@ class VerificationReport:
     dependency_chains: list[dict[str, Any]]
     evidence_files: list[str]
     recommendations: list[str]
-    generated_at: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
-    )
+    generated_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     def to_markdown(self) -> str:
         lines: list[str] = []
@@ -757,6 +757,7 @@ class VerificationOrchestrator:
             per_step_timeout=per_step_timeout,
         )
         from runtime.system.evidence.aggregator import EvidenceAggregator
+
         self._aggregator = EvidenceAggregator(self._repo_root)
         self._map_path = map_path
         self._changed_files: list[str] = []
@@ -921,12 +922,12 @@ class VerificationOrchestrator:
         if self._plan is None:
             raise RuntimeError("No plan generated. Call generate_plan() first.")
 
-        self._run_start = datetime.now(timezone.utc)
+        self._run_start = datetime.now(UTC)
         total_steps = len(self._plan.steps)
         self._results = []
 
         for idx, step in enumerate(self._plan.steps, start=1):
-            elapsed = (datetime.now(timezone.utc) - self._run_start).total_seconds()
+            elapsed = (datetime.now(UTC) - self._run_start).total_seconds()
             if elapsed > self._overall_timeout:
                 # C5.2: hard ceiling — abort remaining steps rather than running
                 # forever when the per-step timeout misfires.
@@ -1065,7 +1066,7 @@ class VerificationOrchestrator:
             "schema": "run-manifest/v1",
             "commit": _get_current_commit(),
             "branch": _current_branch(),
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
             "profile": self._profile.name if self._profile else None,
             "steps": entries,
             "unmapped": unmapped,

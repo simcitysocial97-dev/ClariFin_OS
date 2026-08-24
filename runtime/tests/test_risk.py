@@ -7,7 +7,6 @@ never under-report a High dimension.
 
 from __future__ import annotations
 
-
 from runtime.foundation.intelligence import engineering_risk, format_risk
 
 

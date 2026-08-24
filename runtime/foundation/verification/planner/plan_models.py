@@ -8,8 +8,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import dataclass, field, asdict
-from datetime import datetime, timezone
+from dataclasses import asdict, dataclass, field
+from datetime import UTC, datetime
 from typing import Literal
 
 from runtime.foundation.verification.planner.impact_rules import (
@@ -207,7 +207,7 @@ class VerificationPlan:
 
         return cls(
             plan_id=plan_id,
-            generated_at=datetime.now(timezone.utc).isoformat(),
+            generated_at=datetime.now(UTC).isoformat(),
             triggered_by=triggered_by,
             changed_files=files,
             impact=VerificationImpact(

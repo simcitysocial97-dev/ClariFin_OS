@@ -16,7 +16,7 @@ import json
 import subprocess
 import sys
 import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 # Add backend to path
@@ -25,8 +25,8 @@ if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
 from runtime.foundation.verification.api_contracts.inventory import (
-    ContractInventory,
     REPO_ROOT,
+    ContractInventory,
 )
 from runtime.foundation.verification.api_contracts.normalize import (
     diff_openapi,
@@ -35,10 +35,10 @@ from runtime.foundation.verification.api_contracts.normalize import (
 from runtime.foundation.verification.api_contracts.taxonomy import (
     ContractFailure,
     DimensionResult,
+    FailureClassification,
     GateReport,
     InventorySnapshot,
     _failure,
-    FailureClassification,
 )
 
 
@@ -46,7 +46,7 @@ class ApiContractGate:
     """Main orchestrator for M9-C27 API contract integrity checks."""
 
     def __init__(self, run_id: str | None = None) -> None:
-        self.run_id = run_id or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        self.run_id = run_id or datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
         self._repo_root = REPO_ROOT
         self._inventory = ContractInventory()
 
@@ -616,9 +616,10 @@ class ApiContractGate:
         ]
 
         # Set up isolated test DB
-        from src.config import settings
-        import tempfile
         import os
+        import tempfile
+
+        from src.config import settings
 
         with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
             tmp_db_path = tmp.name

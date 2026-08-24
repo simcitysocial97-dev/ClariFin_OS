@@ -9,7 +9,6 @@ and risk distribution. Read only.
 
 from __future__ import annotations
 
-
 from runtime.foundation.workspace.formatter import (
     format_duration,
     format_number,

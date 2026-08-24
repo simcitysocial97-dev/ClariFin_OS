@@ -9,7 +9,6 @@ from __future__ import annotations
 import json
 import os
 
-
 from runtime.foundation.verification.models import (
     VerificationScope,
 )
@@ -17,7 +16,6 @@ from runtime.foundation.verification.planner import (
     VerificationPlanner,
     plan_verification,
 )
-
 from runtime.foundation.verification.planner.planner import CrossLayerImpactPlanner
 
 

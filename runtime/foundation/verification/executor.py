@@ -6,9 +6,9 @@ import signal
 import subprocess
 import threading
 import time
-from datetime import datetime, timezone
+from collections.abc import Callable
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Callable, Optional
 
 from runtime.foundation.verification.models import (
     ExecutionResult,
@@ -59,8 +59,8 @@ class Executor:
         # Canonical execution environment: prepend .venv/bin when it exists
         self._exec_env = self._build_exec_env()
         # Process-group tracking for F19
-        self._current_pgid: Optional[int] = None
-        self._proc: Optional[subprocess.Popen] = None
+        self._current_pgid: int | None = None
+        self._proc: subprocess.Popen | None = None
         self._proc_lock = threading.Lock()
 
     def _build_exec_env(self) -> dict[str, str]:
@@ -89,7 +89,7 @@ class Executor:
 
     def _kill_process_group(self) -> None:
         """Kill the entire process group associated with the current command.
-        
+
         This ensures no orphaned descendants survive timeout or cancellation (F19).
         """
         with self._proc_lock:
@@ -97,7 +97,7 @@ class Executor:
             proc = self._proc
             self._current_pgid = None
             self._proc = None
-        
+
         if pgid is not None:
             try:
                 os.killpg(pgid, signal.SIGTERM)
@@ -113,8 +113,10 @@ class Executor:
             except PermissionError:
                 pass  # No permission (shouldn't happen for our children)
             # Evidence: record process group termination
-            self._record_lifecycle_event("process_group_killed", {"pgid": pgid, "signal": "SIGTERM+SIGKILL"})
-        
+            self._record_lifecycle_event(
+                "process_group_killed", {"pgid": pgid, "signal": "SIGTERM+SIGKILL"}
+            )
+
         # Also try direct proc kill as fallback
         if proc is not None:
             try:
@@ -125,7 +127,7 @@ class Executor:
     def _record_lifecycle_event(self, event_type: str, details: dict) -> None:
         """Record a lifecycle event for evidence tracking."""
         event = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "event": event_type,
             "details": details,
         }
@@ -176,12 +178,11 @@ class Executor:
         C5.2: uses ``Popen`` with line-buffered pipe readers so output is written
         to durable evidence files and surfaced via ``_log_callback`` as soon as
         each line is produced — the CI log is no longer silent for hours.
-        
+
         F19: Command runs in its own process group (start_new_session=True).
         Timeout/cancellation kills the entire process group via os.killpg().
         """
-        import time
-        start_time = datetime.now(timezone.utc)
+        start_time = datetime.now(UTC)
         task_label = task_id or "step"
 
         stdout_persistent = self._results_dir / f"{task_label}-stdout.txt"
@@ -248,7 +249,7 @@ class Executor:
             stdout_thread.join(timeout=3)
             stderr_thread.join(timeout=3)
 
-            duration = (datetime.now(timezone.utc) - start_time).total_seconds()
+            duration = (datetime.now(UTC) - start_time).total_seconds()
 
             stderr_content = (
                 stderr_persistent.read_text(encoding="utf-8")
@@ -283,7 +284,7 @@ class Executor:
         except subprocess.TimeoutExpired:
             # Fallback: ensure process group is killed
             self._kill_process_group()
-            duration = (datetime.now(timezone.utc) - start_time).total_seconds()
+            duration = (datetime.now(UTC) - start_time).total_seconds()
             return ExecutionResult(
                 task_id=task_id,
                 command=command,
@@ -302,7 +303,7 @@ class Executor:
         except Exception as exc:
             # Fallback: ensure process group is killed
             self._kill_process_group()
-            duration = (datetime.now(timezone.utc) - start_time).total_seconds()
+            duration = (datetime.now(UTC) - start_time).total_seconds()
             return ExecutionResult(
                 task_id=task_id,
                 command=command,

@@ -162,8 +162,8 @@ def test_reporting_error_cannot_mask_failure() -> None:
 
 def test_orchestrator_failure_report_renders_classification(tmp_path: Path) -> None:
     from runtime.foundation.verification.models import (
-        VerificationSummary,
         VerificationScope,
+        VerificationSummary,
     )
     from runtime.foundation.verification.orchestrator import VerificationPlan
 

@@ -7,8 +7,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from unittest.mock import patch, MagicMock
-
+from unittest.mock import MagicMock, patch
 
 from runtime.foundation.verification.models import (
     VerificationScope,
@@ -640,6 +639,9 @@ class TestVerificationReportDiagnostics:
     def test_report_identifies_failing_task_exit_reason_artifact(self, tmp_path):
         from runtime.foundation.verification.models import (
             ExecutionResult as ExecutionResultModel,
+        )
+        from runtime.foundation.verification.models import (
+            VerificationScope,
             VerificationStatus,
             VerificationSummary,
         )
@@ -647,7 +649,6 @@ class TestVerificationReportDiagnostics:
             VerificationPlan,
             VerificationReport,
         )
-        from runtime.foundation.verification.models import VerificationScope
 
         failed = ExecutionResultModel(
             task_id="step-0002",
@@ -719,6 +720,9 @@ class TestVerificationReportDiagnostics:
         """M9 — error=None vs error='' vs error='actual' must be distinct in report."""
         from runtime.foundation.verification.models import (
             ExecutionResult as ExecutionResultModel,
+        )
+        from runtime.foundation.verification.models import (
+            VerificationScope,
             VerificationStatus,
             VerificationSummary,
         )
@@ -726,7 +730,6 @@ class TestVerificationReportDiagnostics:
             VerificationPlan,
             VerificationReport,
         )
-        from runtime.foundation.verification.models import VerificationScope
 
         passed_none = ExecutionResultModel(
             task_id="t-passed",
@@ -1015,11 +1018,11 @@ class TestC5Observability:
 
     def test_orchestrator_emits_per_step_progress(self, tmp_path: Path, monkeypatch):
         """The orchestrator prints a '[N/M] Running step ...' line before each run."""
-        from runtime.foundation.verification.profiles import get_profile
+        from runtime.foundation.verification.models import VerificationScope
         from runtime.foundation.verification.orchestrator import (
             VerificationOrchestrator,
         )
-        from runtime.foundation.verification.models import VerificationScope
+        from runtime.foundation.verification.profiles import get_profile
 
         orch = VerificationOrchestrator(
             profile=get_profile("quick"), repo_root=tmp_path
@@ -1028,8 +1031,8 @@ class TestC5Observability:
         orch.analyze_cross_layer()
         orch.generate_plan(scope=VerificationScope.QUICK)
         # Capture stdout from execute().
-        import io
         import contextlib
+        import io
 
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
@@ -1042,11 +1045,11 @@ class TestC5Observability:
 
     def test_orchestrator_respects_overall_timeout(self, tmp_path: Path):
         """When total wall-clock exceeds ``overall_timeout``, remaining steps abort."""
-        from runtime.foundation.verification.profiles import get_profile
+        from runtime.foundation.verification.models import VerificationScope
         from runtime.foundation.verification.orchestrator import (
             VerificationOrchestrator,
         )
-        from runtime.foundation.verification.models import VerificationScope
+        from runtime.foundation.verification.profiles import get_profile
 
         orch = VerificationOrchestrator(
             profile=get_profile("quick"),

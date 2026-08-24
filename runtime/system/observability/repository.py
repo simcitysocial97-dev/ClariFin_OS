@@ -142,7 +142,7 @@ class LocalMetricsRepository(MetricsRepository):
         if not self._path.exists():
             return HybridHistory()
         try:
-            with open(self._path, "r", encoding="utf-8") as f:
+            with open(self._path, encoding="utf-8") as f:
                 data = json.load(f)
             return HybridHistory.from_dict(data)
         except (json.JSONDecodeError, OSError):
@@ -173,7 +173,7 @@ class GitHubMetricsRepository(MetricsRepository):
         if not self._path.exists():
             return HybridHistory()
         try:
-            with open(self._path, "r", encoding="utf-8") as f:
+            with open(self._path, encoding="utf-8") as f:
                 data = json.load(f)
             return HybridHistory.from_dict(data)
         except (json.JSONDecodeError, OSError):

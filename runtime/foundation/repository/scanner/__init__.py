@@ -13,16 +13,16 @@ Scanners are designed to be:
 
 from __future__ import annotations
 
-from runtime.foundation.repository.scanner.base import BaseScanner, ScanResult
-from runtime.foundation.repository.scanner.backend_scanner import BackendScanner
-from runtime.foundation.repository.scanner.frontend_scanner import FrontendScanner
 from runtime.foundation.repository.scanner.api_scanner import ApiScanner
-from runtime.foundation.repository.scanner.test_scanner import SuiteDiscovery
+from runtime.foundation.repository.scanner.backend_scanner import BackendScanner
+from runtime.foundation.repository.scanner.base import BaseScanner, ScanResult
 from runtime.foundation.repository.scanner.docs_scanner import DocsScanner
-from runtime.foundation.repository.scanner.workflow_scanner import WorkflowScanner
-from runtime.foundation.repository.scanner.script_scanner import ScriptScanner
-from runtime.foundation.repository.scanner.migration_scanner import MigrationScanner
+from runtime.foundation.repository.scanner.frontend_scanner import FrontendScanner
 from runtime.foundation.repository.scanner.metadata_scanner import MetadataScanner
+from runtime.foundation.repository.scanner.migration_scanner import MigrationScanner
+from runtime.foundation.repository.scanner.script_scanner import ScriptScanner
+from runtime.foundation.repository.scanner.test_scanner import SuiteDiscovery
+from runtime.foundation.repository.scanner.workflow_scanner import WorkflowScanner
 
 __all__ = [
     "BaseScanner",

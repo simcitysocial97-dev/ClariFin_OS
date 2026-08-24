@@ -126,12 +126,12 @@ def _check_terminal_formatting() -> dict[str, Any]:
         from runtime.foundation.workspace.formatter import (
             _USE_UNICODE,
             _supports_unicode,
-            render_table,
-            render_section,
-            format_status,
             format_duration,
-            format_percent,
             format_number,
+            format_percent,
+            format_status,
+            render_section,
+            render_table,
         )
     except ImportError as exc:
         findings.append(
@@ -319,11 +319,11 @@ def _check_unicode_ascii_handling() -> dict[str, Any]:
 
     try:
         from runtime.foundation.workspace.formatter import (
-            _supports_unicode,
             _H,
-            _V,
             _TL,
             _TR,
+            _V,
+            _supports_unicode,
         )
     except ImportError as exc:
         findings.append(

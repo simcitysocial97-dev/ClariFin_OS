@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -205,7 +205,7 @@ def cluster_issues(issues: list[dict[str, Any]]) -> dict[str, Any]:
         )
 
     return {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "total_clusters": len(result_clusters),
         "total_issues": sum(c["issue_count"] for c in result_clusters),
         "clusters": result_clusters,

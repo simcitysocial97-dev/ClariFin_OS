@@ -1,5 +1,5 @@
 from src.engines.loan_engine.amortization import generate_schedule
-from src.engines.loan_engine.prepayment import apply_prepayment_at_month, PrepaymentMode
+from src.engines.loan_engine.prepayment import PrepaymentMode, apply_prepayment_at_month
 
 found = False
 for rate in [500, 600, 700, 800, 900, 1000, 1200, 1500, 2000, 2500, 3000, 3600]:

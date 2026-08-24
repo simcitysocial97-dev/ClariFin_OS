@@ -9,7 +9,6 @@ current verification cache, and risk summary.
 
 from __future__ import annotations
 
-
 from runtime.foundation.workspace.formatter import (
     format_duration,
     format_percent,

@@ -12,22 +12,20 @@ from pathlib import Path
 from typing import Any
 
 from runtime.foundation.verification.models import (
+    ScopeResolver,
     VerificationPlan,
     VerificationScope,
+    get_scope_resolver,
+    reset_scope_resolver,
 )
 from runtime.foundation.verification.planner import (
-    VerificationPlanner,
     PlanningContext,
+    VerificationPlanner,
 )
 from runtime.foundation.verification.registry import (
     VerificationRegistry,
     get_registry,
     reset_registry,
-)
-from runtime.foundation.verification.models import (
-    ScopeResolver,
-    get_scope_resolver,
-    reset_scope_resolver,
 )
 from runtime.foundation.verification.validation import (
     ValidationFinding,

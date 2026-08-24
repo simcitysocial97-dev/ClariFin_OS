@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -25,9 +25,7 @@ class DependencyGrowthRecord:
     previous_count: int = 0
     delta: int = 0
     growth_rate: float = 0.0
-    timestamp: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
-    )
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -84,7 +82,7 @@ class DependencyGrowthIntelligence:
             if not self._cross_layer_map_path.exists():
                 return {}
             try:
-                with open(self._cross_layer_map_path, "r", encoding="utf-8") as f:
+                with open(self._cross_layer_map_path, encoding="utf-8") as f:
                     return json.load(f)
             except (json.JSONDecodeError, OSError):
                 return {}

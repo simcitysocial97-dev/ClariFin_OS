@@ -8,10 +8,11 @@ One JSON object per line. Immutable events only.
 from __future__ import annotations
 
 import json
+from collections.abc import Iterator
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 EVENT_STORE_PATH = REPO_ROOT / "runtime" / "generated" / "engineering-events.jsonl"
@@ -64,7 +65,7 @@ class EngineeringEventStore:
     def iter_events(self) -> Iterator[EngineeringEvent]:
         if not self._path.exists():
             return
-        with open(self._path, "r", encoding="utf-8") as f:
+        with open(self._path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:
@@ -111,7 +112,7 @@ def create_event(
     return EngineeringEvent(
         event_id=event_id or str(uuid.uuid4()),
         event_type=event_type,
-        timestamp=datetime.now(timezone.utc),
+        timestamp=datetime.now(UTC),
         execution_context=execution_context,
         payload=payload,
         metadata=metadata or {},

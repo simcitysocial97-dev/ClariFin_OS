@@ -12,7 +12,7 @@ Usage:
 import json
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 # Resolve paths relative to repository root, not script location or cwd.
@@ -75,7 +75,7 @@ def get_surviving_mutants() -> list[str]:
 
 def generate_report(results: dict, survivors: list[str]) -> str:
     """Generate markdown report."""
-    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    timestamp = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
 
     score = results["score"]
 

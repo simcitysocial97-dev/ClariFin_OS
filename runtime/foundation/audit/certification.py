@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -98,7 +98,7 @@ def generate_dashboard() -> dict[str, Any]:
         high_delta = previous["high_count"] - latest["high_count"]
 
     return {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "current_snapshot": {
             "timestamp": latest["timestamp"],
             "overall_status": latest["overall_status"],

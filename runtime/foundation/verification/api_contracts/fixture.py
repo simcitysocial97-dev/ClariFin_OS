@@ -30,9 +30,9 @@ def seed_contract_fixture(db_path: str) -> None:
     - emi_ratio > 0        (loan EMI present for semantic validation)
     """
     from src.core.db.schema import create_all, run_migrations
+    from src.repositories.loan_repository import LoanRepository
     from src.repositories.statement_repository import StatementRepository
     from src.repositories.transaction_repository import TransactionRepository
-    from src.repositories.loan_repository import LoanRepository
 
     create_all(db_path)
     run_migrations(db_path)

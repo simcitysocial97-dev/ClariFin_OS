@@ -12,10 +12,9 @@ import time
 from pathlib import Path
 from unittest.mock import patch
 
-
 from runtime.foundation.verification.models import VerificationScope, VerificationStatus
-from runtime.foundation.verification.planner import CrossLayerImpactPlanner
 from runtime.foundation.verification.orchestrator import VerificationOrchestrator
+from runtime.foundation.verification.planner import CrossLayerImpactPlanner
 from runtime.system.evidence.aggregator import EvidenceAggregator
 
 MAP_DATA = {

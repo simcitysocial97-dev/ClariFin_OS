@@ -6,27 +6,27 @@ scan results. Deterministic. No network. No git mutation.
 
 from __future__ import annotations
 
-from runtime.foundation.integrity.scanner import (
-    ArchitecturalGraph,
-    ImportRecord,
-    ScannedFile,
-)
 from runtime.foundation.integrity.models import (
     ArchitectureLayer,
     ViolationSeverity,
 )
 from runtime.foundation.integrity.rules import (
-    check_router_not_import_engine,
-    check_component_not_api_direct,
-    check_mapper_not_react,
-    check_workspace_not_fetch,
-    check_no_circular_dependencies,
-    check_component_not_import_engine,
     check_capability_for_every_endpoint,
     check_capability_has_exactly_one_mapper,
+    check_component_not_api_direct,
+    check_component_not_import_engine,
+    check_mapper_not_react,
     check_mapper_returns_viewmodel,
+    check_no_circular_dependencies,
     check_no_duplicate_endpoint_ownership,
     check_page_registers_workspace,
+    check_router_not_import_engine,
+    check_workspace_not_fetch,
+)
+from runtime.foundation.integrity.scanner import (
+    ArchitecturalGraph,
+    ImportRecord,
+    ScannedFile,
 )
 
 

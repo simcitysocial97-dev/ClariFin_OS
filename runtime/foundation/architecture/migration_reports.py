@@ -246,9 +246,12 @@ def build_runtime_consistency(arch=None) -> dict[str, Any]:
     #    public API (not a non-existent <engine>.py file).
     phantom = []
     for name, eng in arch.engines.items():
-        if eng.style == "package" and not eng.entry_point.endswith("__init__.py"):
-            phantom.append(name)
-        elif eng.style == "single_file" and not eng.path.endswith(".py"):
+        if (
+            eng.style == "package"
+            and not eng.entry_point.endswith("__init__.py")
+            or eng.style == "single_file"
+            and not eng.path.endswith(".py")
+        ):
             phantom.append(name)
     add(
         "no_phantom_engine_keys",

@@ -40,6 +40,9 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from runtime.foundation.verification.failure_report import (  # noqa: E402
+    build_failure_report,
+)
 from runtime.foundation.verification.models import (  # noqa: E402
     VerificationStatus,
 )
@@ -50,9 +53,6 @@ from runtime.foundation.verification.orchestrator import (  # noqa: E402
     _is_git_available,
 )
 from runtime.foundation.verification.profiles import get_profile  # noqa: E402
-from runtime.foundation.verification.failure_report import (  # noqa: E402
-    build_failure_report,
-)
 
 VERIFICATION_CACHE_PATH = (
     REPO_ROOT / "runtime" / "generated" / "verification-cache.json"
@@ -93,11 +93,11 @@ def _record_verification_event(
     status: str | None = None,
 ) -> None:
     try:
-        from runtime.system.observability.execution_context import create_context
         from runtime.system.observability.event_store import (
-            create_event,
             EngineeringEventStore,
+            create_event,
         )
+        from runtime.system.observability.execution_context import create_context
         from runtime.system.observability.repository import (
             LocalMetricsRepository,
             RunRecord,
@@ -264,16 +264,16 @@ def cmd_diagnose_failures() -> int:
     M5 evidence (``unit_id`` already joined to the M3 manifest), never parsed out
     of raw logs. Zero manual log parsing.
     """
-    from runtime.foundation.intelligence.platform.blast import compute_blast_radius
-    from runtime.foundation.intelligence.platform.change import analyze_changes
-    from runtime.foundation.intelligence.platform.optimizer import optimize_verification
     from runtime.foundation.intelligence.platform.attribution import (
         attribute_failures,
         build_observed_failures,
     )
+    from runtime.foundation.intelligence.platform.blast import compute_blast_radius
+    from runtime.foundation.intelligence.platform.change import analyze_changes
     from runtime.foundation.intelligence.platform.cli_format import (
         format_cross_layer_failure,
     )
+    from runtime.foundation.intelligence.platform.optimizer import optimize_verification
     from runtime.system.evidence.aggregator import EvidenceAggregator
 
     changed_files = _collect_changed_files() if _is_git_available() else []
@@ -319,8 +319,8 @@ def cmd_diagnose_failures() -> int:
 def cmd_affected() -> int:
     from runtime.foundation.intelligence import (
         blast_radius,
-        verification_plan,
         format_affected,
+        verification_plan,
     )
 
     changed_files = _collect_changed_files() if _is_git_available() else []
@@ -335,7 +335,7 @@ def cmd_affected() -> int:
 
 
 def cmd_repair() -> int:
-    from runtime.foundation.intelligence import repair_plan, format_repair
+    from runtime.foundation.intelligence import format_repair, repair_plan
 
     changed_files = _collect_changed_files() if _is_git_available() else []
     if not changed_files:
@@ -374,8 +374,8 @@ def cmd_integrity() -> int:
 
 
 def cmd_knowledge() -> int:
-    from runtime.foundation.knowledge.indexer import build_index
     from runtime.foundation.knowledge.formatter import format_knowledge_report
+    from runtime.foundation.knowledge.indexer import build_index
 
     index = build_index()
     output = format_knowledge_report(index)
@@ -384,8 +384,8 @@ def cmd_knowledge() -> int:
 
 
 def cmd_knowledge_endpoint() -> int:
-    from runtime.foundation.knowledge.query import query_endpoint
     from runtime.foundation.knowledge.indexer import build_index
+    from runtime.foundation.knowledge.query import query_endpoint
 
     build_index()  # noqa: F841 - warm knowledge cache
     from runtime.foundation.knowledge.formatter import format_query_result
@@ -407,8 +407,8 @@ def cmd_knowledge_endpoint() -> int:
 
 
 def cmd_knowledge_capability() -> int:
-    from runtime.foundation.knowledge.query import query_capability
     from runtime.foundation.knowledge.indexer import build_index
+    from runtime.foundation.knowledge.query import query_capability
 
     build_index()  # noqa: F841 - warm knowledge cache
     from runtime.foundation.knowledge.formatter import format_query_result
@@ -431,8 +431,8 @@ def cmd_knowledge_capability() -> int:
 
 
 def cmd_knowledge_workspace() -> int:
-    from runtime.foundation.knowledge.query import query_workspace
     from runtime.foundation.knowledge.indexer import build_index
+    from runtime.foundation.knowledge.query import query_workspace
 
     build_index()  # noqa: F841 - warm knowledge cache
     from runtime.foundation.knowledge.formatter import format_query_result
@@ -455,8 +455,8 @@ def cmd_knowledge_workspace() -> int:
 
 
 def cmd_knowledge_rule() -> int:
-    from runtime.foundation.knowledge.query import query_rule
     from runtime.foundation.knowledge.indexer import build_index
+    from runtime.foundation.knowledge.query import query_rule
 
     build_index()  # noqa: F841 - warm knowledge cache
     from runtime.foundation.knowledge.formatter import format_query_result
@@ -476,8 +476,8 @@ def cmd_knowledge_rule() -> int:
 
 
 def cmd_knowledge_component() -> int:
-    from runtime.foundation.knowledge.query import query_component
     from runtime.foundation.knowledge.indexer import build_index
+    from runtime.foundation.knowledge.query import query_component
 
     build_index()  # noqa: F841 - warm knowledge cache
     from runtime.foundation.knowledge.formatter import format_query_result
@@ -1136,35 +1136,35 @@ def cmd_contract_governance() -> int:
 
 
 def cmd_audit() -> int:
-    from runtime.foundation.audit.runner import AuditRunner
-    from runtime.foundation.audit.reporter import AuditReporter
-    from runtime.foundation.audit.repository import audit as _audit_repository
+    from runtime.foundation.audit.artifact_ownership import (
+        audit as _audit_artifact_ownership,
+    )
     from runtime.foundation.audit.cross_layer import audit as _audit_cross_layer
     from runtime.foundation.audit.dependency_graph import (
         audit as _audit_dependency_graph,
     )
-    from runtime.foundation.audit.planner import audit as _audit_planner
-    from runtime.foundation.audit.executor import audit as _audit_executor
     from runtime.foundation.audit.evidence import audit as _audit_evidence
-    from runtime.foundation.audit.observability import audit as _audit_observability
-    from runtime.foundation.audit.knowledge import audit as _audit_knowledge
-    from runtime.foundation.audit.workspace import audit as _audit_workspace
-    from runtime.foundation.audit.integrity import audit as _audit_integrity
-    from runtime.foundation.audit.github_actions import audit as _audit_github_actions
-    from runtime.foundation.audit.runtime_cli import audit as _audit_runtime_cli
-    from runtime.foundation.audit.github_runtime import audit as _audit_github_runtime
-    from runtime.foundation.audit.verification_profiles import (
-        audit as _audit_verification_profiles,
-    )
-    from runtime.foundation.audit.artifact_ownership import (
-        audit as _audit_artifact_ownership,
-    )
-    from runtime.foundation.audit.performance import audit as _audit_performance
+    from runtime.foundation.audit.executor import audit as _audit_executor
     from runtime.foundation.audit.failure_injection import (
         audit as _audit_failure_injection,
     )
+    from runtime.foundation.audit.github_actions import audit as _audit_github_actions
+    from runtime.foundation.audit.github_runtime import audit as _audit_github_runtime
+    from runtime.foundation.audit.integrity import audit as _audit_integrity
+    from runtime.foundation.audit.knowledge import audit as _audit_knowledge
+    from runtime.foundation.audit.observability import audit as _audit_observability
+    from runtime.foundation.audit.performance import audit as _audit_performance
     from runtime.foundation.audit.pipeline import audit as _audit_pipeline
+    from runtime.foundation.audit.planner import audit as _audit_planner
+    from runtime.foundation.audit.reporter import AuditReporter
+    from runtime.foundation.audit.repository import audit as _audit_repository
     from runtime.foundation.audit.roi import audit as _audit_roi
+    from runtime.foundation.audit.runner import AuditRunner
+    from runtime.foundation.audit.runtime_cli import audit as _audit_runtime_cli
+    from runtime.foundation.audit.verification_profiles import (
+        audit as _audit_verification_profiles,
+    )
+    from runtime.foundation.audit.workspace import audit as _audit_workspace
 
     runner = AuditRunner()
 
@@ -1373,7 +1373,9 @@ def main() -> int:
     # Get execution fingerprint for cache invalidation (R11)
     fp_report = resolve_environment(profile=profile_name)
     fingerprint = fp_report.fingerprint
-    replay: ReplayResult = cache.replay(commit, changed_files, profile_name, fingerprint)
+    replay: ReplayResult = cache.replay(
+        commit, changed_files, profile_name, fingerprint
+    )
 
     if replay.reusable:
         verdict_status = replay.overall_status or "unknown"

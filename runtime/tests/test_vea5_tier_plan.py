@@ -308,13 +308,13 @@ def test_manifest_records_required_fields_and_is_inspectable():
 def test_existing_optimizer_units_all_have_catalog_counterparts():
     """The catalog is the single source of truth; assert it covers exactly the
     unit ids the intelligence planner can emit (selected or skipped)."""
-    from runtime.foundation.intelligence.platform.optimizer import (
-        optimize_verification,
-    )
     from runtime.foundation.intelligence.platform.blast import (
         compute_blast_radius,
     )
     from runtime.foundation.intelligence.platform.change import analyze_changes
+    from runtime.foundation.intelligence.platform.optimizer import (
+        optimize_verification,
+    )
 
     change = analyze_changes(paths=ENGINE_CHANGE)
     blast = compute_blast_radius(change)

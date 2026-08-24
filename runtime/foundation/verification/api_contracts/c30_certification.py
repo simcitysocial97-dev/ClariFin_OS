@@ -20,7 +20,7 @@ import json
 import subprocess
 import sys
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -1121,8 +1121,8 @@ def verify_ci_enforcement() -> dict[str, Any]:
 
 def run_c30_certification() -> dict[str, Any]:
     """Run full C30 certification and return results."""
-    run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    start_time = datetime.now(timezone.utc)
+    run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    start_time = datetime.now(UTC)
 
     print("=" * 72)
     print("  M9-C30 — CONTRACT GOVERNANCE & ENFORCEMENT CERTIFICATION")
@@ -1212,7 +1212,7 @@ def run_c30_certification() -> dict[str, Any]:
             print(f"    - {b['workflow']}")
 
     # Compile final report
-    end_time = datetime.now(timezone.utc)
+    end_time = datetime.now(UTC)
     duration_seconds = (end_time - start_time).total_seconds()
 
     report = {

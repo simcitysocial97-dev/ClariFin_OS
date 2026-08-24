@@ -1,9 +1,11 @@
 # ClariFin OS Verification Runtime
 # Program 7B — Autonomous Verification Orchestrator
 
-from runtime.foundation.verification.executor import Executor, ExecutionResult
+from runtime.foundation.verification.executor import ExecutionResult, Executor
 from runtime.foundation.verification.models import (
     ExecutionResult as ExecutionResultModel,
+)
+from runtime.foundation.verification.models import (
     VerificationPlan,
     VerificationScope,
     VerificationStatus,

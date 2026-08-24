@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 from .evidence import (
+    ContractEvidence,
     CoverageEvidence,
+    EvidenceCollectionResult,
     MutationEvidence,
     TestResultEvidence,
-    ContractEvidence,
     VerificationEvidence,
-    EvidenceCollectionResult,
 )
 
 __all__ = [

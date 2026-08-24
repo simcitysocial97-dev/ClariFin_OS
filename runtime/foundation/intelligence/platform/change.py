@@ -13,7 +13,7 @@ than being force-fitted into a category.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from runtime.foundation.intelligence.platform.changeset import (
@@ -252,7 +252,7 @@ def analyze_changes(
     }
 
     return ChangeIntelligence(
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
         changeset=cs,
         entities=entities,
         owning_engines=tuple(sorted(owning.values(), key=lambda r: r.ref)),

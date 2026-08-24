@@ -7,7 +7,7 @@ Generates runtime/generated/dashboard.json with Local, CI, and Combined telemetr
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -78,7 +78,7 @@ class DashboardGenerator:
                 "growth": growth_data,
                 "flaky_tests": flaky_data,
             },
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
         }
 
     def save(self, path: Path | None = None) -> None:

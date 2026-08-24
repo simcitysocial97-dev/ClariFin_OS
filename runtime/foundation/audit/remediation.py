@@ -5,7 +5,7 @@ Generates deterministic repair plan for all root cause clusters.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
@@ -13,7 +13,7 @@ REMEDIATION_PATH = REPO_ROOT / "runtime" / "generated" / "platform-remediation.m
 
 
 def _now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def _generate_remediation() -> str:

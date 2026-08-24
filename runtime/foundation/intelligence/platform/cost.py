@@ -15,7 +15,7 @@ explicitly in the artifact so it can be re-calibrated without code changes.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from runtime.foundation.intelligence.platform.optimizer import VerificationPlanIntel
@@ -171,7 +171,7 @@ def estimate_cost(plan: VerificationPlanIntel) -> VerificationCost:
         }
 
     return VerificationCost(
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
         entries=tuple(entries),
         skipped_savings=tuple(avoided),
         totals=totals,

@@ -28,15 +28,13 @@ import atexit
 import hashlib
 import json
 import os
-import signal
 import shutil
+import signal
 import subprocess
-import sys
 import time
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 from runtime.foundation.verification.env import (
     PINNED_MUTMUT,
@@ -45,17 +43,16 @@ from runtime.foundation.verification.env import (
     resolve_environment,
 )
 from runtime.foundation.verification.mutation_contract import (
+    ENGINE_SELECTION,
+    SELECTION_METHOD,
     MutationResult,
     build_infrastructure_failure,
     classify_gates,
     compute_score,
+    is_valid_engine,
     parse_mutmut_results,
     reconcile_counts,
-    render_mutmut_config_block,
     write_backend_mutmut_config,
-    is_valid_engine,
-    ENGINE_SELECTION,
-    SELECTION_METHOD,
 )
 
 BACKEND_DIR = REPO_ROOT / "backend"
@@ -64,10 +61,11 @@ FULL_CONFIG = BACKEND_DIR / "pyproject.toml"
 SMOKE_CONFIG = SMOKE_DIR / "pyproject.toml"
 GENERATED_DIR = BACKEND_DIR / "tests" / "generated" / "mutation"
 
+
 # ── Mutation execution safety context (R3a, R4) ──────────────────────────────
 class _MutationSafety:
     """Context manager for mutation execution safety.
-    
+
     Guarantees:
     - Signal handlers (SIGTERM, SIGINT) restore config on abnormal exit
     - atexit handler restores config on normal exit
@@ -75,20 +73,20 @@ class _MutationSafety:
     - Post-run verification of exact restoration
     - Dirty-worktree refusal with override flag
     """
-    
+
     def __init__(self, mode: str, allow_dirty: bool = False):
         self.mode = mode
         self.allow_dirty = allow_dirty
         self.config_restored = False
-        self.original_config_text: Optional[str] = None
+        self.original_config_text: str | None = None
         self.captured_hashes: dict[str, str] = {}
         self._signal_handlers_installed = False
-        
+
     def _hash_file(self, path: Path) -> str:
         if path.exists():
             return hashlib.sha256(path.read_bytes()).hexdigest()
         return ""
-    
+
     def _capture_hashes(self) -> None:
         """Capture hashes of files that mutation should NOT modify."""
         # Always capture backend/pyproject.toml (config file we rewrite)
@@ -100,7 +98,7 @@ class _MutationSafety:
             self.captured_hashes["backend/src"] = self._hash_dir(BACKEND_DIR / "src")
         # For smoke mode, mutation runs in mutation_infra/ which is expected to change
         # (mutants, cache), so we don't hash it
-    
+
     def _hash_dir(self, path: Path) -> str:
         if not path.exists():
             return ""
@@ -109,27 +107,31 @@ class _MutationSafety:
             if f.is_file() and not any(part.startswith(".") for part in f.parts):
                 hashes.append(self._hash_file(f))
         return hashlib.sha256("".join(hashes).encode()).hexdigest()
-    
+
     def _verify_restoration(self) -> list[str]:
         """Verify exact restoration of protected files. Returns list of unexpected changes."""
         unexpected = []
         for rel_path, expected_hash in self.captured_hashes.items():
             abs_path = REPO_ROOT / rel_path
-            actual_hash = self._hash_file(abs_path) if abs_path.is_file() else self._hash_dir(abs_path)
+            actual_hash = (
+                self._hash_file(abs_path)
+                if abs_path.is_file()
+                else self._hash_dir(abs_path)
+            )
             if actual_hash != expected_hash:
-                unexpected.append(f"{rel_path}: hash changed (expected {expected_hash[:8]}, got {actual_hash[:8]})")
+                unexpected.append(
+                    f"{rel_path}: hash changed (expected {expected_hash[:8]}, got {actual_hash[:8]})"
+                )
         return unexpected
-    
+
     def _check_dirty_worktree(self) -> list[str]:
         """Check for unexpected tracked modifications in restore scope."""
         # Determine restore scope
-        if self.mode == "full":
-            scope = "backend/src"
-        elif self.mode == "target":
+        if self.mode == "full" or self.mode == "target":
             scope = "backend/src"
         else:
             scope = str(SMOKE_DIR.relative_to(REPO_ROOT))
-        
+
         try:
             out = subprocess.run(
                 ["git", "status", "--porcelain", scope],
@@ -140,28 +142,28 @@ class _MutationSafety:
             ).stdout
         except Exception:
             return []
-        
+
         dirty = []
         for line in out.splitlines():
             if line[:2] in (" M", "M ", "MM", "??", "A ", "D "):
                 dirty.append(line[3:].strip())
         return dirty
-    
+
     def install_signal_handlers(self) -> None:
         """Install SIGTERM/SIGINT handlers for config restoration."""
         if self._signal_handlers_installed:
             return
-        
+
         def _signal_handler(signum, frame):
             self._restore_config()
             # Re-raise with default handler
             signal.signal(signum, signal.SIG_DFL)
             os.kill(os.getpid(), signum)
-        
+
         signal.signal(signal.SIGTERM, _signal_handler)
         signal.signal(signal.SIGINT, _signal_handler)
         self._signal_handlers_installed = True
-    
+
     def _restore_config(self) -> None:
         """Restore backend/pyproject.toml if we modified it."""
         if self.config_restored or self.original_config_text is None:
@@ -171,7 +173,7 @@ class _MutationSafety:
         except Exception:
             pass
         self.config_restored = True
-    
+
     def enter(self) -> None:
         """Enter the safety context."""
         # Check dirty worktree BEFORE capturing hashes (to avoid false positives)
@@ -183,16 +185,16 @@ class _MutationSafety:
                     f"Unexpected tracked changes: {dirty}. "
                     f"Use --allow-dirty to override."
                 )
-        
+
         self._capture_hashes()
         self.install_signal_handlers()
         atexit.register(self._restore_config)
-    
-    def exit(self, installed_config_original: Optional[str]) -> None:
+
+    def exit(self, installed_config_original: str | None) -> None:
         """Exit the safety context, verify restoration."""
         self.original_config_text = installed_config_original
         self._restore_config()
-        
+
         # Verify exact restoration of protected files
         unexpected = self._verify_restoration()
         if unexpected:
@@ -200,7 +202,7 @@ class _MutationSafety:
                 f"Mutation execution left unexpected file modifications: {unexpected}. "
                 f"This indicates a safety violation — config/source not properly restored."
             )
-        
+
         # Clean up atexit
         try:
             atexit.unregister(self._restore_config)
@@ -226,8 +228,7 @@ def _git_sha() -> str:
                 capture_output=True,
                 text=True,
                 timeout=30,
-            )
-            .stdout.strip()
+            ).stdout.strip()
             or "unknown"
         )
     except Exception:
@@ -243,8 +244,7 @@ def _git_tree() -> str:
                 capture_output=True,
                 text=True,
                 timeout=30,
-            )
-            .stdout.strip()
+            ).stdout.strip()
             or "unknown"
         )
     except Exception:
@@ -309,7 +309,7 @@ def _write_cache_provenance(cwd: Path, *, config_hash: str) -> None:
                 "config_hash": config_hash,
                 "mutmut_version": PINNED_MUTMUT,
                 "python_version": resolve_environment().python.version,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
             indent=2,
         )
@@ -318,7 +318,7 @@ def _write_cache_provenance(cwd: Path, *, config_hash: str) -> None:
 
 def _restore_source_tree(cwd: Path, scope: str) -> list[str]:
     """Restore any mutated tracked source via git. Returns restored paths.
-    
+
     For full mode, scope is "backend/src" (the actual mutated source).
     For target mode, scope is "backend/src".
     For smoke mode, scope is the mutation_infra directory.
@@ -354,7 +354,7 @@ def _restore_source_tree(cwd: Path, scope: str) -> list[str]:
 def _record_lifecycle_event(event_type: str, details: dict) -> None:
     """Record a lifecycle event for evidence tracking."""
     event = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "event": event_type,
         "details": details,
     }
@@ -376,15 +376,15 @@ def _config_hash() -> str:
 def execute_mutation(
     *,
     mode: str,
-    target: Optional[str] = None,
-    max_runtime: Optional[int] = None,
+    target: str | None = None,
+    max_runtime: int | None = None,
     max_children: int = 0,
     no_cache: bool = False,
     restore_only: bool = False,
     allow_dirty: bool = False,
 ) -> MutationResult:
     """Core executor. Returns a MutationResult (no file I/O side effects on callers).
-    
+
     Safety guarantees (R3a, R4):
     - Signal handlers (SIGTERM, SIGINT) + atexit restore config on any exit
     - Pre-run capture of backend/pyproject.toml + mutation scope hashes
@@ -399,7 +399,7 @@ def execute_mutation(
 
     # Initialize safety context
     safety = _MutationSafety(mode=mode, allow_dirty=allow_dirty)
-    installed_config_original: Optional[str] = None
+    installed_config_original: str | None = None
     safety_entered = False
 
     try:
@@ -407,7 +407,11 @@ def execute_mutation(
         safety_entered = True
 
         if restore_only:
-            scope = "backend/src" if mode == "full" else str(SMOKE_DIR.relative_to(REPO_ROOT))
+            scope = (
+                "backend/src"
+                if mode == "full"
+                else str(SMOKE_DIR.relative_to(REPO_ROOT))
+            )
             restored = _restore_source_tree(BACKEND_DIR, scope)
             return MutationResult(
                 run_id=run_id,
@@ -443,7 +447,7 @@ def execute_mutation(
         # The [tool.mutmut] block is rendered ONLY from ENGINE_SELECTION (the single
         # source of truth in mutation_contract.py). This removes the fragile implicit
         # coverage-mapping fallback and guarantees the selected test scope is recorded.
-        installed_config_original: Optional[str] = None
+        installed_config_original: str | None = None
         selected_test_scope = ""
         source_scope = ""
         selection_method = SELECTION_METHOD
@@ -527,8 +531,8 @@ def execute_mutation(
         timeout = max_runtime or DEFAULT_RUNTIME.get(mode, 5400)
 
         start = time.monotonic()
-        rc: Optional[int] = None
-        infra_error: Optional[str] = None
+        rc: int | None = None
+        infra_error: str | None = None
         log_tail = ""
         proc = None
         try:
@@ -544,7 +548,7 @@ def execute_mutation(
                 env={**os.environ, "PATH": f"{VENV_BIN}:{os.environ.get('PATH','')}"},
             )
             pgid = os.getpgid(proc.pid)
-            
+
             try:
                 stdout, stderr = proc.communicate(timeout=timeout)
                 rc = proc.returncode
@@ -579,9 +583,16 @@ def execute_mutation(
                 except Exception:
                     pass
                 # Evidence: record process group termination
-                _record_lifecycle_event("mutation_process_group_killed", {"pgid": pgid, "signal": "SIGTERM+SIGKILL"})
+                _record_lifecycle_event(
+                    "mutation_process_group_killed",
+                    {"pgid": pgid, "signal": "SIGTERM+SIGKILL"},
+                )
             # Restore source tree with CORRECT scope (backend/src for full/target)
-            restore_scope = "backend/src" if mode in ("full", "target") else str(SMOKE_DIR.relative_to(REPO_ROOT))
+            restore_scope = (
+                "backend/src"
+                if mode in ("full", "target")
+                else str(SMOKE_DIR.relative_to(REPO_ROOT))
+            )
             _restore_source_tree(cwd, restore_scope)
             # Restore the canonical [tool.mutmut] block we installed for this run so
             # backend/pyproject.toml is never left in a per-engine state.
@@ -680,7 +691,7 @@ def execute_mutation(
 
         return result
 
-    except Exception as exc:
+    except Exception:
         # Ensure safety context cleanup on any exception
         if safety_entered:
             try:
@@ -707,7 +718,10 @@ def _print_report(result: MutationResult) -> None:
     print("=" * 72)
     print("  M9-C42.5 MUTATION RUNNER")
     print("=" * 72)
-    print(f"  Mode             : {result.mode}" + (f" (target={result.target})" if result.target else ""))
+    print(
+        f"  Mode             : {result.mode}"
+        + (f" (target={result.target})" if result.target else "")
+    )
     print(f"  Repo SHA         : {result.repository_sha}")
     print(f"  mutmut           : {result.mutmut_version} (pinned {PINNED_MUTMUT})")
     print(f"  Killed           : {result.killed}")
@@ -732,13 +746,27 @@ def _print_report(result: MutationResult) -> None:
 def run_mutation_cli(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="verify.py mutation")
     parser.add_argument("--smoke", action="store_true", help="bounded infra smoke test")
-    parser.add_argument("--target", default=None, help="incremental target (engine/module)")
-    parser.add_argument("--max-runtime", type=int, default=None, help="hard subprocess timeout (s)")
-    parser.add_argument("--max-children", type=int, default=0, help="mutmut parallelism")
-    parser.add_argument("--no-cache", action="store_true", help="discard mutation cache")
-    parser.add_argument("--restore", action="store_true", help="restore mutated source and exit")
+    parser.add_argument(
+        "--target", default=None, help="incremental target (engine/module)"
+    )
+    parser.add_argument(
+        "--max-runtime", type=int, default=None, help="hard subprocess timeout (s)"
+    )
+    parser.add_argument(
+        "--max-children", type=int, default=0, help="mutmut parallelism"
+    )
+    parser.add_argument(
+        "--no-cache", action="store_true", help="discard mutation cache"
+    )
+    parser.add_argument(
+        "--restore", action="store_true", help="restore mutated source and exit"
+    )
     parser.add_argument("--json", action="store_true", help="emit summary path only")
-    parser.add_argument("--allow-dirty", action="store_true", help="allow dirty worktree in mutation scope (D5 override)")
+    parser.add_argument(
+        "--allow-dirty",
+        action="store_true",
+        help="allow dirty worktree in mutation scope (D5 override)",
+    )
     args = parser.parse_args(argv)
 
     mode = "smoke" if args.smoke else ("target" if args.target else "full")

@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -663,7 +663,7 @@ def build(repo_root: Path | None = None) -> dict[str, Any]:
             by_concern.setdefault(concern, []).append(entry.file)
 
     return {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "phase": "Program 13.2 — Phase 1: Locate Every Legacy Architecture Builder",
         "rule": (
             "Exactly one architecture discovery pipeline may exist. Every other "

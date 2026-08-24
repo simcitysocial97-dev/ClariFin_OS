@@ -7,7 +7,7 @@ No calculations. No regeneration. Uses immutable models.
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -203,7 +203,7 @@ class WorkspaceLoader:
         combined_cache = combined.get("cache", {})
 
         return EngineeringHealth(
-            generated_at=datetime.now(timezone.utc).isoformat(),
+            generated_at=datetime.now(UTC).isoformat(),
             verification_success_rate=combined_verif.get("success_rate", 0.0),
             local_success_rate=local_verif.get("success_rate", 0.0),
             ci_success_rate=ci_verif.get("success_rate", 0.0),

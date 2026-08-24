@@ -5,13 +5,13 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from runtime.system.evidence.collectors.base import EvidenceArtifact, EvidenceCollector
+from runtime.system.evidence.collectors.contract_tests import ContractTestCollector
 from runtime.system.evidence.collectors.coverage import CoverageCollector
 from runtime.system.evidence.collectors.mutation import MutationCollector
 from runtime.system.evidence.collectors.property_tests import PropertyTestCollector
-from runtime.system.evidence.collectors.contract_tests import ContractTestCollector
 
 
 @dataclass
@@ -21,10 +21,10 @@ class CoverageEvidence:
     percentage: float
     covered_lines: int
     total_lines: int
-    gaps: List[Dict[str, Any]] = field(default_factory=list)
+    gaps: list[dict[str, Any]] = field(default_factory=list)
 
     @classmethod
-    def from_artifacts(cls, artifacts: List[EvidenceArtifact]) -> "CoverageEvidence":
+    def from_artifacts(cls, artifacts: list[EvidenceArtifact]) -> CoverageEvidence:
         """Build coverage evidence from collected artifacts."""
         backend_coverage = None
         frontend_coverage = None
@@ -58,7 +58,7 @@ class MutationEvidence:
     skipped: int = 0
 
     @classmethod
-    def from_artifacts(cls, artifacts: List[EvidenceArtifact]) -> "MutationEvidence":
+    def from_artifacts(cls, artifacts: list[EvidenceArtifact]) -> MutationEvidence:
         """Build mutation evidence from collected artifacts."""
         for artifact in artifacts:
             if artifact.artifact_type == "mutation":
@@ -81,11 +81,11 @@ class VerificationEvidence:
     branch: str
     timestamp: str
     status: str  # pass, fail, partial
-    coverage: Optional[CoverageEvidence] = None
-    mutation: Optional[MutationEvidence] = None
-    artifacts: List[EvidenceArtifact] = field(default_factory=list)
+    coverage: CoverageEvidence | None = None
+    mutation: MutationEvidence | None = None
+    artifacts: list[EvidenceArtifact] = field(default_factory=list)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
         return {
             "commit": self.commit_sha,
@@ -108,10 +108,10 @@ class VerificationEvidence:
 class CollectionResult:
     """Result of evidence collection."""
 
-    artifacts: List[EvidenceArtifact]
-    collector_status: Dict[str, Dict[str, Any]]
+    artifacts: list[EvidenceArtifact]
+    collector_status: dict[str, dict[str, Any]]
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "artifacts": [a.to_dict() for a in self.artifacts],
             "collector_status": self.collector_status,
@@ -123,7 +123,7 @@ class CollectionResult:
         return json.dumps(self.to_dict(), indent=2)
 
 
-COLLECTORS: List[type[EvidenceCollector]] = [
+COLLECTORS: list[type[EvidenceCollector]] = [
     CoverageCollector,
     MutationCollector,
     PropertyTestCollector,
@@ -160,7 +160,7 @@ def collect_all_evidence(workspace_root: Path) -> CollectionResult:
 def build_verification_evidence(
     commit_sha: str,
     branch: str,
-    artifacts: List[EvidenceArtifact],
+    artifacts: list[EvidenceArtifact],
     status: str = "partial",
 ) -> VerificationEvidence:
     """Build complete verification evidence from collected artifacts."""

@@ -10,14 +10,14 @@ from .analytics import AnalyticsEngine, AnalyticsReport, generate_analytics
 from .cost_analysis import CostAnalysis, generate_cost_analysis
 from .dashboard import DashboardGenerator, generate_dashboard
 from .dependency_growth import DependencyGrowthIntelligence, generate_dependency_growth
-from .event_store import EngineeringEventStore, EngineeringEvent, create_event
+from .event_store import EngineeringEvent, EngineeringEventStore, create_event
 from .execution_context import (
     ExecutionContext,
     ExecutionEnvironment,
     RunnerType,
+    TriggerType,
     VerificationDepth,
     VerificationIntent,
-    TriggerType,
     create_context,
     detect_environment,
     detect_intent,

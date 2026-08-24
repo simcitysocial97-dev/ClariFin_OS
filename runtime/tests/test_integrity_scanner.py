@@ -8,13 +8,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-
+from runtime.foundation.integrity.models import ArchitectureLayer
 from runtime.foundation.integrity.scanner import (
     ArchitecturalScanner,
     classify_layer,
     discover_source_files,
 )
-from runtime.foundation.integrity.models import ArchitectureLayer
 
 
 class TestClassifyLayer:

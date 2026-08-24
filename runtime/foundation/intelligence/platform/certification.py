@@ -20,7 +20,7 @@ import json
 import re
 import subprocess
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -417,7 +417,7 @@ def certify(generated_dir: Path | None = None) -> CertificationResult:
     )
 
     return CertificationResult(
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
         checks=checks,
         audit_status=audit_status,
         audit_sections=tuple(sections),
@@ -670,7 +670,7 @@ def certify_v5(generated_dir: Path | None = None) -> dict[str, Any]:
         "schema": "engineering-platform-audit/v5",
         "program": "14.1 — Eliminate Legacy Intelligence & Complete "
         "Constitutional Migration",
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "certification_status": (
             "CERTIFIED" if passed == len(all_checks) else "NOT_CERTIFIED"
         ),

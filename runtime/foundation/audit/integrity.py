@@ -241,16 +241,16 @@ def _inject_and_verify_violations() -> dict[str, Any]:
 
     try:
         from runtime.foundation.integrity.models import ArchitectureLayer
-        from runtime.foundation.integrity.scanner import (
-            ArchitecturalGraph,
-            ScannedFile,
-            ImportRecord,
-        )
         from runtime.foundation.integrity.rules import (
-            check_router_not_import_engine,
             check_component_not_api_direct,
             check_mapper_not_react,
+            check_router_not_import_engine,
             check_workspace_not_fetch,
+        )
+        from runtime.foundation.integrity.scanner import (
+            ArchitecturalGraph,
+            ImportRecord,
+            ScannedFile,
         )
     except ImportError as exc:
         findings.append(

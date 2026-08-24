@@ -24,18 +24,18 @@ from __future__ import annotations
 
 import json
 import threading
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from runtime.foundation.architecture import ids
 from runtime.foundation.architecture.models import (
+    DTO,
     Architecture,
     Artifact,
     Capability,
     Component,
     Detector,
-    DTO,
     Endpoint,
     Engine,
     Facade,
@@ -127,7 +127,7 @@ class ArchitectureProvider:
     """Single source of architectural truth for the Engineering Runtime."""
 
     _lock = threading.Lock()
-    _instance: "ArchitectureProvider | None" = None
+    _instance: ArchitectureProvider | None = None
 
     def __init__(self, generated_dir: Path | None = None) -> None:
         self.generated_dir = generated_dir or GENERATED_DIR
@@ -135,7 +135,7 @@ class ArchitectureProvider:
 
     # -- singleton ------------------------------------------------------
     @classmethod
-    def instance(cls, generated_dir: Path | None = None) -> "ArchitectureProvider":
+    def instance(cls, generated_dir: Path | None = None) -> ArchitectureProvider:
         with cls._lock:
             if cls._instance is None or (
                 generated_dir is not None
@@ -206,7 +206,7 @@ class ArchitectureProvider:
         )
 
         return Architecture(
-            generated_at=datetime.now(timezone.utc).isoformat(),
+            generated_at=datetime.now(UTC).isoformat(),
             source_artifacts=CANONICAL_SOURCES,
             engines=engines,
             engine_modules=engine_modules,

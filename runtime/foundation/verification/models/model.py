@@ -240,7 +240,7 @@ class ExecutionResult:
     # vocabulary, so a red pipeline is self-describing without opening raw logs.
     # ``UNKNOWN_FAILURE`` is used whenever the runtime cannot establish a more
     # specific cause, and the raw diagnostic is preserved in ``error``/artifacts.
-    classification: "FailureClassification" = field(
+    classification: FailureClassification = field(
         default=FailureClassification.UNKNOWN_FAILURE
     )
     # Structured failure summary, when the executor can derive one (e.g. pytest

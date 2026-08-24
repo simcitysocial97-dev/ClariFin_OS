@@ -38,17 +38,17 @@ if str(REPO_ROOT) not in sys.path:
 from runtime.foundation.verification.models import (  # noqa: E402
     VerificationScope,
 )
-from runtime.foundation.verification.planner import plan_verification  # noqa: E402
-from runtime.foundation.verification.planner.plan_models import (  # noqa: E402
-    VerificationPlan,
-)
-from runtime.foundation.verification.registry import VerificationRegistry  # noqa: E402
 from runtime.foundation.verification.models.scope import (  # noqa: E402
     SCOPE_EXPLANATIONS,
     explain_frontend_api_change,
     explain_loan_engine,
     get_scope_resolver,
 )
+from runtime.foundation.verification.planner import plan_verification  # noqa: E402
+from runtime.foundation.verification.planner.plan_models import (  # noqa: E402
+    VerificationPlan,
+)
+from runtime.foundation.verification.registry import VerificationRegistry  # noqa: E402
 
 
 @click.group()

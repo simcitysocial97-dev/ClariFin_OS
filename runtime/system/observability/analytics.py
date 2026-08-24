@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 from collections import defaultdict
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -44,9 +44,7 @@ class AnalyticsReport:
     local: dict[str, Any] = field(default_factory=dict)
     ci: dict[str, Any] = field(default_factory=dict)
     combined: dict[str, Any] = field(default_factory=dict)
-    generated_at: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
-    )
+    generated_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     def to_dict(self) -> dict[str, Any]:
         return {

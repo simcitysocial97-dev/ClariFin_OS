@@ -22,7 +22,7 @@ from __future__ import annotations
 import json
 import subprocess
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -118,7 +118,7 @@ def collect_github_intelligence(
 
     if not _gh_available(root):
         return GitHubIntelligence(
-            generated_at=datetime.now(timezone.utc).isoformat(),
+            generated_at=datetime.now(UTC).isoformat(),
             available=False,
             notes=(
                 "gh CLI unavailable or unauthenticated; "
@@ -278,7 +278,7 @@ def collect_github_intelligence(
         )
 
     return GitHubIntelligence(
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
         available=True,
         runs=tuple(runs),
         failed_jobs=tuple(failed_jobs),

@@ -17,13 +17,14 @@ from __future__ import annotations
 
 import json
 from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Set, Tuple
+from typing import Any
 
 from runtime.foundation.repository.graph.schema import (
-    GraphNode,
     GraphEdge,
+    GraphNode,
     RepositoryGraph,
 )
 
@@ -32,20 +33,20 @@ from runtime.foundation.repository.graph.schema import (
 class GraphServiceCache:
     """Simple deterministic in-memory caches for RepositoryGraphService."""
 
-    node_cache: Dict[str, GraphNode] = field(default_factory=dict)
-    edge_cache: Dict[str, list[GraphEdge]] = field(
+    node_cache: dict[str, GraphNode] = field(default_factory=dict)
+    edge_cache: dict[str, list[GraphEdge]] = field(
         default_factory=lambda: defaultdict(list)
     )
-    successor_cache: Dict[Tuple[str, str | None], List[str]] = field(
+    successor_cache: dict[tuple[str, str | None], list[str]] = field(
         default_factory=dict
     )
-    predecessor_cache: Dict[Tuple[str, str | None], List[str]] = field(
+    predecessor_cache: dict[tuple[str, str | None], list[str]] = field(
         default_factory=dict
     )
-    neighbor_cache: Dict[str, Set[str]] = field(
+    neighbor_cache: dict[str, set[str]] = field(
         default_factory=dict
     )  # Empty dict, populated lazily
-    gaps: Dict[str, Any] = field(default_factory=dict)  # Store gap metadata
+    gaps: dict[str, Any] = field(default_factory=dict)  # Store gap metadata
 
     def clear(self) -> None:
         self.node_cache.clear()
@@ -373,7 +374,7 @@ class RepositoryGraphService:
         source: str,
         target: str,
         max_depth: int = 8,
-    ) -> List[List[str]]:
+    ) -> list[list[str]]:
         """Find all simple paths from source to target up to max_depth.
 
         Uses BFS to enumerate all simple paths (no repeated nodes) from the
@@ -394,9 +395,9 @@ class RepositoryGraphService:
         if source not in self._cache.node_cache or target not in self._cache.node_cache:
             return []
 
-        results: List[List[str]] = []
+        results: list[list[str]] = []
         # Stack contains (current_id, path_as_list_of_ids)
-        stack: List[Tuple[str, List[str]]] = [(source, [source])]
+        stack: list[tuple[str, list[str]]] = [(source, [source])]
 
         while stack:
             current, path = stack.pop()
@@ -447,7 +448,7 @@ class RepositoryGraphService:
 
         return outgoing, incoming
 
-    def get_gaps(self) -> Dict[str, Any]:
+    def get_gaps(self) -> dict[str, Any]:
         """Return gap detection metadata from the index (if available).
 
         Returns:

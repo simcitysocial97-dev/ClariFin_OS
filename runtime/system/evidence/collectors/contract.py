@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
-from .base import EvidenceCollector, EvidenceArtifact
+from .base import EvidenceArtifact, EvidenceCollector
 
 
 @dataclass(frozen=True, slots=True)
@@ -53,7 +53,7 @@ class ContractCollector(EvidenceCollector):
 
         return ContractEvidence(
             status="not_run",
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
     def _parse(self, path: Path) -> ContractEvidence:
@@ -62,13 +62,13 @@ class ContractCollector(EvidenceCollector):
         except (json.JSONDecodeError, OSError):
             return ContractEvidence(
                 status="not_run",
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
 
         if data is None:
             return ContractEvidence(
                 status="not_run",
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
 
         endpoints = data.get("endpoints_tested", 0)
@@ -103,7 +103,7 @@ class ContractCollector(EvidenceCollector):
             failures=failures,
             schema_violations=violations,
             status=status,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
     def collect_artifacts(self) -> list[EvidenceArtifact]:

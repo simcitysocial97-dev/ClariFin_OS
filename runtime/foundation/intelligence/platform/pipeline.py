@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -134,7 +134,7 @@ def run_intelligence(
         github = collect_github_intelligence(allow_logs=allow_logs)
     else:
         github = GitHubIntelligence(
-            generated_at=datetime.now(timezone.utc).isoformat(),
+            generated_at=datetime.now(UTC).isoformat(),
             available=False,
             notes=("CI collection disabled for this run",),
         )

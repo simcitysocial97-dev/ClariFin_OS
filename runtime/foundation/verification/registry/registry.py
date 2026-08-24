@@ -15,9 +15,9 @@ import yaml
 
 from runtime.foundation.verification.models import (
     VerificationCategory,
+    VerificationRequirement,
     VerificationScope,
     VerificationSeverity,
-    VerificationRequirement,
 )
 
 

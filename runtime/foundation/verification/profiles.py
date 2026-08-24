@@ -128,9 +128,7 @@ _VERIFY_BACKEND_TASKS = (
         id="backend-schemathesis",
         name="Schemathesis contract tests",
         profile="backend",
-        commands=[
-            "schemathesis run backend/tests/contract/"
-        ],
+        commands=["schemathesis run backend/tests/contract/"],
         category=VerificationCategory.CONTRACT,
         scope=VerificationScope.BACKEND,
         estimated_duration_seconds=180,
@@ -203,9 +201,7 @@ _VERIFY_CONTRACTS_TASKS = (
         id="contracts-schemathesis",
         name="Schemathesis contract validation",
         profile="contracts",
-        commands=[
-            "schemathesis run backend/tests/contract/"
-        ],
+        commands=["schemathesis run backend/tests/contract/"],
         category=VerificationCategory.CONTRACT,
         scope=VerificationScope.CONTRACTS,
         estimated_duration_seconds=180,
@@ -309,9 +305,7 @@ _VERIFY_FULL_TASKS = (
         id="full-schemathesis",
         name="Schemathesis contract tests",
         profile="full",
-        commands=[
-            "schemathesis run backend/tests/contract/"
-        ],
+        commands=["schemathesis run backend/tests/contract/"],
         category=VerificationCategory.CONTRACT,
         scope=VerificationScope.FULL,
         estimated_duration_seconds=180,

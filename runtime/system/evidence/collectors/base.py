@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import json
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, List, Dict, Optional
+from typing import Any
 
 
 @dataclass(frozen=True)
@@ -18,9 +18,9 @@ class EvidenceArtifact:
     name: str  # Human-readable name
     path: str  # Relative path to the artifact file
     timestamp: str  # ISO format timestamp
-    metadata: Dict[str, Any]  # Collector-specific metadata
+    metadata: dict[str, Any]  # Collector-specific metadata
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
@@ -48,7 +48,7 @@ class EvidenceCollector(ABC):
         pass
 
     @abstractmethod
-    def collect_artifacts(self) -> List[EvidenceArtifact]:
+    def collect_artifacts(self) -> list[EvidenceArtifact]:
         """Collect evidence artifacts from the workspace.
 
         Returns:
@@ -56,7 +56,7 @@ class EvidenceCollector(ABC):
         """
         pass
 
-    def collect(self, artifact_path: Optional[Path] = None) -> Any:
+    def collect(self, artifact_path: Path | None = None) -> Any:
         """Collect evidence from a specific artifact path.
 
         Default implementation delegates to collect_artifacts().
@@ -67,7 +67,7 @@ class EvidenceCollector(ABC):
     def _read_json(self, path: Path) -> Any:
         """Safely read a JSON file."""
         try:
-            with open(path, "r") as f:
+            with open(path) as f:
                 return json.load(f)
         except (json.JSONDecodeError, OSError):
             return None
@@ -83,7 +83,7 @@ class EvidenceCollector(ABC):
         self,
         name: str,
         path: Path,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: dict[str, Any] | None = None,
     ) -> EvidenceArtifact:
         """Create an EvidenceArtifact from a file path."""
         try:

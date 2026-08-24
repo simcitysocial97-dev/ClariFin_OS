@@ -7,19 +7,16 @@ and verification report outputs.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from unittest.mock import patch
 
-
 from runtime.foundation.verification.models import VerificationScope, VerificationStatus
+from runtime.foundation.verification.orchestrator import VerificationOrchestrator
 from runtime.foundation.verification.planner import (
     CrossLayerImpactPlanner,
     VerificationPlanner,
 )
-from runtime.foundation.verification.orchestrator import VerificationOrchestrator
-
-
-import re
 
 SNAPSHOT_DIR = Path(__file__).parent / "snapshots"
 
@@ -171,9 +168,7 @@ class TestSnapshots:
         ):
             import datetime as dt
 
-            mock_dt.now.return_value = dt.datetime(
-                2026, 1, 1, 0, 0, 0, tzinfo=dt.timezone.utc
-            )
+            mock_dt.now.return_value = dt.datetime(2026, 1, 1, 0, 0, 0, tzinfo=dt.UTC)
             mock_dt.timezone = dt.timezone
             orchestrator = VerificationOrchestrator(
                 repo_root=tmp_path, map_path=map_path

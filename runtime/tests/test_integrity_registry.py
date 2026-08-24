@@ -6,14 +6,13 @@ Deterministic. No network. No git mutation.
 
 from __future__ import annotations
 
-
-from runtime.foundation.integrity.registry import (
-    IntegrityRule,
-    get_constitution,
-)
 from runtime.foundation.integrity.models import (
     ViolationCategory,
     ViolationSeverity,
+)
+from runtime.foundation.integrity.registry import (
+    IntegrityRule,
+    get_constitution,
 )
 
 

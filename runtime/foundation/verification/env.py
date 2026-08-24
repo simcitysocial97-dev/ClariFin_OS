@@ -27,7 +27,6 @@ import subprocess
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Optional
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 VENV_BIN = REPO_ROOT / ".venv" / "bin"
@@ -48,8 +47,8 @@ FORBIDDEN_VENV_DIRS = [
 @dataclass(frozen=True, slots=True)
 class Tool:
     name: str
-    path: Optional[str]
-    version: Optional[str]
+    path: str | None
+    version: str | None
     source: str  # "venv" | "path" | "missing"
 
 
@@ -75,7 +74,7 @@ class EnvironmentReport:
         }
 
 
-def _resolve(tool: str) -> tuple[Optional[str], str]:
+def _resolve(tool: str) -> tuple[str | None, str]:
     """Return (resolved_path, source). Prefer REPO_ROOT/.venv/bin, then PATH."""
     venv_path = VENV_BIN / tool
     if venv_path.is_file():
@@ -86,7 +85,7 @@ def _resolve(tool: str) -> tuple[Optional[str], str]:
     return None, "missing"
 
 
-def _version(path: Optional[str], *, config_dir: Optional[Path] = None) -> Optional[str]:
+def _version(path: str | None, *, config_dir: Path | None = None) -> str | None:
     """Get a tool version. mutmut auto-loads config at import, so run it from a
     directory that has a [tool.mutmut] section when possible."""
     if not path:
@@ -106,7 +105,7 @@ def _version(path: Optional[str], *, config_dir: Optional[Path] = None) -> Optio
         return None
 
 
-def _resolve_tool(name: str, *, config_dir: Optional[Path] = None) -> Tool:
+def _resolve_tool(name: str, *, config_dir: Path | None = None) -> Tool:
     path, source = _resolve(name)
     ver = _version(path, config_dir=config_dir)
     return Tool(name=name, path=path, version=ver, source=source)
@@ -114,9 +113,9 @@ def _resolve_tool(name: str, *, config_dir: Optional[Path] = None) -> Tool:
 
 def resolve_environment(
     *,
-    config_dir: Optional[Path] = None,
-    profile: Optional[str] = None,
-    capability_selection: Optional[list[str]] = None,
+    config_dir: Path | None = None,
+    profile: str | None = None,
+    capability_selection: list[str] | None = None,
 ) -> EnvironmentReport:
     """Resolve and validate the canonical mutation environment."""
     errors: list[str] = []
@@ -170,7 +169,14 @@ def resolve_environment(
             + ", ".join(forbidden)
         )
 
-    fingerprint = build_fingerprint(py, pytest, mutmut, forbidden, profile=profile, capability_selection=capability_selection)
+    fingerprint = build_fingerprint(
+        py,
+        pytest,
+        mutmut,
+        forbidden,
+        profile=profile,
+        capability_selection=capability_selection,
+    )
 
     return EnvironmentReport(
         python=py,
@@ -184,13 +190,16 @@ def resolve_environment(
 
 
 def build_fingerprint(
-    py: Tool, pytest: Tool, mutmut: Tool, forbidden: list[str],
+    py: Tool,
+    pytest: Tool,
+    mutmut: Tool,
+    forbidden: list[str],
     *,
-    profile: Optional[str] = None,
-    capability_selection: Optional[list[str]] = None,
+    profile: str | None = None,
+    capability_selection: list[str] | None = None,
 ) -> dict:
     """Machine-readable environment fingerprint for drift visibility.
-    
+
     Extended fingerprint includes:
     - Tool versions (python, pytest, ruff, black, mypy, coverage, mutmut)
     - Config hashes (pyproject.toml, ruff config, black config, mypy config)
@@ -200,35 +209,42 @@ def build_fingerprint(
     - Repository revision
     """
     repo_root = REPO_ROOT
-    
+
     # Core tool versions
     ruff_tool = _resolve_tool("ruff")
     black_tool = _resolve_tool("black")
     mypy_tool = _resolve_tool("mypy")
     coverage_tool = _resolve_tool("coverage")
-    
+
     # Config hashes
     pyproject_hash = hash_file(repo_root / "pyproject.toml")
-    ruff_config_hash = hash_file(repo_root / "backend" / "ruff.toml") if (repo_root / "backend" / "ruff.toml").exists() else "missing"
+    ruff_config_hash = (
+        hash_file(repo_root / "backend" / "ruff.toml")
+        if (repo_root / "backend" / "ruff.toml").exists()
+        else "missing"
+    )
     black_config_hash = "embedded_in_pyproject"  # black config is in pyproject.toml
     mypy_config_hash = hash_file(repo_root / "backend" / "pyproject.toml")
-    
+
     # Dependency lock fingerprint
     lock_hash = hash_file(repo_root / "requirements.lock")
-    
+
     # Repository revision
     repo_sha = "unknown"
     try:
-        repo_sha = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            cwd=str(repo_root),
-            capture_output=True,
-            text=True,
-            timeout=10,
-        ).stdout.strip() or "unknown"
+        repo_sha = (
+            subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=str(repo_root),
+                capture_output=True,
+                text=True,
+                timeout=10,
+            ).stdout.strip()
+            or "unknown"
+        )
     except Exception:
         pass
-    
+
     return {
         # Core tools
         "python_version": py.version,
@@ -241,7 +257,6 @@ def build_fingerprint(
         "pinned_mutmut": PINNED_MUTMUT,
         "forbidden_venvs": forbidden,
         "venv_bin": str(VENV_BIN),
-        
         # Extended toolchain
         "ruff_version": ruff_tool.version,
         "ruff_source": ruff_tool.source,
@@ -251,7 +266,6 @@ def build_fingerprint(
         "mypy_source": mypy_tool.source,
         "coverage_version": coverage_tool.version,
         "coverage_source": coverage_tool.source,
-        
         # Config hashes
         "config_hashes": {
             "pyproject_toml": pyproject_hash,
@@ -259,17 +273,13 @@ def build_fingerprint(
             "black": black_config_hash,
             "mypy": mypy_config_hash,
         },
-        
         # Dependency lock
         "requirements_lock_hash": lock_hash,
-        
         # Repository state
         "repository_sha": repo_sha,
-        
         # Profile & capability
         "verification_profile": profile,
         "capability_selection": capability_selection or [],
-        
         # Fingerprint version for future compatibility
         "fingerprint_version": "1.0",
     }
@@ -293,7 +303,6 @@ def _build_minimal_fingerprint(
 
 
 def hash_file(path: Path) -> str:
-    import hashlib
 
     if not path.is_file():
         return "missing"
@@ -302,30 +311,38 @@ def hash_file(path: Path) -> str:
 
 def main_env_check(argv: list[str]) -> int:
     """`verify.py env-check` — print fingerprint, exit non-zero if inconsistent.
-    
+
     Flags:
         --full    Include extended fingerprint (tool versions, config hashes, lock hash, repo SHA)
     """
     full = "--full" in argv
     report = resolve_environment()
-    
+
     if full:
         # Print extended fingerprint
         print(json.dumps(report.fingerprint, indent=2))
     else:
         # Print minimal fingerprint (backward compatible)
-        print(json.dumps({
-            "python": asdict(report.python),
-            "pytest": asdict(report.pytest),
-            "mutmut": asdict(report.mutmut),
-            "forbidden_venvs": list(report.forbidden_venvs),
-            "fingerprint": _build_minimal_fingerprint(
-                report.python, report.pytest, report.mutmut, list(report.forbidden_venvs)
-            ),
-            "consistent": report.consistent,
-            "errors": list(report.errors),
-        }, indent=2))
-    
+        print(
+            json.dumps(
+                {
+                    "python": asdict(report.python),
+                    "pytest": asdict(report.pytest),
+                    "mutmut": asdict(report.mutmut),
+                    "forbidden_venvs": list(report.forbidden_venvs),
+                    "fingerprint": _build_minimal_fingerprint(
+                        report.python,
+                        report.pytest,
+                        report.mutmut,
+                        list(report.forbidden_venvs),
+                    ),
+                    "consistent": report.consistent,
+                    "errors": list(report.errors),
+                },
+                indent=2,
+            )
+        )
+
     if report.consistent:
         print("\nENVIRONMENT CONSISTENT — canonical .venv is the only environment.")
         return 0

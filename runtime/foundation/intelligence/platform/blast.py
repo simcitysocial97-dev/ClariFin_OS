@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from collections import deque
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from runtime.foundation.intelligence.platform.change import ChangeIntelligence
@@ -508,7 +508,7 @@ def compute_blast_radius(
     developer = tuple(n for n in (*direct, *indirect) if n.ref.kind in _DEVELOPER_KINDS)
 
     return BlastRadius(
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
         seeds=seeds,
         direct=direct,
         indirect=indirect,

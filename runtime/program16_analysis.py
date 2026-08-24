@@ -5,7 +5,7 @@ Generates all 11 deliverables using canonical provider artifacts.
 """
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 REPO = Path("/home/vasantha/AI-Projects/ClariFin_OS")
@@ -23,7 +23,7 @@ def save(name, data):
 
 
 def now():
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 # Load canonical artifacts
@@ -1334,8 +1334,8 @@ def phase9():
 # ===================================================================
 def phase10():
     # Run the audit to generate v7
-    from runtime.foundation.audit.runner import AuditRunner
     from runtime.foundation.audit.reporter import AuditReporter
+    from runtime.foundation.audit.runner import AuditRunner
 
     runner = AuditRunner()
     runner.register(

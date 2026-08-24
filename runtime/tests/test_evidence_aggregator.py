@@ -9,7 +9,6 @@ import json
 from pathlib import Path
 from unittest.mock import patch
 
-
 from runtime.system.evidence.aggregator import (
     EvidenceAggregator,
     _find_dependency_chain,
