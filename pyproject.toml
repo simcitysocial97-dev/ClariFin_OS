@@ -151,7 +151,7 @@ python_version = "3.12"
 exclude = ['servers/src/fetch/tests/', 'backend/mutants/']
 
 [tool.pytest.ini_options]
-norecursedirs = ["backend/mutants", "backend/tests/mutation_infra/mutants", ".git", "__pycache__", ".venv", "venv", "node_modules", "frontend/node_modules"]
+norecursedirs = ["backend/mutants", "backend/tests/mutation_infra/mutants", "backend/tests/invariants/_m4_exit_probe/**", ".git", "__pycache__", ".venv", "venv", "node_modules", "frontend/node_modules"]
 pythonpath = ["backend/src", "backend/tests"]
 markers = [
     "capability: mark test as capability smoke test",
