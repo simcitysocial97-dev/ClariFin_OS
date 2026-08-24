@@ -118,6 +118,7 @@ exclude = [
     "venv",
     "backend/tests/generated",
     "backend/mutants",
+    "backend/tests/mutation_infra/mutants/**",
     "*.pyc",
 ]
 
@@ -138,6 +139,7 @@ extend-exclude = '''
   | venv
   | __pycache__
   | backend/mutants
+  | backend/tests/mutation_infra/mutants
   | backend/tests/generated
   | build
   | dist
