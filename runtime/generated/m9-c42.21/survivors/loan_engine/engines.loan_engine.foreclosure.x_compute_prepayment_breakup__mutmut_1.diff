@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.foreclosure.x_compute_prepayment_breakup__mutmut_1: survived
+--- src/engines/loan_engine/foreclosure.py
++++ src/engines/loan_engine/foreclosure.py
+@@ -4,7 +4,7 @@
+     months_elapsed: int,
+     original_principal_paise: int,
+     original_tenure_months: int,
+-    prepayment_penalty_bps: int = 0,
++    prepayment_penalty_bps: int = 1,
+ ) -> dict[str, int]:
+     remaining_months = original_tenure_months - months_elapsed
+     if remaining_months <= 0 or outstanding_paise <= 0:

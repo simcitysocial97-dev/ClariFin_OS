@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_multiple_prepayments__mutmut_16: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -14,7 +14,7 @@
+     results = []
+ 
+     for month, amount in sorted_prepayments:
+-        if month < 1 or month > len(current_schedule):
++        if month < 2 or month > len(current_schedule):
+             continue
+         new_schedule, result = apply_prepayment_at_month(
+             current_schedule,

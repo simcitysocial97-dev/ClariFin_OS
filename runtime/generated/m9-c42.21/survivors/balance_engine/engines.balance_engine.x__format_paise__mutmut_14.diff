@@ -1,0 +1,13 @@
+# status: survived
+# engines.balance_engine.x__format_paise__mutmut_14: survived
+--- src/engines/balance_engine.py
++++ src/engines/balance_engine.py
+@@ -21,7 +21,7 @@
+     paise_part = paise % 100
+ 
+     # Format with Indian grouping (lakhs, crores)
+-    if rupees <= 999:
++    if rupees < 999:
+         formatted = str(rupees)
+     else:
+         s = str(rupees)

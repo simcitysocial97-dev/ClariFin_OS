@@ -1,0 +1,15 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_loss_aversion_index__mutmut_161: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -68,9 +68,7 @@
+     recovery_days = 0
+     if large_expenses:
+         # Simplified: assume recovery takes proportional time
+-        avg_large = sum(
+-            (t.get("amount_paise", 0) or 0) / 100.0 for t in large_expenses
+-        ) / len(large_expenses)
++        avg_large = None
+         recovery_days = min(30, int(avg_large / max(median_debit, 1)))
+ 
+     # Normalize to 0-1 score

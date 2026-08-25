@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_101: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -47,7 +47,7 @@
+ 
+     # Credit dependency (convert amount_paise to rupees)
+     total_credit = sum((t.get("amount_paise", 0) or 0) / 100.0 for t in credits)
+-    total_debit = sum((t.get("amount_paise", 0) or 0) / 100.0 for t in debits)
++    total_debit = sum((t.get("XXamount_paiseXX", 0) or 0) / 100.0 for t in debits)
+     credit_dependency = total_credit / max(total_debit, 1) if total_debit > 0 else 0
+ 
+     # End-of-month depletion (last 5 days spending ratio)

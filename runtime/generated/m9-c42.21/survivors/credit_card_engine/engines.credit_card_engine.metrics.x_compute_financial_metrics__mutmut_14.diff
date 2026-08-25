@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_14: survived
+--- src/engines/credit_card_engine/metrics.py
++++ src/engines/credit_card_engine/metrics.py
+@@ -28,7 +28,7 @@
+     if credit_limit_paise < 0:
+         raise ValueError("credit_limit_paise must be non-negative")
+     if annual_rate_bps < 0:
+-        raise ValueError("annual_rate_bps must be non-negative")
++        raise ValueError(None)
+     if total_interest_paid_paise < 0:
+         raise ValueError("total_interest_paid_paise must be non-negative")
+ 

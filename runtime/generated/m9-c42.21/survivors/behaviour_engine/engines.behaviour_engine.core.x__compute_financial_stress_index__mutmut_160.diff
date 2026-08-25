@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_160: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -67,7 +67,7 @@
+             except (ValueError, TypeError):
+                 pass
+ 
+-    eom_ratio = eom_spending / max(total_spending, 1)
++    eom_ratio = eom_spending / max(total_spending, 2)
+ 
+     # Buffer adequacy (days of expenses covered by average balance)
+     avg_balance = (

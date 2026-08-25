@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_158: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -65,7 +65,7 @@
+             avg_other_total = sum(other_totals) / len(other_totals)
+             if avg_other_total > 0:
+                 pct_change_total = (
+-                    (this_month_total - avg_other_total) / avg_other_total
++                    (this_month_total - avg_other_total) * avg_other_total
+                 ) * 100
+                 if pct_change_total > 15:
+                     insights.append(

@@ -1,0 +1,12 @@
+# status: survived
+# engines.behaviour_engine.core.x__coefficient_of_variation__mutmut_3: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -1,6 +1,6 @@
+ def _coefficient_of_variation(values: list[float]) -> float:
+     """Calculate coefficient of variation (std/mean)."""
+-    if not values or len(values) < 2:
++    if not values or len(values) <= 2:
+         return 0.0
+     mean = sum(values) / len(values)
+     if mean == 0:

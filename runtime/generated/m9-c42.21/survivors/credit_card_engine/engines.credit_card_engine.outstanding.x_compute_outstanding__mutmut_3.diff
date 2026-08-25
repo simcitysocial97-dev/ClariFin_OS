@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.outstanding.x_compute_outstanding__mutmut_3: survived
+--- src/engines/credit_card_engine/outstanding.py
++++ src/engines/credit_card_engine/outstanding.py
+@@ -20,7 +20,7 @@
+     INVARIANT 5: Balances are never negative.
+     """
+     if total_spend_paise < 0:
+-        raise ValueError("total_spend_paise must be non-negative")
++        raise ValueError(None)
+     if total_emi_paise < 0:
+         raise ValueError("total_emi_paise must be non-negative")
+     if total_fees_paise < 0:

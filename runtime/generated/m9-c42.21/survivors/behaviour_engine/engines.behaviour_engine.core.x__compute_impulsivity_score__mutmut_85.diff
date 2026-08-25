@@ -1,0 +1,15 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_impulsivity_score__mutmut_85: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -43,9 +43,7 @@
+         weekend_avg = sum(
+             (t.get("amount_paise", 0) or 0) / 100.0 for t in weekend_txns
+         ) / len(weekend_txns)
+-        weekday_avg = sum(
+-            (t.get("amount_paise", 0) or 0) / 100.0 for t in weekday_txns
+-        ) / len(weekday_txns)
++        weekday_avg = None
+         weekend_ratio = weekend_avg / max(weekday_avg, 1)
+     else:
+         weekend_ratio = 1.0

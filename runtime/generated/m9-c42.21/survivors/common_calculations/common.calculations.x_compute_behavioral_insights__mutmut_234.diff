@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_234: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -93,7 +93,7 @@
+         desc = (largest.get("description_display") or largest.get("description", ""))[
+             :30
+         ]
+-        amt = format_inr((largest.get("amount_paise", 0) or 0) / 100.0)
++        amt = None
+         insights.append(
+             {
+                 "title": "Largest Expense",

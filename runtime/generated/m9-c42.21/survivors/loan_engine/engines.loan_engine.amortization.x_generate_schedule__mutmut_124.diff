@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.amortization.x_generate_schedule__mutmut_124: survived
+--- src/engines/loan_engine/amortization.py
++++ src/engines/loan_engine/amortization.py
+@@ -101,7 +101,7 @@
+             else:
+                 balance = balance - principal_exact
+                 new_reported = int(
+-                    balance.quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
++                    balance.quantize(Decimal(2), rounding=ROUND_HALF_EVEN)
+                 )
+                 principal_component_paise = max(0, reported_balance - new_reported)
+                 principal_component_paise = min(principal_component_paise, emi_paise)

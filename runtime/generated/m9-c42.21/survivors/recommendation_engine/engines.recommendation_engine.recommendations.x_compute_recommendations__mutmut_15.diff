@@ -1,0 +1,13 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_compute_recommendations__mutmut_15: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -37,7 +37,7 @@
+         recommendations.append(liquidity_rec)
+ 
+     # Check subscription growth rule
+-    sub_rec = detect_subscription_growth(current_subscriptions, previous_subscriptions)
++    sub_rec = detect_subscription_growth(current_subscriptions, )
+     if sub_rec:
+         recommendations.append(sub_rec)
+ 

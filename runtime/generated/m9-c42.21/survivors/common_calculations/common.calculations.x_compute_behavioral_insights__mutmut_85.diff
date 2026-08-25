@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_85: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -32,7 +32,7 @@
+                 avg_other = sum(other_months) / len(other_months)
+                 if avg_other > 0:
+                     pct_change = ((this_month_cat - avg_other) / avg_other) * 100
+-                    if pct_change > 30:
++                    if pct_change > 31:
+                         insights.append(
+                             {
+                                 "title": f"{cat} Spending Up",

@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_loss_aversion_index__mutmut_102: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -41,7 +41,7 @@
+         spend_72h = 0.0
+         for debit in debits:
+             debit_date = _parse_date(debit.get("date_iso", "") or debit.get("date", ""))
+-            if not debit_date:
++            if debit_date:
+                 continue
+ 
+             days_diff = (debit_date - credit_date).days

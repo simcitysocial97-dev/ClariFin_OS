@@ -1,0 +1,12 @@
+# status: survived
+# engines.credit_card_engine.foreclosure.x_compute_card_foreclosure__mutmut_45: survived
+--- src/engines/credit_card_engine/foreclosure.py
++++ src/engines/credit_card_engine/foreclosure.py
+@@ -47,7 +47,6 @@
+         outstanding_paise=outstanding_paise,
+         annual_rate_bps=annual_rate_bps,
+         remaining_months=remaining_months,
+-        months_paid=0,
+         prepayment_penalty_bps=penalty_bps,
+     )
+ 

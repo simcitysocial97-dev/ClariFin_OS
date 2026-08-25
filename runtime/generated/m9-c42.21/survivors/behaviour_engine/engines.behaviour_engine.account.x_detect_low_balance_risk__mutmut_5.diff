@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.account.x_detect_low_balance_risk__mutmut_5: survived
+--- src/engines/behaviour_engine/account.py
++++ src/engines/behaviour_engine/account.py
+@@ -23,7 +23,7 @@
+         # No essential expenses means no risk
+         return Decimal("0")
+ 
+-    if current_balance_paise >= essential_monthly_expenses_paise:
++    if current_balance_paise > essential_monthly_expenses_paise:
+         return Decimal("0")
+ 
+     # Risk = (essential - current) / essential

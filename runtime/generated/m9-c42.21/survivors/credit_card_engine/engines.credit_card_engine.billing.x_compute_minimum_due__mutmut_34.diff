@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.billing.x_compute_minimum_due__mutmut_34: survived
+--- src/engines/credit_card_engine/billing.py
++++ src/engines/credit_card_engine/billing.py
+@@ -32,7 +32,7 @@
+     pct_amount = (
+         Decimal(total_outstanding_paise) * Decimal(min_due_pct_bps) / Decimal(10000)
+     )
+-    pct_amount_paise = int(pct_amount.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
++    pct_amount_paise = int(pct_amount.quantize(Decimal(1), rounding=None))
+ 
+     result = max(floor_paise, pct_amount_paise)
+     return min(result, total_outstanding_paise)

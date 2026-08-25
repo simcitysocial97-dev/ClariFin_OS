@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.emi.x_compute_principal_from_emi__mutmut_33: survived
+--- src/engines/loan_engine/emi.py
++++ src/engines/loan_engine/emi.py
+@@ -27,7 +27,7 @@
+ 
+     principal_decimal: Decimal = numerator / denominator
+     base_principal = int(
+-        principal_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
++        principal_decimal.quantize(Decimal(1), )
+     )
+ 
+     # Extended localized search window (-500 to +500 paise) to securely capture

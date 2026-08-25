@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_walk_lineage__mutmut_195: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -105,7 +105,7 @@
+         )
+ 
+         lifecycle_updates_by_event[matched_advance_id] = _merge_lifecycle_update(
+-            lifecycle_updates_by_event.get(matched_advance_id),
++            None,
+             {
+                 "event_id": matched_advance_id,
+                 "lifecycle_state": new_state,

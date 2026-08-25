@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_180: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -76,7 +76,7 @@
+                             "icon": "alert-triangle",
+                         }
+                     )
+-                elif pct_change_total < -15:
++                elif pct_change_total <= -15:
+                     insights.append(
+                         {
+                             "title": "Spending Down",

@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x__check_match__mutmut_24: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -23,7 +23,7 @@
+     # Get debit/credit values
+     a_debit = txn_a.get("debit") or 0
+     a_credit = txn_a.get("credit") or 0
+-    b_debit = txn_b.get("debit") or 0
++    b_debit = txn_b.get("debit") or 1
+     b_credit = txn_b.get("credit") or 0
+ 
+     # Determine which is debit and which is credit

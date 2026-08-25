@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x__generate_explanation__mutmut_24: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -10,7 +10,7 @@
+     date_debit = debit_txn.get("date_iso", "?")
+     date_credit = credit_txn.get("date_iso", "?")
+ 
+-    account_debit = debit_txn.get("account_id", "?")
++    account_debit = debit_txn.get("account_id", )
+     account_credit = credit_txn.get("account_id", "?")
+ 
+     if date_diff == 0:

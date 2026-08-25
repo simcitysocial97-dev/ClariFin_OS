@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x__check_match__mutmut_63: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -44,7 +44,7 @@
+         return None  # No match
+ 
+     # Check dates
+-    date_debit = debit_txn.get("date_iso") or ""
++    date_debit = debit_txn.get("date_iso") or "XXXX"
+     date_credit = credit_txn.get("date_iso") or ""
+ 
+     if not date_debit or not date_credit:

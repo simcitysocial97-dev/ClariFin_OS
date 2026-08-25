@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_detect_rollover_scenarios__mutmut_61: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -46,7 +46,7 @@
+                 e
+                 for e in other_account_events
+                 if _is_liability_event(e)
+-                and e.get("id") != event_id
++                and e.get("ID") != event_id
+                 and int(e.get("liability_change_paise", 0) or 0) > 0  # Original advance
+                 and e.get("lifecycle_state") in ("open", "partially_settled")
+             ]

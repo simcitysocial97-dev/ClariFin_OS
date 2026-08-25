@@ -1,0 +1,207 @@
+{
+  "title": "M9-C42.21 \u2014 Milestone M21.9 Verification Architecture Forward Scan",
+  "generated_at": "2026-08-25T06:45:11.395183+00:00",
+  "run_id": "m9-c42.21",
+  "scope": "Assess whether current framework can represent the full verification graph, planner requirements, evidence architecture, historical intelligence, profile certification, and CI/workflow integration \u2014 as required for the final self-verifying ClariFin_OS system.",
+  "verification_graph_gaps": {
+    "file_to_symbol": {
+      "status": "PARTIAL",
+      "current": "mutmut generates mutant names with file:function__mutmut_N; capability mapping uses directory patterns; no unified file\u2192symbol index for all production code.",
+      "gap": "No single authoritative mapping from repository file to symbol/function for ALL production code (only mutation-eligible subset in ENGINE_SELECTION). Deferred components and Tier 3 excluded components have no mapping.",
+      "required_for": "automatic verification scope determination from changed files"
+    },
+    "symbol_to_capability": {
+      "status": "PARTIAL",
+      "current": "ENGINE_SELECTION maps engine \u2192 capability implicitly (via test_selection paths). M9-C42.20 scope manifest has component\u2192capability but not symbol-level.",
+      "gap": "Symbol-to-capability mapping missing for deferred components, Tier 3 components, and new engines. Existing mapping is engine-granular, not symbol-granular.",
+      "required_for": "fine-grained verification scope (only affected capabilities from changed symbols)"
+    },
+    "capability_to_profile": {
+      "status": "DEFINED BUT NOT ENFORCED",
+      "current": "Verification profiles (quick, unit, property, mutation, contract, golden, e2e, full) exist in runtime/foundation/verification/profiles.py with scope/prerequisites. But mutation profile is not integrated into profile execution (no gate enforcement in CI).",
+      "gap": "Profile execution is CLI-driven (verify.py) but not wired into CI gate semantics. Mutation profile lacks artifact expectations and failure semantics in profile definition.",
+      "required_for": "automatic profile selection based on changed capabilities"
+    },
+    "profile_to_test": {
+      "status": "PARTIAL",
+      "current": "pytest markers (unit, property, contract, capability, invariant, golden, mutation) exist. Test selection for mutation is via ENGINE_SELECTION.test_selection. Other profiles use marker-based selection.",
+      "gap": "No unified test-to-profile mapping that is queryable programmatically (e.g., 'which tests belong to mutation profile for capability X?'). ENGINE_SELECTION is the only complete mapping.",
+      "required_for": "planner test expansion"
+    },
+    "test_to_evidence": {
+      "status": "MUTATION COMPLETE; OTHERS PARTIAL",
+      "current": "Mutation: complete evidence chain (mutant \u2192 status \u2192 diff \u2192 summary \u2192 classification). Coverage: line/branch data only. Contract: schemathesis runs but evidence not integrated. Golden: datasets exist but evidence format varies. E2E: Playwright runs but evidence format separate.",
+      "gap": "Unified evidence schema across ALL verification layers. Current evidence per layer is siloed (different JSON schemas, locations, formats).",
+      "required_for": "cross-layer evidence aggregation and gate decisions"
+    },
+    "evidence_to_gate": {
+      "status": "MUTATION DEFINED; OTHERS AD-HOC",
+      "current": "Mutation: 3-gate model (A/B/C) with explicit PASS/FAIL/NOT_EVALUABLE. Coverage: pytest-cov threshold (40% overall, 70% engines). Other layers: manual interpretation.",
+      "gap": "No unified gate model across layers. Each layer has different failure semantics and no composite gate.",
+      "required_for": "single composite gate decision from multi-layer evidence"
+    }
+  },
+  "planner_gaps": {
+    "changed_files_detection": {
+      "status": "IMPLEMENTED",
+      "current": "runtime/foundation/verification/planner/ can compute changed files from git diff.",
+      "gap": "None"
+    },
+    "affected_capabilities": {
+      "status": "PARTIAL",
+      "current": "Can map changed files \u2192 engines via ENGINE_SELECTION source_paths. Cannot map changed files \u2192 capabilities for non-mutation-eligible code.",
+      "gap": "Capability mapping incomplete for deferred/Tier 3 code."
+    },
+    "dependency_expansion": {
+      "status": "NOT IMPLEMENTED",
+      "current": "No dependency graph expansion from changed symbols to transitive capabilities.",
+      "gap": "Required for 'unknown \u2192 expand verification' fail-safe behavior."
+    },
+    "verification_profiles": {
+      "status": "DEFINED",
+      "current": "Profiles defined with scope/prerequisites/commands. Not executable as a unified planner output.",
+      "gap": "Planner should output: required profiles + required tests per profile + evidence expectations."
+    },
+    "unknown_mapping": {
+      "status": "MISSING FAIL-SAFE",
+      "current": "If file\u2192symbol or symbol\u2192capability mapping is missing, planner behavior undefined.",
+      "required": "unknown \u2192 expand verification (run broader profile, not skip). Currently not implemented."
+    },
+    "missing_capability": {
+      "status": "MISSING FAIL-SAFE",
+      "current": "If capability not registered, planner behavior undefined.",
+      "required": "missing capability \u2192 run full profile (max verification). Not implemented."
+    },
+    "missing_profile": {
+      "status": "MISSING FAIL-SAFE",
+      "current": "If profile not defined for capability, behavior undefined.",
+      "required": "missing profile \u2192 fall back to 'full' profile. Not implemented."
+    },
+    "ambiguous_dependency": {
+      "status": "MISSING FAIL-SAFE",
+      "current": "No ambiguity detection in dependency graph.",
+      "required": "ambiguous \u2192 expand verification. Not implemented."
+    },
+    "missing_test": {
+      "status": "MISSING FAIL-SAFE",
+      "current": "Planner does not verify test existence for selected profile.",
+      "required": "missing test \u2192 report as evidence gap (Class D), not skip."
+    },
+    "missing_evidence": {
+      "status": "MISSING FAIL-SAFE",
+      "current": "No evidence completeness check in planner.",
+      "required": "missing evidence \u2192 NOT EVALUABLE, not PASS."
+    },
+    "stale_cache": {
+      "status": "PARTIAL (mutation only)",
+      "current": "Mutation runner validates cache provenance (repository_sha, config_hash, mutmut_version). Other layers no cache validation.",
+      "gap": "Unified cache/provenance validation across all layers."
+    },
+    "incomplete_execution": {
+      "status": "MUTATION ONLY (not_checked=0 gate)",
+      "current": "Mutation enforces not_checked=0. Other layers have no equivalent.",
+      "gap": "Unified execution completeness gate across layers."
+    }
+  },
+  "evidence_architecture_gaps": {
+    "current_artifacts": [
+      "mutation-summary.json (per-engine, from runner)",
+      "coverage.json (pytest-cov, single file)",
+      "contract test results (schemathesis, separate)",
+      "golden regression (custom, per-dataset)",
+      "e2e tests (Playwright, separate)",
+      "mutation-lifecycle-events.jsonl (runner internal)",
+      "C42 milestone artifacts (per-milestone, not per-run)"
+    ],
+    "target_unified_structure": "verification-run/{manifest,baseline,scope,execution,coverage,mutation,contracts,e2e,golden,failures,certification}.json",
+    "gaps": [
+      "No unified run_id across layers (mutation has run_id; coverage/contract/e2e/golden do not)",
+      "No unified commit_sha/tree_sha/timestamp/environment across layers",
+      "No unified scope manifest (what was verified in this run)",
+      "No unified failures.json (all failures across layers)",
+      "No unified certification.json (composite gate decision)",
+      "Artifact locations scattered: backend/tests/generated/, runtime/generated/, frontend test results/",
+      "Schema inconsistency: each layer has different JSON structure",
+      "No historical linkage (run_id \u2192 previous run_id)"
+    ],
+    "minimum_convergence_path": [
+      "1. Define unified VerificationRun schema (run_id, commit_sha, tree_sha, timestamp, env, scope, results, evidence, decision)",
+      "2. Wrap each layer's execution to emit VerificationRun-compatible artifact",
+      "3. Add aggregator that merges layer artifacts into single VerificationRun",
+      "4. Add historical index (run_id \u2192 previous run_id, delta computation)",
+      "5. Define composite gate evaluator on aggregated evidence"
+    ]
+  },
+  "historical_verification_gaps": {
+    "current": "Mutation evidence stored per-milestone (m9-c42.19-mutation-completion.json, etc.). Coverage stored in m9-c42.19-coverage-analysis.json. No cross-milestone delta computation.",
+    "required_capability": "Identify across commits: coverage\u2193, mutation\u2193, survivors\u2191, capability_verification\u2193, test_count\u2193, new_unmapped_production_logic, new_evidence_gaps.",
+    "gaps": [
+      "No unified historical store (per-milestone files only)",
+      "No delta computation engine",
+      "No trend detection (e.g., mutation score declining over N runs)",
+      "No regression alerting on capability verification degradation",
+      "No 'new unmapped production logic' detection (requires file\u2192symbol\u2192capability mapping)"
+    ]
+  },
+  "profile_certification_gaps": {
+    "profiles": [
+      "quick",
+      "runtime",
+      "unit",
+      "property",
+      "contract",
+      "mutation",
+      "golden",
+      "e2e",
+      "full"
+    ],
+    "certified": [
+      "mutation (CLI only, not CI-gated)"
+    ],
+    "gaps_per_profile": {
+      "quick": "scope/prerequisites defined; artifact expectations missing; gate semantics missing",
+      "runtime": "same as quick",
+      "unit": "scope=unit tests; mutation not included; gate=coverage threshold only",
+      "property": "scope=property tests; mutation not included",
+      "contract": "scope=contract tests; schemathesis runs; evidence schema not unified; gate not defined",
+      "mutation": "CLI certified; CI gate NOT certified; artifact expectations defined; failure semantics defined (3-gate)",
+      "golden": "scope=golden datasets; evidence format custom; gate not defined",
+      "e2e": "scope=Playwright; CI exists (frontend-verify.yml); gate=test pass; evidence not unified",
+      "full": "scope=all; gate=all sub-gates; NOT IMPLEMENTED"
+    },
+    "next": "Certify each profile: define scope, prerequisites, commands, expected artifacts, failure semantics, timeout, parallelism, evidence completeness, gate behavior. Start with mutation CI gate, then contract, then full."
+  },
+  "workflow_ci_gaps": {
+    "current_workflows": [
+      "verification-runtime.yml",
+      "frontend-verify.yml",
+      "backend-verify.yml",
+      "mutation-local.yml"
+    ],
+    "gaps": [
+      "Mutation campaign runs in CI but NOT gated (verification-runtime.yml runs mutation but does not fail CI on score < 80%)",
+      "No reusable action for mutation campaign (uses inline steps; violates M9-C42.5 reusable_setup decision)",
+      "Evidence artifacts not uploaded as named artifacts with retention policy",
+      "No composite gate: workflow passes if individual steps pass; no cross-layer gate",
+      "Deferred components (transaction_intelligence, financial_intelligence) not tracked in CI",
+      "No historical comparison step in CI (compare current run vs baseline)",
+      "Mutation smoke test not in PR gate (only full campaign in scheduled)"
+    ],
+    "required_for_certification": [
+      "Reusable action for mutation campaign (setup, execute, capture, upload)",
+      "Composite gate action (consumes VerificationRun, evaluates all layer gates, fails if any NOT_EVALUABLE/FAIL)",
+      "Baseline comparison step (compare current VerificationRun vs stored baseline)",
+      "Evidence artifact retention (90 days minimum for certification evidence)",
+      "Deferred component tracking in CI (fail build if unmapped production logic added without capability registration)"
+    ]
+  },
+  "summary": {
+    "verification_graph": "PARTIAL \u2014 file\u2192symbol\u2192capability mapping complete only for 12 mutation-eligible engines; deferred/Tier 3 unmapped",
+    "planner": "PARTIAL \u2014 changed files detection works; fail-safe behaviors (unknown\u2192expand) NOT IMPLEMENTED",
+    "evidence_architecture": "SILOS \u2014 mutation evidence complete; other layers use different schemas/locations; no unified run structure",
+    "historical": "PER-MILESTONE ONLY \u2014 no delta engine, no trend detection, no regression alerts",
+    "profiles": "DEFINED NOT CERTIFIED \u2014 mutation CLI certified; CI gate + artifact expectations missing; full profile not implemented",
+    "workflows": "MUTATION NOT GATED \u2014 CI runs mutation but does not enforce score; no reusable action; no composite gate",
+    "overall_readiness": "MUTATION EVIDENCE READY FOR CONSUMPTION; verification architecture requires cross-layer unification before final self-verifying system certification."
+  }
+}

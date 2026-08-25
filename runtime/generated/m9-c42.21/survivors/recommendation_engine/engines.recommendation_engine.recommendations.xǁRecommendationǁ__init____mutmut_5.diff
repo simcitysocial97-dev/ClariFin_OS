@@ -1,0 +1,10 @@
+# status: survived
+# engines.recommendation_engine.recommendations.xǁRecommendationǁ__init____mutmut_5: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -19,4 +19,4 @@
+     self.reason = reason
+     self.metric = metric
+     self.severity = severity
+-    self.suggested_action = suggested_action
++    self.suggested_action = None

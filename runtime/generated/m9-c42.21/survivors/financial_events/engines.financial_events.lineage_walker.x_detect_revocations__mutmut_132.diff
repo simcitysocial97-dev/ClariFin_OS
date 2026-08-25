@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_detect_revocations__mutmut_132: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -78,7 +78,7 @@
+ 
+         # Apply revocation to all events in this transfer
+         for transfer_event in transfer_events:
+-            transfer_event_id = transfer_event.get("id", 0)
++            transfer_event_id = transfer_event.get("id", 1)
+             proposed_links.append(
+                 {
+                     "event_id": event_id,

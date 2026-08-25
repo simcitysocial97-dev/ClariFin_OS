@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.interest.x_compute_daily_interest__mutmut_28: survived
+--- src/engines/credit_card_engine/interest.py
++++ src/engines/credit_card_engine/interest.py
+@@ -29,7 +29,7 @@
+     outstanding: Decimal = Decimal(outstanding_paise)
+     interest_decimal: Decimal = outstanding * daily_rate
+     interest_paise = int(
+-        interest_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
++        interest_decimal.quantize(Decimal(1), )
+     )
+ 
+     return interest_paise

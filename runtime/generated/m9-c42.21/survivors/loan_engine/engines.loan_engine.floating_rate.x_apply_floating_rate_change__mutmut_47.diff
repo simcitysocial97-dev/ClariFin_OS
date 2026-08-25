@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.floating_rate.x_apply_floating_rate_change__mutmut_47: survived
+--- src/engines/loan_engine/floating_rate.py
++++ src/engines/loan_engine/floating_rate.py
+@@ -33,7 +33,7 @@
+             schedule[change_month - 1 :],
+             opening_balance,
+             new_rate_bps,
+-            "reduce_emi",
++            "REDUCE_EMI",
+             change_row.payment_date,
+             original_emi=None,
+             original_tenure=remaining_tenure,

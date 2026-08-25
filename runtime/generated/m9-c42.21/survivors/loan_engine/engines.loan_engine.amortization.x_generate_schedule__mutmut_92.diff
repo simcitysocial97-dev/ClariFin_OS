@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.amortization.x_generate_schedule__mutmut_92: survived
+--- src/engines/loan_engine/amortization.py
++++ src/engines/loan_engine/amortization.py
+@@ -85,7 +85,7 @@
+         else:
+             principal_exact: Decimal = Decimal(emi_paise) - interest_exact
+ 
+-            if principal_exact <= 0 or reported_balance <= 0:
++            if principal_exact < 0 or reported_balance <= 0:
+                 # EMI does not even cover the interest (or the loan is already
+                 # closed): nothing is amortized this month.
+                 principal_component_paise = 0

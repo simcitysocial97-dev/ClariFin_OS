@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.emi.x_compute_principal_from_emi__mutmut_5: survived
+--- src/engines/loan_engine/emi.py
++++ src/engines/loan_engine/emi.py
+@@ -12,7 +12,7 @@
+     INVARIANT 2: Rates stored as basis points
+     """
+     if tenure_months <= 0:
+-        raise ValueError("Tenure must be positive")
++        raise ValueError("tenure must be positive")
+ 
+     if annual_rate_bps == 0:
+         return emi_paise * tenure_months

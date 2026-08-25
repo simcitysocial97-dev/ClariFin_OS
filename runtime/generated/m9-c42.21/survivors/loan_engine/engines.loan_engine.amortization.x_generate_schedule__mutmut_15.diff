@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.amortization.x_generate_schedule__mutmut_15: survived
+--- src/engines/loan_engine/amortization.py
++++ src/engines/loan_engine/amortization.py
+@@ -50,7 +50,7 @@
+     # Such loans cannot be described by one fixed instalment, so the EMI is
+     # re-anchored to the outstanding balance and remaining term every month.
+     # Ordinary loans keep a single constant EMI, exactly as a lender would.
+-    if monthly_rate > 0:
++    if monthly_rate > 1:
+         annuity_factor = (
+             (Decimal(1) + monthly_rate) ** tenure_months - Decimal(1)
+         ) / monthly_rate

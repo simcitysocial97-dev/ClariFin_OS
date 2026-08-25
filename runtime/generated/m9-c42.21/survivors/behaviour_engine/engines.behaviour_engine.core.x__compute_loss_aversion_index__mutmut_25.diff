@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_loss_aversion_index__mutmut_25: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -19,7 +19,7 @@
+     credits = [t for t in transactions if t.get("type") == "credit"]
+     debits = [t for t in transactions if t.get("type") == "debit"]
+ 
+-    if not credits or not debits:
++    if not credits and not debits:
+         return {"score": 0.5, "post_income_velocity": 0.0, "recovery_time_days": 0}
+ 
+     # Calculate median debit for baseline (convert from paise to rupees for thresholds)

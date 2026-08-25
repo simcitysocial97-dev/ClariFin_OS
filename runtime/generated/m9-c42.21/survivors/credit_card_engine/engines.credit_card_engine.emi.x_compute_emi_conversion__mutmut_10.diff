@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.emi.x_compute_emi_conversion__mutmut_10: survived
+--- src/engines/credit_card_engine/emi.py
++++ src/engines/credit_card_engine/emi.py
+@@ -7,7 +7,7 @@
+     if amount_paise < 0:
+         raise ValueError("amount_paise must be non-negative")
+     if annual_rate_bps < 0:
+-        raise ValueError("annual_rate_bps must be non-negative")
++        raise ValueError("ANNUAL_RATE_BPS MUST BE NON-NEGATIVE")
+     if tenure_months <= 0:
+         raise ValueError("tenure_months must be positive")
+ 

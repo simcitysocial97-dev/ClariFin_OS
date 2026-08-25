@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_248: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -92,7 +92,7 @@
+     return {
+         "score": round(stress_index, 4),
+         "balance_volatility": round(balance_cv, 4),
+-        "credit_dependency": round(credit_dependency, 4),
++        "credit_dependency": round(4),
+         "eom_depletion_ratio": round(eom_ratio, 4),
+         "buffer_days": round(buffer_days, 1),
+     }

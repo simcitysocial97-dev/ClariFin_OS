@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_detect_rollover_scenarios__mutmut_126: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -64,7 +64,7 @@
+                     proposed_links.append(
+                         {
+                             "event_id": event_id,
+-                            "linked_event_id": source.get("id", 0),
++                            "linked_event_id": source.get("id", ),
+                             "link_type": "rolls_over",
+                         }
+                     )

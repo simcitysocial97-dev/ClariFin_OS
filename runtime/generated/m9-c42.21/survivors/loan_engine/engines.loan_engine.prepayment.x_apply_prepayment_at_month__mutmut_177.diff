@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_177: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -129,7 +129,7 @@
+         original_total = sum(r.emi_paise for r in schedule)
+         tol = original_remaining_months * 10 + 1000
+         for _ in range(20):
+-            has_balloon = new_schedule[-1].emi_paise > new_schedule[0].emi_paise
++            has_balloon = new_schedule[-1].emi_paise > new_schedule[1].emi_paise
+             new_total = sum(r.emi_paise for r in new_schedule)
+             if not has_balloon and new_total <= original_total + tol:
+                 break

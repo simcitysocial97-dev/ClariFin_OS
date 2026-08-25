@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.amortization.x_generate_schedule__mutmut_35: survived
+--- src/engines/loan_engine/amortization.py
++++ src/engines/loan_engine/amortization.py
+@@ -57,7 +57,7 @@
+     else:
+         annuity_factor = Decimal(tenure_months)
+     ill_conditioned = annuity_factor / Decimal(2) > Decimal(principal_paise) / Decimal(
+-        100
++        101
+     )
+ 
+     schedule: list[AmortizationRow] = []

@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_5: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -40,7 +40,7 @@
+             - total_credit_advance_paise: Sum of credit advance amounts
+             - effective_liquidity_cost_annualized: Simple annualized fee estimate
+     """
+-    income = int(cash_summary.get("income_paise", 0) or 0)
++    income = int(cash_summary.get("income_paise", None) or 0)
+     expense = int(cash_summary.get("expense_paise", 0) or 0)
+ 
+     # Aggregate event impacts

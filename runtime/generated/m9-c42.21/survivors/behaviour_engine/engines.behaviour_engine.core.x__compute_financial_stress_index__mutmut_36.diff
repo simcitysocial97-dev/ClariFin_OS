@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_36: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -21,7 +21,7 @@
+         return {"score": 0.5, "balance_volatility": 0.0, "credit_dependency": 0.0}
+ 
+     # Daily net flow (convert amount_paise to rupees for analysis)
+-    daily_net: defaultdict[str, float] = defaultdict(float)
++    daily_net: defaultdict[str, float] = defaultdict(None)
+     for txn in transactions:
+         date_iso = txn.get("date_iso", "")
+         if date_iso:

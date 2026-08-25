@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_multiple_prepayments__mutmut_7: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -9,7 +9,7 @@
+     if not prepayments:
+         return schedule, []
+ 
+-    sorted_prepayments = sorted(prepayments, key=lambda x: x[0])
++    sorted_prepayments = sorted(prepayments, key=None)
+     current_schedule = schedule.copy()
+     results = []
+ 

@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.floating_rate.x_simulate_floating_rate_schedule__mutmut_41: survived
+--- src/engines/loan_engine/floating_rate.py
++++ src/engines/loan_engine/floating_rate.py
+@@ -38,7 +38,7 @@
+         month = get_change_month(change)
+         new_rate = get_new_rate(change)
+         change_mode = get_mode(change)
+-        if month < 1 or month > len(schedule):
++        if month <= 1 or month > len(schedule):
+             continue
+         schedule = apply_floating_rate_change(
+             schedule,

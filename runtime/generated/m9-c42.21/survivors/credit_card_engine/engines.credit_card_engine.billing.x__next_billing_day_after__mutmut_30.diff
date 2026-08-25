@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.billing.x__next_billing_day_after__mutmut_30: survived
+--- src/engines/credit_card_engine/billing.py
++++ src/engines/credit_card_engine/billing.py
+@@ -10,7 +10,7 @@
+         return candidate
+ 
+     # Otherwise, advance by one month using month-end safe arithmetic
+-    next_month_ref = _add_months(date(start_date.year, start_date.month, 1), 1)
++    next_month_ref = _add_months(date(start_date.year, start_date.month, 2), 1)
+     _, last_day_next = calendar.monthrange(next_month_ref.year, next_month_ref.month)
+     return date(
+         next_month_ref.year, next_month_ref.month, min(billing_day, last_day_next)

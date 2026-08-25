@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_impulsivity_score__mutmut_107: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -48,7 +48,7 @@
+         ) / len(weekday_txns)
+         weekend_ratio = weekend_avg / max(weekday_avg, 1)
+     else:
+-        weekend_ratio = 1.0
++        weekend_ratio = 2.0
+ 
+     # Category switching (discretionary categories)
+     discretionary_categories = [

@@ -1,0 +1,12 @@
+# status: survived
+# engines.reconciliation_engine.x__check_match__mutmut_167: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -90,6 +90,6 @@
+         "match_type": match_type,
+         "deterministic_key": deterministic_key,
+         "explanation": _generate_explanation(
+-            debit_txn, credit_txn, amount_paise, date_diff
++            debit_txn, credit_txn, amount_paise, None
+         ),
+     }

@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x_find_matches_for_transaction__mutmut_26: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -38,7 +38,7 @@
+ 
+     # Find potential matching transactions
+     # Must be opposite type with same amount
+-    if target_debit > 0:
++    if target_debit > 1:
+         amount_to_match = target_debit
+         match_condition = "credit = ?"
+     elif target_credit > 0:

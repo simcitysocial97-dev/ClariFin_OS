@@ -1,0 +1,12 @@
+# status: survived
+# engines.behaviour_engine.account.x_detect_balance_volatility__mutmut_11: survived
+--- src/engines/behaviour_engine/account.py
++++ src/engines/behaviour_engine/account.py
+@@ -27,6 +27,6 @@
+     cv = _coefficient_of_variation(monthly_balances_paise)
+ 
+     if cv is None:
+-        return Decimal("0")
++        return Decimal(None)
+ 
+     return cv

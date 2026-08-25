@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_212: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -89,7 +89,7 @@
+     # Largest expense
+     this_month_txns = [t for t in debit_txns if t.get("month_key") == this_month]
+     if this_month_txns:
+-        largest = max(this_month_txns, key=lambda t: t.get("amount_paise", 0) or 0)
++        largest = max(this_month_txns, key=lambda t: t.get("amount_paise", 0) and 0)
+         desc = (largest.get("description_display") or largest.get("description", ""))[
+             :30
+         ]

@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_71: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -26,7 +26,7 @@
+ 
+     for cat, monthly_data in cat_monthly.items():
+         if len(monthly_data) >= 2:
+-            this_month_cat = monthly_data.get(this_month, 0)
++            this_month_cat = monthly_data.get(this_month, 1)
+             other_months = [v for k, v in monthly_data.items() if k != this_month]
+             if other_months:
+                 avg_other = sum(other_months) / len(other_months)

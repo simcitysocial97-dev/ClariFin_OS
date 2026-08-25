@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_walk_lineage__mutmut_92: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -66,7 +66,7 @@
+             for e in account_events
+             if _is_liability_event(e)
+             and e.get("lifecycle_state") in ("open", "partially_settled")
+-            and e.get("id") != event_id
++            and e.get(None) != event_id
+             and int(e.get("id", 0)) < int(event_id)  # Advance must be earlier
+             and e.get("date_iso", "")
+             <= event_date_iso  # Advance date <= repayment date

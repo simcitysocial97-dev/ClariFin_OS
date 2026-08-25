@@ -1,0 +1,14 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_59: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -43,8 +43,7 @@
+                 reason="New subscriptions detected",
+                 metric=f"{len(current_subscriptions)} new subscriptions adding ₹{total_current // 100}",
+                 severity="MEDIUM",
+-                suggested_action="Monitor new subscription services for usage value and consider canceling unused services",
+-            )
++                )
+         return None
+ 
+     # Calculate growth percentage

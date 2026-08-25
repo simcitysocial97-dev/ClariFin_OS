@@ -1,0 +1,10 @@
+# status: no tests
+# engines.financial_events.lineage_walker.x__is_revocable_event__mutmut_26: no tests
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -6,4 +6,4 @@
+         "fund_transfer_out",
+         "fund_transfer_in",
+         "transfer",
+-    ) and lifecycle_state in ("open", "partially_settled")
++    ) and lifecycle_state in ("XXopenXX", "partially_settled")

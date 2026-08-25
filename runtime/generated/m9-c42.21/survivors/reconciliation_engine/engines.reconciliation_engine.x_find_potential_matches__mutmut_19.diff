@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x_find_potential_matches__mutmut_19: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -57,7 +57,7 @@
+     for i, txn_a in enumerate(transactions):
+         for txn_b in transactions[i + 1 :]:
+             # Check for match
+-            match = _check_match(txn_a, txn_b, max_date_window_days)
++            match = _check_match(txn_a, txn_b, )
+ 
+             if match:
+                 key = match["deterministic_key"]

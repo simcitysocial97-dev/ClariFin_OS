@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_101: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -41,7 +41,7 @@
+                                 "icon": "trending-up",
+                             }
+                         )
+-                    elif pct_change < -30:
++                    elif pct_change < +30:
+                         insights.append(
+                             {
+                                 "title": f"{cat} Savings",

@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.interest.x_compute_monthly_interest_simple__mutmut_5: survived
+--- src/engines/credit_card_engine/interest.py
++++ src/engines/credit_card_engine/interest.py
+@@ -20,7 +20,7 @@
+         Interest charge in paise (int).
+     """
+     if average_daily_balance_paise < 0:
+-        raise ValueError("average_daily_balance_paise must be non-negative")
++        raise ValueError("AVERAGE_DAILY_BALANCE_PAISE MUST BE NON-NEGATIVE")
+     if days_in_cycle <= 0:
+         raise ValueError("days_in_cycle must be positive")
+     if annual_rate_bps < 0:

@@ -1,0 +1,12 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_check_liquidity__mutmut_26: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -13,6 +13,6 @@
+             reason="Emergency fund required",
+             metric=f"Only {liquidity_months} months of expenses covered",
+             severity="HIGH" if liquidity_months < 1 else "MEDIUM",
+-            suggested_action="Build an emergency fund covering 3-6 months of essential expenses before taking on new debt",
++            suggested_action="BUILD AN EMERGENCY FUND COVERING 3-6 MONTHS OF ESSENTIAL EXPENSES BEFORE TAKING ON NEW DEBT",
+         )
+     return None

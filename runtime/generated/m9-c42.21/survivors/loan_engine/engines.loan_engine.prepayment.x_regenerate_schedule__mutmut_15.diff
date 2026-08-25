@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_regenerate_schedule__mutmut_15: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -30,7 +30,7 @@
+ 
+     if mode == "reduce_tenure":
+         if original_emi is None:
+-            raise ValueError("original_emi is required for reduce_tenure mode")
++            raise ValueError("XXoriginal_emi is required for reduce_tenure modeXX")
+         new_tenure = _compute_tenure_from_emi(
+             new_principal_paise, annual_rate_bps, original_emi
+         )

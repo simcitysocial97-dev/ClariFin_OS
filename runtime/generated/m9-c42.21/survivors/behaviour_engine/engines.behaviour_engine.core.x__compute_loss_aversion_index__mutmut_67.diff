@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_loss_aversion_index__mutmut_67: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -33,7 +33,7 @@
+     post_income_spends: list[float] = []
+ 
+     for credit in credits:
+-        credit_date = _parse_date(credit.get("date_iso", "") or credit.get("date", ""))
++        credit_date = _parse_date(credit.get(None, "") or credit.get("date", ""))
+         if not credit_date:
+             continue
+ 

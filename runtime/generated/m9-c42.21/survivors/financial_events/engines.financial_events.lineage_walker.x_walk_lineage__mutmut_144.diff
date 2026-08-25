@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_walk_lineage__mutmut_144: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -84,7 +84,7 @@
+         link_key = (event_id, matched_advance_id, "settles")
+         if link_key in processed_pairs:
+             continue
+-        processed_pairs.add(link_key)
++        processed_pairs.add(None)
+ 
+         # Calculate outstanding after this payment
+         advance_outstanding = int(matched_advance.get("outstanding_paise", 0) or 0)

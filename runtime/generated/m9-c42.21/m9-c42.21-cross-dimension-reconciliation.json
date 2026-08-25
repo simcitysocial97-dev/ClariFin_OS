@@ -1,0 +1,186 @@
+{
+  "title": "M9-C42.21 \u2014 Milestone M21.7 Cross-Dimension Reconciliation",
+  "generated_at": "2026-08-25T06:42:06.593419+00:00",
+  "run_id": "m9-c42.21",
+  "scope": "Correlate mutation evidence with coverage, capability mapping, test inventory, and verification profiles across 12 authorized + 2 deferred components.",
+  "mutation_vs_coverage": [
+    {
+      "engine": "behaviour_engine",
+      "mutation_score": 26.7,
+      "coverage_pct": 70.4,
+      "gap_type": "HIGH_COVERAGE_LOW_MUTATION",
+      "analysis": "70.4% line coverage but 39.3% no_tests mutants; indirect coverage dominates. Tests exercise code paths but lack behavioral assertions for mutation discrimination."
+    },
+    {
+      "engine": "cashflow_engine",
+      "mutation_score": 29.1,
+      "coverage_pct": 97.6,
+      "gap_type": "HIGH_COVERAGE_LOW_MUTATION",
+      "analysis": "97.6% coverage but only 4 property tests; property tests assert statistical invariants, not exact mutations \u2192 high survival is expected and reveals test-type limitation, not coverage gap."
+    },
+    {
+      "engine": "credit_card_engine",
+      "mutation_score": 75.6,
+      "coverage_pct": 93.1,
+      "gap_type": "HIGH_COVERAGE_BELOW_GATE",
+      "analysis": "93.1% coverage, 75.6% mutation; ~43 genuine gaps identified. Ceiling ~83% (per C42.19). 80% gate reachable with 26 kills from available genuine gaps."
+    },
+    {
+      "engine": "account_engine",
+      "mutation_score": 89.1,
+      "coverage_pct": 98.9,
+      "gap_type": "HIGH_COVERAGE_HIGH_MUTATION",
+      "analysis": "Strong alignment: high coverage + high mutation. 17 genuine gaps remain (boundary assertions)."
+    },
+    {
+      "engine": "loan_engine",
+      "mutation_score": 84.0,
+      "coverage_pct": 98.7,
+      "gap_type": "HIGH_COVERAGE_HIGH_MUTATION",
+      "analysis": "Strong alignment; minor non-determinism (\u00b10.2pp). 130 estimated genuine gaps in arithmetic logic."
+    },
+    {
+      "engine": "reconciliation_engine",
+      "mutation_score": 80.4,
+      "coverage_pct": 95.4,
+      "gap_type": "HIGH_COVERAGE_AT_GATE",
+      "analysis": "Passes 80% gate; 69 genuine gaps in matching logic \u2014 all Class A."
+    },
+    {
+      "engine": "balance_engine",
+      "mutation_score": 95.4,
+      "coverage_pct": 58.9,
+      "gap_type": "LOW_COVERAGE_HIGH_MUTATION",
+      "analysis": "Only 58.9% line coverage but 95.4% mutation! Dedicated unit file (balance_engine.py) provides strong behavioral tests despite narrow coverage surface. Coverage metric under-reports verification strength."
+    },
+    {
+      "engine": "ledger_audit_engine",
+      "mutation_score": 56.8,
+      "coverage_pct": 93.5,
+      "gap_type": "HIGH_COVERAGE_LOW_MUTATION",
+      "analysis": "93.5% coverage, 56.8% mutation; no dedicated unit tests (scope says 0). Tests likely from reconciliation/capability exercise code indirectly. Weak test-to-mutant binding."
+    },
+    {
+      "engine": "recommendation_engine",
+      "mutation_score": 57.8,
+      "coverage_pct": 95.9,
+      "gap_type": "HIGH_COVERAGE_LOW_MUTATION",
+      "analysis": "95.9% coverage, 57.8% mutation; 36 tests but many boundary mutations survive. Capability smoke tests + unit tests \u2014 unit tests need boundary strengthening."
+    },
+    {
+      "engine": "financial_events",
+      "mutation_score": 59.0,
+      "coverage_pct": 88.0,
+      "gap_type": "MODERATE_COVERAGE_MODERATE_MUTATION",
+      "analysis": "88% coverage, 59% mutation; 29 no_tests (4%) indicates discovery gap. Property + capability tests cover main paths but miss utilities."
+    },
+    {
+      "engine": "common_calculations",
+      "mutation_score": 56.4,
+      "coverage_pct": 99.4,
+      "gap_type": "HIGH_COVERAGE_LOW_MUTATION",
+      "analysis": "99.4% coverage, 56.4% mutation; single test file, 4 functions. Many operator mutations equivalent under financial precision; boundary gaps remain."
+    },
+    {
+      "engine": "core_domain_money",
+      "mutation_score": 82.4,
+      "coverage_pct": 100.0,
+      "gap_type": "FULL_COVERAGE_HIGH_MUTATION",
+      "analysis": "100% coverage, 82.4% mutation; 96 tests across unit/property/invariant. Strong verification, minor equivalent survivors."
+    }
+  ],
+  "deferred_components": [
+    {
+      "engine": "transaction_intelligence",
+      "coverage_pct": 24.3,
+      "mutation_ready": false,
+      "analysis": "24.3% coverage, 5 tests (2 capability + 3 property), NO unit suite. ~76% code untested. Mutation would yield ~76% no_tests. Test-strengthening required before mutation."
+    },
+    {
+      "engine": "financial_intelligence",
+      "coverage_pct": 35.2,
+      "mutation_ready": false,
+      "analysis": "35.2% coverage, 807 stmts, 9 tests, only indirect exercise. Mutation-readiness requires dedicated test suite + property tests."
+    }
+  ],
+  "capability_mapping_gaps": [
+    {
+      "capability": "behaviour_engine",
+      "mapped_components": [
+        "behaviour_engine"
+      ],
+      "verification_status": "WEAK",
+      "mutation_score": 26.7,
+      "coverage": 70.4,
+      "gap": "39% no_tests; capability tests (pattern_analysis, household_cashflow) are indirect; need direct unit/property bindings."
+    },
+    {
+      "capability": "cashflow_engine",
+      "mapped_components": [
+        "cashflow_engine"
+      ],
+      "verification_status": "WEAK",
+      "mutation_score": 29.1,
+      "coverage": 97.6,
+      "gap": "Only property tests (4); no unit/capability tests directly targeting cashflow."
+    },
+    {
+      "capability": "ledger_audit",
+      "mapped_components": [
+        "ledger_audit_engine"
+      ],
+      "verification_status": "WEAK",
+      "mutation_score": 56.8,
+      "coverage": 93.5,
+      "gap": "No dedicated unit tests; relies on reconciliation/capability indirect exercise."
+    },
+    {
+      "capability": "recommendation",
+      "mapped_components": [
+        "recommendation_engine"
+      ],
+      "verification_status": "MODERATE",
+      "mutation_score": 57.8,
+      "coverage": 95.9,
+      "gap": "Unit + capability tests exist but boundary coverage weak; 40 estimated genuine gaps."
+    },
+    {
+      "capability": "financial_events",
+      "mapped_components": [
+        "financial_events"
+      ],
+      "verification_status": "MODERATE",
+      "mutation_score": 59.0,
+      "coverage": 88.0,
+      "gap": "Capability + property tests; 29 no_tests utilities untested."
+    },
+    {
+      "capability": "common_calculations",
+      "mapped_components": [
+        "common_calculations"
+      ],
+      "verification_status": "MODERATE",
+      "mutation_score": 56.4,
+      "coverage": 99.4,
+      "gap": "Single unit test file; 164 survivors, many equivalent."
+    }
+  ],
+  "verification_profile_alignment": {
+    "quick": "covers unit tests; mutation evidence not integrated",
+    "unit": "covers unit tests; mutation not integrated",
+    "property": "covers property tests; cashflow/behaviour property-only engines weak",
+    "mutation": "THIS CAMPAIGN \u2014 authoritative evidence produced; profiles not yet consuming it",
+    "contract": "API contract tests exist; mutation not integrated",
+    "golden": "golden datasets exist; mutation not integrated",
+    "e2e": "Playwright tests exist; mutation not integrated",
+    "full": "all layers; mutation gate not enforced in CI",
+    "gap": "Mutation profile exists as CLI but not wired into profile semantics (prerequisites, gates, artifact expectations). Next phase must define mutation profile integration."
+  },
+  "key_patterns": [
+    "HIGH COVERAGE + LOW MUTATION = tests exercise lines but lack behavioral discrimination (cashflow, ledger_audit, recommendation, common_calculations, financial_events, behaviour).",
+    "LOW COVERAGE + HIGH MUTATION = focused test surface with strong assertions beats broad coverage (balance_engine: 58.9% cov, 95.4% mut).",
+    "HIGH COVERAGE + HIGH MUTATION = strong verification (account, loan, reconciliation, core_domain_money).",
+    "HIGH COVERAGE + BELOW GATE = near-threshold (credit_card 75.6%); targeted genuine-gap kills can close.",
+    "NO_TESTS MUTANTS = discovery gap, not coverage gap (behaviour 39%, financial_events 4%). Coverage sees lines; mutation sees test-to-mutant binding."
+  ]
+}

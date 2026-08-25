@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_108: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -93,7 +93,7 @@
+ 
+     # Month classification
+     has_credit_events = any(
+-        e.get("event_type")
++        e.get("XXevent_typeXX")
+         in ("cash_advance", "credit_card_cash_advance", "liability_increase")
+         for e in financial_events
+     )

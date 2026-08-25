@@ -1,0 +1,14 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_16: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -14,8 +14,7 @@
+ 
+     # Penalty with ROUND_HALF_EVEN (capped at min(remaining_interest, 3% of outstanding balance))
+     outstanding_balance = (
+-        schedule[prepayment_month - 1].balance_paise
+-        + schedule[prepayment_month - 1].principal_paise
++        schedule[prepayment_month - 1].balance_paise - schedule[prepayment_month - 1].principal_paise
+     )
+     remaining_interest = sum(
+         row.interest_paise for row in schedule[prepayment_month - 1 :]

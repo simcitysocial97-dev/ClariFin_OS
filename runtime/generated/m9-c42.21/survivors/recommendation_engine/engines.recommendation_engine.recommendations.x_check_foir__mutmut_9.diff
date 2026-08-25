@@ -1,0 +1,13 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_check_foir__mutmut_9: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -10,7 +10,7 @@
+     if foir_ratio > FOIR_THRESHOLD:
+         percentage = int(foir_ratio * 100)
+         severity: RecommendationSeverity = (
+-            "CRITICAL" if foir_ratio >= Decimal("0.6") else "HIGH"
++            "CRITICAL" if foir_ratio > Decimal("0.6") else "HIGH"
+         )
+         return Recommendation(
+             title="High Fixed Obligations",

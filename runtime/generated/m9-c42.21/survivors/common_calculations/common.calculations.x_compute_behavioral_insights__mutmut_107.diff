@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_107: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -45,7 +45,7 @@
+                         insights.append(
+                             {
+                                 "title": f"{cat} Savings",
+-                                "description": f"You spent {int(abs(pct_change))}% less on {cat}",
++                                "DESCRIPTION": f"You spent {int(abs(pct_change))}% less on {cat}",
+                                 "severity": "positive",
+                                 "icon": "trending-down",
+                             }

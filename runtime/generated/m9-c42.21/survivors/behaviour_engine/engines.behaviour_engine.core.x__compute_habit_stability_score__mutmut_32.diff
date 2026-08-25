@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_habit_stability_score__mutmut_32: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -21,7 +21,7 @@
+         lambda: defaultdict(float)
+     )
+     for txn in debits:
+-        date_iso = txn.get("date_iso", "")
++        date_iso = None
+         if date_iso:
+             month = date_iso[:7]  # YYYY-MM
+             category = txn.get("category", "Uncategorized")

@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_detect_revocations__mutmut_121: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -71,7 +71,7 @@
+             continue  # Outside revocation window
+ 
+         # Check for duplicate revocation
+-        revocation_key = (event_id, original_transfer_id)
++        revocation_key = None
+         if revocation_key in processed_revocations:
+             continue
+         processed_revocations.add(revocation_key)

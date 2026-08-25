@@ -1,0 +1,12 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_check_debt_dependency__mutmut_24: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -14,6 +14,6 @@
+             reason="Your lifestyle is partly funded by borrowed money",
+             metric=f"{percentage}% of expenses are credit-funded",
+             severity="HIGH",
+-            suggested_action="Create a debt repayment plan and reduce credit-funded spending to build financial stability",
++            suggested_action="XXCreate a debt repayment plan and reduce credit-funded spending to build financial stabilityXX",
+         )
+     return None

@@ -1,0 +1,13 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_89: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -57,7 +57,7 @@
+             return Recommendation(
+                 title="Review Subscriptions",
+                 reason="Subscription spending is increasing rapidly",
+-                metric=f"Subscription spending increased by {growth_pct}%",
++                metric=None,
+                 severity="MEDIUM",
+                 suggested_action="Review and consolidate subscription services to control recurring expenses",
+             )

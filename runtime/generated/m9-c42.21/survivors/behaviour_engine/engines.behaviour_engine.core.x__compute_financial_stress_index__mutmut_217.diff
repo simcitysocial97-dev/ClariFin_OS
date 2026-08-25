@@ -1,0 +1,14 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_217: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -85,8 +85,7 @@
+     stress_index = (
+         volatility_score * 0.30
+         + dependency_score * 0.30
+-        + eom_score * 0.20
+-        + (1 - buffer_score) * 0.20
++        + eom_score * 0.20 - (1 - buffer_score) * 0.20
+     )
+ 
+     return {

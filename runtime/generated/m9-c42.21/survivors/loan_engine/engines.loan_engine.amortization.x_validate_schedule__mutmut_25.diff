@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.amortization.x_validate_schedule__mutmut_25: survived
+--- src/engines/loan_engine/amortization.py
++++ src/engines/loan_engine/amortization.py
+@@ -66,7 +66,7 @@
+     # 5. Cumulative interest is monotonic non-decreasing
+     prev_cumulative = -1
+     for row in schedule:
+-        if row.cumulative_interest_paise < prev_cumulative:
++        if row.cumulative_interest_paise <= prev_cumulative:
+             errors.append(
+                 f"Cumulative interest decreased at month {row.month_number}: "
+                 f"{row.cumulative_interest_paise} < {prev_cumulative}"

@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_37: survived
+--- src/engines/credit_card_engine/metrics.py
++++ src/engines/credit_card_engine/metrics.py
+@@ -40,7 +40,7 @@
+             Decimal(outstanding_paise) * Decimal(10000) / Decimal(credit_limit_paise)
+         )
+         utilization_bps = int(
+-            util_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
++            util_decimal.quantize(Decimal(1), rounding=None)
+         )
+         utilization_bps = min(utilization_bps, 10000)
+     else:

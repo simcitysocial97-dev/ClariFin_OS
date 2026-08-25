@@ -1,0 +1,12 @@
+# status: survived
+# core.domain.money.xǁMoneyǁ__format____mutmut_7: survived
+--- src/core/domain/money.py
++++ src/core/domain/money.py
+@@ -2,6 +2,6 @@
+     """Format support for f-strings."""
+     if format_spec == "rupees":
+         return f"₹{self._paise / 100.0:,.2f}"
+-    elif format_spec == "paise":
++    elif format_spec == "XXpaiseXX":
+         return f"{self._paise} paise"
+     return str(self)

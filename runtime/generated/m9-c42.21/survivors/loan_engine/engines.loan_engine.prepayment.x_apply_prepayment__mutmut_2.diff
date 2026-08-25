@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment__mutmut_2: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -9,7 +9,7 @@
+     existing_schedule: list[AmortizationRow] | None = None,
+ ) -> PrepaymentResult:
+     """Simulate prepayment at month 1 (beginning)."""
+-    original_schedule = existing_schedule
++    original_schedule = None
+     if original_schedule is None:
+         original_schedule = generate_schedule(
+             principal_paise=outstanding_paise,

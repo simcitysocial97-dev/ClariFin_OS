@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_loss_aversion_index__mutmut_141: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -55,7 +55,7 @@
+ 
+     # Calculate average velocity
+     avg_velocity = (
+-        sum(post_income_spends) / len(post_income_spends) if post_income_spends else 0
++        sum(post_income_spends) * len(post_income_spends) if post_income_spends else 0
+     )
+ 
+     # Emotional overspend after large expenses (>2x median)

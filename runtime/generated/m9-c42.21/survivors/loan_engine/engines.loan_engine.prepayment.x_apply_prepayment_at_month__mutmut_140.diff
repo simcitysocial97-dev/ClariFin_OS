@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_140: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -99,7 +99,7 @@
+     # We need to pass the tail starting from prepayment_month
+     tail_start_index = prepayment_month - 1
+     tail = regenerate_schedule(
+-        schedule[tail_start_index:],
++        None,
+         new_balance,
+         annual_rate_bps,
+         mode_literal,

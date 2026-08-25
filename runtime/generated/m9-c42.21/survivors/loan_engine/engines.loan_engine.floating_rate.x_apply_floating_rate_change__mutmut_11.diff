@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.floating_rate.x_apply_floating_rate_change__mutmut_11: survived
+--- src/engines/loan_engine/floating_rate.py
++++ src/engines/loan_engine/floating_rate.py
+@@ -8,7 +8,7 @@
+     if change_month < 1 or change_month > len(schedule):
+         raise ValueError(f"Change month {change_month} out of range")
+     if new_rate_bps < 0:
+-        raise ValueError("Rate cannot be negative")
++        raise ValueError("XXRate cannot be negativeXX")
+ 
+     change_row = schedule[change_month - 1]
+     # Balance before change month's payment

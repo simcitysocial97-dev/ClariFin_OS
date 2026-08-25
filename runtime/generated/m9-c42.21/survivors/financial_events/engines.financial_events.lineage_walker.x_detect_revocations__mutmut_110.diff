@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_detect_revocations__mutmut_110: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -65,7 +65,7 @@
+ 
+         # Check if this revocation is within the allowed window
+         days_diff = _date_difference_days(
+-            original_transfer.get("date_iso", ""), date_iso
++            original_transfer.get("date_iso", None), date_iso
+         )
+         if days_diff < 0 or days_diff > lookback_days:
+             continue  # Outside revocation window

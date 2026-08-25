@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_detect_revocations__mutmut_84: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -56,7 +56,7 @@
+ 
+         # Skip if this transfer was already auto-revoked
+         if transfer_id in auto_revoked_transfers:
+-            continue
++            break
+ 
+         # Find the original transfer event (earliest date)
+         transfer_events.sort(key=lambda e: e.get("date_iso", ""))

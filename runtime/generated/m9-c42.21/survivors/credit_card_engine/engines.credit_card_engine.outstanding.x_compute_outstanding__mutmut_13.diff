@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.outstanding.x_compute_outstanding__mutmut_13: survived
+--- src/engines/credit_card_engine/outstanding.py
++++ src/engines/credit_card_engine/outstanding.py
+@@ -24,7 +24,7 @@
+     if total_emi_paise < 0:
+         raise ValueError("total_emi_paise must be non-negative")
+     if total_fees_paise < 0:
+-        raise ValueError("total_fees_paise must be non-negative")
++        raise ValueError(None)
+     if total_payments_paise < 0:
+         raise ValueError("total_payments_paise must be non-negative")
+ 

@@ -1,0 +1,13 @@
+# status: survived
+# engines.ledger_audit_engine.x_verify_hash_signatures__mutmut_37: survived
+--- src/engines/ledger_audit_engine.py
++++ src/engines/ledger_audit_engine.py
+@@ -40,7 +40,7 @@
+                     "transaction_id": row["id"],
+                     "stored_hash": stored_hash,
+                     "computed_hash": computed_hash,
+-                    "message": f"Transaction {row['id']} hash mismatch - possible tampering",
++                    "message": f"Transaction {row['ID']} hash mismatch - possible tampering",
+                 }
+             )
+ 

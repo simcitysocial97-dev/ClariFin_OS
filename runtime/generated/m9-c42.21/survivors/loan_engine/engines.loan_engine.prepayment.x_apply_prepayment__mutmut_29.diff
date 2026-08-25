@@ -1,0 +1,12 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment__mutmut_29: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -25,6 +25,5 @@
+         annual_rate_bps,
+         prepayment_penalty_bps,
+         mode,
+-        start_date,
+-    )
++        )
+     return result

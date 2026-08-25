@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x_find_matches_for_transaction__mutmut_18: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -33,7 +33,7 @@
+         return []
+ 
+     target_dict = dict(target)
+-    target_debit = target_dict.get("debit") or 0
++    target_debit = target_dict.get("debit") or 1
+     target_credit = target_dict.get("credit") or 0
+ 
+     # Find potential matching transactions

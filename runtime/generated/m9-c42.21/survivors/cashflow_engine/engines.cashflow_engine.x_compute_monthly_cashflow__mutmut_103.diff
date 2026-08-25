@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_103: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -89,7 +89,7 @@
+     liability_adjusted = true_savings - total_liability_increase
+ 
+     # Net worth impact = assets - liabilities
+-    net_worth_impact = total_asset_change - total_liability_increase
++    net_worth_impact = None
+ 
+     # Month classification
+     has_credit_events = any(

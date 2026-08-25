@@ -1,0 +1,12 @@
+# status: survived
+# core.domain.money.xǁMoneyǁmultiply__mutmut_3: survived
+--- src/core/domain/money.py
++++ src/core/domain/money.py
+@@ -10,6 +10,6 @@
+         """
+     if not isinstance(factor, int):
+         raise TypeError(
+-            f"Money can only be multiplied by int, got {type(factor).__name__}"
++            f"Money can only be multiplied by int, got {type(None).__name__}"
+         )
+     return Money(self._paise * factor)

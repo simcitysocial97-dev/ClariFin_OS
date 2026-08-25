@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.emi.x_compute_monthly_interest__mutmut_1: survived
+--- src/engines/credit_card_engine/emi.py
++++ src/engines/credit_card_engine/emi.py
+@@ -3,7 +3,7 @@
+     annual_rate_bps: int,
+ ) -> int:
+     """Compute standard monthly interest component in paise."""
+-    if outstanding_paise <= 0 or annual_rate_bps <= 0:
++    if outstanding_paise <= 0 and annual_rate_bps <= 0:
+         return 0
+ 
+     monthly_rate = Decimal(annual_rate_bps) / Decimal(10000) / Decimal(12)

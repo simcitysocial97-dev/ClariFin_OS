@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_43: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -20,7 +20,7 @@
+     cat_monthly: dict[str, Any] = defaultdict(lambda: defaultdict(float))
+     for t in debit_txns:
+         mk = t.get("month_key", "")
+-        cat = t.get("category", "Uncategorized")
++        cat = t.get("category", None)
+         if mk:
+             cat_monthly[cat][mk] += (t.get("amount_paise", 0) or 0) / 100.0
+ 

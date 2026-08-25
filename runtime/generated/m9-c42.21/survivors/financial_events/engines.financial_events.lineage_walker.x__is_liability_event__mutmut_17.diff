@@ -1,0 +1,11 @@
+# status: survived
+# engines.financial_events.lineage_walker.x__is_liability_event__mutmut_17: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -5,5 +5,5 @@
+         "liability_increase",
+         "cash_advance",
+         "credit_card_cash_advance",
+-        "emi_payment",
++        "EMI_PAYMENT",
+     )

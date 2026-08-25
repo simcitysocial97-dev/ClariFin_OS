@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_197: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -78,7 +78,7 @@
+     buffer_score = _normalize_score(buffer_days, 0, 30)
+ 
+     # Composite stress index (higher = more stress)
+-    volatility_score = _normalize_score(balance_cv, 0, 2)
++    volatility_score = _normalize_score(balance_cv, 0, 3)
+     dependency_score = _normalize_score(credit_dependency, 0, 2)
+     eom_score = _normalize_score(eom_ratio, 0, 0.5)
+ 

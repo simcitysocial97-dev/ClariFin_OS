@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x__check_match__mutmut_70: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -47,7 +47,7 @@
+     date_debit = debit_txn.get("date_iso") or ""
+     date_credit = credit_txn.get("date_iso") or ""
+ 
+-    if not date_debit or not date_credit:
++    if not date_debit and not date_credit:
+         return None
+ 
+     date_diff = _date_difference_days(date_debit, date_credit)

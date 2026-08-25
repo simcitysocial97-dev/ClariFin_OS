@@ -1,0 +1,10 @@
+# status: survived
+# core.domain.money.xǁMoneyǁ__gt____mutmut_2: survived
+--- src/core/domain/money.py
++++ src/core/domain/money.py
+@@ -2,4 +2,4 @@
+     """Support > operator."""
+     if not isinstance(other, Money):
+         return NotImplemented
+-    return self._paise > other._paise
++    return self._paise >= other._paise

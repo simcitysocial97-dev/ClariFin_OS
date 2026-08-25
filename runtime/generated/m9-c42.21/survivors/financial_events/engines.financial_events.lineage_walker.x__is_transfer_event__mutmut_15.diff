@@ -1,0 +1,10 @@
+# status: survived
+# engines.financial_events.lineage_walker.x__is_transfer_event__mutmut_15: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -1,4 +1,4 @@
+ def _is_transfer_event(event: dict[str, Any]) -> bool:
+     """Check if event type represents a fund transfer."""
+     event_type = event.get("event_type", "")
+-    return event_type in ("fund_transfer_out", "fund_transfer_in", "transfer")
++    return event_type in ("fund_transfer_out", "fund_transfer_in", "TRANSFER")

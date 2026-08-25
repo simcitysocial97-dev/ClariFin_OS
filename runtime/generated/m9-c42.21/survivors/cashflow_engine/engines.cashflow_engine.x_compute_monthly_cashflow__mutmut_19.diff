@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_19: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -41,7 +41,7 @@
+             - effective_liquidity_cost_annualized: Simple annualized fee estimate
+     """
+     income = int(cash_summary.get("income_paise", 0) or 0)
+-    expense = int(cash_summary.get("expense_paise", 0) or 0)
++    expense = int(cash_summary.get("XXexpense_paiseXX", 0) or 0)
+ 
+     # Aggregate event impacts
+     total_fees = 0

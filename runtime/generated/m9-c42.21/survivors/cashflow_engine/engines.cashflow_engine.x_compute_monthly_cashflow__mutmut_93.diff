@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_93: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -74,7 +74,7 @@
+             total_fees += max(0, fee_estimate)
+ 
+         # Track asset changes
+-        total_asset_change += asset_change
++        total_asset_change = asset_change
+ 
+     # Cash surplus (cash basis): income - expenses + credit advances received
+     # Credit advances inflate available cash but create liabilities

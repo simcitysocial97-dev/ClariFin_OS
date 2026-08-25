@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_124: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -54,7 +54,7 @@
+     # Spending trend
+     monthly_totals: dict[str, Any] = defaultdict(float)
+     for t in debit_txns:
+-        mk = t.get("month_key", "")
++        mk = t.get("month_key", )
+         if mk:
+             monthly_totals[mk] += (t.get("amount_paise", 0) or 0) / 100.0
+ 

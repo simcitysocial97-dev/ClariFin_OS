@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_walk_lineage__mutmut_75: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -60,7 +60,7 @@
+             continue
+ 
+         # Find open advances on this account (liability account)
+-        account_events = events_by_account.get(account_id, [])
++        account_events = events_by_account.get(account_id, None)
+         open_advances = [
+             e
+             for e in account_events

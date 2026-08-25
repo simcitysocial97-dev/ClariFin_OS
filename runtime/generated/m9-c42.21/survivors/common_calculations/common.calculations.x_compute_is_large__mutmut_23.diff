@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_is_large__mutmut_23: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -7,7 +7,7 @@
+     avg_debit = sum((t.get("amount_paise", 0) or 0) for t in debit_txns) / len(
+         debit_txns
+     )
+-    threshold = avg_debit * 250000  # 2.5x in paise
++    threshold = avg_debit * 250001  # 2.5x in paise
+ 
+     for t in transactions:
+         t["is_large"] = bool(

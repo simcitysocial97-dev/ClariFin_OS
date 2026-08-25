@@ -1,0 +1,13 @@
+# status: survived
+# engines.ledger_audit_engine.x_validate_ledger_integrity__mutmut_55: survived
+--- src/engines/ledger_audit_engine.py
++++ src/engines/ledger_audit_engine.py
+@@ -73,7 +73,7 @@
+     for row in cur.fetchall():
+         violations.append(
+             {
+-                "type": "DUAL_ENTRY",
++                "type": "XXDUAL_ENTRYXX",
+                 "transaction_id": row["id"],
+                 "message": f"Transaction {row['id']} has both debit ({row['debit']}) and credit ({row['credit']})",
+             }

@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_63: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -32,7 +32,7 @@
+     capped_penalty = min(
+         Decimal(remaining_interest), Decimal(max_penalty_paise), raw_penalty
+     )
+-    penalty = int(capped_penalty.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
++    penalty = int(capped_penalty.quantize(Decimal(2), rounding=ROUND_HALF_EVEN))
+ 
+     effective_prepayment = prepayment_paise - penalty
+ 

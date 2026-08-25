@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_habit_stability_score__mutmut_151: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -69,7 +69,7 @@
+     for txn in debits:
+         date_iso = txn.get("date_iso", "")
+         if date_iso:
+-            daily_counts[date_iso] += 1
++            daily_counts[date_iso] += 2
+ 
+     if daily_counts:
+         counts = [float(v) for v in daily_counts.values()]

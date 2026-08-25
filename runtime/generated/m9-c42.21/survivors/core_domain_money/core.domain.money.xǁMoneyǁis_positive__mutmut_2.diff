@@ -1,0 +1,9 @@
+# status: survived
+# core.domain.money.xǁMoneyǁis_positive__mutmut_2: survived
+--- src/core/domain/money.py
++++ src/core/domain/money.py
+@@ -1,3 +1,3 @@
+ def is_positive(self) -> bool:
+     """Check if amount is positive."""
+-    return self._paise > 0
++    return self._paise > 1

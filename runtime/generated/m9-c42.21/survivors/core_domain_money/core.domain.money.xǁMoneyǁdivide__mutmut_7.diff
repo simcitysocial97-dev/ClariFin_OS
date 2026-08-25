@@ -1,0 +1,11 @@
+# status: survived
+# core.domain.money.xǁMoneyǁdivide__mutmut_7: survived
+--- src/core/domain/money.py
++++ src/core/domain/money.py
+@@ -16,5 +16,5 @@
+             f"Money can only be divided by int, got {type(divisor).__name__}"
+         )
+     if divisor == 0:
+-        raise ZeroDivisionError("Cannot divide Money by zero")
++        raise ZeroDivisionError("XXCannot divide Money by zeroXX")
+     return Money(round(self._paise / divisor))

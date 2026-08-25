@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_85: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -70,7 +70,7 @@
+         ):
+             # Fee = amount_transacted - asset_received
+             # For CRED: amount (debit) > asset_change (credit received)
+-            fee_estimate = event_amount - asset_change
++            fee_estimate = event_amount + asset_change
+             total_fees += max(0, fee_estimate)
+ 
+         # Track asset changes

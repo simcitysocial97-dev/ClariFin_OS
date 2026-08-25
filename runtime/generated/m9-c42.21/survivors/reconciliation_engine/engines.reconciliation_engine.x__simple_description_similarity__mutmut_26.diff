@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x__simple_description_similarity__mutmut_26: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -14,7 +14,7 @@
+     # Common transfer-related keywords
+     transfer_keywords = ["transfer", "neft", "imps", "rtgs", "upi", "paytm", "gpay"]
+ 
+-    has_keyword_a = any(kw in desc_a_lower for kw in transfer_keywords)
++    has_keyword_a = any(kw not in desc_a_lower for kw in transfer_keywords)
+     has_keyword_b = any(kw in desc_b_lower for kw in transfer_keywords)
+ 
+     if has_keyword_a and has_keyword_b:

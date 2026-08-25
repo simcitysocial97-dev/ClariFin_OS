@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.billing.x__next_billing_day_after__mutmut_18: survived
+--- src/engines/credit_card_engine/billing.py
++++ src/engines/credit_card_engine/billing.py
+@@ -6,7 +6,7 @@
+     candidate = date(start_date.year, start_date.month, target_day)
+ 
+     # If this candidate is already strictly after start_date, it's our next day
+-    if candidate > start_date:
++    if candidate >= start_date:
+         return candidate
+ 
+     # Otherwise, advance by one month using month-end safe arithmetic

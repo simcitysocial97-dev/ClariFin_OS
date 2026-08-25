@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.account.x_detect_low_balance_risk__mutmut_2: survived
+--- src/engines/behaviour_engine/account.py
++++ src/engines/behaviour_engine/account.py
+@@ -19,7 +19,7 @@
+         0 = no risk (balance >= essential expenses)
+         1 = highest risk (balance = 0)
+     """
+-    if essential_monthly_expenses_paise == 0:
++    if essential_monthly_expenses_paise == 1:
+         # No essential expenses means no risk
+         return Decimal("0")
+ 

@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_135: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -56,7 +56,7 @@
+     for t in debit_txns:
+         mk = t.get("month_key", "")
+         if mk:
+-            monthly_totals[mk] += (t.get("amount_paise", 0) or 0) / 100.0
++            monthly_totals[mk] += (t.get("amount_paise", ) or 0) / 100.0
+ 
+     if len(monthly_totals) >= 2:
+         this_month_total = monthly_totals.get(this_month, 0)

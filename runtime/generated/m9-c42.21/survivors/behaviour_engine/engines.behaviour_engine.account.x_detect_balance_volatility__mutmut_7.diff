@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.account.x_detect_balance_volatility__mutmut_7: survived
+--- src/engines/behaviour_engine/account.py
++++ src/engines/behaviour_engine/account.py
+@@ -21,7 +21,7 @@
+         return Decimal("0")
+ 
+     if not monthly_balances_paise:
+-        return Decimal("0")
++        return Decimal("XX0XX")
+ 
+     # Use the shared utility function
+     cv = _coefficient_of_variation(monthly_balances_paise)

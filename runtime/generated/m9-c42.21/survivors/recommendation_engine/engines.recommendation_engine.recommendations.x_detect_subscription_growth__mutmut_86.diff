@@ -1,0 +1,13 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_86: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -53,7 +53,7 @@
+             str(total_previous)
+         )
+         if growth > SUBSCRIPTION_GROWTH_THRESHOLD:
+-            growth_pct = int(growth * 100)
++            growth_pct = int(growth * 101)
+             return Recommendation(
+                 title="Review Subscriptions",
+                 reason="Subscription spending is increasing rapidly",

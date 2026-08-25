@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_186: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -79,7 +79,7 @@
+                 elif pct_change_total < -15:
+                     insights.append(
+                         {
+-                            "title": "Spending Down",
++                            "title": "XXSpending DownXX",
+                             "description": f"Spending is down {int(abs(pct_change_total))}%",
+                             "severity": "positive",
+                             "icon": "check-circle",

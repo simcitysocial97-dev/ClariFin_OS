@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_walk_lineage__mutmut_222: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -121,7 +121,7 @@
+     for update in revocation_proposal.lifecycle_updates:
+         event_id = update.get("event_id", 0)
+         lifecycle_updates_by_event[event_id] = _merge_lifecycle_update(
+-            lifecycle_updates_by_event.get(event_id), update
++            None, update
+         )
+ 
+     lifecycle_updates = list(lifecycle_updates_by_event.values())

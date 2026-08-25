@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.amortization.x_generate_schedule__mutmut_68: survived
+--- src/engines/loan_engine/amortization.py
++++ src/engines/loan_engine/amortization.py
+@@ -72,7 +72,7 @@
+ 
+         interest_exact: Decimal = balance * monthly_rate
+         interest_rounded = int(
+-            interest_exact.quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
++            interest_exact.quantize(Decimal(1), rounding=None)
+         )
+ 
+         if month == tenure_months:

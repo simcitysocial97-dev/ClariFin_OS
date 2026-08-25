@@ -1,0 +1,10 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_263: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -103,4 +103,4 @@
+             }
+         )
+ 
+-    return insights[:6]
++    return insights[:7]

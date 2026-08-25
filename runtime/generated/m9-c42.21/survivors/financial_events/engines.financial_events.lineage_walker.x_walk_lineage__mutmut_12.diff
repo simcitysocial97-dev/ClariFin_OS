@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_walk_lineage__mutmut_12: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -32,7 +32,7 @@
+     # Group events by account_id for efficient lookup
+     events_by_account: dict[str, list[dict[str, Any]]] = {}
+     for event in events:
+-        acc_id = event.get("account_id", "")
++        acc_id = event.get("account_id", "XXXX")
+         if acc_id:
+             if acc_id not in events_by_account:
+                 events_by_account[acc_id] = []

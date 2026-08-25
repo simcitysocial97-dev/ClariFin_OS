@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_loss_aversion_index__mutmut_148: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -60,7 +60,7 @@
+ 
+     # Emotional overspend after large expenses (>2x median)
+     large_expenses = [
+-        t for t in debits if (t.get("amount_paise", 0) or 0) / 100.0 > 2 * median_debit
++        t for t in debits if (t.get("amount_paise", None) or 0) / 100.0 > 2 * median_debit
+     ]
+ 
+     # Recovery time calculation (simplified)

@@ -1,0 +1,213 @@
+{
+  "title": "M9-C42.21 \u2014 Milestone M21.5 Mutation Certification Record",
+  "generated_at": "2026-08-25T06:38:03.909800+00:00",
+  "run_id": "m9-c42.21",
+  "repository_sha": "3a37fab34dd71b2fe3aebecf41630815f92e7ad0",
+  "environment": {
+    "python": "3.12.3 (.venv)",
+    "pytest": "9.1.1",
+    "mutmut": "3.7.0 (pinned)",
+    "coverage": "7.15.2"
+  },
+  "configuration": {
+    "source_paths": "rendered per-engine from ENGINE_SELECTION (single source of truth)",
+    "test_selection": "explicit pytest paths; no silent full-suite fallback",
+    "parallelism": "--max-children 4",
+    "max_runtime_per_engine": "1800\u20137200s per campaign plan",
+    "evidence_ordering": "R2 architectural fix (evidence collected inside try before finally)",
+    "safety": "dirty-worktree check, signal+atexit restore, source-hash verification"
+  },
+  "scope": {
+    "authorized_components": 12,
+    "deferred_components": [
+      "transaction_intelligence",
+      "financial_intelligence"
+    ],
+    "deferred_status": "DEFERRED \u2014 TEST-STRENGTHENING GATE",
+    "population_identity": "11,730 mutants (actual, authoritative; C42.20 estimate was ~5,354)"
+  },
+  "component_results": [
+    {
+      "engine": "core_domain_money",
+      "killed": 84,
+      "survived": 18,
+      "timeout": 0,
+      "no_tests": 0,
+      "not_checked": 0,
+      "suspicious": 0,
+      "generated": 102,
+      "score": 82.4,
+      "pilot": false
+    },
+    {
+      "engine": "cashflow_engine",
+      "killed": 50,
+      "survived": 122,
+      "timeout": 0,
+      "no_tests": 0,
+      "not_checked": 0,
+      "suspicious": 0,
+      "generated": 172,
+      "score": 29.1,
+      "pilot": false
+    },
+    {
+      "engine": "ledger_audit_engine",
+      "killed": 108,
+      "survived": 82,
+      "timeout": 0,
+      "no_tests": 0,
+      "not_checked": 0,
+      "suspicious": 0,
+      "generated": 190,
+      "score": 56.8,
+      "pilot": false
+    },
+    {
+      "engine": "account_engine",
+      "killed": 163,
+      "survived": 20,
+      "timeout": 0,
+      "no_tests": 0,
+      "not_checked": 0,
+      "suspicious": 0,
+      "generated": 183,
+      "score": 89.1,
+      "pilot": true
+    },
+    {
+      "engine": "recommendation_engine",
+      "killed": 163,
+      "survived": 119,
+      "timeout": 0,
+      "no_tests": 0,
+      "not_checked": 0,
+      "suspicious": 0,
+      "generated": 282,
+      "score": 57.8,
+      "pilot": false
+    },
+    {
+      "engine": "balance_engine",
+      "killed": 272,
+      "survived": 13,
+      "timeout": 0,
+      "no_tests": 0,
+      "not_checked": 0,
+      "suspicious": 0,
+      "generated": 285,
+      "score": 95.4,
+      "pilot": false
+    },
+    {
+      "engine": "reconciliation_engine",
+      "killed": 296,
+      "survived": 72,
+      "timeout": 0,
+      "no_tests": 0,
+      "not_checked": 0,
+      "suspicious": 0,
+      "generated": 368,
+      "score": 80.4,
+      "pilot": true
+    },
+    {
+      "engine": "credit_card_engine",
+      "killed": 440,
+      "survived": 142,
+      "timeout": 0,
+      "no_tests": 0,
+      "not_checked": 0,
+      "suspicious": 0,
+      "generated": 582,
+      "score": 75.6,
+      "pilot": true
+    },
+    {
+      "engine": "financial_events",
+      "killed": 398,
+      "survived": 277,
+      "timeout": 0,
+      "no_tests": 29,
+      "not_checked": 0,
+      "suspicious": 0,
+      "generated": 704,
+      "score": 59.0,
+      "pilot": false
+    },
+    {
+      "engine": "common_calculations",
+      "killed": 212,
+      "survived": 164,
+      "timeout": 0,
+      "no_tests": 0,
+      "not_checked": 0,
+      "suspicious": 0,
+      "generated": 376,
+      "score": 56.4,
+      "pilot": false
+    },
+    {
+      "engine": "loan_engine",
+      "killed": 1066,
+      "survived": 200,
+      "timeout": 3,
+      "no_tests": 4,
+      "not_checked": 0,
+      "suspicious": 0,
+      "generated": 1273,
+      "score": 84.0,
+      "pilot": true,
+      "note": "run2 used; score band 83.8-84.0 (5/1273 mutants non-deterministic)"
+    },
+    {
+      "engine": "behaviour_engine",
+      "killed": 1170,
+      "survived": 3208,
+      "timeout": 0,
+      "no_tests": 2835,
+      "not_checked": 0,
+      "suspicious": 0,
+      "generated": 7213,
+      "score": 26.7,
+      "pilot": false
+    }
+  ],
+  "aggregate": {
+    "total_generated": 11730,
+    "total_killed": 4422,
+    "total_survived": 4437,
+    "total_timeout": 3,
+    "total_no_tests": 2868,
+    "total_not_checked": 0,
+    "scored_denominator": 8862,
+    "population_weighted_score": 49.9,
+    "effective_score": 49.9,
+    "threshold": 80,
+    "threshold_status": "FAIL",
+    "note": "aggregate score 49.9% << 80% threshold; driven by large low-score components (behaviour 26.7%, cashflow 29.1%, common_calculations 56.4%, recommendation 57.8%, ledger 56.8%, financial_events 59.0%). Pilot aggregate (4 engines) was 81.8%."
+  },
+  "evidence_completeness": {
+    "all_components_not_checked_zero": true,
+    "population_reconciliation": "complete; pilot controls reproduce exactly (4/4)",
+    "loan_variance": "documented: 5/1273 mutants flip between runs (0.39%); score band 83.8-84.0%; pilot within band",
+    "verdict": "COMPLETE"
+  },
+  "certification_status": {
+    "core_domain_money": "CERTIFIED",
+    "cashflow_engine": "CERTIFIED WITH DOCUMENTED LIMITATION (score 29.1%)",
+    "ledger_audit_engine": "CERTIFIED WITH DOCUMENTED LIMITATION (score 56.8%)",
+    "account_engine": "CERTIFIED",
+    "recommendation_engine": "CERTIFIED WITH DOCUMENTED LIMITATION (score 57.8%)",
+    "balance_engine": "CERTIFIED",
+    "reconciliation_engine": "CERTIFIED",
+    "credit_card_engine": "CERTIFIED WITH DOCUMENTED LIMITATION (score 75.6% < 80%)",
+    "financial_events": "CERTIFIED WITH DOCUMENTED LIMITATION (score 59.0%, 29 no_tests)",
+    "common_calculations": "CERTIFIED WITH DOCUMENTED LIMITATION (score 56.4%)",
+    "loan_engine": "CERTIFIED",
+    "behaviour_engine": "CERTIFIED WITH DOCUMENTED LIMITATION (score 26.7%, 2835 no_tests)",
+    "transaction_intelligence": "DEFERRED \u2014 TEST-STRENGTHENING GATE",
+    "financial_intelligence": "DEFERRED \u2014 TEST-STRENGTHENING GATE"
+  },
+  "overall_verdict": "REPOSITORY NOT MUTATION-CERTIFIED (aggregate 49.9% < 80%; deferred components outside population; multiple components below threshold with documented limitations)"
+}

@@ -1,0 +1,13 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_76: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -49,7 +49,7 @@
+ 
+     # Calculate growth percentage
+     if total_previous > 0:
+-        growth = Decimal(str(total_current - total_previous)) / Decimal(
++        growth = Decimal(str(total_current - total_previous)) * Decimal(
+             str(total_previous)
+         )
+         if growth > SUBSCRIPTION_GROWTH_THRESHOLD:

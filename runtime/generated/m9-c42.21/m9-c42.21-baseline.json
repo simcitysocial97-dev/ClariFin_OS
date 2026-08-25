@@ -1,0 +1,144 @@
+{
+  "title": "M9-C42.21 \u2014 Milestone M21.1 Baseline Lock",
+  "generated_at": "2026-08-25T03:14:36.306987+00:00",
+  "run_id": "m9-c42.21",
+  "repository_identity": {
+    "root": "/home/vasantha/AI-Projects/ClariFin_OS",
+    "branch": "m9c9-merge-authorization-resolution",
+    "head_sha": "3a37fab34dd71b2fe3aebecf41630815f92e7ad0",
+    "parent_sha": "5170e0b30ef5e308f2055661a0839e2966a721d4",
+    "tree_sha": "5b5311dccca36c4ab105c035889cf15e20d75957",
+    "working_tree_changes": 1,
+    "working_tree_note": "clean at M21.1 capture; only this phase's generated artifacts added",
+    "pilot_anchor_commit": "5170e0b30ef5e308f2055661a0839e2966a721d4",
+    "backend_src_changed_since_pilot": false,
+    "backend_src_diff_note": "git diff 5170e0b3..HEAD -- backend/src is empty; only backend/tests/generated evidence files changed"
+  },
+  "environment": {
+    "python": "Python 3.12.3",
+    "pytest": "pytest 9.1.1",
+    "mutmut": "3.7.0 (pinned; .venv/bin/mutmut)",
+    "coverage": "7.15.2",
+    "ruff": "0.15.20",
+    "mypy": "2.1.0",
+    "hypothesis": "6.161.4",
+    "cpus": 4,
+    "ram_gb": 7,
+    "env_check_consistent": true,
+    "forbidden_venvs": [],
+    "locale_timezone_controls": "M9-C42.15 external-state hardening active (TZ/locale pins in conftest/fixtures)",
+    "smoke_gate": "PASS (Gate A + Gate B, not_checked=0, 6 mutants: 2 killed / 2 survived-by-design / 2 no_tests)"
+  },
+  "certified_baseline": {
+    "full_suite_coverage_pct": 65.59,
+    "repository_coverage_threshold_pct": 40,
+    "pilot_results": [
+      {
+        "engine": "credit_card_engine",
+        "generated": 582,
+        "killed": 440,
+        "survived": 142,
+        "timeout": 0,
+        "no_tests": 0,
+        "not_checked": 0,
+        "score": 75.6
+      },
+      {
+        "engine": "account_engine",
+        "generated": 183,
+        "killed": 163,
+        "survived": 20,
+        "timeout": 0,
+        "no_tests": 0,
+        "not_checked": 0,
+        "score": 89.1
+      },
+      {
+        "engine": "loan_engine",
+        "generated": 1273,
+        "killed": 1066,
+        "survived": 199,
+        "timeout": 4,
+        "no_tests": 4,
+        "not_checked": 0,
+        "score": 84.0
+      },
+      {
+        "engine": "reconciliation_engine",
+        "generated": 368,
+        "killed": 296,
+        "survived": 72,
+        "timeout": 0,
+        "no_tests": 0,
+        "not_checked": 0,
+        "score": 80.4
+      }
+    ],
+    "pilot_aggregate": {
+      "generated": 2406,
+      "killed": 1965,
+      "survived": 433,
+      "timeout": 4,
+      "no_tests": 4,
+      "not_checked": 0,
+      "population_weighted_score": 81.8,
+      "naive_mean_pct": 82.3,
+      "aggregation_rule": "population-weighted: killed / (killed + survived + timeout) over the union of evaluated populations; naive averaging explicitly rejected"
+    }
+  },
+  "mutation_configuration": {
+    "tool": "mutmut 3.7.0 (pinned in root pyproject.toml)",
+    "config_file": "backend/pyproject.toml [tool.mutmut] \u2014 rendered per-run from runtime/foundation/verification/mutation_contract.py ENGINE_SELECTION (single source of truth)",
+    "runner": "python3 -m pytest",
+    "selection_method": "explicit-pytest-path (mutmut pytest_add_cli_args_test_selection); no silent full-suite fallback",
+    "evidence_ordering": "R2 architectural fix active: evidence collected inside try before finally restores config (regression test test_r2_evidence_collected_with_target_config_active = PASS)",
+    "execution": "per-engine sequential outer loop; mutmut inner parallelism --max-children 4; explicit --max-runtime per component per M9-C42.20 campaign plan",
+    "safety": "dirty-worktree refusal, signal+atexit config restore, backend/src hash verification, mutants/+.mutmut-cache cleared on scope change"
+  },
+  "scope": {
+    "authorized_components": [
+      "credit_card_engine",
+      "account_engine",
+      "loan_engine",
+      "reconciliation_engine",
+      "behaviour_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine",
+      "financial_events",
+      "recommendation_engine",
+      "core_domain_money",
+      "common_calculations"
+    ],
+    "authorized_component_count": 12,
+    "expected_population_approx": 5354,
+    "population_authority": "actual generated population per component is authoritative; ~5,354 is an estimate only",
+    "deferred_components": [
+      {
+        "component": "transaction_intelligence",
+        "status": "DEFERRED \u2014 TEST-STRENGTHENING GATE",
+        "coverage_pct": 24.3,
+        "direct_tests": 5,
+        "reason": "insufficient test suite (~76% untested; 2 capability + 3 property tests, no unit suite)"
+      },
+      {
+        "component": "financial_intelligence",
+        "status": "DEFERRED \u2014 TEST-STRENGTHENING GATE",
+        "coverage_pct": 35.2,
+        "direct_tests": 9,
+        "reason": "807 stmts at 35.2% with only indirect exercise; mutation would yield mostly no_tests"
+      }
+    ],
+    "deferred_note": "explicitly out of the mutation population this phase; NOT a permanent exclusion; recorded in this manifest, not silently omitted",
+    "pilot_rerun_rationale": "pilots re-executed inside the campaign as internal reproducibility controls: backend/src unchanged since 5170e0b3, so their populations must match exactly (582/183/1273/368); drift would indicate environment/config regression"
+  },
+  "baseline_lock": {
+    "runtime_tests_mutation_infra": "21 passed (incl. R2 regression test)",
+    "mutation_smoke": "PASS",
+    "backend_pyproject": "committed reconciliation_engine config at lock time; runner renders per-engine config and restores after each run",
+    "gates_unchanged": true,
+    "production_code_changed": false,
+    "tests_changed": false
+  },
+  "operational_incident_note": "One pre-campaign incident: a timed-out (120s bash limit) pytest invocation of the R2 regression test killed the suite mid-execution, leaving backend/pyproject.toml contaminated with the credit_card config. Restored via git checkout; R2 test rerun clean = 21 passed. Classification: environment/operational defect (tool timeout), not a runner or production defect. Lesson: campaign commands use explicit large timeouts."
+}

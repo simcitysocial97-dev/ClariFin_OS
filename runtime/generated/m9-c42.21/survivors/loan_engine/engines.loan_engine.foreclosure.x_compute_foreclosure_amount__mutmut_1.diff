@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.foreclosure.x_compute_foreclosure_amount__mutmut_1: survived
+--- src/engines/loan_engine/foreclosure.py
++++ src/engines/loan_engine/foreclosure.py
+@@ -2,7 +2,7 @@
+     outstanding_paise: int,
+     annual_rate_bps: int,
+     remaining_months: int,
+-    months_paid: int = 0,
++    months_paid: int = 1,
+     prepayment_penalty_bps: int = 0,
+ ) -> ForeclosureResult:
+     if outstanding_paise <= 0 or remaining_months <= 0:

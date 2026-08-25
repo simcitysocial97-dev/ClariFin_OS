@@ -1,0 +1,13 @@
+# status: survived
+# engines.ledger_audit_engine.x_run_full_audit__mutmut_8: survived
+--- src/engines/ledger_audit_engine.py
++++ src/engines/ledger_audit_engine.py
+@@ -14,7 +14,7 @@
+ 
+     overall = (
+         "PASS"
+-        if (integrity["status"] == "PASS" and hashes["status"] == "PASS")
++        if (integrity["status"] == "PASS" or hashes["status"] == "PASS")
+         else "FAIL"
+     )
+ 

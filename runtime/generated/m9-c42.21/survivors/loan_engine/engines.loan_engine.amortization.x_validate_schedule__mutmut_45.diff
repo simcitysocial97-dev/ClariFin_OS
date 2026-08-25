@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.amortization.x_validate_schedule__mutmut_45: survived
+--- src/engines/loan_engine/amortization.py
++++ src/engines/loan_engine/amortization.py
+@@ -85,7 +85,7 @@
+         )
+ 
+     if errors:
+-        msg = "Schedule invariant violations: " + "; ".join(errors)
++        msg = "Schedule invariant violations: " + "XX; XX".join(errors)
+         if debug_mode:
+             raise ValueError(msg)
+         return False

@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_impulsivity_score__mutmut_45: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -19,7 +19,7 @@
+ 
+     # Micro-transactions (< ₹500)
+     micro_txns = [t for t in debits if (t.get("amount_paise", 0) or 0) / 100.0 < 500]
+-    micro_ratio = len(micro_txns) / total_debits if total_debits > 0 else 0
++    micro_ratio = len(micro_txns) / total_debits if total_debits >= 0 else 0
+ 
+     # Late-night spending (simplified - would need timestamp data)
+     # For now, use weekend spending as proxy

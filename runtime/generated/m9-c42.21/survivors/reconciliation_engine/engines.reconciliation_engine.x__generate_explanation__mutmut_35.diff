@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x__generate_explanation__mutmut_35: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -11,7 +11,7 @@
+     date_credit = credit_txn.get("date_iso", "?")
+ 
+     account_debit = debit_txn.get("account_id", "?")
+-    account_credit = credit_txn.get("account_id", "?")
++    account_credit = credit_txn.get("account_id", "XX?XX")
+ 
+     if date_diff == 0:
+         return f"Exact match: ₹{amount_rupees:.2f} transferred from {account_debit} to {account_credit} on {date_debit}"

@@ -1,0 +1,11 @@
+# status: survived
+# core.domain.money.xǁMoneyǁadd__mutmut_3: survived
+--- src/core/domain/money.py
++++ src/core/domain/money.py
+@@ -13,5 +13,5 @@
+             New Money instance with sum
+         """
+     if not isinstance(other, Money):
+-        raise TypeError(f"Cannot add Money and {type(other).__name__}")
++        raise TypeError(f"Cannot add Money and {type(None).__name__}")
+     return Money(self._paise + other._paise)

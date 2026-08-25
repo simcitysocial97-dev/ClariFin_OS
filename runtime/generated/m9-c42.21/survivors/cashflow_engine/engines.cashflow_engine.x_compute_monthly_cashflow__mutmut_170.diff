@@ -1,0 +1,12 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_170: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -128,6 +128,6 @@
+         "total_fees_paise": total_fees,
+         "total_credit_advance_paise": total_credit_funded,
+         "effective_liquidity_cost_annualized": effective_liquidity_cost_annualized,
+-        "scope": scope,
++        "SCOPE": scope,
+         "owner_id": owner_id,
+     }

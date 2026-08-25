@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x_find_potential_matches__mutmut_11: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -55,7 +55,7 @@
+ 
+     # Compare all pairs
+     for i, txn_a in enumerate(transactions):
+-        for txn_b in transactions[i + 1 :]:
++        for txn_b in transactions[i - 1 :]:
+             # Check for match
+             match = _check_match(txn_a, txn_b, max_date_window_days)
+ 

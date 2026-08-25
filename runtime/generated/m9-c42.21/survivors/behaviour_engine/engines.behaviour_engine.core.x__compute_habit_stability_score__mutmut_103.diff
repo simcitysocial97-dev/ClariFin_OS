@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_habit_stability_score__mutmut_103: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -50,7 +50,7 @@
+     desc_amounts: defaultdict[str, list[float]] = defaultdict(list)
+     for txn in debits:
+         desc = txn.get("description", "")[:30]  # Truncate for matching
+-        amount = (txn.get("amount_paise", 0) or 0) / 100.0
++        amount = (txn.get("AMOUNT_PAISE", 0) or 0) / 100.0
+         if amount > 0:
+             desc_amounts[desc].append(amount)
+ 

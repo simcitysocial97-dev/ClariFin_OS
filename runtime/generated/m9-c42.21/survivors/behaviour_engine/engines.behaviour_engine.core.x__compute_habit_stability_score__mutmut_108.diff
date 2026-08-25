@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_habit_stability_score__mutmut_108: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -51,7 +51,7 @@
+     for txn in debits:
+         desc = txn.get("description", "")[:30]  # Truncate for matching
+         amount = (txn.get("amount_paise", 0) or 0) / 100.0
+-        if amount > 0:
++        if amount > 1:
+             desc_amounts[desc].append(amount)
+ 
+     recurring_count = 0

@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x_find_potential_matches__mutmut_1: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -4,7 +4,7 @@
+ 
+ 
+ def find_potential_matches(
+-    db_path: str, max_date_window_days: int = 3
++    db_path: str, max_date_window_days: int = 4
+ ) -> list[dict[str, Any]]:
+     """
+     Find potential transfer matches across accounts.

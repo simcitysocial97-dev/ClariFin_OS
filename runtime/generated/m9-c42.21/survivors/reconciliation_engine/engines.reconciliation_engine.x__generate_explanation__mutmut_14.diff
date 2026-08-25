@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x__generate_explanation__mutmut_14: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -8,7 +8,7 @@
+     amount_rupees = amount_paise / 100
+ 
+     date_debit = debit_txn.get("date_iso", "?")
+-    date_credit = credit_txn.get("date_iso", "?")
++    date_credit = credit_txn.get("date_iso", None)
+ 
+     account_debit = debit_txn.get("account_id", "?")
+     account_credit = credit_txn.get("account_id", "?")

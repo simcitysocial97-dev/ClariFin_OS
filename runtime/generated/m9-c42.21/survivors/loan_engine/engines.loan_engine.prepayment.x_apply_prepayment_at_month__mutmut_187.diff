@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_187: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -133,7 +133,7 @@
+             new_total = sum(r.emi_paise for r in new_schedule)
+             if not has_balloon and new_total <= original_total + tol:
+                 break
+-            bumped_emi = new_schedule[0].emi_paise + 1
++            bumped_emi = new_schedule[1].emi_paise + 1
+             tail = generate_schedule(
+                 principal_paise=new_balance,
+                 annual_rate_bps=annual_rate_bps,

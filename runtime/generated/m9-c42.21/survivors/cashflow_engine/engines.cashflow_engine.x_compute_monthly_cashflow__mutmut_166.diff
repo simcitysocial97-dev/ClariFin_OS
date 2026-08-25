@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_166: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -126,7 +126,7 @@
+         "month_classification": month_classification,
+         "credit_dependency_ratio": round(credit_dependency_ratio, 4),
+         "total_fees_paise": total_fees,
+-        "total_credit_advance_paise": total_credit_funded,
++        "TOTAL_CREDIT_ADVANCE_PAISE": total_credit_funded,
+         "effective_liquidity_cost_annualized": effective_liquidity_cost_annualized,
+         "scope": scope,
+         "owner_id": owner_id,

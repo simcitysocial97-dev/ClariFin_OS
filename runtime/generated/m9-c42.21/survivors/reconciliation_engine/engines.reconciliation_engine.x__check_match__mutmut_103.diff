@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x__check_match__mutmut_103: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -65,7 +65,7 @@
+ 
+     # Calculate confidence
+     desc_similarity = _simple_description_similarity(
+-        debit_txn.get("description", ""), credit_txn.get("description", "")
++        debit_txn.get("description", ""), credit_txn.get("description", )
+     )
+ 
+     confidence = _calculate_confidence(

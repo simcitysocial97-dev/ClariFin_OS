@@ -1,0 +1,13 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_10: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -16,7 +16,7 @@
+     if not current_subscriptions:
+         return None
+ 
+-    total_current = sum(sub.get("avg_amount_paise", 0) for sub in current_subscriptions)
++    total_current = sum(sub.get("avg_amount_paise", 1) for sub in current_subscriptions)
+ 
+     if previous_subscriptions is None:
+         # No historical comparison - just check if subscription count is significant

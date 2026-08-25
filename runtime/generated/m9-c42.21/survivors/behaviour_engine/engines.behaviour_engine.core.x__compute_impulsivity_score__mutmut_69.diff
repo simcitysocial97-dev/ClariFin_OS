@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_impulsivity_score__mutmut_69: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -34,7 +34,7 @@
+                 if dt.weekday() >= 5:  # Saturday, Sunday
+                     weekend_txns.append(txn)
+                 else:
+-                    weekday_txns.append(txn)
++                    weekday_txns.append(None)
+             except (ValueError, TypeError):
+                 pass
+ 

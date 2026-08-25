@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_habit_stability_score__mutmut_82: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -44,7 +44,7 @@
+                 cv = _coefficient_of_variation(monthly_vals)
+                 category_cvs.append(cv)
+ 
+-    avg_category_cv = sum(category_cvs) / len(category_cvs) if category_cvs else 0
++    avg_category_cv = sum(None) / len(category_cvs) if category_cvs else 0
+ 
+     # Recurring expense detection (similar amounts, same description)
+     desc_amounts: defaultdict[str, list[float]] = defaultdict(list)

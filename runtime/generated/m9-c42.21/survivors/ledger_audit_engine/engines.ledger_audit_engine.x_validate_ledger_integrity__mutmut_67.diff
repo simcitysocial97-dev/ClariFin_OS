@@ -1,0 +1,13 @@
+# status: survived
+# engines.ledger_audit_engine.x_validate_ledger_integrity__mutmut_67: survived
+--- src/engines/ledger_audit_engine.py
++++ src/engines/ledger_audit_engine.py
+@@ -75,7 +75,7 @@
+             {
+                 "type": "DUAL_ENTRY",
+                 "transaction_id": row["id"],
+-                "message": f"Transaction {row['id']} has both debit ({row['debit']}) and credit ({row['credit']})",
++                "message": f"Transaction {row['id']} has both debit ({row['debit']}) and credit ({row['XXcreditXX']})",
+             }
+         )
+ 

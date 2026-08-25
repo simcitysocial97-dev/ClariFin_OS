@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.account.x_detect_balance_volatility__mutmut_2: survived
+--- src/engines/behaviour_engine/account.py
++++ src/engines/behaviour_engine/account.py
+@@ -17,7 +17,7 @@
+         Returns Decimal('0') for empty list or fewer than 2 entries.
+         Returns Decimal('0') when all values are equal (no variance).
+     """
+-    if len(monthly_balances_paise) < 2:
++    if len(monthly_balances_paise) < 3:
+         return Decimal("0")
+ 
+     if not monthly_balances_paise:

@@ -1,0 +1,13 @@
+# status: timeout
+# engines.loan_engine.prepayment.x_apply_multiple_prepayments__mutmut_11: timeout
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -9,7 +9,7 @@
+     if not prepayments:
+         return schedule, []
+ 
+-    sorted_prepayments = sorted(prepayments, key=lambda x: x[0])
++    sorted_prepayments = sorted(prepayments, key=lambda x: x[1])
+     current_schedule = schedule.copy()
+     results = []
+ 

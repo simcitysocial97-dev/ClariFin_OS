@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_multiple_prepayments__mutmut_1: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -2,7 +2,7 @@
+     schedule: list[AmortizationRow],
+     prepayments: list[tuple[int, int]],
+     annual_rate_bps: int,
+-    prepayment_penalty_bps: int = 0,
++    prepayment_penalty_bps: int = 1,
+     mode: PrepaymentMode | Literal["reduce_tenure", "reduce_emi"] = "reduce_tenure",
+     start_date: str | None = None,
+ ) -> tuple[list[AmortizationRow], list[PrepaymentResult]]:

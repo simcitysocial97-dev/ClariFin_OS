@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_86: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -46,7 +46,7 @@
+         balance_cv = 0
+ 
+     # Credit dependency (convert amount_paise to rupees)
+-    total_credit = sum((t.get("amount_paise", 0) or 0) / 100.0 for t in credits)
++    total_credit = sum((t.get(0) or 0) / 100.0 for t in credits)
+     total_debit = sum((t.get("amount_paise", 0) or 0) / 100.0 for t in debits)
+     credit_dependency = total_credit / max(total_debit, 1) if total_debit > 0 else 0
+ 

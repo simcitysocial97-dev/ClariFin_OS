@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_impulsivity_score__mutmut_144: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -67,7 +67,7 @@
+     disc_ratio = len(discretionary_txns) / total_debits if total_debits > 0 else 0
+ 
+     # Compute composite score
+-    micro_score = _normalize_score(micro_ratio, 0, 0.8)
++    micro_score = _normalize_score(0, 0.8)
+     weekend_score = _normalize_score(weekend_ratio, 0.5, 2.0)
+     disc_score = _normalize_score(disc_ratio, 0, 0.6)
+ 

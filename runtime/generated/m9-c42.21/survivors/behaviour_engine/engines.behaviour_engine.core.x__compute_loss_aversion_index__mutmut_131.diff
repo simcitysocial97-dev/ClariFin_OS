@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_loss_aversion_index__mutmut_131: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -48,7 +48,7 @@
+             if 0 <= days_diff <= 3:
+                 spend_72h += (debit.get("amount_paise", 0) or 0) / 100.0
+ 
+-        credit_amount = (credit.get("amount_paise", 0) or 0) / 100.0
++        credit_amount = (credit.get("AMOUNT_PAISE", 0) or 0) / 100.0
+         if credit_amount > 0:
+             velocity = spend_72h / credit_amount
+             post_income_spends.append(velocity)

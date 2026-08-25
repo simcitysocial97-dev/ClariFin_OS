@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_walk_lineage__mutmut_62: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -49,7 +49,7 @@
+         lifecycle_state = event.get("lifecycle_state", "open")
+ 
+         # Process revocation events first
+-        if event.get("event_type") == "transfer_revocation":
++        if event.get("event_type") == "TRANSFER_REVOCATION":
+             continue  # Handled by detect_revocations
+ 
+         # Only process open/partially_settled repayments looking for advances to settle

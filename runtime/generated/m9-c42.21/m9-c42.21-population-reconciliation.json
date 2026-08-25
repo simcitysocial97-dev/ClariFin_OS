@@ -1,0 +1,302 @@
+{
+  "title": "M9-C42.21 \u2014 Milestone M21.2 Population Reconciliation",
+  "generated_at": "2026-08-25T03:22:09.658957+00:00",
+  "method": "mutmut 3.7.0 own generation building blocks (copy_src_dir/copy_also_copy_files/setup_source_paths/store_lines_covered_by_tests/create_mutants) executed with per-engine canonical config installed; population read from mutmut cache exactly as `mutmut results` reads it; no tests executed during probe",
+  "probe_script": "runtime/generated/m9-c42.21-population-probe.py",
+  "population_total": 11730,
+  "c42_20_estimated_total": 5354,
+  "estimate_vs_actual": "ACTUAL POPULATION IS AUTHORITATIVE per mission directive; ~5,354 was an estimate. Deviation driven entirely by the 8 never-before-mutated components whose C42.20 estimates were unmeasured static heuristics; all 4 pilot controls reproduce EXACTLY.",
+  "pilot_controls": {
+    "verdict": "PASS \u2014 credit_card 582, account 183, loan 1273, reconciliation 368 all reproduce exactly against M9-C42.19; no environment/config drift"
+  },
+  "unexpected_exclusions": {
+    "finding": "zero-mutant files: src/core/domain/__init__.py and src/engines/recommendation_engine/__init__.py generate 0 mutants (re-export modules with no mutatable functions). They were copied but contribute no population. No other exclusions: every mutatable function in every authorized source path is present.",
+    "syntax_unsupported_files": 0,
+    "excluded_by_config": "none within the 12; transaction_intelligence and financial_intelligence are out of scope by explicit deferral (source_paths not installed)"
+  },
+  "runtime_implication": "population ~11.7k (vs 5.4k estimated) \u2014 dominated by behaviour_engine (7,213) and common_calculations/financial_events/balance/recommendation fan-out. Campaign budgeted sequentially with explicit per-engine --max-runtime (behaviour 7200s; loan 7200s; others 1800-3600s).",
+  "components": [
+    {
+      "engine": "credit_card_engine",
+      "c42_20_estimate": 582,
+      "estimate_source": "measured pilot (M9-C42.19)",
+      "actual_mutants_generated": 582,
+      "pilot_control": {
+        "expected": 582,
+        "match": true
+      },
+      "files_mutated": 8,
+      "per_file_mutants": {
+        "src/engines/credit_card_engine/__init__.py": 0,
+        "src/engines/credit_card_engine/billing.py": 195,
+        "src/engines/credit_card_engine/emi.py": 108,
+        "src/engines/credit_card_engine/foreclosure.py": 55,
+        "src/engines/credit_card_engine/interest.py": 79,
+        "src/engines/credit_card_engine/metrics.py": 64,
+        "src/engines/credit_card_engine/outstanding.py": 29,
+        "src/engines/credit_card_engine/utilization.py": 52
+      },
+      "source_paths": [
+        "src/engines/credit_card_engine"
+      ],
+      "test_selection": [
+        "tests/unit/engines/credit_card",
+        "tests/properties/credit_card_engine",
+        "tests/capability/credit_cards"
+      ],
+      "population_fingerprint_sha256": "255fbf22df904e0a2fb825934fd11a8673f9af4f93c667730a1b66b4c65c700d"
+    },
+    {
+      "engine": "account_engine",
+      "c42_20_estimate": 183,
+      "estimate_source": "measured pilot (M9-C42.19)",
+      "actual_mutants_generated": 183,
+      "pilot_control": {
+        "expected": 183,
+        "match": true
+      },
+      "files_mutated": 7,
+      "per_file_mutants": {
+        "src/engines/account_engine/__init__.py": 0,
+        "src/engines/account_engine/balance.py": 39,
+        "src/engines/account_engine/cashflow.py": 34,
+        "src/engines/account_engine/dormant.py": 14,
+        "src/engines/account_engine/history.py": 39,
+        "src/engines/account_engine/lifecycle.py": 23,
+        "src/engines/account_engine/metrics.py": 34
+      },
+      "source_paths": [
+        "src/engines/account_engine"
+      ],
+      "test_selection": [
+        "tests/unit/engines/account",
+        "tests/capability/account_management"
+      ],
+      "population_fingerprint_sha256": "69e4e1d4e1f64fc0fad39da4d32cfb29cbcb0e9c9b89bd3334c5ba50a8c67385"
+    },
+    {
+      "engine": "loan_engine",
+      "c42_20_estimate": 1273,
+      "estimate_source": "measured pilot (M9-C42.19)",
+      "actual_mutants_generated": 1273,
+      "pilot_control": {
+        "expected": 1273,
+        "match": true
+      },
+      "files_mutated": 9,
+      "per_file_mutants": {
+        "src/engines/loan_engine/__init__.py": 0,
+        "src/engines/loan_engine/amortization.py": 325,
+        "src/engines/loan_engine/emi.py": 148,
+        "src/engines/loan_engine/floating_rate.py": 126,
+        "src/engines/loan_engine/foreclosure.py": 150,
+        "src/engines/loan_engine/metrics.py": 95,
+        "src/engines/loan_engine/models.py": 0,
+        "src/engines/loan_engine/prepayment.py": 421,
+        "src/engines/loan_engine/utils.py": 8
+      },
+      "source_paths": [
+        "src/engines/loan_engine"
+      ],
+      "test_selection": [
+        "tests/unit/engines/loan",
+        "tests/properties/loan_engine"
+      ],
+      "population_fingerprint_sha256": "719919c6fc420b8e7c0ddd7e75bf8044bc798a21967c08fd0f938dfe78b279c6"
+    },
+    {
+      "engine": "reconciliation_engine",
+      "c42_20_estimate": 368,
+      "estimate_source": "measured pilot (M9-C42.19)",
+      "actual_mutants_generated": 368,
+      "pilot_control": {
+        "expected": 368,
+        "match": true
+      },
+      "files_mutated": 1,
+      "per_file_mutants": {
+        "src/engines/reconciliation_engine.py": 368
+      },
+      "source_paths": [
+        "src/engines/reconciliation_engine.py"
+      ],
+      "test_selection": [
+        "tests/unit/engines/reconciliation",
+        "tests/properties/reconciliation",
+        "tests/capability/reconciliation"
+      ],
+      "population_fingerprint_sha256": "04fcf11b93b9bbf82f0a43ccd26509fad5d4fbaa0ce7829297fad789497416a2"
+    },
+    {
+      "engine": "behaviour_engine",
+      "c42_20_estimate": 1200,
+      "estimate_source": "static heuristic (never mutated before C42.21)",
+      "actual_mutants_generated": 7213,
+      "pilot_control": null,
+      "files_mutated": 18,
+      "per_file_mutants": {
+        "src/engines/behaviour_engine/__init__.py": 0,
+        "src/engines/behaviour_engine/account.py": 60,
+        "src/engines/behaviour_engine/cashflow.py": 51,
+        "src/engines/behaviour_engine/core.py": 2080,
+        "src/engines/behaviour_engine/credit_dependency.py": 681,
+        "src/engines/behaviour_engine/debt.py": 139,
+        "src/engines/behaviour_engine/income.py": 77,
+        "src/engines/behaviour_engine/insights.py": 957,
+        "src/engines/behaviour_engine/lifestyle.py": 35,
+        "src/engines/behaviour_engine/nudges.py": 580,
+        "src/engines/behaviour_engine/patterns.py": 365,
+        "src/engines/behaviour_engine/profile.py": 286,
+        "src/engines/behaviour_engine/resilience.py": 32,
+        "src/engines/behaviour_engine/savings.py": 24,
+        "src/engines/behaviour_engine/stress.py": 1425,
+        "src/engines/behaviour_engine/temporal.py": 199,
+        "src/engines/behaviour_engine/utils.py": 101,
+        "src/engines/behaviour_engine/wellness.py": 121
+      },
+      "source_paths": [
+        "src/engines/behaviour_engine"
+      ],
+      "test_selection": [
+        "tests/unit/engines/behaviour",
+        "tests/properties/behaviour"
+      ],
+      "population_fingerprint_sha256": "695fdf39f6793f0f6477502272573cc1d337f73a5d3ee77cb749663948363d29"
+    },
+    {
+      "engine": "balance_engine",
+      "c42_20_estimate": 95,
+      "estimate_source": "static heuristic (never mutated before C42.21)",
+      "actual_mutants_generated": 285,
+      "pilot_control": null,
+      "files_mutated": 1,
+      "per_file_mutants": {
+        "src/engines/balance_engine.py": 285
+      },
+      "source_paths": [
+        "src/engines/balance_engine.py"
+      ],
+      "test_selection": [
+        "tests/unit/engines/balance_engine.py"
+      ],
+      "population_fingerprint_sha256": "131718434ad274ba5be70c7eeecc012ea870d45d6cc3005f405f6a16550bb8e3"
+    },
+    {
+      "engine": "ledger_audit_engine",
+      "c42_20_estimate": 46,
+      "estimate_source": "static heuristic (never mutated before C42.21)",
+      "actual_mutants_generated": 190,
+      "pilot_control": null,
+      "files_mutated": 1,
+      "per_file_mutants": {
+        "src/engines/ledger_audit_engine.py": 190
+      },
+      "source_paths": [
+        "src/engines/ledger_audit_engine.py"
+      ],
+      "test_selection": [
+        "tests/unit/engines/ledger_audit_engine.py"
+      ],
+      "population_fingerprint_sha256": "ffbe425865327478fcca965c241729153c507163025894c2e6e70d510a9592e4"
+    },
+    {
+      "engine": "cashflow_engine",
+      "c42_20_estimate": 41,
+      "estimate_source": "static heuristic (never mutated before C42.21)",
+      "actual_mutants_generated": 172,
+      "pilot_control": null,
+      "files_mutated": 1,
+      "per_file_mutants": {
+        "src/engines/cashflow_engine.py": 172
+      },
+      "source_paths": [
+        "src/engines/cashflow_engine.py"
+      ],
+      "test_selection": [
+        "tests/properties/cashflow"
+      ],
+      "population_fingerprint_sha256": "a9f4598ce8428c2154135f3df9a8b03a8b7546bb677a9757ac1e985bb95d1ae5"
+    },
+    {
+      "engine": "financial_events",
+      "c42_20_estimate": 184,
+      "estimate_source": "static heuristic (never mutated before C42.21)",
+      "actual_mutants_generated": 704,
+      "pilot_control": null,
+      "files_mutated": 2,
+      "per_file_mutants": {
+        "src/engines/financial_events/__init__.py": 0,
+        "src/engines/financial_events/lineage_walker.py": 704
+      },
+      "source_paths": [
+        "src/engines/financial_events"
+      ],
+      "test_selection": [
+        "tests/unit/engines/financial_events",
+        "tests/properties/financial_events",
+        "tests/capability/financial_events"
+      ],
+      "population_fingerprint_sha256": "b1bfbe4d51c5c2a6c61e3750ab5d2c4db0d2aa5e11e91046d54e61e79b2a4ae9"
+    },
+    {
+      "engine": "recommendation_engine",
+      "c42_20_estimate": 73,
+      "estimate_source": "static heuristic (never mutated before C42.21)",
+      "actual_mutants_generated": 282,
+      "pilot_control": null,
+      "files_mutated": 2,
+      "per_file_mutants": {
+        "src/engines/recommendation_engine/__init__.py": 0,
+        "src/engines/recommendation_engine/recommendations.py": 282
+      },
+      "source_paths": [
+        "src/engines/recommendation_engine"
+      ],
+      "test_selection": [
+        "tests/unit/engines/recommendation",
+        "tests/capability/recommendations"
+      ],
+      "population_fingerprint_sha256": "84a2421fb6c3881b850c8007e0c26024219adc5d7c201c590984477437c28612"
+    },
+    {
+      "engine": "core_domain_money",
+      "c42_20_estimate": 105,
+      "estimate_source": "static heuristic (never mutated before C42.21)",
+      "actual_mutants_generated": 102,
+      "pilot_control": null,
+      "files_mutated": 2,
+      "per_file_mutants": {
+        "src/core/domain/__init__.py": 0,
+        "src/core/domain/money.py": 102
+      },
+      "source_paths": [
+        "src/core/domain"
+      ],
+      "test_selection": [
+        "tests/unit/test_money.py",
+        "tests/properties/test_money_invariants.py",
+        "tests/invariants/test_money.py"
+      ],
+      "population_fingerprint_sha256": "a771d47294b3e0139c5436524cb675c77c99f9cf916b6244b91c6687de5147db"
+    },
+    {
+      "engine": "common_calculations",
+      "c42_20_estimate": 30,
+      "estimate_source": "static heuristic (never mutated before C42.21)",
+      "actual_mutants_generated": 376,
+      "pilot_control": null,
+      "files_mutated": 1,
+      "per_file_mutants": {
+        "src/common/calculations.py": 376
+      },
+      "source_paths": [
+        "src/common/calculations.py"
+      ],
+      "test_selection": [
+        "tests/unit/test_calculations.py"
+      ],
+      "population_fingerprint_sha256": "b1a9a73d4c27b9236f934acd5a8de0cb60e68b173084ce6d5c51ef7826950aa2"
+    }
+  ],
+  "gate": "M21.2 PASS: all 12 eligible populations identified, actual mutant populations recorded, fingerprints recorded, unexpected exclusions explained"
+}

@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_walk_lineage__mutmut_210: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -115,7 +115,7 @@
+ 
+     # Detect and apply revocations. Merge their lifecycle updates into the
+     # per-event dedup map so a revoked event is never emitted twice.
+-    revocation_proposal = detect_revocations(events, revocation_lookback_days)
++    revocation_proposal = detect_revocations(events, )
+     proposed_links.extend(revocation_proposal.proposed_links)
+     superseded_events.extend(revocation_proposal.superseded_events)
+     for update in revocation_proposal.lifecycle_updates:

@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x__calculate_confidence__mutmut_6: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -24,7 +24,7 @@
+ 
+     # Date factor
+     if date_diff_days == 0:
+-        confidence += 0.4  # Exact same date
++        confidence = 0.4  # Exact same date
+     elif date_diff_days == 1:
+         confidence += 0.3  # Within 1 day
+ 

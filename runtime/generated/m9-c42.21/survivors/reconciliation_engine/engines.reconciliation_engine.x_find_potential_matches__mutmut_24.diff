@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x_find_potential_matches__mutmut_24: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -62,7 +62,7 @@
+             if match:
+                 key = match["deterministic_key"]
+                 if key not in seen_keys:
+-                    seen_keys.add(key)
++                    seen_keys.add(None)
+                     matches.append(match)
+ 
+     return matches

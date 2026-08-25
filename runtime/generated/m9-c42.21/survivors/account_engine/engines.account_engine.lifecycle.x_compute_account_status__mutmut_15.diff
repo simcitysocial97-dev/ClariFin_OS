@@ -1,0 +1,13 @@
+# status: survived
+# engines.account_engine.lifecycle.x_compute_account_status__mutmut_15: survived
+--- src/engines/account_engine/lifecycle.py
++++ src/engines/account_engine/lifecycle.py
+@@ -32,7 +32,7 @@
+ 
+     days_since = compute_days_since_activity(last_transaction_date, reference_date)
+ 
+-    if is_account_dormant(days_since, threshold_days=365):
++    if is_account_dormant(days_since, ):
+         return "DORMANT"
+ 
+     return "ACTIVE"

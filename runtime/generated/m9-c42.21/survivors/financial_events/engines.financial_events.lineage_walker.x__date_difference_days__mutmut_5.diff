@@ -1,0 +1,12 @@
+# status: survived
+# engines.financial_events.lineage_walker.x__date_difference_days__mutmut_5: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -2,6 +2,6 @@
+     """Calculate difference in days between two ISO dates."""
+     dt_a = _parse_date_iso(date_a)
+     dt_b = _parse_date_iso(date_b)
+-    if dt_a is None or dt_b is None:
++    if dt_a is None and dt_b is None:
+         return -1
+     return (dt_b - dt_a).days

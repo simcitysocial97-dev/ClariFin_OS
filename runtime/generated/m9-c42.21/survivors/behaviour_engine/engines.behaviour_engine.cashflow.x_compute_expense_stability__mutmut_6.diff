@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.cashflow.x_compute_expense_stability__mutmut_6: survived
+--- src/engines/behaviour_engine/cashflow.py
++++ src/engines/behaviour_engine/cashflow.py
+@@ -18,7 +18,7 @@
+     if len(monthly_expenses_paise) < 2:
+         return Decimal("1")
+ 
+-    cv = _coefficient_of_variation(monthly_expenses_paise)
++    cv = _coefficient_of_variation(None)
+     # Stability = 1 - normalized CV (max CV considered is 1.0)
+     stability = Decimal("1") - min(Decimal("1"), cv)
+     return max(Decimal("0"), stability)

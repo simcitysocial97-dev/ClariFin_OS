@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.floating_rate.x_simulate_floating_rate_schedule__mutmut_50: survived
+--- src/engines/loan_engine/floating_rate.py
++++ src/engines/loan_engine/floating_rate.py
+@@ -45,7 +45,7 @@
+             month,
+             new_rate,
+             change_mode,
+-            start_date,
++            None,
+         )
+ 
+     return schedule

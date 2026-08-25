@@ -1,0 +1,13 @@
+# status: survived
+# engines.account_engine.cashflow.x_compute_cash_flow_rate__mutmut_4: survived
+--- src/engines/account_engine/cashflow.py
++++ src/engines/account_engine/cashflow.py
+@@ -17,7 +17,7 @@
+     INVARIANT 3: Uses ROUND_HALF_UP for rounding.
+     """
+     if days <= 0:
+-        raise ValueError("days must be positive")
++        raise ValueError("XXdays must be positiveXX")
+ 
+     rate_decimal = Decimal(net_flow_paise) / Decimal(days)
+     return int(rate_decimal.quantize(Decimal(1), rounding=ROUND_HALF_UP))

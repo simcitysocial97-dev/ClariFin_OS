@@ -1,0 +1,13 @@
+# status: survived
+# engines.account_engine.history.x_compute_balance_velocity__mutmut_4: survived
+--- src/engines/account_engine/history.py
++++ src/engines/account_engine/history.py
+@@ -20,7 +20,7 @@
+     INVARIANT 3: Uses ROUND_HALF_UP for rounding.
+     """
+     if days <= 0:
+-        raise ValueError("days must be positive")
++        raise ValueError("XXdays must be positiveXX")
+ 
+     change = closing_balance - opening_balance
+     velocity_decimal = Decimal(change) / Decimal(days)

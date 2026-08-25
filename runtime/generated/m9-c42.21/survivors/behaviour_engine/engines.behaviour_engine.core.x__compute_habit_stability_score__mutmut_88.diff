@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_habit_stability_score__mutmut_88: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -49,7 +49,7 @@
+     # Recurring expense detection (similar amounts, same description)
+     desc_amounts: defaultdict[str, list[float]] = defaultdict(list)
+     for txn in debits:
+-        desc = txn.get("description", "")[:30]  # Truncate for matching
++        desc = txn.get("description", None)[:30]  # Truncate for matching
+         amount = (txn.get("amount_paise", 0) or 0) / 100.0
+         if amount > 0:
+             desc_amounts[desc].append(amount)

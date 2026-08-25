@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.emi.x_compute_principal_from_emi__mutmut_41: survived
+--- src/engines/loan_engine/emi.py
++++ src/engines/loan_engine/emi.py
+@@ -34,7 +34,7 @@
+     # forward-pass integer quantization divergence across all boundary cases.
+     best_principal = base_principal
+     min_diff = float("inf")
+-    best_distance = float("inf")
++    best_distance = None
+ 
+     for candidate in range(base_principal - 500, base_principal + 501):
+         if candidate <= 0:

@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_146: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -105,7 +105,7 @@
+         mode_literal,
+         start_date or schedule[tail_start_index].payment_date,
+         original_emi=original_emi,
+-        original_tenure=original_remaining_months,
++        original_tenure=None,
+     )
+ 
+     # Combine prefix and tail

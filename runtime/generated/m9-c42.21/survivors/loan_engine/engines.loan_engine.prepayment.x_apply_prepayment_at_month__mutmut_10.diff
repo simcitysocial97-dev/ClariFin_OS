@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_10: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -9,7 +9,7 @@
+ ) -> tuple[list[AmortizationRow], PrepaymentResult]:
+     if prepayment_month < 1 or prepayment_month > len(schedule):
+         raise ValueError(f"Prepayment month {prepayment_month} out of range")
+-    if prepayment_paise <= 0:
++    if prepayment_paise <= 1:
+         raise ValueError("Prepayment must be positive")
+ 
+     # Penalty with ROUND_HALF_EVEN (capped at min(remaining_interest, 3% of outstanding balance))

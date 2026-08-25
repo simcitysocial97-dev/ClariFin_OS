@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_135: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -109,7 +109,7 @@
+ 
+     # Credit dependency ratio
+     if expense > 0:
+-        credit_dependency_ratio = Decimal(str(total_credit_funded)) / Decimal(
++        credit_dependency_ratio = Decimal(str(total_credit_funded)) * Decimal(
+             str(expense)
+         )
+     else:

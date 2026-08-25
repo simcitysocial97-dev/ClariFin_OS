@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_127: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -102,7 +102,7 @@
+         month_classification = MonthClassification.SURPLUS
+     elif cash_surplus <= 0 and has_credit_events:
+         month_classification = MonthClassification.DEFICIT_COVERED_BY_CREDIT
+-    elif cash_surplus <= 0 and not has_credit_events:
++    elif cash_surplus < 0 and not has_credit_events:
+         month_classification = MonthClassification.DEFICIT
+     else:
+         month_classification = MonthClassification.SURPLUS

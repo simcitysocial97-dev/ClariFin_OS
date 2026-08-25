@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_impulsivity_score__mutmut_133: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -62,7 +62,7 @@
+     ]
+ 
+     discretionary_txns = [
+-        t for t in debits if t.get("category") in discretionary_categories
++        t for t in debits if t.get("CATEGORY") in discretionary_categories
+     ]
+     disc_ratio = len(discretionary_txns) / total_debits if total_debits > 0 else 0
+ 

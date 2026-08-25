@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_walk_lineage__mutmut_165: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -88,7 +88,7 @@
+ 
+         # Calculate outstanding after this payment
+         advance_outstanding = int(matched_advance.get("outstanding_paise", 0) or 0)
+-        payment_amount = int(event.get("liability_change_paise", 0) or 0)
++        payment_amount = int(event.get("liability_change_paise", 1) or 0)
+         # liability_change_paise for repayment is negative, use absolute value
+         if payment_amount < 0:
+             payment_amount = abs(payment_amount)

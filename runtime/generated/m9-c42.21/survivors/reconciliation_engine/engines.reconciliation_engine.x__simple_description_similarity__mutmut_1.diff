@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x__simple_description_similarity__mutmut_1: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -5,7 +5,7 @@
+ 
+     This is a deterministic check, not ML-based.
+     """
+-    if not desc_a or not desc_b:
++    if not desc_a and not desc_b:
+         return 0.0
+ 
+     desc_a_lower = desc_a.lower()

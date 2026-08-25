@@ -1,0 +1,13 @@
+# status: survived
+# engines.ledger_audit_engine.x_validate_ledger_integrity__mutmut_78: survived
+--- src/engines/ledger_audit_engine.py
++++ src/engines/ledger_audit_engine.py
+@@ -88,7 +88,7 @@
+         violations.append(
+             {
+                 "type": "NULL_HASH",
+-                "transaction_id": row["id"],
++                "transaction_id": row["ID"],
+                 "message": f"Transaction {row['id']} has null or empty hash_signature",
+             }
+         )

@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_regenerate_schedule__mutmut_60: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -64,7 +64,7 @@
+     )
+ 
+     # Adjust month numbers to continue from previous schedule
+-    if previous_schedule and previous_schedule[0].month_number > 1:
++    if previous_schedule and previous_schedule[0].month_number >= 1:
+         offset = previous_schedule[0].month_number - 1
+         for row in new_tail:
+             row.month_number += offset

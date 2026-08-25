@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_150: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -121,7 +121,7 @@
+     return {
+         "cash_surplus": cash_surplus,
+         "true_savings": true_savings,
+-        "liability_adjusted_savings": liability_adjusted,
++        "XXliability_adjusted_savingsXX": liability_adjusted,
+         "net_worth_impact": net_worth_impact,
+         "month_classification": month_classification,
+         "credit_dependency_ratio": round(credit_dependency_ratio, 4),

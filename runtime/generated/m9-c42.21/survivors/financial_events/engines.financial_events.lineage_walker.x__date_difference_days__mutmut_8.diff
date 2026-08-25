@@ -1,0 +1,11 @@
+# status: survived
+# engines.financial_events.lineage_walker.x__date_difference_days__mutmut_8: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -3,5 +3,5 @@
+     dt_a = _parse_date_iso(date_a)
+     dt_b = _parse_date_iso(date_b)
+     if dt_a is None or dt_b is None:
+-        return -1
++        return +1
+     return (dt_b - dt_a).days
