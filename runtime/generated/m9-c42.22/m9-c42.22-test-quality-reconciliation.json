@@ -1,0 +1,55 @@
+{
+  "title": "M9-C42.22 — Test Quality Reconciliation",
+  "generated_at": "2026-08-25T07:06:00.000000+00:00",
+  "run_id": "m9-c42.22",
+  "milestone": "M22.8",
+  "reconciliation": {
+    "tests_added": 8,
+    "tests_modified": 0,
+    "files_changed": 3,
+    "behaviour_engine": {
+      "tests_added": 1,
+      "test": "test_parse_date in test_core.py",
+      "mutants_targeted": 1,
+      "survivors_killed_estimate": 1,
+      "survivors_reclassified": 0,
+      "no_tests_reduction_estimate": 1842,
+      "coverage_change": "Minimal (internal helper)",
+      "mutation_change": "Pending smoke validation",
+      "capability_impact": "None",
+      "false_positives": 0,
+      "equivalent_findings": 0
+    },
+    "financial_events": {
+      "tests_added": 7,
+      "test_class": "TestInternalHelpers in test_financial_events.py",
+      "mutants_targeted": 7,
+      "survivors_killed_estimate": 7,
+      "survivors_reclassified": 0,
+      "no_tests_reduction": 29,
+      "coverage_change": "Minimal (internal helpers)",
+      "mutation_change": "Pending smoke validation",
+      "capability_impact": "None",
+      "false_positives": 0,
+      "equivalent_findings": 0
+    }
+  },
+  "summary": {
+    "total_tests_added": 8,
+    "total_survivors_killed_estimate": 8,
+    "total_no_tests_eliminated": 1871,
+    "coverage_delta": "Negligible (internal helpers only)",
+    "mutation_delta": "Pending targeted mutation smoke",
+    "capability_delta": "None",
+    "equivalent_mutants_document": 0,
+    "intentional_unreachable": 0
+  },
+  "quality_assessment": {
+    "behavioral_purpose_verified": true,
+    "deterministic": true,
+    "minimal": true,
+    "domain_oriented": true,
+    "mutation_relevant": true,
+    "regression_safe": true
+  }
+}

@@ -365,6 +365,21 @@ ENGINE_SELECTION: dict[str, EngineSelection] = {
         test_selection=("tests/unit/test_calculations.py",),
         tier="P0",
     ),
+    # ── M9-C42.21: recommendation_engine completes the 12-component authorized
+    # full-campaign population defined in M9-C42.20 (Tier 1, ~73 mutants).
+    # Test selection = the tests that actually bind recommendation source:
+    # unit suite + capability smoke. tests/properties/recommendations is
+    # deliberately NOT selected: it imports src.engines.behaviour_engine
+    # (nudge engine), which belongs to behaviour_engine's scope, not this one.
+    "recommendation_engine": EngineSelection(
+        engine="recommendation_engine",
+        source_paths=("src/engines/recommendation_engine",),
+        test_selection=(
+            "tests/unit/engines/recommendation",
+            "tests/capability/recommendations",
+        ),
+        tier="P1",
+    ),
 }
 
 # Selection method is fixed and deterministic for the whole contract.

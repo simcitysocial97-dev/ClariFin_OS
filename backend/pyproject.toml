@@ -84,18 +84,6 @@ ignore_missing_imports = true
 # Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
 # Scope: reconciliation_engine
 # Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
-# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
-# Scope: reconciliation_engine
-# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
-# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
-# Scope: reconciliation_engine
-# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
-# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
-# Scope: reconciliation_engine
-# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
-# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
-# Scope: reconciliation_engine
-# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
 [tool.mutmut]
 source_paths = ["src/engines/reconciliation_engine.py"]
 also_copy = ["src", "tests"]

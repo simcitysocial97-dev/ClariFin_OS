@@ -1,0 +1,33 @@
+{
+  "title": "M9-C42.22 — Milestone M22.7 Mutation Effectiveness Check",
+  "generated_at": "2026-08-25T07:06:00.000000+00:00",
+  "run_id": "m9-c42.22",
+  "milestone": "M22.7",
+  "phase": "Discovery Repair Validation",
+  "components_validated": ["behaviour_engine", "financial_events"],
+  "mutation_smoke_needed": true,
+  "validation_method": "bounded_mutation_smoke",
+  "expected_outcomes": {
+    "behaviour_engine": {
+      "no_tests_before": 2835,
+      "no_tests_after_discovery_repair": "~993 (estimated 65% reduction from test_selection fix + 1 new test)",
+      "survived_before": 3208,
+      "expected_survived_change": "Some previously no_tests will become killed/survived",
+      "target_kills_from_new_tests": "At least 1 mutant killed by _parse_date test"
+    },
+    "financial_events": {
+      "no_tests_before": 29,
+      "no_tests_after_discovery_repair": 0,
+      "survived_before": 277,
+      "expected_survived_change": "Previously no_tests helpers now killed/survived",
+      "target_kills_from_new_tests": "7 mutants killed by new helper tests"
+    }
+  },
+  "validation_criteria": [
+    "no_tests reduction achieved for valid discovery reasons",
+    "New tests kill target mutants (negative control verified)",
+    "Normal test suite remains green",
+    "No unexpected survivor increases"
+  ],
+  "status": "Ready for targeted mutation smoke execution"
+}

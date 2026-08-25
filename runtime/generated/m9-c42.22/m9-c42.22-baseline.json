@@ -1,0 +1,134 @@
+{
+  "title": "M9-C42.22 — Milestone M22.1 Baseline Lock",
+  "generated_at": "2026-08-25T07:06:00.000000+00:00",
+  "run_id": "m9-c42.22",
+  "predecessor_run_id": "m9-c42.21",
+  "predecessor_sha": "3a37fab34dd71b2fe3aebecf41630815f92e7ad0",
+  "predecessor_artifacts": [
+    "m9-c42.21-mutation-certification.json",
+    "m9-c42.21-survivor-intelligence.json",
+    "m9-c42.21-cross-dimension-reconciliation.json",
+    "m9-c42.21-deferred-intelligence-readiness.json",
+    "m9-c42.21-forward-convergence-report.json",
+    "m9-c42.21-baseline.json",
+    "per-engine population files"
+  ],
+  "repository_identity": {
+    "root": "/home/vasantha/AI-Projects/ClariFin_OS",
+    "branch": "m9c9-merge-authorization-resolution",
+    "head_sha": "3a37fab34dd71b2fe3aebecf41630815f92e7ad0",
+    "tree_sha": "5b5311dccca36c4ab105c035889cf15e20d75957"
+  },
+  "baseline_preservation": {
+    "m9_c42_21_baseline_immutable": true,
+    "survivor_inventory_accessible": true,
+    "coverage_baseline_accessible": true,
+    "test_inventory_recorded": true,
+    "no_overwrite_of_original_artifacts": true
+  },
+  "evidence_sources": {
+    "mutation_certification": "runtime/generated/m9-c42.21/m9-c42.21-mutation-certification.json",
+    "survivor_intelligence": "runtime/generated/m9-c42.21/m9-c42.21-survivor-intelligence.json",
+    "cross_dimension_reconciliation": "runtime/generated/m9-c42.21/m9-c42.21-cross-dimension-reconciliation.json",
+    "deferred_intelligence": "runtime/generated/m9-c42.21/m9-c42.21-deferred-intelligence-readiness.json",
+    "forward_convergence": "runtime/generated/m9-c42.21/m9-c42.21-forward-convergence-report.json",
+    "baseline": "runtime/generated/m9-c42.21/m9-c42.21-baseline.json",
+    "population_files": "runtime/generated/m9-c42.21/m9-c42.21-population-*.json"
+  },
+  "key_baseline_metrics": {
+    "total_mutants_generated": 11730,
+    "total_killed": 4422,
+    "total_survived": 4437,
+    "total_timeout": 3,
+    "total_no_tests": 2868,
+    "population_weighted_score": 49.9,
+    "scored_denominator": 8862
+  },
+  "priority_components": {
+    "behaviour_engine": {
+      "mutants": 7213,
+      "no_tests": 2835,
+      "survived": 3208,
+      "score": 26.7,
+      "priority": "P0_discovery"
+    },
+    "financial_events": {
+      "mutants": 704,
+      "no_tests": 29,
+      "survived": 277,
+      "score": 59.0,
+      "priority": "P0_discovery"
+    },
+    "cashflow_engine": {
+      "mutants": 172,
+      "no_tests": 0,
+      "survived": 122,
+      "score": 29.1,
+      "coverage": 97.6,
+      "priority": "P1_behavioral"
+    },
+    "ledger_audit_engine": {
+      "mutants": 190,
+      "no_tests": 0,
+      "survived": 82,
+      "score": 56.8,
+      "priority": "P1_behavioral"
+    },
+    "recommendation_engine": {
+      "mutants": 282,
+      "no_tests": 0,
+      "survived": 119,
+      "score": 57.8,
+      "priority": "P1_behavioral"
+    },
+    "common_calculations": {
+      "mutants": 376,
+      "no_tests": 0,
+      "survived": 164,
+      "score": 56.4,
+      "priority": "P1_behavioral"
+    },
+    "credit_card_engine": {
+      "mutants": 582,
+      "no_tests": 0,
+      "survived": 142,
+      "score": 75.6,
+      "priority": "P1_behavioral"
+    },
+    "loan_engine": {
+      "mutants": 1273,
+      "no_tests": 4,
+      "survived": 200,
+      "score": 84.0,
+      "priority": "P2_review"
+    },
+    "reconciliation_engine": {
+      "mutants": 368,
+      "no_tests": 0,
+      "survived": 72,
+      "score": 80.4,
+      "priority": "P2_review"
+    },
+    "balance_engine": {
+      "mutants": 285,
+      "no_tests": 0,
+      "survived": 13,
+      "score": 95.4,
+      "priority": "CONTROL"
+    },
+    "core_domain_money": {
+      "mutants": 102,
+      "no_tests": 0,
+      "survived": 18,
+      "score": 82.4,
+      "priority": "CONTROL"
+    },
+    "account_engine": {
+      "mutants": 183,
+      "no_tests": 0,
+      "survived": 20,
+      "score": 89.1,
+      "priority": "CONTROL"
+    }
+  }
+}

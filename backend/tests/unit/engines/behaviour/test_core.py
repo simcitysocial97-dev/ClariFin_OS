@@ -15,6 +15,7 @@ from src.engines.behaviour_engine.core import (
     _compute_savings_discipline_score,
     _moving_average,
     _normalize_score,
+    _parse_date,
     compute_behavior_profile,
     detect_india_risk_patterns,
     generate_behavioral_insights,
@@ -79,11 +80,11 @@ class TestBehaviourEngineCore:
         """Test the behavioral index functions with basic inputs."""
         # Test with transaction-like data that the functions expect
         test_transactions = [
-            {"amount_paise": 100, "type": "debit", "description": "test"},
-            {"amount_paise": 200, "type": "credit", "description": "test"},
-            {"amount_paise": 300, "type": "debit", "description": "test"},
-            {"amount_paise": 400, "type": "credit", "description": "test"},
-            {"amount_paise": 500, "type": "debit", "description": "test"},
+            {"amount_paise": 100, "type": "debit", "description": "test", "date_iso": "2023-01-01"},
+            {"amount_paise": 200, "type": "credit", "description": "test", "date_iso": "2023-01-02"},
+            {"amount_paise": 300, "type": "debit", "description": "test", "date_iso": "2023-01-03"},
+            {"amount_paise": 400, "type": "credit", "description": "test", "date_iso": "2023-01-04"},
+            {"amount_paise": 500, "type": "debit", "description": "test", "date_iso": "2023-01-05"},
         ]
 
         # These should not raise exceptions and should return reasonable values
@@ -99,6 +100,19 @@ class TestBehaviourEngineCore:
         assert isinstance(habit_stability, dict)
         assert isinstance(stress_index, dict)
         assert isinstance(savings_discipline, dict)
+
+    def test_parse_date(self) -> None:
+        """Test _parse_date utility function."""
+        # Test valid dates
+        assert _parse_date("2023-01-15") is not None
+        assert _parse_date("15/01/2023") is not None
+        assert _parse_date("15-01-2023") is not None
+        assert _parse_date("15 Jan 2023") is not None
+        
+        # Test invalid dates
+        assert _parse_date("invalid") is None
+        assert _parse_date("") is None
+        assert _parse_date(None) is None
 
     def test_compute_behavior_profile(self) -> None:
         """Test compute_behavior_profile with a test database."""
