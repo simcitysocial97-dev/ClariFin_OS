@@ -1,0 +1,52 @@
+{
+  "title": "M9-C42.26 — 14-Component Population Ledger (Component Matrix)",
+  "generated_at": "2026-08-26T07:50:00+05:30",
+  "run_id": "m9-c42.26-population-ledger",
+  "milestone": "M26.5",
+  "purpose": "Distinguish AUTHORITATIVE MEASURED / TARGETED MEASURED / MATHEMATICALLY RECONCILED / NOT EXECUTED evidence to prevent future agents from falsely claiming a 14-component full campaign was executed.",
+
+  "ledger_evidence_statuses": {
+    "AUTHORITATIVE MEASURED": "Component was part of an executed mutmut run with full evidence (counts, per-component mutation score, per-mutant classification).",
+    "AUTHORITATIVE TARGETED MEASURED": "Component was part of an executed mutmut targeted smoke with full evidence; coverage bounded but not a full campaign.",
+    "MATHEMATICALLY RECONCILED": "Score is derived by combining authoritative inputs arithmetically. NOT an executed measurement.",
+    "NOT EXECUTED": "No measurement run; component may or may not be in the population but its score is not stated."
+  },
+
+  "components": [
+    {"component": "account_engine",         "evidence_id": "C42.24-B",  "status": "AUTHORITATIVE MEASURED",       "source_artifact": "runtime/generated/m9-c42.24/summaries/account_engine-mutation-summary.json",        "scored": 183,   "killed": 163,  "mutation_score_pct": 89.1, "scope": "12-component full campaign", "reused_in_14": true},
+    {"component": "balance_engine",         "evidence_id": "C42.24-B",  "status": "AUTHORITATIVE MEASURED",       "source_artifact": "runtime/generated/m9-c42.24/summaries/balance_engine-mutation-summary.json",        "scored": 285,   "killed": 270,  "mutation_score_pct": 94.7, "scope": "12-component full campaign", "reused_in_14": true},
+    {"component": "behaviour_engine",       "evidence_id": "C42.24-B",  "status": "AUTHORITATIVE MEASURED",       "source_artifact": "runtime/generated/m9-c42.24/summaries/behaviour_engine-mutation-summary.json",      "scored": 5258,  "killed": 1875, "mutation_score_pct": 35.7, "scope": "12-component full campaign (evaluated=5258 after discovery repair, generated=7213 with 1955 no_tests)", "reused_in_14": true},
+    {"component": "cashflow_engine",        "evidence_id": "C42.24-B",  "status": "AUTHORITATIVE MEASURED",       "source_artifact": "runtime/generated/m9-c42.24/summaries/cashflow_engine-mutation-summary.json",       "scored": 172,   "killed": 128,  "mutation_score_pct": 74.4, "scope": "12-component full campaign", "reused_in_14": true},
+    {"component": "common_calculations",    "evidence_id": "C42.24-B",  "status": "AUTHORITATIVE MEASURED",       "source_artifact": "runtime/generated/m9-c42.24/summaries/common_calculations-mutation-summary.json (implicit in C42.24-B full; per-component summary from C42.24)", "scored": 377, "killed": 213, "mutation_score_pct": 56.4, "scope": "12-component full campaign", "reused_in_14": true, "note": "Per-engine summary file not in m9-c42.24/summaries/; aggregate derived from C42.21/C42.24 component matrices and full-campaign rollup. Original evidence valid and unaffected by C42.26 expansion."},
+    {"component": "core_domain_money",      "evidence_id": "C42.24-B",  "status": "AUTHORITATIVE MEASURED",       "source_artifact": "runtime/generated/m9-c42.24/summaries/core_domain_money-mutation-summary.json",     "scored": 102,   "killed": 84,   "mutation_score_pct": 82.4, "scope": "12-component full campaign", "reused_in_14": true},
+    {"component": "credit_card_engine",     "evidence_id": "C42.24-B",  "status": "AUTHORITATIVE MEASURED",       "source_artifact": "runtime/generated/m9-c42.24/summaries/credit_card_engine-mutation-summary.json",  "scored": 582,   "killed": 440,  "mutation_score_pct": 75.6, "scope": "12-component full campaign", "reused_in_14": true},
+    {"component": "financial_events",       "evidence_id": "C42.24-B",  "status": "AUTHORITATIVE MEASURED",       "source_artifact": "runtime/generated/m9-c42.24/summaries/financial_events-mutation-summary.json",      "scored": 704,   "killed": 454,  "mutation_score_pct": 64.5, "scope": "12-component full campaign", "reused_in_14": true},
+    {"component": "ledger_audit_engine",    "evidence_id": "C42.24-B",  "status": "AUTHORITATIVE MEASURED",       "source_artifact": "runtime/generated/m9-c42.24/summaries/ledger_audit_engine-mutation-summary.json", "scored": 190,   "killed": 108,  "mutation_score_pct": 56.8, "scope": "12-component full campaign", "reused_in_14": true},
+    {"component": "loan_engine",            "evidence_id": "C42.24-B",  "status": "AUTHORITATIVE MEASURED",       "source_artifact": "runtime/generated/m9-c42.24/summaries/loan_engine-mutation-summary.json",         "scored": 1273,  "killed": 1066, "mutation_score_pct": 84.0, "scope": "12-component full campaign", "reused_in_14": true},
+    {"component": "recommendation_engine",  "evidence_id": "C42.24-B",  "status": "AUTHORITATIVE MEASURED",       "source_artifact": "runtime/generated/m9-c42.24/summaries/recommendation_engine-mutation-summary.json","scored": 282, "killed": 179,  "mutation_score_pct": 63.5, "scope": "12-component full campaign", "reused_in_14": true},
+    {"component": "reconciliation_engine",  "evidence_id": "C42.24-B",  "status": "AUTHORITATIVE MEASURED",       "source_artifact": "runtime/generated/m9-c42.24/summaries/reconciliation_engine-mutation-summary.json","scored": 368, "killed": 297,  "mutation_score_pct": 80.7, "scope": "12-component full campaign", "reused_in_14": true},
+    {"component": "transaction_intelligence","evidence_id": "C42.25-txn","status": "AUTHORITATIVE TARGETED MEASURED","source_artifact": "runtime/generated/m9-c42.25/transaction/mutation-smoke.json",                   "scored": 1465,  "killed": 1028, "mutation_score_pct": 70.2, "scope": "targeted smoke (C42.25)", "reused_in_14": true, "methodology": "bounded smoke — representative operators across conditional/arithmetic/comparison/return/boolean domains", "not_checked": 0},
+    {"component": "financial_intelligence", "evidence_id": "C42.25-fin","status": "AUTHORITATIVE TARGETED MEASURED","source_artifact": "runtime/generated/m9-c42.25/financial/mutation-smoke.json",                    "scored": 3710,  "killed": 2710, "mutation_score_pct": 73.0, "scope": "targeted smoke (C42.25)", "reused_in_14": true, "methodology": "bounded smoke — representative operators across conditional/arithmetic/comparison/return/boolean domains", "not_checked": 0}
+  ],
+
+  "aggregate_status": {
+    "label": "MATHEMATICALLY RECONCILED",
+    "components": 14,
+    "scored": 14951,
+    "killed": 9015,
+    "mutation_score_pct": 60.3,
+    "raw_pct": 60.2970,
+    "formula": "9015 / 14951 * 100 = 60.30%",
+    "note": "Aggregate is derived from the sum of AUTHORITATIVE MEASURED (12) + AUTHORITATIVE TARGETED MEASURED (2) inputs. It is NOT a freshly executed 14-component full campaign.",
+    "not_a_fresh_14_component_campaign": true
+  },
+
+  "fresh_14_component_full_campaign": {
+    "status": "NOT EXECUTED",
+    "executed": false,
+    "planned": false,
+    "rationale": "M26.10 decision gate: no source change, no infra change, no config change, no population fingerprint change, no cross-component interference detected. C42.24-B + C42.25 evidence is internally consistent. No trigger condition met. Reusing certified evidence is the correct, forensic-rigorous operation."
+  },
+
+  "audit_warning": "Future agents must NOT claim a '14-component full mutation campaign was executed' from this ledger. The 14-component aggregate is mathematically reconciled, not measured. Any claim that requires a freshly executed 14-component run must explicitly motivate a new run per M26.10 trigger conditions."
+}

@@ -1,0 +1,108 @@
+{
+  "title": "M9-C42.26 — Baseline Preservation & Source/Test Integrity Verification",
+  "generated_at": "2026-08-26T07:50:00+05:30",
+  "run_id": "m9-c42.26-baseline",
+  "milestone": "M26.1",
+  "phase": "Repository-Wide Mutation Population Expansion & Intelligence Certification",
+  "predecessor": "M9-C42.25 — CERTIFIED (intelligence READY)",
+  "principle": "Measure -> Freeze -> Expand -> Reconcile -> Certify -> Correlate -> Strengthen -> Periodically Re-measure",
+
+  "frozen_baseline": {
+    "milestone": "M9-C42.24-B",
+    "label": "AUTHORITATIVE MEASURED (12-component population)",
+    "frozen_at_commit": "6bb27a89b64f0582dea1ef393487143f3cc33400",
+    "frozen_at_tree": "60a4a87728ed2f78f27aa110d0d053a85434c04c",
+    "frozen_at_subject": "M9-C42.22: Evidence-driven test strengthening — discovery repair + behavioral scaffolding",
+    "counts": {
+      "components": 12,
+      "mutants_generated": 11730,
+      "killed": 5277,
+      "survived": 4494,
+      "no_tests": 1959,
+      "timeout": 5,
+      "suspicious": 0,
+      "not_checked": 0,
+      "evaluated": 9776,
+      "reported_mutation_score_pct": 54.0
+    },
+    "score_formula": "5277 / (5277 + 4494 + 5) * 100 = 54.0%",
+    "gates": {"G1_to_G10": "PASS"},
+    "source_artifacts": [
+      "runtime/generated/m9-c42.24/m9-c42.24-full-campaign.json",
+      "runtime/generated/m9-c42.24/m9-c42.24-certification.json",
+      "runtime/generated/m9-c42.24/summaries/full-campaign-mutation-summary.json",
+      "runtime/generated/m9-c42.24/summaries/<engine>-mutation-summary.json (12 files)"
+    ]
+  },
+
+  "post_C42_24B_change_inventory": {
+    "window": "6bb27a89..HEAD",
+    "commits_in_window": [
+      "cdfaefe1 M9-C42.25: Intelligence test-surface strengthening — CERTIFIED (Outcome A)",
+      "7b1a7f7d M9-C42.23–24: Bundle prior strengthening evidence + C42.25 commit",
+      "fa643089 M9-C42.25: Ruff lint fixes for pre-existing strengthening tests (unused imports)",
+      "ee86117f M9-C42.25: Ruff whitespace fix in pre-existing test_core.py",
+      "512e1f04 M9-C42.25: Fix ruff F811 in test_mutation_gap_repairs.py (intentional duplicate assertions)",
+      "91d12406 M9-C42.25: Resolve pre-existing ruff F811/C401 errors in loan and financial_events tests",
+      "8aa3421d M9-C42.25: Resolve pre-existing ruff errors across backend and runtime",
+      "cf456ede M9-C42.25: Update progress.md with ruff resolution summary"
+    ],
+    "production_source_changes_under_src_engines": "NONE (git diff 6bb27a89..HEAD -- src/engines/ is empty)",
+    "runtime_foundation_changes": "lint-only edits (unused imports, whitespace, B007 loop-var rename, F821 missing import, F841 unused local, C401/C408/C409 generator-to-comprehension, I001 import sort). No behavioral effect on mutation targets.",
+    "test_changes_against_12_component_engines": [
+      {"file": "backend/tests/unit/engines/behaviour/test_credit_dependency.py", "commit": "7b1a7f7d", "kind": "ADD (existed in working tree at C42.24-B measurement; tracked here)", "effect": "Included in C42.24-B measurement — 36 tests, no_tests reduction 2835->1955 already credited"},
+      {"file": "backend/tests/unit/engines/behaviour/test_temporal.py", "commit": "7b1a7f7d", "kind": "ADD (existed in working tree at C42.24-B measurement; tracked here)", "effect": "Included in C42.24-B measurement — 25 tests, same discovery repair batch"},
+      {"file": "backend/tests/unit/engines/credit_card/test_interest_strengthening.py", "commit": "7b1a7f7d", "kind": "ADD (untracked at C42.24-B measurement; mutation effect credited in C42.23)", "effect": "Part of C42.23 strengthening — already reflected in C42.24-B credit_card_engine (582 generated, score 75.6%)"},
+      {"file": "backend/tests/unit/engines/credit_card/test_mutation_gap_repairs.py", "commit": "512e1f04", "kind": "MODIFY (noqa F811 annotation; no behavioral change)", "effect": "Lint-only"},
+      {"file": "backend/tests/unit/engines/financial_events/test_financial_events.py", "commit": "91d12406", "kind": "MODIFY (ruff C401/C408/C409 refactors; no behavioral change)", "effect": "Lint-only"},
+      {"file": "backend/tests/unit/engines/loan/test_loan_engine.py", "commit": "91d12406", "kind": "MODIFY (ruff F811 cleanup; no behavioral change)", "effect": "Lint-only"},
+      {"file": "backend/tests/unit/engines/recommendation/test_recommendation_strengthening.py", "commit": "7b1a7f7d", "kind": "ADD (untracked at C42.24-B; C42.23 strengthening — already credited)", "effect": "Part of C42.23 strengthening — already reflected in C42.24-B recommendation_engine (282 generated, score 63.5%)"},
+      {"file": "backend/tests/unit/engines/reconciliation/test_reconciliation_strengthening.py", "commit": "7b1a7f7d", "kind": "ADD (untracked at C42.24-B; C42.23 strengthening — already credited)", "effect": "Part of C42.23 strengthening — already reflected in C42.24-B reconciliation_engine (368 generated, score 80.7%)"},
+      {"file": "backend/tests/properties/cashflow/test_behavioral_strengthening.py", "commit": "7b1a7f7d", "kind": "ADD (untracked at C42.24-B; C42.23 strengthening — already credited)", "effect": "Part of C42.23 strengthening — already reflected in C42.24-B cashflow_engine (172 generated, score 74.4%)"},
+      {"file": "backend/tests/unit/test_calculations_strengthening.py", "commit": "7b1a7f7d", "kind": "ADD (untracked at C42.24-B; C42.23 strengthening — already credited)", "effect": "Part of C42.23 strengthening — already reflected in C42.24-B common_calculations"},
+      {"file": "backend/tests/unit/engines/behaviour/test_core.py", "commit": "ee86117f", "kind": "MODIFY (whitespace; no behavioral change)", "effect": "Lint-only"},
+      {"file": "backend/tests/properties/financial_intelligence/* (5 files)", "commit": "cdfaefe1", "kind": "ADD (intelligence; not part of 12-component measurement)", "effect": "Belongs to transaction_intelligence / financial_intelligence — out of 12-component scope"},
+      {"file": "backend/tests/unit/engines/transaction_intelligence/* (4 files)", "commit": "cdfaefe1", "kind": "ADD (intelligence; not part of 12-component measurement)", "effect": "Belongs to transaction_intelligence — out of 12-component scope"},
+      {"file": "backend/tests/unit/engines/financial_intelligence/* (6 files)", "commit": "cdfaefe1", "kind": "ADD (intelligence; not part of 12-component measurement)", "effect": "Belongs to financial_intelligence — out of 12-component scope"},
+      {"file": "backend/tests/capability/transaction_intelligence/test_capability.py", "commit": "cdfaefe1", "kind": "MODIFY (capability extension for txn; out of 12-component mutation scope)", "effect": "Intelligence capability binding — out of 12-component scope"},
+      {"file": "backend/tests/capability/financial_intelligence/*", "commit": "cdfaefe1", "kind": "ADD (intelligence capability; out of 12-component scope)", "effect": "Intelligence capability binding — out of 12-component scope"}
+    ],
+    "test_changes_against_intelligence_components": [
+      {"file": "backend/tests/unit/engines/transaction_intelligence/test_cash_conversion_detector.py", "commit": "cdfaefe1", "kind": "ADD (new intelligence measurement target)", "effect": "Inside C42.25 measurement scope — not a 12-component change"},
+      {"file": "backend/tests/unit/engines/transaction_intelligence/test_cc_payment_detector.py", "commit": "cdfaefe1", "kind": "ADD", "effect": "Inside C42.25 measurement scope"},
+      {"file": "backend/tests/unit/engines/transaction_intelligence/test_detector_result.py", "commit": "cdfaefe1", "kind": "ADD", "effect": "Inside C42.25 measurement scope"},
+      {"file": "backend/tests/unit/engines/transaction_intelligence/test_loan_emi_detector.py", "commit": "cdfaefe1", "kind": "ADD", "effect": "Inside C42.25 measurement scope"},
+      {"file": "backend/tests/unit/engines/financial_intelligence/test_forecasting.py", "commit": "cdfaefe1", "kind": "ADD", "effect": "Inside C42.25 measurement scope"},
+      {"file": "backend/tests/unit/engines/financial_intelligence/test_goal_planner.py", "commit": "cdfaefe1", "kind": "ADD", "effect": "Inside C42.25 measurement scope"},
+      {"file": "backend/tests/unit/engines/financial_intelligence/test_intelligence.py", "commit": "cdfaefe1", "kind": "ADD", "effect": "Inside C42.25 measurement scope"},
+      {"file": "backend/tests/unit/engines/financial_intelligence/test_optimization.py", "commit": "cdfaefe1", "kind": "ADD", "effect": "Inside C42.25 measurement scope"},
+      {"file": "backend/tests/unit/engines/financial_intelligence/test_scenario.py", "commit": "cdfaefe1", "kind": "ADD", "effect": "Inside C42.25 measurement scope"},
+      {"file": "backend/tests/unit/engines/financial_intelligence/test_utils.py", "commit": "cdfaefe1", "kind": "ADD", "effect": "Inside C42.25 measurement scope"},
+      {"file": "backend/tests/properties/transaction_intelligence/test_detector_properties.py", "commit": "cdfaefe1", "kind": "ADD", "effect": "Inside C42.25 measurement scope"},
+      {"file": "backend/tests/properties/transaction_intelligence/test_engine_properties.py", "commit": "cdfaefe1", "kind": "ADD (pre-existing 3 tautological tests, left intact)", "effect": "Pre-existing — out of C42.26 mutation scope"},
+      {"file": "backend/tests/properties/financial_intelligence/test_optimization_properties.py", "commit": "cdfaefe1", "kind": "ADD", "effect": "Inside C42.25 measurement scope"},
+      {"file": "backend/tests/properties/financial_intelligence/test_scenario_intelligence_properties.py", "commit": "cdfaefe1", "kind": "ADD", "effect": "Inside C42.25 measurement scope"}
+    ]
+  },
+
+  "classification": [
+    {"component": "account_engine", "since_c42_24b": "unchanged", "decision": "REUSE BASELINE", "rationale": "No source changes; only lint-only touches to its tests; no impact on mutation outcomes"},
+    {"component": "balance_engine", "since_c42_24b": "unchanged", "decision": "REUSE BASELINE", "rationale": "No source changes; no test changes; C42.24-B evidence remains valid"},
+    {"component": "ledger_audit_engine", "since_c42_24b": "unchanged", "decision": "REUSE BASELINE", "rationale": "No source or test changes"},
+    {"component": "reconciliation_engine", "since_c42_24b": "unchanged (test additions predate C42.24-B measurement)", "decision": "REUSE BASELINE", "rationale": "test_reconciliation_strengthening.py was untracked but present in working tree at C42.24-B — already credited in C42.23 strengthening + C42.24-B score 80.7%"},
+    {"component": "loan_engine", "since_c42_24b": "unchanged (lint-only test edits)", "decision": "REUSE BASELINE", "rationale": "test_loan_engine.py got ruff F811 cleanup; no behavioral change; C42.24-B 84.0% unchanged"},
+    {"component": "behaviour_engine", "since_c42_24b": "unchanged (lint-only test edits; new tests already in C42.24-B scope)", "decision": "REUSE BASELINE", "rationale": "test_credit_dependency.py + test_temporal.py were present in working tree at C42.24-B and credited in discovery repair. test_core.py lint-only. C42.24-B 35.7% (evaluated) unchanged"},
+    {"component": "cashflow_engine", "since_c42_24b": "unchanged (test additions predate C42.24-B measurement)", "decision": "REUSE BASELINE", "rationale": "test_behavioral_strengthening.py was untracked but present at C42.24-B — already credited"},
+    {"component": "financial_events", "since_c42_24b": "unchanged (lint-only test edits)", "decision": "REUSE BASELINE", "rationale": "test_financial_events.py got C401/C408/C409 refactors; no behavioral change"},
+    {"component": "core_domain_money", "since_c42_24b": "unchanged", "decision": "REUSE BASELINE", "rationale": "No source or test changes"},
+    {"component": "common_calculations", "since_c42_24b": "unchanged (test additions predate C42.24-B measurement)", "decision": "REUSE BASELINE", "rationale": "test_calculations_strengthening.py was untracked but present at C42.24-B — already credited"},
+    {"component": "credit_card_engine", "since_c42_24b": "unchanged (test additions predate C42.24-B measurement)", "decision": "REUSE BASELINE", "rationale": "test_interest_strengthening.py was untracked but present at C42.24-B; test_mutation_gap_repairs.py is noqa annotation only"},
+    {"component": "recommendation_engine", "since_c42_24b": "unchanged (test additions predate C42.24-B measurement)", "decision": "REUSE BASELINE", "rationale": "test_recommendation_strengthening.py was untracked but present at C42.24-B — already credited"}
+  ],
+
+  "verdict": {
+    "status": "PASS",
+    "summary": "All 12 previously certified components remain in the C42.24-B evidence state. No source files under src/engines/ changed. Test changes are either lint-only (no behavioral effect) or were already present in the C42.24-B working tree and credited in that measurement. No targeted re-measurement required for any of the 12 components. Baseline integrity VERIFIED.",
+    "next_action": "Admit transaction_intelligence and financial_intelligence to the mutation population using C42.25 evidence. No full 12-component re-run."
+  }
+}

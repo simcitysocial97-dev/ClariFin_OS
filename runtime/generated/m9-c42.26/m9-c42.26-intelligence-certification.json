@@ -1,0 +1,155 @@
+{
+  "title": "M9-C42.26 — Intelligence Component Certification",
+  "generated_at": "2026-08-26T07:50:00+05:30",
+  "run_id": "m9-c42.26-intelligence-cert",
+  "milestone": "M26.3",
+  "certification_label": "INTELLIGENCE COMPONENTS CERTIFIED",
+  "principle": "Per-engine independent certification of test-surface, capability binding, discovery, and mutation evidence. No full rerun required if C42.25 evidence remains valid.",
+
+  "transaction_intelligence": {
+    "component": "transaction_intelligence",
+    "source_path": "backend/src/engines/transaction_intelligence/",
+    "modules": ["__init__.py", "cash_conversion_detector.py", "cc_payment_detector.py", "detector_result.py", "loan_emi_detector.py"],
+    "deferred_status_before_c42_25": "NOT READY (C42.24-B)",
+    "c42_25_status": "READY (C42.25)",
+    "c42_26_status": "READY + CERTIFIED",
+
+    "test_surface": {
+      "direct_unit_tests": 157,
+      "property_invariant_tests": 23,
+      "capability_tests": 6,
+      "total": 186,
+      "unit_test_files": [
+        "backend/tests/unit/engines/transaction_intelligence/test_cash_conversion_detector.py",
+        "backend/tests/unit/engines/transaction_intelligence/test_cc_payment_detector.py",
+        "backend/tests/unit/engines/transaction_intelligence/test_detector_result.py",
+        "backend/tests/unit/engines/transaction_intelligence/test_loan_emi_detector.py"
+      ],
+      "property_test_files": [
+        "backend/tests/properties/transaction_intelligence/test_detector_properties.py",
+        "backend/tests/properties/transaction_intelligence/test_engine_properties.py"
+      ],
+      "capability_test_files": [
+        "backend/tests/capability/transaction_intelligence/test_capability.py"
+      ],
+      "coverage_pct": 98.6,
+      "coverage_artifact": "runtime/generated/m9-c42.25/transaction/coverage.json"
+    },
+
+    "capability_binding": {
+      "status": "CONFIRMED",
+      "binding_path": "backend/tests/capability/transaction_intelligence/test_capability.py",
+      "engine_imports_under_capability_test": ["transaction_intelligence"],
+      "evidence": "C42.25 extension added 4 wiring tests that import src.engines.transaction_intelligence directly (per M9-C42.25 forward-convergence-report). Registry regenerated via check_coverage.py.",
+      "registry_artifact": "backend/tests/generated/capability-registry.yaml"
+    },
+
+    "discovery": {
+      "status": "CONFIRMED",
+      "pytest_collection": "tests/unit/engines/transaction_intelligence + tests/properties/transaction_intelligence + tests/capability/transaction_intelligence",
+      "evidence": "All transaction direct tests discoverable by pytest. C42.25 smoke selected representative mutants across conditional_boundary / arithmetic_operator_replacement / comparison_operator_replacement / return_value_replacement / boolean_logic_replacement — every mutant hit a real test path (not_checked=0).",
+      "discovery_artifact": "runtime/generated/m9-c42.25/transaction/discovery-validation.json"
+    },
+
+    "mutation_evidence": {
+      "source_artifact": "runtime/generated/m9-c42.25/transaction/mutation-smoke.json",
+      "run_id": "m9-c42.25-smoke-transaction",
+      "methodology": "bounded smoke — representative operators across conditional/arithmetic/comparison/return/boolean domains",
+      "counts": {
+        "mutants_generated": 1465,
+        "killed": 1028,
+        "survived": 437,
+        "no_tests": 0,
+        "timeout": 0,
+        "suspicious": 0,
+        "not_checked": 0
+      },
+      "mutation_score_pct": 70.2,
+      "not_checked_confirmed_zero": true,
+      "gate": "PASS"
+    },
+
+    "c42_25_gates_passed": ["G1_Baseline_Integrity", "G2_Transaction_Inventory", "G4_Transaction_Test_Surface", "G6_Capability_Binding", "G7_Discovery_Integrity", "G8_Transaction_Coverage (98.6%)", "G10_Mutation_Smoke (70.2%, not_checked=0)"],
+
+    "verdict": "CERTIFIED — eligible for repository-wide mutation population"
+  },
+
+  "financial_intelligence": {
+    "component": "financial_intelligence",
+    "source_path": "backend/src/engines/financial_intelligence/",
+    "modules": ["__init__.py", "utils.py", "forecasting.py", "goal_planner.py", "intelligence.py", "optimization.py", "scenario.py"],
+    "deferred_status_before_c42_25": "NOT READY (C42.24-B)",
+    "c42_25_status": "READY (C42.25)",
+    "c42_26_status": "READY + CERTIFIED",
+
+    "test_surface": {
+      "direct_unit_tests": 245,
+      "property_invariant_tests": 22,
+      "capability_tests": 8,
+      "total": 275,
+      "unit_test_files": [
+        "backend/tests/unit/engines/financial_intelligence/test_forecasting.py",
+        "backend/tests/unit/engines/financial_intelligence/test_goal_planner.py",
+        "backend/tests/unit/engines/financial_intelligence/test_intelligence.py",
+        "backend/tests/unit/engines/financial_intelligence/test_optimization.py",
+        "backend/tests/unit/engines/financial_intelligence/test_scenario.py",
+        "backend/tests/unit/engines/financial_intelligence/test_utils.py"
+      ],
+      "property_test_files": [
+        "backend/tests/properties/financial_intelligence/test_optimization_properties.py",
+        "backend/tests/properties/financial_intelligence/test_scenario_intelligence_properties.py"
+      ],
+      "capability_test_files": [
+        "backend/tests/capability/financial_intelligence/test_capability.py"
+      ],
+      "coverage_pct": 94.4,
+      "coverage_artifact": "runtime/generated/m9-c42.25/financial/coverage.json"
+    },
+
+    "capability_binding": {
+      "status": "CONFIRMED",
+      "binding_path": "backend/tests/capability/financial_intelligence/test_capability.py",
+      "engine_imports_under_capability_test": ["financial_intelligence"],
+      "evidence": "New domain tests/capability/financial_intelligence/ created in C42.25 with 6+ tests binding src.engines.financial_intelligence. Registry regenerated.",
+      "registry_artifact": "backend/tests/generated/capability-registry.yaml"
+    },
+
+    "discovery": {
+      "status": "CONFIRMED",
+      "pytest_collection": "tests/unit/engines/financial_intelligence + tests/properties/financial_intelligence + tests/capability/financial_intelligence",
+      "evidence": "All financial direct tests discoverable by pytest. C42.25 smoke selected representative mutants across the same five operator domains — every mutant hit a real test path (not_checked=0).",
+      "discovery_artifact": "runtime/generated/m9-c42.25/financial/discovery-validation.json"
+    },
+
+    "mutation_evidence": {
+      "source_artifact": "runtime/generated/m9-c42.25/financial/mutation-smoke.json",
+      "run_id": "m9-c42.25-smoke-financial",
+      "methodology": "bounded smoke — representative operators across conditional/arithmetic/comparison/return/boolean domains",
+      "counts": {
+        "mutants_generated": 3710,
+        "killed": 2710,
+        "survived": 1000,
+        "no_tests": 0,
+        "timeout": 0,
+        "suspicious": 0,
+        "not_checked": 0
+      },
+      "mutation_score_pct": 73.0,
+      "not_checked_confirmed_zero": true,
+      "gate": "PASS"
+    },
+
+    "c42_25_gates_passed": ["G1_Baseline_Integrity", "G3_Financial_Inventory", "G5_Financial_Test_Surface", "G6_Capability_Binding", "G7_Discovery_Integrity", "G9_Financial_Coverage (94.4%)", "G10_Mutation_Smoke (73.0%, not_checked=0)"],
+
+    "verdict": "CERTIFIED — eligible for repository-wide mutation population"
+  },
+
+  "no_full_rerun_required_rationale": [
+    "M26.1 baseline integrity: 12-component evidence is still valid.",
+    "Source paths of both intelligence components unchanged since C42.25 (the only file changes are the new test files in cdfaefe1, which were the tests being measured).",
+    "Test paths of both intelligence components unchanged since C42.25.",
+    "Mutmut version, pytest version, Python version, config_hash all unchanged since C42.25.",
+    "C42.25 evidence is internally consistent: not_checked=0 for both, comprehensive operator coverage, and capability binding + discovery validated.",
+    "Rerunning would not produce new information — it would only confirm the C42.25 evidence."
+  ]
+}

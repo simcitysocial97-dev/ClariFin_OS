@@ -1,0 +1,187 @@
+{
+  "title": "M9-C42.26 — Final Certification",
+  "generated_at": "2026-08-26T07:50:00+05:30",
+  "run_id": "m9-c42.26-certification",
+  "milestone": "M26.13 + M26.14",
+  "certification_label": "14-COMPONENT POPULATION RECONCILED — NO FULL RERUN REQUIRED",
+  "deferred_intelligence_status": {
+    "milestone": "M26.13",
+    "before_c42_26": {
+      "transaction_intelligence": "NOT READY",
+      "financial_intelligence": "NOT READY"
+    },
+    "after_c42_26": {
+      "transaction_intelligence": "READY + CERTIFIED",
+      "financial_intelligence": "READY + CERTIFIED"
+    },
+    "14_component_population_eligible": true,
+    "certification_kind": "by_evidence_composition",
+    "important_distinction": "Component certification is per-engine and authoritative (C42.25 evidence). Freshly executed 14-component full campaign is NOT what was performed. The 14-component population is certified by evidence composition (C42.24-B + C42.25 mathematically reconciled), not by a fresh run."
+  },
+
+  "population": {
+    "component_count": 14,
+    "components": [
+      "credit_card_engine",
+      "account_engine",
+      "loan_engine",
+      "reconciliation_engine",
+      "behaviour_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine",
+      "financial_events",
+      "core_domain_money",
+      "common_calculations",
+      "recommendation_engine",
+      "transaction_intelligence",
+      "financial_intelligence"
+    ]
+  },
+
+  "evidence_rollup": {
+    "existing_authoritative_campaign": {
+      "milestone": "C42.24-B",
+      "mutants_generated": 11730,
+      "scored": 9776,
+      "killed": 5277,
+      "scope": "12 components",
+      "frozen_at_commit": "6bb27a89"
+    },
+    "newly_admitted_measured_population": {
+      "milestone": "C42.25",
+      "scored": 5175,
+      "killed": 3738,
+      "scope": "2 intelligence components (transaction_intelligence 1465/1028 + financial_intelligence 3710/2710)"
+    },
+    "combined_mathematically_reconciled_scored_population": 14951,
+    "combined_killed": 9015,
+    "derived_aggregate": "~60.3%",
+    "raw_aggregate_pct": 60.2970,
+    "aggregate_formula": "9015 / 14951 * 100 = 60.30%"
+  },
+
+  "measurement_status": {
+    "label": "14-COMPONENT POPULATION RECONCILED — NO FULL RERUN REQUIRED",
+    "aggregate_label": "Repository-wide mathematically reconciled mutation effectiveness",
+    "not_authoritative_full_campaign_score": true,
+    "do_not_call_60_3_an_authoritative_full_campaign_score": true,
+    "called_instead": "Repository-wide mathematically reconciled mutation effectiveness"
+  },
+
+  "certification_gates": {
+    "G1_baseline_preserved": {
+      "status": "PASS",
+      "evidence": "runtime/generated/m9-c42.26/m9-c42.26-baseline.json — C42.24-B 12-component state frozen at 6bb27a89; integrity verified"
+    },
+    "G2_existing_evidence_intact": {
+      "status": "PASS",
+      "evidence": "All 12 components classified REUSE BASELINE in m9-c42.26-baseline.json"
+    },
+    "G3_intelligence_admitted": {
+      "status": "PASS",
+      "evidence": "m9-c42.26-population-expansion.json — 12 -> 14 components"
+    },
+    "G4_intelligence_certified": {
+      "status": "PASS",
+      "evidence": "m9-c42.26-intelligence-certification.json — per-engine independent certification"
+    },
+    "G5_zero_not_checked_confirmed": {
+      "status": "PASS",
+      "evidence": "Both transaction_intelligence and financial_intelligence show not_checked=0 in C42.25 evidence"
+    },
+    "G6_capability_bindings_reconciled": {
+      "status": "PASS",
+      "evidence": "C42.25 capability-binding.json files + progress.md C42.25 section confirm both engines are capability-bound"
+    },
+    "G7_coverage_reconciled": {
+      "status": "PASS",
+      "evidence": "transaction_intelligence 98.6% (367 statements, 2 missing), financial_intelligence 94.4%"
+    },
+    "G8_survivors_classified": {
+      "status": "PASS",
+      "evidence": "m9-c42.26-intelligence-survivor-intelligence.json — TXN-E1/C1/C2, FIN-E1/E2/E3/E4/E5 classified and preserved"
+    },
+    "G9_production_anomalies_preserved": {
+      "status": "PASS",
+      "evidence": "All 8 documented anomalies kept as findings, not silently fixed"
+    },
+    "G10_no_unnecessary_full_campaign": {
+      "status": "PASS",
+      "evidence": "m9-c42.26-cadence-and-architecture.json — M26.10 trigger conditions all clear"
+    },
+    "G11_population_ledger_created": {
+      "status": "PASS",
+      "evidence": "m9-c42.26-component-matrix.json — full 14-component ledger with evidence statuses"
+    },
+    "G12_trajectory_reconciled": {
+      "status": "PASS",
+      "evidence": "m9-c42.26-mutation-score-interpretation.json — 49.9 -> 52.4 -> 54.0 -> 60.3 mathematically attributed"
+    },
+    "G13_measurement_cadence_formalized": {
+      "status": "PASS",
+      "evidence": "m9-c42.26-cadence-and-architecture.json — M26.11"
+    },
+    "G14_evidence_reuse_architecture_recorded": {
+      "status": "PASS",
+      "evidence": "m9-c42.26-cadence-and-architecture.json M26.12 — forward dependency on Unified Evidence Architecture"
+    },
+    "G15_no_80_percent_chasing": {
+      "status": "PASS",
+      "evidence": "No test generation triggered by 60.3% being below 80% threshold"
+    },
+    "G16_no_equivalent_mutant_targeting": {
+      "status": "PASS",
+      "evidence": "No artificial test generation against equivalent/unreachable mutants"
+    },
+    "G17_no_silent_production_fix": {
+      "status": "PASS",
+      "evidence": "8 documented anomalies preserved as findings"
+    },
+    "G18_no_repository_code_deletion": {
+      "status": "PASS",
+      "evidence": "TXN-C1, FIN-E2 dead code preserved; no removal"
+    },
+    "G19_no_gate_weakening": {
+      "status": "PASS",
+      "evidence": "All prior gates remain at their established thresholds"
+    },
+    "G20_forward_convergence_documented": {
+      "status": "PASS",
+      "evidence": "m9-c42.26-forward-convergence-report.json"
+    }
+  },
+
+  "definition_of_done": {
+    "milestone": "M26 DoD",
+    "checks": [
+      {"item": "C42.24-B baseline frozen", "status": "PASS"},
+      {"item": "Existing 12-component evidence integrity verified", "status": "PASS"},
+      {"item": "transaction_intelligence admitted", "status": "PASS"},
+      {"item": "financial_intelligence admitted", "status": "PASS"},
+      {"item": "Both intelligence components independently certified", "status": "PASS"},
+      {"item": "0 not_checked confirmed for both", "status": "PASS"},
+      {"item": "Capability bindings reconciled", "status": "PASS"},
+      {"item": "Coverage/readiness evidence reconciled", "status": "PASS"},
+      {"item": "Intelligence survivors classified", "status": "PASS"},
+      {"item": "Production anomalies preserved as documented findings", "status": "PASS"},
+      {"item": "No unnecessary full 14-component campaign executed", "status": "PASS"},
+      {"item": "Existing population evidence reused legitimately", "status": "PASS"},
+      {"item": "Mathematical aggregate independently calculated", "status": "PASS (60.2970% -> 60.3%)"},
+      {"item": "~60.3% derived aggregate recorded", "status": "PASS"},
+      {"item": "Derived aggregate explicitly distinguished from fresh campaign measurement", "status": "PASS"},
+      {"item": "14-component population ledger created", "status": "PASS"},
+      {"item": "C42.21 -> C42.24-B -> C42.25 -> C42.26 trajectory reconciled", "status": "PASS"},
+      {"item": "Measurement cadence formalized", "status": "PASS"},
+      {"item": "Full-campaign trigger conditions defined", "status": "PASS"},
+      {"item": "Evidence-reuse requirement recorded for verification architecture", "status": "PASS"},
+      {"item": "No arbitrary 80% score chasing", "status": "PASS"},
+      {"item": "No equivalent mutants artificially targeted", "status": "PASS"},
+      {"item": "No production anomalies silently fixed", "status": "PASS"},
+      {"item": "No repository code deleted", "status": "PASS"},
+      {"item": "No verification gate weakened", "status": "PASS"},
+      {"item": "Forward convergence report updated", "status": "PASS"},
+      {"item": "Authoritative progress document updated", "status": "PASS (in this run)"}
+    ]
+  }
+}

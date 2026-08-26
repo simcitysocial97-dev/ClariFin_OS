@@ -6441,3 +6441,88 @@ fa643089 M9-C42.25: Ruff lint fixes for pre-existing strengthening tests (unused
 7b1a7f7d M9-C42.23–24: Bundle prior strengthening evidence + C42.25 commit
 cdfaefe1 M9-C42.25: Intelligence test-surface strengthening — CERTIFIED (Outcome A)
 ```
+
+## M9-C42.26 — Repository-Wide Mutation Population Expansion & Intelligence Certification (2026-08-26)
+
+**Status:** CERTIFIED — 14-COMPONENT POPULATION RECONCILED — NO FULL RERUN REQUIRED
+**Date:** 2026-08-26
+**Predecessor:** M9-C42.25 (Outcome A — Both intelligence READY)
+**Governing principle:** Measure → Freeze → Expand → Reconcile → Certify → Correlate → Strengthen → Periodically Re-measure
+
+### Strategic Outcome
+
+Established a mathematically reconciled 14-component mutation population, certified the two intelligence components, and determined the next highest-value convergence work (verification architecture hardening, not more mutation). Closed the deferred-intelligence gate without a 50+ minute repository-wide mutation rerun.
+
+### Population State
+
+| | Before C42.26 | After C42.26 |
+|---|---|---|
+| Components | 12 | 14 |
+| Scored mutants | 9,776 | 14,951 |
+| Killed mutants | 5,277 | 9,015 |
+| Reported aggregate | 54.0% (C42.24-B) | ~60.3% (mathematically reconciled) |
+
+### Key Decisions
+
+1. **No full 14-component campaign executed.** M26.10 trigger conditions all clear (no source change, no config change, no infra change, no population fingerprint change, evidence schemas compatible, no cross-component interference). C42.24-B 12-component evidence preserved + C42.25 intelligence evidence mathematically integrated.
+
+2. **60.3% is NOT an authoritative full-campaign score.** It is a *mathematically reconciled* figure from (C42.24-B) + (C42.25-txn) + (C42.25-fin). The 14-component ledger explicitly distinguishes:
+   - AUTHORITATIVE MEASURED (12 components)
+   - AUTHORITATIVE TARGETED MEASURED (2 intelligence components)
+   - MATHEMATICALLY RECONCILED (14-component aggregate)
+   - NOT EXECUTED (fresh 14-component full campaign)
+
+3. **Trajectory is property of evidence composition, not measurement improvement.** Going from 54.0% → 60.3% is driven by adding two new components (transaction_intelligence 70.2%, financial_intelligence 73.0%) — both substantially above the weakest existing components (behaviour 35.7%, common_calculations 56.4%, ledger_audit 56.8%). C42.22-23 strengthening and C42.24-B discovery repair are already credited in the 12-component evidence.
+
+### M26 Sub-Phases Executed
+
+- **M26.1** Baseline Preservation: C42.24-B frozen at 6bb27a89; integrity verified (no source changes, test changes are lint-only or were untracked-but-present in C42.24-B working tree).
+- **M26.2** Population Admission: 12 → 14 components (added transaction_intelligence + financial_intelligence).
+- **M26.3** Intelligence Certification: Both engines independently certified with 0 not_checked, capability binding + discovery confirmed.
+- **M26.4** Mathematical Reconciliation: 9015 / 14951 = 60.2970% ≈ 60.3% (independently calculated).
+- **M26.5** Population Ledger: 14-component matrix created with explicit evidence statuses.
+- **M26.6** Score Interpretation: Trajectory 49.9 → 52.4 → 54.0 → 60.3 attributed to evidence composition.
+- **M26.7** Survivor Intelligence: 8 documented anomalies classified and preserved (no test generation triggered).
+- **M26.8** Anomaly Boundary: C42.25 non-goal preserved; no silent production fixes.
+- **M26.9** Cross-Dimension Reconciliation: Capability matrix produced; only `behaviour-analysis` is PRIORITY; `ledger`/`cashflow`/`financial_events`/`recommendation`/`common_calculations` are MONITOR; 6 capabilities CERTIFIED; 2 NEWLY CERTIFIED.
+- **M26.10** Full-Campaign Decision Gate: NO trigger met. Reuse certified evidence.
+- **M26.11** Measurement Cadence: Formalized (targeted = per-component; full = only at population expansion, major architecture change, infra change, periodic checkpoint, final certification).
+- **M26.12** Verification Architecture: Forward dependency recorded. Required first-class concepts: EvidenceReuse, ComponentMeasurement, PopulationSnapshot, DerivedAggregate, MeasurementInvalidation.
+- **M26.13** Deferred Intelligence Status: Both flipped NOT READY → READY + CERTIFIED.
+- **M26.14** Final Certification: 20 gates PASS; full Definition-of-Done checklist cleared.
+- **M26.15** Forward Convergence: Next phase is verification architecture (C42.27 Verification Graph + Planner), NOT more mutation.
+
+### Production Anomalies Preserved (Not Fixed)
+
+| ID | Component | Class | Classification |
+|---|---|---|---|
+| TXN-E1 | transaction_intelligence | E (ambiguity) | DESIGN/CONTRACT QUESTION |
+| TXN-C1 | transaction_intelligence | C (defensive/unreachable) | UNREACHABLE CODE |
+| TXN-C2 | transaction_intelligence | C (defensive/unreachable) | UNREACHABLE CODE |
+| FIN-E1 | financial_intelligence | E (ambiguity) | PRODUCTION DEFECT CANDIDATE |
+| FIN-E2 | financial_intelligence | E (info — dead helper) | UNREACHABLE CODE |
+| FIN-E3 | financial_intelligence | E (defect) | PRODUCTION DEFECT CANDIDATE |
+| FIN-E4 | financial_intelligence | E (defect) | PRODUCTION DEFECT CANDIDATE |
+| FIN-E5 | financial_intelligence | E (metric defect) | PRODUCTION DEFECT CANDIDATE |
+
+### Key Artifacts (11 files)
+
+All under `runtime/generated/m9-c42.26/`:
+
+- `m9-c42.26-baseline.json` — C42.24-B baseline preservation + source/test integrity verification
+- `m9-c42.26-population-expansion.json` — 12 → 14 component admission record
+- `m9-c42.26-intelligence-certification.json` — per-engine intelligence certification
+- `m9-c42.26-mathematical-reconciliation.json` — 60.3% derivation with explicit disclaimer
+- `m9-c42.26-component-matrix.json` — 14-component ledger with evidence statuses
+- `m9-c42.26-mutation-score-interpretation.json` — trajectory + delta attribution
+- `m9-c42.26-intelligence-survivor-intelligence.json` — 8 anomalies classified
+- `m9-c42.26-cross-dimension-reconciliation.json` — capability matrix + remediation priority
+- `m9-c42.26-cadence-and-architecture.json` — full-campaign decision + cadence + verification-architecture forward dep
+- `m9-c42.26-certification.json` — final 20-gate certification
+- `m9-c42.26-forward-convergence-report.json` — 8 candidate next phases ranked
+
+### Forward Convergence Decision
+
+The next phase is **C42.27 — Verification Graph + Planner Hardening** (verification architecture), NOT more mutation. Behaviour-engine is the only PRIORITY capability (35.7%); the rest of the mutation system is mature for measurement. Continued mutation score chasing (toward an arbitrary 80% threshold) is explicitly NOT the objective.
+
+**M9-C42.26 CERTIFIED — 14-COMPONENT POPULATION RECONCILED — NO FULL RERUN REQUIRED**
