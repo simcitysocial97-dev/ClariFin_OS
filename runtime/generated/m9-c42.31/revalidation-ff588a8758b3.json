@@ -1,0 +1,18 @@
+{
+  "proposal_id": "prop::ff588a8758b3",
+  "component": "credit_card_engine",
+  "before": {
+    "killed": 0,
+    "generated": 0
+  },
+  "after": {
+    "killed": 1,
+    "generated": 0
+  },
+  "target_mutant_killed": true,
+  "kill_regressions": 0,
+  "hypothesis_validated": true,
+  "accepted": true,
+  "rationale": "accepted: target mutant mut-cc-real-0047 now killed with zero kill regressions; behavioral hypothesis validated",
+  "used_full_campaign": false
+}

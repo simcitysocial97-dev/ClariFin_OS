@@ -1,0 +1,121 @@
+{
+  "scenarios": [
+    {
+      "scenario": "FA",
+      "name": "no_repository_change",
+      "expected": "no unnecessary execution; evidence reuse; derived aggregate; certifiable",
+      "executed": 0,
+      "reused": 14,
+      "aggregate_label": "MATHEMATICALLY_RECONCILED",
+      "verdict": "CERTIFIABLE",
+      "pass": true
+    },
+    {
+      "scenario": "FB",
+      "name": "one_engine_source_change",
+      "expected": "affected component identified; only required verification executed; unaffected reused; aggregate reconciled",
+      "affected": [
+        "credit_card"
+      ],
+      "executed": [
+        "credit_card_engine"
+      ],
+      "reused": 13,
+      "aggregate_label": "AUTHORITATIVE_TARGETED",
+      "verdict": "CERTIFIABLE",
+      "pass": true
+    },
+    {
+      "scenario": "FC",
+      "name": "test_change",
+      "expected": "correct test evidence invalidation; mutation evidence handled per fingerprints; no population-wide execution",
+      "selected_dispositions": [
+        "credit_card_engine:selected_revalidation"
+      ],
+      "executed": [
+        "credit_card_engine"
+      ],
+      "reused": 13,
+      "verdict": "CERTIFIABLE",
+      "pass": true
+    },
+    {
+      "scenario": "FD",
+      "name": "verification_configuration_change",
+      "expected": "exact invalidation scope; no silent expansion",
+      "selected_count": 0,
+      "invalidated": [],
+      "reused": 14,
+      "verdict": "CERTIFIABLE",
+      "pass": true
+    },
+    {
+      "scenario": "FE",
+      "name": "ci_failure_distinction",
+      "expected": "infrastructure vs verification distinction preserved; definitive defect => NOT_CERTIFIABLE",
+      "by_kind": {
+        "verification_failure": [
+          "cashflow_engine",
+          "loan_engine"
+        ],
+        "infrastructure_failure": [
+          "account_engine"
+        ]
+      },
+      "verdict": "NOT_CERTIFIABLE",
+      "failure_answer": "mixed \u2014 verification failures in cashflow_engine, loan_engine; the remaining failures are infrastructure/evidence problems, not product defects",
+      "pass": true
+    },
+    {
+      "scenario": "FF",
+      "name": "discovery_drift",
+      "expected": "CERTIFICATION BLOCKED (C42.24 lesson)",
+      "drift_blockers": [
+        "capability cap::cashflow-engine has surfaces but no source binding"
+      ],
+      "verdict": "CERTIFICATION_BLOCKED",
+      "pass": true
+    },
+    {
+      "scenario": "FG",
+      "name": "insufficient_test_surface",
+      "expected": "behavioral weakness diagnosed; no automatic score-chasing; strengthening recommended",
+      "gaps": [
+        {
+          "kind": "insufficient_test_surface",
+          "subject": "behaviour_engine",
+          "detail": "12 mutant(s) had no covering test",
+          "gates_certification": false,
+          "recommendation": "behavioral gap: consider evidence-driven test strengthening (C42.31); do NOT chase score blindly"
+        }
+      ],
+      "verdict": "CERTIFIABLE",
+      "pass": true
+    },
+    {
+      "scenario": "FH",
+      "name": "equivalent_nondeterministic_survivor",
+      "expected": "classified; preserved; not artificially targeted",
+      "equivalent": [
+        {
+          "kind": "equivalent_mutant",
+          "subject": "balance_engine",
+          "detail": "survivor(s) classified equivalent/observable-equivalent",
+          "gates_certification": false,
+          "recommendation": "preserve; do not target artificially"
+        }
+      ],
+      "nondeterministic": [
+        {
+          "kind": "nondeterministic_mutation",
+          "subject": "balance_engine",
+          "detail": "3 suspicious outcome(s) \u2014 possible nondeterminism",
+          "gates_certification": false,
+          "recommendation": "re-run the specific mutants before interpreting"
+        }
+      ],
+      "pass": true
+    }
+  ],
+  "determinism_check_pass": true
+}

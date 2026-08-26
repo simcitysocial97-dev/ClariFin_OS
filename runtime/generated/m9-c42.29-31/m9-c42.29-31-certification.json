@@ -1,0 +1,165 @@
+{
+  "schema": "m9-certification/v1",
+  "phase": "M9-C42.29-31",
+  "generated_at": "2026-08-26T07:04:55.247221+00:00",
+  "total": 26,
+  "passed": 26,
+  "results": [
+    {
+      "gate": "G1",
+      "name": "C42.28 baseline preserved",
+      "passed": true,
+      "detail": "baseline captured at SHA 084359346b3b"
+    },
+    {
+      "gate": "G2",
+      "name": "CI evidence contract implemented",
+      "passed": true,
+      "detail": "CI_EVIDENCE_SCHEMA=m9-ci-evidence/v1; 20/20 canonical fields present"
+    },
+    {
+      "gate": "G3",
+      "name": "CI evidence correctly fingerprinted",
+      "passed": true,
+      "detail": "drift-fingerprint rules observed: ['R-CFG-002']"
+    },
+    {
+      "gate": "G4",
+      "name": "CI evidence correctly enters the Verification Graph",
+      "passed": true,
+      "detail": "18 verification bindings of 138 considered steps"
+    },
+    {
+      "gate": "G5",
+      "name": "Local and CI evidence share canonical semantics",
+      "passed": true,
+      "detail": "6 dimensions aligned: ['identity', 'scope', 'execution', 'result', 'validity', 'reuse_disposition']"
+    },
+    {
+      "gate": "G6",
+      "name": "Invalidation remains deterministic",
+      "passed": true,
+      "detail": "identical inputs -> identical decisions (reusable, drifts=0)"
+    },
+    {
+      "gate": "G7",
+      "name": "Planner consumes CI evidence correctly",
+      "passed": true,
+      "detail": "shared invalidation rule surface: 14 rules; drift-to-change mapping covers 6/6 drift kinds"
+    },
+    {
+      "gate": "G8",
+      "name": "Targeted executor remains scope-safe",
+      "passed": true,
+      "detail": "scope enforcement helpers present and callable"
+    },
+    {
+      "gate": "G9",
+      "name": "ForensicExecutionRecord is complete",
+      "passed": true,
+      "detail": "causal chain complete; 12 stages validated; missing=[] silent=[]"
+    },
+    {
+      "gate": "G10",
+      "name": "Nine canonical diagnostic questions are answerable",
+      "passed": true,
+      "detail": "all nine Q-fields present on DiagnosticReport; 9 q-prefixed"
+    },
+    {
+      "gate": "G11",
+      "name": "Failure classifications are correct",
+      "passed": true,
+      "detail": "closed taxonomy: ['certification_failure', 'configuration_failure', 'evidence_failure', 'infrastructure_failure', 'scope_failure', 'verification_failure']"
+    },
+    {
+      "gate": "G12",
+      "name": "Discovery drift blocks certification",
+      "passed": true,
+      "detail": "FF scenario verdict=CERTIFICATION_BLOCKED"
+    },
+    {
+      "gate": "G13",
+      "name": "Evidence reuse is explainable",
+      "passed": true,
+      "detail": "FA reused count=14; verdict=CERTIFIABLE"
+    },
+    {
+      "gate": "G14",
+      "name": "Derived evidence is mathematically reproducible",
+      "passed": true,
+      "detail": "C42.26 derived aggregate deterministic at 53.9791%"
+    },
+    {
+      "gate": "G15",
+      "name": "Diagnostic Agent produces deterministic conclusions",
+      "passed": true,
+      "detail": "determinism_check_pass=True"
+    },
+    {
+      "gate": "G16",
+      "name": "Strengthening proposals are evidence-derived",
+      "passed": "prop::30ce77a3d581",
+      "detail": "S-A proposal_id=prop::30ce77a3d581"
+    },
+    {
+      "gate": "G17",
+      "name": "Class B/C/E survivors are not artificially targeted",
+      "passed": true,
+      "detail": "all B/C/E scenarios pass and classify correctly (['S-B:B', 'S-C:C', 'S-E:E'])"
+    },
+    {
+      "gate": "G18",
+      "name": "Targeted strengthening revalidation works",
+      "passed": true,
+      "detail": "S-F/S-G/S-H all pass: ['S-F:acc', 'S-G:rej', 'S-H:rej']"
+    },
+    {
+      "gate": "G19",
+      "name": "No unnecessary full mutation campaign occurs",
+      "passed": true,
+      "detail": "master no_full_campaign=True targeted_only=True"
+    },
+    {
+      "gate": "G20",
+      "name": "End-to-end repository-change scenario passes",
+      "passed": true,
+      "detail": "master scenario checks: 12/12 pass; final=CERTIFIABLE"
+    },
+    {
+      "gate": "G21",
+      "name": "Resource efficiency is measured",
+      "passed": true,
+      "detail": "aggregate saved = 94.29% (3960 / 4200 mutation-minutes)"
+    },
+    {
+      "gate": "G22",
+      "name": "No verification gates weakened",
+      "passed": true,
+      "detail": "C42.27/28/29/30/31 tests still pass (144 passed, 2 warnings in 62.15s (0:01:02))"
+    },
+    {
+      "gate": "G23",
+      "name": "No production functionality deleted",
+      "passed": true,
+      "detail": "14 components checked (engines/core/common + canonical alternates); missing=[]"
+    },
+    {
+      "gate": "G24",
+      "name": "No duplicate architecture introduced",
+      "passed": true,
+      "detail": "single EvidenceAwarePlanner; new modules: ci_evidence, diagnostic_agent, strengthening"
+    },
+    {
+      "gate": "G25",
+      "name": "All evidence artifacts are reproducible",
+      "passed": true,
+      "detail": "two invocations produce identical final certification: CERTIFIABLE; steps identical=True"
+    },
+    {
+      "gate": "G26",
+      "name": "Certification decision is defensible from artifacts alone",
+      "passed": true,
+      "detail": "verdict=CERTIFIABLE; ci_bindings=18; all scenario checks=True"
+    }
+  ]
+}

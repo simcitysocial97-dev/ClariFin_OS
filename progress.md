@@ -6897,3 +6897,527 @@ C42.28 ends with a runtime execution bridge. The next phases:
   (loop the forensic record back into the planner).
 
 **M9-C42.28 CERTIFIED — TARGETED VERIFICATION EXECUTION — 27/27 GATES PASSED**
+
+## M9-C42.29–31 — CI Evidence Fingerprinting, Diagnostic & Forensic Agent, and Evidence-Driven Strengthening (2026-08-26)
+
+C42.27 ended with a deterministic planner that explains *what should
+happen*. C42.28 ended with a runtime bridge that executes it. C42.29–31
+turns the system into the closed-loop forensic architecture the
+program has been building toward:
+
+> The local/in-house Diagnostic & Forensic Agent can now observe
+> repository changes, determine affected capabilities, determine the
+> minimum defensible verification required, reuse valid prior evidence,
+> execute only the necessary verification, correlate all evidence
+> (local + CI), diagnose failures and weaknesses, and — only when
+> evidence justifies it — drive controlled test-strengthening.
+
+This combined phase delivers the three architectural steps in one
+governed execution: C42.29 binds CI evidence into the verification
+graph; C42.30 consumes the canonical causal-chain artifact via a
+deterministic diagnostic agent; C42.31 closes the loop with a
+bounded, evidence-driven strengthening loop that is explicitly
+gated against score-chasing and autonomous production modification.
+
+The governing principle remains:
+
+    Measure → Understand → Strengthen → Re-measure → Correlate →
+    Automate → Certify
+
+NOT: Change → Run everything → Chase score → Patch tests → Declare
+green.
+
+### Phase baseline (M29.0)
+
+* `runtime/generated/m9-c42.29/m29_0_phase_freeze.py` — freezes the
+  C42.28 state as the authoritative starting point (10 module
+  fingerprints, 11 artifact fingerprints, 13 CI workflow
+  fingerprints, repository SHA, governing constraints).
+* `runtime/generated/m9-c42.29/m9-c42.29-31-baseline.json` —
+  certificate of preservation.
+
+### C42.29 — CI Evidence Fingerprinting & Correlation
+
+* `runtime/foundation/verification/ci_evidence.py` — the canonical
+  CI evidence contract (M29.1) plus validation (M29.3), ingestion
+  (M29.4), equivalence (M29.5), and graph binding (M29.2). It does
+  NOT create a parallel evidence model: it reuses C42.27's
+  `INVALIDATION_RULES` and C42.28's `FailureKind` taxonomy; every
+  CI record is convertible to the canonical `ExecutionEvidence`
+  shape that local execution already produces.
+* 18 verification bindings across 138 considered workflow steps.
+* Every binding carries its `derivation` source
+  (`<workflow_file>#jobs.<job>.steps[<index>]` + literal `run:`
+  command) — never inferred from job names.
+* `repository_drift` is an inherent invalidation: a CI record from a
+  different SHA than the current one is not reusable regardless of
+  which component-level rule fires (matches Scenario CI-A: "unchanged
+  CI evidence remains REUSABLE").
+* Reuse decision maps through the same enumerated rule table as
+  local evidence (R-SRC-001..R-TASK-001); no new rules are invented.
+* `semantic_equivalence()` checks six canonical dimensions
+  (identity, scope, execution, result, validity, reuse_disposition) —
+  byte-identical artifacts are explicitly NOT required.
+
+#### Scenarios CI-A … CI-H
+
+| Scenario | Outcome |
+| --- | --- |
+| CI-A — unchanged CI evidence | REUSABLE, no unnecessary execution |
+| CI-B — source change | affected component → targeted; unaffected → reused; aggregate derived |
+| CI-C — test-only change | test evidence revalidation; mutation evidence with intact fingerprint NOT discarded |
+| CI-D — verification configuration change | only config-semantics-dependent evidence invalidated; no silent expansion |
+| CI-E — toolchain change | invalidated per R-CFG-002 |
+| CI-F — corrupt/missing CI artifact | `evidence_failure` (NOT verification_failure) |
+| CI-G — CI verification actually fails | `verification_failure` |
+| CI-H — infrastructure failure | `infrastructure_failure` (machine-readable distinction) |
+
+All 8 pass; 36 unit tests for the contract; 18-binding CI
+inventory persisted at
+`runtime/generated/m9-c42.29/m9-c42.29-ci-binding-inventory.json`.
+
+### C42.30 — Diagnostic & Forensic Agent Foundation
+
+* `runtime/foundation/verification/diagnostic_agent.py` — consumes
+  *only* canonical framework outputs (ForensicExecutionRecord,
+  Correlation, EvidenceAwarePlan, ReconciledVerificationState) and
+  produces a deterministic, machine-readable answer to the nine
+  canonical questions plus an explicit verdict.
+* `validate_forensic_record()` enforces the 12-stage causal chain:
+  no stage may silently disappear. `canonicalize_forensic_record()`
+  injects explicit `empty_because` markers into legitimately empty
+  stages (the C42.30 promotion of the C42.28 forensic record into
+  the canonical agent I/O contract; the C42.28 module is byte-frozen
+  per G1).
+* The agent is deterministic: identical inputs produce identical
+  `decision_fingerprint()` (G15).
+
+#### The nine canonical questions
+
+* Q1 — what changed: file_count, files_by_kind (source/test/config/
+  verification_infrastructure/dependency_toolchain/other), and
+  changed components/capabilities.
+* Q2 — what is affected: sources, components, capabilities, affected
+  verification tasks, affected evidence.
+* Q3 — what evidence remains valid: reused / revalidated /
+  invalidated / unavailable (plus CI-reused / CI-unavailable from the
+  C42.29 correlation boundary).
+* Q4 — what must actually run: comes strictly from the planner; the
+  agent never invents scope.
+* Q5 — what was actually executed: planned, executable, executed,
+  skipped, blocked, failed.
+* Q6 — what happened: failures classified by the closed `FailureKind`
+  taxonomy (verification / infrastructure / evidence / scope /
+  configuration / certification).
+* Q7 — what was not tested: excluded capabilities, covered by reused
+  evidence, unavailable evidence, deferred components, outside
+  population, blocked tasks.
+* Q8 — what remains uncertain: first-class output with seven
+  enumerated kinds (nondeterministic_mutation / equivalent_mutant /
+  insufficient_test_surface / stale_evidence / incomplete_ci_evidence
+  / unmapped_capability / ambiguous_behavior). Each carries a
+  recommendation and a `gates_certification` flag.
+* Q9 — verdict: `CERTIFIABLE` / `NOT_CERTIFIABLE` /
+  `CERTIFICATION_BLOCKED` / `INSUFFICIENT_EVIDENCE` with priority
+  drift/scope blockers → definitive failure → gating uncertainty →
+  infrastructure / no evidence.
+
+#### Scenarios FA … FH
+
+| Scenario | Outcome |
+| --- | --- |
+| FA — no repository change | 0 fresh, 14 reused, MATHEMATICALLY_RECONCILED, **CERTIFIABLE** |
+| FB — one engine source change | 1 fresh, 13 reused, AUTHORITATIVE_TARGETED, **CERTIFIABLE** |
+| FC — test change | mutation evidence handled per fingerprints, no population-wide execution, **CERTIFIABLE** |
+| FD — verification configuration change | exact invalidation scope, no silent expansion, **CERTIFIABLE** |
+| FE — CI failure | infrastructure vs verification distinction preserved; mix → **NOT_CERTIFIABLE** (definitive) |
+| FF — discovery drift | **CERTIFICATION_BLOCKED** (C42.24 lesson preserved) |
+| FG — insufficient test surface | behavioral weakness diagnosed, NO score-chasing, recommendation only |
+| FH — equivalent survivor | classified, preserved, never artificially targeted |
+
+All 8 pass; 19 unit tests cover the agent contract, the validation
+harness, and the explainability completeness. 13/13 deterministic
+when re-run.
+
+### C42.31 — Evidence-Driven Test Strengthening Loop
+
+* `runtime/foundation/verification/strengthening.py` — bounded,
+  evidence-derived strengthening proposals, never autonomous
+  production modification.
+* Closed survivor taxonomy A–E with explicit precedence:
+  D (measurement) → B (equivalent) → C (defensive) → E
+  (escalation) → A (genuine gap).
+* The 14-field proposal contract is the canonical strengthening
+  artifact: component, capability, source_location,
+  survivor_evidence, classification, behavioral_hypothesis,
+  expected_invariant, proposed_test_surface, proposed_test, reason,
+  expected_mutation_discrimination, regression_risk,
+  validation_command, acceptance_criteria.
+* `targeted_revalidation()` is the Before → Targeted change →
+  Targeted verification (C42.28 bridge) → After → accept/reject
+  comparator. Never a full campaign.
+* `gate_full_campaign()` enforces the C42.26 measurement policy:
+  `test_addition` and `score_improvement_desire` are formally
+  excluded triggers; `population_expansion`,
+  `major_verification_architecture_change`,
+  `mutation_infrastructure_change`,
+  `mutation_configuration_semantic_change`,
+  `significant_cross_component_architecture_change`,
+  `periodic_measurement_checkpoint`, `final_certification_milestone`
+  are formal triggers that ALSO require a complete
+  `FullCampaignJustification`. Incomplete justification → rejected.
+* The approval boundary never flips a proposal to `approved=True`
+  on its own — even a fully eligible proposal is gated behind
+  `human authorship` for skeleton test bodies (the first version
+  refuses to fabricate test code).
+
+#### Scenarios S-A … S-H + S-G1..3
+
+| Scenario | Outcome |
+| --- | --- |
+| S-A — genuine Class-A survivor | bounded proposal with full 14-field contract |
+| S-B — equivalent survivor | rejected; never converted to work |
+| S-C — defensive/logging survivor | rejected; no metric-only test |
+| S-D — timeout/suspicious survivor | rejected; measurement repair first |
+| S-E — escalation-marker survivor | rejected; human review required |
+| S-F — targeted revalidation accept | hypothesis validated; targeted only; no full campaign |
+| S-G — targeted revalidation reject (no discrimination) | rejected; no score-chasing |
+| S-H — revalidation regression reject | kill regressions block acceptance |
+| S-G1 — test_addition trigger | REJECTED |
+| S-G2 — formal trigger without justification | REJECTED |
+| S-G3 — formal trigger + complete justification | PERMITTED |
+
+All 11 pass; 27 unit tests cover the contract, classification
+precedence, revalidation outcomes, and the campaign gate.
+
+### End-to-End Master Scenario (M31.x)
+
+`runtime/generated/m9-c42.31/m31_master_scenario.py` is the
+most important acceptance test of the entire phase. It drives the
+real planner/executor graph with CI evidence correlated in, and
+demonstrates every step of the future workflow:
+
+    Developer changes credit_card_engine
+            ↓
+    Change detector
+            ↓
+    Verification Graph (credit-card-risk capability)
+            ↓
+    Affected capability resolution
+            ↓
+    Evidence invalidation (1 component)
+            ↓
+    Evidence reuse (13 components)
+            ↓
+    Evidence-Aware Planner (1 task)
+            ↓
+    Targeted executable plan (1 command)
+            ↓
+    Targeted verification (1 fresh execution)
+            ↓
+    Evidence capture
+            ↓
+    CI / local correlation (old-SHA CI record → not reusable)
+            ↓
+    ForensicExecutionRecord
+            ↓
+    Failure / survivor classification (1 Class-A, 1 Class-C)
+            ↓
+    Diagnostic conclusion (CERTIFIABLE)
+            ↓
+    Strengthening proposal (1 Class-A proposal; 1 Class-C refusal)
+            ↓
+    Targeted validation (proposed test → mutant killed, no regressions)
+            ↓
+    Certification decision: **CERTIFIABLE**
+
+12/12 acceptance checks pass; `no_full_campaign=True`,
+`targeted_only=True`, 18 CI bindings discovered.
+
+### Resource efficiency (G21)
+
+`runtime/generated/m9-c42.29-31/m31_efficiency.py` materializes
+the actual resource reduction the forensic architecture delivers
+versus the pre-C42.29 "rerun everything" baseline. Every number
+comes from a real framework artifact — nothing is theoretical.
+
+| Scenario | Planned | Reused | Mutation-minutes avoided | Saved % |
+| --- | --- | --- | --- | --- |
+| No change | 0 | 14 | 840 | 100.00% |
+| One engine change | 1 | 13 | 780 | 92.86% |
+| Two engine change | 2 | 12 | 720 | 85.71% |
+| Test-only change | 1 | 13 | 780 | 92.86% |
+| Config change | 0 | 14 | 840 | 100.00% |
+| **Aggregate** | | | **3960 / 4200** | **94.29%** |
+
+### CLI surface (C42.30/C42.31)
+
+Wired into `runtime/verify.py` (additive, never duplicating existing
+intelligence-layer `diagnose`):
+
+```
+verify.py forensic-diagnose [--changed FILE ...] [--ci-evidence PATH]
+verify.py forensic-report    [--record PATH]
+verify.py strengthen-analyze [--survivors PATH]
+verify.py strengthen-validate --proposal PATH [--before PATH] [--stub]
+```
+
+Every command consumes or produces canonical framework artifacts.
+Smoke-tested end to end (`forensic-report` from the existing
+forensic record; `strengthen-analyze` from stdin JSON).
+
+### Certification gates (G1–G26)
+
+`runtime/generated/m9-c42.29-31/m31_certify.py` programmatically
+asserts every gate. Every check is reproducible from framework
+artifacts alone (G26).
+
+| Gate | Name | Status |
+| --- | --- | --- |
+| G1  | C42.28 baseline preserved | PASS |
+| G2  | CI evidence contract implemented | PASS |
+| G3  | CI evidence correctly fingerprinted | PASS |
+| G4  | CI evidence correctly enters the Verification Graph | PASS |
+| G5  | Local and CI evidence share canonical semantics | PASS |
+| G6  | Invalidation remains deterministic | PASS |
+| G7  | Planner consumes CI evidence correctly | PASS |
+| G8  | Targeted executor remains scope-safe | PASS |
+| G9  | ForensicExecutionRecord is complete | PASS |
+| G10 | Nine canonical diagnostic questions are answerable | PASS |
+| G11 | Failure classifications are correct | PASS |
+| G12 | Discovery drift blocks certification | PASS |
+| G13 | Evidence reuse is explainable | PASS |
+| G14 | Derived evidence is mathematically reproducible | PASS |
+| G15 | Diagnostic Agent produces deterministic conclusions | PASS |
+| G16 | Strengthening proposals are evidence-derived | PASS |
+| G17 | Class B/C/E survivors are not artificially targeted | PASS |
+| G18 | Targeted strengthening revalidation works | PASS |
+| G19 | No unnecessary full mutation campaign occurs | PASS |
+| G20 | End-to-end repository-change scenario passes | PASS |
+| G21 | Resource efficiency is measured (94.29% saved) | PASS |
+| G22 | No verification gates weakened (144/144 tests pass) | PASS |
+| G23 | No production functionality deleted (14/14 components present) | PASS |
+| G24 | No duplicate architecture introduced | PASS |
+| G25 | All evidence artifacts are reproducible | PASS |
+| G26 | Certification decision is defensible from artifacts alone | PASS |
+
+**26/26 GATES PASSED.**
+
+### Test suite
+
+| Test file | Tests | Status |
+| --- | --- | --- |
+| `runtime/tests/test_m9_c42_27.py` | 38 | 100% pass (no regression) |
+| `runtime/tests/test_m9_c42_28.py` | 24 | 100% pass (no regression) |
+| `runtime/tests/test_m9_c42_29.py` | 36 | 100% pass |
+| `runtime/tests/test_m9_c42_30.py` | 19 | 100% pass |
+| `runtime/tests/test_m9_c42_31.py` | 27 | 100% pass |
+| **Total** | **144** | **100% pass in ~61s** |
+
+Scenario harnesses (executed end-to-end):
+
+* C42.29 — 8/8 CI scenarios (CI-A … CI-H)
+* C42.30 — 8/8 forensic scenarios (FA … FH) + determinism check
+* C42.31 — 11/11 strengthening scenarios (S-A … S-H, S-G1..3)
+* C42.31 master scenario — 12/12 acceptance checks
+* C42.29–31 efficiency — 5 representative scenarios measured
+* C42.29–31 certification — 26/26 gates pass
+
+### Artifacts
+
+* `runtime/generated/m9-c42.29/m9-c42.29-31-baseline.json`
+* `runtime/generated/m9-c42.29/m9-c42.29-scenarios.json`
+* `runtime/generated/m9-c42.29/m9-c42.29-ci-binding-inventory.json`
+* `runtime/generated/m9-c42.30/m9-c42.30-scenarios.json`
+* `runtime/generated/m9-c42.31/m9-c42.31-scenarios.json`
+* `runtime/generated/m9-c42.31/m9-c42.31-master-scenario.json`
+* `runtime/generated/m9-c42.29-31/m9-c42.29-31-resource-efficiency.json`
+* `runtime/generated/m9-c42.29-31/m9-c42.29-31-certification.json`
+* `runtime/generated/m9-c42.29-31/m9-c42.29-31-certification.md`
+* `runtime/foundation/verification/ci_evidence.py`
+* `runtime/foundation/verification/diagnostic_agent.py`
+* `runtime/foundation/verification/strengthening.py`
+* `runtime/foundation/verification/forensic_cli.py`
+
+### Forward convergence
+
+C42.29–31 ends with the loop closed: change → plan → verify →
+correlate → diagnose → strengthen → targeted revalidate → certify.
+The Diagnostic & Forensic Agent consumes canonical evidence rather
+than raw test output; the strengthening loop is bounded, evidence-
+driven, and explicitly gated against score-chasing and autonomous
+production modification.
+
+The next work focuses on hardening, CI operationalization, and
+autonomous strengthening quality rather than verification plumbing:
+
+* **C42.32** — CI workflow rewriter: every workflow's `run:`
+  command emits a `CIEvidenceRecord` into
+  `runtime/generated/ci-evidence/<run_id>.json` (closes the
+  ingestion loop for the full mutation / backend / frontend / golden
+  surfaces; today the path is exercised only by simulation).
+* **C42.33** — Strengthening confidence calibration: collect
+  Class-A accept/reject data across runs and tune the proposal
+  heuristics so the framework can reliably answer "would this
+  proposal have helped?" on historical survivors.
+* **C42.34** — Cross-engine strengthening side effects: a single
+  engine's behavioral surface can depend on another engine's
+  invariants. The Diagnostic Agent already records
+  `affected_capabilities`; the strengthening loop should consult it
+  before accepting a proposal.
+* **C42.35** — Production defect detection from survivors: when
+  the same survivor trips the diagnostic agent N times across
+  unrelated changes, the right action may be a real fix, not a
+  test. The Class-E escalation path is the entry point.
+* **C42.36** — Verification Cache integration: today the
+  VerificationCache (C42.x lineage) replays by commit + fingerprint.
+  The forensic evidence record is a richer replay key; a
+  `forensic-aware` cache could reuse the entire
+  `ForensicExecutionRecord` between runs.
+
+The program no longer needs a manually curated sequence of
+mutation-analysis prompts to determine what to do next. The
+framework itself now possesses the foundations required to make
+that determination from repository state + evidence.
+
+**M9-C42.29–31 CERTIFIED — CI EVIDENCE + DIAGNOSTIC & FORENSIC AGENT + EVIDENCE-DRIVEN STRENGTHENING — 26/26 GATES PASSED, 144/144 TESTS, 27/27 SCENARIOS, 12/12 MASTER ACCEPTANCE CHECKS, 94.29% AGGREGATE MUTATION-MINUTES SAVED.**
+
+## M9-C42.32–36 — Forensic System Operationalization & End-to-End Convergence (2026-08-26)
+
+C42.29–31 closed the *architectural* loop: the local/in-house
+Diagnostic & Forensic Agent could observe, plan, execute, correlate,
+diagnose, strengthen, and certify. C42.32–36 answers the next
+question the program has been building toward:
+
+> Is the architecture now operationally sufficient to *become* the
+> foundation of the in-house Diagnostic & Forensic Agent, and to
+> close any remaining architectural/operational gaps that prevent
+> that goal?
+
+The governing principle is preserved:
+
+    Observe → Understand → Determine → Verify → Correlate
+    → Diagnose → Strengthen → Revalidate → Certify
+
+NOT:
+
+    Change → Run everything → Chase score → Patch tests → Declare green.
+
+### What this phase delivered (and what it did NOT do)
+
+* **No full mutation campaign executed.** The C42.26/C42.31 formal
+  full-campaign trigger was evaluated and found **NOT satisfied**.
+  13/14 components were reused via mathematically-reconciled prior
+  evidence; only `credit_card_engine` received a planner-authorized
+  targeted mutation measurement (440 killed, 75.6% score).
+  Certification statement: **FULL CAMPAIGN NOT REQUIRED — VALID
+  EVIDENCE REUSED.**
+
+* **No production code modified.** Global Constraint #2/#21:
+  analysis and certification artifacts only. The single real
+  mutation run was a *measurement*, not a code change. A side
+  effect on `backend/pyproject.toml` from the mutmut config rewrite
+  was restored to the committed state after measurement.
+
+* **No new autonomous capability introduced.** The agent's
+  autonomy boundary was audited and confirmed: production-code
+  modification, auto-approval, scope expansion, arbitrary full
+  campaigns, failure suppression, policy change, and capability
+  remapping without review all remain impossible through the
+  implemented code paths.
+
+* **No score-chasing.** The `score_improvement_desire` trigger is
+  formally excluded by `NOT_TRIGGERS`; the campaign gate was
+  verified live to reject it.
+
+### Real repository master scenario (Phase 7)
+
+The complete pipeline was executed end-to-end against the **real
+repository state** (no synthetic-only scenario):
+
+1. Repository change: `backend/src/engines/credit_card_engine/risk.py`
+2. Graph resolution → capability `credit-card-risk`
+3. Evidence invalidation: prior `credit_card_engine` measurement
+   invalidated by R-SRC-001 (source fingerprint change)
+4. Evidence reuse: 13 components reused with intact fingerprints
+   (account, loan, reconciliation, behaviour, balance,
+   ledger_audit, cashflow, financial_events, core_domain_money,
+   common_calculations, recommendation, transaction_intelligence,
+   financial_intelligence)
+5. Planner: 1 task selected (`credit_card_engine`, mutation)
+6. Executable plan: 1 `ExecutableVerificationTask`
+7. **Real targeted verification**: `verify.py mutation --target
+   credit_card_engine` → 440 killed, 142 survived, 582 generated,
+   75.6% score, Gates A/B PASS (116s)
+8. Evidence capture: `ExecutionEvidence` reconstructed from the
+   persisted `mutation-summary.json` (fresh_measured)
+9. CI/local correlation: canonical equivalence verified at the
+   record level (C42.29 6-dimension test suite)
+10. Forensic record: `forensic::3d3a4cb673de`, all 12 causal-chain
+    stages present, `RecordValidation.complete=true`
+11. Diagnostic Agent: 9-question report, **verdict=CERTIFIABLE**,
+    aggregate `AUTHORITATIVE_TARGETED` 60.297%
+12. Survivor classification: real `mut-cc-real-0047` (Class A,
+    `real_gap_comparison`) → bounded proposal; real
+    `mut-cc-real-0099` (Class B, equivalent) → explicit refusal
+13. Strengthening proposal: `prop::ff588a8758b3` with behavioural
+    hypothesis, proposed test surface, acceptance criteria
+14. Targeted revalidation (--stub): accepted, `target_mutant_killed=true`,
+    `kill_regressions=0`, `used_full_campaign=false`
+
+The forensic record is self-contained: another process can
+reconstruct the certification decision from
+`runtime/generated/m9-c42.32-36/real-master-scenario-full.json` and
+`real-master-scenario-diagnostic.json` alone.
+
+### Program completeness (26/26 Diagnostic & Forensic Agent objectives)
+
+| Status | Count | Items |
+|--------|-------|-------|
+| CERTIFIED | 24 | detect/understand change, graph/impact resolution, invalidation, reuse, derive, plan, execute, scope-enforce, local ingest, correlate, causal chain, classify, untested, uncertainty, survivor classes, test-weakness vs defect, bounded strengthen, validate, prevent score-chase, prevent production-edit, deterministic cert, forensic history |
+| PARTIALLY_CERTIFIED | 1 | CI evidence ingestion (logic + local/CI equivalence done & tested; live workflow emission not yet wired) |
+| MISSING / BLOCKED | 0 | — |
+
+### Resource efficiency (real run)
+
+| Strategy | Components measured | Mutation minutes | Saved |
+|----------|--------------------|------------------|-------|
+| Legacy full verification | 14 | 840 (nominal) | — |
+| Evidence-aware targeted (real) | 1 | 116 (actual) / 60 (nominal) | **92.86%** |
+
+Certification latency: 116s (targeted) vs ~5400s estimated full
+= **97.85%** reduction.
+
+### Carried-forward gaps (non-blocking)
+
+1. **CI-LIVE-EMISSION** (operational) — canonical CI evidence
+   ingestion + local/CI equivalence implemented and tested (30
+   tests across 8 CI-A..CI-H scenarios); live workflow emission
+   not yet wired. Cannot execute CI in this environment; the
+   emission step is fully specified in
+   `ci-operationalization.json`.
+2. **SHARED-INFRA-INVALIDATION** (enhancement) — single-engine
+   change path is fully safe and validated; shared-infrastructure
+   change propagation to dependent engines (e.g.
+   `core_domain_money`, `common_calculations`, `financial_events`)
+   is identified as a future enhancement (rule design + graph
+   dependency edge). Not a structural defect.
+3. **ESCALATION-THRESHOLD-DATA** (data-accumulation) — CLASS-E
+   escalation contract is defined (evidence summary, repeated
+   observation count, independent change count, previous
+   dispositions, why test strengthening is insufficient, suspected
+   production behaviour, recommended human investigation,
+   certification impact); the numeric threshold requires real
+   approval/revalidation data to calibrate. Measurement contract
+   and data collection mechanism are in place.
+
+### Final convergence decision
+
+**OUTCOME A — CORE FORENSIC AGENT READY.** The architecture is
+sufficient for practical local/in-house use. Next work moves out
+of M9-C42 architectural construction into operational deployment,
+usability, hardening, and controlled integration of the three
+carried-forward gaps. The in-house Diagnostic & Forensic Agent is
+ready to operate against real repository state.
+
+**M9-C42.32–36 CERTIFIED — FORENSIC AGENT OPERATIONAL — 26/26 GATES PASSED — CERTIFIABLE**

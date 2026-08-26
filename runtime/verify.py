@@ -1370,6 +1370,35 @@ def main() -> int:
 
         return run_mutation_inventory_cli(sys.argv[2:])
 
+    if command == "forensic-diagnose":
+        from runtime.foundation.verification.forensic_cli import (
+            run_forensic_diagnose,
+        )
+
+        return run_forensic_diagnose(sys.argv[2:])
+
+    if command == "forensic-report":
+        from runtime.foundation.verification.forensic_cli import (
+            run_forensic_report,
+        )
+
+        return run_forensic_report(sys.argv[2:])
+
+    if command == "strengthen-analyze":
+        from runtime.foundation.verification.forensic_cli import (
+            run_strengthen_analyze,
+        )
+
+        return run_strengthen_analyze(sys.argv[2:])
+
+    if command == "strengthen-validate":
+        from runtime.foundation.verification.forensic_cli import (
+            run_strengthen_validate,
+        )
+
+        return run_strengthen_validate(sys.argv[2:])
+
+
     if command == "env-check":
         from runtime.foundation.verification.env import main_env_check
 

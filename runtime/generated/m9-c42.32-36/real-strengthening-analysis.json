@@ -1,0 +1,52 @@
+{
+  "schema": "m9-strengthening-analysis/v1",
+  "input_count": 2,
+  "proposals": [
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::ff588a8758b3",
+      "component": "credit_card_engine",
+      "capability": "credit-card-risk",
+      "source_location": "src/engines/credit_card_engine/interest.py:22",
+      "survivor_evidence": {
+        "survivor_id": "mut-cc-real-0047",
+        "component": "credit_card_engine",
+        "capability": "credit-card-risk",
+        "location": "src/engines/credit_card_engine/interest.py:22",
+        "mutation_operator": "comparison",
+        "original_snippet": "if outstanding_paise == 0 or annual_rate_bps == 0:",
+        "mutated_snippet": "if outstanding_paise == 0 and annual_rate_bps == 0:",
+        "status": "survived",
+        "notes": "real_gap_comparison",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "boundary/ordering behavior at 'src/engines/credit_card_engine/interest.py:22' is load-bearing: the mutated comparison would change decisions at the boundary",
+      "expected_invariant": "behavior at src/engines/credit_card_engine/interest.py:22 follows the original expression `if outstanding_paise == 0 or annual_rate_bps == 0:`; the mutated form `if outstanding_paise == 0 and annual_rate_bps == 0:` must be rejected by the proposed test",
+      "proposed_test_surface": "backend/tests/unit/engines/credit_card_engine/test_strengthening_ff588a8758b3.py",
+      "proposed_test": "def test_ff588a8758b3():\n    \"\"\"Discriminates survivor mut-cc-real-0047: boundary/ordering behavior at 'src/engines/credit_card_engine/interest.py:22' is load-bearing: the mutated comparison would change decisions at the boundary\"\"\"\n    ...  # exercise src/engines/credit_card_engine/interest.py:22; assert the original semantics\n",
+      "reason": "classified A: no test reaches src/engines/credit_card_engine/interest.py:22; the behavior is entirely unasserted",
+      "expected_mutation_discrimination": "mutant mut-cc-real-0047 transitions survived->killed under the proposed test for credit_card_engine",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/credit_card_engine -q && .venv/bin/python runtime/verify.py strengthen-validate --proposal prop::ff588a8758b3 --component credit_card_engine",
+      "acceptance_criteria": [
+        "proposed test fails against the mutated expression",
+        "proposed test passes against the original expression",
+        "targeted re-measurement shows killed>=killed_before+1 with zero kill regressions",
+        "no production source modified"
+      ]
+    }
+  ],
+  "refusals": [
+    {
+      "survivor_id": "mut-cc-real-0099",
+      "classification": "B",
+      "reason": "equivalent/observable-equivalent behavior; targeting it would inflate the score without improving defect detection"
+    }
+  ],
+  "policy": {
+    "class_a": "bounded proposal generated",
+    "class_b_c_d_e": "explicitly refused; reasons recorded",
+    "automation_boundary": "detect -> diagnose -> propose -> validate; production code is never modified autonomously"
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "record_id": "forensic::3d3a4cb673de",
+  "generated_at": "2026-08-26T09:39:22.584873+00:00",
+  "repository_sha": "084359346b3b14792c5bd38e159932f6c42922fd",
+  "change": {
+    "changed_files": [
+      "backend/src/engines/credit_card_engine/risk.py"
+    ],
+    "affected_components": [
+      "credit_card"
+    ],
+    "affected_capabilities": [
+      "credit-card-risk"
+    ]
+  },
+  "affected_graph_nodes": {
+    "sources": [
+      "backend/src/engines/credit_card_engine/risk.py"
+    ],
+    "capabilities": [
+      "credit-card-risk"
+    ]
+  },
+  "invalidations": {
+    "by_component": {
+      "credit_card_engine": [
+        "R-SRC-001"
+      ],
+      "account_engine": [],
+      "loan_engine": [],
+      "reconciliation_engine": [],
+      "behaviour_engine": [],
+      "balance_engine": [],
+      "ledger_audit_engine": [],
+      "cashflow_engine": [],
+      "financial_events": [],
+      "core_domain_money": [],
+      "common_calculations": [],
+      "recommendation_engine": [],
+      "transaction_intelligence": [],
+      "financial_intelligence": []
+    }
+  },
+  "reused_evidence": {
+    "count": 13,
+    "components": [
+      "account_engine",
+      "loan_engine",
+      "reconciliation_engine",
+      "behaviour_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine",
+      "financial_events",
+      "core_domain_money",
+      "common_calculations",
+      "recommendation_engine",
+      "transaction_intelligence",
+      "financial_intelligence"
+    ]
+  },
+  "selected_tasks": {
+    "count": 1,
+    "components": [
+      "credit_card_engine"
+    ]
+  },
+  "executed_tasks": {
+    "count": 1,
+    "components": [
+      "credit_card_engine"
+    ]
+  },
+  "execution_results": {
+    "by_component": {
+      "credit_card_engine": {
+        "execution_id": "mut-5e916a2f825e",
+        "task_id": "task::mutation::credit_card_engine",
+        "component": "credit_card_engine",
+        "capability": "credit-card-risk",
+        "verification_kind": "mutation",
+        "started_at": "",
+        "completed_at": "",
+        "duration_seconds": 116,
+        "command": "verify.py mutation --target credit_card_engine",
+        "exit_code": 0,
+        "failure_kind": null,
+        "failure_message": "",
+        "source_fingerprint": "",
+        "test_fingerprint": "",
+        "config_fingerprint": "7b66603ddae99f28",
+        "toolchain_fingerprint": "",
+        "repository_sha": "084359346b3b14792c5bd38e159932f6c42922fd",
+        "artifact_paths": [
+          "backend/tests/generated/mutation/mutation-summary.json"
+        ],
+        "notes": "reconstructed from backend/tests/generated/mutation/mutation-summary.json",
+        "counts": {
+          "generated": 582,
+          "killed": 440,
+          "survived": 142,
+          "no_tests": 0,
+          "timeout": 0,
+          "suspicious": 0,
+          "not_checked": 0
+        }
+      }
+    }
+  },
+  "new_evidence": {
+    "count": 1,
+    "components": [
+      "credit_card_engine"
+    ]
+  },
+  "derived_evidence": {
+    "aggregate": {
+      "label": "AUTHORITATIVE_TARGETED",
+      "result": 60.297,
+      "numerator": 9015,
+      "denominator": 14951,
+      "scope": "pop-14-c42.26",
+      "decided_at": "2026-08-26T09:39:22.582348+00:00",
+      "rationale": "1 component(s) freshly measured + 13 reused; only the fresh subset is directly measured, the rest are derived from prior certified artifacts"
+    }
+  },
+  "failures": {
+    "by_component": {},
+    "count": 0
+  },
+  "uncertainties": {
+    "no_evidence": [],
+    "invalidated": [],
+    "drift_blockers": [],
+    "certification_gaps": []
+  },
+  "certification_decision": {
+    "certifiable": true,
+    "rationale": "certifiable: every component has either fresh measured evidence or a reused prior measurement",
+    "aggregate_label": "AUTHORITATIVE_TARGETED",
+    "aggregate_result": 60.297
+  }
+}

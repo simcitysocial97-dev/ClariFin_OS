@@ -1,0 +1,184 @@
+{
+  "schema": "m9-c42.32-36-forensic-cache-analysis/v1",
+  "generated_at": "2026-08-26T07:22:00.000000+00:00",
+  "phase": "M9-C42.36 Phase 6",
+  "repository_sha": "084359346b3b14792c5bd38e159932f6c42922fd",
+  "baseline_reference": "runtime/generated/m9-c42.32-36/baseline.json",
+  "current_cache": {
+    "implementation": "runtime/foundation/verification/cache.py:VerificationCache",
+    "key_strategy": "(commit, changed_files, profile) + optional fingerprint",
+    "storage": "runtime/generated/verification-cache.json",
+    "verdict_storage": "CachedVerdict with overall_status, passed, failed, skipped, unit_statuses",
+    "replay_contract": "ReplayResult with reusable boolean, exit_code (0 for pass, 1 for fail), reason"
+  },
+  "forensic_evidence_identity": {
+    "forensic_record": "runtime/generated/m9-c42.28/forensic-execution-record.json",
+    "stages": [
+      "change",
+      "affected_graph_nodes",
+      "invalidations",
+      "reused_evidence",
+      "selected_tasks",
+      "executed_tasks",
+      "execution_results",
+      "new_evidence",
+      "derived_evidence",
+      "failures",
+      "uncertainties",
+      "certification_decision"
+    ],
+    "evidence_awareness": "ForensicExecutionRecord captures complete causal chain including invalidation decisions, reuse decisions, planner selections, and execution outcomes"
+  },
+  "cache_vs_forensic_comparison": {
+    "cache_key": "commit + changed_files + profile + fingerprint",
+    "forensic_identity": "Complete causal chain with 12 stages",
+    "weaknesses": [
+      "Cache key does not include capability mappings (graph drift)",
+      "Cache key does not include invalidation rule set version",
+      "Cache key does not include evidence reuse decisions",
+      "Cache key does not include CI evidence correlation",
+      "Cache key does not include diagnostic conclusions",
+      "Cache key does not include strengthening history",
+      "Fingerprint only covers toolchain/config, not source/test fingerprints per component"
+    ],
+    "strengths": [
+      "Cache correctly invalidates on commit change",
+      "Cache correctly invalidates on changed_files change",
+      "Cache correctly invalidates on fingerprint change (toolchain/config)",
+      "Replay never returns exit_code=0 for stored fail status"
+    ]
+  },
+  "forensic_aware_cache_design": {
+    "proposed_key_components": [
+      "commit (repository_sha)",
+      "changed_files (normalized)",
+      "profile",
+      "source_fingerprints (per component from collect_repo_fingerprints)",
+      "test_fingerprints (per component)",
+      "config_fingerprint",
+      "toolchain_fingerprint",
+      "population_fingerprint",
+      "task_definitions_hash",
+      "invalidation_rules_version",
+      "capability_mappings_hash",
+      "ci_correlation_hash"
+    ],
+    "reuse_criteria": "Forensic cache hit requires ALL of: identical commit, identical source/test/config/toolchain/population/task fingerprints, identical capability mappings, identical invalidation rules, valid CI correlation (if present)",
+    "invalidation_rules": [
+      "Repository drift (commit change) -> INVALIDATE",
+      "Source drift (component source fingerprint change) -> INVALIDATE per R-SRC-001",
+      "Test drift (component test fingerprint change) -> INVALIDATE per R-SRC-003",
+      "Config drift (mutation-dependent evidence) -> INVALIDATE per R-CFG-001",
+      "Toolchain drift (mutation evidence) -> INVALIDATE per R-CFG-002",
+      "Population drift -> INVALIDATE per R-POP-001",
+      "Task definition drift -> INVALIDATE per R-TASK-001",
+      "Capability mapping drift -> INVALIDATE (C42.24 discovery drift)",
+      "CI evidence change -> INVALIDATE per CIDriftReport",
+      "Stale cache (timestamp threshold) -> INVALIDATE",
+      "Corrupted cache (JSON parse failure) -> INVALIDATE"
+    ]
+  },
+  "cache_correctness_scenarios": {
+    "1_exact_unchanged_state": {
+      "description": "Same commit, no file changes, same profile, same environment",
+      "expected": "CACHE_HIT - forensic record reused completely",
+      "status": "VERIFIED - current cache handles this"
+    },
+    "2_source_change": {
+      "description": "Source file modified in one component",
+      "expected": "CACHE_MISS for affected component; others may hit",
+      "status": "PARTIAL - cache invalidates whole profile; forensic would allow component-level reuse"
+    },
+    "3_test_only_change": {
+      "description": "Test file modified in one component",
+      "expected": "CACHE_MISS for affected component; source fingerprints unchanged",
+      "status": "PARTIAL - current cache invalidates whole profile; forensic invalidation is component-scoped"
+    },
+    "4_config_change": {
+      "description": "pyproject.toml or mutation config changed",
+      "expected": "CACHE_MISS for mutation-dependent evidence; observational may reuse",
+      "status": "PARTIAL - fingerprint covers config_hash; but scope not differentiated"
+    },
+    "5_toolchain_change": {
+      "description": "mutmut/pytest/python version changed",
+      "expected": "CACHE_MISS for mutation evidence (R-CFG-002)",
+      "status": "VERIFIED - fingerprint includes toolchain versions"
+    },
+    "6_ci_evidence_change": {
+      "description": "CI evidence record updated or new CI run available",
+      "expected": "CACHE_MISS - local cache cannot account for CI correlation changes",
+      "status": "NOT_IMPLEMENTED - current cache has no CI awareness"
+    },
+    "7_capability_mapping_drift": {
+      "description": "ENGINE_TO_CAPABILITY or cross-layer-map changed",
+      "expected": "CACHE_MISS - planner would produce different selections",
+      "status": "NOT_IMPLEMENTED - current cache has no graph awareness"
+    },
+    "8_stale_cache": {
+      "description": "Cache entry older than validity threshold",
+      "expected": "CACHE_MISS - explicit timestamp-based invalidation",
+      "status": "NOT_IMPLEMENTED - no TTL or staleness check"
+    },
+    "9_corrupted_cache": {
+      "description": "Cache file corrupted or tampered",
+      "expected": "CACHE_MISS - JSON parse failure or schema validation failure",
+      "status": "PARTIAL - JSON decode error returns empty dict; no schema validation"
+    },
+    "10_population_expansion": {
+      "description": "New component added to mutation population",
+      "expected": "CACHE_MISS - population_fingerprint changed (R-POP-001)",
+      "status": "VERIFIED - if population_fingerprint in fingerprint, covered"
+    }
+  },
+  "forensic_cache_integration": {
+    "forensic_record_as_cache_key": "ForensicExecutionRecord semantic_identity() could serve as cache key",
+    "evidence_reuse_decisions": "Forensic record's invalidations + reused_evidence = exact cache invalidation/reuse decisions",
+    "planner_scope": "Forensic record's selected_tasks = exact scope for cache entry",
+    "diagnostic_conclusion": "Forensic record's certification_decision = cacheable verdict",
+    "strengthening_history": "Forensic record's uncertainties + proposals = cache invalidation triggers"
+  },
+  "gaps_identified": [
+    {
+      "gap": "Cache key weaker than forensic evidence identity",
+      "severity": "HIGH",
+      "detail": "Cache key missing: source/test fingerprints per component, capability mappings, invalidation rules version, CI correlation, diagnostic conclusions, strengthening history"
+    },
+    {
+      "gap": "No component-scoped cache invalidation",
+      "severity": "HIGH",
+      "detail": "Current cache invalidates entire profile; forensic system enables component-level reuse"
+    },
+    {
+      "gap": "No CI evidence awareness",
+      "severity": "MEDIUM",
+      "detail": "Cache cannot incorporate or invalidate based on CI evidence changes"
+    },
+    {
+      "gap": "No graph/capability mapping drift detection",
+      "severity": "MEDIUM",
+      "detail": "Cache does not detect C42.24 discovery drift (capability mapping changes)"
+    },
+    {
+      "gap": "No staleness/TTL mechanism",
+      "severity": "LOW",
+      "detail": "Cache entries never expire based on time"
+    },
+    {
+      "gap": "No schema validation on cache load",
+      "severity": "LOW",
+      "detail": "Corrupted cache structure not detected beyond JSON parse"
+    }
+  ],
+  "recommendations": [
+    "Extend cache key with forensic evidence identity components",
+    "Implement component-scoped cache entries (per-component verdicts)",
+    "Add CI evidence correlation to cache key",
+    "Add capability mapping hash to cache key",
+    "Add invalidation rules version to cache key",
+    "Add TTL/staleness invalidation",
+    "Add schema validation on cache load",
+    "Integrate forensic record validation into cache replay"
+  ],
+  "status": "ANALYSIS_COMPLETE - Current cache is functional but weaker than forensic evidence identity; forensic-aware layer can safely extend without replacing",
+  "next_action": "Design forensic-aware cache layer that wraps VerificationCache and adds forensic identity components to key"
+}

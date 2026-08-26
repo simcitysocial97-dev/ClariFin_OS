@@ -1,0 +1,136 @@
+{
+  "schema": "m9-c42.32-36-ci-operationalization/v1",
+  "generated_at": "2026-08-26T07:18:00.000000+00:00",
+  "phase": "M9-C42.32 Phase 2",
+  "repository_sha": "084359346b3b14792c5bd38e159932f6c42922fd",
+  "baseline_reference": "runtime/generated/m9-c42.32-36/baseline.json",
+  "gap_analysis_reference": "runtime/generated/m9-c42.32-36/operational-gap-analysis.json",
+  "current_state": {
+    "mutation_workflow": "exists (.github/workflows/mutation.yml)",
+    "mutation_smoke_job": "runs 'python runtime/verify.py mutation --smoke'",
+    "mutation_full_job": "runs 'python runtime/verify.py mutation' (needs: mutation-smoke)",
+    "artifacts_produced": [
+      "backend/tests/generated/mutation/mutation-summary.json",
+      "backend/tests/generated/mutation/mutation-report.md",
+      "backend/tests/generated/mutation/ (full directory)"
+    ],
+    "artifacts_uploaded": "via upload-runtime action",
+    "ci_evidence_records_emitted": false,
+    "canonical_schema_used": false,
+    "local_ci_correlation_tested": false
+  },
+  "required_ci_evidence_fields": [
+    "record_id",
+    "repository_sha",
+    "workflow",
+    "job",
+    "step",
+    "command",
+    "environment/toolchain fingerprint",
+    "task identity",
+    "scope",
+    "evidence kind",
+    "execution status",
+    "failure classification",
+    "artifact reference",
+    "validity/fingerprint metadata"
+  ],
+  "command_matchers_coverage": {
+    "verified_commands": [
+      "verify.py mutation --smoke -> task::mutation::smoke (observational)",
+      "verify.py mutation --target -> task::mutation::targeted (targeted, reusable)",
+      "verify.py mutation -> task::mutation::full (authoritative, reusable)",
+      "run_backend_verification.sh -> task::unit::backend-suite",
+      "verify.py backend -> task::unit::backend-suite",
+      "run_frontend_verification.sh -> task::static::frontend-suite",
+      "verify.py frontend -> task::static::frontend-suite",
+      "run_playwright_tests.sh -> task::e2e::playwright",
+      "run_golden_tests.sh -> task::golden::regression",
+      "codeql-action/analyze -> task::static::codeql",
+      "verify.py env-check -> task::static::env-check",
+      "verify.py status -> task::static::status-summary"
+    ],
+    "mutation_workflow_commands": [
+      "python runtime/verify.py env-check",
+      "python runtime/verify.py mutation --smoke",
+      "python runtime/verify.py mutation"
+    ],
+    "matching_status": "PARTIAL - env-check matches; mutation commands match COMMAND_MATCHERS"
+  },
+  "workflow_evidence_gaps": [
+    {
+      "workflow": "mutation.yml",
+      "job": "mutation-smoke",
+      "step": "Run bounded mutation smoke",
+      "command": "python runtime/verify.py mutation --smoke",
+      "current_output": "mutation-summary.json in local-smoke/ subdir",
+      "missing": "CIEvidenceRecord emission with all canonical fields",
+      "severity": "HIGH"
+    },
+    {
+      "workflow": "mutation.yml",
+      "job": "mutation",
+      "step": "Run mutation testing",
+      "command": "python runtime/verify.py mutation",
+      "current_output": "mutation-summary.json in mutation/ dir",
+      "missing": "CIEvidenceRecord emission with all canonical fields",
+      "severity": "HIGH"
+    },
+    {
+      "workflow": "backend-verify.yml",
+      "job": "verify",
+      "step": "Run verification",
+      "command": "python runtime/verify.py backend",
+      "current_output": "verification-report.md, JUnit XML",
+      "missing": "CIEvidenceRecord emission for unit test results",
+      "severity": "MEDIUM"
+    },
+    {
+      "workflow": "frontend-verify.yml",
+      "job": "verify",
+      "step": "Run verification",
+      "command": "python runtime/verify.py frontend",
+      "current_output": "build/test artifacts",
+      "missing": "CIEvidenceRecord emission",
+      "severity": "MEDIUM"
+    }
+  ],
+  "implementation_requirements": [
+    "Add CI evidence emission step to mutation.yml after mutation summary is produced",
+    "Add CI evidence emission to backend-verify.yml and frontend-verify.yml",
+    "Emission step must: capture repository_sha, workflow, job, step, command, environment fingerprint, task identity, scope, evidence kind, execution status, failure classification, artifact path, validity fingerprints",
+    "Use existing ci_evidence.py:CIEvidenceRecord and save_ci_evidence()",
+    "Emit records to runtime/generated/ci-evidence/<workflow>-<job>-<run_id>.json",
+    "Upload CI evidence records as workflow artifacts",
+    "Validate emitted records against m9-ci-evidence/v1 schema",
+    "Test local/CI semantic equivalence with real artifacts"
+  ],
+  "proposed_ci_evidence_emission_step": {
+    "name": "Emit CI Evidence Record",
+    "description": "A CI step that constructs a canonical CIEvidenceRecord from the mutation summary and persists it as an uploadable artifact. Fingerprints would be computed via collect_repo_fingerprints(); the snippet below is illustrative of the wiring, not the literal YAML block.",
+    "run_snippet": "python - <<'PY'\nimport json, os, subprocess\nfrom pathlib import Path\nfrom datetime import UTC, datetime\nsha = subprocess.run(['git','rev-parse','HEAD'], capture_output=True, text=True).stdout.strip()\nrecord = {\n  'schema': 'm9-ci-evidence/v1',\n  'record_id': f\"ci::{os.environ.get('GITHUB_RUN_ID','local')}::{os.environ.get('GITHUB_JOB','mutation')}::mutation\",\n  'repository_sha': sha,\n  'workflow': 'mutation.yml',\n  'job': os.environ.get('GITHUB_JOB','mutation'),\n  'step': 'Run mutation testing',\n  'command': 'python runtime/verify.py mutation',\n  'verification_task': 'task::mutation::full',\n  'component': os.environ.get('TARGET_ENGINE', None),\n  'capability': None,\n  'evidence_kind': 'mutation-summary',\n  'execution_mode': 'authoritative',\n  'source_fingerprint': '',\n  'test_fingerprint': '',\n  'configuration_fingerprint': '',\n  'toolchain_fingerprint': '',\n  'population_fingerprint': '',\n  'evidence_artifact_fingerprint': '',\n  'artifact_path': 'backend/tests/generated/mutation/mutation-summary.json',\n  'started_at': datetime.now(UTC).isoformat(),\n  'ended_at': datetime.now(UTC).isoformat(),\n  'exit_status': int(os.environ.get('STEP_EXIT_CODE','0')),\n  'failure_classification': None,\n  'summary': {}\n}\nout_dir = Path('runtime/generated/ci-evidence')\nout_dir.mkdir(parents=True, exist_ok=True)\nout_file = out_dir / f\"ci-evidence-{os.environ.get('GITHUB_RUN_ID','local')}-{os.environ.get('GITHUB_JOB','job')}.json\"\nout_file.write_text(json.dumps([record], indent=2))\nprint(f'CI evidence emitted to {out_file}')\nPY",
+    "upload_artifact": true
+  },
+  "validation_harness": {
+    "description": "Narrowest reproducible validation harness for CI evidence ingestion",
+    "components": [
+      "1. Local mutation run producing mutation-summary.json",
+      "2. Convert to CIEvidenceRecord using ci_evidence.py helpers",
+      "3. Capture CIRepositoryContext locally",
+      "4. Run validate_and_decide() to produce drift report and reuse decision",
+      "5. Ingest into ExecutionEvidence via ingest_ci_evidence()",
+      "6. Run semantic_equivalence() against local execution evidence",
+      "7. Verify all 6 dimensions pass",
+      "8. Feed into DiagnosticForensicAgent with ci_correlation"
+    ],
+    "can_execute_locally": true,
+    "requires_ci": false,
+    "marks_live_ci_boundary": true
+  },
+  "certification_criteria": {
+    "minimum_viable": "At least one workflow (mutation.yml mutation-smoke job) produces and successfully ingests canonical CI evidence record that passes validate_and_decide with disposition='reusable'",
+    "full_operational": "All verification workflows emit CI evidence; local/CI semantic equivalence validated on real artifacts; correlation feeds Diagnostic Agent"
+  },
+  "status": "DESIGN_COMPLETE - Implementation pending",
+  "next_action": "Implement CI evidence emission in mutation.yml workflow"
+}

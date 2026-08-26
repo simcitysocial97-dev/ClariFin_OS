@@ -1,0 +1,162 @@
+[
+  {
+    "scenario": "S-A",
+    "name": "genuine_class_a_proposal",
+    "expected": "bounded evidence-derived proposal with full contract",
+    "classification": "A",
+    "contract_complete": true,
+    "proposal_id": "prop::30ce77a3d581",
+    "pass": true
+  },
+  {
+    "scenario": "S-B",
+    "name": "class_b_equivalent_rejected",
+    "expected": "equivalent survivor never converted into work",
+    "classification": "B",
+    "rejection_reason": "equivalent/observable-equivalent behavior; targeting it would inflate the score without improving defect detection",
+    "pass": true
+  },
+  {
+    "scenario": "S-C",
+    "name": "class_c_defensive_rejected",
+    "expected": "no test manufactured for observability code",
+    "classification": "C",
+    "rejection_reason": "defensive/observability code; manufacturing a test here optimizes the metric, not behavior",
+    "pass": true
+  },
+  {
+    "scenario": "S-D",
+    "name": "class_d_measurement_first",
+    "expected": "repair measurement before interpreting behavior",
+    "classification": "D",
+    "rejection_reason": "measurement integrity problem (timeout/suspicious); repair measurement before interpreting behavior",
+    "pass": true
+  },
+  {
+    "scenario": "S-E",
+    "name": "class_e_escalation",
+    "expected": "ambiguous/production-defect candidate escalated",
+    "classification": "E",
+    "rejection_reason": "ambiguous/design/possible production defect; requires human review before any test is written",
+    "pass": true
+  },
+  {
+    "scenario": "S-F",
+    "name": "targeted_revalidation_accept",
+    "expected": "hypothesis validated; targeted only; no full campaign",
+    "outcome": {
+      "proposal_id": "prop::30ce77a3d581",
+      "component": "credit_card_engine",
+      "before": {
+        "killed": 440,
+        "generated": 582
+      },
+      "after": {
+        "killed": 441,
+        "generated": 582
+      },
+      "target_mutant_killed": true,
+      "kill_regressions": 0,
+      "hypothesis_validated": true,
+      "accepted": true,
+      "rationale": "accepted: target mutant mut-cc-0047 now killed with zero kill regressions; behavioral hypothesis validated",
+      "used_full_campaign": false
+    },
+    "pass": true
+  },
+  {
+    "scenario": "S-G",
+    "name": "targeted_revalidation_reject_nondiscriminating",
+    "expected": "rejected honestly; no score-chasing fallback",
+    "outcome": {
+      "proposal_id": "prop::30ce77a3d581",
+      "component": "credit_card_engine",
+      "before": {
+        "killed": 440,
+        "generated": 582
+      },
+      "after": {
+        "killed": 440,
+        "generated": 582
+      },
+      "target_mutant_killed": false,
+      "kill_regressions": 0,
+      "hypothesis_validated": false,
+      "accepted": false,
+      "rationale": "rejected: target mutant mut-cc-0047 still survives; the proposed test did not discriminate the hypothesized behavior gap",
+      "used_full_campaign": false
+    },
+    "pass": true
+  },
+  {
+    "scenario": "S-H",
+    "name": "targeted_revalidation_regression_reject",
+    "expected": "kill regressions block acceptance",
+    "outcome": {
+      "proposal_id": "prop::30ce77a3d581",
+      "component": "credit_card_engine",
+      "before": {
+        "killed": 440,
+        "generated": 582
+      },
+      "after": {
+        "killed": 438,
+        "generated": 582
+      },
+      "target_mutant_killed": true,
+      "kill_regressions": 2,
+      "hypothesis_validated": false,
+      "accepted": false,
+      "rationale": "rejected: 2 previously-killed mutant(s) now survive; the strengthening change regressed existing discrimination",
+      "used_full_campaign": false
+    },
+    "pass": true
+  },
+  {
+    "scenario": "S-G1",
+    "name": "campaign_gate_test_addition_rejected",
+    "expected": "a test addition alone NEVER justifies a full campaign",
+    "decision": {
+      "permitted": false,
+      "reason": "'test_addition' is formally excluded as a trigger; targeted measurement remains the default",
+      "justification": null
+    },
+    "pass": true
+  },
+  {
+    "scenario": "S-G2",
+    "name": "campaign_gate_missing_justification_rejected",
+    "expected": "formal trigger still requires complete justification",
+    "decision": {
+      "permitted": false,
+      "reason": "full campaign requires a complete FullCampaignJustification artifact; none supplied",
+      "justification": null
+    },
+    "pass": true
+  },
+  {
+    "scenario": "S-G3",
+    "name": "campaign_gate_formal_trigger_permitted",
+    "expected": "formal trigger + complete justification permitted",
+    "decision": {
+      "permitted": true,
+      "reason": "trigger 'population_expansion' is formal and justification is complete",
+      "justification": {
+        "trigger": "population_expansion",
+        "population_affected": [
+          "new_engine_a",
+          "new_engine_b"
+        ],
+        "evidence_invalidated": [
+          "meas::agg::pop-14"
+        ],
+        "why_targeted_insufficient": "two new components join the population; every prior aggregate denominator changes, so component-level reuse cannot answer the comparability question",
+        "expected_information_gained": "authoritative baseline measurements for both new components",
+        "estimated_resource_cost": "~2 x 60 mutation-minutes via bounded per-component campaigns",
+        "certification_consequence": "pop-16 aggregate becomes authoritative; pop-14 retired",
+        "why_mathematical_reconciliation_cannot_answer": "there are no prior measurements to reconcile from for the new components"
+      }
+    },
+    "pass": true
+  }
+]

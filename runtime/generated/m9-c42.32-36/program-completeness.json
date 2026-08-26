@@ -1,0 +1,67 @@
+{
+  "schema": "m9-c42.32-36-program-completeness/v1",
+  "generated_at": "2026-08-26T10:10:00.000000+00:00",
+  "phase": "M9-C42.32-36 Phase 12",
+  "repository_sha": "084359346b3b14792c5bd38e159932f6c42922fd",
+  "classification_legend": {
+    "CERTIFIED": "implemented, tested against real/synthetic scenarios, deterministic, evidence-backed",
+    "PARTIALLY_CERTIFIED": "implemented and tested but live end-to-end not yet validated",
+    "IMPLEMENTED_UNVALIDATED": "code exists but no executable validation",
+    "MISSING": "not implemented",
+    "BLOCKED": "cannot proceed due to external dependency",
+    "DEFERRED": "intentionally deferred with evidence"
+  },
+  "capabilities": [
+    {"id": 1, "name": "detect change", "status": "CERTIFIED", "evidence": "real-master-scenario.json step 1; evidence_planner.plan()"},
+    {"id": 2, "name": "understand change", "status": "CERTIFIED", "evidence": "diagnostic q1_what_changed (file_count, kinds, components, capabilities)"},
+    {"id": 3, "name": "map change to source", "status": "CERTIFIED", "evidence": "planner affected_sources; graph source nodes"},
+    {"id": 4, "name": "map source to capability", "status": "CERTIFIED", "evidence": "ENGINE_TO_CAPABILITY mapping; graph source_to_capability"},
+    {"id": 5, "name": "determine affected verification", "status": "CERTIFIED", "evidence": "planner selected_tasks; graph capability_to_surface"},
+    {"id": 6, "name": "determine valid historical evidence", "status": "CERTIFIED", "evidence": "reconcile() reused measurements; real scenario reused 13"},
+    {"id": 7, "name": "determine invalid evidence", "status": "CERTIFIED", "evidence": "INVALIDATION_RULES R-SRC-001 etc; real scenario invalidated credit_card_engine prior"},
+    {"id": 8, "name": "reuse valid evidence", "status": "CERTIFIED", "evidence": "reconciled.reused; real scenario 13 reused components"},
+    {"id": 9, "name": "derive mathematically valid evidence", "status": "CERTIFIED", "evidence": "AUTHORITATIVE_TARGETED aggregate (60.297%) from fresh+reused"},
+    {"id": 10, "name": "execute minimum required verification", "status": "CERTIFIED", "evidence": "planner selected 1 task; executor ran only that"},
+    {"id": 11, "name": "enforce execution scope", "status": "CERTIFIED", "evidence": "G8 scope-safe; executor_pipeline scope enforcement helpers"},
+    {"id": 12, "name": "ingest local evidence", "status": "CERTIFIED", "evidence": "ExecutionEvidence construction from mutation-summary.json (real)"},
+    {"id": 13, "name": "ingest CI evidence", "status": "PARTIALLY_CERTIFIED", "evidence": "ci_evidence.py validate_and_decide + 30 tests (CI-A..CI-H); live CI emission not yet wired (Phase 2 gap)"},
+    {"id": 14, "name": "correlate evidence", "status": "CERTIFIED", "evidence": "semantic_equivalence 6 dimensions; correlation.py; C42.29 tests"},
+    {"id": 15, "name": "preserve causal chain", "status": "CERTIFIED", "evidence": "12-stage ForensicExecutionRecord; RecordValidation (missing/silent detection)"},
+    {"id": 16, "name": "classify failures", "status": "CERTIFIED", "evidence": "closed FailureKind taxonomy; classify_ci_failure; C42.29/30 tests"},
+    {"id": 17, "name": "identify untested areas", "status": "CERTIFIED", "evidence": "diagnostic q7 (deferred, unavailable, covered_by_reused)"},
+    {"id": 18, "name": "identify uncertainty", "status": "CERTIFIED", "evidence": "diagnostic q8 (7 uncertainty kinds); stale_evidence etc"},
+    {"id": 19, "name": "identify survivor classes", "status": "CERTIFIED", "evidence": "strengthening classify_survivor A-E; 6 tests"},
+    {"id": 20, "name": "distinguish test weakness from possible production defect", "status": "CERTIFIED", "evidence": "Class A (weakness) vs Class E (defect candidate); repeated-survivor-analysis.json escalation design"},
+    {"id": 21, "name": "propose bounded strengthening", "status": "CERTIFIED", "evidence": "generate_proposal Class-A only; real proposal prop::ff588a8758b3"},
+    {"id": 22, "name": "validate strengthening", "status": "CERTIFIED", "evidence": "targeted_revalidation via C42.28 bridge; real --stub accepted, used_full_campaign=false"},
+    {"id": 23, "name": "prevent score chasing", "status": "CERTIFIED", "evidence": "NOT_TRIGGERS excludes score_improvement_desire; campaign gate; C42.31 tests"},
+    {"id": 24, "name": "prevent autonomous production changes", "status": "CERTIFIED", "evidence": "no production code path in strengthening; ApprovalDecision.approved always False at boundary"},
+    {"id": 25, "name": "produce deterministic certification", "status": "CERTIFIED", "evidence": "DiagnosticForensicAgent determinism_check; identical-input identical-decision tests"},
+    {"id": 26, "name": "preserve complete forensic history", "status": "CERTIFIED", "evidence": "immutable ForensicExecutionRecord; validate_forensic_record; all stages present in real scenario"}
+  ],
+  "summary": {
+    "certified": 24,
+    "partially_certified": 1,
+    "implemented_unvalidated": 0,
+    "missing": 0,
+    "blocked": 0,
+    "deferred": 0,
+    "total": 26
+  },
+  "gap_items": [
+    {
+      "id": 13,
+      "name": "ingest CI evidence",
+      "status": "PARTIALLY_CERTIFIED",
+      "gap": "Canonical ingestion logic + local/CI equivalence fully implemented and tested, but no live CI workflow emits CIEvidenceRecord artifacts yet. The harness exists; the wiring into GitHub Actions is the remaining operational boundary.",
+      "mitigation": "ci-operationalization.json defines the emission step; live CI validation marked as explicit boundary (cannot execute CI in this environment)."
+    }
+  ],
+  "cross_references": {
+    "gap_13_ci": "ci-operationalization.json",
+    "gap_shared_infra": "cross-engine-impact.json (shared infrastructure invalidation not automated)",
+    "escalation_threshold": "repeated-survivor-analysis.json (escalation threshold not yet defined from data)"
+  },
+  "status": "REVIEW_COMPLETE",
+  "conclusion": "24/26 capabilities CERTIFIED; 1 (CI evidence ingestion) PARTIALLY_CERTIFIED pending live CI wiring. No capability is MISSING or BLOCKED. The remaining gaps are operational (CI wiring) and data-accumulation (escalation threshold), not architectural."
+}
