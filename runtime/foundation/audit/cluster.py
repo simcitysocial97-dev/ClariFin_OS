@@ -31,7 +31,7 @@ class RootCauseCluster:
 
 def _cluster_key(issue: dict[str, Any]) -> str:
     subsystem = issue.get("subsystem", "")
-    pipeline_stage = issue.get("pipeline_stage", "")
+    issue.get("pipeline_stage", "")
     root_cause = issue.get("root_cause", "")
 
     if "repository" in subsystem and (
@@ -170,9 +170,9 @@ def cluster_issues(issues: list[dict[str, Any]]) -> dict[str, Any]:
     result_clusters = []
     for key, cluster_issues in clusters.items():
         name, description, repair_strategy, complexity, benefit = _cluster_metadata(key)
-        subsystems = tuple(sorted(set(i["subsystem"] for i in cluster_issues)))
+        subsystems = tuple(sorted({i["subsystem"] for i in cluster_issues}))
         pipeline_stages = tuple(
-            sorted(set(i["pipeline_stage"] for i in cluster_issues))
+            sorted({i["pipeline_stage"] for i in cluster_issues})
         )
         issue_ids = tuple(i["issue_id"] for i in cluster_issues)
 

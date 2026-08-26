@@ -267,7 +267,7 @@ def _verify_router_file_existence(
     data: dict[str, dict[str, Any]], repo_root: Path
 ) -> list[dict[str, Any]]:
     missing_routers: list[str] = []
-    for chain_key, chain in data.items():
+    for _chain_key, chain in data.items():
         for router in chain.get("routers", []):
             if not (repo_root / router).exists():
                 missing_routers.append(router)
@@ -303,7 +303,7 @@ def _verify_no_duplicate_engines(data: dict[str, dict[str, Any]]) -> dict[str, A
     seen: set[str] = set()
     duplicates: list[str] = []
     engines: list[str] = []
-    for chain_key, chain in data.items():
+    for _chain_key, chain in data.items():
         engine = chain.get("engine", "")
         if engine:
             if engine in seen and engine not in duplicates:

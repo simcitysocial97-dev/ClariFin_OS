@@ -276,18 +276,18 @@ def optimize_verification(
                 targets=tuple(sorted(set(backend_files))),
                 reason=(
                     f"{len(set(backend_files))} backend entity/entities impacted "
-                    f"(kinds: {sorted(set(n.ref.kind for n in blast.all_impacted if n.ref.kind in backend_kinds))})"
+                    f"(kinds: {sorted({n.ref.kind for n in blast.all_impacted if n.ref.kind in backend_kinds})})"
                 ),
                 evidence=tuple(sorted(set(backend_files))[:20]),
                 estimated_seconds=120,
                 capabilities=all_capabilities,
                 impact_kinds=tuple(
                     sorted(
-                        set(
+                        {
                             n.ref.kind
                             for n in blast.all_impacted
                             if n.ref.kind in backend_kinds
-                        )
+                        }
                     )
                 ),
                 source=cross_source,

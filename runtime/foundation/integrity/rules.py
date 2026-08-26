@@ -625,7 +625,7 @@ def check_mapper_referenced_by_capability(graph: ArchitecturalGraph) -> list[Vio
     """ARCH-019: Every mapper is referenced by exactly one capability."""
     violations: list[Violation] = []
     mapper_capabilities: dict[str, list[str]] = {}
-    for entry_path, entry in graph.cross_layer_map.items():
+    for _entry_path, entry in graph.cross_layer_map.items():
         if not isinstance(entry, dict):
             continue
         for cap in entry.get("capabilities", []):
@@ -658,7 +658,7 @@ def check_viewmodel_referenced_by_mapper(graph: ArchitecturalGraph) -> list[Viol
     """ARCH-020: Every ViewModel is referenced by exactly one mapper."""
     violations: list[Violation] = []
     vm_mappers: dict[str, list[str]] = {}
-    for entry_path, entry in graph.cross_layer_map.items():
+    for _entry_path, entry in graph.cross_layer_map.items():
         if not isinstance(entry, dict):
             continue
         for mp in entry.get("mappers", []):
@@ -690,7 +690,7 @@ def check_component_one_workspace(graph: ArchitecturalGraph) -> list[Violation]:
     """ARCH-021: Every component belongs to exactly one workspace."""
     violations: list[Violation] = []
     component_workspaces: dict[str, list[str]] = {}
-    for entry_path, entry in graph.cross_layer_map.items():
+    for _entry_path, entry in graph.cross_layer_map.items():
         if not isinstance(entry, dict):
             continue
         for ws in entry.get("workspace", []):
@@ -782,7 +782,7 @@ def check_page_registers_workspace(graph: ArchitecturalGraph) -> list[Violation]
 def check_endpoint_in_cross_layer_map(graph: ArchitecturalGraph) -> list[Violation]:
     """ARCH-023: Every endpoint must appear in the cross-layer map."""
     violations: list[Violation] = []
-    map_endpoints = graph.endpoints_in_map()
+    graph.endpoints_in_map()
     for f in graph.files:
         if f.layer != ArchitectureLayer.BACKEND_ROUTER.value:
             continue

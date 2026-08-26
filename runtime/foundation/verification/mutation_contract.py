@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from pathlib import Path
 
 # Canonical mutmut 3.7.0 status vocabulary -> our bucket.
 _STATUS_MAP = {

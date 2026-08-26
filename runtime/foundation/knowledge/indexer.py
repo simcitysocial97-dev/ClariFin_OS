@@ -379,7 +379,7 @@ def _merge_from_provider(
     out_caps = list(capabilities)
     out_ws = list(workspaces)
 
-    for sig, ep in arch.endpoints.items():
+    for _sig, ep in arch.endpoints.items():
         if (ep.method, ep.path) in existing_eps:
             continue
         existing_eps.add((ep.method, ep.path))

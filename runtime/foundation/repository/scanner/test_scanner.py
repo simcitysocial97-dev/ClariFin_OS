@@ -187,6 +187,6 @@ class SuiteDiscovery(BaseScanner):
     def _count_test_files(directory: Path) -> int:
         """Count test files in a directory tree."""
         count = 0
-        for py_file in directory.rglob("test_*.py"):
+        for _py_file in directory.rglob("test_*.py"):
             count += 1
         return count

@@ -154,7 +154,7 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
             )
 
     references_found = False
-    for obj_key, entries in categories.items():
+    for _obj_key, entries in categories.items():
         for entry in entries:
             if isinstance(entry, dict) and "references" in entry:
                 refs = entry["references"]
@@ -191,7 +191,7 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
         )
 
     broken_links = 0
-    for obj_key, entries in categories.items():
+    for _obj_key, entries in categories.items():
         for entry in entries:
             if not isinstance(entry, dict):
                 continue
@@ -245,7 +245,7 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
     duplicates_found = 0
     seen_paths: dict[str, list[str]] = {}
     seen_names: dict[str, list[str]] = {}
-    for obj_key, entries in categories.items():
+    for _obj_key, entries in categories.items():
         for entry in entries:
             if not isinstance(entry, dict):
                 continue
@@ -273,10 +273,10 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
                 doc_path = entry.get("path", "")
                 seen_paths.setdefault(doc_path, []).append(obj_key)
 
-    for identifier, keys in seen_paths.items():
+    for _identifier, keys in seen_paths.items():
         if len(keys) > 1:
             duplicates_found += 1
-    for name, keys in seen_names.items():
+    for _name, keys in seen_names.items():
         if len(keys) > 1:
             duplicates_found += 1
 

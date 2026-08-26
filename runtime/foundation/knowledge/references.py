@@ -112,7 +112,7 @@ class ReferenceEngine:
         chains: list[RelationshipChain] = []
         for vp in self._catalog.verification_profiles:
             if vp.name == name:
-                ke = self._entry_to_knowledge_entry(vp, "verificationProfile")
+                self._entry_to_knowledge_entry(vp, "verificationProfile")
                 chains.append(
                     RelationshipChain(
                         source=name,
@@ -132,7 +132,7 @@ class ReferenceEngine:
         entry = self._catalog.rule_by_id(rule_id)
         if entry is None:
             return chains
-        ke = self._entry_to_knowledge_entry(entry, "integrityRule")
+        self._entry_to_knowledge_entry(entry, "integrityRule")
         chains.append(
             RelationshipChain(
                 source=rule_id,
@@ -203,7 +203,7 @@ class ReferenceEngine:
         entry: KnowledgeEntry,
     ) -> list[RelationshipChain]:
         chains: list[RelationshipChain] = []
-        for key, value in entry.references.items():
+        for key, _value in entry.references.items():
             if key.startswith("capability:"):
                 cap_name = key.replace("capability:", "")
                 chains.append(
@@ -245,7 +245,7 @@ class ReferenceEngine:
         entry: KnowledgeEntry,
     ) -> list[RelationshipChain]:
         chains: list[RelationshipChain] = []
-        for key, value in entry.references.items():
+        for key, _value in entry.references.items():
             if key.startswith("mapper:"):
                 mapper_name = key.replace("mapper:", "")
                 chains.append(
@@ -289,7 +289,7 @@ class ReferenceEngine:
         entry: KnowledgeEntry,
     ) -> list[RelationshipChain]:
         chains: list[RelationshipChain] = []
-        for key, value in entry.references.items():
+        for key, _value in entry.references.items():
             if key.startswith("viewModel:"):
                 vm_name = key.replace("viewModel:", "")
                 chains.append(
@@ -331,7 +331,7 @@ class ReferenceEngine:
         entry: KnowledgeEntry,
     ) -> list[RelationshipChain]:
         chains: list[RelationshipChain] = []
-        for key, value in entry.references.items():
+        for key, _value in entry.references.items():
             if key.startswith("workspace:"):
                 ws_name = key.replace("workspace:", "")
                 chains.append(
@@ -373,7 +373,7 @@ class ReferenceEngine:
         entry: KnowledgeEntry,
     ) -> list[RelationshipChain]:
         chains: list[RelationshipChain] = []
-        for key, value in entry.references.items():
+        for key, _value in entry.references.items():
             if key.startswith("component:"):
                 comp_name = key.replace("component:", "")
                 chains.append(

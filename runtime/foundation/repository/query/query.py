@@ -581,11 +581,10 @@ class RepositoryIndex:
 
     def health(self) -> dict[str, Any]:
         """Get comprehensive repository health metrics."""
+        from runtime.foundation.repository.graph.graph_service import load_graph_service
         from runtime.foundation.repository.metrics import (
             calculate_metrics as calc_metrics,
         )
-
-        from runtime.foundation.repository.graph.graph_service import load_graph_service
 
         try:
             service = load_graph_service(self._index_path)

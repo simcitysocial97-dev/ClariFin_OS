@@ -19,6 +19,8 @@ tables) — using the registry as the canonical source.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from runtime.foundation.repository.scanner.base import BaseScanner, ScanResult
 
 

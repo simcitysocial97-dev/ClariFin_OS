@@ -42,7 +42,7 @@ def _normalize_finding(finding: dict[str, Any], section: str) -> NormalizedIssue
     name = finding.get("name", "")
     message = finding.get("message", "")
     severity = finding.get("severity", "medium")
-    priority = finding.get("priority", "medium")
+    finding.get("priority", "medium")
     recommendation = finding.get("recommendation", "")
     details = finding.get("details", {})
 

@@ -154,7 +154,7 @@ class ApiScanner(BaseScanner):
             },
         )
 
-        for router_name, router_data in registry.get("routers", {}).items():
+        for _router_name, router_data in registry.get("routers", {}).items():
             for ep in router_data.get("endpoints", []):
                 method = ep.get("method", "GET")
                 path = ep.get("path", "")

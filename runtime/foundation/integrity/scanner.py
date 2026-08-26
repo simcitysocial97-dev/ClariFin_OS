@@ -686,7 +686,7 @@ class ArchitecturalScanner:
             errors.append(f"Error loading graph index: {exc}")
             return [], []
 
-        meta = data.get("metadata", {})
+        data.get("metadata", {})
         graph_data = data.get("graph", {})
         if not graph_data:
             graph_data = data

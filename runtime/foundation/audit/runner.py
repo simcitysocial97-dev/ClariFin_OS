@@ -74,8 +74,7 @@ class _SectionRunner:
                 section=self.name,
                 name=self.name,
                 status=AuditStatus.FAIL,
-                findings=tuple(
-                    [
+                findings=(
                         AuditFinding(
                             section=self.name,
                             check_id="runner-error",
@@ -85,8 +84,7 @@ class _SectionRunner:
                             priority=AuditPriority.CRITICAL,
                             message=str(exc),
                         )
-                    ]
-                ),
+                    ,),
                 duration_seconds=time.monotonic() - start,
             )
 

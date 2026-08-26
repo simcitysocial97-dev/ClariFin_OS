@@ -190,7 +190,7 @@ def _enrich_dto_mapper_impact(
 
         if chain is None:
             engine_name = _infer_engine_from_dto(dto_ref, chain_map)
-            for eng_path, cm_chain in chain_map.items():
+            for _eng_path, cm_chain in chain_map.items():
                 if cm_chain.get("engineName") == engine_name:
                     chain = cm_chain
                     break
@@ -272,7 +272,7 @@ def _enrich_backend_bridge_impact(
         if chain is None:
             engine_name = _infer_engine_from_dto(ref, chain_map)
             if engine_name is not None:
-                for eng_path, cm_chain in chain_map.items():
+                for _eng_path, cm_chain in chain_map.items():
                     if cm_chain.get("engineName") == engine_name:
                         chain = cm_chain
                         break
@@ -370,7 +370,7 @@ def _infer_engine_from_dto(dto_ref: Any, chain_map: dict) -> str | None:
     """
     dto_path_lower = dto_ref.path.lower()
 
-    for eng_path, chain in chain_map.items():
+    for _eng_path, chain in chain_map.items():
         eng_name = chain.get("engineName", "")
         if eng_name and eng_name.lower() in dto_path_lower:
             return eng_name

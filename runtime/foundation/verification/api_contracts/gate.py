@@ -342,7 +342,7 @@ class ApiContractGate:
             checked += 1
             # Check required fields
             openapi_props = openapi_schema.get("properties", {})
-            openapi_required = set(openapi_schema.get("required", []))
+            set(openapi_schema.get("required", []))
             zod_shape = zod_schema.shape
 
             # Missing fields in Zod that exist in OpenAPI
@@ -789,9 +789,9 @@ class ApiContractGate:
             openapi = app.openapi()
             ops = self._inventory.extract_backend_operations(openapi)
             consumers = self._inventory.extract_frontend_consumers()
-            artifacts = self._inventory.index_generated_artifacts()
+            self._inventory.index_generated_artifacts()
         except Exception:
-            ops, consumers, artifacts = [], [], []
+            ops, consumers, _artifacts = [], [], []
 
         # Run each dimension
         freshness = self.check_freshness()

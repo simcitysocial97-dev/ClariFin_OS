@@ -189,7 +189,7 @@ class WorkspaceLoader:
         )
 
     def load_engineering_health(self) -> EngineeringHealth:
-        health_md = self._load_markdown("engineering-health.md") or ""
+        self._load_markdown("engineering-health.md") or ""
         analytics = self._load_json("engineering-analytics.json") or {}
 
         local = analytics.get("local", {})
@@ -199,7 +199,7 @@ class WorkspaceLoader:
         local_verif = local.get("verification", {})
         ci_verif = ci.get("verification", {})
         combined_verif = combined.get("verification", {})
-        local_cache = local.get("cache", {})
+        local.get("cache", {})
         combined_cache = combined.get("cache", {})
 
         return EngineeringHealth(
@@ -246,7 +246,7 @@ class WorkspaceLoader:
         high = 0
         medium = 0
         low = 0
-        for phase, data in cost.items():
+        for _phase, data in cost.items():
             if isinstance(data, dict):
                 total_files += data.get("local", {}).get("runs", 0)
                 total_files += data.get("ci", {}).get("runs", 0)

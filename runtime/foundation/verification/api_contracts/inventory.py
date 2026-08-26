@@ -74,7 +74,7 @@ class ContractInventory:
         """Build backend operation list directly from live OpenAPI paths."""
         ops: list[BackendOperation] = []
         paths = openapi.get("paths", {})
-        components = openapi.get("components", {}).get("schemas", {})
+        openapi.get("components", {}).get("schemas", {})
 
         for path, methods in sorted(paths.items()):
             for method, spec in sorted(methods.items()):
@@ -256,7 +256,7 @@ class ContractInventory:
                 req_fields.append(field_name)
 
         # Extract min/max bounds from expressions like .min(0), .max(100)
-        for field_name, info in shape.items():
+        for _field_name, info in shape.items():
             expr = info["expr"]
             mins = re.findall(r"\.min\(([\d.]+)\)", expr)
             maxs = re.findall(r"\.max\(([\d.]+)\)", expr)

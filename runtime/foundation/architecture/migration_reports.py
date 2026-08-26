@@ -164,7 +164,7 @@ def build_knowledge_migration_report(arch=None) -> dict[str, Any]:
             }
         )
 
-    for name, svc in sorted(arch.services.items()):
+    for _name, svc in sorted(arch.services.items()):
         entities.append(
             {
                 "id": svc.id,
@@ -175,7 +175,7 @@ def build_knowledge_migration_report(arch=None) -> dict[str, Any]:
             }
         )
 
-    for name, rtr in sorted(arch.routers.items()):
+    for _name, rtr in sorted(arch.routers.items()):
         entities.append(
             {
                 "id": rtr.id,

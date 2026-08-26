@@ -261,13 +261,13 @@ class ArchitectureProvider:
             for mod_path in entry.get("implementation_modules", []):
                 inv = modules_by_path.get(mod_path, {})
                 node_type = inv.get("node_type", "Engine Module")
-                record_kwargs = dict(
-                    path=mod_path,
-                    engine=name,
-                    classes=tuple(inv.get("classes", ())),
-                    functions=tuple(inv.get("functions", ())),
-                    docstring=inv.get("docstring", "") or "",
-                )
+                record_kwargs = {
+                    "path": mod_path,
+                    "engine": name,
+                    "classes": tuple(inv.get("classes", ())),
+                    "functions": tuple(inv.get("functions", ())),
+                    "docstring": inv.get("docstring", "") or "",
+                }
                 if node_type == "Detector":
                     detectors[mod_path] = Detector(
                         id=ids.detector_id(mod_path), **record_kwargs
@@ -308,7 +308,7 @@ class ArchitectureProvider:
         modules_by_path: dict[str, dict[str, Any]],
     ) -> dict[str, Facade]:
         facades: dict[str, Facade] = {}
-        for name, entry in topology.get("parked_facades", {}).items():
+        for _name, entry in topology.get("parked_facades", {}).items():
             raw = entry.get("path", "")
             path = raw if raw.startswith("backend/") else f"backend/src/{raw}"
             facades[path] = Facade(
@@ -318,7 +318,7 @@ class ArchitectureProvider:
                 replaces=entry.get("replaces"),
                 import_references=entry.get("import_references", 0),
             )
-        for name, entry in normalization.get("engines", {}).items():
+        for _name, entry in normalization.get("engines", {}).items():
             status = entry.get("migration_status", "")
             if status not in {"FACADE", "PARKED"}:
                 continue
