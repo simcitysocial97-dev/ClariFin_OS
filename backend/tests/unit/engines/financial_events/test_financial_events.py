@@ -5,16 +5,15 @@ from __future__ import annotations
 import pytest
 from src.engines.financial_events.lineage_walker import (
     DEFAULT_ROLLOVER_LOOKBACK_DAYS,
-    detect_rollover_scenarios,
-    walk_lineage,
-    detect_revocations,
-    _parse_date_iso,
     _date_difference_days,
     _is_liability_event,
     _is_repayment_event,
-    _is_transfer_event,
     _is_revocable_event,
+    _is_transfer_event,
     _merge_lifecycle_update,
+    _parse_date_iso,
+    detect_rollover_scenarios,
+    walk_lineage,
 )
 
 # ============================================================================
@@ -561,9 +560,8 @@ class TestInternalHelpers:
 
     def test_parse_date_iso_valid(self) -> None:
         """Test _parse_date_iso with valid ISO dates."""
-        from src.engines.financial_events.lineage_walker import _parse_date_iso
         from datetime import datetime
-        
+
         result = _parse_date_iso("2025-01-15")
         assert isinstance(result, datetime)
         assert result.year == 2025
@@ -572,8 +570,7 @@ class TestInternalHelpers:
 
     def test_parse_date_iso_invalid(self) -> None:
         """Test _parse_date_iso with invalid dates."""
-        from src.engines.financial_events.lineage_walker import _parse_date_iso
-        
+
         assert _parse_date_iso("invalid") is None
         assert _parse_date_iso("") is None
         assert _parse_date_iso("2025-13-45") is None
@@ -581,8 +578,7 @@ class TestInternalHelpers:
 
     def test_date_difference_days(self) -> None:
         """Test _date_difference_days."""
-        from src.engines.financial_events.lineage_walker import _date_difference_days
-        
+
         assert _date_difference_days("2025-01-01", "2025-01-10") == 9
         assert _date_difference_days("2025-01-10", "2025-01-01") == -9
         assert _date_difference_days("2025-01-01", "2025-01-01") == 0
@@ -591,8 +587,7 @@ class TestInternalHelpers:
 
     def test_is_liability_event(self) -> None:
         """Test _is_liability_event."""
-        from src.engines.financial_events.lineage_walker import _is_liability_event
-        
+
         assert _is_liability_event({"event_type": "cash_advance"}) is True
         assert _is_liability_event({"event_type": "credit_card_cash_advance"}) is True
         assert _is_liability_event({"event_type": "liability_increase"}) is True
@@ -602,8 +597,7 @@ class TestInternalHelpers:
 
     def test_is_repayment_event(self) -> None:
         """Test _is_repayment_event."""
-        from src.engines.financial_events.lineage_walker import _is_repayment_event
-        
+
         assert _is_repayment_event({"event_type": "liability_repayment"}) is True
         assert _is_repayment_event({"event_type": "emi_payment"}) is True
         assert _is_repayment_event({"event_type": "cash_advance"}) is False
@@ -611,8 +605,7 @@ class TestInternalHelpers:
 
     def test_is_transfer_event(self) -> None:
         """Test _is_transfer_event."""
-        from src.engines.financial_events.lineage_walker import _is_transfer_event
-        
+
         assert _is_transfer_event({"event_type": "fund_transfer_out"}) is True
         assert _is_transfer_event({"event_type": "fund_transfer_in"}) is True
         assert _is_transfer_event({"event_type": "transfer"}) is True
@@ -620,8 +613,7 @@ class TestInternalHelpers:
 
     def test_is_revocable_event(self) -> None:
         """Test _is_revocable_event."""
-        from src.engines.financial_events.lineage_walker import _is_revocable_event
-        
+
         assert _is_revocable_event({"event_type": "fund_transfer_out", "lifecycle_state": "open"}) is True
         assert _is_revocable_event({"event_type": "fund_transfer_in", "lifecycle_state": "partially_settled"}) is True
         assert _is_revocable_event({"event_type": "fund_transfer_out", "lifecycle_state": "settled"}) is False
@@ -630,18 +622,17 @@ class TestInternalHelpers:
 
     def test_merge_lifecycle_update(self) -> None:
         """Test _merge_lifecycle_update state merging."""
-        from src.engines.financial_events.lineage_walker import _merge_lifecycle_update
-        
+
         # None existing -> return candidate
         result = _merge_lifecycle_update(None, {"event_id": 1, "lifecycle_state": "open", "outstanding_paise": 100})
         assert result["lifecycle_state"] == "open"
-        
+
         # settled > partially_settled > revoked > open
         existing = {"event_id": 1, "lifecycle_state": "partially_settled", "outstanding_paise": 50}
         candidate = {"event_id": 1, "lifecycle_state": "settled", "outstanding_paise": 0}
         result = _merge_lifecycle_update(existing, candidate)
         assert result["lifecycle_state"] == "settled"
-        
+
         # Same state -> smaller outstanding wins
         existing = {"event_id": 1, "lifecycle_state": "partially_settled", "outstanding_paise": 100}
         candidate = {"event_id": 1, "lifecycle_state": "partially_settled", "outstanding_paise": 50}

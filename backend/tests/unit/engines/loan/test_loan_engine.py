@@ -8,7 +8,7 @@ Covers: amortization, prepayment, foreclosure, floating rate, metrics, edge case
 
 from __future__ import annotations
 
-from decimal import Decimal, ROUND_HALF_EVEN
+from decimal import ROUND_HALF_EVEN, Decimal
 
 import pytest
 from src.engines.loan_engine import (
@@ -25,10 +25,10 @@ from src.engines.loan_engine import (
     validate_schedule_invariants,
 )
 from src.engines.loan_engine.amortization import (
+    _add_months,
     find_schedule_row,
     total_payment_paise,
     total_principal_paise,
-    _add_months,
 )
 from src.engines.loan_engine.emi import (
     compute_principal_from_emi,
@@ -44,12 +44,10 @@ from src.engines.loan_engine.foreclosure import (
 from src.engines.loan_engine.metrics import (
     calculate_interest_saved,
     calculate_tenure_saved,
-    compute_loan_metrics,
     get_emi_component,
     get_interest_component,
 )
-from src.engines.loan_engine.models import AmortizationRow
-from src.engines.loan_engine.models import FloatingRateChange
+from src.engines.loan_engine.models import AmortizationRow, FloatingRateChange
 from src.engines.loan_engine.prepayment import (
     _compute_tenure_from_emi,
     apply_multiple_prepayments,
@@ -1040,7 +1038,7 @@ class TestForeclosureSurvivors:
 
     def test_foreclosure_penalty_rounding_precision(self):
         """Penalty uses integer quantize, not 2-decimal (kills rounding_precision mut)."""
-        from decimal import ROUND_HALF_EVEN, Decimal
+        from decimal import Decimal
 
         # 15 bps on 1000 paise = 1.5 → quantize(Decimal(1)) ROUND_HALF_EVEN = 2
         # quantize(Decimal(2)) would give 1.50 → int()=1 — different result
@@ -1304,12 +1302,12 @@ class TestAmortizationMutationKillers:
         # principal=9000 at 36% for 60 months is NOT ill-conditioned
         # (annuity_factor/2 ≈ 81.5 < 9000/100 = 90)
         schedule_normal = generate_schedule(9000, 3600, 60, "2025-01-01")
-        emis_normal = set(row.emi_paise for row in schedule_normal[:-1])
+        emis_normal = {row.emi_paise for row in schedule_normal[:-1]}
         assert len(emis_normal) == 1  # single fixed EMI
 
         # principal=7000 IS ill-conditioned
         schedule_ill = generate_schedule(7000, 3600, 60, "2025-01-01")
-        emis_ill = set(row.emi_paise for row in schedule_ill)
+        emis_ill = {row.emi_paise for row in schedule_ill}
         assert len(emis_ill) > 1  # re-anchored EMIs
 
     # --- Comparison mutations (interest-only mid-schedule) ---
@@ -1370,7 +1368,7 @@ class TestAmortizationMutationKillers:
         'quantize(Decimal(1), rounding=ROUND_HALF_EVEN)' → 'quantize(Decimal(2), ...)'
         Using Decimal(2) would round to nearest 2, giving different results.
         """
-        from decimal import Decimal, ROUND_HALF_EVEN
+        from decimal import Decimal
 
         # 60 paise * 1000bps / 120000 = 0.5 exactly
         interest = Decimal("60") * Decimal("1000") / Decimal("120000")
@@ -1384,7 +1382,7 @@ class TestAmortizationMutationKillers:
         Kills: rounding_argument_mutation on
         'balance.quantize(Decimal(1), rounding=ROUND_HALF_EVEN)' → 'Decimal(2)'
         """
-        from decimal import Decimal, ROUND_HALF_EVEN
+        from decimal import Decimal
 
         balance = Decimal("29.5")
         rounded = int(balance.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
@@ -1638,7 +1636,7 @@ class TestPrepaymentSurvivors:
         """When emi equals exactly principal*monthly_rate, loan cannot amortize."""
         principal = 100000000
         rate = 850
-        from decimal import Decimal, ROUND_HALF_EVEN
+        from decimal import Decimal
         monthly_rate = Decimal(rate) / Decimal(120000)
         emi_exact = int((Decimal(principal) * monthly_rate).quantize(
             Decimal(1), rounding=ROUND_HALF_EVEN
