@@ -7,7 +7,6 @@ testing can measure behavioral effectiveness instead of reporting no_tests.
 All monetary values are integers in paise (₹1.00 = 100 paise).
 """
 
-from decimal import Decimal
 
 from src.engines.behaviour_engine.temporal import (
     _coefficient_of_variation,
@@ -19,7 +18,6 @@ from src.engines.behaviour_engine.temporal import (
     compute_trend,
     compute_weekly_pattern,
 )
-
 
 # ============================================================
 # _coefficient_of_variation

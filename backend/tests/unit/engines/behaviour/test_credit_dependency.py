@@ -21,7 +21,6 @@ from src.engines.behaviour_engine.credit_dependency import (
     transactor_vs_revolver,
 )
 
-
 # ============================================================
 # artificial_income_flag
 # ============================================================
