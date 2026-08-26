@@ -1,0 +1,156 @@
+{
+  "title": "M9-C42.28 \u2014 End-to-end scenarios A\u2013G + resource-efficiency benchmark",
+  "milestone": "M9-C42.28",
+  "scenarios": [
+    {
+      "name": "A_no_change",
+      "passed": true,
+      "summary": "selected_count=OK; fresh_count=OK; reused_count=OK; label=OK; certifiable=OK",
+      "plan_id": "e3b0c44298fc",
+      "selected_count": 0,
+      "executed_count": 0,
+      "fresh_count": 0,
+      "reused_count": 14,
+      "certifiable": true,
+      "aggregate_label": "MATHEMATICALLY_RECONCILED",
+      "aggregate_result": 60.297,
+      "artifacts": {
+        "plan": "runtime/generated/m9-c42.28/scenarios/plan-A_no_change.json",
+        "executable": "runtime/generated/m9-c42.28/scenarios/executable-A_no_change.json",
+        "reconciled": "runtime/generated/m9-c42.28/scenarios/reconciled-A_no_change.json",
+        "forensic": "runtime/generated/m9-c42.28/scenarios/forensic-A_no_change.json"
+      },
+      "notes": "No changed files \u2192 planner excludes every component \u2192 all 14 prior measurements feed the derived aggregate."
+    },
+    {
+      "name": "B_single_engine_change",
+      "passed": true,
+      "summary": "selected_count=OK; fresh_count=OK; reused_count=OK; label=OK; certifiable=OK",
+      "plan_id": "fd15d3c7b432",
+      "selected_count": 1,
+      "executed_count": 1,
+      "fresh_count": 1,
+      "reused_count": 13,
+      "certifiable": true,
+      "aggregate_label": "AUTHORITATIVE_TARGETED",
+      "aggregate_result": 59.8037,
+      "artifacts": {
+        "plan": "runtime/generated/m9-c42.28/scenarios/plan-B_single_engine_change.json",
+        "executable": "runtime/generated/m9-c42.28/scenarios/executable-B_single_engine_change.json",
+        "reconciled": "runtime/generated/m9-c42.28/scenarios/reconciled-B_single_engine_change.json",
+        "forensic": "runtime/generated/m9-c42.28/scenarios/forensic-B_single_engine_change.json"
+      },
+      "notes": "One component invalidated \u2192 targeted measurement; remaining 13 components reuse their C42.24-B/C42.25 prior measurements."
+    },
+    {
+      "name": "C_test_only_change",
+      "passed": true,
+      "summary": "selected_count=OK; fresh_count=OK; reused_count=OK; label=OK; certifiable=OK",
+      "plan_id": "04f9aa6cf413",
+      "selected_count": 1,
+      "executed_count": 1,
+      "fresh_count": 1,
+      "reused_count": 13,
+      "certifiable": true,
+      "aggregate_label": "AUTHORITATIVE_TARGETED",
+      "aggregate_result": 59.8037,
+      "artifacts": {
+        "plan": "runtime/generated/m9-c42.28/scenarios/plan-C_test_only_change.json",
+        "executable": "runtime/generated/m9-c42.28/scenarios/executable-C_test_only_change.json",
+        "reconciled": "runtime/generated/m9-c42.28/scenarios/reconciled-C_test_only_change.json",
+        "forensic": "runtime/generated/m9-c42.28/scenarios/forensic-C_test_only_change.json"
+      },
+      "notes": "Test-only change invalidates evidence_only (R-SRC-003); planner emits selected_revalidation for the affected test surface, executor dispatches as fresh."
+    },
+    {
+      "name": "D_new_component",
+      "passed": true,
+      "summary": "new_engine_in_selected=OK; no_fresh_measured=OK; existing_components_reused=OK; new_engine_invalidated=OK; certifiable_false=OK",
+      "plan_id": "e3b0c44298fc",
+      "selected_count": 1,
+      "executed_count": 0,
+      "fresh_count": 0,
+      "reused_count": 14,
+      "certifiable": false,
+      "aggregate_label": "MATHEMATICALLY_RECONCILED",
+      "aggregate_result": 60.297,
+      "artifacts": {
+        "plan": "runtime/generated/m9-c42.28/scenarios/plan-D_new_component.json",
+        "executable": "runtime/generated/m9-c42.28/scenarios/executable-D_new_component.json",
+        "reconciled": "runtime/generated/m9-c42.28/scenarios/reconciled-D_new_component.json",
+        "forensic": "runtime/generated/m9-c42.28/scenarios/forensic-D_new_component.json"
+      },
+      "notes": "New population pop-15-c42.28 admits new_engine; planner selected it: True. fresh_measured=0 (no execution performed in this scenario), reused=14, no_evidence=1 (new_engine). Aggregate is provisional."
+    },
+    {
+      "name": "E_scope_mismatch",
+      "passed": true,
+      "summary": "failure_kind_is_scope=OK; exit_code_negative=OK",
+      "plan_id": "fd15d3c7b432",
+      "selected_count": 1,
+      "executed_count": 1,
+      "fresh_count": 0,
+      "reused_count": 0,
+      "certifiable": false,
+      "aggregate_label": null,
+      "aggregate_result": null,
+      "artifacts": {
+        "evidence": "runtime/generated/m9-c42.28/scenarios/evidence-E_scope_mismatch.json"
+      },
+      "notes": "scope_mismatch: expected_engine=credit_card_engine; installed scope discovered ['credit_card_engine'] (pre-corruption). Executor must block and emit failure_kind=scope_failure."
+    },
+    {
+      "name": "F_verification_failure",
+      "passed": true,
+      "summary": "selected_count=OK; fresh_count=OK; reused_count=OK; label=OK; certifiable=OK",
+      "plan_id": "cd277bc90e4e",
+      "selected_count": 1,
+      "executed_count": 1,
+      "fresh_count": 0,
+      "reused_count": 13,
+      "certifiable": false,
+      "aggregate_label": "MATHEMATICALLY_RECONCILED",
+      "aggregate_result": 73.6614,
+      "artifacts": {
+        "plan": "runtime/generated/m9-c42.28/scenarios/plan-F_verification_failure.json",
+        "executable": "runtime/generated/m9-c42.28/scenarios/executable-F_verification_failure.json",
+        "reconciled": "runtime/generated/m9-c42.28/scenarios/reconciled-F_verification_failure.json",
+        "forensic": "runtime/generated/m9-c42.28/scenarios/forensic-F_verification_failure.json"
+      },
+      "notes": "Verification actually ran and found a defect \u2192 failure_kind=verification_failure, not infrastructure. The component is invalidated; the 13 reused components still produce a provisional aggregate (MATHEMATICALLY_RECONCILED)."
+    },
+    {
+      "name": "G_infrastructure_failure",
+      "passed": true,
+      "summary": "selected_count=OK; fresh_count=OK; reused_count=OK; label=OK; certifiable=OK",
+      "plan_id": "cd277bc90e4e",
+      "selected_count": 1,
+      "executed_count": 1,
+      "fresh_count": 0,
+      "reused_count": 13,
+      "certifiable": false,
+      "aggregate_label": "MATHEMATICALLY_RECONCILED",
+      "aggregate_result": 73.6614,
+      "artifacts": {
+        "plan": "runtime/generated/m9-c42.28/scenarios/plan-G_infrastructure_failure.json",
+        "executable": "runtime/generated/m9-c42.28/scenarios/executable-G_infrastructure_failure.json",
+        "reconciled": "runtime/generated/m9-c42.28/scenarios/reconciled-G_infrastructure_failure.json",
+        "forensic": "runtime/generated/m9-c42.28/scenarios/forensic-G_infrastructure_failure.json"
+      },
+      "notes": "Mutmut cannot execute \u2192 failure_kind=infrastructure_failure, not verification_failure. Component is invalidated; 13 reused components produce a provisional aggregate."
+    }
+  ],
+  "resource_efficiency_benchmark": {
+    "name": "single_engine_change_vs_full_campaign",
+    "full_campaign_components": 14,
+    "planner_selected_components": 1,
+    "full_campaign_cost_units": 840,
+    "planner_selected_cost_units": 60,
+    "saved_cost_units": 780,
+    "saved_fraction": 0.9286,
+    "cost_basis": "Per-component 60-minute mutation budget; sum of all 14 components = full campaign; 1 component = planner-selected for the canonical single-engine-change scenario (Scenario B). Cost basis matches the C42.25/C42.26 cost model.",
+    "certification_confidence_preserved": true,
+    "notes": "Avoided 13/14 = 92.86% of the full mutation cost without reducing certification confidence. The avoided work would have re-measured 13 components whose evidence remained valid under the C42.27 invalidation rules."
+  },
+  "overall_passed": true
+}

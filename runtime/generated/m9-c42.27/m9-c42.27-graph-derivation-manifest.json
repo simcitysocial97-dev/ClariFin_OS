@@ -1,0 +1,49 @@
+{
+  "title": "M9-C42.27 \u2014 Graph Derivation Manifest",
+  "generated_at": "2026-08-26T03:13:12.723877+00:00",
+  "auto_derived": {
+    "source_from_path": 411,
+    "test_surface_from_path": 57,
+    "capability_from_engine_dir": 14,
+    "source_to_capability_from_engine": 65
+  },
+  "manually_encoded": {
+    "capability_matrix_components": [
+      "account_engine",
+      "balance_engine",
+      "behaviour_engine",
+      "cashflow_engine",
+      "common_calculations",
+      "core_domain_money",
+      "credit_card_engine",
+      "financial_events",
+      "ledger_audit_engine",
+      "loan_engine",
+      "recommendation_engine",
+      "reconciliation_engine",
+      "transaction_intelligence",
+      "financial_intelligence"
+    ],
+    "intelligence_capabilities": [
+      "transaction-intelligence",
+      "financial-intelligence"
+    ],
+    "engine_to_capability_aliases": [
+      "credit_card",
+      "account",
+      "loan",
+      "reconciliation",
+      "behaviour",
+      "balance",
+      "ledger_audit",
+      "cashflow",
+      "financial_events",
+      "common_calculations",
+      "recommendation",
+      "transaction_intelligence",
+      "financial_intelligence",
+      "core_domain_money"
+    ]
+  },
+  "inconsistencies": []
+}

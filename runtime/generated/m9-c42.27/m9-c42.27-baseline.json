@@ -1,0 +1,203 @@
+{
+  "title": "M9-C42.27 \u2014 Authoritative Baseline (M27.1)",
+  "milestone": "M9-C42.27",
+  "phase": "M27.1 \u2014 Freeze and Audit the Existing Verification Architecture",
+  "generated_at": "2026-08-26T03:02:44.240432+00:00",
+  "git_head": "523637b8de928565ee19fbcff2b5645fbd85a2ce",
+  "freeze_semantics": "All paths listed are frozen. C42.27 must not change the behavior or contents of these artifacts. Any mutation, deletion, or new dependency on these paths is a C42.27 violation.",
+  "frozen_artifact_count": 27,
+  "missing_artifacts": [],
+  "aggregate_sha256": "cdd6f29d6c3c71fedd2e48be242797e828f34b754982b9b17226fc86043abaec",
+  "artifacts": [
+    {
+      "kind": "certification",
+      "path": "runtime/generated/m9-c42.26/m9-c42.26-certification.json",
+      "exists": true,
+      "sha256": "138fc338190aed46498e65f3ee284965760e6616bc09d11c40417d82965bde57",
+      "bytes": 8190
+    },
+    {
+      "kind": "certification",
+      "path": "runtime/generated/m9-c42.26/m9-c42.26-baseline.json",
+      "exists": true,
+      "sha256": "30e3d04fbaae147609a51b63490f31b3495235cebf92a0d1de1658c902c135b3",
+      "bytes": 13082
+    },
+    {
+      "kind": "certification",
+      "path": "runtime/generated/m9-c42.26/m9-c42.26-population-expansion.json",
+      "exists": true,
+      "sha256": "25cb93f51258404bf013b3a3545306b7f764821b1c30ca74b6359eb3d5129dc7",
+      "bytes": 3622
+    },
+    {
+      "kind": "certification",
+      "path": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+      "exists": true,
+      "sha256": "b126fbd8331d7da7290a7f00023363979a8e026a45ee0eb29015475a9001e962",
+      "bytes": 7647
+    },
+    {
+      "kind": "certification",
+      "path": "runtime/generated/m9-c42.26/m9-c42.26-mathematical-reconciliation.json",
+      "exists": true,
+      "sha256": "75ac340bdb5bbae1673c5be97baec1806b8882058f05a70b98aa8d0ff9a63bca",
+      "bytes": 5564
+    },
+    {
+      "kind": "certification",
+      "path": "runtime/generated/m9-c42.26/m9-c42.26-intelligence-certification.json",
+      "exists": true,
+      "sha256": "1868320f80e32bf837b6b7e1830c9e5e683b434b9e036210aba2dedadabd37dc",
+      "bytes": 8103
+    },
+    {
+      "kind": "certification",
+      "path": "runtime/generated/m9-c42.26/m9-c42.26-intelligence-survivor-intelligence.json",
+      "exists": true,
+      "sha256": "1a18af3d1aacc2aa348323c270ca4ed498d4c3a055a4d853cb7829faff1f984d",
+      "bytes": 8755
+    },
+    {
+      "kind": "certification",
+      "path": "runtime/generated/m9-c42.26/m9-c42.26-mutation-score-interpretation.json",
+      "exists": true,
+      "sha256": "40215d60ad315bf5b1775332f3ef2bd13b733bcfc861907f23c948e496c32d69",
+      "bytes": 4870
+    },
+    {
+      "kind": "certification",
+      "path": "runtime/generated/m9-c42.26/m9-c42.26-cross-dimension-reconciliation.json",
+      "exists": true,
+      "sha256": "67b08a4a458bf676b68eb50a391e7d16858666a1daa0d3091d9337985aa163bc",
+      "bytes": 10108
+    },
+    {
+      "kind": "certification",
+      "path": "runtime/generated/m9-c42.26/m9-c42.26-cadence-and-architecture.json",
+      "exists": true,
+      "sha256": "436b9673d78d1d59fc8aea11faf428dbe4ac4012f0f8c095192b59eb9ff48a26",
+      "bytes": 8458
+    },
+    {
+      "kind": "population_ledger",
+      "path": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+      "exists": true,
+      "sha256": "b126fbd8331d7da7290a7f00023363979a8e026a45ee0eb29015475a9001e962",
+      "bytes": 7647
+    },
+    {
+      "kind": "mutation_contract",
+      "path": "runtime/foundation/verification/mutation_contract.py",
+      "exists": true,
+      "sha256": "caf44e6ee563d7817d0212caa703c4a26c35bc12c98438179bba9d42ed574d91",
+      "bytes": 19127
+    },
+    {
+      "kind": "mutation_runner",
+      "path": "runtime/foundation/verification/mutation_runner.py",
+      "exists": true,
+      "sha256": "1f5dc9c71a4c6a0dd353d347a3c00d3dc4fa4110bb340c217c6576e5759ae4d5",
+      "bytes": 31664
+    },
+    {
+      "kind": "mutation_inventory",
+      "path": "runtime/foundation/verification/mutation_inventory.py",
+      "exists": true,
+      "sha256": "fa4dd0c2dc3304146faab330da2fe1d4afa7f4b4d108ac35863dce4417090780",
+      "bytes": 19373
+    },
+    {
+      "kind": "registry",
+      "path": "runtime/foundation/verification/registry/registry.py",
+      "exists": true,
+      "sha256": "a82469d4914e676185c926cb5baeae717f2b64ca114d78ecd506cff3ca7d3017",
+      "bytes": 54083
+    },
+    {
+      "kind": "registry_init",
+      "path": "runtime/foundation/verification/registry/__init__.py",
+      "exists": true,
+      "sha256": "c4731fbc525200d4de2b6d0a1ecceee9cf4b033575082464f97c7564c9b659c6",
+      "bytes": 619
+    },
+    {
+      "kind": "verification_config",
+      "path": "runtime/foundation/verification/verification.yaml",
+      "exists": true,
+      "sha256": "24cbea2b723a4bd861862e0e53ca4deaf1cabb72c25eb82ed9628f5e24dc7a44",
+      "bytes": 11355
+    },
+    {
+      "kind": "planner",
+      "path": "runtime/foundation/verification/planner/planner.py",
+      "exists": true,
+      "sha256": "8e8755b2f749b8470a7c62a6ab2a5fdadf3b9b4fbde39d9d4ebd8aacb5f9dea0",
+      "bytes": 51635
+    },
+    {
+      "kind": "planner_models",
+      "path": "runtime/foundation/verification/planner/plan_models.py",
+      "exists": true,
+      "sha256": "4d3ea51f19d9ae5a54b65a9f2f18abef6198621795007365793b3b426a95fcdd",
+      "bytes": 10603
+    },
+    {
+      "kind": "planner_impact",
+      "path": "runtime/foundation/verification/planner/impact_rules.py",
+      "exists": true,
+      "sha256": "fe3acaf6be051122b904610f190aa5460990379d2f9f89a13206be1c5dc6ce8e",
+      "bytes": 4521
+    },
+    {
+      "kind": "orchestrator",
+      "path": "runtime/foundation/verification/orchestrator.py",
+      "exists": true,
+      "sha256": "3753b0876b22f66c6e210709f69ccca0ba3f3b7fb59d20b68e695f7efe8e3594",
+      "bytes": 46504
+    },
+    {
+      "kind": "verify_runtime",
+      "path": "runtime/verify.py",
+      "exists": true,
+      "sha256": "a060a8a8bffd10b43ef85c0b0b8cbb5083e7ed3949431d4b504391bd73ba982a",
+      "bytes": 55029
+    },
+    {
+      "kind": "verification_models",
+      "path": "runtime/foundation/verification/models/model.py",
+      "exists": true,
+      "sha256": "9af5a8bcdb12bd675abbcc288dee98d9f6f0e2109fd2babc11693b8e31334c1b",
+      "bytes": 10895
+    },
+    {
+      "kind": "verification_scope",
+      "path": "runtime/foundation/verification/models/scope.py",
+      "exists": true,
+      "sha256": "bb3ed5b8289c4a694819abc4834aede96ad06aeb87167335f1eec9b47ddb5286",
+      "bytes": 19165
+    },
+    {
+      "kind": "verification_models_init",
+      "path": "runtime/foundation/verification/models/__init__.py",
+      "exists": true,
+      "sha256": "6556a5e493258b6a203e8e694506a200a49b889545ad138498280019c9ec7136",
+      "bytes": 1129
+    },
+    {
+      "kind": "evidence_contract",
+      "path": "runtime/foundation/verification/evidence_contract.py",
+      "exists": true,
+      "sha256": "29336dc1c7e6397b2ad1aae2fba4e46449f603cc9a7b3542883bdb1e4b96d509",
+      "bytes": 25023
+    },
+    {
+      "kind": "progress",
+      "path": "progress.md",
+      "exists": true,
+      "sha256": "df5f31ec3e330d8c7b7a019aafa16fd3d42777c7c4704bb4bf9fd15638bb5a18",
+      "bytes": 349932
+    }
+  ],
+  "certification_label": "M9-C42.26 \u2014 14-COMPONENT POPULATION RECONCILED \u2014 NO FULL RERUN REQUIRED"
+}

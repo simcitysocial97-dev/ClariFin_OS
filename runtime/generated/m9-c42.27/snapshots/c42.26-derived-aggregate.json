@@ -1,0 +1,26 @@
+{
+  "aggregate_id": "agg::pop-14::c42.26",
+  "scope_id": "pop-14",
+  "measurement_kind": "mutation",
+  "population_id": "pop-14-c42.26",
+  "component_measurement_ids": [
+    "meas::account_engine::c42.24-B",
+    "meas::balance_engine::c42.24-B",
+    "meas::behaviour_engine::c42.24-B",
+    "meas::cashflow_engine::c42.24-B",
+    "meas::common_calculations::c42.24-B",
+    "meas::core_domain_money::c42.24-B",
+    "meas::credit_card_engine::c42.24-B",
+    "meas::financial_events::c42.24-B",
+    "meas::ledger_audit_engine::c42.24-B",
+    "meas::loan_engine::c42.24-B",
+    "meas::recommendation_engine::c42.24-B",
+    "meas::reconciliation_engine::c42.24-B",
+    "meas::transaction_intelligence::c42.25",
+    "meas::financial_intelligence::c42.25"
+  ],
+  "formula": "sum(killed)/sum(scored) * 100",
+  "result": 60.297,
+  "decided_at": "2026-08-26T03:04:56.791597+00:00",
+  "rationale": "Mathematical reconciliation of C42.24-B 12-component measurement + C42.25 2-component targeted measurement."
+}

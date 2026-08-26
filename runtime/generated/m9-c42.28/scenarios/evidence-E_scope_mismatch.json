@@ -1,0 +1,21 @@
+{
+  "execution_id": "exec-a30935475eb4",
+  "task_id": "exec::task::mutation::credit_card_engine",
+  "component": "credit_card_engine",
+  "capability": "credit-card-engine",
+  "verification_kind": "mutation",
+  "started_at": "2026-08-26T04:26:36.843978+00:00",
+  "completed_at": "2026-08-26T04:26:36.846142+00:00",
+  "duration_seconds": 0.0,
+  "command": ".venv/bin/python runtime/verify.py mutation --target credit_card_engine --json",
+  "exit_code": -3,
+  "failure_kind": "scope_failure",
+  "failure_message": "SCOPE MISMATCH: executor expected only 'credit_card_engine' in installed mutmut scope, but discovered: ['loan_engine']",
+  "source_fingerprint": "03a257beaa78f2f5b179c91b1719066a52106924ac4bef97fd66467d59ce8109",
+  "test_fingerprint": "",
+  "config_fingerprint": "29b283dad76f8949",
+  "toolchain_fingerprint": "ee413b0b32ea5eb98ed0e9931550cd4254045079467407863471360714777ba6",
+  "repository_sha": "523637b8de928565ee19fbcff2b5645fbd85a2ce",
+  "artifact_paths": [],
+  "notes": "expected_engine=credit_card_engine; installed_scope=['loan_engine']"
+}

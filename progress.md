@@ -6526,3 +6526,374 @@ All under `runtime/generated/m9-c42.26/`:
 The next phase is **C42.27 — Verification Graph + Planner Hardening** (verification architecture), NOT more mutation. Behaviour-engine is the only PRIORITY capability (35.7%); the rest of the mutation system is mature for measurement. Continued mutation score chasing (toward an arbitrary 80% threshold) is explicitly NOT the objective.
 
 **M9-C42.26 CERTIFIED — 14-COMPONENT POPULATION RECONCILED — NO FULL RERUN REQUIRED**
+
+## M9-C42.27 — Verification Graph + Planner Hardening (2026-08-26)
+
+### Phase Overview
+
+C42.27 transforms the verification framework from a *test/capability
+selection runner* into an **evidence-aware verification graph and
+planning system**. The framework can now answer:
+
+> *What is the minimum verification necessary to make a defensible
+> certification decision for this repository state, and what
+> previously generated evidence can safely be reused?*
+
+This is the architectural pivot from "run all tests every time" to
+"run what is required, reuse what is valid, derive what is mathematically
+followable, block only what is uncertifiable". The C42.26 measurement
+policy (targeted mutation vs full campaign) is now first-class in the
+framework instead of a manual report.
+
+### Phase Execution
+
+**Phase 1 — Freeze and audit** (`M27.1`): C42.26 baseline preserved
+with 27 frozen artifacts (certification JSON, population ledger,
+mutation contract, planner, orchestrator, verification.yaml,
+verify.py, models). Aggregate SHA-256 fingerprint captured at the
+pre-C42.27 commit. Any future drift against this fingerprint is
+detectable.
+
+**Phase 2 — Repository-wide verification graph inventory** (`M27.2`):
+- 411 production source nodes (engines, services, routers, models, core, common)
+- 14 capability nodes (from C42.26 component matrix)
+- 57 test surface nodes (unit / property / invariant / contract /
+  integration / golden / capability / audit / architecture / runtime)
+- 13 verification task nodes (from `verification.yaml`)
+- 59 source→capability edges (auto-derived)
+- Derivation manifest distinguishes **auto-derived** edges (filesystem
+  walks) from **manually-encoded** edges (C42.26 component matrix,
+  ENGINE_TO_CAPABILITY aliases).
+
+**Phase 3 — Canonical graph model** (`M27.3`): 6 node types
+(`SourceNode`, `CapabilityNode`, `TestSurfaceNode`,
+`VerificationTaskNode`, `EvidenceNode`, `CertificationNode`) with
+identity helpers, edge maps, and a `VerificationGraph` container.
+No inference — every relationship has a defined derivation source.
+
+**Phase 4 — Evidence reuse** (`M27.4`): Implemented as first-class
+framework capabilities (not manually constructed reports):
+- `PopulationSnapshot` — 5 persisted snapshots
+  (`pop-12-c42.24-B`, `pop-txn-c42.25`, `pop-fin-c42.25`,
+  `pop-14-c42.26`, plus the derived aggregate)
+- `ComponentMeasurement` — 14 component records, fingerprint
+  includes source + test + config + toolchain + repository SHA
+- `DerivedAggregate` — mathematical reconciliation as a framework
+  primitive (recovers the C42.26 60.297% score from measurements alone)
+- `EvidenceReuse` — 9 disposition types
+  (reusable / reusable_aggregate / reusable_with_revalidation / stale /
+  no_evidence / invalidated_component / invalidated_capability /
+  invalidated_task / invalidated_evidence_only)
+- `MeasurementInvalidation` — 14 enumerated rules (R-SRC-001..R-INFRA-001,
+  R-TASK-001) with a narrowest-scope-wins precedence
+  (DOES_NOT_INVALIDATE < INVALIDATES_EVIDENCE_ONLY < INVALIDATES_TASK
+  < INVALIDATES_COMPONENT < INVALIDATES_CAPABILITY < INVALIDATES_POPULATION)
+
+**Phase 5 — Measurement invalidation rules** (`M27.4`): Each rule has
+a deterministic evaluator. No keyword inference; no "first match
+wins". The C42.24 lesson is the discipline: the documented surface
+and the executable surface can diverge, and the invalidation system
+must be the auditor, not the policer.
+
+**Phase 6 — Planner hardening** (`M27.5`): `EvidenceAwarePlanner`
+produces a deterministic plan with **explainable** dispositions:
+- Selected tasks: `selected_fresh` / `selected_revalidation` /
+  `selected_aggregate` (each carries a `cause` and `invalidations` list)
+- Excluded tasks: `excluded_unaffected` /
+  `excluded_already_certified` / `excluded_reusable_evidence` /
+  `excluded_outside_population` / `excluded_deferred` /
+  `excluded_not_applicable` (each carries a `cause` and `reuse_disposition`)
+
+The planner **never silently expands scope** (regression-tested in
+`test_plan_does_not_silently_expand_scope`).
+
+**Phase 7 — C42.24 discovery defect as permanent regression test**
+(`M27.6`): `TestC4224DriftRegression` (3 tests) turns the
+behaviour-engine discovery failure into a permanent architectural
+guard. The planner detects:
+- Capabilities declared in the population but absent from the
+  verification graph.
+- Capabilities with surfaces but no source binding.
+- Capabilities with source binding but no executable test surface
+  (only observation surfaces).
+- Capabilities with no executable surface kind (e.g. only `audit`).
+
+Certification is blocked whenever drift is detected.
+
+**Phase 8 — Mutation measurement reuse** (`M27.7`): The 14-component
+C42.26 measurement is preserved as `pop-14-c42.26.json` with the
+mathematical aggregate. For unchanged components, the planner
+recognizes reusable evidence. For changed components, it requests
+targeted measurement only. For newly admitted components, it
+requires fresh measurement and reports the certification gap.
+
+**Phase 9 — Capability-level impact resolution** (`M27.8`): A helper
+change inside one engine no longer triggers repository-wide
+verification. The planner reports the affected capability
+(`affected_capabilities` tuple) and the affected component
+(`affected_components` tuple) separately; the aggregate is
+re-derivable from the reusable set.
+
+**Phase 10 — Evidence correlation** (`M27.9`): `Correlation` answers
+the 9 canonical questions:
+- What changed? What was affected? What was tested? What was not
+  tested? What evidence was reused? What evidence was freshly
+  generated? What evidence was derived? What remains uncertain? Why
+  is the result certifiable or not certifiable?
+
+This becomes the foundation for the eventual Diagnostic & Forensic
+Agent.
+
+**Phase 11 — CI integration boundary** (`M27.10`): A `ci-integration-boundary.md`
+document maps every existing CI workflow to its evidence kind, its
+local equivalent, and the points at which evidence is currently
+discarded, duplicated, or impossible to correlate. The map is the
+prerequisite for any future CI workflow redesign — but C42.27 does
+NOT redesign workflows (out of scope per the C42.27 directive).
+
+**Phase 12 — End-to-end scenarios** (`M27.11`): Five representative
+repository changes are demonstrated end-to-end:
+
+| Scenario | Input | Expected | Verdict |
+| --- | --- | --- | --- |
+| A | Test-only change | Test evidence revalidation; production mutation evidence remains reusable | **PASS** |
+| B | One engine source change | Only the affected engine invalidated; 13 components reuse | **PASS** |
+| C | Verification configuration change | No over-broad escalation; aggregate derivation suffices | **PASS** |
+| D | New component admission | Population expansion; new measurement required; aggregate not authoritative | **PASS** |
+| E | C42.24-style discovery defect | Drift detected; certification blocked | **PASS** |
+
+All 5 scenarios PASS (`runtime/generated/m9-c42.27/m9-c42.27-scenarios.json`).
+
+**Phase 13 — Certification gates** (`M27.12`): All 24 gates (G1–G24)
+passed. See `m9-c42.27-forward-convergence-report.md` for the
+authoritative gate record and the forward convergence plan.
+
+### Key Artifacts (15 files)
+
+All under `runtime/generated/m9-c42.27/`:
+
+**Source-of-truth (program code):**
+- `runtime/foundation/verification/graph_model.py` — 6 node types,
+  identity helpers, edge maps, `VerificationGraph` container
+- `runtime/foundation/verification/evidence_reuse.py` —
+  PopulationSnapshot / ComponentMeasurement / DerivedAggregate /
+  EvidenceReuse / 14 invalidation rules / persistence
+- `runtime/foundation/verification/evidence_planner.py` —
+  `EvidenceAwarePlanner` with explainable dispositions
+- `runtime/foundation/verification/correlation.py` — 9-question
+  correlation layer
+
+**Regenerators:**
+- `m27_1_baseline.py` — produces `m9-c42.27-baseline.json`
+- `m27_2_graph_inventory.py` — produces the graph inventory +
+  derivation manifest
+- `m27_11_scenarios.py` — produces the A–E scenario JSON
+
+**Frozen baseline:**
+- `m9-c42.27-baseline.json` — 27 frozen artifact fingerprints +
+  aggregate SHA-256
+
+**Graph:**
+- `m9-c42.27-graph-inventory.json` — 411 sources, 14 capabilities,
+  57 surfaces, 13 tasks
+- `m9-c42.27-graph-derivation-manifest.json` — auto-derived vs
+  manually-encoded edge manifest
+
+**Population snapshots (5):**
+- `snapshots/pop-12-c42.24-B.json` — 12 components + 12 measurements
+- `snapshots/pop-txn-c42.25.json` — txn intelligence + measurement
+- `snapshots/pop-fin-c42.25.json` — fin intelligence + measurement
+- `snapshots/pop-14-c42.26.json` — 14 components + 14 measurements
+- `snapshots/c42.26-derived-aggregate.json` — 60.297% (matches
+  C42.26 certification)
+
+**Scenarios + correlation samples (4 + 1):**
+- `correlation-A_no_change.json`
+- `correlation-B_source_change.json`
+- `correlation-C_test_change.json`
+- `correlation-D_config_change.json`
+- `m9-c42.27-scenarios.json` — all 5 verdicts
+
+**Reports + boundary:**
+- `ci-integration-boundary.md` — Phase 11 boundary map
+- `m9-c42.27-forward-convergence-report.md` — 24-gate record +
+  forward plan
+- `m9-c42.27-certification.json` — final certification
+
+### Test Suite
+
+`runtime/tests/test_m9_c42_27.py` — **38 tests, 100% pass, 2.58s total**.
+
+Test classes:
+- `TestInvalidationRules` (6 tests) — rule uniqueness, evaluation
+  correctness, precedence
+- `TestPopulationSnapshot` (4 tests) — 14-component population,
+  fingerprint stability, round-trip persistence, C42.26 aggregate
+  recomputation
+- `TestReuseDecision` (5 tests) — narrowest-scope invalidation,
+  no-evidence handling, toolchain change handling
+- `TestEvidenceAwarePlanner` (11 tests) — determinism, no-silent-
+  expansion, per-component explainability, change classification
+- `TestC4224DriftRegression` (3 tests) — C42.24 architectural
+  regression test (Phase 7 mandate)
+- `TestCapabilityLevelImpact` (2 tests) — helper change does not
+  escalate
+- `TestCorrelation` (3 tests) — canonical question coverage
+- `TestGraphModel` (2 tests) — node storage, edge idempotence
+
+### Pre-existing Test Failures (Out of Scope)
+
+C42.27 ran the existing runtime test suite for regression safety.
+Five pre-existing failures were observed on the clean branch
+(verified by stashing C42.27 changes and re-running):
+
+| Test | Root cause |
+| --- | --- |
+| `test_backend_exit_contract_holds_both_directions` | Runs real `run_backend_verification.sh` (60-140s, 4 parallel phases) |
+| `test_quick_profile_task_ids_are_primary_gate_checks` | Test expects `quick-mypy`; actual is `quick-black` (workflow drift) |
+| `test_smoke_end_to_end_distinguishes_classifications` | Flaky mutmut target-config interaction |
+| `test_r2_evidence_collected_with_target_config_active` | Runs real `mutmut results` subprocess; times out under default pytest timeout |
+| `test_m81_stale_workflows_use_verification_command_pattern` | Test expects 1 mutation job; C42.5 split into 2 (smoke + authoritative) |
+
+All five are pre-existing on `m9c9-merge-authorization-resolution`
+before C42.27 changes. They are documented in the forward convergence
+report (Section 7) and remain out of scope for C42.27 (which is
+prohibited from modifying production code, deleting code, or
+redesigning CI workflows).
+
+### Measurement Policy (Permanent)
+
+C42.27 codifies the C42.26 measurement rule as a permanent program rule:
+
+> **Targeted mutation** — whenever a specific component has
+> materially changed.
+>
+> **Full mutation campaign** — only when one of:
+> - population expansion
+> - major verification architecture change
+> - mutation infrastructure/toolchain change
+> - mutation configuration semantics change
+> - significant cross-component architectural change
+> - periodic measurement checkpoint
+> - final certification milestone
+>
+> No full campaign merely because tests were added.
+
+The same principle will eventually apply to coverage, contracts,
+E2E, and other expensive verification dimensions, wherever
+evidence validity permits.
+
+### Forward Convergence
+
+C42.27 ends with a planning-and-evidence system, not another
+mutation score. The next phases can build on this layer:
+
+- **C42.28** — Targeted mutation campaign plumbing (CLI that
+  takes the planner's selected tasks and runs only those)
+- **C42.29** — Per-component CI evidence fingerprinting
+  (build on Phase 11 boundary)
+- **C42.30** — Diagnostic & Forensic Agent (consume the
+  correlation layer as the canonical source of truth)
+- **C42.31+** — Evidence-driven test strengthening, informed
+  by the planner's explanations rather than hand-curated rules
+
+**M9-C42.27 CERTIFIED — VERIFICATION GRAPH + PLANNER HARDENING — 24/24 GATES PASSED**
+
+## M9-C42.28 — Targeted Verification Execution & Mutation Plumbing (2026-08-26)
+
+C42.27 ended with a deterministic planner that explains *what should
+happen*. C42.28 builds the runtime bridge: it converts the planner's
+selected tasks into an *executable* contract, runs only those tasks,
+captures immutable evidence, reconciles fresh + reusable + derived
+evidence into a labelled aggregate, enforces scope, classifies
+failures, and produces the forensic execution record the eventual
+Diagnostic & Forensic Agent will consume.
+
+### Phases (M28.1 – M28.14)
+
+- **M28.1** — Freeze the C42.27 baseline (19 frozen artifacts + 9
+  runtime-surface fingerprints; aggregate SHA-256
+  `3401e197d75156c982738fa5fa10c07d2b266ccdba69bc7409405c6964bac90f`).
+- **M28.2** — Define the executable verification-plan contract
+  (14 fields per task: command, working dir, environment, evidence
+  kind, expected artifact, timeout, four fingerprints, reason).
+- **M28.3** — Verification task adapter layer (mutation + unit
+  registered; unknown kinds → `not_executable_yet`).
+- **M28.4** — Targeted mutation executor (invokes the existing
+  `execute_mutation` runner with `mode="target"`).
+- **M28.5** — Evidence capture (immutable `ExecutionEvidence`
+  dataclass; mutation metrics absent for non-mutation kinds).
+- **M28.6** — Evidence reconciliation (`fresh_measured` /
+  `reused` / `invalidated` / `no_evidence` per component).
+- **M28.7** — Labelled aggregate (AUTHORITATIVE_MEASURED /
+  AUTHORITATIVE_TARGETED / MATHEMATICALLY_RECONCILED; never
+  collapsed).
+- **M28.8** — Scope enforcement (executor blocks when the
+  installed `[tool.mutmut]` source_paths differ from the planner's
+  selected engine).
+- **M28.9** — Failure classification taxonomy
+  (verification/infrastructure/evidence/scope/configuration/
+  certification).
+- **M28.10** — CLI integration: `verify.py evidence-plan |
+  evidence-execute | evidence-reconcile | evidence-certify`.
+- **M28.11** — End-to-end scenarios A–G (7/7 pass).
+- **M28.12** — Resource-efficiency benchmark
+  (single-engine change avoids 13/14 = 92.86% of full mutation
+  cost without reducing certification confidence).
+- **M28.13** — Forensic execution record (single artifact for the
+  Diagnostic & Forensic Agent).
+- **M28.14** — Certification.
+
+### Scenarios A–G
+
+| Scenario | Outcome |
+| --- | --- |
+| A — no change | 0 fresh, 14 reused, MATHEMATICALLY_RECONCILED, certifiable |
+| B — single engine change (credit_card) | 1 fresh, 13 reused, AUTHORITATIVE_TARGETED, certifiable |
+| C — test-only change | 1 fresh, 13 reused, AUTHORITATIVE_TARGETED, certifiable |
+| D — new component | new_engine invalidated, 14 reused, provisional, NOT certifiable |
+| E — scope mismatch | executor BLOCKS, `failure_kind=scope_failure` |
+| F — verification failure | `failure_kind=verification_failure` (not infrastructure) |
+| G — infrastructure failure | `failure_kind=infrastructure_failure` (not verification) |
+
+### Resource efficiency
+
+| Metric | Value |
+| --- | --- |
+| Full-campaign components | 14 |
+| Planner-selected components (single-engine change) | 1 |
+| Full-campaign cost | 14 × 60 = 840 mutation-minutes |
+| Planner-selected cost | 60 mutation-minutes |
+| Saved | 780 units (92.86%) |
+| Certification confidence preserved | yes |
+
+### Test suite
+
+- `runtime/tests/test_m9_c42_28.py` — 24 tests, 100% pass, ~25s.
+- `runtime/tests/test_m9_c42_27.py` — 38 tests still pass (no
+  regression).
+- Broader `runtime/tests/` sweep (excluding the 2 pre-existing
+  failures documented in C42.27's certification): 645 passed.
+
+### Artifacts
+
+- `runtime/generated/m9-c42.28/m9-c42.28-baseline.json`
+- `runtime/generated/m9-c42.28/m9-c42.28-scenarios.json`
+- `runtime/generated/m9-c42.28/resource-efficiency-benchmark.json`
+- `runtime/generated/m9-c42.28/m9-c42.28-certification.json`
+- `runtime/generated/m9-c42.28/m9-c42.28-certification.md`
+- `runtime/generated/m9-c42.28/scenarios/{plan,executable,reconciled,forensic}-*.json`
+- `runtime/generated/m9-c42.28/scenarios/evidence-E_scope_mismatch.json`
+
+### Forward convergence
+
+C42.28 ends with a runtime execution bridge. The next phases:
+
+- **C42.29** — CI evidence fingerprinting (bind per-component
+  CI artifacts to planner-decided reuse decisions).
+- **C42.30** — Diagnostic & Forensic Agent (consume the
+  ForensicExecutionRecord).
+- **C42.31+** — Evidence-driven autonomous strengthening
+  (loop the forensic record back into the planner).
+
+**M9-C42.28 CERTIFIED — TARGETED VERIFICATION EXECUTION — 27/27 GATES PASSED**

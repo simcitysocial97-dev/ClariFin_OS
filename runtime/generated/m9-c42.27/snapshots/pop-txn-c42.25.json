@@ -1,0 +1,61 @@
+{
+  "snapshot": {
+    "population_id": "pop-txn-c42.25",
+    "created_at": "2026-08-25T18:00:00+00:00",
+    "components": [
+      "transaction_intelligence",
+      "financial_intelligence"
+    ],
+    "component_fingerprints": {
+      "transaction_intelligence": "src::transaction_intelligence",
+      "financial_intelligence": "src::financial_intelligence"
+    },
+    "config_hash": "c42-25-config-v1",
+    "toolchain_hash": "mutmut-3.7.0|pytest-8.x",
+    "repository_sha": "cdfaefe1",
+    "notes": "C42.25 2-component targeted intelligence population.",
+    "population_fingerprint": "8c7ef868f26bbb7a9e2760b3fa4a81b0ff9c2057de77a75709119a4b7e7139cb"
+  },
+  "measurements": [
+    {
+      "measurement_id": "meas::transaction_intelligence::c42.25",
+      "component": "transaction_intelligence",
+      "population_id": "pop-txn-c42.25",
+      "kind": "mutation",
+      "run_id": "c42.25-txn-targeted",
+      "measured_at": "2026-08-25T18:00:00+00:00",
+      "repository_sha": "cdfaefe1",
+      "source_fingerprint": "src::transaction_intelligence",
+      "test_fingerprint": "tests::transaction_intelligence",
+      "config_hash": "c42-25-config-v1",
+      "toolchain_hash": "mutmut-3.7.0|pytest-8.x",
+      "summary": {
+        "scored": 1465,
+        "killed": 1028,
+        "mutation_score_pct": 70.2
+      },
+      "notes": "C42.25 targeted intelligence measurement",
+      "measurement_fingerprint": "836c50800ecb8556ed5dc9ca0cb5475f04155591c0eaa3e5c6acfcad05dd0969"
+    },
+    {
+      "measurement_id": "meas::financial_intelligence::c42.25",
+      "component": "financial_intelligence",
+      "population_id": "pop-fin-c42.25",
+      "kind": "mutation",
+      "run_id": "c42.25-fin-targeted",
+      "measured_at": "2026-08-25T18:00:00+00:00",
+      "repository_sha": "cdfaefe1",
+      "source_fingerprint": "src::financial_intelligence",
+      "test_fingerprint": "tests::financial_intelligence",
+      "config_hash": "c42-25-config-v1",
+      "toolchain_hash": "mutmut-3.7.0|pytest-8.x",
+      "summary": {
+        "scored": 3710,
+        "killed": 2710,
+        "mutation_score_pct": 73.0
+      },
+      "notes": "C42.25 targeted intelligence measurement",
+      "measurement_fingerprint": "93ce8d368f29cfeb0069712ca5bafd90992bd223e1313426dd16f6bcaf79d689"
+    }
+  ]
+}

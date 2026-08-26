@@ -1228,7 +1228,7 @@ def main() -> int:
             file=sys.stderr,
         )
         print(
-            "Commands: status, metrics, history, deps, verify-status, analytics, health, doctor, ci-doctor, diagnose, diagnose-failures, plan, reconcile, exec-evidence, deep-contract, local-gate, affected, repair, risk, integrity, knowledge, knowledge endpoint, knowledge capability, knowledge workspace, knowledge rule, knowledge component, dashboard, intelligence, intelligence-audit, certify-v4, certify-v5, audit, api-contracts, contract-governance",
+            "Commands: status, metrics, history, deps, verify-status, analytics, health, doctor, ci-doctor, diagnose, diagnose-failures, plan, reconcile, exec-evidence, deep-contract, local-gate, affected, repair, risk, integrity, knowledge, knowledge endpoint, knowledge capability, knowledge workspace, knowledge rule, knowledge component, dashboard, intelligence, intelligence-audit, certify-v4, certify-v5, audit, api-contracts, contract-governance, evidence-plan, evidence-execute, evidence-reconcile, evidence-certify",
             file=sys.stderr,
         )
         print(
@@ -1316,6 +1316,52 @@ def main() -> int:
         from runtime.foundation.verification.mutation_runner import run_mutation_cli
 
         return run_mutation_cli(sys.argv[2:])
+
+    if command == "evidence-plan":
+        from runtime.foundation.verification.executor_pipeline import main as _plan_main
+        import sys as _sys
+        saved = _sys.argv
+        _sys.argv = ["verify.py evidence-plan", *saved[2:]]
+        try:
+            return _plan_main()
+        finally:
+            _sys.argv = saved
+
+    if command == "evidence-execute":
+        from runtime.foundation.verification.executor_pipeline import main as _exec_main
+        import sys as _sys
+        saved = _sys.argv
+        _sys.argv = ["verify.py evidence-execute", *saved[2:], "--run-mutation"]
+        try:
+            return _exec_main()
+        finally:
+            _sys.argv = saved
+
+    if command == "evidence-reconcile":
+        # Re-execute plan (no mutation) + reconciliation; the
+        # reconciliation phase does not require fresh runs to produce
+        # a verified state — it consumes whatever evidence is on disk
+        # plus the planner output.
+        from runtime.foundation.verification.executor_pipeline import main as _recon_main
+        import sys as _sys
+        saved = _sys.argv
+        _sys.argv = ["verify.py evidence-reconcile", *saved[2:]]
+        try:
+            return _recon_main()
+        finally:
+            _sys.argv = saved
+
+    if command == "evidence-certify":
+        # Certify = execute + reconcile, the full M28.10 flow.
+        from runtime.foundation.verification.executor_pipeline import main as _cert_main
+        import sys as _sys
+        saved = _sys.argv
+        _sys.argv = ["verify.py evidence-certify", *saved[2:], "--run-mutation"]
+        try:
+            return _cert_main()
+        finally:
+            _sys.argv = saved
+
 
     if command == "mutation-inventory":
         from runtime.foundation.verification.mutation_inventory import (

@@ -1,0 +1,397 @@
+{
+  "plan_id": "cd277bc90e4e",
+  "generated_at": "2026-08-26T04:26:41.353207+00:00",
+  "repository_state": {
+    "population_id": "pop-14-c42.26"
+  },
+  "changed_files": [
+    "backend/src/engines/behaviour_engine/some_logic.py"
+  ],
+  "affected_sources": [
+    "backend/src/engines/behaviour_engine/some_logic.py"
+  ],
+  "affected_capabilities": [
+    "behaviour-analytics"
+  ],
+  "affected_components": [
+    "behaviour"
+  ],
+  "population_id": "pop-14-c42.26",
+  "population_fingerprint": "8c7613a8e57ca5797bf44da029e767cac5a7fd3d5aaca585d57ffc90a27172f8",
+  "selected_tasks": [
+    {
+      "task_id": "task::mutation::behaviour_engine",
+      "task_kind": "mutation",
+      "target": "behaviour_engine",
+      "disposition": "selected_fresh",
+      "cause": "component behaviour_engine invalidated by change (R-SRC-001); fresh measurement required",
+      "evidence_id": "meas::behaviour_engine::c42.24-B",
+      "invalidations": [
+        "R-SRC-001"
+      ],
+      "reuse_disposition": "invalidated_component",
+      "notes": ""
+    }
+  ],
+  "excluded_tasks": [
+    {
+      "task_id": "task::mutation::credit_card_engine",
+      "task_kind": "mutation",
+      "target": "credit_card_engine",
+      "disposition": "excluded_reusable_evidence",
+      "cause": "component credit_card_engine unchanged; existing measurement feeds the derived aggregate",
+      "evidence_id": "meas::credit_card_engine::c42.24-B",
+      "invalidations": [],
+      "reuse_disposition": "reusable_aggregate",
+      "notes": ""
+    },
+    {
+      "task_id": "task::mutation::account_engine",
+      "task_kind": "mutation",
+      "target": "account_engine",
+      "disposition": "excluded_reusable_evidence",
+      "cause": "component account_engine unchanged; existing measurement feeds the derived aggregate",
+      "evidence_id": "meas::account_engine::c42.24-B",
+      "invalidations": [],
+      "reuse_disposition": "reusable_aggregate",
+      "notes": ""
+    },
+    {
+      "task_id": "task::mutation::loan_engine",
+      "task_kind": "mutation",
+      "target": "loan_engine",
+      "disposition": "excluded_reusable_evidence",
+      "cause": "component loan_engine unchanged; existing measurement feeds the derived aggregate",
+      "evidence_id": "meas::loan_engine::c42.24-B",
+      "invalidations": [],
+      "reuse_disposition": "reusable_aggregate",
+      "notes": ""
+    },
+    {
+      "task_id": "task::mutation::reconciliation_engine",
+      "task_kind": "mutation",
+      "target": "reconciliation_engine",
+      "disposition": "excluded_reusable_evidence",
+      "cause": "component reconciliation_engine unchanged; existing measurement feeds the derived aggregate",
+      "evidence_id": "meas::reconciliation_engine::c42.24-B",
+      "invalidations": [],
+      "reuse_disposition": "reusable_aggregate",
+      "notes": ""
+    },
+    {
+      "task_id": "task::mutation::balance_engine",
+      "task_kind": "mutation",
+      "target": "balance_engine",
+      "disposition": "excluded_reusable_evidence",
+      "cause": "component balance_engine unchanged; existing measurement feeds the derived aggregate",
+      "evidence_id": "meas::balance_engine::c42.24-B",
+      "invalidations": [],
+      "reuse_disposition": "reusable_aggregate",
+      "notes": ""
+    },
+    {
+      "task_id": "task::mutation::ledger_audit_engine",
+      "task_kind": "mutation",
+      "target": "ledger_audit_engine",
+      "disposition": "excluded_reusable_evidence",
+      "cause": "component ledger_audit_engine unchanged; existing measurement feeds the derived aggregate",
+      "evidence_id": "meas::ledger_audit_engine::c42.24-B",
+      "invalidations": [],
+      "reuse_disposition": "reusable_aggregate",
+      "notes": ""
+    },
+    {
+      "task_id": "task::mutation::cashflow_engine",
+      "task_kind": "mutation",
+      "target": "cashflow_engine",
+      "disposition": "excluded_reusable_evidence",
+      "cause": "component cashflow_engine unchanged; existing measurement feeds the derived aggregate",
+      "evidence_id": "meas::cashflow_engine::c42.24-B",
+      "invalidations": [],
+      "reuse_disposition": "reusable_aggregate",
+      "notes": ""
+    },
+    {
+      "task_id": "task::mutation::financial_events",
+      "task_kind": "mutation",
+      "target": "financial_events",
+      "disposition": "excluded_reusable_evidence",
+      "cause": "component financial_events unchanged; existing measurement feeds the derived aggregate",
+      "evidence_id": "meas::financial_events::c42.24-B",
+      "invalidations": [],
+      "reuse_disposition": "reusable_aggregate",
+      "notes": ""
+    },
+    {
+      "task_id": "task::mutation::core_domain_money",
+      "task_kind": "mutation",
+      "target": "core_domain_money",
+      "disposition": "excluded_reusable_evidence",
+      "cause": "component core_domain_money unchanged; existing measurement feeds the derived aggregate",
+      "evidence_id": "meas::core_domain_money::c42.24-B",
+      "invalidations": [],
+      "reuse_disposition": "reusable_aggregate",
+      "notes": ""
+    },
+    {
+      "task_id": "task::mutation::common_calculations",
+      "task_kind": "mutation",
+      "target": "common_calculations",
+      "disposition": "excluded_reusable_evidence",
+      "cause": "component common_calculations unchanged; existing measurement feeds the derived aggregate",
+      "evidence_id": "meas::common_calculations::c42.24-B",
+      "invalidations": [],
+      "reuse_disposition": "reusable_aggregate",
+      "notes": ""
+    },
+    {
+      "task_id": "task::mutation::recommendation_engine",
+      "task_kind": "mutation",
+      "target": "recommendation_engine",
+      "disposition": "excluded_reusable_evidence",
+      "cause": "component recommendation_engine unchanged; existing measurement feeds the derived aggregate",
+      "evidence_id": "meas::recommendation_engine::c42.24-B",
+      "invalidations": [],
+      "reuse_disposition": "reusable_aggregate",
+      "notes": ""
+    },
+    {
+      "task_id": "task::mutation::transaction_intelligence",
+      "task_kind": "mutation",
+      "target": "transaction_intelligence",
+      "disposition": "excluded_reusable_evidence",
+      "cause": "component transaction_intelligence unchanged; existing measurement feeds the derived aggregate",
+      "evidence_id": "meas::transaction_intelligence::c42.25",
+      "invalidations": [],
+      "reuse_disposition": "reusable_aggregate",
+      "notes": ""
+    },
+    {
+      "task_id": "task::mutation::financial_intelligence",
+      "task_kind": "mutation",
+      "target": "financial_intelligence",
+      "disposition": "excluded_reusable_evidence",
+      "cause": "component financial_intelligence unchanged; existing measurement feeds the derived aggregate",
+      "evidence_id": "meas::financial_intelligence::c42.25",
+      "invalidations": [],
+      "reuse_disposition": "reusable_aggregate",
+      "notes": ""
+    }
+  ],
+  "reuses": [
+    {
+      "reuse_id": "reuse::credit_card_engine::meas::credit_card_engine::c42.24-B",
+      "scope_id": "credit_card_engine",
+      "scope_kind": "component",
+      "disposition": "reusable_aggregate",
+      "measurement_id": "meas::credit_card_engine::c42.24-B",
+      "population_id": "pop-14-c42.26",
+      "invalidations": [],
+      "reasons": [
+        "no rules triggered"
+      ],
+      "decided_at": "2026-08-26T04:26:41.352012+00:00"
+    },
+    {
+      "reuse_id": "reuse::account_engine::meas::account_engine::c42.24-B",
+      "scope_id": "account_engine",
+      "scope_kind": "component",
+      "disposition": "reusable_aggregate",
+      "measurement_id": "meas::account_engine::c42.24-B",
+      "population_id": "pop-14-c42.26",
+      "invalidations": [],
+      "reasons": [
+        "no rules triggered"
+      ],
+      "decided_at": "2026-08-26T04:26:41.352121+00:00"
+    },
+    {
+      "reuse_id": "reuse::loan_engine::meas::loan_engine::c42.24-B",
+      "scope_id": "loan_engine",
+      "scope_kind": "component",
+      "disposition": "reusable_aggregate",
+      "measurement_id": "meas::loan_engine::c42.24-B",
+      "population_id": "pop-14-c42.26",
+      "invalidations": [],
+      "reasons": [
+        "no rules triggered"
+      ],
+      "decided_at": "2026-08-26T04:26:41.352205+00:00"
+    },
+    {
+      "reuse_id": "reuse::reconciliation_engine::meas::reconciliation_engine::c42.24-B",
+      "scope_id": "reconciliation_engine",
+      "scope_kind": "component",
+      "disposition": "reusable_aggregate",
+      "measurement_id": "meas::reconciliation_engine::c42.24-B",
+      "population_id": "pop-14-c42.26",
+      "invalidations": [],
+      "reasons": [
+        "no rules triggered"
+      ],
+      "decided_at": "2026-08-26T04:26:41.352286+00:00"
+    },
+    {
+      "reuse_id": "reuse::behaviour_engine::comp-invalidated",
+      "scope_id": "behaviour_engine",
+      "scope_kind": "component",
+      "disposition": "invalidated_component",
+      "measurement_id": "meas::behaviour_engine::c42.24-B",
+      "population_id": "pop-14-c42.26",
+      "invalidations": [
+        "R-SRC-001"
+      ],
+      "reasons": [
+        "source change for behaviour_engine"
+      ],
+      "decided_at": "2026-08-26T04:26:41.352373+00:00"
+    },
+    {
+      "reuse_id": "reuse::balance_engine::meas::balance_engine::c42.24-B",
+      "scope_id": "balance_engine",
+      "scope_kind": "component",
+      "disposition": "reusable_aggregate",
+      "measurement_id": "meas::balance_engine::c42.24-B",
+      "population_id": "pop-14-c42.26",
+      "invalidations": [],
+      "reasons": [
+        "no rules triggered"
+      ],
+      "decided_at": "2026-08-26T04:26:41.352467+00:00"
+    },
+    {
+      "reuse_id": "reuse::ledger_audit_engine::meas::ledger_audit_engine::c42.24-B",
+      "scope_id": "ledger_audit_engine",
+      "scope_kind": "component",
+      "disposition": "reusable_aggregate",
+      "measurement_id": "meas::ledger_audit_engine::c42.24-B",
+      "population_id": "pop-14-c42.26",
+      "invalidations": [],
+      "reasons": [
+        "no rules triggered"
+      ],
+      "decided_at": "2026-08-26T04:26:41.352549+00:00"
+    },
+    {
+      "reuse_id": "reuse::cashflow_engine::meas::cashflow_engine::c42.24-B",
+      "scope_id": "cashflow_engine",
+      "scope_kind": "component",
+      "disposition": "reusable_aggregate",
+      "measurement_id": "meas::cashflow_engine::c42.24-B",
+      "population_id": "pop-14-c42.26",
+      "invalidations": [],
+      "reasons": [
+        "no rules triggered"
+      ],
+      "decided_at": "2026-08-26T04:26:41.352628+00:00"
+    },
+    {
+      "reuse_id": "reuse::financial_events::meas::financial_events::c42.24-B",
+      "scope_id": "financial_events",
+      "scope_kind": "component",
+      "disposition": "reusable_aggregate",
+      "measurement_id": "meas::financial_events::c42.24-B",
+      "population_id": "pop-14-c42.26",
+      "invalidations": [],
+      "reasons": [
+        "no rules triggered"
+      ],
+      "decided_at": "2026-08-26T04:26:41.352708+00:00"
+    },
+    {
+      "reuse_id": "reuse::core_domain_money::meas::core_domain_money::c42.24-B",
+      "scope_id": "core_domain_money",
+      "scope_kind": "component",
+      "disposition": "reusable_aggregate",
+      "measurement_id": "meas::core_domain_money::c42.24-B",
+      "population_id": "pop-14-c42.26",
+      "invalidations": [],
+      "reasons": [
+        "no rules triggered"
+      ],
+      "decided_at": "2026-08-26T04:26:41.352789+00:00"
+    },
+    {
+      "reuse_id": "reuse::common_calculations::meas::common_calculations::c42.24-B",
+      "scope_id": "common_calculations",
+      "scope_kind": "component",
+      "disposition": "reusable_aggregate",
+      "measurement_id": "meas::common_calculations::c42.24-B",
+      "population_id": "pop-14-c42.26",
+      "invalidations": [],
+      "reasons": [
+        "no rules triggered"
+      ],
+      "decided_at": "2026-08-26T04:26:41.352868+00:00"
+    },
+    {
+      "reuse_id": "reuse::recommendation_engine::meas::recommendation_engine::c42.24-B",
+      "scope_id": "recommendation_engine",
+      "scope_kind": "component",
+      "disposition": "reusable_aggregate",
+      "measurement_id": "meas::recommendation_engine::c42.24-B",
+      "population_id": "pop-14-c42.26",
+      "invalidations": [],
+      "reasons": [
+        "no rules triggered"
+      ],
+      "decided_at": "2026-08-26T04:26:41.352947+00:00"
+    },
+    {
+      "reuse_id": "reuse::transaction_intelligence::meas::transaction_intelligence::c42.25",
+      "scope_id": "transaction_intelligence",
+      "scope_kind": "component",
+      "disposition": "reusable_aggregate",
+      "measurement_id": "meas::transaction_intelligence::c42.25",
+      "population_id": "pop-14-c42.26",
+      "invalidations": [],
+      "reasons": [
+        "no rules triggered"
+      ],
+      "decided_at": "2026-08-26T04:26:41.353026+00:00"
+    },
+    {
+      "reuse_id": "reuse::financial_intelligence::meas::financial_intelligence::c42.25",
+      "scope_id": "financial_intelligence",
+      "scope_kind": "component",
+      "disposition": "reusable_aggregate",
+      "measurement_id": "meas::financial_intelligence::c42.25",
+      "population_id": "pop-14-c42.26",
+      "invalidations": [],
+      "reasons": [
+        "no rules triggered"
+      ],
+      "decided_at": "2026-08-26T04:26:41.353103+00:00"
+    }
+  ],
+  "derived_aggregates": [
+    {
+      "aggregate_id": "agg::pop-14-c42.26::derived",
+      "scope_id": "pop-14-c42.26",
+      "measurement_kind": "mutation",
+      "population_id": "pop-14-c42.26",
+      "component_measurement_ids": [
+        "meas::credit_card_engine::c42.24-B",
+        "meas::account_engine::c42.24-B",
+        "meas::loan_engine::c42.24-B",
+        "meas::reconciliation_engine::c42.24-B",
+        "meas::balance_engine::c42.24-B",
+        "meas::ledger_audit_engine::c42.24-B",
+        "meas::cashflow_engine::c42.24-B",
+        "meas::financial_events::c42.24-B",
+        "meas::core_domain_money::c42.24-B",
+        "meas::common_calculations::c42.24-B",
+        "meas::recommendation_engine::c42.24-B",
+        "meas::transaction_intelligence::c42.25",
+        "meas::financial_intelligence::c42.25"
+      ],
+      "formula": "sum(killed)/sum(scored) * 100",
+      "result": 73.6614,
+      "decided_at": "2026-08-26T04:26:41.353162+00:00",
+      "rationale": "Derived aggregate from valid (reusable) component measurements. Invalidated components are excluded and must be re-measured before the aggregate can be promoted to authoritative."
+    }
+  ],
+  "drift_blockers": [],
+  "certification_gaps": [],
+  "rationale": "Inputs: 1 file(s) changed. Affected capabilities: behaviour-analytics. Affected components: behaviour. Decisions across 14 components: 0 reusable, 1 invalidated, 0 no-evidence. Selected tasks: 1; excluded tasks: 13; drift blockers: 0."
+}
