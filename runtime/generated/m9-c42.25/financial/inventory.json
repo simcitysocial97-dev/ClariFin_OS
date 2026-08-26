@@ -1,0 +1,166 @@
+{
+  "title": "M9-C42.25 / M25.3 — financial_intelligence Forensic Inventory",
+  "run_id": "m9-c42.25",
+  "generated_at": "2026-08-26T00:48:00+05:30",
+  "component": "financial_intelligence",
+  "source_location": "backend/src/engines/financial_intelligence/",
+  "methodology": "Complete source inspection (all 8 modules read line-by-line) + coverage.py missing-line analysis (29.9% at entry, 807 statements — historical 807-statement figure VERIFIED against current repo) + grep-based caller mapping. Performed independently of the transaction inventory.",
+  "architecture": "Pure-function intelligence layer: forecasting, goal planning, optimization, scenario simulation, and report aggregation. No database access, no LLM calls. Monetary values: integer paise; ratios: Decimal; rates: basis points.",
+  "modules": [
+    {
+      "module": "utils.py",
+      "statements": 84,
+      "coverage_pct_at_entry": 68.6,
+      "public_symbols": ["DEFAULT_EMERGENCY_THRESHOLD_PAISE", "DEFAULT_FORECAST_MONTHS", "MAX_FORECAST_MONTHS", "FOIR_SAFE_THRESHOLD", "FOIR_WARNING_THRESHOLD", "HIGH_INTEREST_THRESHOLD_BPS", "MEDIUM_INTEREST_THRESHOLD_BPS", "EMERGENCY_FUND_MIN_MONTHS", "DEFAULT_DEBT_ALLOCATION_RATIO", "LONG_TERM_GOAL_ALLOCATION_RATIO", "ACTION_WEIGHTS", "next_month", "generate_month_sequence", "compute_variance", "compute_weighted_average", "compute_confidence_from_variance", "compute_utilization_ratio", "compute_trend_direction", "project_running_balance", "find_stress_month"],
+      "decision_logic": ["trend: first-half vs second-half average, 10% relative threshold, zero-baseline handling", "variance<2 elements -> 0.0", "weighted average weight-length validation -> ValueError", "confidence inverse-variance normalization bounded [0,1]"],
+      "uncovered_regions": [
+        {"region": "compute_weighted_average error path + explicit weights", "class": "A", "note": ""},
+        {"region": "compute_trend_direction first_half_avg==0 branch", "class": "A", "note": ""},
+        {"region": "compute_utilization_ratio empty/None paths", "class": "A", "note": ""},
+        {"region": "next_month December rollover already indirectly covered", "class": "B", "note": "via generate_month_sequence property usage"}
+      ]
+    },
+    {
+      "module": "forecasting.py",
+      "statements": 109,
+      "coverage_pct_at_entry": 69.0,
+      "public_symbols": ["forecast_cashflow", "forecast_liquidity", "forecast_credit_utilization", "detect_future_cash_shortfall"],
+      "internal_helpers": ["_next_month", "_weighted_average", "_compute_current_credit_dependency"],
+      "decision_logic": [
+        "forecast_cashflow: forecast_months clamp [1,12]; empty history -> zero forecast + neutral 0.5 confidence from 2026-01; sorted history; explicit surplus_paise vs computed income-expense; weighted moving average; variance-derived confidence",
+        "forecast_liquidity: empty forecast -> risk from current liquidity vs threshold; risk matrix low/medium/high from projected_min, stress month <=1/>=2/<=3/beyond",
+        "forecast_credit_utilization: dependency from credit_history avg else financial-event fallback; worsening +10% (capped 1.0, gated on >0.1 current), improving -10% (floored 0.0), stable passthrough",
+        "_compute_current_credit_dependency: history first; events (cash_advance/credit_card_cash_advance/liability_increase with positive liability_change) ratio capped 1.0; revolver behavior default 0.3 vs 0.1; total_expense==0 -> 0",
+        "detect_future_cash_shortfall: stress month 1 -> critical; <=2 -> critical; else warning; negative-surplus+high-risk -> warning; else none"
+      ],
+      "boundary_conditions": ["forecast_months 0/1/12/13", "stress month exactly 1/2/3/4", "projected_min exactly at threshold", "dependency exactly 0.1 gate", "utilization trend exactly at 10% threshold"],
+      "uncovered_regions": [
+        {"region": "empty-history forecast branch", "class": "A", "note": ""},
+        {"region": "_compute_current_credit_dependency event fallback + revolver defaults", "class": "A", "note": "property tests only exercise credit_history path"},
+        {"region": "detect_future_cash_shortfall severity matrix", "class": "A", "note": "never directly tested"},
+        {"region": "forecast_liquidity risk matrix branches", "class": "A", "note": "property tests assert membership only, not branch correctness"}
+      ]
+    },
+    {
+      "module": "goal_planner.py",
+      "statements": 137,
+      "coverage_pct_at_entry": 20.1,
+      "public_symbols": ["DEFAULT_GOAL_ALLOCATION_RATIO", "DEFAULT_EMERGENCY_MONTHS", "calculate_goal_projection", "calculate_emergency_fund_target", "calculate_debt_payoff_projection", "calculate_goal_health", "calculate_household_goal_summary"],
+      "internal_helpers": ["_months_to_payoff"],
+      "decision_logic": [
+        "goal projection: already-achieved fast paths, no-forecast zero confidence, positive-surplus-only allocation int(surplus*ratio), cumulative horizon scan, confidence extraction from first forecast with valid 'confidence' key",
+        "emergency target: non-positive expenses -> 0 target; expenses*months",
+        "debt payoff: combined loan+card list filtered outstanding>0, avalanche ordering by interest_rate_bps desc, allocation int(surplus*ratio), ceiling-division months, simplified interest estimate with 300bps fallback, None months when allocation==0",
+        "goal health: invalid target, months==0 achieved, months==None progress bands (0.75/0.50), target-date month comparison on_track/at_risk(<=3)/behind(>3), malformed-date fallback, no-target-date progress bands (0.5/0.25)",
+        "household summary: completed/on_track/at_risk counts, critical active goals list, projections shorter than goals"
+      ],
+      "boundary_conditions": ["current == target exactly", "progress exactly 0.75/0.50/0.25", "months_diff exactly 3 vs 4", "allocation exactly covering remaining", "surplus == 0"],
+      "uncovered_regions": [
+        {"region": "calculate_emergency_fund_target / calculate_debt_payoff_projection / calculate_goal_health / calculate_household_goal_summary", "class": "A", "note": "genuinely untested"},
+        {"region": "calculate_goal_projection partial (property determinism test only)", "class": "B", "note": ""}
+      ]
+    },
+    {
+      "module": "intelligence.py",
+      "statements": 109,
+      "coverage_pct_at_entry": 8.3,
+      "public_symbols": ["build_financial_snapshot", "generate_financial_priorities", "calculate_intelligence_confidence", "generate_financial_intelligence_report"],
+      "internal_helpers": ["_get_action_reason", "_extract_liquidity_months", "_aggregate_risks", "_identify_opportunities", "_compute_health_score"],
+      "decision_logic": [
+        "priorities: optimization actions ranked first with reason map (revolver>0.5 branch), emergency fund injection when liquidity months <3 (impact high when <1) with dedup + rank<=3 gate, credit dependency injection when revolver>0.5, sorted, capped at 5",
+        "confidence: 4 equal-weight factors (months/3 capped, completeness clamped, coverage clamped, inverse variance), quality bands excellent>=0.8 good>=0.6 fair>=0.4 else poor",
+        "report: full composition of snapshot+priorities+risks+opportunities+health+confidence with defaults (transaction_completeness 0.8, account_coverage 0.9)",
+        "risks: liquidity high->critical / medium->warning, credit trend worsening or dependency>0.3 (Decimal-typed check), debt_cycle_score>70, optimization warnings passthrough",
+        "opportunities: surplus>500000 -> investment (benefit 12x), active emergency_fund goal with remaining>0 and surplus>0 -> proximity",
+        "health: wellness_score passthrough if present else 0.4*(1-debt_cycle/100)+0.4*(1-revolver)+0.2*stability scaled to 100, clamped"
+      ],
+      "boundary_conditions": ["revolver exactly 0.5 vs above", "liquidity months exactly 1/3 (// 100000)", "confidence exactly 0.8/0.6/0.4", "debt_cycle exactly 70/71", "surplus exactly 500000/500001"],
+      "uncovered_regions": [{"region": "all functions except import surface", "class": "A", "note": "genuinely untested; only statement_orchestrator touches report path marginally"}]
+    },
+    {
+      "module": "optimization.py",
+      "statements": 201,
+      "coverage_pct_at_entry": 4.0,
+      "public_symbols": ["ActionImpact", "derive_cash_advance_debt_entry", "optimize_surplus_allocation", "rank_debt_payoff_strategy", "optimize_goal_prioritization", "calculate_financial_action_score", "generate_optimization_plan"],
+      "internal_helpers": ["_sum_high_interest_debt"],
+      "decision_logic": [
+        "derive_cash_advance_debt_entry: effective annual bps = fee/principal*10000*365/max(days,1); explicit outstanding_paise override (incl. 0 = settled); liability/expense zero -> 0 bps",
+        "surplus allocation cascade: emergency deficit first, high-interest debt 60% of remaining, medium-interest 60%, long-term active non-emergency goals 40%, remainder investment; non-positive surplus -> empty",
+        "debt strategy: invalid strategy -> avalanche fallback; active-balance filter with outstanding_paise||balance_paise fallback; avalanche (rate desc), snowball (balance asc), balanced (0.7*rate/5000 + 0.3*100000/max(balance,1000))",
+        "goal prioritization: emergency_fund < debt_payoff < deadline < other, user priority ascending; recommendations from emergency deficit and high-interest debt",
+        "action scoring: 4 factors with ACTION_WEIGHTS (interest 0.35, risk 0.30, urgency 0.20, goal 0.15); rate bands >=1800/>=800 bps; revolver bands >0.5/>0.2; impact bands >=0.7 high / >=0.4 medium; invalid action -> zero score; score quantized 0.01",
+        "plan orchestration: empty state -> warning; emergency status from forecast threshold−liquidity; action scores filtered >=0.5; warnings (emergency deficit, high-interest debt, no surplus); confidence from forecast.confidence else 0.7 if surplus>0 else 0"
+      ],
+      "boundary_conditions": ["rate exactly 1800/800 bps", "revolver exactly 0.5/0.2", "score exactly 0.7/0.5/0.4", "holding_period_days 0 -> max(,1)", "surplus exactly 0"],
+      "uncovered_regions": [{"region": "all functions except module import", "class": "A", "note": "genuinely untested; 189 statements missing"}]
+    },
+    {
+      "module": "scenario.py",
+      "statements": 92,
+      "coverage_pct_at_entry": 8.2,
+      "public_symbols": ["simulate_expense_reduction", "simulate_income_change", "simulate_debt_prepayment", "simulate_new_loan", "simulate_credit_behaviour_change", "compare_scenario"],
+      "decision_logic": [
+        "expense reduction: savings passthrough, cumulative benefit over generated 2026-08+ month sequence, base surplus beyond forecast horizon -> 0",
+        "income change: cumulative = change * months, revised surplus = base + change (negative allowed)",
+        "debt prepayment: baseline vs revised payoff projection via goal_planner; months_saved max(0, diff); avg_rate fallback 300; annual interest = total*int(rate/100)//100, monthly//12*months_saved",
+        "new loan: reuses loan_engine.emi.compute_emi_fixed (cross-module dependency); FOIR = emi/surplus, zero surplus -> 1.0; affordability safe<0.40 / warning<=0.60 / unsafe",
+        "credit behaviour: revolver==0 -> unchanged; no rate -> requires_rate_input=True with None savings; improvement factor = 1 - revolver*0.8",
+        "compare_scenario: COMPARE_METRICS loop, None skip, Decimal->float coercion, surplus/benefit/interest improvements, foir risk branch"
+      ],
+      "boundary_conditions": ["foir exactly 0.40 (safe edge) / 0.60 (warning edge)", "revolver exactly 0", "empty debt list (avg_rate default)", "forecast horizon shorter than projection"],
+      "dependencies": ["src.engines.loan_engine.emi.compute_emi_fixed (the only cross-module engine dependency)", ".goal_planner", ".models", ".utils"],
+      "uncovered_regions": [{"region": "all six functions except module import", "class": "A", "note": "genuinely untested"}],
+      "anomalies": [
+        {
+          "id": "FIN-E1",
+          "location": "compare_scenario foir risk branch, lines 344-352",
+          "class": "E",
+          "severity": "AMBIGUOUS",
+          "description": "Condition `float(FOIR_WARNING_THRESHOLD) < scenario_val <= float(FOIR_WARNING_THRESHOLD)` is mathematically impossible (always False), so a negative foir change ALWAYS appends 'FOIR increased above safe threshold' even though the change is a decrease. The 'pass # warning zone' comment indicates suppressed intent, but whether the risk should be gated on the new value exceeding a threshold cannot be determined from code alone.",
+          "disposition": "AMBIGUOUS -> explicitly recorded, NOT silently assigned. Tests pin current behavior with an explicit anomaly note; no production change in C42.25."
+        },
+        {
+          "id": "FIN-E2",
+          "location": "optimize_goal_prioritization deadline_score, lines 392-403",
+          "class": "E",
+          "severity": "info",
+          "description": "deadline_score() is defined but never used (comment: 'computed but unused; kept for future refinement'); its try-body returns 0 unconditionally. Dead helper inside production.",
+          "disposition": "Recorded; NOT deleted (non-goal). Not directly tested (no production path reaches it); documented as unwired."
+        }
+      ]
+    },
+    {
+      "module": "models.py",
+      "statements": 67,
+      "coverage_pct_at_entry": 100.0,
+      "public_symbols": ["ScenarioResult", "ScenarioComparison", "LoanScenario", "DebtScenario", "COMPARE_METRICS", "FinancialSnapshot", "IntelligenceReport", "PriorityAction", "ConfidenceMetadata", "RiskFlag", "Opportunity"],
+      "uncovered_regions": []
+    },
+    {
+      "module": "__init__.py",
+      "statements": 8,
+      "coverage_pct_at_entry": 100.0,
+      "uncovered_regions": []
+    }
+  ],
+  "capability_mappings": {
+    "registry_status": "No 'financial_intelligence' test-domain exists; the 'forecasting' domain (tests/capability/forecasting) binds only via lazy import and lists engine_imports=[]. Engine topology knows 'financial_intelligence' with router src/routers/financial_intelligence.py + service src/services/financial_intelligence_service.py + tests/properties/forecasting.",
+    "gap": "Existing production capability (router + service + 8 engine modules) has no dedicated capability test-domain. forecasting domain is a genuine but PARTIAL subset. Reconciliation plan in M25.5 — a financial_intelligence domain test package is the honest correction (no taxonomy duplication: capability id does not exist yet)."
+  },
+  "existing_tests": {
+    "unit": {"path": "backend/tests/unit/engines/forecasting/", "status": "EMPTY (only __init__.py); no financial_intelligence unit dir exists"},
+    "property": {"path": "backend/tests/properties/forecasting/test_engine_properties.py", "count": 9, "binding": "REAL — binds forecast_cashflow, forecast_liquidity, forecast_credit_utilization, calculate_goal_projection, project_running_balance; assertions are mostly membership/determinism (weak) with one strong re-computation invariant (liquidity_projection_monotonicity)"},
+    "capability": {"path": "backend/tests/capability/forecasting/test_capability.py", "count": 2, "binding": "smoke import + golden dataset load"},
+    "invariants": {"path": "backend/tests/invariants/forecast.py", "binding": "assert_forecast_invariants helper consumed by property tests"}
+  },
+  "indirect_callers": [
+    "backend/src/services/financial_intelligence_service.py (all 26 public engine functions wired to endpoints)",
+    "backend/src/routers/financial_intelligence.py",
+    "backend/src/api.py (router registration)",
+    "backend/src/orchestration/statement_orchestrator.py (forecast consumers)",
+    "backend/tests/integration/orchestration/test_statement_orchestrator.py (indirect exercise)",
+    "backend/tests/meta/test_change_intelligence.py (import-level only)"
+  ],
+  "why_coverage_is_low": "Direct property tests bind only forecasting.py/goal_planner.calculate_goal_projection/utils helpers. optimization.py (201 stmts), intelligence.py, scenario.py and most of goal_planner.py have NO tests of any kind; their exercise is limited to service-layer imports. ~70% of statements are class A genuinely untested.",
+  "classification_summary": {"A_genuinely_untested": "~70% of statements", "B_indirectly_exercised": "~23%", "C_defensive_unreachable": "~2% (deadline_score dead helper)", "D_infrastructure": 0, "E_ambiguity": 2}
+}

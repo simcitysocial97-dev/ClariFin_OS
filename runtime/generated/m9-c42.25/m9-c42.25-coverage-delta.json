@@ -1,0 +1,21 @@
+{
+  "run_id": "m9-c42.25-cov-delta",
+  "generated_at": "2026-08-26T05:00:00+05:30",
+  "title": "M9-C42.25 \u2014 Coverage Delta",
+  "transaction_intelligence": {
+    "baseline_stmts": 367,
+    "baseline_pct": 17.5,
+    "post_stmts": 367,
+    "post_pct": 98.6,
+    "delta_pct": "+81.1"
+  },
+  "financial_intelligence": {
+    "baseline_stmts": 807,
+    "baseline_pct": 29.9,
+    "post_stmts": 807,
+    "post_pct": 94.4,
+    "delta_pct": "+64.5"
+  },
+  "repository_total_coverage": 65.56,
+  "repository_threshold": 40
+}

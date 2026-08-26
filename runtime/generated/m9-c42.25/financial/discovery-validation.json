@@ -1,0 +1,13 @@
+{
+  "component": "financial",
+  "run_id": "m9-c42.25",
+  "generated_at": "2026-08-26T05:00:00+05:30",
+  "test_discovery": {
+    "pytest_collection": "tests/unit/engines/financial + tests/properties/financial + tests/capability/financial",
+    "mutmut_selection": "deferred \u2014 not yet in ENGINE_SELECTION (C42.25 non-goal)",
+    "capability_selection": "engine_imports=[financial] confirmed in capability-registry.yaml",
+    "property_selection": "tests/properties/financial"
+  },
+  "source_modules_exercised": [],
+  "assertion": "All financial direct tests discoverable by pytest and would be selected by future ENGINE_SELECTION entry"
+}

@@ -1,0 +1,19 @@
+{
+  "component": "transaction",
+  "engine_name": "transaction_intelligence",
+  "generated_at": "2026-08-26T05:00:00+05:30",
+  "test_domain": {
+    "id": "transaction",
+    "registered": false,
+    "engine_imports": [],
+    "path": "backend/tests/capability/transaction",
+    "test_count": 0
+  },
+  "engine_topology": {
+    "registered": true,
+    "has_router": false,
+    "has_service": true
+  },
+  "registration_status": "UNBOUND",
+  "notes": "transaction test-domain engine_imports=[]"
+}

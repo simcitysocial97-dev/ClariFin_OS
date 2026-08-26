@@ -325,7 +325,10 @@ ENGINE_SELECTION: dict[str, EngineSelection] = {
         source_paths=("src/engines/behaviour_engine",),
         test_selection=(
             "tests/unit/engines/behaviour",
+            "tests/unit/engines/behaviour/test_metrics.py",
+            "tests/unit/engines/behaviour/test_integration.py",
             "tests/properties/behaviour",
+            "tests/capability/pattern_analysis",
         ),
         tier="P1",
     ),

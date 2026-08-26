@@ -1,0 +1,26 @@
+{
+  "component": "financial",
+  "run_id": "m9-c42.25",
+  "generated_at": "2026-08-26T05:00:00+05:30",
+  "verdict": "READY",
+  "readiness_gates": {
+    "G1_direct_behavioral_suite": true,
+    "G2_property_invariant_surface": true,
+    "G3_capability_binding": true,
+    "G4_test_discovery_verified": true,
+    "G5_coverage_ge_70": true,
+    "G6_mutation_smoke_meaningful": true,
+    "G7_no_unexplained_discovery_failure": true,
+    "G8_evidence_complete": true
+  },
+  "blockers": [],
+  "summary": {
+    "unit_tests": 245,
+    "property_tests": 39,
+    "capability_tests": 8,
+    "coverage_pct": 94.4,
+    "mutation_score": 73.0,
+    "no_tests": 0,
+    "not_checked": 0
+  }
+}

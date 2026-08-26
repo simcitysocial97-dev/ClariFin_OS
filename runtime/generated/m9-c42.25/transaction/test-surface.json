@@ -1,0 +1,32 @@
+{
+  "component": "transaction",
+  "run_id": "m9-c42.25",
+  "generated_at": "2026-08-26T05:00:00+05:30",
+  "test_counts": {
+    "direct_unit_tests": 157,
+    "property_tests": 23,
+    "capability_tests": 6,
+    "total": 186
+  },
+  "unit_test_files": [
+    "backend/tests/unit/engines/transaction_intelligence/test_cash_conversion_detector.py",
+    "backend/tests/unit/engines/transaction_intelligence/test_cc_payment_detector.py",
+    "backend/tests/unit/engines/transaction_intelligence/test_detector_result.py",
+    "backend/tests/unit/engines/transaction_intelligence/test_loan_emi_detector.py"
+  ],
+  "property_test_files": [
+    "backend/tests/properties/transaction_intelligence/test_detector_properties.py",
+    "backend/tests/properties/transaction_intelligence/test_engine_properties.py"
+  ],
+  "capability_test_files": [
+    "backend/tests/capability/transaction_intelligence/test_capability.py"
+  ],
+  "readiness_indicators": {
+    "direct_unit_tests_required": 50,
+    "direct_unit_tests_current": 157,
+    "property_tests_required": 20,
+    "property_tests_current": 23,
+    "direct_coverage_required_pct": 70,
+    "direct_coverage_current_pct": 98.6
+  }
+}

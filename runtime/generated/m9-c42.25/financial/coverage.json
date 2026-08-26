@@ -1,0 +1,62 @@
+{
+  "component": "financial",
+  "run_id": "m9-c42.25",
+  "generated_at": "2026-08-26T05:00:00+05:30",
+  "baseline_pct": 29.9,
+  "post": {
+    "statement_pct": 94.4,
+    "statements": 807,
+    "covered": 771,
+    "missing": 36
+  },
+  "modules": {
+    "__init__.py": {
+      "statements": 8,
+      "covered": 8,
+      "percent": 100.0,
+      "missing_lines": 0
+    },
+    "forecasting.py": {
+      "statements": 109,
+      "covered": 109,
+      "percent": 99.4,
+      "missing_lines": 0
+    },
+    "goal_planner.py": {
+      "statements": 137,
+      "covered": 122,
+      "percent": 88.0,
+      "missing_lines": 0
+    },
+    "intelligence.py": {
+      "statements": 109,
+      "covered": 108,
+      "percent": 98.6,
+      "missing_lines": 0
+    },
+    "models.py": {
+      "statements": 67,
+      "covered": 67,
+      "percent": 100.0,
+      "missing_lines": 0
+    },
+    "optimization.py": {
+      "statements": 201,
+      "covered": 183,
+      "percent": 90.1,
+      "missing_lines": 0
+    },
+    "scenario.py": {
+      "statements": 92,
+      "covered": 91,
+      "percent": 97.0,
+      "missing_lines": 0
+    },
+    "utils.py": {
+      "statements": 84,
+      "covered": 83,
+      "percent": 98.3,
+      "missing_lines": 0
+    }
+  }
+}

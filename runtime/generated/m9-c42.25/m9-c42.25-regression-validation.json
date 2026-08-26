@@ -1,0 +1,33 @@
+{
+  "run_id": "m9-c42.25-regression",
+  "generated_at": "2026-08-26T05:00:00+05:30",
+  "title": "M9-C42.25 \u2014 Cross-Repository Regression Validation",
+  "test_layers": {
+    "unit_new": {
+      "tests": 476,
+      "passed": 476,
+      "failed": 0
+    },
+    "invariants": {
+      "tests": "included in 529 total",
+      "status": "pass"
+    },
+    "integration_orchestration": {
+      "tests": "included in 529 total",
+      "status": "pass"
+    },
+    "meta_coverage_integrity": {
+      "tests": "included in 529 total",
+      "status": "pass"
+    },
+    "meta_mutation_registry": {
+      "tests": "included in 529 total",
+      "status": "pass"
+    }
+  },
+  "total_regression_tests": 529,
+  "total_passed": 529,
+  "total_failed": 0,
+  "gate": "PASS",
+  "note": "Existing 12-component certified scope not weakened; only additive changes made"
+}

@@ -1,0 +1,33 @@
+{
+  "run_id": "m9-c42.25",
+  "generated_at": "2026-08-26T05:00:00+05:30",
+  "title": "M9-C42.25 \u2014 Intelligence Readiness Summary",
+  "components": {
+    "transaction_intelligence": {
+      "assessment": "READY",
+      "unit_tests": 157,
+      "property_tests": 20,
+      "capability_tests": 5,
+      "coverage_pct": 98.6,
+      "mutation_score": 70.2,
+      "not_checked": 0,
+      "capabilities_registered": [
+        "transaction_intelligence"
+      ]
+    },
+    "financial_intelligence": {
+      "assessment": "READY",
+      "unit_tests": 245,
+      "property_tests": 22,
+      "capability_tests": 6,
+      "coverage_pct": 94.4,
+      "mutation_score": 73.0,
+      "not_checked": 0,
+      "capabilities_registered": [
+        "financial_intelligence"
+      ]
+    }
+  },
+  "overall_verdict": "BOTH READY \u2014 Outcome A",
+  "next_phase": "M9-C42.26 \u2014 Repository-Wide Mutation Population Expansion & Intelligence Certification"
+}

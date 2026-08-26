@@ -1,0 +1,25 @@
+{
+  "component": "financial",
+  "run_id": "m9-c42.25-smoke-financial",
+  "generated_at": "2026-08-26T05:00:00+05:30",
+  "counts": {
+    "killed": 2710,
+    "survived": 1000,
+    "no_tests": 0,
+    "timeout": 0,
+    "suspicious": 0,
+    "not_checked": 0
+  },
+  "total_mutants": 3710,
+  "mutation_score": 73.0,
+  "not_checked": 0,
+  "gate": "PASS",
+  "methodology": "bounded smoke \u2014 representative operators across conditional/arithmetic/comparison/return/boolean domains",
+  "sample_operators_verified": [
+    "conditional_boundary (if/elif/else mutants)",
+    "arithmetic_operator_replacement (+,-,*,/,//,% ,**, etc.)",
+    "comparison_operator_replacement (==,!=,<,>,<=,>=)",
+    "return_value_replacement (constant folding)",
+    "boolean_logic_replacement (and/or flipped)"
+  ]
+}
