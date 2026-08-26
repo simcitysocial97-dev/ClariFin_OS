@@ -108,7 +108,7 @@ class TestBehaviourEngineCore:
         assert _parse_date("15/01/2023") is not None
         assert _parse_date("15-01-2023") is not None
         assert _parse_date("15 Jan 2023") is not None
-        
+
         # Test invalid dates
         assert _parse_date("invalid") is None
         assert _parse_date("") is None
