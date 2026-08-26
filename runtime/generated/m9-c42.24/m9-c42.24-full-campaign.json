@@ -1,0 +1,51 @@
+{
+  "title": "M9-C42.24 — Full Campaign Results (Updated: C42.24-B)",
+  "generated_at": "2026-08-26T00:13:52.000000+05:30",
+  "run_id": "mut-fd981fd0301a-updated",
+  "mode": "full",
+  "repository_sha": "6bb27a89b64f0582dea1ef393487143f3cc33400",
+  "tree_sha": "60a4a87728ed2f78f27aa110d0d053a85434c04c",
+  "environment": {
+    "python": "Python 3.12.3",
+    "pytest": "pytest 9.1.1",
+    "mutmut": "mutmut, version 3.7.0",
+    "config_hash": "0a1bf1c02b884684"
+  },
+  "execution": {
+    "duration_seconds": 3360,
+    "max_children": 4,
+    "selected_test_scope": "tests/unit/engines/credit_card tests/properties/credit_card_engine tests/capability/credit_cards tests/unit/engines/account tests/capability/account_management tests/unit/engines/balance_engine.py tests/unit/engines/ledger_audit_engine.py tests/unit/engines/reconciliation tests/properties/reconciliation tests/capability/reconciliation tests/unit/engines/loan tests/properties/loan_engine tests/unit/engines/behaviour tests/unit/engines/behaviour/test_metrics.py tests/unit/engines/behaviour/test_integration.py tests/properties/behaviour tests/capability/pattern_analysis tests/properties/cashflow tests/unit/engines/financial_events tests/properties/financial_events tests/capability/financial_events tests/unit/test_money.py tests/properties/test_money_invariants.py tests/invariants/test_money.py tests/unit/test_calculations.py tests/unit/engines/recommendation tests/capability/recommendations",
+    "source_scope": "src/engines/"
+  },
+  "counts": {
+    "mutants_generated": 11730,
+    "killed": 5277,
+    "survived": 4494,
+    "no_tests": 1959,
+    "timeout": 5,
+    "suspicious": 0,
+    "not_checked": 0,
+    "evaluated": 9776
+  },
+  "score": {
+    "mutation_score": 54.0,
+    "threshold_percent": 80,
+    "denominator": "killed + survived + timeout = 5277 + 4494 + 5 = 9776",
+    "formula": "5277 / 9776 * 100 = 54.0%"
+  },
+  "gates": {
+    "execution_status": "PASS",
+    "classification_status": "PASS",
+    "evidence_complete": true
+  },
+  "c42_24_original_comparison": {
+    "c42_24_before": {"killed": 4658, "survived": 4228, "no_tests": 2839, "score": 52.4},
+    "c42_24_after_b": {"killed": 5277, "survived": 4494, "no_tests": 1959, "score": 54.0},
+    "delta": {"killed": 619, "survived": 266, "no_tests": -880, "score": 1.6}
+  },
+  "c42_21_baseline_comparison": {
+    "c42_21": {"killed": 4419, "survived": 4438, "no_tests": 2868, "score": 49.9},
+    "c42_24_b": {"killed": 5277, "survived": 4494, "no_tests": 1959, "score": 54.0},
+    "delta": {"killed": 858, "survived": 56, "no_tests": -909, "score": 4.1}
+  }
+}

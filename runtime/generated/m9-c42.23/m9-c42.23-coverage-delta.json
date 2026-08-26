@@ -1,0 +1,24 @@
+{
+  "artifact": "m9-c42.23-coverage-delta",
+  "description": "Coverage delta for M9-C42.23 vs C42.21 baseline.",
+  "method": "Component line-coverage was already high in C42.21; this phase adds behavioral ASSERTIONS (mutation discrimination), not execution coverage. Coverage delta is therefore modest by design — the objective is mutation EFFECTIVENESS, not coverage inflation.",
+  "component_coverage_c42_21": {
+    "cashflow_engine": "~97.6%",
+    "ledger_audit_engine": "covered by 25-test suite",
+    "recommendation_engine": "covered by 36-test suite",
+    "common_calculations": "covered by 34-test suite",
+    "credit_card_engine": "covered by 189-test suite",
+    "reconciliation_engine": "covered by 31-test suite",
+    "loan_engine": "strong (property + unit)",
+    "core_domain_money": "covered"
+  },
+  "coverage_after_c42_23": {
+    "cashflow_engine": "~97.6% (line coverage unchanged; behavioral assertion density increased via 10 new tests)",
+    "recommendation_engine": "line coverage unchanged; threshold-metric-ordering assertions added",
+    "common_calculations": "line coverage unchanged; strict-boundary assertions added",
+    "credit_card_engine": "line coverage unchanged; interest-invariant assertions added",
+    "reconciliation_engine": "line coverage unchanged; scoring-boundary assertions added"
+  },
+  "repository_threshold": "NOT raised. Coverage remains stable/modestly improved.",
+  "conclusion": "Test QUALITY (mutation sensitivity) improved independently of line coverage — the explicit C42.23 objective."
+}

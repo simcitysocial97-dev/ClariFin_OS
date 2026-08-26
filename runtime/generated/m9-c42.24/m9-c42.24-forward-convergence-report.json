@@ -1,0 +1,80 @@
+{
+  "title": "M9-C42.24 — Forward Convergence Report",
+  "generated_at": "2026-08-25T18:58:00.000000+00:00",
+  "run_id": "m9-c42.24",
+  "current_state": {
+    "mutation_population": "12 components (frozen)",
+    "repository_mutation_score": 52.4,
+    "strong_engines": ["account (89.1%)", "balance (94.7%)", "core_domain_money (82.4%)", "loan (84.0%)", "reconciliation (80.7%)"],
+    "improved_engines": ["cashflow (29.1% -> 74.4%)", "recommendation (57.8% -> 63.5%)", "financial_events (59.0% -> 64.5%)"],
+    "stable_engines": ["common_calculations (56.4%)", "credit_card (75.6%)", "ledger_audit (56.8%)"],
+    "weak_engines": ["behaviour (28.8%)", "balance coverage gap (49.1%)"],
+    "blocked_components": ["transaction_intelligence", "financial_intelligence"]
+  },
+  "next_highest_value_dependency": {
+    "phase": "M9-C42.24-B — Bounded Intelligence-Specific Strengthening",
+    "scope": "transaction_intelligence + financial_intelligence test-surface integration",
+    "objective": "Build direct test suites for both intelligence components to achieve >=70% coverage and >=50/100 unit tests respectively",
+    "rationale": "The 12-component strengthening is materially complete. The only remaining blocker to 14-component mutation is the intelligence components' lack of direct test surfaces. A bounded strengthening phase focused solely on these two components will clear the entry gate."
+  },
+  "future_convergence_sequence": [
+    {
+      "phase": "M9-C42.25",
+      "name": "Deferred Intelligence Test-Surface Integration & Repository-Wide Mutation Expansion",
+      "trigger": "Both intelligence components reach READY status",
+      "scope": "Expand mutation population to 14 components; run authoritative full campaign"
+    },
+    {
+      "phase": "Post-C42.25",
+      "name": "Verification Graph",
+      "trigger": "14-component mutation certified",
+      "scope": "Implement verification graph: file -> symbol -> capability -> profile -> test -> evidence -> gate"
+    },
+    {
+      "phase": "Post-Verification-Graph",
+      "name": "Planner Fail-Safe Hardening",
+      "trigger": "Verification graph operational",
+      "scope": "Expand verification graph to handle unknown/missing/ambiguous/stale/incomplete states"
+    },
+    {
+      "phase": "Post-Planner-Fail-Safe",
+      "name": "Unified Evidence Architecture",
+      "trigger": "Planner fail-safe hardened",
+      "scope": "Move toward verification-run/ manifest structure with unified evidence collection"
+    },
+    {
+      "phase": "Post-Unified-Evidence",
+      "name": "Verification Profile Certification",
+      "trigger": "Unified evidence operational",
+      "scope": "Certify quick/runtime/unit/property/contract/mutation/golden/e2e/full profiles"
+    },
+    {
+      "phase": "Post-Profile-Certification",
+      "name": "Workflow Certification",
+      "trigger": "All profiles certified",
+      "scope": "CI enforcement: local -> pre-push -> PR -> main -> nightly"
+    },
+    {
+      "phase": "Post-Workflow-Certification",
+      "name": "Historical Regression Intelligence",
+      "trigger": "Workflow certification complete",
+      "scope": "Run delta analysis: run A -> run B -> delta -> regression detection -> trend"
+    },
+    {
+      "phase": "Post-Historical-Intelligence",
+      "name": "Controlled Self-Adapting Test System",
+      "trigger": "Historical regression intelligence operational",
+      "scope": "Self-adapting test generation bounded by mutation corpus"
+    },
+    {
+      "phase": "Final",
+      "name": "FINAL VERIFICATION SYSTEM CERTIFICATION",
+      "trigger": "All prior phases complete",
+      "scope": "Repository-wide verification system certification"
+    }
+  ],
+  "blockers": [
+    "C42.22 behaviour_engine discovery repair NOT implemented in ENGINE_SELECTION — must be fixed before next mutation campaign",
+    "transaction_intelligence and financial_intelligence lack direct test suites — bounded strengthening phase required"
+  ]
+}

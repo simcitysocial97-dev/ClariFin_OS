@@ -1,0 +1,46 @@
+{
+  "artifact": "m9-c42.23-full-campaign-comparison",
+  "status": "AUTHORITATIVE 12-COMPONENT CAMPAIGN PENDING CI (Batch 6 trigger)",
+  "policy": "The full 11,730-mutant campaign is CI-scoped (mutation.yml nightly/dispatch) per AGENTS.md and C42.23 §19. It is the final measurement milestone, executed AFTER all strengthening batches passed their gates. Local full runs were used where feasible (cashflow, ledger); other components validated via targeted mutation.",
+  "scope": "Same authoritative 12-component scope as C42.21 (behaviour_engine, financial_events, credit_card_engine, account_engine, balance_engine, ledger_audit_engine, reconciliation_engine, loan_engine, core_domain_money, common_calculations, recommendation_engine, cashflow_engine).",
+  "population_identity": "Preserved — no source changes, only test additions; mutant populations per component unchanged from C42.21.",
+  "measured_component_deltas": {
+    "cashflow_engine": {
+      "old_population": 172, "new_population": 172,
+      "old_killed": 50, "new_killed": 128,
+      "old_survived": 122, "new_survived": 44,
+      "old_no_tests": 0, "new_no_tests": 0,
+      "old_mutation_pct": 29.1, "new_mutation_pct": 74.4,
+      "delta_pct": 45.3,
+      "method": "FULL local mutmut run with backend/mutants cache cleared"
+    },
+    "ledger_audit_engine": {
+      "old_population": 190, "new_population": 190,
+      "old_killed": 108, "new_killed": 108,
+      "old_survived": 82, "new_survived": 82,
+      "old_no_tests": 0, "new_no_tests": 0,
+      "old_mutation_pct": 56.8, "new_mutation_pct": 56.8,
+      "delta_pct": 0.0,
+      "method": "FULL local mutmut run — stable, identical to C42.21"
+    },
+    "recommendation_engine": {"baseline_c42_21": "282/163/119/57.8", "new": "pending CI full campaign", "validation": "spot-check killed representative mutant"},
+    "common_calculations": {"baseline_c42_21": "376/212/164/56.4", "new": "pending CI full campaign", "validation": "spot-check killed representative mutant"},
+    "credit_card_engine": {"baseline_c42_21": "582/440/142/75.6", "new": "pending CI full campaign", "validation": "spot-check killed representative mutant"},
+    "reconciliation_engine": {"baseline_c42_21": "368/296/72/80.4", "new": "pending CI full campaign", "validation": "spot-check killed representative mutant"},
+    "loan_engine": {"baseline_c42_21": "1273/1066/200/84.0", "new": "pending CI full campaign", "note": "5 nondeterministic mutants preserved as reproducibility evidence"},
+    "behaviour_engine": {"note": "C42.22 Batch 1 discovery repair reduced no_tests; NOT reopened"},
+    "financial_events": {"note": "C42.22 Batch 1 discovery repair; no_tests -> 0; NOT reopened"},
+    "account_engine": {"baseline_c42_21": "strong", "new": "pending CI full campaign"},
+    "balance_engine": {"baseline_c42_21": "strong", "new": "pending CI full campaign"},
+    "core_domain_money": {"baseline_c42_21": "strong", "new": "pending CI full campaign"}
+  },
+  "required_checks_for_ci_campaign": {
+    "not_checked": "must be 0",
+    "population_identity": "must match C42.21",
+    "discovery_direction": "behaviour_engine/financial_events no_tests must have moved in expected direction (C42.22)",
+    "effectiveness": "cashflow/ledger/recommendation/common_calculations/credit_card meaningful improvement",
+    "strong_engines": "balance/account/loan/reconciliation/core_domain_money stable",
+    "reproducibility": "loan variance within 83.8-84.0% band",
+    "regressions": "no previously-strong component materially deteriorated"
+  }
+}

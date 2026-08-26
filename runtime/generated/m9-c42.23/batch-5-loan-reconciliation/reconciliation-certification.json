@@ -1,0 +1,22 @@
+{
+  "batch": "batch-5-loan-reconciliation",
+  "component": "reconciliation_engine",
+  "objective": "Strengthen meaningful reconciliation scoring behavior (C42.21: 368 generated, 296 killed, 72 survived, 80.4%). Conservative: only high-value Class-A survivors addressed.",
+  "strategic_constraint": "Do not spend the batch eliminating every equivalent mutant; target genuine scoring/threshold gaps only.",
+  "baseline_c42_21": {"generated": 368, "killed": 296, "survived": 72, "no_tests": 0, "score_pct": 80.4},
+  "approach": "Added 10 deterministic tests for the pure scoring helpers (_calculate_confidence, _simple_description_similarity): exact-date weight (+0.4), within-1-day (+0.3), exact-amount (+0.4), 1.0 cap with similarity, the strictly->0.7 description-similarity boundary, the date-diff tiers, and keyword similarity rules.",
+  "tests_added": ["tests/unit/engines/reconciliation/test_reconciliation_strengthening.py (10 tests)"],
+  "validation": {
+    "regression": "10 passed; full reconciliation suite green",
+    "ruff": "passed",
+    "mypy_strict": "passed",
+    "targeted_mutation": "Manual mutant (description_similarity > 0.7 -> >= 0.7) caught by test_confidence_similarity_boundary_exactly_0_7_excluded (test FAILS on mutant).",
+    "method_note": "Full component re-measurement is performed by the authoritative CI campaign (Batch 6 trigger)."
+  },
+  "survivor_classification": {
+    "class_A_addressed": "Confidence weight tiers, 1.0 cap, strictly->0.7 similarity boundary, keyword similarity rule.",
+    "class_B": "Equivalent rounding/aggregation mutants on the confidence sum.",
+    "class_C": "Defensive None/empty handling already covered."
+  },
+  "production_code_changed": false
+}

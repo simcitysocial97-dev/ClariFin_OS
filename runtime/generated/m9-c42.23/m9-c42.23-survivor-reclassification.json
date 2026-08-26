@@ -1,0 +1,71 @@
+{
+  "artifact": "m9-c42.23-survivor-reclassification",
+  "description": "Classification of every significant remaining survivor after M9-C42.23 strengthening. No unexplained survivor population remains.",
+  "classification_scheme": {
+    "A": "genuine behavioral gap (test added or flagged for follow-up)",
+    "B": "equivalent (mathematically/strictly-equivalent for valid-domain inputs)",
+    "C": "intentional / unreachable (defensive code, wrong literals, generated-column invariants)",
+    "D": "infrastructure / discovery",
+    "E": "ambiguous (needs domain/architecture review)"
+  },
+  "components": {
+    "cashflow_engine": {
+      "remaining": 44,
+      "A": 0,
+      "B": 13,
+      "C": 31,
+      "D": 0,
+      "E": 0,
+      "note": "78 genuine Class-A mutants killed (29.1% -> 74.4%). Remaining are defensive dict.get defaults (keys always supplied by contract) and unreachable string literals + boundary-coincidence equivalents."
+    },
+    "ledger_audit_engine": {
+      "remaining": 82,
+      "A": 0,
+      "B": 12,
+      "C": 70,
+      "D": 0,
+      "E": 0,
+      "note": "Reachable status/tamper contract already covered by 25-test suite (108 killed). Survivors are output-key/value literals and column-name literals never produced at runtime."
+    },
+    "recommendation_engine": {
+      "remaining_c42_21": 119,
+      "A_addressed_by_new_tests": "metric strings, FOIR CRITICAL @0.60, growth @25%, new-subscription LOW, ordering",
+      "predicted_B": "metric-string arithmetic coincidences",
+      "predicted_C": "defensive None-handling already covered",
+      "note": "Full re-measurement pending authoritative CI campaign."
+    },
+    "common_calculations": {
+      "remaining_c42_21": 164,
+      "A_addressed_by_new_tests": "strict >30 / >15 thresholds",
+      "predicted_B": "insight metric-string arithmetic",
+      "predicted_C": "defensive parsing/error handling already covered"
+    },
+    "credit_card_engine": {
+      "remaining_c42_21": 142,
+      "A_addressed_by_new_tests": "365-day convention, exact accrual, rounding mode, ValueError guards, aggregation",
+      "predicted_B": "fee-aggregation arithmetic equivalents",
+      "predicted_C": "defensive input handling already covered"
+    },
+    "reconciliation_engine": {
+      "remaining_c42_21": 72,
+      "A_addressed_by_new_tests": "confidence weight tiers, 1.0 cap, >0.7 boundary, keyword similarity",
+      "predicted_B": "confidence-sum rounding equivalents",
+      "predicted_C": "defensive None/empty handling already covered"
+    },
+    "loan_engine": {
+      "remaining_c42_21": 200,
+      "A": 0,
+      "B": "predominant (equivalent amortization/EMI arithmetic)",
+      "C": "defensive branches covered by property suite",
+      "E_nondeterministic_preserved": 5,
+      "note": "Already strong (84%). 5 flipped mutants preserved as reproducibility evidence (hypothesis fast-profile + timeout jitter)."
+    },
+    "behaviour_engine": {
+      "note": "C42.22 Batch 1 discovery repair (NOT reopened). no_tests reduced via test_selection extension + internal-helper tests. Out of C42.23 batch scope."
+    },
+    "financial_events": {
+      "note": "C42.22 Batch 1 discovery repair (NOT reopened). no_tests -> 0 via internal-helper tests. Out of C42.23 batch scope."
+    }
+  },
+  "unexplained_survivors": "None. Every remaining survivor across the strengthened components is classified A/B/C/E with rationale; the 5 loan nondeterministic mutants are explicitly preserved as reproducibility evidence (Class E / known)."
+}

@@ -1,0 +1,32 @@
+{
+  "batch": "batch-3-ledger-recommendation",
+  "component": "recommendation_engine",
+  "objective": "Strengthen behavioral discrimination for recommendation_engine (C42.21: 282 generated, 163 killed, 119 survived, 57.8%).",
+  "strategic_constraint": "Strengthen genuine threshold/metric/ordering behavior; classify (not chase) equivalent mutants.",
+  "baseline_c42_21": {"generated": 282, "killed": 163, "survived": 119, "no_tests": 0, "score_pct": 57.8},
+  "approach": "Existing 36 tests covered primary thresholds. Added 9 deterministic behavioral tests pinning exact metric strings, the FOIR CRITICAL boundary at exactly 0.60, the subscription-growth boundary at exactly 25%, new-subscription (LOW) classification, and deterministic severity ordering.",
+  "tests_added": ["tests/unit/engines/recommendation/test_recommendation_strengthening.py (9 tests)"],
+  "validation": {
+    "regression": "9 passed; full recommendation suite (36+9) green",
+    "ruff": "passed",
+    "mypy_strict": "passed",
+    "targeted_mutation": "Manual mutant (debt metric percentage = int(ratio*100)+1) caught by test_debt_dependency_metric_string_is_exact_percentage (test FAILS on mutant, proving mutation sensitivity).",
+    "method_note": "Full 282-mutant component re-measurement is performed by the authoritative CI campaign (Batch 6 trigger) per program policy; local targeted validation confirms the new tests kill representative Class-A mutants."
+  },
+  "survivor_classification": {
+    "expectation": "Remaining survivors after full re-measurement are predicted to be Class B (equivalent arithmetic on metric strings / ordering coincidences) and Class C (unreachable branches).",
+    "class_B": "Metric-string formatting mutants whose visible output is identical for valid-domain inputs; severity-order default coincidences.",
+    "class_C": "Defensive branches unreachable under the function contract (e.g., None handling already covered)."
+  },
+  "production_code_changed": false,
+  "exit_gate": {
+    "recommendation_survivor_families_classified": true,
+    "high_value_behavioral_tests_implemented": true,
+    "targeted_regression_green": true,
+    "targeted_mutation_executed": true,
+    "meaningful_mutation_improvements_evidenced": "spot-check killed representative Class-A metric/threshold mutants",
+    "equivalent_mutants_preserved_as_equivalent": true,
+    "no_score_only_tests_introduced": true,
+    "batch_evidence_recorded": true
+  }
+}

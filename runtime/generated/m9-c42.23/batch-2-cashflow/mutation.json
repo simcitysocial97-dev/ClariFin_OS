@@ -1,0 +1,12 @@
+{
+  "batch": "batch-2-cashflow",
+  "component": "cashflow_engine",
+  "source_scope": "src/engines/cashflow_engine.py",
+  "test_selection": ["tests/properties/cashflow"],
+  "before": {"generated": 172, "killed": 50, "survived": 122, "no_tests": 0, "score_pct": 29.1},
+  "after": {"generated": 172, "killed": 128, "survived": 44, "no_tests": 0, "score_pct": 74.4},
+  "delta": {"killed": 78, "survived": -78},
+  "method": "Local mutmut 3.7.0 run after clearing mutants/ cache (results persisted in backend/mutants/mutmut-stats.json)",
+  "tests_added": 10,
+  "production_code_changed": false
+}

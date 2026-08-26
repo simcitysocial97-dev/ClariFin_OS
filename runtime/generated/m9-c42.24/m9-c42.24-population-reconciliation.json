@@ -1,0 +1,53 @@
+{
+  "title": "M9-C42.24 — Population Reconciliation",
+  "generated_at": "2026-08-25T19:00:00.000000+00:00",
+  "run_id": "m9-c42.24",
+  "baseline_population": {
+    "source": "m9-c42.21",
+    "components": [
+      "credit_card_engine",
+      "account_engine",
+      "loan_engine",
+      "reconciliation_engine",
+      "behaviour_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine",
+      "financial_events",
+      "recommendation_engine",
+      "core_domain_money",
+      "common_calculations"
+    ],
+    "count": 12,
+    "deferred": ["transaction_intelligence", "financial_intelligence"]
+  },
+  "c42_24_population": {
+    "components": [
+      "credit_card_engine",
+      "account_engine",
+      "loan_engine",
+      "reconciliation_engine",
+      "behaviour_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine",
+      "financial_events",
+      "recommendation_engine",
+      "core_domain_money",
+      "common_calculations"
+    ],
+    "count": 12,
+    "deferred": ["transaction_intelligence", "financial_intelligence"]
+  },
+  "reconciliation": {
+    "identical": true,
+    "difference": "None — 12-component population matches C42.21 exactly",
+    "exception": "behaviour_engine test_selection in ENGINE_SELECTION does not reflect C42.22 claimed discovery repair extension"
+  },
+  "population_fingerprint": {
+    "total_generated_c42_21": 11730,
+    "total_generated_c42_24": 11730,
+    "population_identity": "IDENTICAL",
+    "note": "No source changes; only test additions. Mutant populations per component unchanged from C42.21."
+  }
+}

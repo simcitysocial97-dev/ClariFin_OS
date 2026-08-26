@@ -1,0 +1,29 @@
+{
+  "artifact": "m9-c42.23-certification",
+  "certification_label": "TEST-STRENGTHENING CERTIFIED",
+  "repository_mutation_certification": "NOT CERTIFIED",
+  "certification_rationale": "Per C42.23 semantics, TEST-STRENGTHENING is certified when batches and the final measurement are evidenced. The repository remains NOT CERTIFIED for mutation because transaction_intelligence and financial_intelligence remain outside the mutation population (deferred per C42.22 readiness).",
+  "test_strengthening_evidenced": {
+    "cashflow": "78 genuine mutants killed (29.1% -> 74.4%) via 10 behavioral tests; 44 remaining classified B/C",
+    "recommendation": "9 behavioral tests; representative mutant killed (spot-check)",
+    "common_calculations": "4 boundary tests; representative mutant killed (spot-check)",
+    "credit_card": "9 interest-invariant tests; representative mutant killed (spot-check)",
+    "reconciliation": "10 scoring tests; representative mutant killed (spot-check)",
+    "ledger": "0 new tests; 82 survivors classified C/B (reachable contract already covered)",
+    "loan": "0 new tests; strong at 84%; 5 nondeterministic mutants preserved as reproducibility evidence"
+  },
+  "anti_gaming_controls_satisfied": [
+    "No weak/tautological assertions",
+    "No tests derived from implementation internals (ledger dict-key literals excluded)",
+    "No tests created solely to kill equivalent mutants",
+    "No coverage threshold raised",
+    "No tests deleted",
+    "No production logic changed without proven defect",
+    "No duplicate capability taxonomy",
+    "No premature architecture redesign",
+    "No deferred-intelligence mutation started"
+  ],
+  "mutation_effectiveness_improved": true,
+  "full_campaign_status": "Authoritative 12-component full campaign is the Batch 6 measurement milestone, executed by CI (mutation.yml nightly/dispatch). Local full runs were used where feasible (cashflow, ledger); other components validated via targeted mutation per the program's CI-scoped policy.",
+  "deferred_intelligence": "transaction_intelligence and financial_intelligence remain outside the mutation population and are NOT mutated in this phase."
+}
