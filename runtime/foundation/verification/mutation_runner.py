@@ -55,6 +55,10 @@ from runtime.foundation.verification.mutation_contract import (
     write_backend_mutmut_config,
 )
 from runtime.foundation.verification.survivor_catalog import run_catalog_cli
+from runtime.foundation.verification.survivor_intel import (
+    build_survivor_intel,
+    write_survivor_intel,
+)
 
 BACKEND_DIR = REPO_ROOT / "backend"
 SMOKE_DIR = BACKEND_DIR / "tests" / "mutation_infra"
@@ -799,6 +803,14 @@ def run_mutation_cli(argv: list[str]) -> int:
         "(mutation-survivors.json + console report)",
     )
     parser.add_argument(
+        "--intel-enrich",
+        type=int,
+        default=0,
+        help="at-most N survivors to enrich with mutmut tests-for-mutant "
+        "covering-test surfaces when persisting the durable survivor-intel "
+        "record (<=0 enriches all; conservative default 0 runs all)",
+    )
+    parser.add_argument(
         "--allow-dirty",
         action="store_true",
         help="allow dirty worktree in mutation scope (D5 override)",
@@ -839,6 +851,32 @@ def run_mutation_cli(argv: list[str]) -> int:
             run_catalog_cli(BACKEND_DIR / "mutants", BACKEND_DIR)
         except Exception as exc:  # pragma: no cover - defensive reporting
             print(f"  [catalog] survivor breakdown unavailable: {exc}")
+
+    # M9-C45.2: persist a durable per-mutant survivor-intel record while the
+    # .meta cache + mutants/ tree are still alive, so the intelligence (what
+    # mutated -> covering tests -> classification -> capability -> fingerprint ->
+    # recommendation) survives the workspace lifecycle. Runs unconditionally for
+    # full/target campaigns with survivors, or on demand with the catalog flag.
+    if (
+        not args.restore
+        and (args.catalog or mode in ("full", "target"))
+        and result.survived > 0
+    ):
+        try:
+            intel = build_survivor_intel(
+                BACKEND_DIR / "mutants",
+                BACKEND_DIR,
+                enrich_tests=True,
+                max_enrich=args.intel_enrich,
+            )
+            intel_path = write_survivor_intel(intel)
+            print(
+                f"  [intel] durable survivor-intel persisted ({intel['total_survivors']} "
+                f"survivors; {intel['tests_enriched_count']} tests-enriched): "
+                f"{intel_path.relative_to(REPO_ROOT)}"
+            )
+        except Exception as exc:  # pragma: no cover - defensive reporting
+            print(f"  [intel] durable survivor record unavailable: {exc}")
 
     gate_a, gate_b, gate_c, verdict = classify_gates(result)
     if not gate_a or not gate_b:

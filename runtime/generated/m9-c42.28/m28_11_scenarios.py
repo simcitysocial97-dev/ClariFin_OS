@@ -33,15 +33,11 @@ Run with:
 from __future__ import annotations
 
 import json
-import os
-import shutil
 import sys
-import tempfile
-import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Callable
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -60,17 +56,13 @@ from runtime.foundation.verification.evidence_planner import (  # noqa: E402
 )
 from runtime.foundation.verification.evidence_reuse import (  # noqa: E402
     ComponentMeasurement,
-    c42_24_b_measurements,
-    c42_25_measurements,
     c42_26_population,
 )
 from runtime.foundation.verification.executor_pipeline import (  # noqa: E402
     ExecutionEvidence,
-    ExecutableVerificationPlan,
     FailureKind,
-    ForensicExecutionRecord,
-    ReconciledComponent,
-    ReconciledVerificationState,
+    _git_sha,
+    _read_installed_mutmut_scope,
     build_executable_plan,
     build_forensic_record,
     collect_repo_fingerprints,
@@ -78,15 +70,7 @@ from runtime.foundation.verification.executor_pipeline import (  # noqa: E402
     default_prior_measurements,
     execute_mutation_task,
     reconcile,
-    _git_sha,
-    _read_installed_mutmut_scope,
-    _resolve_kind,
-    ADAPTERS,
 )
-from runtime.foundation.verification.evidence_reuse import (  # noqa: E402
-    c42_26_population,
-)
-
 
 # ---------------------------------------------------------------------------
 # Stub executor — deterministic, time-bounded, never invokes mutmut.
@@ -431,7 +415,6 @@ def scenario_D() -> ScenarioResult:
     reconciler marks the new component as no_evidence → certification
     is BLOCKED until fresh measurement exists."""
     from runtime.foundation.verification.evidence_reuse import (
-        Change as CChange,
         PopulationSnapshot,
         c42_26_population,
     )
@@ -442,7 +425,7 @@ def scenario_D() -> ScenarioResult:
         population_id="pop-15-c42.28",
         created_at=datetime.now(UTC).isoformat(),
         components=new_components,
-        component_fingerprints={c: "" for c in new_components},
+        component_fingerprints=dict.fromkeys(new_components, ""),
         config_hash=c42_26_population().config_hash,
         toolchain_hash=c42_26_population().toolchain_hash,
         repository_sha="unknown",

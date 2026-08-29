@@ -54,7 +54,6 @@ def _mutmut_tests_for(survivor_id: str, backend_dir: Path | None = None) -> list
     (the exact test surface that currently fails to detect the mutant).
     Silent on any error (the analysis is best-effort enrichment).
     """
-    import os
     import subprocess
 
     cwd = backend_dir or (REPO_ROOT / "backend")
@@ -90,7 +89,6 @@ def _mutmut_tests_for(survivor_id: str, backend_dir: Path | None = None) -> list
 
 
 def run_forensic_diagnose(argv: list[str]) -> int:
-    import argparse
 
     parser = argparse.ArgumentParser(prog="verify.py forensic-diagnose", add_help=False)
     parser.add_argument(
@@ -125,9 +123,9 @@ def run_forensic_diagnose(argv: list[str]) -> int:
         from runtime.foundation.verification.executor_pipeline import (
             build_executable_plan,
             build_forensic_record,
-            reconcile,
             default_population,
             default_prior_measurements,
+            reconcile,
         )
 
         planner = default_planner()
@@ -145,10 +143,10 @@ def run_forensic_diagnose(argv: list[str]) -> int:
     ci_correlation = None
     if args.ci_evidence:
         from runtime.foundation.verification.ci_evidence import (
+            build_ci_bindings,
             load_ci_evidence,
             validate_and_decide,
             verification_bindings,
-            build_ci_bindings,
         )
 
         records = load_ci_evidence(args.ci_evidence)
@@ -158,12 +156,19 @@ def run_forensic_diagnose(argv: list[str]) -> int:
                 sem_by_task.setdefault(b.command, b.semantics)
         entries = []
         for r in records:
-            sem = None
-            for cmd_key, s in sem_by_task.items():
-                if s.verification_task == r.verification_task:
-                    sem = s
-                    break
-            _, decision = validate_and_decide(r, _context_for(r))
+            # Resolve this record's command semantics so observational /
+            # infra-health evidence (reusable_evidence=False) is correctly
+            # excluded from reuse by ci_reuse_decision (they are NOT reusable
+            # measurement). Semantics is wired through to validate_and_decide.
+            sem = next(
+                (
+                    s
+                    for _, s in sem_by_task.items()
+                    if s.verification_task == r.verification_task
+                ),
+                None,
+            )
+            _, decision = validate_and_decide(r, _context_for(r), semantics=sem)
             entries.append(
                 {
                     "record_id": r.record_id,
@@ -201,8 +206,8 @@ def _context_for(record):
         c42_26_population,
     )
     from runtime.foundation.verification.executor_pipeline import (
-        collect_repo_fingerprints,
         _git_sha,
+        collect_repo_fingerprints,
     )
 
     comp = record.component or ""
@@ -227,7 +232,6 @@ def _context_for(record):
 
 
 def run_forensic_report(argv: list[str]) -> int:
-    import argparse
 
     parser = argparse.ArgumentParser(prog="verify.py forensic-report", add_help=False)
     parser.add_argument("--record", default=DEFAULT_RECORD)
@@ -293,7 +297,6 @@ def run_forensic_report(argv: list[str]) -> int:
 
 
 def run_strengthen_analyze(argv: list[str]) -> int:
-    import argparse
 
     parser = argparse.ArgumentParser(
         prog="verify.py strengthen-analyze", add_help=False
@@ -309,9 +312,6 @@ def run_strengthen_analyze(argv: list[str]) -> int:
     parser.add_argument("--out", default=None)
     args, _ = parser.parse_known_args(argv)
 
-    from runtime.foundation.verification.strengthening import (
-        generate_proposal,
-    )
 
     raw = json.loads(Path(args.survivors).read_text())
     survivors = [s for s in (raw if isinstance(raw, list) else [raw])]
@@ -354,6 +354,8 @@ def generate_proposal_from_dict(s: dict):
     """Build a SurvivorEvidence from a dict and classify/propose."""
     from runtime.foundation.verification.strengthening import (
         SurvivorEvidence,
+    )
+    from runtime.foundation.verification.strengthening import (
         generate_proposal as _gp,
     )
 
@@ -381,7 +383,6 @@ def generate_proposal_from_dict(s: dict):
 
 
 def run_strengthen_validate(argv: list[str]) -> int:
-    import argparse
 
     parser = argparse.ArgumentParser(
         prog="verify.py strengthen-validate", add_help=False
@@ -435,7 +436,8 @@ def run_strengthen_validate(argv: list[str]) -> int:
     )
 
     if args.stub:
-        from dataclasses import dataclass, field as _field
+        from dataclasses import dataclass
+        from dataclasses import field as _field
 
         @dataclass
         class _StubResult:
@@ -459,12 +461,12 @@ def run_strengthen_validate(argv: list[str]) -> int:
             )
 
     else:
-        from runtime.foundation.verification.executor_pipeline import (
-            execute_mutation_task,
-            adapt_mutation_task,
-        )
         from runtime.foundation.verification.evidence_planner import (
             PlannedTask,
+        )
+        from runtime.foundation.verification.executor_pipeline import (
+            adapt_mutation_task,
+            execute_mutation_task,
         )
 
         def executor(component: str):
@@ -507,7 +509,6 @@ def run_strengthen_discover(argv: list[str]) -> int:
     """Discover survivors from canonical classification / mutation artifacts
     and emit a clean evidence list suitable for subsequent strengthen-analyze /
     strengthen-propose calls."""
-    import argparse
 
     parser = argparse.ArgumentParser(
         prog="verify.py strengthen-discover", add_help=False
@@ -533,6 +534,16 @@ def run_strengthen_discover(argv: list[str]) -> int:
         ),
         help="Path to mutation-survivors.json (per-function survivor data)",
     )
+    parser.add_argument(
+        "--from-intel",
+        default=str(
+            REPO_ROOT
+            / "backend/tests/generated/mutation/mutation-survivor-intel.json"
+        ),
+        help="Preferred durable per-mutant intel (M9-C45.2). When present, "
+        "per-component records with correct classification/capability are "
+        "derived from it; falls back to --from-survivors / aggregators.",
+    )
     parser.add_argument("--out", default=None)
     parser.add_argument(
         "--class-filter",
@@ -552,35 +563,69 @@ def run_strengthen_discover(argv: list[str]) -> int:
     class_filter = set(args.class_filter)
     discovered: list[dict] = []
 
-    # Primary: read per-function survivor data from mutation-survivors.json
+    # Preferred: derive per-component survivor evidence from the durable
+    # M9-C45.2 intel record (backend/tests/generated/mutation/
+    # mutation-survivor-intel.json). This carries the correct component,
+    # capability, A–E classification, covering tests and recommended action
+    # for EVERY surviving mutant, so discovery is not behaviour_engine-only
+    # and is not re-derived from a coarser per-function summary.
+    intel = None
     try:
-        surv_data = json.loads(Path(args.from_survivors).read_text())
-        entries = surv_data.get("entries", [])
-        cat_to_cls: dict[str, str] = {
-            "control_flow": "A", "arithmetic": "A", "comparison": "A",
-            "boolean": "A", "default_value": "A", "dict_key": "A",
-            "string_literal": "B", "numeric_literal": "B", "other": "B",
-        }
-        for e in entries:
-            cat = e.get("category", "other")
-            cls = cat_to_cls.get(cat, "B")
+        if Path(args.from_intel).exists():
+            intel = json.loads(Path(args.from_intel).read_text())
+    except Exception:
+        intel = None
+    if intel:
+        for e in intel.get("survivors", []):
+            cls = str(e.get("classification", "A")).upper()
             if cls not in class_filter:
                 continue
             discovered.append({
-                "survivor_id": e.get("key", ""),
-                "component": "behaviour_engine",
-                "capability": "behaviour-analysis",
-                "location": f"src/{e.get('source_file', '')}:{e.get('function', '')}",
-                "mutation_operator": cat,
-                "original_snippet": e.get("old", ""),
-                "mutated_snippet": e.get("new", ""),
+                "survivor_id": e.get("survivor_id", ""),
+                "component": e.get("component", "unknown"),
+                "capability": e.get("capability", "unknown"),
+                "location": f"{e.get('source_file', '')}:{e.get('function', '')}",
+                "mutation_operator": e.get("mutation_type", "unknown"),
+                "original_snippet": e.get("original_expression", ""),
+                "mutated_snippet": e.get("mutated_expression", ""),
                 "status": "survived",
                 "classification": cls,
-                "notes": e.get("signature", ""),
-                "covering_tests": (),
+                "notes": e.get("classification_evidence", ""),
+                "covering_tests": tuple(e.get("covering_tests", ())),
+                "recommended_action": e.get("recommended_action", ""),
             })
-    except Exception:
-        pass
+
+    # Legacy fallback: per-function survivor data from mutation-survivors.json
+    # (used only when no durable intel is available).
+    if not discovered:
+        try:
+            surv_data = json.loads(Path(args.from_survivors).read_text())
+            entries = surv_data.get("entries", [])
+            cat_to_cls: dict[str, str] = {
+                "control_flow": "A", "arithmetic": "A", "comparison": "A",
+                "boolean": "A", "default_value": "A", "dict_key": "A",
+                "string_literal": "B", "numeric_literal": "B", "other": "B",
+            }
+            for e in entries:
+                cat = e.get("category", "other")
+                cls = cat_to_cls.get(cat, "B")
+                if cls not in class_filter:
+                    continue
+                discovered.append({
+                    "survivor_id": e.get("key", ""),
+                    "component": "behaviour_engine",
+                    "capability": "behaviour-analysis",
+                    "location": f"src/{e.get('source_file', '')}:{e.get('function', '')}",
+                    "mutation_operator": cat,
+                    "original_snippet": e.get("old", ""),
+                    "mutated_snippet": e.get("new", ""),
+                    "status": "survived",
+                    "classification": cls,
+                    "notes": e.get("signature", ""),
+                    "covering_tests": (),
+                })
+        except Exception:
+            pass
 
     # Fallback: parse aggregate classification summary
     if not discovered:
@@ -679,7 +724,6 @@ def run_strengthen_propose(argv: list[str]) -> int:
     """Batch-proposes strengthened tests for all discoverable Class-A
     survivors. Accepts output of strengthen-discover as input and emits
     the canonical strengthening-proposals artifact."""
-    import argparse
 
     parser = argparse.ArgumentParser(
         prog="verify.py strengthen-propose", add_help=False
@@ -751,7 +795,6 @@ def run_strengthen_report(argv: list[str]) -> int:
     """Produce a concise human-readable report on strengthening progress:
     how many proposals generated, how many accepted, how many killed,
     how many rejected/refused, and the current mutation posture."""
-    import argparse
 
     parser = argparse.ArgumentParser(
         prog="verify.py strengthen-report", add_help=False
@@ -845,7 +888,6 @@ def run_strengthen_survivor(argv: list[str]) -> int:
     analysis (`show` for the exact diff, `tests-for-mutant` for the covering
     test surface) supplemented with capability attribution. Aids the
     Class-A -> capability -> invariant -> test-surface chain."""
-    import argparse
 
     parser = argparse.ArgumentParser(
         prog="verify.py strengthen-survivor", add_help=False
@@ -859,7 +901,6 @@ def run_strengthen_survivor(argv: list[str]) -> int:
     parser.add_argument("--json", action="store_true")
     args, _ = parser.parse_known_args(argv)
 
-    import os
     import subprocess
 
     backend_dir = REPO_ROOT / "backend"

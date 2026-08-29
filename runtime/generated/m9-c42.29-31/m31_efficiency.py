@@ -45,14 +45,13 @@ if str(REPO_ROOT) not in sys.path:
 OUT_DIR = REPO_ROOT / "runtime" / "generated" / "m9-c42.29-31"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-from runtime.foundation.verification.evidence_planner import default_planner  # noqa: E402
-from runtime.foundation.verification.evidence_reuse import (  # noqa: E402
-    c42_26_population,
+from runtime.foundation.verification.ci_evidence import (  # noqa: E402
+    build_ci_bindings,
+    verification_bindings,
 )
-from runtime.foundation.verification.executor_pipeline import (  # noqa: E402
-    build_executable_plan,
+from runtime.foundation.verification.evidence_planner import (
+    default_planner,  # noqa: E402
 )
-from runtime.foundation.verification.ci_evidence import build_ci_bindings, verification_bindings  # noqa: E402
 
 # Canonical C42.26 cost per component (mutmut-3.7.0 + pytest-8.x,
 # bounded bounded-budget mode, observed in C42.24-B / C42.25 runs).

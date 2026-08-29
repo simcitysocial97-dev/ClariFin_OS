@@ -33,8 +33,8 @@ if str(REPO_ROOT) not in sys.path:
 from runtime.foundation.verification.diagnostic_agent import (  # noqa: E402
     CAUSAL_CHAIN_STAGES,
     DIAGNOSTIC_REPORT_SCHEMA,
-    DiagnosticForensicAgent,
     UNCERTAINTY_KINDS,
+    DiagnosticForensicAgent,
     canonicalize_forensic_record,
     validate_forensic_record,
 )

@@ -41,16 +41,11 @@ OUT_DIR = REPO_ROOT / "runtime" / "generated" / "m9-c42.29"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 from runtime.foundation.verification.ci_evidence import (  # noqa: E402
-    CIDriftReport,
     CIEvidenceRecord,
     CIRepositoryContext,
-    CIReuseDecision,
     FailureKind,
     build_ci_bindings,
-    ci_reuse_decision,
     classify_ci_failure,
-    ingest_ci_evidence,
-    semantic_equivalence,
     validate_and_decide,
     validate_ci_evidence,
     verification_bindings,

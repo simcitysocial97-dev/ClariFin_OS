@@ -6,8 +6,6 @@ titles/values so operator and constant-replacement mutants are killed.
 
 from __future__ import annotations
 
-import pytest
-
 from src.engines.behaviour_engine.insights import (
     generate_behavioral_insights,
     generate_summary_text,

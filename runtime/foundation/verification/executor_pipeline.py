@@ -58,17 +58,16 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 import re
 import subprocess
 import sys
-import time
 import traceback
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Iterable, Literal
+from typing import Any, Literal
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -77,37 +76,28 @@ if str(REPO_ROOT) not in sys.path:
 assert (REPO_ROOT / "backend").is_dir(), f"REPO_ROOT sanity check failed: {REPO_ROOT}"
 
 # C42.27 imports (the authoritative planner + evidence model)
+from runtime.foundation.verification.env import (  # noqa: E402
+    hash_file,
+    resolve_environment,
+)
 from runtime.foundation.verification.evidence_planner import (  # noqa: E402
     EvidenceAwarePlan,
-    EvidenceAwarePlanner,
     PlannedTask,
     default_planner,
 )
 from runtime.foundation.verification.evidence_reuse import (  # noqa: E402
-    C42_26_POPULATION_ID,
     ComponentMeasurement,
-    DerivedAggregate,
-    EvidenceReuse,
     PopulationSnapshot,
     c42_24_b_measurements,
     c42_25_measurements,
     c42_26_population,
 )
-from runtime.foundation.verification.correlation import (  # noqa: E402
-    Correlation,
-    correlate,
-)
-from runtime.foundation.verification.mutation_runner import (  # noqa: E402
-    execute_mutation,
-)
 from runtime.foundation.verification.mutation_contract import (  # noqa: E402
     ENGINE_SELECTION,
     is_valid_engine,
 )
-from runtime.foundation.verification.env import (  # noqa: E402
-    REPO_ROOT as _ENV_REPO_ROOT,
-    resolve_environment,
-    hash_file,
+from runtime.foundation.verification.mutation_runner import (  # noqa: E402
+    execute_mutation,
 )
 
 # ===========================================================================

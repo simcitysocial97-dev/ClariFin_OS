@@ -23,8 +23,8 @@ from __future__ import annotations
 from decimal import Decimal
 
 import pytest
-
 from src.engines.behaviour_engine import (
+    core,
     credit_dependency,
     insights,
     nudges,
@@ -32,7 +32,6 @@ from src.engines.behaviour_engine import (
     temporal,
     wellness,
 )
-from src.engines.behaviour_engine import core
 
 
 # ============================================================

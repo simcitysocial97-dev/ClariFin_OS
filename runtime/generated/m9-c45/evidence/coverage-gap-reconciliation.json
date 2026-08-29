@@ -1,0 +1,80 @@
+{
+  "schema": "m9-c45-coverage-gap-reconciliation/v1",
+  "generated_at": "2026-08-29T17:45:00Z",
+  "repository_sha": "219cf55738d51e7d49b3d3ef7b49af73973436a5",
+  "authoritative_baseline": "runtime/generated/m9-c44/coverage-baseline.json (AUTHORITATIVE_MEASURED, SHA f632e28; valid at C45 start because no backend source or backend test files were modified since)",
+  "overall": {
+    "statement_pct": 80.58,
+    "branch_pct": 75.91,
+    "combined_pct": 80.58,
+    "num_statements": 10238,
+    "covered_lines": 8378,
+    "num_branches": 2740,
+    "covered_branches": 2080,
+    "missed_branches_total": 660,
+    "statement_80_target": "ACHIEVED (80.58 >= 80.0)",
+    "branch_target": "75.91% tracked toward project target; meaningful branch coverage RECONCILED below"
+  },
+  "classification_of_remaining_branch_weakness": {
+    "genuine_missing_behavioral_paths": [
+      {
+        "module": "engines/financial_intelligence (branch 95.7%, 28 missed of 332)",
+        "classification": "GENUINE_MISSING_BEHAVIORS",
+        "detail": "Boundary comparisons, exact constants and untested control branches in planning/optimization/scenario functions. Addressed in M45.5 via targeted behavioral tests (dual effect: mutation kills + branch coverage uplift in an in-scope component).",
+        "action": "M45.5 (financial_intelligence targeted strengthening)"
+      },
+      {
+        "module": "engines/transaction_intelligence (branch 96.6%, 5 missed of 148)",
+        "classification": "GENUINE_MISSING_BEHAVIORS",
+        "detail": "Very small residual (5 branches); detector edge cases.",
+        "action": "M45.5 (transaction_intelligence targeted strengthening, if selected)"
+      },
+      {
+        "module": "engines/behaviour_engine (79.6% branch, 188 missed of 786)",
+        "classification": "ACHIEVED_COMPONENT_EXCLUDED",
+        "detail": "behaviour_engine is ACHIEVED at 83.5% mutation (80%+ target met) and EXCLUDED from further engineering effort per C45 anti-drift rule. Residual branch gap reflects characterization-complete code with defensive tail paths; not a convergence blocker.",
+        "action": "none (anti-drift)"
+      }
+    ],
+    "defensive_or_error_handling_paths": [
+      {
+        "module": "repositories (55.4% statement, 31.6% branch: 157 missed of 228)",
+        "classification": "DEFENSIVE_DB_PLUMBING",
+        "detail": "SQLAlchemy session/commit/rollback and exception-handling branches; ORM relationship edge paths. Not part of the 14-component mutation population (financial engines scope). Error paths require live-DB failure injection to exercise honestly.",
+        "action": "documented; not a mutation-gate blocker; legitimate exclusion from the 80% mutation population"
+      },
+      {
+        "module": "services (66.3% statement, 43.1% branch: 292 missed of 510)",
+        "classification": "DEFENSIVE_API_ORCHESTRATION",
+        "detail": "API service orchestration: DTO validation branches, HTTP error mapping, DB-transaction rollback paths. Out of mutation population. Some genuine validation branches could be tested with service-level unit tests, but they do NOT contribute to the 80% mutation target and are not required for certification (coverage combined target already met).",
+        "action": "documented; optional future work"
+      }
+    ],
+    "generated_or_compatibility_or_data_classes": [
+      {
+        "module": "core/dtos (92.8% statement, 0 branches)",
+        "classification": "GENERATED_COMPATIBILITY",
+        "detail": "Pydantic DTOs; data classes with no branching logic. Statement miss = defaulted field assignments never constructed.",
+        "action": "none"
+      },
+      {
+        "module": "core/mappers (35.9% statement, 24 missed of 26 branches)",
+        "classification": "PARTIALLY_GENUINE (mapping edge branches) + wiring",
+        "detail": "DTO->API mappers: some are pure function projections (testable) but are API-layer glue outside the mutation population. Not a convergence blocker.",
+        "action": "optional future work"
+      },
+      {
+        "module": "models (88.6% statement, 0% branch: 40 missed of 40)",
+        "classification": "DATA_MODEL_BRANCHES",
+        "detail": "SQLAlchemy models: conditional column defaults / onupdate lambdas / computed properties. Mostly database-lifecycle code, not runtime-decision logic.",
+        "action": "none (not meaningful behavioral decision surface)"
+      }
+    ]
+  },
+  "reconciliation_verdict": {
+    "meaningful_behavioural_branch_coverage": "RECONCILED",
+    "statement_80_pct": "PRESERVED (no test-quality reduction; M45.5 adds behavioral tests only)",
+    "branch_improvement_path": "M45.5 in-scope engine tests (financial_intelligence 28 missed branches; transaction_intelligence 5) are the meaningful branch-coverage improvements; out-of-scope API/DB layers (services/repositories/mappers/models) are classified defensive/plumbing/generated and are explicit, documented non-blockers",
+    "fresh_coverage_remeasure_trigger": "re-measure once after M45.5 test additions (single measurement; expected to IMPROVE branch% slightly and keep statement% >= 80%)"
+  }
+}

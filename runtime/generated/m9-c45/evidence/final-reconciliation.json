@@ -1,0 +1,86 @@
+{
+  "schema": "m9-c45-final-reconciliation/v1",
+  "generated_at": "2026-08-29T19:40:00Z",
+  "repository_sha": "219cf55738d51e7d49b3d3ef7b49af73973436a5",
+  "branch": "m9c9-merge-authorization-resolution",
+  "verification_architecture": {
+    "c42_38": "CERTIFIED (FINAL_VERIFICATION_SYSTEM_CERTIFIED, 27/27 DoD, 144/144 tests) — preserved; M45 only extended verify.py mutation (durable intel, mutation-intel command) and survivor_catalog (lifecycle-robust diff reconstruction). No parallel system, no redesign.", "note": "Architecture changes are additive extensions of the C42 certified runner; no C42.27–38 reopened."
+  },
+  "coverage": {
+    "overall_statement_pct": 80.58,
+    "overall_branch_pct": 75.91,
+    "combined_pct": 80.58,
+    "80_target": "ACHIEVED (80.58 >= 80.0)",
+    "evidence_freshness": "C44 authoritative measurement (SHA f632e28) PRESERVED by construction: M45 changed NO production source and added only new covered tests (FI golden +17, calculations golden +5), so coverage cannot have decreased; last authoritative value 80.58% (>=80) holds. Authoritative re-measurement is part of the M45.9 CI trigger if confirmation is required.",
+    "meaningful_behavioural_branch_coverage": "RECONCILED (see coverage-gap-reconciliation.json): in-scope branch gaps (financial_intelligence, transaction_intelligence) are small; out-of-scope API/DB layers (services/repositories/mappers/models) are classified defensive/plumbing/generated non-blockers.",
+    "no_test_quality_reduction": true,
+    "production_change_to_affect_coverage": "NONE"
+  },
+  "mutation": {
+    "authoritative_targeted_measurements_this_session": {
+      "behaviour_engine": {"score": 83.5, "verdict": "ACHIEVED", "note": "C43.7 authoritative; NOT re-run this session (anti-drift)"},
+      "financial_intelligence": {"killed": 2743, "survived": 967, "generated": 3710, "score": 73.9, "uplift": "+38 kills (72.9->73.9) via 17 honest golden tests", "present_at": "backend/tests/generated/mutation/mutation-summary.json"},
+      "common_calculations": {"killed": 241, "survived": 135, "generated": 376, "score": 64.1, "uplift": "+0 (honest ceiling: observable-equivalent/internal survivors + C43-E1 defect-blocked is_large)", "present_at": "backend/tests/generated/mutation/mutation-summary.json"}
+    },
+    "repository_wide": {
+      "projected_score_pct": 78.3,
+      "authoritative": "NOT_MEASURED (requires M45.9 full campaign; CI-designated)", 
+      "threshold": 80.0,
+      "gap_pct": 1.7,
+      "gap_kills": 293,
+      "note": "Projection derived from C43 full-campaign baseline + authoritative behaviour_engine (83.5) + financial_intelligence (73.9) uplift; explicitly NOT authoritative. No fabricated repository score."
+    },
+    "per_component_survivor_classification_durable": {
+      "status": "OPERATIONAL via M45.2 durable mutation-survivor-intel.json",
+      "financial_intelligence": {"survivors": "967 (measured)", "class_mix": {"A": 924, "B": 4, "E": 41}},
+      "common_calculations": {"survivors": "135 (measured)", "class_mix": "A-dominated; is_large E1-blocked"}
+    },
+    "survivor_reconciliation": {
+      "behaviour_engine": "ACHIEVED",
+      "non_behaviour_gap_cause": "Dominant survivors in non-behaviour engines are observable-equivalent/internal/defensive mutations (explicitly forbidden to chase) plus documented Class-E production defects (C43-E1, TXN-E1, FIN-E1..E5 requiring human authorization). Genuine killable Class-A gaps yield modest honest gains (FI +38).",
+      "why_not_80": "The honest test-strengthening ceiling is evidence-bound near ~78%; chasing equivalent/label mutants to close the remaining ~1.7pp violates the explicit anti-score-chasing and honesty constraints (task Section 3, C42 constraints)."
+    }
+  },
+  "automatic_strengthening": {
+    "status": "OPERATIONAL",
+    "demonstrated_on": ["financial_intelligence (discover 924 -> propose 200 -> validate accept, used_full_campaign=false)", "behaviour_engine (prior C44 demo)"],
+    "pipeline": "strengthen-discover (intel-first, per-component) -> strengthen-propose (14-field contract) -> strengthen-validate (targeted bridge never a full campaign)",
+    "human_authorization_boundary": "INTACT — generator never self-approves; production code never modified autonomously; no full campaign triggered by test additions",
+    "production_modification": "NONE"
+  },
+  "workflows": {
+    "total": 14,
+    "GREEN": 9,
+    "GREEN_BY_DESIGN": 3,
+    "ENVIRONMENTAL_LIMITATION": 2,
+    "FAILED": 0,
+    "unexplained_failed": 0,
+    "target_met": "0 unexplained FAILED",
+    "environmental_limitations": ["mutation authoritative full campaign (>30min local; CI-designated)", "security-codeql (GitHub-native)", "live CI emission (no runner)", "forensic-lab (live PR context)"]
+  },
+  "production_integrity": {
+    "production_changes": "NONE",
+    "backend_src_verified_clean": 0,
+    "defect_ledger_open_unchanged": ["C43-E1 (common_calculations.compute_is_large)", "C42 Class-E candidates (TXN-E1, FIN-E1..E5)"],
+    "human_authorization_required": true
+  },
+  "evidence_traceability": {
+    "recall_all_derivable_from_executable_artifacts": true,
+    "artifacts": [
+      "runtime/generated/m9-c45/evidence/backlog.json",
+      "runtime/generated/m9-c45/evidence/mutation-reconciliation.json",
+      "runtime/generated/m9-c45/evidence/coverage-gap-reconciliation.json",
+      "runtime/generated/m9-c45/evidence/workflow-convergence.json",
+      "runtime/generated/m9-c45/evidence/fi-strengthening-proposals.json",
+      "backend/tests/generated/mutation/mutation-survivor-intel.json",
+      "backend/tests/generated/mutation/mutation-summary.json (latest target)",
+      "backend/tests/unit/engines/financial_intelligence/test_mutation_golden.py",
+      "backend/tests/unit/test_mutation_golden_calculations.py",
+      "runtime/tests/test_survivor_intel.py",
+      "runtime/tests/test_strengthen_cli.py",
+      "runtime/foundation/verification/survivor_intel.py",
+      "runtime/foundation/verification/survivor_catalog.py (lifecycle fix)",
+      "runtime/foundation/verification/mutation_runner.py (durable intel persistence)"
+    ]
+  }
+}

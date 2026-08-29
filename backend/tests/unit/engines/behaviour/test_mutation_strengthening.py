@@ -69,7 +69,6 @@ class TestCoefficientOfVariationMutants:
 
     def test_two_different_values(self) -> None:
         # [0, 2] → mean=1, std=1, cv=1.0
-        import math
         result = _coefficient_of_variation([0.0, 2.0])
         assert result == pytest.approx(1.0, rel=1e-5)
 

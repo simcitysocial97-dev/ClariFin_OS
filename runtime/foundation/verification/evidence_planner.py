@@ -27,50 +27,34 @@ from __future__ import annotations
 import hashlib
 import json
 import sys
-from dataclasses import dataclass, field
+from collections.abc import Iterable
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Iterable, Literal
+from typing import Any, Literal
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+import importlib.util
+
 from runtime.foundation.verification.evidence_reuse import (  # noqa: E402
-    C42_24_B_POPULATION_ID,
-    C42_25_FIN_POPULATION_ID,
-    C42_25_TXN_POPULATION_ID,
-    C42_26_POPULATION_ID,
-    C42_26_COMPONENTS,
     Change,
     ComponentMeasurement,
     DerivedAggregate,
     EvidenceReuse,
-    InvalidationRule,
-    InvalidationScope,
-    InvalidationVerdict,
     PopulationSnapshot,
     ReuseDisposition,
-    aggregate_invalidation,
     c42_24_b_measurements,
     c42_25_measurements,
     c42_26_population,
     decide_reuse,
-    evaluate_rule,
-    INVALIDATION_RULES,
 )
 from runtime.foundation.verification.graph_model import (  # noqa: E402
-    CapabilityNode,
-    EvidenceNode,
-    SourceNode,
     VerificationGraph,
     capability_id,
-    evidence_id,
-    fingerprint_components,
-    source_id,
 )
-import importlib.util
-from pathlib import Path as _Path
 
 _graph_module_path = (
     REPO_ROOT / "runtime" / "generated" / "m9-c42.27" / "m27_2_graph_inventory.py"

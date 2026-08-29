@@ -32,17 +32,15 @@ OUT_DIR = REPO_ROOT / "runtime" / "generated" / "m9-c42.31"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 from runtime.foundation.verification.strengthening import (  # noqa: E402
-    CampaignGateDecision,
     FullCampaignJustification,
     RejectionRecord,
-    SurvivorEvidence,
     StrengtheningProposal,
+    SurvivorEvidence,
     classify_survivor,
-    generate_proposal,
     gate_full_campaign,
+    generate_proposal,
     targeted_revalidation,
 )
-
 
 # ---------------------------------------------------------------------------
 # Deterministic stub executor with per-mutant status map

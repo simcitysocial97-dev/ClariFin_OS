@@ -20,7 +20,6 @@ import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable
 
 # ── Coarse type vocabulary (used for aggregation + reporting) ────────────────
 CATEGORY_STRING = "string_literal"      # quoted literal change (incl. dict keys)
@@ -239,22 +238,59 @@ def _source_file_from_key(meta_dir: Path, mutant_key: str) -> str:
     return rel
 
 
+def source_path_from_meta(meta_file: Path, meta_dir: Path) -> str | None:
+    """Derive the source-relative path of a mutant's file from its .meta
+    location.
+
+    The .meta files live at ``mutants/<source_rel>.meta``, so the source-relative
+    path is the meta path minus the ``.meta`` suffix. This is the stable,
+    lifecycle-proof source of truth for the mutated file — it is independent of
+    whichever engine's [tool.mutmut] scope happens to be resting in
+    backend/pyproject.toml at post-run evidence-gathering time.
+    """
+    try:
+        return str(meta_file.relative_to(meta_dir).with_suffix(""))
+    except ValueError:
+        return None
+
+
 def build_survivor_catalog(meta_dir: Path, backend_dir: Path) -> SurvivorCatalog:
     """Build a categorized catalog of all *surviving* mutants.
 
     Requires `backend_dir` to be the cwd-equivalent for mutmut's
     `get_diff_for_mutant` (it reads `mutants/<path>` relative to cwd).
     """
+    from mutmut.__main__ import get_diff_for_mutant
+
     from runtime.foundation.verification.mutation_contract import (
         _MUTMUT_EXIT_CODE_TO_STATUS,
     )
-    from mutmut.__main__ import get_diff_for_mutant
 
     catalog = SurvivorCatalog()
     if not meta_dir.is_dir():
         return catalog
 
     for meta_file in meta_dir.rglob("*.meta"):
+        # M9-C45.2 lifecycle fix: reconstruct each diff via the explicit
+        # source-relative path (mutants/<path>), NOT via the config-walking
+        # find_mutant(). The mutation runner restores backend/pyproject.toml
+        # to its resting [tool.mutmut] scope before post-run evidence is
+        # gathered, so config-walking silently fails for any target whose
+        # scope differs from the resting scope (diffs came back empty and
+        # every survivor was miscategorized as "other"). The .meta layout
+        # (mutants/<source_rel>.meta) is the stable, lifecycle-proof
+        # source of truth for the mutated file path.
+        source_rel = source_path_from_meta(meta_file, meta_dir)
+        # M9-C45.7 measurement hygiene: exclude copied test-fixture/probe
+        # `.meta` files (e.g. src/tests/mutation_infra/mutants/probe.py.meta)
+        # from the survivor catalog. When an engine's source tree is copied
+        # (mutmut also_copy=["src"]) and a smoke-probe fixture lives under
+        # src/tests/, its stale .meta would otherwise be counted as a survivor
+        # of the target engine, polluting the measurement.
+        if source_rel and (
+            source_rel.startswith("tests/") or "mutation_infra" in source_rel
+        ):
+            continue
         try:
             meta = json.loads(meta_file.read_text())
         except (OSError, json.JSONDecodeError):
@@ -265,12 +301,16 @@ def build_survivor_catalog(meta_dir: Path, backend_dir: Path) -> SurvivorCatalog
             if status != "survived":
                 continue
             try:
-                diff = get_diff_for_mutant(key)
+                diff = (
+                    get_diff_for_mutant(key, path=source_rel)
+                    if source_rel is not None
+                    else get_diff_for_mutant(key)
+                )
             except Exception:
                 diff = ""
             category, old, new = _classify_diff(diff)
             func = key.rsplit("__mutmut_", 1)[0].rsplit(".", 1)[-1]
-            src = _source_file_from_key(meta_dir, key)
+            src = source_rel or _source_file_from_key(meta_dir, key)
             entry = SurvivorEntry(
                 key=key,
                 function=func,

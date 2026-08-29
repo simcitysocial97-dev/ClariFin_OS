@@ -12,13 +12,8 @@ value strings) and feed PARTIAL profiles so missing-key defaults are exercised.
 
 from __future__ import annotations
 
-import copy
-
-import pytest
-
 from src.engines.behaviour_engine.insights import (
     generate_behavioral_insights,
-    generate_summary_text,
 )
 from src.engines.behaviour_engine.nudges import generate_nudges
 

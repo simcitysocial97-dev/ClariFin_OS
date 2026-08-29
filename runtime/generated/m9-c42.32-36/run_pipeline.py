@@ -1,14 +1,15 @@
 """Run the full real-master-scenario forensic pipeline for C42.32-36 Phase 7."""
+import json
+
 from runtime.foundation.verification.evidence_planner import default_planner
 from runtime.foundation.verification.executor_pipeline import (
     build_executable_plan,
-    reconcile,
+    build_forensic_record,
     default_population,
     default_prior_measurements,
     execute_mutation_task,
-    build_forensic_record,
+    reconcile,
 )
-import json
 
 CHANGED = ("backend/src/engines/credit_card_engine/risk.py",)
 

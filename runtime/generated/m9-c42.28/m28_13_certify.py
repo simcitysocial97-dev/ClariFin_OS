@@ -17,7 +17,6 @@ The certification is the single artifact that M9-C42.30 (Diagnostic
 from __future__ import annotations
 
 import json
-import os
 import subprocess
 import sys
 from datetime import UTC, datetime

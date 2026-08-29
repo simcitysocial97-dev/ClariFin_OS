@@ -1,0 +1,86 @@
+{
+  "schema": "m9-c45-final-certification/v1",
+  "generated_at": "2026-08-29T19:45:00Z",
+  "repository_sha": "219cf55738d51e7d49b3d3ef7b49af73973436a5",
+  "branch": "m9c9-merge-authorization-resolution",
+  "primary_verdict": "FINAL QUALITY CERTIFICATION — NOT YET ACHIEVED (repository-wide mutation threshold below 80%; evidence-bound; authoritative full measurement is CI-designated)",
+  "certification_dimensions": [
+    {
+      "dimension": "C42.38 verification architecture",
+      "status": "CERTIFIED",
+      "evidence": "C42.38 FINAL_VERIFICATION_SYSTEM_CERTIFIED preserved; M45 added only additive extensions (durable survivor intel via survivor_intel.py, mutation-intel command, lifecycle-robust survivor_catalog diff reconstruction, strengthen-discover intel-first). No parallel verification system; no C42.27–38 reopen."
+    },
+    {
+      "dimension": "Statement coverage >= 80%",
+      "status": "PASS",
+      "value": "80.58% combined (statement 80.58%)",
+      "evidence": "C44 authoritative measurement preserved by construction (no production change; only added covered tests)."
+    },
+    {
+      "dimension": "Meaningful branch coverage",
+      "status": "RECONCILED",
+      "value": "75.91% branch; in-scope branch gaps small; out-of-scope API/DB layers classified defensive/plumbing/generated non-blockers",
+      "evidence": "runtime/generated/m9-c45/evidence/coverage-gap-reconciliation.json"
+    },
+    {
+      "dimension": "Repository-wide mutation >= 80%",
+      "status": "NOT ACHIEVED",
+      "value": "derived ~78.3% (non-authoritative); authoritative measurement pending CI (M45.9 command `python runtime/verify.py mutation`)",
+      "evidence": "runtime/generated/m9-c45/evidence/final-reconciliation.json; mutation-baseline recompute (C43 baseline + behaviour_engine 83.5% + FI 73.9% uplift)"
+    },
+    {
+      "dimension": "behaviour_engine (dominant component)",
+      "status": "ACHIEVED (83.5%)",
+      "evidence": "authoritative C43.7 measurement; excluded from M45 engineering effort per anti-drift."
+    },
+    {
+      "dimension": "Automatic test-strengthening",
+      "status": "OPERATIONAL",
+      "evidence": "discover->propose->validate demonstrated on financial_intelligence (multi-component) and behaviour_engine (prior); human-authorization boundary intact; no full campaign triggered by test additions."
+    },
+    {
+      "dimension": "Workflow state",
+      "status": "GREEN / EXPLICIT LIMITATION",
+      "value": "9 GREEN / 3 GREEN-BY-DESIGN / 2 ENVIRONMENTAL_LIMITATION / 0 FAILED",
+      "evidence": "runtime/generated/m9-c45/evidence/workflow-convergence.json"
+    },
+    {
+      "dimension": "Production integrity",
+      "status": "PRESERVED",
+      "evidence": "0 production source changes; backend/src verified clean; defect ledger (C43-E1, TXN-E1, FIN-E1..E5) unchanged and awaiting human authorization."
+    },
+    {
+      "dimension": "Evidence reproducibility",
+      "status": "PASS",
+      "evidence": "all conclusions traceable to runtime/generated/m9-c45 artifacts + backend/tests/generated/mutation durable intel/summary."
+    }
+  ],
+  "repository_wide_acceptance": "NOT ACHIEVED at 80% mutation gate (evidence-bound); all other dimensions PASS/RECONCILED/OPERATIONAL/PRESERVED.",
+  "final_decision": "FINAL QUALITY CERTIFICATION — NOT YET ACHIEVED",
+  "remaining_evidence_backed_backlog": {
+    "repository_wide_mutation_gate": {
+      "gap": "~1.7pp (~293 kills) below 80% (derived, non-authoritative)",
+      "authoritative_measurement": "required: `python runtime/verify.py mutation` in CI (mutation.yml authoritative job) — the final-certification measurement checkpoint",
+      "honest_ceiling_assessment": "The remaining non-behaviour survivors are concentrated in observable-equivalent/internal/defensive mutations (explicitly forbidden to chase) and documented Class-E production defects (C43-E1, TXN-E1, FIN-E1..E5) requiring human authorization before any production fix (which would be the only honest way to unlock defect-blocked kills). Genuine killable Class-A gaps yield modest honest gains only (FI +38)."
+    },
+    "human_authorization_required": [
+      "C43-E1: common_calculations.compute_is_large threshold defect (avg*250000) — fix would collapse ~21 CC survivors an honestly unlock is_large behavior",
+      "C42 Class-E candidates: TXN-E1 (cash_conversion fee), FIN-E1 (FOIR impossible condition), FIN-E2 (dead deadline_score), FIN-E3 (decimal.InvalidOperation), FIN-E4 (falsy-coalescing health score), FIN-E5 (total_allocated_paise)"
+    ],
+    "next_actions_to_close_gate_honestly": [
+      "1. Human-authorize + fix C43-E1 and any confirmed Class-E production defects (the ONLY honest path to recover defect-blocked survivors).",
+      "2. Run the authoritative full campaign in CI (mutation.yml authoritative job) to obtain the true repository score.",
+      "3. If the authoritative score is >=80%, re-certify; if below, the evidence-bound limit is confirmed and defect resolution (not test fabrication) is the remaining honest lever."
+    ],
+    "already_completed_this_session": [
+      "Durable mutation survival intelligence operational (survivor_intel.py, mutation-intel, lifecycle-robust catalog)",
+      "financial_intelligence strengthened +38 honest kills (73.9%)",
+      "common_calculations measured (64.1%); honest ceiling established (observable-equivalent/defect-blocked)",
+      "Automatic strengthening demonstrated multi-component",
+      "Workflow convergence 0 unexplained FAILED",
+      "Coverage >=80% protected; branch coverage reconciled",
+      "Pre-existing mutation-infra hermetic test bug fixed; common_calculations catalog probe-contamination fixed"
+    ]
+  },
+  "do_not_fabricate": "No rounded/projected/extrapolated repository mutation score is reported as authoritative. The derived ~78.3% is explicitly non-authoritative until the CI full campaign completes."
+}

@@ -16,7 +16,6 @@ operator swaps in score formulas).
 from __future__ import annotations
 
 import pytest
-
 from src.engines.behaviour_engine import stress
 
 # Exact key sets observed from source
@@ -30,7 +29,7 @@ SAV_KEYS = {"score", "savings_rate", "momentum", "consistency", "positive_saving
 class TestLossAversionStructure:
     def test_empty(self) -> None:
         r = stress.loss_aversion_index([])
-        assert LOSS_KEYS >= set(r.keys())
+        assert set(r.keys()) <= LOSS_KEYS
         assert r["score"] == 0.5
         assert r["post_income_velocity"] == 0.0
         assert r["recovery_time_days"] == 0
@@ -39,7 +38,7 @@ class TestLossAversionStructure:
         r = stress.loss_aversion_index(
             [{"type": "credit", "amount_paise": 100, "date_iso": "2025-01-01"}]
         )
-        assert LOSS_KEYS >= set(r.keys())
+        assert set(r.keys()) <= LOSS_KEYS
         assert r["score"] == 0.5
 
     def test_exact_velocity(self) -> None:
@@ -49,7 +48,7 @@ class TestLossAversionStructure:
             {"type": "debit", "amount_paise": 50000, "date_iso": "2025-01-02"},
         ]
         r = stress.loss_aversion_index(txns)
-        assert LOSS_KEYS >= set(r.keys())
+        assert set(r.keys()) <= LOSS_KEYS
         assert r["post_income_velocity"] == pytest.approx(0.5, abs=1e-6)
         assert r["score"] == pytest.approx(0.2, abs=1e-4)
         assert r["recovery_time_days"] == 0
@@ -63,7 +62,7 @@ class TestLossAversionStructure:
             {"type": "debit", "amount_paise": 2000000, "date_iso": "2025-01-03"},
         ]
         r = stress.loss_aversion_index(txns)
-        assert LOSS_KEYS >= set(r.keys())
+        assert set(r.keys()) <= LOSS_KEYS
         assert r["post_income_velocity"] == pytest.approx(10.5, abs=1e-6)
         assert r["score"] == pytest.approx(1.0, abs=1e-4)
         assert r["recovery_time_days"] == 30
@@ -75,14 +74,14 @@ class TestLossAversionStructure:
             {"type": "debit", "amount_paise": 50000, "date_iso": "2025-01-01"},
         ]
         r = stress.loss_aversion_index(txns)
-        assert LOSS_KEYS >= set(r.keys())
+        assert set(r.keys()) <= LOSS_KEYS
         assert isinstance(r["score"], float)
 
 
 class TestImpulsivityStructure:
     def test_empty(self) -> None:
         r = stress.impulsivity_score([])
-        assert IMP_KEYS >= set(r.keys())
+        assert set(r.keys()) <= IMP_KEYS
         assert r["score"] == 0.5
         assert r["micro_txn_ratio"] == 0.0
         assert r["late_night_ratio"] == 0.0
@@ -94,7 +93,7 @@ class TestImpulsivityStructure:
             {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-05", "category": "Food & Dining"},
         ]
         r = stress.impulsivity_score(txns)
-        assert IMP_KEYS >= set(r.keys())
+        assert set(r.keys()) <= IMP_KEYS
         assert r["micro_txn_ratio"] == pytest.approx(1.0, abs=1e-6)
         assert r["weekend_ratio"] == pytest.approx(1.0, abs=1e-6)
         assert r["discretionary_ratio"] == pytest.approx(1.0, abs=1e-6)
@@ -108,7 +107,7 @@ class TestImpulsivityStructure:
             {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-07", "category": "Food & Dining"},
         ]
         r = stress.impulsivity_score(txns)
-        assert IMP_KEYS >= set(r.keys())
+        assert set(r.keys()) <= IMP_KEYS
         assert r["discretionary_ratio"] == pytest.approx(1.0, abs=1e-6)
         assert r["score"] == pytest.approx(0.7667, abs=1e-3)
         assert r["micro_txn_count"] == 2
@@ -116,14 +115,14 @@ class TestImpulsivityStructure:
     def test_missing_keys(self) -> None:
         txns = [{"type": "debit", "amount_paise": 30000}]
         r = stress.impulsivity_score(txns)
-        assert IMP_KEYS >= set(r.keys())
+        assert set(r.keys()) <= IMP_KEYS
         assert isinstance(r["score"], float)
 
 
 class TestHabitStabilityStressStructure:
     def test_empty(self) -> None:
         r = stress.habit_stability_score([])
-        assert HABIT_KEYS >= set(r.keys())
+        assert set(r.keys()) <= HABIT_KEYS
         assert r["score"] == 0.5
         assert r["category_cv"] == 0.0
         assert r["recurring_predictability"] == 0.0
@@ -135,7 +134,7 @@ class TestHabitStabilityStressStructure:
             {"type": "debit", "amount_paise": 500000, "date_iso": "2025-03-01", "description": "NETFLIX", "category": "X"},
         ]
         r = stress.habit_stability_score(txns)
-        assert HABIT_KEYS >= set(r.keys())
+        assert set(r.keys()) <= HABIT_KEYS
         assert r["category_cv"] == pytest.approx(0.0, abs=1e-6)
         assert r["recurring_count"] == 1
         assert r["rhythm_score"] == pytest.approx(1.0, abs=1e-6)
@@ -147,14 +146,14 @@ class TestHabitStabilityStressStructure:
             {"type": "debit", "amount_paise": 500000, "date_iso": "2025-02-01", "description": "X"},
         ]
         r = stress.habit_stability_score(txns)
-        assert HABIT_KEYS >= set(r.keys())
+        assert set(r.keys()) <= HABIT_KEYS
         assert isinstance(r["score"], float)
 
 
 class TestFinancialStressStructure:
     def test_empty(self) -> None:
         r = stress.financial_stress_index([])
-        assert FSTRESS_KEYS >= set(r.keys())
+        assert set(r.keys()) <= FSTRESS_KEYS
         assert r["score"] == 0.5
         assert r["balance_volatility"] == 0.0
         assert r["credit_dependency"] == 0.0
@@ -165,7 +164,7 @@ class TestFinancialStressStructure:
             {"type": "debit", "amount_paise": 50000, "date_iso": "2025-01-01"},
         ]
         r = stress.financial_stress_index(txns)
-        assert FSTRESS_KEYS >= set(r.keys())
+        assert set(r.keys()) <= FSTRESS_KEYS
         assert r["balance_volatility"] == pytest.approx(0.0, abs=1e-6)
         assert r["credit_dependency"] == pytest.approx(2.0, abs=1e-6)
         assert r["buffer_days"] == pytest.approx(1.0, abs=1e-6)
@@ -174,14 +173,14 @@ class TestFinancialStressStructure:
     def test_missing_keys(self) -> None:
         txns = [{"type": "debit", "amount_paise": 50000}]
         r = stress.financial_stress_index(txns)
-        assert FSTRESS_KEYS >= set(r.keys())
+        assert set(r.keys()) <= FSTRESS_KEYS
         assert isinstance(r["score"], float)
 
 
 class TestSavingsDisciplineStressStructure:
     def test_empty(self) -> None:
         r = stress.savings_discipline_score([])
-        assert SAV_KEYS >= set(r.keys())
+        assert set(r.keys()) <= SAV_KEYS
         assert r["score"] == 0.5
         assert r["savings_rate"] == 0.0
         assert r["momentum"] == 0.0
@@ -192,7 +191,7 @@ class TestSavingsDisciplineStressStructure:
             {"type": "debit", "amount_paise": 80000, "date_iso": "2025-01-15"},
         ]
         r = stress.savings_discipline_score(txns)
-        assert SAV_KEYS >= set(r.keys())
+        assert set(r.keys()) <= SAV_KEYS
         assert r["savings_rate"] == pytest.approx(0.2, abs=1e-6)
         assert r["momentum"] == 0
         assert r["consistency"] == 1.0
@@ -202,5 +201,5 @@ class TestSavingsDisciplineStressStructure:
     def test_missing_keys(self) -> None:
         txns = [{"type": "credit", "amount_paise": 100000}]
         r = stress.savings_discipline_score(txns)
-        assert SAV_KEYS >= set(r.keys())
+        assert set(r.keys()) <= SAV_KEYS
         assert isinstance(r["score"], float)

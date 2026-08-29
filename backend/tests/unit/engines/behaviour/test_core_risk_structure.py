@@ -13,9 +13,9 @@ Kills: dict KEY renames, STRING literal changes, DEFAULT value mutations
 
 from __future__ import annotations
 
-import pytest
 from decimal import Decimal
 
+import pytest
 from src.engines.behaviour_engine import core, profile, stress
 
 EXPECTED_INDIA_KEYS = {
@@ -35,7 +35,7 @@ EXPECTED_LOSS_KEYS = {"post_income_velocity", "recovery_time_days", "score", "la
 class TestDetectIndiaRiskStructure:
     def test_empty_returns_exact_keys(self) -> None:
         result = core.detect_india_risk_patterns([])
-        assert EXPECTED_INDIA_KEYS >= set(result.keys())
+        assert set(result.keys()) <= EXPECTED_INDIA_KEYS
         assert result["upi_micro_spend_flag"] is False
         assert result["gambling_flag"] is False
         assert result["loan_app_pattern_flag"] is False
@@ -48,7 +48,7 @@ class TestDetectIndiaRiskStructure:
             for i in range(11)
         ]
         result = core.detect_india_risk_patterns(txns)
-        assert EXPECTED_INDIA_KEYS >= set(result.keys())
+        assert set(result.keys()) <= EXPECTED_INDIA_KEYS
         assert result["upi_micro_spend_flag"] is True
         # Only 10 -> False
         txns10 = txns[:10]
@@ -59,7 +59,7 @@ class TestDetectIndiaRiskStructure:
             {"type": "debit", "amount_paise": 50000, "date_iso": "2025-01-01", "description": "dream11 entry"},
         ]
         result = core.detect_india_risk_patterns(txns)
-        assert EXPECTED_INDIA_KEYS >= set(result.keys())
+        assert set(result.keys()) <= EXPECTED_INDIA_KEYS
         assert result["gambling_flag"] is True
         # Keyword "rummy"
         txns2 = [
@@ -74,7 +74,7 @@ class TestDetectIndiaRiskStructure:
             {"type": "credit", "amount_paise": 300000, "date_iso": "2025-01-03", "description": "instant cash"},
         ]
         result = core.detect_india_risk_patterns(txns)
-        assert EXPECTED_INDIA_KEYS >= set(result.keys())
+        assert set(result.keys()) <= EXPECTED_INDIA_KEYS
         assert result["loan_app_pattern_flag"] is True
         # Single loan credit -> False
         txns1 = [txns[0]]
@@ -87,7 +87,7 @@ class TestDetectIndiaRiskStructure:
             {"type": "credit", "amount_paise": 1000000, "date_iso": "2025-01-05", "description": "salary"},
         ]
         result = core.detect_india_risk_patterns(txns)
-        assert EXPECTED_INDIA_KEYS >= set(result.keys())
+        assert set(result.keys()) <= EXPECTED_INDIA_KEYS
         assert result["emi_ratio"] == pytest.approx(0.5, abs=1e-4)
 
     def test_missing_keys_defaults(self) -> None:
@@ -98,7 +98,7 @@ class TestDetectIndiaRiskStructure:
             {"type": "debit", "amount_paise": 50000, "description": "loan"},
         ]
         result = core.detect_india_risk_patterns(txns)
-        assert EXPECTED_INDIA_KEYS >= set(result.keys())
+        assert set(result.keys()) <= EXPECTED_INDIA_KEYS
         assert isinstance(result["upi_micro_spend_flag"], bool)
         assert isinstance(result["gambling_flag"], bool)
         assert isinstance(result["loan_app_pattern_flag"], bool)
@@ -108,7 +108,7 @@ class TestDetectIndiaRiskStructure:
 class TestHabitStabilityStructure:
     def test_empty(self) -> None:
         r = core._compute_habit_stability_score([])
-        assert EXPECTED_HABIT_KEYS >= set(r.keys())
+        assert set(r.keys()) <= EXPECTED_HABIT_KEYS
         assert r["score"] == 0.5
         assert r["category_cv"] == 0.0
         assert r["recurring_predictability"] == 0.0
@@ -124,7 +124,7 @@ class TestHabitStabilityStructure:
             {"type": "debit", "amount_paise": 300000, "date_iso": "2025-03-02", "category": "X"},
         ]
         r = core._compute_habit_stability_score(txns)
-        assert EXPECTED_HABIT_KEYS >= set(r.keys())
+        assert set(r.keys()) <= EXPECTED_HABIT_KEYS
         assert r["category_cv"] >= 0.0
         assert 0.0 <= r["score"] <= 1.0
         # recurring_predictability present in empty case; recurring_count in non-empty
@@ -136,7 +136,7 @@ class TestHabitStabilityStructure:
 class TestLossAversionStructure:
     def test_empty(self) -> None:
         r = core._compute_loss_aversion_index([])
-        assert EXPECTED_LOSS_KEYS >= set(r.keys())
+        assert set(r.keys()) <= EXPECTED_LOSS_KEYS
         assert r["score"] == 0.5
         assert r["post_income_velocity"] == 0.0
         assert r["recovery_time_days"] == 0
@@ -148,7 +148,7 @@ class TestLossAversionStructure:
             {"type": "debit", "amount_paise": 50000, "date_iso": "2025-01-02"},
         ]
         r = core._compute_loss_aversion_index(txns)
-        assert EXPECTED_LOSS_KEYS >= set(r.keys())
+        assert set(r.keys()) <= EXPECTED_LOSS_KEYS
         assert r["post_income_velocity"] == pytest.approx(0.5, abs=1e-6)
         assert r["score"] == pytest.approx(0.2, abs=1e-4)
 
@@ -157,7 +157,7 @@ class TestStressDetectRiskStructure:
     def test_empty(self) -> None:
         r = stress.detect_risk_patterns([])
         assert isinstance(r, dict)
-        assert EXPECTED_INDIA_KEYS >= set(r.keys())
+        assert set(r.keys()) <= EXPECTED_INDIA_KEYS
         assert isinstance(r["upi_micro_spend_flag"], bool)
         assert isinstance(r["gambling_flag"], bool)
         assert isinstance(r["loan_app_pattern_flag"], bool)
@@ -172,7 +172,7 @@ class TestStressDetectRiskStructure:
         ]
         r = stress.detect_risk_patterns(txns)
         assert isinstance(r, dict)
-        assert EXPECTED_INDIA_KEYS >= set(r.keys())
+        assert set(r.keys()) <= EXPECTED_INDIA_KEYS
         assert "upi_micro_spend_flag" in r
         assert isinstance(r["upi_micro_spend_flag"], bool)
 

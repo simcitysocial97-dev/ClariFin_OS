@@ -307,15 +307,20 @@ def test_r2_evidence_collected_with_target_config_active(monkeypatch, tmp_path):
     # evidence under the TARGET scope, restoration to the seeded resting scope.
     target_scope = ["src/engines/credit_card_engine"]
     seeded_resting_scope = ["src/engines/balance_engine.py"]
-    if extract_source_paths(original_text) == target_scope:
-        seeded_text = re.sub(
-            r"(source_paths\s*=\s*\[).*?(\])",
-            lambda m: m.group(1) + '"src/engines/balance_engine.py"' + m.group(2),
-            original_text,
-            count=1,
-            flags=re.S,
+    # Hermetic seed: whichever scope currently rests in backend/pyproject.toml,
+    # ensure it is a scope DISTINCT from the target before the run. This holds
+    # regardless of which targeted run previously left its resting scope (e.g.
+    # behaviour_engine), so the R2 round-trip is always discriminating.
+    if extract_source_paths(original_text) != seeded_resting_scope:
+        backend_pyproject.write_text(
+            re.sub(
+                r"(source_paths\s*=\s*\[).*?(\])",
+                lambda m: m.group(1) + '"src/engines/balance_engine.py"' + m.group(2),
+                original_text,
+                count=1,
+                flags=re.S,
+            )
         )
-        backend_pyproject.write_text(seeded_text)
     resting_scope = extract_source_paths(backend_pyproject.read_text())
     assert resting_scope == seeded_resting_scope
 

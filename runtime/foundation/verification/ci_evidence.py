@@ -48,10 +48,11 @@ from __future__ import annotations
 import hashlib
 import json
 import sys
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime
 from pathlib import Path
-from typing import Any, Iterable, Literal
+from typing import Any, Literal
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -59,18 +60,16 @@ if str(REPO_ROOT) not in sys.path:
 
 from runtime.foundation.verification.evidence_reuse import (  # noqa: E402
     C42_26_COMPONENTS,
+    INVALIDATION_RULES,
     Change,
     ComponentMeasurement,
-    PopulationSnapshot,
     ReuseDisposition,
-    evaluate_rule,
-    INVALIDATION_RULES,
     aggregate_invalidation,
+    evaluate_rule,
 )
 from runtime.foundation.verification.executor_pipeline import (  # noqa: E402
     ExecutionEvidence,
     FailureKind,
-    TaskFingerprints,
 )
 
 CI_EVIDENCE_SCHEMA = "m9-ci-evidence/v1"
@@ -615,7 +614,6 @@ def bind_into_graph(graph, bindings: Iterable[CIBinding]):
     """
     from runtime.foundation.verification.graph_model import (
         VerificationTaskNode,
-        task_id as _task_id,
     )
 
     added: set[str] = set()

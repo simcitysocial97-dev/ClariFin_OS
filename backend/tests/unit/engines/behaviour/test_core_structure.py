@@ -15,7 +15,6 @@ COMPUTED constant mutations.
 from __future__ import annotations
 
 import pytest
-
 from src.engines.behaviour_engine import core
 
 FSTRESS_KEYS = {"score", "balance_volatility", "credit_dependency", "eom_depletion_ratio", "buffer_days"}
@@ -34,7 +33,7 @@ TEMPORAL_KEYS = {
 class TestCoreFinancialStressStructure:
     def test_empty(self) -> None:
         r = core._compute_financial_stress_index([])
-        assert FSTRESS_KEYS >= set(r.keys())
+        assert set(r.keys()) <= FSTRESS_KEYS
         assert r["score"] == 0.5
         assert r["balance_volatility"] == 0.0
         assert r["credit_dependency"] == 0.0
@@ -45,7 +44,7 @@ class TestCoreFinancialStressStructure:
             {"type": "debit", "amount_paise": 50000, "date_iso": "2025-01-01"},
         ]
         r = core._compute_financial_stress_index(txns)
-        assert FSTRESS_KEYS >= set(r.keys())
+        assert set(r.keys()) <= FSTRESS_KEYS
         assert r["balance_volatility"] == pytest.approx(0.0, abs=1e-6)
         assert r["credit_dependency"] == pytest.approx(2.0, abs=1e-6)
         assert r["buffer_days"] == pytest.approx(1.0, abs=1e-6)
@@ -54,14 +53,14 @@ class TestCoreFinancialStressStructure:
     def test_missing_keys(self) -> None:
         txns = [{"type": "debit", "amount_paise": 50000}]
         r = core._compute_financial_stress_index(txns)
-        assert FSTRESS_KEYS >= set(r.keys())
+        assert set(r.keys()) <= FSTRESS_KEYS
         assert isinstance(r["score"], float)
 
 
 class TestCoreSavingsDisciplineStructure:
     def test_empty(self) -> None:
         r = core._compute_savings_discipline_score([])
-        assert SAV_KEYS >= set(r.keys())
+        assert set(r.keys()) <= SAV_KEYS
         assert r["score"] == 0.5
         assert r["savings_rate"] == 0.0
         assert r["momentum"] == 0.0
@@ -72,7 +71,7 @@ class TestCoreSavingsDisciplineStructure:
             {"type": "debit", "amount_paise": 80000, "date_iso": "2025-01-15"},
         ]
         r = core._compute_savings_discipline_score(txns)
-        assert SAV_KEYS >= set(r.keys())
+        assert set(r.keys()) <= SAV_KEYS
         assert r["savings_rate"] == pytest.approx(0.2, abs=1e-6)
         assert r["momentum"] == 0
         assert r["consistency"] == 1.0
@@ -82,14 +81,14 @@ class TestCoreSavingsDisciplineStructure:
     def test_missing_keys(self) -> None:
         txns = [{"type": "credit", "amount_paise": 100000}]
         r = core._compute_savings_discipline_score(txns)
-        assert SAV_KEYS >= set(r.keys())
+        assert set(r.keys()) <= SAV_KEYS
         assert isinstance(r["score"], float)
 
 
 class TestCoreImpulsivityStructure:
     def test_empty(self) -> None:
         r = core._compute_impulsivity_score([])
-        assert IMP_KEYS >= set(r.keys())
+        assert set(r.keys()) <= IMP_KEYS
         assert r["score"] == 0.5
         assert r["micro_txn_ratio"] == 0.0
         assert r["late_night_ratio"] == 0.0
@@ -101,7 +100,7 @@ class TestCoreImpulsivityStructure:
             {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-05", "category": "Food & Dining"},
         ]
         r = core._compute_impulsivity_score(txns)
-        assert IMP_KEYS >= set(r.keys())
+        assert set(r.keys()) <= IMP_KEYS
         assert r["micro_txn_ratio"] == pytest.approx(1.0, abs=1e-6)
         assert r["weekend_ratio"] == pytest.approx(1.0, abs=1e-6)
         assert r["discretionary_ratio"] == pytest.approx(1.0, abs=1e-6)
@@ -111,14 +110,14 @@ class TestCoreImpulsivityStructure:
     def test_missing_keys(self) -> None:
         txns = [{"type": "debit", "amount_paise": 30000}]
         r = core._compute_impulsivity_score(txns)
-        assert IMP_KEYS >= set(r.keys())
+        assert set(r.keys()) <= IMP_KEYS
         assert isinstance(r["score"], float)
 
 
 class TestCoreTemporalPatternsStructure:
     def test_empty(self) -> None:
         r = core._compute_temporal_patterns([])
-        assert TEMPORAL_KEYS >= set(r.keys())
+        assert set(r.keys()) <= TEMPORAL_KEYS
         for k in TEMPORAL_KEYS:
             if k in r:
                 assert isinstance(r[k], (int, float, dict))
@@ -130,7 +129,7 @@ class TestCoreTemporalPatternsStructure:
             {"type": "debit", "amount_paise": 70000, "date_iso": "2025-01-03"},
         ]
         r = core._compute_temporal_patterns(txns)
-        assert TEMPORAL_KEYS >= set(r.keys())
+        assert set(r.keys()) <= TEMPORAL_KEYS
         assert isinstance(r["daily_spending"], dict)
         assert isinstance(r["weekly_pattern"], dict)
         assert r["daily_spending"]["2025-01-01"] == 50000.0

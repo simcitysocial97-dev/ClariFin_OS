@@ -8,16 +8,16 @@ from the persisted mutation-summary.json rather than re-running mutation
 import json
 from pathlib import Path
 
+from runtime.foundation.verification.diagnostic_agent import DiagnosticForensicAgent
 from runtime.foundation.verification.evidence_planner import default_planner
 from runtime.foundation.verification.executor_pipeline import (
+    ExecutionEvidence,
     build_executable_plan,
-    reconcile,
+    build_forensic_record,
     default_population,
     default_prior_measurements,
-    build_forensic_record,
-    ExecutionEvidence,
+    reconcile,
 )
-from runtime.foundation.verification.diagnostic_agent import DiagnosticForensicAgent
 
 CHANGED = ("backend/src/engines/credit_card_engine/risk.py",)
 SUMMARY = Path("backend/tests/generated/mutation/mutation-summary.json")

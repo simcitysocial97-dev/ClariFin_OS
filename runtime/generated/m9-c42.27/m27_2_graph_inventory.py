@@ -25,9 +25,9 @@ import hashlib
 import json
 import os
 import sys
+from collections.abc import Iterable
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Iterable
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -36,8 +36,6 @@ if str(REPO_ROOT) not in sys.path:
 from runtime.foundation.verification.graph_model import (  # noqa: E402
     CapabilityLayer,
     CapabilityNode,
-    CertificationNode,
-    EvidenceNode,
     SourceKind,
     SourceNode,
     TestSurfaceKind,
@@ -45,13 +43,10 @@ from runtime.foundation.verification.graph_model import (  # noqa: E402
     VerificationGraph,
     VerificationTaskNode,
     capability_id,
-    evidence_id,
-    fingerprint_components,
     source_id,
     surface_id,
     task_id,
 )
-
 
 # ---------------------------------------------------------------------------
 # File classification — mirrors impact_rules.py but is the inventory's

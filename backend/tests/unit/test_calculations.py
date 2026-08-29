@@ -446,13 +446,13 @@ class TestMutationStrengthening_PercentageChange:
         """Small positive change should include + sign."""
         result = percentage_change(110, 100)
         assert result.startswith("+")
-        assert "+10.0%" == result
+        assert result == "+10.0%"
 
     def test_percentage_change_negative(self) -> None:
         """Negative change should include - sign."""
         result = percentage_change(90, 100)
         assert result.startswith("-")
-        assert "-10.0%" == result
+        assert result == "-10.0%"
 
     def test_percentage_change_exact_double(self) -> None:
         """Exact doubling -> +100.0%."""
@@ -465,7 +465,7 @@ class TestMutationStrengthening_PercentageChange:
     def test_percentage_change_fractional(self) -> None:
         """Fractional percentage should show 1 decimal place."""
         result = percentage_change(133, 100)
-        assert "+33.0%" == result
+        assert result == "+33.0%"
 
     def test_percentage_change_one_decimal(self) -> None:
         """Result should always have exactly 1 decimal place."""
@@ -475,7 +475,7 @@ class TestMutationStrengthening_PercentageChange:
     def test_percentage_change_zero_change(self) -> None:
         """Zero change -> +0.0%."""
         result = percentage_change(100, 100)
-        assert "+0.0%" == result
+        assert result == "+0.0%"
 
 
 class TestMutationStrengthening_ComputeIsLarge:

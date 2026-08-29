@@ -18,7 +18,7 @@ def _insert_transaction(conn, amount_paise=100000, txn_type="debit", account_id=
         import hashlib
         hash_input = f"TestBank|2025-01-01|{description}|{amount_paise}|{txn_type}"
         hash_signature = hashlib.sha256(hash_input.encode()).hexdigest().lower()
-    
+
     conn.execute(
         """
         INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature)

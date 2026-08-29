@@ -8,11 +8,9 @@ constant-replacement mutants would break.
 from __future__ import annotations
 
 import math
-from datetime import datetime
 from decimal import Decimal
 
 import pytest
-
 from src.engines.behaviour_engine import patterns, profile, stress, utils
 
 

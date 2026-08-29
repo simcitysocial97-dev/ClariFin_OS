@@ -11,36 +11,26 @@ Run with:
 
 from __future__ import annotations
 
-import json
-import os
 import sys
 import tempfile
 from pathlib import Path
-
-import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from runtime.foundation.verification.correlation import correlate  # noqa: E402
 from runtime.foundation.verification.evidence_planner import (  # noqa: E402
     EvidenceAwarePlanner,
     default_planner,
     describe_change,
 )
 from runtime.foundation.verification.evidence_reuse import (  # noqa: E402
-    C42_24_B_POPULATION_ID,
-    C42_25_FIN_POPULATION_ID,
-    C42_25_TXN_POPULATION_ID,
-    C42_26_POPULATION_ID,
     C42_26_COMPONENTS,
+    C42_26_POPULATION_ID,
+    INVALIDATION_RULES,
     Change,
     ComponentMeasurement,
-    DerivedAggregate,
-    EvidenceReuse,
-    INVALIDATION_RULES,
-    InvalidationRule,
-    InvalidationScope,
     InvalidationVerdict,
     PopulationSnapshot,
     aggregate_invalidation,
@@ -55,15 +45,12 @@ from runtime.foundation.verification.evidence_reuse import (  # noqa: E402
 from runtime.foundation.verification.graph_model import (  # noqa: E402
     CapabilityNode,
     SourceNode,
-    TestSurfaceKind,
     TestSurfaceNode,
     VerificationGraph,
     capability_id,
     source_id,
     surface_id,
-    task_id,
 )
-from runtime.foundation.verification.correlation import correlate  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # M27.4 — Invalidation rules
@@ -122,7 +109,7 @@ class TestPopulationSnapshot:
     def test_c42_26_population_has_14_components(self) -> None:
         pop = c42_26_population()
         assert len(pop.components) == 14
-        assert C42_26_COMPONENTS == pop.components
+        assert pop.components == C42_26_COMPONENTS
 
     def test_population_fingerprint_changes_with_config(self) -> None:
         pop1 = c42_26_population()

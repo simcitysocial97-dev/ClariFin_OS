@@ -32,12 +32,12 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 import sys
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Iterable, Literal
+from typing import Literal
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -721,7 +721,7 @@ def c42_26_population() -> PopulationSnapshot:
         population_id=C42_26_POPULATION_ID,
         created_at="2026-08-26T07:50:00+00:00",
         components=C42_26_COMPONENTS,
-        component_fingerprints={c: "" for c in C42_26_COMPONENTS},
+        component_fingerprints=dict.fromkeys(C42_26_COMPONENTS, ""),
         config_hash="c42-26-config-v1",
         toolchain_hash="mutmut-3.7.0|pytest-8.x",
         repository_sha="523637b8",

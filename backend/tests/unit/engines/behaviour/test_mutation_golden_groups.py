@@ -10,15 +10,19 @@ from __future__ import annotations
 from decimal import Decimal
 
 from engines.behaviour_engine.credit_dependency import (
-    artificial_income_flag, transactor_vs_revolver, revolver_ratio,
-    liquidity_extraction_frequency, household_divergence,
-)
-from engines.behaviour_engine.wellness import (
-    compute_wellness_score, classify_wellness_band,
+    artificial_income_flag,
+    household_divergence,
+    liquidity_extraction_frequency,
+    revolver_ratio,
+    transactor_vs_revolver,
 )
 from engines.behaviour_engine.profile import (
-    classify_financial_personality, _is_debt_dependent, _is_saver,
-    _is_debt_optimizer, _is_spender, _build_explanation,
+    _build_explanation,
+    classify_financial_personality,
+)
+from engines.behaviour_engine.wellness import (
+    classify_wellness_band,
+    compute_wellness_score,
 )
 
 

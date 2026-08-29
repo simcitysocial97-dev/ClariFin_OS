@@ -15,12 +15,9 @@ Run with:
 
 from __future__ import annotations
 
-import json
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-
-import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -30,12 +27,12 @@ from runtime.foundation.verification.strengthening import (  # noqa: E402
     CLASS_DESCRIPTIONS,
     FULL_CAMPAIGN_TRIGGERS,
     NOT_TRIGGERS,
-    FullCampaignJustification,
-    RejectionRecord,
     STRENGTHENING_PROPOSAL_SCHEMA,
     SURVIVOR_CLASSES,
-    SurvivorEvidence,
+    FullCampaignJustification,
+    RejectionRecord,
     StrengtheningProposal,
+    SurvivorEvidence,
     classify_survivor,
     evaluate_auto_approval_eligibility,
     gate_full_campaign,

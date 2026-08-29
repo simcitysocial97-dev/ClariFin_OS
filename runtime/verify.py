@@ -1318,8 +1318,9 @@ def main() -> int:
         return run_mutation_cli(sys.argv[2:])
 
     if command == "evidence-plan":
-        from runtime.foundation.verification.executor_pipeline import main as _plan_main
         import sys as _sys
+
+        from runtime.foundation.verification.executor_pipeline import main as _plan_main
 
         saved = _sys.argv
         _sys.argv = ["verify.py evidence-plan", *saved[2:]]
@@ -1329,8 +1330,9 @@ def main() -> int:
             _sys.argv = saved
 
     if command == "evidence-execute":
-        from runtime.foundation.verification.executor_pipeline import main as _exec_main
         import sys as _sys
+
+        from runtime.foundation.verification.executor_pipeline import main as _exec_main
 
         saved = _sys.argv
         _sys.argv = ["verify.py evidence-execute", *saved[2:], "--run-mutation"]
@@ -1344,10 +1346,11 @@ def main() -> int:
         # reconciliation phase does not require fresh runs to produce
         # a verified state — it consumes whatever evidence is on disk
         # plus the planner output.
+        import sys as _sys
+
         from runtime.foundation.verification.executor_pipeline import (
             main as _recon_main,
         )
-        import sys as _sys
 
         saved = _sys.argv
         _sys.argv = ["verify.py evidence-reconcile", *saved[2:]]
@@ -1358,8 +1361,9 @@ def main() -> int:
 
     if command == "evidence-certify":
         # Certify = execute + reconcile, the full M28.10 flow.
-        from runtime.foundation.verification.executor_pipeline import main as _cert_main
         import sys as _sys
+
+        from runtime.foundation.verification.executor_pipeline import main as _cert_main
 
         saved = _sys.argv
         _sys.argv = ["verify.py evidence-certify", *saved[2:], "--run-mutation"]
@@ -1374,6 +1378,11 @@ def main() -> int:
         )
 
         return run_mutation_inventory_cli(sys.argv[2:])
+
+    if command == "mutation-intel":
+        from runtime.foundation.verification.survivor_intel import run_intel_cli
+
+        return run_intel_cli(sys.argv[2:])
 
     if command == "forensic-diagnose":
         from runtime.foundation.verification.forensic_cli import (

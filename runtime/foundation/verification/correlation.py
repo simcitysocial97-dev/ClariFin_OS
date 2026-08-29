@@ -21,10 +21,9 @@ from __future__ import annotations
 
 import json
 import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -32,7 +31,6 @@ if str(REPO_ROOT) not in sys.path:
 
 from runtime.foundation.verification.evidence_planner import (  # noqa: E402
     EvidenceAwarePlan,
-    PlannedTask,
 )
 from runtime.foundation.verification.evidence_reuse import (  # noqa: E402
     DerivedAggregate,

@@ -17,11 +17,8 @@ Run with:
 from __future__ import annotations
 
 import hashlib
-import json
 import sys
 from pathlib import Path
-
-import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -29,17 +26,14 @@ if str(REPO_ROOT) not in sys.path:
 
 from runtime.foundation.verification.ci_evidence import (  # noqa: E402
     CI_EVIDENCE_SCHEMA,
-    CIEvidenceRecord,
-    CIDriftReport,
-    CIRepositoryContext,
-    CIReuseDecision,
     DRIFT_KINDS,
     EQUIVALENCE_DIMENSIONS,
+    CIEvidenceRecord,
+    CIRepositoryContext,
     FailureKind,
-    build_ci_bindings,
     bind_into_graph,
+    build_ci_bindings,
     ci_measurement,
-    ci_reuse_decision,
     classify_ci_failure,
     ingest_ci_evidence,
     load_ci_evidence,

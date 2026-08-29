@@ -6,8 +6,6 @@ BehaviourMapper (full dict, empty sub-dicts, list comprehensions).
 
 from __future__ import annotations
 
-import pytest
-
 from src.core.mappers.behaviour_mapper import BehaviourMapper
 
 

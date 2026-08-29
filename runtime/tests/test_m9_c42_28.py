@@ -23,22 +23,20 @@ import json
 import sys
 from pathlib import Path
 
-import pytest
-
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from runtime.foundation.verification.evidence_planner import (  # noqa: E402
+    PlannedTask,
+    default_planner,
+)
 from runtime.foundation.verification.executor_pipeline import (  # noqa: E402
     ADAPTERS,
-    ExecutionEvidence,
     ExecutableVerificationPlan,
-    ExecutableVerificationTask,
+    ExecutionEvidence,
     FailureKind,
-    ForensicExecutionRecord,
-    LabelledAggregate,
     ReconciledComponent,
-    ReconciledVerificationState,
     _compute_labelled_aggregate,
     _read_installed_mutmut_scope,
     _resolve_kind,
@@ -49,15 +47,6 @@ from runtime.foundation.verification.executor_pipeline import (  # noqa: E402
     default_prior_measurements,
     execute_mutation_task,
     reconcile,
-)
-from runtime.foundation.verification.evidence_planner import (  # noqa: E402
-    PlannedTask,
-    default_planner,
-)
-from runtime.foundation.verification.evidence_reuse import (  # noqa: E402
-    ComponentMeasurement,
-    PopulationSnapshot,
-    c42_26_population,
 )
 
 # ---------------------------------------------------------------------------
@@ -141,9 +130,6 @@ class TestAdapterLayer:
         # Override the resolver? No — we test the *behaviour* through
         # the contract: any task whose verification_kind has no
         # adapter is marked not_executable_yet.
-        from runtime.foundation.verification.executor_pipeline import (
-            ADAPTERS,
-        )
 
         # Synthesize a task with an unknown kind by bypassing the
         # resolver — build the executable plan with a manually
@@ -422,7 +408,7 @@ class TestScopeEnforcement:
             if line.strip() == "[tool.mutmut]":
                 in_block = True
                 new_lines.append(line)
-                new_lines.append(f'source_paths = ["src/engines/loan_engine.py"]')
+                new_lines.append('source_paths = ["src/engines/loan_engine.py"]')
                 continue
             if in_block and line.strip().startswith("["):
                 in_block = False

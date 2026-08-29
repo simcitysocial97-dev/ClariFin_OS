@@ -63,7 +63,8 @@ def g1_baseline_preserved() -> tuple[bool, str]:
 
 def g2_ci_evidence_contract_implemented() -> tuple[bool, str]:
     from runtime.foundation.verification.ci_evidence import (
-        CIEvidenceRecord, CI_EVIDENCE_SCHEMA,
+        CI_EVIDENCE_SCHEMA,
+        CIEvidenceRecord,
     )
     fields = set(CIEvidenceRecord(
         record_id="x", repository_sha="x", workflow="x", job="x", step="x",
@@ -120,11 +121,16 @@ def g4_ci_evidence_enters_graph() -> tuple[bool, str]:
 
 def g5_local_ci_evidence_equivalence() -> tuple[bool, str]:
     from runtime.foundation.verification.ci_evidence import (
-        EQUIVALENCE_DIMENSIONS, semantic_equivalence,
-        CIEvidenceRecord, ingest_ci_evidence, validate_and_decide,
+        EQUIVALENCE_DIMENSIONS,
+        CIEvidenceRecord,
         CIRepositoryContext,
+        ingest_ci_evidence,
+        semantic_equivalence,
+        validate_and_decide,
     )
-    from runtime.foundation.verification.executor_pipeline import collect_repo_fingerprints
+    from runtime.foundation.verification.executor_pipeline import (
+        collect_repo_fingerprints,
+    )
     fps = collect_repo_fingerprints("credit_card_engine")
     rec = CIEvidenceRecord(
         record_id="g5", repository_sha="x", workflow="x", job="x", step="x",
@@ -159,9 +165,13 @@ def g5_local_ci_evidence_equivalence() -> tuple[bool, str]:
 
 def g6_invalidation_deterministic() -> tuple[bool, str]:
     from runtime.foundation.verification.ci_evidence import (
-        validate_and_decide, CIEvidenceRecord, CIRepositoryContext,
+        CIEvidenceRecord,
+        CIRepositoryContext,
+        validate_and_decide,
     )
-    from runtime.foundation.verification.executor_pipeline import collect_repo_fingerprints
+    from runtime.foundation.verification.executor_pipeline import (
+        collect_repo_fingerprints,
+    )
     fps = collect_repo_fingerprints("credit_card_engine")
     rec = CIEvidenceRecord(
         record_id="g6", repository_sha="x", workflow="x", job="x", step="x",
@@ -198,10 +208,11 @@ def g7_planner_consumes_ci_evidence() -> tuple[bool, str]:
     # reuses field, which is built from the same invalidation rules
     # the CI evidence validation uses. Verify the rule surface is the
     # same: import the same INVALIDATION_RULES from evidence_reuse.
-    from runtime.foundation.verification.evidence_reuse import INVALIDATION_RULES
     from runtime.foundation.verification.ci_evidence import (
-        ci_reuse_decision, _change_for_drift, DetectedDrift,
+        DetectedDrift,
+        _change_for_drift,
     )
+    from runtime.foundation.verification.evidence_reuse import INVALIDATION_RULES
     rule_ids = {r.rule_id for r in INVALIDATION_RULES}
     mapped = 0
     for kind in ("configuration_drift", "task_definition_drift", "test_drift",
@@ -231,7 +242,8 @@ def g7_planner_consumes_ci_evidence() -> tuple[bool, str]:
 
 def g8_targeted_executor_scope_safe() -> tuple[bool, str]:
     from runtime.foundation.verification.executor_pipeline import (
-        _read_installed_mutmut_scope, _scope_violation_message,
+        _read_installed_mutmut_scope,
+        _scope_violation_message,
     )
     # The scope-enforcement helpers exist; their behavior is exercised
     # by test_m9_c42_28 (test_scope_mismatch_blocks).  Verify here that
@@ -246,18 +258,22 @@ def g8_targeted_executor_scope_safe() -> tuple[bool, str]:
 def g9_forensic_record_complete() -> tuple[bool, str]:
     # Build a canonical forensic record directly without depending on
     # the C42.28 scenario harness API.
+    from datetime import UTC, datetime
+
     from runtime.foundation.verification.diagnostic_agent import (
-        validate_forensic_record, canonicalize_forensic_record,
+        canonicalize_forensic_record,
+        validate_forensic_record,
     )
     from runtime.foundation.verification.evidence_planner import default_planner
     from runtime.foundation.verification.executor_pipeline import (
-        build_executable_plan, build_forensic_record, reconcile,
-        default_population, default_prior_measurements,
+        ExecutionEvidence,
+        build_executable_plan,
+        build_forensic_record,
+        collect_repo_fingerprints,
+        default_population,
+        default_prior_measurements,
+        reconcile,
     )
-    from runtime.foundation.verification.executor_pipeline import collect_repo_fingerprints
-    from runtime.foundation.verification.executor_pipeline import ExecutionEvidence
-    from runtime.foundation.verification.executor_pipeline import FailureKind
-    from datetime import UTC, datetime
 
     planner = default_planner()
     plan = planner.plan(("backend/src/engines/credit_card_engine/risk.py",))
@@ -299,8 +315,11 @@ def g10_nine_questions_answerable() -> tuple[bool, str]:
     )
     from runtime.foundation.verification.evidence_planner import default_planner
     from runtime.foundation.verification.executor_pipeline import (
-        build_executable_plan, build_forensic_record, reconcile,
-        default_population, default_prior_measurements,
+        build_executable_plan,
+        build_forensic_record,
+        default_population,
+        default_prior_measurements,
+        reconcile,
     )
     planner = default_planner()
     plan = planner.plan(())
@@ -324,7 +343,6 @@ def g10_nine_questions_answerable() -> tuple[bool, str]:
 
 def g11_failure_classifications_correct() -> tuple[bool, str]:
     from runtime.foundation.verification.executor_pipeline import FailureKind
-    from runtime.foundation.verification.ci_evidence import classify_ci_failure
     # Each kind must be a closed enum value; verify exhaustive coverage.
     closed = {fk.value for fk in FailureKind}
     return (
@@ -361,7 +379,8 @@ def g13_evidence_reuse_explainable() -> tuple[bool, str]:
 
 def g14_derived_evidence_reproducible() -> tuple[bool, str]:
     from runtime.foundation.verification.evidence_reuse import (
-        c42_26_derived_aggregate, c42_24_b_measurements, c42_25_measurements,
+        c42_24_b_measurements,
+        c42_26_derived_aggregate,
     )
     a = c42_26_derived_aggregate(c42_24_b_measurements())
     b = c42_26_derived_aggregate(c42_24_b_measurements())
@@ -496,17 +515,18 @@ def g23_no_production_deleted() -> tuple[bool, str]:
 def g24_no_duplicate_architecture() -> tuple[bool, str]:
     # One planner, one executor bridge, one evidence model. Verify the
     # known new modules do not redefine existing surfaces.
-    from runtime.foundation.verification.evidence_planner import (
-        EvidenceAwarePlanner as EWP1,
+    from runtime.foundation.verification import (
+        ci_evidence,
+        diagnostic_agent,
+        strengthening,
     )
-    from runtime.foundation.verification import strengthening, ci_evidence, diagnostic_agent
     new_modules_ok = all(hasattr(m, "__name__") for m in (
         strengthening, ci_evidence, diagnostic_agent
     ))
     return (
         new_modules_ok,
-        f"single EvidenceAwarePlanner; new modules: "
-        f"ci_evidence, diagnostic_agent, strengthening",
+        "single EvidenceAwarePlanner; new modules: "
+        "ci_evidence, diagnostic_agent, strengthening",
     )
 
 

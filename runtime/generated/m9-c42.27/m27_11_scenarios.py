@@ -45,9 +45,6 @@ from runtime.foundation.verification.evidence_planner import (  # noqa: E402
 )
 from runtime.foundation.verification.evidence_reuse import (  # noqa: E402
     C42_26_COMPONENTS,
-    Change,
-    ComponentMeasurement,
-    EvidenceReuse,
     PopulationSnapshot,
     c42_24_b_measurements,
     c42_25_measurements,
@@ -56,14 +53,12 @@ from runtime.foundation.verification.evidence_reuse import (  # noqa: E402
 from runtime.foundation.verification.graph_model import (  # noqa: E402
     CapabilityNode,
     SourceNode,
-    TestSurfaceKind,
     TestSurfaceNode,
     VerificationGraph,
     capability_id,
     source_id,
     surface_id,
 )
-
 
 OUT = REPO_ROOT / "runtime" / "generated" / "m9-c42.27" / "m9-c42.27-scenarios.json"
 

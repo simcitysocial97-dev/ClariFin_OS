@@ -61,15 +61,15 @@ OUT_DIR.mkdir(parents=True, exist_ok=True)
 from runtime.foundation.verification.ci_evidence import (  # noqa: E402
     CIEvidenceRecord,
     build_ci_bindings,
-    classify_ci_failure,
-    ingest_ci_evidence,
     validate_and_decide,
     verification_bindings,
 )
 from runtime.foundation.verification.diagnostic_agent import (  # noqa: E402
     DiagnosticForensicAgent,
 )
-from runtime.foundation.verification.evidence_planner import default_planner  # noqa: E402
+from runtime.foundation.verification.evidence_planner import (
+    default_planner,  # noqa: E402
+)
 from runtime.foundation.verification.executor_pipeline import (  # noqa: E402
     ExecutionEvidence,
     FailureKind,
@@ -193,7 +193,9 @@ def run_master() -> dict[str, Any]:
 
     # 9. Reconcile -> ForensicExecutionRecord
     from runtime.foundation.verification.evidence_reuse import (
-        c42_24_b_measurements, c42_25_measurements, c42_26_population,
+        c42_24_b_measurements,
+        c42_25_measurements,
+        c42_26_population,
     )
     prior = {m.component: m for m in c42_24_b_measurements() + c42_25_measurements()}
     reconciled = reconcile(plan, fresh, prior, c42_26_population())
@@ -340,9 +342,9 @@ def run_master() -> dict[str, Any]:
 
 def _context_like(record: CIEvidenceRecord):
     from runtime.foundation.verification.ci_evidence import CIRepositoryContext
-    from runtime.foundation.verification.evidence_reuse import c42_26_population
     from runtime.foundation.verification.executor_pipeline import (
-        collect_repo_fingerprints, _git_sha,
+        _git_sha,
+        collect_repo_fingerprints,
     )
     fps = collect_repo_fingerprints(AFFECTED_COMPONENT)
     return CIRepositoryContext(
