@@ -269,7 +269,7 @@
       "capability": "behaviour_engine",
       "gap_type": "component",
       "severity": "high",
-      "description": "Mutation score 35.7% critically below 80% target; 3,383 surviving mutants — largest survivor population in the corpus"
+      "description": "Mutation score 35.7% critically below 80% target; 3,383 surviving mutants \u2014 largest survivor population in the corpus"
     },
     {
       "capability": "common_calculations",
@@ -281,13 +281,13 @@
       "capability": "ledger",
       "gap_type": "behavioral",
       "severity": "medium",
-      "description": "Assertion strength is weak; behavioral coverage needs strengthening — only 1 test, validation maturity NONE"
+      "description": "Assertion strength is weak; behavioral coverage needs strengthening \u2014 only 1 test, validation maturity NONE"
     },
     {
       "capability": "reconciliation",
       "gap_type": "behavioral",
       "severity": "medium",
-      "description": "Assertion strength is moderate; behavioral coverage needs strengthening — only 4 tests"
+      "description": "Assertion strength is moderate; behavioral coverage needs strengthening \u2014 only 4 tests"
     },
     {
       "capability": "api-contracts",
@@ -331,5 +331,6 @@
       "severity": "medium",
       "description": "Combined coverage 77.72% is 2.28pp below 80% target; 296 additional covered items (statements+branches) required"
     }
-  ]
+  ],
+  "c44_update_note": "C44.9 update: behaviour_engine re-measured authoritatively this session (C43.7) at 83.5% (6,021/7,213, 1,189 survivors) vs the 65.9%/2,459-survivor figure captured at the C44.0 freeze. See mutation-baseline.json. This file remains the C44.0 full-campaign classification snapshot."
 }

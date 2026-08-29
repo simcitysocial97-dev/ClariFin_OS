@@ -151,7 +151,7 @@
       "realistically_killable_with_behavioral_tests": 2100,
       "rationale": "Not all Class-A gaps are equally killable; some require cross-capability test infrastructure or property-based approaches. Conservative estimate: ~55% of Class-A can be closed with targeted behavioral tests without violating integrity."
     },
-    "evidence_bound_assessment": "80% ACHIEVABLE_WITH_CONDITIONS: If ~2,100 Class-A survivors can be killed via capability-aware test strengthening across behaviour_engine, financial_intelligence, transaction_intelligence, and common_calculations, the 80% threshold is reachable. However, this requires: (1) per-mutant inventories for all 14 components (currently only 4 have them); (2) cross-capability test infrastructure for shared dependencies; (3) acceptance that some Class-E candidates (production defects) will remain alive. If conditions are not met, the honest assessment is 80% NOT ACHIEVED — EVIDENCE-BOUND LIMIT."
+    "evidence_bound_assessment": "80% ACHIEVABLE_WITH_CONDITIONS: If ~2,100 Class-A survivors can be killed via capability-aware test strengthening across behaviour_engine, financial_intelligence, transaction_intelligence, and common_calculations, the 80% threshold is reachable. However, this requires: (1) per-mutant inventories for all 14 components (currently only 4 have them); (2) cross-capability test infrastructure for shared dependencies; (3) acceptance that some Class-E candidates (production defects) will remain alive. If conditions are not met, the honest assessment is 80% NOT ACHIEVED \u2014 EVIDENCE-BOUND LIMIT."
   },
   "methodology_notes": [
     "C42.31 precedence applied: D -> B -> C -> E -> A",
@@ -160,5 +160,6 @@
     "Class-D count is 0 because no measurement/infrastructure anomalies were recorded in the full campaign",
     "Class-E includes documented production defect candidates from C42.25 and C43 defect ledger",
     "Per-mutant inventories for remaining 10 components would convert DERIVED to MEASURED"
-  ]
+  ],
+  "c44_update_note": "C44.9 update: behaviour_engine re-measured authoritatively this session (C43.7) at 83.5% (6,021/7,213, 1,189 survivors) vs the 65.9%/2,459-survivor figure captured at the C44.0 freeze. See mutation-baseline.json. This file remains the C44.0 full-campaign classification snapshot."
 }

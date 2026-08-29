@@ -1,0 +1,48 @@
+{
+  "schema": "m9-c44-mutation-baseline/v1",
+  "generated_at": "2026-08-29T08:00:00Z",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "branch": "m9c9-merge-authorization-resolution",
+  "baseline_captured_at": "2026-08-27T16:02+05:30 (C44.0 freeze)",
+  "measurement_method": "mutmut 3.7.0 (pinned), authoritative per-component campaign",
+  "components": {
+    "behaviour_engine": {
+      "status": "AUTHORITATIVE_MEASURED (this session, C43.7)",
+      "killed": 6021,
+      "survived": 1189,
+      "generated": 7213,
+      "mutation_score": 83.5,
+      "threshold_pct": 80.0,
+      "verdict": "ACHIEVED",
+      "evidence": "backend/tests/generated/mutation/mutation-summary.json (execution_status=PASS, classification_status=PASS)",
+      "note": "Previously recorded at 65.9% (2,459 survivors) in C44 freeze; C43.7 golden characterization strengthening raised it to 83.5% (1,189 survivors)."
+    },
+    "repository_wide": {
+      "status": "DERIVED_FROM_C43_FULL_CAMPAIGN + BEHAVIOUR_ENGINE_REMEASURE",
+      "c43_full_campaign": {
+        "killed": 11925,
+        "generated": 16905,
+        "score": 70.6
+      },
+      "behaviour_engine_c43_contribution_killed": 4753,
+      "non_behaviour_killed": 7172,
+      "non_behaviour_generated": 9692,
+      "non_behaviour_score": 74.0,
+      "recomputed_repo_wide_killed": 13193,
+      "recomputed_repo_wide_generated": 16905,
+      "recomputed_repo_wide_score_pct": 78.0,
+      "threshold_pct": 80.0,
+      "verdict": "NOT_ACHIEVED_EVIDENCE_BOUND",
+      "note": "Authoritative full re-measurement is the M44.16 final-certification trigger; cannot complete locally within resource bounds (GitHub Actions unavailable locally; full repo campaign >30 min). Projection computed from C43 full-campaign baseline with behaviour_engine re-measured authoritatively this session.",
+      "uplift_from_behaviour_engine": 1268
+    }
+  },
+  "authoritative_full_campaign_status": "PENDING_FORMAL_REMEASUREMENT (environmental limitation: local execution exceeds time budget; CI is the designated trigger)",
+  "classification_precedence": "C42.31 (D->B->C->E->A)",
+  "evidence_artifacts": [
+    "backend/tests/generated/mutation/mutation-summary.json",
+    "runtime/generated/m9-c43/m9-c43-mutation-survivor-analysis.json",
+    "runtime/generated/m9-c44/survivor-classification.json",
+    "runtime/generated/m9-c44/survivor-capability-attribution.json"
+  ]
+}
