@@ -104,7 +104,9 @@ def test_projection_invalid_confidence_raises_pinned_fin_e3():
 
 def test_projection_custom_allocation_ratio():
     forecast = [row("2026-01", 100_000)]
-    result = calculate_goal_projection(100_000, 0, forecast, allocation_ratio=Decimal("1.0"))
+    result = calculate_goal_projection(
+        100_000, 0, forecast, allocation_ratio=Decimal("1.0")
+    )
     assert result["achieved"] is True
     assert result["months_required"] == 1
 
@@ -183,8 +185,22 @@ def test_payoff_projection_avalanche_order():
 
 
 def test_payoff_projection_includes_credit_cards():
-    loans = [{"id": "L1", "name": "Home", "outstanding_paise": 100_000, "interest_rate_bps": 800}]
-    cards = [{"id": "C1", "name": "CC", "outstanding_paise": 50_000, "interest_rate_bps": 3600}]
+    loans = [
+        {
+            "id": "L1",
+            "name": "Home",
+            "outstanding_paise": 100_000,
+            "interest_rate_bps": 800,
+        }
+    ]
+    cards = [
+        {
+            "id": "C1",
+            "name": "CC",
+            "outstanding_paise": 50_000,
+            "interest_rate_bps": 3600,
+        }
+    ]
     result = calculate_debt_payoff_projection(loans, cards, 30_000)
     assert [d["type"] for d in result["payoff_order"]] == ["credit_card", "loan"]
     assert result["monthly_allocation_paise"] == 15_000  # 30_000 * 0.5
@@ -297,7 +313,13 @@ def test_household_goal_summary_counts():
 
 def test_household_goal_summary_critical_active_goals_only():
     goals = [
-        {"id": 1, "status": "active", "priority": "critical", "name": "EF", "goal_type": "emergency_fund"},
+        {
+            "id": 1,
+            "status": "active",
+            "priority": "critical",
+            "name": "EF",
+            "goal_type": "emergency_fund",
+        },
         {"id": 2, "status": "completed", "priority": "critical", "name": "Done"},
     ]
     projections = [{"status": "behind"}, {"status": "on_track"}]

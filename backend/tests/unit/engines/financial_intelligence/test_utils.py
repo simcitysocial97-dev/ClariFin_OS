@@ -104,7 +104,9 @@ def test_compute_weighted_average_recent_values_dominate():
 
 
 def test_compute_weighted_average_explicit_weights():
-    assert compute_weighted_average([10, 20], weights=[2, 1]) == pytest.approx(40.0 / 3.0)
+    assert compute_weighted_average([10, 20], weights=[2, 1]) == pytest.approx(
+        40.0 / 3.0
+    )
 
 
 def test_compute_weighted_average_weight_length_mismatch_raises():
@@ -199,7 +201,13 @@ def test_trend_direction_first_half_zero_second_negative():
 
 
 def test_trend_direction_odd_length_split():
-    ratios = [Decimal("0.1"), Decimal("0.1"), Decimal("0.1"), Decimal("0.2"), Decimal("0.2")]
+    ratios = [
+        Decimal("0.1"),
+        Decimal("0.1"),
+        Decimal("0.1"),
+        Decimal("0.2"),
+        Decimal("0.2"),
+    ]
     # mid = 2: first avg 0.1, second avg 0.1666... -> +66% -> worsening
     assert compute_trend_direction(ratios) == "worsening"
 

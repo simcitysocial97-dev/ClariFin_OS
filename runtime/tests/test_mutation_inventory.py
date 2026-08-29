@@ -20,7 +20,7 @@ from runtime.foundation.verification.mutation_inventory import (
 def test_message_only_mutation_is_equivalent():
     c = classify(
         '        raise ValueError("outstanding_paise must be non-negative")',
-        '        raise ValueError(None)',
+        "        raise ValueError(None)",
     )
     assert isinstance(c, Classification)
     assert c.classification == B_EQUIVALENT
@@ -68,7 +68,9 @@ def test_none_replacement_is_real_gap_constant():
 
 
 def test_dict_key_mutation_is_real_gap():
-    c = classify('            "outstanding_paise": 0,', '            "XXoutstanding_paiseXX": 0,')
+    c = classify(
+        '            "outstanding_paise": 0,', '            "XXoutstanding_paiseXX": 0,'
+    )
     assert c.classification == A_REAL_GAP
     assert c.subclass == "real_gap_dict_key"
 

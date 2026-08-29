@@ -230,7 +230,9 @@ def test_minimum_due_pct_range():
 def test_next_statement_date_last_stmt_advance():
     # kills candidate <= last -> <, _add_months(candidate,1) -> None/..,
     # candidate < ref -> <=, last_statement_date -> None
-    d = compute_next_statement_date(15, date(2024, 6, 1), last_statement_date=date(2024, 1, 15))
+    d = compute_next_statement_date(
+        15, date(2024, 6, 1), last_statement_date=date(2024, 1, 15)
+    )
     assert isinstance(d, date)
 
 
@@ -248,13 +250,17 @@ def test_next_statement_date_dec31_branch():
 
 def test_next_statement_date_month_advance():
     # kills next_month_ref = _add_months(date(.,month,1),1) -> day 2 / month 2
-    d = compute_next_statement_date(10, date(2024, 3, 5), last_statement_date=date(2024, 2, 10))
+    d = compute_next_statement_date(
+        10, date(2024, 3, 5), last_statement_date=date(2024, 2, 10)
+    )
     assert isinstance(d, date)
 
 
 def test_next_statement_date_past_advance():
     # kills candidate < ref -> <= (L53)
-    d = compute_next_statement_date(15, date(2024, 6, 1), last_statement_date=date(2024, 5, 20))
+    d = compute_next_statement_date(
+        15, date(2024, 6, 1), last_statement_date=date(2024, 5, 20)
+    )
     assert isinstance(d, date)
 
 
@@ -263,7 +269,9 @@ def test_next_statement_date_candidate_eq_start():
     # billing_day=1, last_statement_date=date(2024,1,1) → candidate=date(2024,1,1) == start_date
     # original: candidate > start_date is False → advances to next month
     # mutant >=: candidate >= start_date is True → doesn't advance
-    d = compute_next_statement_date(1, date(2024, 1, 15), last_statement_date=date(2024, 1, 1))
+    d = compute_next_statement_date(
+        1, date(2024, 1, 15), last_statement_date=date(2024, 1, 1)
+    )
     # Should advance to next month (Feb 1)
     assert d == date(2024, 2, 1)
 
@@ -271,7 +279,9 @@ def test_next_statement_date_candidate_eq_start():
 def test_next_statement_date_add_months_variants():
     # kills _add_months(candidate,1) -> _add_months(1)/_add_months(candidate,)/_add_months(candidate,2)
     # Uses component loop with specific last_statement_date
-    d = compute_next_statement_date(10, date(2024, 4, 5), last_statement_date=date(2024, 3, 10))
+    d = compute_next_statement_date(
+        10, date(2024, 4, 5), last_statement_date=date(2024, 3, 10)
+    )
     # Expected: Mar 10 + 1 month = Apr 10 (reference is Apr 5, so Apr 10 is after ref)
     # The _add_months mutations would produce wrong dates
     assert d == date(2024, 4, 10)
@@ -279,7 +289,9 @@ def test_next_statement_date_add_months_variants():
 
 def test_statement_dates_with_last():
     # kills last_statement_date=last_statement_date -> None in compute_statement_dates
-    r = compute_statement_dates(15, 21, date(2024, 6, 1), last_statement_date=date(2024, 1, 15))
+    r = compute_statement_dates(
+        15, 21, date(2024, 6, 1), last_statement_date=date(2024, 1, 15)
+    )
     assert "statement_date" in r and "due_date" in r
 
 
@@ -311,7 +323,9 @@ def test_next_statement_date_candidate_le_last():
     # kills `candidate <= last_statement_date` -> `candidate < last_statement_date`
     # candidate=date(2024,1,1), last_statement=date(2024,1,1) -> candidate <= last is True
     # original: advances; mutant candidate < last (False) -> doesn't advance
-    d = compute_next_statement_date(1, date(2024, 1, 15), last_statement_date=date(2024, 1, 1))
+    d = compute_next_statement_date(
+        1, date(2024, 1, 15), last_statement_date=date(2024, 1, 1)
+    )
     assert d == date(2024, 2, 1)
 
 
@@ -323,19 +337,25 @@ def test_next_statement_date_month_13():
 
 def test_next_statement_date_add_months_variant_day():
     # kills _add_months(candidate,1) -> _add_months(1)
-    d = compute_next_statement_date(10, date(2024, 4, 5), last_statement_date=date(2024, 3, 10))
+    d = compute_next_statement_date(
+        10, date(2024, 4, 5), last_statement_date=date(2024, 3, 10)
+    )
     assert d == date(2024, 4, 10)
 
 
 def test_next_statement_date_add_months_variant_month():
     # kills _add_months(date(.,month,1),1) -> _add_months(date(.,month,2),1)
-    d = compute_next_statement_date(15, date(2024, 2, 20), last_statement_date=date(2024, 1, 15))
+    d = compute_next_statement_date(
+        15, date(2024, 2, 20), last_statement_date=date(2024, 1, 15)
+    )
     assert isinstance(d, date)
 
 
 def test_next_statement_date_add_months_variant_month2():
     # kills _add_months(date(.,month,1),1) -> _add_months(date(.,month,1),2)
-    d = compute_next_statement_date(20, date(2024, 4, 10), last_statement_date=date(2024, 3, 20))
+    d = compute_next_statement_date(
+        20, date(2024, 4, 10), last_statement_date=date(2024, 3, 20)
+    )
     assert isinstance(d, date)
 
 
@@ -359,7 +379,9 @@ def test_next_statement_date_date_construction_day():
 
 def test_next_statement_date_candidate_le_ref():
     # kills `candidate < reference_date` -> `candidate <= reference_date`
-    d = compute_next_statement_date(15, date(2024, 6, 1), last_statement_date=date(2024, 5, 20))
+    d = compute_next_statement_date(
+        15, date(2024, 6, 1), last_statement_date=date(2024, 5, 20)
+    )
     assert isinstance(d, date)
 
 
@@ -480,19 +502,25 @@ def test_billing_quantize_decimal2():
 # ── billing.py — _add_months variants (line 29) ──────────────────────────────
 def test_add_months_candidate_1():
     # kills _add_months(candidate, 1) -> _add_months(1)
-    d = compute_next_statement_date(10, date(2024, 4, 5), last_statement_date=date(2024, 3, 10))
+    d = compute_next_statement_date(
+        10, date(2024, 4, 5), last_statement_date=date(2024, 3, 10)
+    )
     assert d == date(2024, 4, 10)
 
 
 def test_add_months_candidate_none():
     # kills _add_months(candidate, 1) -> _add_months(None, 1)
-    d = compute_next_statement_date(15, date(2024, 2, 20), last_statement_date=date(2024, 1, 15))
+    d = compute_next_statement_date(
+        15, date(2024, 2, 20), last_statement_date=date(2024, 1, 15)
+    )
     assert isinstance(d, date)
 
 
 def test_add_months_candidate_2():
     # kills _add_months(candidate, 1) -> _add_months(candidate, 2)
-    d = compute_next_statement_date(20, date(2024, 4, 10), last_statement_date=date(2024, 3, 20))
+    d = compute_next_statement_date(
+        20, date(2024, 4, 10), last_statement_date=date(2024, 3, 20)
+    )
     assert isinstance(d, date)
 
 
@@ -543,26 +571,33 @@ def test_month_eq_13():
 # ── billing.py — next_month_ref variants ─────────────────────────────────────
 def test_add_months_day2():
     # kills _add_months(date(.,month,1),1) -> _add_months(date(.,month,2),1)
-    d = compute_next_statement_date(15, date(2024, 2, 20), last_statement_date=date(2024, 1, 15))
+    d = compute_next_statement_date(
+        15, date(2024, 2, 20), last_statement_date=date(2024, 1, 15)
+    )
     assert isinstance(d, date)
 
 
 def test_add_months_month2():
     # kills _add_months(date(.,month,1),1) -> _add_months(date(.,month,1),2)
-    d = compute_next_statement_date(20, date(2024, 4, 10), last_statement_date=date(2024, 3, 20))
+    d = compute_next_statement_date(
+        20, date(2024, 4, 10), last_statement_date=date(2024, 3, 20)
+    )
     assert isinstance(d, date)
 
 
 # ── billing.py — last_statement_date=None ────────────────────────────────────
 def test_last_statement_none():
     # kills last_statement_date=last_statement_date -> None
-    r = compute_statement_dates(15, 21, date(2024, 6, 1), last_statement_date=date(2024, 1, 15))
+    r = compute_statement_dates(
+        15, 21, date(2024, 6, 1), last_statement_date=date(2024, 1, 15)
+    )
     assert "statement_date" in r and "due_date" in r
 
 
 # ════════════════════════════════════════════════════════════════════════════
 # COMPREHENSIVE KILL TESTS FOR ALL REMAINING KILLABLE MUTANTS
 # ════════════════════════════════════════════════════════════════════════════
+
 
 # ── utilization.py ──
 def test_utilization_quantize_decimal2():  # noqa: F811
@@ -772,19 +807,25 @@ def test_candidate_le_last():
     # kills `candidate <= last_statement_date` -> `candidate < last_statement_date`
     # candidate=date(2024,1,1), last=date(2024,1,1) -> candidate <= last is True
     # original: advances; mutant candidate < last (False) -> doesn't advance
-    d = compute_next_statement_date(1, date(2024, 1, 15), last_statement_date=date(2024, 1, 1))
+    d = compute_next_statement_date(
+        1, date(2024, 1, 15), last_statement_date=date(2024, 1, 1)
+    )
     assert d == date(2024, 2, 1)
 
 
 def test_candidate_lt_ref():
     # kills `candidate < reference_date` -> `candidate <= reference_date`
-    d = compute_next_statement_date(15, date(2024, 6, 1), last_statement_date=date(2024, 5, 20))
+    d = compute_next_statement_date(
+        15, date(2024, 6, 1), last_statement_date=date(2024, 5, 20)
+    )
     assert isinstance(d, date)
 
 
 def test_candidate_gt_start():
     # kills `candidate > start_date` -> `candidate >= start_date`
-    d = compute_next_statement_date(1, date(2024, 1, 15), last_statement_date=date(2024, 1, 1))
+    d = compute_next_statement_date(
+        1, date(2024, 1, 15), last_statement_date=date(2024, 1, 1)
+    )
     assert d == date(2024, 2, 1)
 
 

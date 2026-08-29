@@ -1,0 +1,50 @@
+{
+  "schema": "m9-c42.38-longitudinal-intelligence-boundary/v1",
+  "generated_at": "2026-08-27T01:50:00.000000+00:00",
+  "phase": "M9-C42.38",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "methodology": "Audit survivor history, repeated-survivor handling, Class-E escalation, historical calibration, forensic cache replay, and evidence persistence. A lack of historical observations is explicitly NOT represented as a verification failure.",
+  "survivor_history": {
+    "status": "CERTIFIED",
+    "evidence": "historical-calibration.json survivor_inventory_summary across credit_card_engine (144), account_engine (20), loan_engine (308), reconciliation_engine (0). Classification tests match expected for A/B/D/E.",
+    "note": "reconciliation_engine total=0 is a legitimate 'no survivors' state, NOT a verification failure."
+  },
+  "repeated_survivor_handling": {
+    "status": "CERTIFIED_WITH_LIMITATION",
+    "evidence": "repeated-survivor-analysis.json defines CLASS-E ESCALATION contract + required evidence; mechanism wired into diagnostic_agent q8_uncertainties.",
+    "limitation": "Empirical repetition detection relies on accumulated cross-run history (SurvivorRegistry) which is not yet implemented."
+  },
+  "class_e_escalation": {
+    "status": "DEFERRED_FOR_DATA",
+    "evidence": "escalation_calibration.threshold_status = NOT_DEFINED; proposed conditions (observation_count>=3, independent_change_count>=2) require real historical accumulation.",
+    "is_blocker": false,
+    "reason": "Contract is defined and enforced (Class-E always refused pending human review); only empirical threshold calibration is deferred."
+  },
+  "historical_calibration": {
+    "status": "DEFERRED_FOR_DATA",
+    "evidence": "empirical_support_level: class_b_refusal EMPIRICALLY_SUPPORTED (99 refusals), class_d_detection IMPLEMENTED, class_a_acceptance INSUFFICIENT_DATA, class_e_escalation PROVISIONAL.",
+    "interpretation": "Calibration is partial: behavioral refusal classes are empirically supported; acceptance/escalation thresholds await data."
+  },
+  "forensic_cache_replay": {
+    "status": "CERTIFIED",
+    "evidence": "C42.32-36 G15 PASS: cache replay cannot return exit 0 for a stored failure. cache.py VerificationCache correctness verified.",
+    "enhancement": "Forensic-aware cache LAYER (component-scoped fingerprints) recommended but not required."
+  },
+  "evidence_persistence": {
+    "status": "CERTIFIED",
+    "evidence": "evidence_reuse.ComponentMeasurement.fingerprint() + load_snapshot()/save_snapshot() enable cross-run comparison; population snapshot fingerprint stable."
+  },
+  "capability_classification": [
+    {"capability": "survivor_history", "disposition": "CERTIFIED"},
+    {"capability": "repeated_survivor_handling", "disposition": "CERTIFIED_WITH_LIMITATION"},
+    {"capability": "class_e_escalation", "disposition": "DEFERRED_FOR_DATA"},
+    {"capability": "historical_calibration", "disposition": "DEFERRED_FOR_DATA"},
+    {"capability": "forensic_cache_replay", "disposition": "CERTIFIED"},
+    {"capability": "evidence_persistence", "disposition": "CERTIFIED"}
+  ],
+  "no_false_failure_from_missing_data": {
+    "asserted": true,
+    "evidence": "reconciliation_engine has 0 survivors and is certified as 'no survivors', not as a failure. Class-A acceptance lacking data is recorded as INSUFFICIENT_DATA, not as a verification defect."
+  },
+  "verdict": "CERTIFIED_WITH_LIMITATION"
+}

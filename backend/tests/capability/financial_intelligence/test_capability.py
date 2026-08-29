@@ -44,7 +44,11 @@ class TestFinancialIntelligenceCapability:
         """Master report must emit snapshot, health score, and confidence."""
         state = {
             "cashflow": {"monthly_surplus_paise": 100_000},
-            "liquidity": {"risk_level": "low", "months_until_stress": None, "projected_min_balance_paise": 5_000_000},
+            "liquidity": {
+                "risk_level": "low",
+                "months_until_stress": None,
+                "projected_min_balance_paise": 5_000_000,
+            },
             "debts": [],
             "goals": [],
             "behaviour": {"wellness_score": 75},

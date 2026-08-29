@@ -23,7 +23,9 @@ from src.engines.financial_intelligence.optimization import (
     rank_debt_payoff_strategy,
 )
 
-SETTINGS = settings(max_examples=30, suppress_health_check=[HealthCheck.differing_executors])
+SETTINGS = settings(
+    max_examples=30, suppress_health_check=[HealthCheck.differing_executors]
+)
 
 paise = st.integers(min_value=0, max_value=10_000_000)
 pos_paise = st.integers(min_value=1, max_value=10_000_000)
@@ -70,8 +72,13 @@ class TestGoalProjectionProperties:
         self, target: int, surplus: int, months: int
     ) -> None:
         # Larger per-month surplus should never require MORE months.
-        forecast_small = [{"month": f"m{i}", "expected_surplus_paise": surplus} for i in range(months)]
-        forecast_big = [{"month": f"m{i}", "expected_surplus_paise": surplus * 2} for i in range(months)]
+        forecast_small = [
+            {"month": f"m{i}", "expected_surplus_paise": surplus} for i in range(months)
+        ]
+        forecast_big = [
+            {"month": f"m{i}", "expected_surplus_paise": surplus * 2}
+            for i in range(months)
+        ]
         small = calculate_goal_projection(target, 0, forecast_small)
         big = calculate_goal_projection(target, 0, forecast_big)
         if big["achieved"] and small["achieved"]:
@@ -83,16 +90,22 @@ class TestDebtPayoffProperties:
     @given(outstanding=pos_paise, payment=pos_paise)
     def test_payoff_months_consistent(self, outstanding: int, payment: int) -> None:
         loans = [{"id": 1, "outstanding_paise": outstanding, "interest_rate_bps": 1200}]
-        result = calculate_debt_payoff_projection(loans, [], payment, allocation_ratio=Decimal("1.0"))
+        result = calculate_debt_payoff_projection(
+            loans, [], payment, allocation_ratio=Decimal("1.0")
+        )
         if payment > 0:
             assert isinstance(result["estimated_months"], int)
             assert result["estimated_months"] >= 1
 
     @SETTINGS
     @given(outstanding=pos_paise, rate=rate_bps)
-    def test_allocation_ratio_zero_never_finishes(self, outstanding: int, rate: int) -> None:
+    def test_allocation_ratio_zero_never_finishes(
+        self, outstanding: int, rate: int
+    ) -> None:
         loans = [{"id": 1, "outstanding_paise": outstanding, "interest_rate_bps": rate}]
-        result = calculate_debt_payoff_projection(loans, [], 100_000, allocation_ratio=Decimal("0"))
+        result = calculate_debt_payoff_projection(
+            loans, [], 100_000, allocation_ratio=Decimal("0")
+        )
         # Zero allocation -> never pays off.
         assert result["estimated_months"] is None
 
@@ -158,7 +171,9 @@ class TestActionScoreProperties:
     @SETTINGS
     @given(rate=rate_bps)
     def test_impact_consistent_with_score(self, rate: int) -> None:
-        result = calculate_financial_action_score("reduce_expenses", {"interest_rate_bps": rate})
+        result = calculate_financial_action_score(
+            "reduce_expenses", {"interest_rate_bps": rate}
+        )
         if result["score"] >= Decimal("0.7"):
             assert result["impact"] == "high"
         elif result["score"] >= Decimal("0.4"):

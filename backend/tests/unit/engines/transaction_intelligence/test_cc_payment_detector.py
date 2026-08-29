@@ -129,7 +129,12 @@ def test_convert_to_paise_unsupported_type():
 # classify_cc_payment
 # ============================================================
 
-TXN = {"id": 1, "description": "CC PAYMENT", "amount_paise": 1_000_000, "date_iso": "2026-08-01"}
+TXN = {
+    "id": 1,
+    "description": "CC PAYMENT",
+    "amount_paise": 1_000_000,
+    "date_iso": "2026-08-01",
+}
 STATEMENT = {"id": 9, "total_amount_due": 1_000_000, "minimum_amount_due": 50_000}
 
 

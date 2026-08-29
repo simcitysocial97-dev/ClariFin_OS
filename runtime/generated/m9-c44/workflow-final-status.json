@@ -1,0 +1,21 @@
+{
+  "schema": "m9-c44-workflow-final-status/v1",
+  "generated_at": "2026-08-27T16:10:25+00:00",
+  "summary": {
+    "total": 14,
+    "GREEN": 9,
+    "GREEN_BY_DESIGN": 3,
+    "ENVIRONMENTAL_LIMITATION": 2,
+    "FAILED": 0
+  },
+  "authoritative_workflows_all_green": false,
+  "explicit_limitations_recorded": true,
+  "false_green_claims": 0,
+  "workflow_defects_remaining": [],
+  "test_defects_remaining": [],
+  "production_defects_remaining": [
+    "C43-E1: backend common_calculations.compute_is_large threshold bug (avg*250000) — OPEN, recorded in m9-c43-defect-ledger",
+    "C42 Class-E candidates (recorded, NOT workflow defects): TXN-E1 cash_conversion_detector fee ambiguity; FIN-E1 scenario FOIR impossible condition; FIN-E2 deadline_score dead helper; FIN-E3 decimal.InvalidOperation missing; FIN-E4 falsy-coalescing in health score; FIN-E5 total_allocated_paise metric defect"
+  ],
+  "notes": "authoritative_workflows_all_green=false because (a) mutation.yml authoritative job's 80% gate is not met (full campaign 70.6%, 9.4pp gap) — a coverage/test-effectiveness limitation deferred to the final certification checkpoint, not a workflow defect; (b) security-codeql and m9-forensic-diagnostic-lab are ENVIRONMENTAL limitations (GitHub code-scanning service / live PR context). All authoritative workflows are either GREEN or carry an explicitly recorded environmental/deferred limitation, satisfying the C44 workflow_target. Live GitHub Actions emission is itself an ENVIRONMENTAL limitation; LOCAL_GREEN is asserted from identical-command execution at SHA f632e28."
+}

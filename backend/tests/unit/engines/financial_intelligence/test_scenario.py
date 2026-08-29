@@ -87,7 +87,9 @@ LOANS_12PCT = [{"outstanding_paise": 1_200_000, "interest_rate_bps": 1200}]
 
 
 def test_debt_prepayment_saves_months():
-    result = simulate_debt_prepayment(LOANS_12PCT, extra_payment_paise=50_000, monthly_surplus_paise=100_000)
+    result = simulate_debt_prepayment(
+        LOANS_12PCT, extra_payment_paise=50_000, monthly_surplus_paise=100_000
+    )
     # Baseline: 50_000/month -> 24 months; revised 75_000 -> 16 months.
     assert result["estimated_months_saved"] == 8
     assert result["interest_saved_paise"] == 96_000
@@ -95,13 +97,17 @@ def test_debt_prepayment_saves_months():
 
 
 def test_debt_prepayment_zero_extra_no_savings():
-    result = simulate_debt_prepayment(LOANS_12PCT, extra_payment_paise=0, monthly_surplus_paise=100_000)
+    result = simulate_debt_prepayment(
+        LOANS_12PCT, extra_payment_paise=0, monthly_surplus_paise=100_000
+    )
     assert result["estimated_months_saved"] == 0
     assert result["interest_saved_paise"] == 0
 
 
 def test_debt_prepayment_empty_debts_safe():
-    result = simulate_debt_prepayment([], extra_payment_paise=10_000, monthly_surplus_paise=50_000)
+    result = simulate_debt_prepayment(
+        [], extra_payment_paise=10_000, monthly_surplus_paise=50_000
+    )
     assert result["estimated_months_saved"] == 0
     assert result["interest_saved_paise"] == 0
     assert result["revised_payoff_projection"] == []
@@ -112,7 +118,9 @@ def test_debt_prepayment_multiple_loans_average_rate():
         {"outstanding_paise": 100_000, "interest_rate_bps": 1200},
         {"outstanding_paise": 100_000, "interest_rate_bps": 2400},
     ]
-    result = simulate_debt_prepayment(loans, extra_payment_paise=50_000, monthly_surplus_paise=50_000)
+    result = simulate_debt_prepayment(
+        loans, extra_payment_paise=50_000, monthly_surplus_paise=50_000
+    )
     # Baseline allocation 25_000: 4+4 = 8 months; revised 75_000: 2+2 = 4 -> 4 saved.
     assert result["estimated_months_saved"] == 4
     # avg_rate = (1200+2400)/2 = 1800 -> int(18) -> 200_000*18//100 = 36_000
@@ -259,7 +267,9 @@ def test_compare_foir_decrease_risk_pinned_anomaly_fin_e1():
 
 
 def test_compare_missing_values_skipped():
-    result = compare_scenario({"monthly_surplus_paise": None}, {"monthly_surplus_paise": 5})
+    result = compare_scenario(
+        {"monthly_surplus_paise": None}, {"monthly_surplus_paise": 5}
+    )
     assert result["delta"] == {}
     assert result["improvements"] == []
     assert result["risks"] == []
@@ -267,7 +277,8 @@ def test_compare_missing_values_skipped():
 
 def test_compare_decimal_values_coerced():
     result = compare_scenario(
-        {"monthly_surplus_paise": Decimal("100")}, {"monthly_surplus_paise": Decimal("150")}
+        {"monthly_surplus_paise": Decimal("100")},
+        {"monthly_surplus_paise": Decimal("150")},
     )
     assert result["delta"]["monthly_surplus_paise"] == 50
 
@@ -278,9 +289,7 @@ def test_compare_unlisted_metrics_ignored():
 
 
 def test_compare_months_metric_delta_recorded_without_message():
-    result = compare_scenario(
-        {"months_to_debt_free": 24}, {"months_to_debt_free": 14}
-    )
+    result = compare_scenario({"months_to_debt_free": 24}, {"months_to_debt_free": 14})
     assert result["delta"]["months_to_debt_free"] == -10
     assert result["improvements"] == []
     assert result["risks"] == []

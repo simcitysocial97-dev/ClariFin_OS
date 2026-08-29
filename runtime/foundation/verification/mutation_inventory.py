@@ -35,11 +35,11 @@ BACKEND_DIR = REPO_ROOT / "backend"
 GENERATED_DIR = REPO_ROOT / "runtime" / "generated"
 
 # ── Classification vocabulary (single source of truth) ───────────────────────
-A_REAL_GAP = "A"        # externally observable behavior the suite should constrain
-B_EQUIVALENT = "B"      # cannot change externally observable behavior in valid domain
-C_UNREACHABLE = "C"     # mutated path cannot be reached via valid system behavior
-D_INFRA = "D"           # result caused by mutation infra / execution, not test quality
-E_UNKNOWN = "E"         # genuinely insufficient evidence (temporary only)
+A_REAL_GAP = "A"  # externally observable behavior the suite should constrain
+B_EQUIVALENT = "B"  # cannot change externally observable behavior in valid domain
+C_UNREACHABLE = "C"  # mutated path cannot be reached via valid system behavior
+D_INFRA = "D"  # result caused by mutation infra / execution, not test quality
+E_UNKNOWN = "E"  # genuinely insufficient evidence (temporary only)
 
 CLASSIFICATION_LEGEND = {
     A_REAL_GAP: "REAL TEST GAP",
@@ -78,7 +78,10 @@ def _mutmut_bin() -> str:
 
 
 def _env_with_venv_path() -> dict:
-    return {**os.environ, "PATH": f"{REPO_ROOT / '.venv/bin'}:{os.environ.get('PATH','')}"}
+    return {
+        **os.environ,
+        "PATH": f"{REPO_ROOT / '.venv/bin'}:{os.environ.get('PATH','')}",
+    }
 
 
 def collect_results() -> dict[str, str]:
@@ -161,7 +164,11 @@ def _parse_diff(text: str) -> list[SurvivorChange]:
         if ln.startswith("-") and not ln.startswith("---"):
             original = ln[1:]
             mutated: str | None = None
-            if i + 1 < len(lines) and lines[i + 1].startswith("+") and not lines[i + 1].startswith("+++"):
+            if (
+                i + 1 < len(lines)
+                and lines[i + 1].startswith("+")
+                and not lines[i + 1].startswith("+++")
+            ):
                 mutated = lines[i + 1][1:]
                 i += 2
             else:
@@ -196,7 +203,9 @@ def infer_operator(original: str, mutated: str) -> str:
         return "comparison_operator_mutation"
     if re.search(r"\b(and|or|not)\b", ol) or re.search(r"\b(and|or|not)\b", ml):
         return "boolean_operator_mutation"
-    if re.search(r"\b(true|false|none)\b", ol) or re.search(r"\b(true|false|none)\b", ml):
+    if re.search(r"\b(true|false|none)\b", ol) or re.search(
+        r"\b(true|false|none)\b", ml
+    ):
         return "constant_replacement_mutation"
     if (o.strip().startswith('"') or o.strip().startswith("'")) and (
         m.strip().startswith('"') or m.strip().startswith("'")
@@ -245,7 +254,9 @@ def classify(original: str, mutated: str) -> Classification:
     # 2. Rounding argument handling (before generic None check, because `rounding=None`).
     if "rounding=" in ol or "rounding=" in ml:
         # Explicit ROUND_HALF_EVEN removed or set to None -> identical to Decimal default.
-        if "rounding=round_half_even" in ol and ("rounding=none" in ml or "rounding=" not in ml):
+        if "rounding=round_half_even" in ol and (
+            "rounding=none" in ml or "rounding=" not in ml
+        ):
             return Classification(
                 B_EQUIVALENT,
                 "equivalent_rounding_default",
@@ -324,7 +335,9 @@ def classify(original: str, mutated: str) -> Classification:
             sub = "real_gap_arithmetic"
         elif re.search(r"\b(and|or|not)\b", ol) or re.search(r"\b(and|or|not)\b", ml):
             sub = "real_gap_boolean"
-        elif re.search(r"\b(true|false|none)\b", ol) or re.search(r"\b(true|false|none)\b", ml):
+        elif re.search(r"\b(true|false|none)\b", ol) or re.search(
+            r"\b(true|false|none)\b", ml
+        ):
             sub = "real_gap_constant"
         elif (o.strip().startswith('"') or o.strip().startswith("'")) and (
             m.strip().startswith('"') or m.strip().startswith("'")
@@ -362,7 +375,13 @@ def build_inventory(target: str, now: str | None = None) -> dict:
     now = now or datetime.datetime.now(datetime.UTC).isoformat()
 
     records: list[dict] = []
-    counts = {A_REAL_GAP: 0, B_EQUIVALENT: 0, C_UNREACHABLE: 0, D_INFRA: 0, E_UNKNOWN: 0}
+    counts = {
+        A_REAL_GAP: 0,
+        B_EQUIVALENT: 0,
+        C_UNREACHABLE: 0,
+        D_INFRA: 0,
+        E_UNKNOWN: 0,
+    }
     sub_counts: dict[str, int] = {}
 
     for name in survivors:
@@ -391,8 +410,11 @@ def build_inventory(target: str, now: str | None = None) -> dict:
             )
 
     repo_sha = subprocess.run(
-        ["git", "rev-parse", "HEAD"], cwd=str(REPO_ROOT),
-        capture_output=True, text=True, timeout=30,
+        ["git", "rev-parse", "HEAD"],
+        cwd=str(REPO_ROOT),
+        capture_output=True,
+        text=True,
+        timeout=30,
     ).stdout.strip()
 
     return {
@@ -437,8 +459,7 @@ def _write_artifacts(inv: dict, target: str) -> tuple[Path, Path]:
         "",
         "## Per-mutant inventory",
         "",
-        "Full machine-readable detail in "
-        f"`{base}.json`.",
+        "Full machine-readable detail in " f"`{base}.json`.",
         "",
         "| # | Mutant | File:Line | Op | Class | Subclass |",
         "|---|---|---|---|---|---|",
@@ -454,17 +475,21 @@ def _write_artifacts(inv: dict, target: str) -> tuple[Path, Path]:
 
 def run_mutation_inventory_cli(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="verify.py mutation-inventory")
-    parser.add_argument("--target", required=True, help="engine name (e.g. credit_card_engine)")
+    parser.add_argument(
+        "--target", required=True, help="engine name (e.g. credit_card_engine)"
+    )
     args = parser.parse_args(argv)
 
     inv = build_inventory(args.target)
     json_path, md_path = _write_artifacts(inv, args.target)
     print(f"Inventory written: {json_path}")
     print(f"Markdown:          {md_path}")
-    print(f"Survivors: {inv['total_survivors']}  "
-          f"A={inv['classification_counts'][A_REAL_GAP]} "
-          f"B={inv['classification_counts'][B_EQUIVALENT]} "
-          f"E={inv['classification_counts'][E_UNKNOWN]}")
+    print(
+        f"Survivors: {inv['total_survivors']}  "
+        f"A={inv['classification_counts'][A_REAL_GAP]} "
+        f"B={inv['classification_counts'][B_EQUIVALENT]} "
+        f"E={inv['classification_counts'][E_UNKNOWN]}"
+    )
     return 0
 
 

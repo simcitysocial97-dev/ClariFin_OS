@@ -1,0 +1,80 @@
+{
+  "schema": "m9-c43-coverage-priority-matrix/v1",
+  "generated_at": "2026-08-27T01:51:39.233027+00:00",
+  "criterion": "charter financial-significance order; ties broken by gap size",
+  "waves": [
+    {
+      "wave": 1,
+      "theme": "transaction + financial-intelligence services & repositories (largest Class-A surface, highest charter rank)",
+      "targets": [
+        "src/repositories/transaction_repository.py",
+        "src/services/credit_card_service.py",
+        "src/repositories/loan_repository.py",
+        "src/services/transaction_service.py",
+        "src/services/loan_analysis_service.py",
+        "src/services/transaction_intelligence_service.py",
+        "src/services/financial_intelligence_service.py"
+      ],
+      "gap_items": 692
+    },
+    {
+      "wave": 2,
+      "theme": "ledger/account integrity + calculation engines + risk/behaviour branches",
+      "targets": [
+        "src/repositories/account_repository.py",
+        "src/services/account_service.py",
+        "src/repositories/financial_event_repository.py",
+        "src/repositories/cashflow_repository.py",
+        "src/engines/behaviour_engine/insights.py",
+        "src/engines/behaviour_engine/core.py",
+        "src/services/behaviour_service.py",
+        "src/engines/behaviour_engine/profile.py",
+        "src/engines/behaviour_engine/nudges.py",
+        "src/engines/behaviour_engine/stress.py",
+        "src/engines/behaviour_engine/patterns.py",
+        "src/engines/behaviour_engine/utils.py"
+      ],
+      "gap_items": 679
+    },
+    {
+      "wave": 3,
+      "theme": "transaction-behavior ingestion + remaining consequential services",
+      "targets": [
+        "src/repositories/statement_repository.py",
+        "src/services/import_service.py",
+        "src/repositories/alert_repository.py",
+        "src/services/credit_cards_workspace_service.py",
+        "src/core/mappers/statement_mapper.py",
+        "src/repositories/financial_goal_repository.py",
+        "src/core/dtos/analytics_dto.py",
+        "src/repositories/bank_repository.py",
+        "src/core/mappers/behaviour_mapper.py",
+        "src/services/networth_workspace_service.py",
+        "src/core/dtos/statement_dto.py",
+        "src/core/mappers/cashflow_mapper.py"
+      ],
+      "gap_items": 1051
+    }
+  ],
+  "non_targets": {
+    "class_C_structural": [
+      "src/core/db/schema.py"
+    ],
+    "class_E_env_bound": [
+      "src/config.py"
+    ],
+    "class_B_defensive": [
+      "src/engines/balance_engine.py",
+      "src/engines/financial_intelligence/optimization.py",
+      "src/engines/financial_intelligence/goal_planner.py",
+      "src/models/loan_simulation.py",
+      "src/models/credit_card.py",
+      "src/models/loan.py",
+      "src/models/transaction.py",
+      "src/orchestration/statement_orchestrator.py",
+      "src/models/financial_goal.py",
+      "src/engines/financial_events/lineage_walker.py"
+    ],
+    "note": "Class-B residual defensive branches may be incidentally covered by Wave 1-3 tests; no metric-only tests will be written for them"
+  }
+}

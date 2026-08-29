@@ -30,6 +30,7 @@ No command duplicates an existing one: diagnose/diagnose-failures are
 the older intelligence-layer diagnostics; these commands are the
 forensic-agent surface.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -48,23 +49,26 @@ DEFAULT_RECORD = "runtime/generated/m9-c42.28/forensic-execution-record.json"
 # forensic-diagnose
 # ---------------------------------------------------------------------------
 
+
 def run_forensic_diagnose(argv: list[str]) -> int:
     import argparse
 
-    parser = argparse.ArgumentParser(
-        prog="verify.py forensic-diagnose", add_help=False
-    )
+    parser = argparse.ArgumentParser(prog="verify.py forensic-diagnose", add_help=False)
     parser.add_argument(
-        "--changed", nargs="*", default=[],
+        "--changed",
+        nargs="*",
+        default=[],
         help="changed files (bypasses git detection)",
     )
     parser.add_argument(
-        "--ci-evidence", default=None,
+        "--ci-evidence",
+        default=None,
         help="path to persisted CI evidence records (m9-ci-evidence/v1)",
     )
     parser.add_argument("--out", default=None, help="output JSON path")
     parser.add_argument(
-        "--record", default=DEFAULT_RECORD,
+        "--record",
+        default=DEFAULT_RECORD,
         help="existing forensic record to diagnose instead of planning",
     )
     args, _ = parser.parse_known_args(argv)
@@ -92,12 +96,12 @@ def run_forensic_diagnose(argv: list[str]) -> int:
         executable = build_executable_plan(plan)
         # Diagnostic mode never launches mutation implicitly.
         reconciled = reconcile(
-            plan, {}, {m.component: m for m in default_prior_measurements()},
+            plan,
+            {},
+            {m.component: m for m in default_prior_measurements()},
             default_population(),
         )
-        record = build_forensic_record(
-            plan, executable, {}, reconciled
-        ).to_dict()
+        record = build_forensic_record(plan, executable, {}, reconciled).to_dict()
 
     ci_correlation = None
     if args.ci_evidence:
@@ -121,22 +125,26 @@ def run_forensic_diagnose(argv: list[str]) -> int:
                     sem = s
                     break
             _, decision = validate_and_decide(r, _context_for(r))
-            entries.append({
-                "record_id": r.record_id,
-                "component": r.component,
-                "executed": True,
-                "reusable": decision.reusable,
-                "disposition": decision.disposition,
-                "failure_classification": decision.failure_classification,
-                "reasons": list(decision.reasons),
-            })
+            entries.append(
+                {
+                    "record_id": r.record_id,
+                    "component": r.component,
+                    "executed": True,
+                    "reusable": decision.reusable,
+                    "disposition": decision.disposition,
+                    "failure_classification": decision.failure_classification,
+                    "reasons": list(decision.reasons),
+                }
+            )
         ci_correlation = {"records": entries}
 
     agent = DiagnosticForensicAgent()
     report = agent.diagnose(record, ci_correlation=ci_correlation)
 
-    out_path = Path(args.out) if args.out else (
-        REPO_ROOT / "runtime/generated/m9-c42.30/diagnostic-report.json"
+    out_path = (
+        Path(args.out)
+        if args.out
+        else (REPO_ROOT / "runtime/generated/m9-c42.30/diagnostic-report.json")
     )
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(report.to_dict(), indent=2))
@@ -159,8 +167,10 @@ def _context_for(record):
     )
 
     comp = record.component or ""
-    fps = collect_repo_fingerprints(comp) if comp else collect_repo_fingerprints(
-        "credit_card_engine"
+    fps = (
+        collect_repo_fingerprints(comp)
+        if comp
+        else collect_repo_fingerprints("credit_card_engine")
     )
     return CIRepositoryContext(
         repository_sha=_git_sha(),
@@ -176,12 +186,11 @@ def _context_for(record):
 # forensic-report
 # ---------------------------------------------------------------------------
 
+
 def run_forensic_report(argv: list[str]) -> int:
     import argparse
 
-    parser = argparse.ArgumentParser(
-        prog="verify.py forensic-report", add_help=False
-    )
+    parser = argparse.ArgumentParser(prog="verify.py forensic-report", add_help=False)
     parser.add_argument("--record", default=DEFAULT_RECORD)
     parser.add_argument("--out", default=None)
     args, _ = parser.parse_known_args(argv)
@@ -235,15 +244,14 @@ def run_forensic_report(argv: list[str]) -> int:
     print(output)
     if args.out:
         Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-        Path(args.out).write_text(
-            json.dumps({"text": output, "report": d}, indent=2)
-        )
+        Path(args.out).write_text(json.dumps({"text": output, "report": d}, indent=2))
     return 0
 
 
 # ---------------------------------------------------------------------------
 # strengthen-analyze
 # ---------------------------------------------------------------------------
+
 
 def run_strengthen_analyze(argv: list[str]) -> int:
     import argparse
@@ -252,7 +260,8 @@ def run_strengthen_analyze(argv: list[str]) -> int:
         prog="verify.py strengthen-analyze", add_help=False
     )
     parser.add_argument(
-        "--survivors", required=True,
+        "--survivors",
+        required=True,
         help=(
             "JSON file with survivor evidence records "
             "(list of SurvivorEvidence dicts)"
@@ -266,9 +275,7 @@ def run_strengthen_analyze(argv: list[str]) -> int:
     )
 
     raw = json.loads(Path(args.survivors).read_text())
-    survivors = [
-        s for s in (raw if isinstance(raw, list) else [raw])
-    ]
+    survivors = [s for s in (raw if isinstance(raw, list) else [raw])]
 
     proposals = []
     refusals = []
@@ -293,8 +300,10 @@ def run_strengthen_analyze(argv: list[str]) -> int:
             ),
         },
     }
-    out_path = Path(args.out) if args.out else (
-        REPO_ROOT / "runtime/generated/m9-c42.31/strengthening-analysis.json"
+    out_path = (
+        Path(args.out)
+        if args.out
+        else (REPO_ROOT / "runtime/generated/m9-c42.31/strengthening-analysis.json")
     )
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(payload, indent=2))
@@ -331,20 +340,26 @@ def generate_proposal_from_dict(s: dict):
 # strengthen-validate
 # ---------------------------------------------------------------------------
 
+
 def run_strengthen_validate(argv: list[str]) -> int:
     import argparse
 
     parser = argparse.ArgumentParser(
         prog="verify.py strengthen-validate", add_help=False
     )
-    parser.add_argument("--proposal", required=True,
-                        help="path to a StrengtheningProposal JSON")
-    parser.add_argument("--before", default=None,
-                        help="JSON file with before counts "
-                             "(default: derived from proposal evidence)")
+    parser.add_argument(
+        "--proposal", required=True, help="path to a StrengtheningProposal JSON"
+    )
+    parser.add_argument(
+        "--before",
+        default=None,
+        help="JSON file with before counts "
+        "(default: derived from proposal evidence)",
+    )
     parser.add_argument("--max-runtime", type=int, default=None)
     parser.add_argument(
-        "--stub", action="store_true",
+        "--stub",
+        action="store_true",
         help="use deterministic stub executor (tests/dry-run)",
     )
     args, _ = parser.parse_known_args(argv)
@@ -368,16 +383,15 @@ def run_strengthen_validate(argv: list[str]) -> int:
         proposed_test_surface=pdata["proposed_test_surface"],
         proposed_test=pdata["proposed_test"],
         reason=pdata["reason"],
-        expected_mutation_discrimination=pdata[
-            "expected_mutation_discrimination"
-        ],
+        expected_mutation_discrimination=pdata["expected_mutation_discrimination"],
         regression_risk=pdata["regression_risk"],
         validation_command=pdata["validation_command"],
         acceptance_criteria=tuple(pdata["acceptance_criteria"]),
     )
 
     before = (
-        json.loads(Path(args.before).read_text()) if args.before
+        json.loads(Path(args.before).read_text())
+        if args.before
         else {"killed": 0, "generated": 0}
     )
 
@@ -389,9 +403,7 @@ def run_strengthen_validate(argv: list[str]) -> int:
             counts: dict = _field(default_factory=dict)
             mutant_statuses: dict = _field(default_factory=dict)
 
-        sid = str(
-            (proposal.survivor_evidence or {}).get("survivor_id", "")
-        )
+        sid = str((proposal.survivor_evidence or {}).get("survivor_id", ""))
         before_killed = int(before.get("killed", 0))
         before_generated = int(before.get("generated", 0))
 
@@ -406,6 +418,7 @@ def run_strengthen_validate(argv: list[str]) -> int:
                 },
                 mutant_statuses={sid: "killed"} if sid else {},
             )
+
     else:
         from runtime.foundation.verification.executor_pipeline import (
             execute_mutation_task,
@@ -431,10 +444,13 @@ def run_strengthen_validate(argv: list[str]) -> int:
             return execute_mutation_task(task, max_runtime=args.max_runtime)
 
     outcome = targeted_revalidation(
-        proposal, before_counts=before, executor=executor,
+        proposal,
+        before_counts=before,
+        executor=executor,
     )
     out_path = (
-        REPO_ROOT / "runtime/generated/m9-c42.31"
+        REPO_ROOT
+        / "runtime/generated/m9-c42.31"
         / f"revalidation-{proposal.proposal_id.split('::')[-1]}.json"
     )
     out_path.parent.mkdir(parents=True, exist_ok=True)

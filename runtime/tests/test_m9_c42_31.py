@@ -12,6 +12,7 @@ Covers:
 Run with:
     .venv/bin/python -m pytest runtime/tests/test_m9_c42_31.py -v
 """
+
 from __future__ import annotations
 
 import json
@@ -75,6 +76,7 @@ def _proposal() -> StrengtheningProposal:
 # Classification
 # ---------------------------------------------------------------------------
 
+
 class TestClassification:
     def test_class_taxonomy_closed_and_documented(self) -> None:
         assert SURVIVOR_CLASSES == ("A", "B", "C", "D", "E")
@@ -117,16 +119,26 @@ class TestClassification:
 # Proposals + refusals
 # ---------------------------------------------------------------------------
 
+
 class TestProposals:
     def test_contract_complete_for_class_a(self) -> None:
         p = _proposal()
         d = p.to_dict()
         required = [
-            "component", "capability", "source_location", "survivor_evidence",
-            "classification", "behavioral_hypothesis", "expected_invariant",
-            "proposed_test_surface", "proposed_test", "reason",
-            "expected_mutation_discrimination", "regression_risk",
-            "validation_command", "acceptance_criteria",
+            "component",
+            "capability",
+            "source_location",
+            "survivor_evidence",
+            "classification",
+            "behavioral_hypothesis",
+            "expected_invariant",
+            "proposed_test_surface",
+            "proposed_test",
+            "reason",
+            "expected_mutation_discrimination",
+            "regression_risk",
+            "validation_command",
+            "acceptance_criteria",
         ]
         missing = [k for k in required if k not in d or d[k] in (None, "", [])]
         assert not missing
@@ -165,6 +177,7 @@ class TestProposals:
 # ---------------------------------------------------------------------------
 # Targeted revalidation
 # ---------------------------------------------------------------------------
+
 
 class TestTargetedRevalidation:
     def test_accept_when_target_killed_no_regressions(self) -> None:
@@ -213,6 +226,7 @@ class TestTargetedRevalidation:
 # Full-campaign discipline
 # ---------------------------------------------------------------------------
 
+
 def _justification() -> FullCampaignJustification:
     return FullCampaignJustification(
         trigger="population_expansion",
@@ -222,9 +236,7 @@ def _justification() -> FullCampaignJustification:
         expected_information_gained="authoritative baseline",
         estimated_resource_cost="60 mutation-minutes",
         certification_consequence="pop-15 becomes authoritative",
-        why_mathematical_reconciliation_cannot_answer=(
-            "nothing to reconcile from"
-        ),
+        why_mathematical_reconciliation_cannot_answer=("nothing to reconcile from"),
     )
 
 
@@ -277,6 +289,7 @@ class TestCampaignGate:
 # ---------------------------------------------------------------------------
 # Automation boundary
 # ---------------------------------------------------------------------------
+
 
 class TestAutomationBoundary:
     def test_approval_never_auto_executes(self) -> None:

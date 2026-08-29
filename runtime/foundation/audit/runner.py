@@ -75,16 +75,16 @@ class _SectionRunner:
                 name=self.name,
                 status=AuditStatus.FAIL,
                 findings=(
-                        AuditFinding(
-                            section=self.name,
-                            check_id="runner-error",
-                            name="Section execution error",
-                            status=AuditStatus.FAIL,
-                            severity=AuditSeverity.CRITICAL,
-                            priority=AuditPriority.CRITICAL,
-                            message=str(exc),
-                        )
-                    ,),
+                    AuditFinding(
+                        section=self.name,
+                        check_id="runner-error",
+                        name="Section execution error",
+                        status=AuditStatus.FAIL,
+                        severity=AuditSeverity.CRITICAL,
+                        priority=AuditPriority.CRITICAL,
+                        message=str(exc),
+                    ),
+                ),
                 duration_seconds=time.monotonic() - start,
             )
 

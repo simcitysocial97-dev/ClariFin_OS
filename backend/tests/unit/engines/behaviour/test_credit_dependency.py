@@ -121,10 +121,16 @@ def test_credit_dependency_ratio_handles_missing_keys():
 
 def test_transactor_vs_revolver_settled_only():
     events = [
-        {"account_id": "C1", "event_type": "liability_increase",
-         "lifecycle_state": "settled"},
-        {"account_id": "C1", "event_type": "liability_increase",
-         "lifecycle_state": "settled"},
+        {
+            "account_id": "C1",
+            "event_type": "liability_increase",
+            "lifecycle_state": "settled",
+        },
+        {
+            "account_id": "C1",
+            "event_type": "liability_increase",
+            "lifecycle_state": "settled",
+        },
     ]
     result = transactor_vs_revolver(events, "C1")
     assert result["type"] == "transactor"
@@ -135,10 +141,16 @@ def test_transactor_vs_revolver_settled_only():
 
 def test_transactor_vs_revolver_revolving_only():
     events = [
-        {"account_id": "C1", "event_type": "liability_increase",
-         "lifecycle_state": "open"},
-        {"account_id": "C1", "event_type": "liability_increase",
-         "lifecycle_state": "rolls_over"},
+        {
+            "account_id": "C1",
+            "event_type": "liability_increase",
+            "lifecycle_state": "open",
+        },
+        {
+            "account_id": "C1",
+            "event_type": "liability_increase",
+            "lifecycle_state": "rolls_over",
+        },
     ]
     result = transactor_vs_revolver(events, "C1")
     assert result["type"] == "revolver"
@@ -148,12 +160,21 @@ def test_transactor_vs_revolver_revolving_only():
 
 def test_transactor_vs_revolver_mixed_revolver_wins():
     events = [
-        {"account_id": "C1", "event_type": "liability_increase",
-         "lifecycle_state": "settled"},
-        {"account_id": "C1", "event_type": "liability_increase",
-         "lifecycle_state": "open"},
-        {"account_id": "C1", "event_type": "liability_increase",
-         "lifecycle_state": "rolls_over"},
+        {
+            "account_id": "C1",
+            "event_type": "liability_increase",
+            "lifecycle_state": "settled",
+        },
+        {
+            "account_id": "C1",
+            "event_type": "liability_increase",
+            "lifecycle_state": "open",
+        },
+        {
+            "account_id": "C1",
+            "event_type": "liability_increase",
+            "lifecycle_state": "rolls_over",
+        },
     ]
     result = transactor_vs_revolver(events, "C1")
     assert result["type"] == "revolver"
@@ -164,12 +185,21 @@ def test_transactor_vs_revolver_mixed_revolver_wins():
 
 def test_transactor_vs_revolver_mixed_transactor_wins():
     events = [
-        {"account_id": "C1", "event_type": "liability_increase",
-         "lifecycle_state": "settled"},
-        {"account_id": "C1", "event_type": "liability_increase",
-         "lifecycle_state": "settled"},
-        {"account_id": "C1", "event_type": "liability_increase",
-         "lifecycle_state": "open"},
+        {
+            "account_id": "C1",
+            "event_type": "liability_increase",
+            "lifecycle_state": "settled",
+        },
+        {
+            "account_id": "C1",
+            "event_type": "liability_increase",
+            "lifecycle_state": "settled",
+        },
+        {
+            "account_id": "C1",
+            "event_type": "liability_increase",
+            "lifecycle_state": "open",
+        },
     ]
     result = transactor_vs_revolver(events, "C1")
     assert result["type"] == "transactor"
@@ -178,10 +208,16 @@ def test_transactor_vs_revolver_mixed_transactor_wins():
 
 def test_transactor_vs_revolver_equal_counts():
     events = [
-        {"account_id": "C1", "event_type": "liability_increase",
-         "lifecycle_state": "settled"},
-        {"account_id": "C1", "event_type": "liability_increase",
-         "lifecycle_state": "open"},
+        {
+            "account_id": "C1",
+            "event_type": "liability_increase",
+            "lifecycle_state": "settled",
+        },
+        {
+            "account_id": "C1",
+            "event_type": "liability_increase",
+            "lifecycle_state": "open",
+        },
     ]
     result = transactor_vs_revolver(events, "C1")
     assert result["type"] == "transactor"
@@ -190,10 +226,16 @@ def test_transactor_vs_revolver_equal_counts():
 
 def test_transactor_vs_revolver_filters_other_accounts():
     events = [
-        {"account_id": "C2", "event_type": "liability_increase",
-         "lifecycle_state": "open"},
-        {"account_id": "C1", "event_type": "liability_increase",
-         "lifecycle_state": "settled"},
+        {
+            "account_id": "C2",
+            "event_type": "liability_increase",
+            "lifecycle_state": "open",
+        },
+        {
+            "account_id": "C1",
+            "event_type": "liability_increase",
+            "lifecycle_state": "settled",
+        },
     ]
     result = transactor_vs_revolver(events, "C1")
     assert result["settled_count"] == 1
@@ -207,12 +249,21 @@ def test_transactor_vs_revolver_filters_other_accounts():
 
 def test_revolver_ratio_normal():
     events = [
-        {"event_type": "liability_increase", "month_bucket": "2025-01",
-         "lifecycle_state": "open"},
-        {"event_type": "liability_increase", "month_bucket": "2025-01",
-         "lifecycle_state": "settled"},
-        {"event_type": "liability_increase", "month_bucket": "2025-02",
-         "lifecycle_state": "rolls_over"},
+        {
+            "event_type": "liability_increase",
+            "month_bucket": "2025-01",
+            "lifecycle_state": "open",
+        },
+        {
+            "event_type": "liability_increase",
+            "month_bucket": "2025-01",
+            "lifecycle_state": "settled",
+        },
+        {
+            "event_type": "liability_increase",
+            "month_bucket": "2025-02",
+            "lifecycle_state": "rolls_over",
+        },
     ]
     ratio = revolver_ratio(events)
     # 2 months with credit activity, both have revolving activity
@@ -221,10 +272,16 @@ def test_revolver_ratio_normal():
 
 def test_revolver_ratio_partial_months():
     events = [
-        {"event_type": "liability_increase", "month_bucket": "2025-01",
-         "lifecycle_state": "settled"},
-        {"event_type": "liability_increase", "month_bucket": "2025-02",
-         "lifecycle_state": "rolls_over"},
+        {
+            "event_type": "liability_increase",
+            "month_bucket": "2025-01",
+            "lifecycle_state": "settled",
+        },
+        {
+            "event_type": "liability_increase",
+            "month_bucket": "2025-02",
+            "lifecycle_state": "rolls_over",
+        },
     ]
     ratio = revolver_ratio(events)
     # 2 months, only 1 has revolving activity
@@ -291,12 +348,13 @@ def test_debt_rolling_flag_empty():
 
 def test_liquidity_extraction_frequency_multiple():
     events = [
-        {"event_type": "cash_advance", "amount_paise": 10000,
-         "date_iso": "2025-01-01"},
-        {"event_type": "credit_card_cash_advance", "amount_paise": 20000,
-         "date_iso": "2025-01-10"},
-        {"event_type": "cash_advance", "amount_paise": 15000,
-         "date_iso": "2025-01-20"},
+        {"event_type": "cash_advance", "amount_paise": 10000, "date_iso": "2025-01-01"},
+        {
+            "event_type": "credit_card_cash_advance",
+            "amount_paise": 20000,
+            "date_iso": "2025-01-10",
+        },
+        {"event_type": "cash_advance", "amount_paise": 15000, "date_iso": "2025-01-20"},
     ]
     result = liquidity_extraction_frequency(events)
     assert result["count"] == 3
@@ -307,8 +365,7 @@ def test_liquidity_extraction_frequency_multiple():
 
 def test_liquidity_extraction_frequency_single():
     events = [
-        {"event_type": "cash_advance", "amount_paise": 10000,
-         "date_iso": "2025-01-01"},
+        {"event_type": "cash_advance", "amount_paise": 10000, "date_iso": "2025-01-01"},
     ]
     result = liquidity_extraction_frequency(events)
     assert result["count"] == 1
@@ -325,8 +382,7 @@ def test_liquidity_extraction_frequency_empty():
 
 def test_liquidity_extraction_frequency_invalid_dates():
     events = [
-        {"event_type": "cash_advance", "amount_paise": 10000,
-         "date_iso": "not-a-date"},
+        {"event_type": "cash_advance", "amount_paise": 10000, "date_iso": "not-a-date"},
     ]
     result = liquidity_extraction_frequency(events)
     assert result["count"] == 1
@@ -361,22 +417,54 @@ def test_normalize_score_normal():
 
 def test_financial_stress_index_high_stress():
     events = [
-        {"id": 1, "event_type": "liability_increase",
-         "lifecycle_state": "rolls_over", "links": [{"link_type": "rolls_over"}]},
-        {"id": 2, "event_type": "liability_increase",
-         "lifecycle_state": "rolls_over", "links": [{"link_type": "rolls_over"}]},
-        {"id": 3, "event_type": "liability_increase",
-         "lifecycle_state": "rolls_over", "links": [{"link_type": "rolls_over"}]},
-        {"id": 4, "event_type": "cash_advance", "amount_paise": 50000,
-         "date_iso": "2025-01-01"},
-        {"id": 5, "event_type": "cash_advance", "amount_paise": 50000,
-         "date_iso": "2025-01-05"},
-        {"id": 6, "event_type": "cash_advance", "amount_paise": 50000,
-         "date_iso": "2025-01-10"},
-        {"id": 7, "event_type": "cash_advance", "amount_paise": 50000,
-         "date_iso": "2025-01-15"},
-        {"id": 8, "event_type": "cash_advance", "amount_paise": 50000,
-         "date_iso": "2025-01-20"},
+        {
+            "id": 1,
+            "event_type": "liability_increase",
+            "lifecycle_state": "rolls_over",
+            "links": [{"link_type": "rolls_over"}],
+        },
+        {
+            "id": 2,
+            "event_type": "liability_increase",
+            "lifecycle_state": "rolls_over",
+            "links": [{"link_type": "rolls_over"}],
+        },
+        {
+            "id": 3,
+            "event_type": "liability_increase",
+            "lifecycle_state": "rolls_over",
+            "links": [{"link_type": "rolls_over"}],
+        },
+        {
+            "id": 4,
+            "event_type": "cash_advance",
+            "amount_paise": 50000,
+            "date_iso": "2025-01-01",
+        },
+        {
+            "id": 5,
+            "event_type": "cash_advance",
+            "amount_paise": 50000,
+            "date_iso": "2025-01-05",
+        },
+        {
+            "id": 6,
+            "event_type": "cash_advance",
+            "amount_paise": 50000,
+            "date_iso": "2025-01-10",
+        },
+        {
+            "id": 7,
+            "event_type": "cash_advance",
+            "amount_paise": 50000,
+            "date_iso": "2025-01-15",
+        },
+        {
+            "id": 8,
+            "event_type": "cash_advance",
+            "amount_paise": 50000,
+            "date_iso": "2025-01-20",
+        },
     ]
     cashflow = {
         "credit_dependency_ratio": 2.0,
@@ -408,8 +496,12 @@ def test_financial_stress_index_low_stress():
 
 def test_household_divergence_detects_cross_owner():
     events = [
-        {"id": 1, "owner_id": "alice", "household_id": "h1",
-         "links": [{"link_type": "funds", "linked_event_id": 2}]},
+        {
+            "id": 1,
+            "owner_id": "alice",
+            "household_id": "h1",
+            "links": [{"link_type": "funds", "linked_event_id": 2}],
+        },
         {"id": 2, "owner_id": "bob", "household_id": "h1", "links": []},
     ]
     result = household_divergence(events)
@@ -421,8 +513,12 @@ def test_household_divergence_detects_cross_owner():
 
 def test_household_divergence_same_owner():
     events = [
-        {"id": 1, "owner_id": "alice", "household_id": "h1",
-         "links": [{"link_type": "funds", "linked_event_id": 2}]},
+        {
+            "id": 1,
+            "owner_id": "alice",
+            "household_id": "h1",
+            "links": [{"link_type": "funds", "linked_event_id": 2}],
+        },
         {"id": 2, "owner_id": "alice", "household_id": "h1", "links": []},
     ]
     result = household_divergence(events)
@@ -432,8 +528,12 @@ def test_household_divergence_same_owner():
 
 def test_household_divergence_settles_link():
     events = [
-        {"id": 1, "owner_id": "alice", "household_id": "h1",
-         "links": [{"link_type": "settles", "linked_event_id": 2}]},
+        {
+            "id": 1,
+            "owner_id": "alice",
+            "household_id": "h1",
+            "links": [{"link_type": "settles", "linked_event_id": 2}],
+        },
         {"id": 2, "owner_id": "bob", "household_id": "h1", "links": []},
     ]
     result = household_divergence(events)

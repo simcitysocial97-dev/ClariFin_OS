@@ -32,6 +32,7 @@ Verdict vocabulary (closed):
 Determinism contract: identical inputs produce byte-identical reports
 (no wall-clock enters any decision field).
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -89,17 +90,17 @@ UNCERTAINTY_KINDS: tuple[UncertaintyKind, ...] = (
 # ===========================================================================
 
 CAUSAL_CHAIN_STAGES: tuple[str, ...] = (
-    "change",                  # repository state -> detected changes
-    "affected_graph_nodes",    # affected source/components/capabilities
-    "invalidations",           # invalidated evidence
-    "reused_evidence",         # reusable evidence
-    "selected_tasks",          # planner decision
-    "executed_tasks",          # executable/executed tasks
-    "execution_results",       # execution results
-    "new_evidence",            # fresh evidence
-    "derived_evidence",        # derived evidence
-    "failures",                # classified outcomes
-    "uncertainties",           # unresolved uncertainty
+    "change",  # repository state -> detected changes
+    "affected_graph_nodes",  # affected source/components/capabilities
+    "invalidations",  # invalidated evidence
+    "reused_evidence",  # reusable evidence
+    "selected_tasks",  # planner decision
+    "executed_tasks",  # executable/executed tasks
+    "execution_results",  # execution results
+    "new_evidence",  # fresh evidence
+    "derived_evidence",  # derived evidence
+    "failures",  # classified outcomes
+    "uncertainties",  # unresolved uncertainty
     "certification_decision",  # certification conclusion
 )
 
@@ -253,28 +254,28 @@ def validate_forensic_record(record_dict: dict[str, Any]) -> RecordValidation:
                 )
             elif marker:
                 validations.append(
-                    StageValidation(
-                        stage, True, True, f"explicitly empty: {marker}"
-                    )
+                    StageValidation(stage, True, True, f"explicitly empty: {marker}")
                 )
             else:
                 validations.append(
                     StageValidation(
-                        stage, True, False,
+                        stage,
+                        True,
+                        False,
                         "stage present but empty without explicit reason",
                     )
                 )
         elif value:
             validations.append(StageValidation(stage, True, False, STAGE_NOTES[stage]))
         else:
-            validations.append(
-                StageValidation(stage, True, False, "falsy stage value")
-            )
+            validations.append(StageValidation(stage, True, False, "falsy stage value"))
     missing = tuple(v.stage for v in validations if not v.present)
     silent = tuple(
         v.stage
         for v in validations
-        if v.present and not v.explicitly_empty and "without explicit reason" in v.detail
+        if v.present
+        and not v.explicitly_empty
+        and "without explicit reason" in v.detail
     )
     return RecordValidation(
         record_id=str(record_dict.get("record_id", "")),
@@ -286,6 +287,7 @@ def validate_forensic_record(record_dict: dict[str, Any]) -> RecordValidation:
 # ===========================================================================
 # Diagnostic report — the nine canonical questions
 # ===========================================================================
+
 
 @dataclass(frozen=True, slots=True)
 class Uncertainty:
@@ -392,6 +394,7 @@ class DiagnosticReport:
 # The agent
 # ===========================================================================
 
+
 class DiagnosticForensicAgent:
     """Consumes canonical artifacts; produces deterministic diagnoses.
 
@@ -438,15 +441,25 @@ class DiagnosticForensicAgent:
         q7 = self._answer_q7(record, q3=q3, q4=q4, q5=q5)
         q8 = self._answer_q8(record, q3=q3, q6=q6, ci_correlation=ci_correlation)
         q9, explain = self._answer_q9(
-            record, validation=validation, q3=q3, q4=q4, q5=q5, q6=q6,
-            q7=q7, q8=q8, q1=q1, q2=q2,
+            record,
+            validation=validation,
+            q3=q3,
+            q4=q4,
+            q5=q5,
+            q6=q6,
+            q7=q7,
+            q8=q8,
+            q1=q1,
+            q2=q2,
         )
 
-        rid_src = "|".join([
-            str(record.get("record_id", "")),
-            q9["verdict"],
-            str(len(q8)),
-        ])
+        rid_src = "|".join(
+            [
+                str(record.get("record_id", "")),
+                q9["verdict"],
+                str(len(q8)),
+            ]
+        )
         return DiagnosticReport(
             schema=DIAGNOSTIC_REPORT_SCHEMA,
             report_id=f"diag::{hashlib.sha256(rid_src.encode()).hexdigest()[:12]}",
@@ -475,22 +488,28 @@ class DiagnosticForensicAgent:
             "source": [f for f in files if f.startswith("backend/src/")],
             "test": [f for f in files if f.startswith("backend/tests/")],
             "config": [
-                f for f in files
+                f
+                for f in files
                 if f.endswith(".toml") or f.endswith(".cfg") or ".github/" in f
             ],
             "verification_infrastructure": [
-                f for f in files
+                f
+                for f in files
                 if f.startswith("runtime/foundation/verification/")
                 or f.startswith(".github/workflows/")
             ],
             "dependency_toolchain": [
-                f for f in files
+                f
+                for f in files
                 if f in ("pyproject.toml", "backend/pyproject.toml")
                 or "requirements" in f
             ],
             "other": [
-                f for f in files
-                if not f.startswith(("backend/src/", "backend/tests/", "runtime/", ".github/"))
+                f
+                for f in files
+                if not f.startswith(
+                    ("backend/src/", "backend/tests/", "runtime/", ".github/")
+                )
                 and not f.endswith((".toml", ".cfg"))
             ],
         }
@@ -532,7 +551,9 @@ class DiagnosticForensicAgent:
         fresh = (record.get("new_evidence", {}) or {}).get("components", [])
 
         revalidated = []
-        for comp, ev in (record.get("execution_results", {}) or {}).get("by_component", {}).items():
+        for comp, ev in (
+            (record.get("execution_results", {}) or {}).get("by_component", {}).items()
+        ):
             if ev.get("failure_kind") is None and ev.get("exit_code") == 0:
                 revalidated.append(comp)
 
@@ -541,7 +562,9 @@ class DiagnosticForensicAgent:
         if ci_correlation:
             for entry in ci_correlation.get("records", []):
                 if entry.get("disposition") == "reusable":
-                    ci_reused.append(entry.get("component") or entry.get("record_id", ""))
+                    ci_reused.append(
+                        entry.get("component") or entry.get("record_id", "")
+                    )
                 elif entry.get("reusable") is False:
                     ci_unavailable.append(
                         {
@@ -551,9 +574,7 @@ class DiagnosticForensicAgent:
                     )
 
         known = set(reused) | set(fresh) | set(invalidated) | set(ci_reused)
-        unavailable = [
-            c for c in self._population if c not in known
-        ]
+        unavailable = [c for c in self._population if c not in known]
         return {
             "reused": reused,
             "revalidated": sorted(set(revalidated)),
@@ -572,9 +593,9 @@ class DiagnosticForensicAgent:
             "authority": "EvidenceAwarePlanner (C42.27) — agent never invents scope",
             "required_tasks": selected.get("components", []),
             "task_count": selected.get("count", 0),
-            "excluded_by_planner": excluded.get("components", [])
-            if isinstance(excluded, dict)
-            else [],
+            "excluded_by_planner": (
+                excluded.get("components", []) if isinstance(excluded, dict) else []
+            ),
         }
 
     # -- Q5 ----------------------------------------------------------------
@@ -590,13 +611,12 @@ class DiagnosticForensicAgent:
 
         planned = set(record.get("selected_tasks", {}).get("components", []))
         executed_set = set(executed.get("components", []))
-        failed = sorted(
-            c for c, ev in results.items() if ev.get("failure_kind")
-        )
+        failed = sorted(c for c, ev in results.items() if ev.get("failure_kind"))
         skipped = sorted(planned - executed_set - set(failed))
 
         blocked = sorted(
-            c for c, ev in results.items()
+            c
+            for c, ev in results.items()
             if ev.get("failure_kind") in ("scope_failure", "configuration_failure")
         )
         ci_executed = []
@@ -661,7 +681,9 @@ class DiagnosticForensicAgent:
         q4: dict[str, Any],
         q5: dict[str, Any],
     ) -> dict[str, Any]:
-        executed_and_selected = set(q5["executed"]) | set(q3["reused"]) | set(q3["revalidated"])
+        executed_and_selected = (
+            set(q5["executed"]) | set(q3["reused"]) | set(q3["revalidated"])
+        )
         outside_population = sorted(
             set(record.get("selected_tasks", {}).get("components", []))
             - set(self._population)
@@ -671,9 +693,8 @@ class DiagnosticForensicAgent:
         return {
             "excluded_capabilities": q4.get("excluded_by_planner", []),
             "covered_by_reused_evidence": q3["reused"] + q3["ci_reused"],
-            "unavailable_evidence": q3["unavailable"] + [
-                u.get("record_id") for u in q3["ci_unavailable"]
-            ],
+            "unavailable_evidence": q3["unavailable"]
+            + [u.get("record_id") for u in q3["ci_unavailable"]],
             "deferred_components": deferred,
             "outside_population_components": outside_population,
             "blocked_tasks": blocked,
@@ -693,26 +714,35 @@ class DiagnosticForensicAgent:
 
         rec_unc = record.get("uncertainties", {}) or {}
         for comp in rec_unc.get("no_evidence", []):
-            found.append(Uncertainty(
-                "insufficient_test_surface", comp,
-                "no prior measurement and no fresh evidence exists",
-                gates_certification=True,
-                recommendation="measure the component before certifying",
-            ))
+            found.append(
+                Uncertainty(
+                    "insufficient_test_surface",
+                    comp,
+                    "no prior measurement and no fresh evidence exists",
+                    gates_certification=True,
+                    recommendation="measure the component before certifying",
+                )
+            )
         for comp in rec_unc.get("invalidated", []):
-            found.append(Uncertainty(
-                "stale_evidence", comp,
-                "prior evidence invalidated and not yet replaced by fresh measurement",
-                gates_certification=True,
-                recommendation="run the planner-selected targeted verification",
-            ))
+            found.append(
+                Uncertainty(
+                    "stale_evidence",
+                    comp,
+                    "prior evidence invalidated and not yet replaced by fresh measurement",
+                    gates_certification=True,
+                    recommendation="run the planner-selected targeted verification",
+                )
+            )
         for blocker in rec_unc.get("drift_blockers", []):
-            found.append(Uncertainty(
-                "unmapped_capability", blocker,
-                "graph-level drift: declared coverage unreachable by executable surface",
-                gates_certification=True,
-                recommendation="repair the capability mapping before certification",
-            ))
+            found.append(
+                Uncertainty(
+                    "unmapped_capability",
+                    blocker,
+                    "graph-level drift: declared coverage unreachable by executable surface",
+                    gates_certification=True,
+                    recommendation="repair the capability mapping before certification",
+                )
+            )
 
         results = (record.get("execution_results", {}) or {}).get("by_component", {})
         for comp, ev in results.items():
@@ -722,42 +752,55 @@ class DiagnosticForensicAgent:
             suspicious = int(counts.get("suspicious", 0) or 0)
             notes = str(ev.get("notes", ""))
             if no_tests:
-                found.append(Uncertainty(
-                    "insufficient_test_surface", comp,
-                    f"{no_tests} mutant(s) had no covering test",
-                    gates_certification=False,
-                    recommendation=(
-                        "behavioral gap: consider evidence-driven test "
-                        "strengthening (C42.31); do NOT chase score blindly"
-                    ),
-                ))
+                found.append(
+                    Uncertainty(
+                        "insufficient_test_surface",
+                        comp,
+                        f"{no_tests} mutant(s) had no covering test",
+                        gates_certification=False,
+                        recommendation=(
+                            "behavioral gap: consider evidence-driven test "
+                            "strengthening (C42.31); do NOT chase score blindly"
+                        ),
+                    )
+                )
             if "equivalent" in notes.lower():
-                found.append(Uncertainty(
-                    "equivalent_mutant", comp,
-                    "survivor(s) classified equivalent/observable-equivalent",
-                    gates_certification=False,
-                    recommendation="preserve; do not target artificially",
-                ))
+                found.append(
+                    Uncertainty(
+                        "equivalent_mutant",
+                        comp,
+                        "survivor(s) classified equivalent/observable-equivalent",
+                        gates_certification=False,
+                        recommendation="preserve; do not target artificially",
+                    )
+                )
             if suspicious:
-                found.append(Uncertainty(
-                    "nondeterministic_mutation", comp,
-                    f"{suspicious} suspicious outcome(s) — possible nondeterminism",
-                    gates_certification=False,
-                    recommendation="re-run the specific mutants before interpreting",
-                ))
+                found.append(
+                    Uncertainty(
+                        "nondeterministic_mutation",
+                        comp,
+                        f"{suspicious} suspicious outcome(s) — possible nondeterminism",
+                        gates_certification=False,
+                        recommendation="re-run the specific mutants before interpreting",
+                    )
+                )
 
         if ci_correlation:
             for entry in ci_correlation.get("records", []):
-                if not entry.get("reusable", True) and entry.get(
-                    "failure_classification"
-                ) == "evidence_failure":
-                    found.append(Uncertainty(
-                        "incomplete_ci_evidence",
-                        entry.get("record_id", ""),
-                        "; ".join(entry.get("reasons", [])) or "CI artifact unusable",
-                        gates_certification=True,
-                        recommendation="repair CI artifact capture before relying on it",
-                    ))
+                if (
+                    not entry.get("reusable", True)
+                    and entry.get("failure_classification") == "evidence_failure"
+                ):
+                    found.append(
+                        Uncertainty(
+                            "incomplete_ci_evidence",
+                            entry.get("record_id", ""),
+                            "; ".join(entry.get("reasons", []))
+                            or "CI artifact unusable",
+                            gates_certification=True,
+                            recommendation="repair CI artifact capture before relying on it",
+                        )
+                    )
 
         # Deterministic ordering.
         found.sort(key=lambda u: (u.kind, u.subject))
@@ -788,9 +831,7 @@ class DiagnosticForensicAgent:
         evidence_failures = q6["by_kind"].get("evidence_failure", [])
         scope_failures = q6["by_kind"].get("scope_failure", [])
 
-        drift_blockers = [
-            u for u in q8 if u.kind == "unmapped_capability"
-        ]
+        drift_blockers = [u for u in q8 if u.kind == "unmapped_capability"]
 
         if not validation.complete:
             verdict: Verdict = "INSUFFICIENT_EVIDENCE"
@@ -811,9 +852,7 @@ class DiagnosticForensicAgent:
             # A genuine verification failure is definitive: defects were
             # detected. This outranks residual insufficiency.
             verdict = "NOT_CERTIFIABLE"
-            reasons.append(
-                f"verification failure(s) in {', '.join(ver_failures)}"
-            )
+            reasons.append(f"verification failure(s) in {', '.join(ver_failures)}")
         elif evidence_failures:
             verdict = "NOT_CERTIFIABLE"
             reasons.append(
@@ -821,9 +860,7 @@ class DiagnosticForensicAgent:
             )
         elif gating:
             verdict = "INSUFFICIENT_EVIDENCE"
-            reasons.extend(
-                f"{u.subject}: {u.detail}" for u in gating[:5]
-            )
+            reasons.extend(f"{u.subject}: {u.detail}" for u in gating[:5])
         elif infra_failures:
             verdict = "INSUFFICIENT_EVIDENCE"
             reasons.append(
@@ -857,9 +894,7 @@ class DiagnosticForensicAgent:
                 if (q3["reused"] or q3["ci_reused"])
                 else "n/a"
             ),
-            what_evidence_became_invalid=(
-                ", ".join(q3["invalidated"]) or "none"
-            ),
+            what_evidence_became_invalid=(", ".join(q3["invalidated"]) or "none"),
             what_failed=(
                 "; ".join(
                     f"{kind}: {', '.join(components)}"
@@ -886,10 +921,15 @@ class DiagnosticForensicAgent:
             ),
             what_remains_unverified=(
                 "; ".join(
-                    filter(None, [
-                        ", ".join(q7["deferred_components"]) and f"deferred: {', '.join(q7['deferred_components'])}",
-                        ", ".join(q7["unavailable_evidence"]) and f"no evidence: {', '.join(map(str, q7['unavailable_evidence']))}",
-                    ])
+                    filter(
+                        None,
+                        [
+                            ", ".join(q7["deferred_components"])
+                            and f"deferred: {', '.join(q7['deferred_components'])}",
+                            ", ".join(q7["unavailable_evidence"])
+                            and f"no evidence: {', '.join(map(str, q7['unavailable_evidence']))}",
+                        ],
+                    )
                 )
                 or "nothing within scope remains unverified"
             ),

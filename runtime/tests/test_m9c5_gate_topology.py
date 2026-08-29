@@ -37,9 +37,14 @@ def test_quality_gate_profile_is_quick_not_mutation() -> None:
 
 
 def test_quick_profile_task_ids_are_primary_gate_checks() -> None:
-    """Primary Quality Gate = ruff + mypy + unit. Mutation is absent."""
+    """Primary Quality Gate = ruff + black + mypy + unit. Mutation is absent.
+
+    M9-C43.1: the canonical quick gate was strengthened to include the black
+    format check (`quick-black`) between ruff and mypy; this list is the
+    authoritative gate composition the test must pin.
+    """
     ids = [t.id for t in get_profile("quick").tasks]
-    assert ids == ["quick-ruff", "quick-mypy", "quick-unit"]
+    assert ids == ["quick-ruff", "quick-black", "quick-mypy", "quick-unit"]
 
 
 # ---------------------------------------------------------------------------

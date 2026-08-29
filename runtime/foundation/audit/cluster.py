@@ -171,9 +171,7 @@ def cluster_issues(issues: list[dict[str, Any]]) -> dict[str, Any]:
     for key, cluster_issues in clusters.items():
         name, description, repair_strategy, complexity, benefit = _cluster_metadata(key)
         subsystems = tuple(sorted({i["subsystem"] for i in cluster_issues}))
-        pipeline_stages = tuple(
-            sorted({i["pipeline_stage"] for i in cluster_issues})
-        )
+        pipeline_stages = tuple(sorted({i["pipeline_stage"] for i in cluster_issues}))
         issue_ids = tuple(i["issue_id"] for i in cluster_issues)
 
         cluster = RootCauseCluster(

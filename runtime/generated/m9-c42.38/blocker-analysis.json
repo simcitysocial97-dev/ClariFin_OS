@@ -1,0 +1,72 @@
+{
+  "schema": "m9-c42.38-blocker-analysis/v1",
+  "generated_at": "2026-08-27T01:58:00.000000+00:00",
+  "phase": "M9-C42.38",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "blocker_definition": "A finding is a FINAL CERTIFICATION BLOCKER only if it prevents the system from reliably answering: What changed? / What is affected? / What evidence remains valid? / What must run? / What actually ran? / What happened? / What was not tested? / What remains uncertain? / Is the result certifiable?",
+  "nine_questions": [
+    "What changed?", "What is affected?", "What evidence remains valid?",
+    "What must run?", "What actually ran?", "What happened?",
+    "What was not tested?", "What remains uncertain?", "Is the result certifiable?"
+  ],
+  "findings": [
+    {
+      "id": "F1", "title": "Live CI evidence emission not wired into workflows",
+      "classification": "ENVIRONMENTAL_LIMITATION",
+      "blocks_certification": false,
+      "reasoning": "Emission schema, binding derivation, canonical conversion, semantic equivalence are fully implemented and tested (36 C42.29 tests pass). Only the wiring into live GitHub Actions workflows is absent, and that requires a GitHub Actions environment. Does not prevent answering any of the nine questions for locally-derivable evidence."
+    },
+    {
+      "id": "F2", "title": "Shared-infrastructure change requires explicit shared:: prefix (no auto-detection)",
+      "classification": "ENHANCEMENT",
+      "blocks_certification": false,
+      "reasoning": "When shared:: prefix is used, R-SRC-002 invalidates exactly the named dependents and the planner re-measures only them. Without the prefix, a shared-module file change does not auto-propagate. This is a deliberately deferred optimization (constraint: do not redesign dependency inference in M38.6). Explicitly-declared changes are answered reliably; auto-detection is an enhancement, not a blocker."
+    },
+    {
+      "id": "F3", "title": "Class-E escalation threshold not empirically calibrated",
+      "classification": "DEFERRED",
+      "blocks_certification": false,
+      "reasoning": "The Class-E ESCALATION contract is defined and enforced (Class-E always refused pending human review). Empirical threshold conditions (observation_count>=3, independent_change_count>=2) require real historical accumulation. The system still answers 'what remains uncertain' (escalation pending) without calibration."
+    },
+    {
+      "id": "F4", "title": "Forensic-aware cache layer not implemented",
+      "classification": "ENHANCEMENT",
+      "blocks_certification": false,
+      "reasoning": "The base VerificationCache cannot turn a stored failure into a pass (G15 PASS). A component-scoped forensic-aware wrapper is recommended but not required; certification is already safe."
+    },
+    {
+      "id": "F5", "title": "SurvivorRegistry for persistent cross-run survivor tracking not implemented",
+      "classification": "ENHANCEMENT",
+      "blocks_certification": false,
+      "reasoning": "Per-run survivor classification and proposal generation work without a persistent registry. A registry improves longitudinal intelligence but is not required to answer the nine questions for the current state."
+    },
+    {
+      "id": "F6", "title": "Class-A acceptance lacks completed empirical approval/rejection cycle",
+      "classification": "DEFERRED",
+      "blocks_certification": false,
+      "reasoning": "Class-A proposals are generated and the human-authorization boundary is enforced. No full real approval cycle has completed, but this is a data-accumulation matter, not a structural blocker. Recorded as INSUFFICIENT_DATA, not as a verification failure."
+    },
+    {
+      "id": "F7", "title": "60.297% is mathematically reconciled, not a fresh measurement",
+      "classification": "ACCEPTED",
+      "blocks_certification": false,
+      "reasoning": "Explicitly labelled MATHEMATICALLY_RECONCILED throughout C42.26-38. The distinction is enforced in code (labelled aggregates) and in artifacts. Accepted as the correct representation of the evidence state."
+    },
+    {
+      "id": "F8", "title": "Historical calibration partial (B/D supported; A/E provisional)",
+      "classification": "DEFERRED",
+      "blocks_certification": false,
+      "reasoning": "Behavioral refusal classes (B, C, D) are empirically supported; acceptance/escalation thresholds await data. This is an observability/calibration improvement, not a blocker."
+    }
+  ],
+  "summary": {
+    "total_findings": 8,
+    "blockers": 0,
+    "environmental_limitations": 1,
+    "enhancements": 3,
+    "deferred": 3,
+    "accepted": 1,
+    "blocker_verdict": "NO_FINAL_CERTIFICATION_BLOCKER"
+  },
+  "verdict": "CERTIFIED (no blocking findings)"
+}

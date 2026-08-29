@@ -41,7 +41,13 @@ def test_m81_stale_workflows_use_verification_command_pattern():
     """Each stale workflow delegates to `runtime/verify.py <profile>` (the VEA-5
     canonical single-command pattern), uses bootstrap-runtime, uploads the shared
     artifacts, and appends `verify.py status`. That is the legitimate refactor —
-    NOT something to reset to main's hand-rolled multi-job form."""
+    NOT something to reset to main's hand-rolled multi-job form.
+
+    M9-C43.1: `mutation` legitimately uses the documented smoke-first topology
+    (mutation-smoke MUST pass before the expensive authoritative job — see the
+    mutation.yml header). Every job must still delegate to a single
+    `verify.py <profile>` command, so the VEA-5 pattern holds per job.
+    """
     expected_profiles = {
         "quality": "quick",
         "mutation": "mutation",
@@ -51,19 +57,35 @@ def test_m81_stale_workflows_use_verification_command_pattern():
     for wf in STALE:
         doc = yaml.safe_load((WORKFLOWS / f"{wf}.yml").read_text())
         jobs = doc.get("jobs", {})
-        # Single job, single command invoking verify.py <profile>.
-        assert len(jobs) == 1, f"{wf} should have exactly one job"
-        (job,) = jobs.values()
-        run_lines = [s.get("run", "") for s in job.get("steps", []) if "run" in s]
-        joined = "\n".join(run_lines)
-        assert (
-            f"runtime/verify.py {expected_profiles[wf]}" in joined
-        ), f"{wf} must delegate to verify.py {expected_profiles[wf]}"
-        # Appends status summary (Rule 9).
-        assert "verify.py status" in joined
-        # Uses bootstrap-runtime (not hand-rolled setup).
-        uses = [s.get("uses", "") for s in job.get("steps", []) if "uses" in s]
-        assert any("bootstrap-runtime" in u for u in uses)
+        if wf == "mutation":
+            # Smoke-first topology: exactly two jobs with a needs dependency.
+            assert set(jobs) == {
+                "mutation-smoke",
+                "mutation",
+            }, "mutation must keep the smoke-first two-job topology"
+            assert "mutation-smoke" in jobs["mutation"].get(
+                "needs", []
+            ), "authoritative mutation must need mutation-smoke"
+        else:
+            # Single job, single command invoking verify.py <profile>.
+            assert len(jobs) == 1, f"{wf} should have exactly one job"
+        for job in jobs.values():
+            run_lines = [s.get("run", "") for s in job.get("steps", []) if "run" in s]
+            joined = "\n".join(run_lines)
+            assert (
+                f"runtime/verify.py {expected_profiles[wf]}" in joined
+            ), f"{wf} must delegate to verify.py {expected_profiles[wf]}"
+            # Uses bootstrap-runtime (not hand-rolled setup).
+            uses = [s.get("uses", "") for s in job.get("steps", []) if "uses" in s]
+            assert any("bootstrap-runtime" in u for u in uses)
+        # Appends status summary (Rule 9) in at least one job.
+        all_runs = "\n".join(
+            s.get("run", "")
+            for job in jobs.values()
+            for s in job.get("steps", [])
+            if "run" in s
+        )
+        assert "verify.py status" in all_runs
 
 
 def test_m81_stale_workflows_match_vea5_concurrency_and_retention():

@@ -80,11 +80,36 @@ class TestBehaviourEngineCore:
         """Test the behavioral index functions with basic inputs."""
         # Test with transaction-like data that the functions expect
         test_transactions = [
-            {"amount_paise": 100, "type": "debit", "description": "test", "date_iso": "2023-01-01"},
-            {"amount_paise": 200, "type": "credit", "description": "test", "date_iso": "2023-01-02"},
-            {"amount_paise": 300, "type": "debit", "description": "test", "date_iso": "2023-01-03"},
-            {"amount_paise": 400, "type": "credit", "description": "test", "date_iso": "2023-01-04"},
-            {"amount_paise": 500, "type": "debit", "description": "test", "date_iso": "2023-01-05"},
+            {
+                "amount_paise": 100,
+                "type": "debit",
+                "description": "test",
+                "date_iso": "2023-01-01",
+            },
+            {
+                "amount_paise": 200,
+                "type": "credit",
+                "description": "test",
+                "date_iso": "2023-01-02",
+            },
+            {
+                "amount_paise": 300,
+                "type": "debit",
+                "description": "test",
+                "date_iso": "2023-01-03",
+            },
+            {
+                "amount_paise": 400,
+                "type": "credit",
+                "description": "test",
+                "date_iso": "2023-01-04",
+            },
+            {
+                "amount_paise": 500,
+                "type": "debit",
+                "description": "test",
+                "date_iso": "2023-01-05",
+            },
         ]
 
         # These should not raise exceptions and should return reasonable values

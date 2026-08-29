@@ -65,7 +65,6 @@ from runtime.foundation.verification.graph_model import (  # noqa: E402
 )
 from runtime.foundation.verification.correlation import correlate  # noqa: E402
 
-
 # ---------------------------------------------------------------------------
 # M27.4 — Invalidation rules
 # ---------------------------------------------------------------------------
@@ -151,7 +150,9 @@ class TestPopulationSnapshot:
             assert loaded_snap.components == snap.components
             assert len(loaded_meas) == len(meas)
             for m in meas:
-                lm = next(x for x in loaded_meas if x.measurement_id == m.measurement_id)
+                lm = next(
+                    x for x in loaded_meas if x.measurement_id == m.measurement_id
+                )
                 assert lm.component == m.component
                 assert lm.summary == m.summary
             # Reset
@@ -160,7 +161,9 @@ class TestPopulationSnapshot:
             )
 
     def test_derived_aggregate_matches_c42_26(self) -> None:
-        from runtime.foundation.verification.evidence_reuse import c42_26_derived_aggregate
+        from runtime.foundation.verification.evidence_reuse import (
+            c42_26_derived_aggregate,
+        )
 
         measurements = c42_24_b_measurements() + c42_25_measurements()
         agg = c42_26_derived_aggregate(measurements)
@@ -211,13 +214,19 @@ class TestReuseDecision:
     def test_unchanged_component_is_reusable(self) -> None:
         pop = c42_26_population()
         meas = c42_24_b_measurements()[0]
-        r = decide_reuse(meas.component, Change(kind="no_change", target=meas.component), meas, pop)
+        r = decide_reuse(
+            meas.component, Change(kind="no_change", target=meas.component), meas, pop
+        )
         assert r.disposition in ("reusable", "reusable_aggregate")
 
     def test_source_change_invalidates_only_affected(self) -> None:
         pop = c42_26_population()
-        m_credit = next(m for m in c42_24_b_measurements() if m.component == "credit_card_engine")
-        m_loan = next(m for m in c42_24_b_measurements() if m.component == "loan_engine")
+        m_credit = next(
+            m for m in c42_24_b_measurements() if m.component == "credit_card_engine"
+        )
+        m_loan = next(
+            m for m in c42_24_b_measurements() if m.component == "loan_engine"
+        )
         r_credit = decide_reuse(
             "credit_card_engine",
             Change(kind="source_change", target="credit_card_engine"),
@@ -230,7 +239,10 @@ class TestReuseDecision:
             m_loan,
             pop,
         )
-        assert r_credit.disposition in ("invalidated_component", "invalidated_capability")
+        assert r_credit.disposition in (
+            "invalidated_component",
+            "invalidated_capability",
+        )
         assert r_loan.disposition in ("reusable", "reusable_aggregate")
 
     def test_no_evidence_for_new_component(self) -> None:
@@ -291,9 +303,7 @@ class TestEvidenceAwarePlanner:
 
     def test_source_change_only_invalidates_affected_component(self) -> None:
         planner = default_planner()
-        plan = planner.plan(
-            ("backend/src/engines/credit_card_engine/foo.py",)
-        )
+        plan = planner.plan(("backend/src/engines/credit_card_engine/foo.py",))
         assert plan.affected_components == ("credit_card",)
         assert len(plan.selected_tasks) == 1
         assert plan.selected_tasks[0].target == "credit_card_engine"
@@ -315,9 +325,7 @@ class TestEvidenceAwarePlanner:
 
     def test_behaviour_engine_change_does_not_invalidate_others(self) -> None:
         planner = default_planner()
-        plan = planner.plan(
-            ("backend/src/engines/behaviour_engine/some.py",)
-        )
+        plan = planner.plan(("backend/src/engines/behaviour_engine/some.py",))
         # Only behaviour_engine should be selected_fresh
         fresh = [t for t in plan.selected_tasks if t.disposition == "selected_fresh"]
         assert len(fresh) == 1
@@ -325,9 +333,7 @@ class TestEvidenceAwarePlanner:
 
     def test_every_selected_task_has_cause(self) -> None:
         planner = default_planner()
-        plan = planner.plan(
-            ("backend/src/engines/credit_card_engine/foo.py",)
-        )
+        plan = planner.plan(("backend/src/engines/credit_card_engine/foo.py",))
         for t in plan.selected_tasks:
             assert t.cause, f"task {t.task_id} has no cause"
             assert t.disposition.startswith("selected_")
@@ -350,14 +356,12 @@ class TestEvidenceAwarePlanner:
         # A test-only change to one engine should not select tasks
         # for any other engine.
         planner = default_planner()
-        plan = planner.plan(
-            ("backend/tests/unit/engines/cashflow_engine/test_x.py",)
-        )
+        plan = planner.plan(("backend/tests/unit/engines/cashflow_engine/test_x.py",))
         for t in plan.selected_tasks:
             # Only test-evidence re-measurement for cashflow is permitted.
-            assert t.target == "cashflow_engine", (
-                f"planner silently expanded scope to {t.target}"
-            )
+            assert (
+                t.target == "cashflow_engine"
+            ), f"planner silently expanded scope to {t.target}"
 
     def test_describe_change_recognises_engine_source(self) -> None:
         d = describe_change("backend/src/engines/loan_engine/foo.py")
@@ -453,8 +457,11 @@ class TestC4224DriftRegression:
         src = source_id("backend/src/engines/test_cap/foo.py")
         g.add_source(
             SourceNode(
-                id=src, path="backend/src/engines/test_cap/foo.py",
-                kind="engine", component="test_cap", fingerprint="",
+                id=src,
+                path="backend/src/engines/test_cap/foo.py",
+                kind="engine",
+                component="test_cap",
+                fingerprint="",
             )
         )
         g.link_source_capability(src, cap)
@@ -486,8 +493,11 @@ class TestC4224DriftRegression:
         src = source_id("backend/src/ok/x.py")
         g.add_source(
             SourceNode(
-                id=src, path="backend/src/ok/x.py",
-                kind="other", component=None, fingerprint="",
+                id=src,
+                path="backend/src/ok/x.py",
+                kind="other",
+                component=None,
+                fingerprint="",
             )
         )
         g.link_source_capability(src, cap)
@@ -509,9 +519,7 @@ class TestC4224DriftRegression:
 class TestCapabilityLevelImpact:
     def test_helper_change_does_not_escalate_to_full_repopulation(self) -> None:
         planner = default_planner()
-        plan = planner.plan(
-            ("backend/src/engines/credit_card_engine/_helpers.py",)
-        )
+        plan = planner.plan(("backend/src/engines/credit_card_engine/_helpers.py",))
         # Only credit_card is selected for fresh measurement; the
         # other 13 components reuse certified evidence.
         assert len(plan.selected_tasks) == 1
@@ -522,9 +530,7 @@ class TestCapabilityLevelImpact:
 
     def test_capability_explanation_is_present(self) -> None:
         planner = default_planner()
-        plan = planner.plan(
-            ("backend/src/engines/cashflow_engine/cashflow.py",)
-        )
+        plan = planner.plan(("backend/src/engines/cashflow_engine/cashflow.py",))
         assert plan.affected_capabilities
         assert "cashflow" in plan.affected_capabilities[0]
 
@@ -537,9 +543,7 @@ class TestCapabilityLevelImpact:
 class TestCorrelation:
     def test_correlation_answers_canonical_questions(self) -> None:
         planner = default_planner()
-        plan = planner.plan(
-            ("backend/src/engines/credit_card_engine/foo.py",)
-        )
+        plan = planner.plan(("backend/src/engines/credit_card_engine/foo.py",))
         corr = correlate(plan)
         assert corr.changed_files
         assert corr.affected_capabilities
@@ -557,16 +561,12 @@ class TestCorrelation:
 
     def test_correlation_distinguishes_reused_vs_fresh(self) -> None:
         planner = default_planner()
-        plan = planner.plan(
-            ("backend/src/engines/credit_card_engine/foo.py",)
-        )
+        plan = planner.plan(("backend/src/engines/credit_card_engine/foo.py",))
         corr = correlate(plan)
         # credit_card should be in fresh
         assert "credit_card_engine" in corr.fresh_evidence_targets
         # others should be in reused
-        assert any(
-            r.scope_id == "loan_engine" for r in corr.reused_evidence
-        )
+        assert any(r.scope_id == "loan_engine" for r in corr.reused_evidence)
 
 
 # ---------------------------------------------------------------------------
@@ -586,7 +586,9 @@ class TestGraphModel:
                 fingerprint="",
             )
         )
-        g.add_capability(CapabilityNode(id=capability_id("x"), name="x", layer="domain"))
+        g.add_capability(
+            CapabilityNode(id=capability_id("x"), name="x", layer="domain")
+        )
         assert len(g.sources) == 1
         assert len(g.capabilities) == 1
 

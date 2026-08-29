@@ -12,6 +12,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from runtime.foundation.verification import mutation_contract as mc
 from runtime.foundation.verification.env import (
     resolve_environment,
@@ -269,6 +271,7 @@ def test_smoke_end_to_end_distinguishes_classifications():
 
 
 # ── 15. R2: evidence is collected with the TARGET config still active ──────
+@pytest.mark.timeout(300)
 def test_r2_evidence_collected_with_target_config_active(monkeypatch, tmp_path):
     """M9-C42.20 Phase 8 (defect R2) — permanent architectural fix.
 
@@ -297,6 +300,25 @@ def test_r2_evidence_collected_with_target_config_active(monkeypatch, tmp_path):
             return None
         return re.findall(r'"([^"]+)"', m.group(1))
 
+    # M9-C43.1: the test must be hermetic — the repository's resting
+    # [tool.mutmut] scope is not a constant (it legitimately follows the last
+    # targeted run). To keep R2 fully discriminating we seed a resting scope
+    # DISTINCT from the target scope, then assert the exact round trip:
+    # evidence under the TARGET scope, restoration to the seeded resting scope.
+    target_scope = ["src/engines/credit_card_engine"]
+    seeded_resting_scope = ["src/engines/balance_engine.py"]
+    if extract_source_paths(original_text) == target_scope:
+        seeded_text = re.sub(
+            r"(source_paths\s*=\s*\[).*?(\])",
+            lambda m: m.group(1) + '"src/engines/balance_engine.py"' + m.group(2),
+            original_text,
+            count=1,
+            flags=re.S,
+        )
+        backend_pyproject.write_text(seeded_text)
+    resting_scope = extract_source_paths(backend_pyproject.read_text())
+    assert resting_scope == seeded_resting_scope
+
     # Before the run we record the active scope whenever evidence is read. The
     # runner calls `subprocess.run([..., "mutmut", "results", ...])`; we capture
     # the config scope at that exact instant by snapshotting the live file.
@@ -321,20 +343,22 @@ def test_r2_evidence_collected_with_target_config_active(monkeypatch, tmp_path):
         result = execute_mutation(
             mode="target", target="credit_card_engine", allow_dirty=True
         )
+        # M9-C43.1: snapshot the config IMMEDIATELY after the runner returns —
+        # i.e. after the runner's own try/finally restoration but BEFORE this
+        # test's finally writes back the pristine text. Asserting on this
+        # snapshot verifies the RUNNER's restore behavior directly (the old
+        # assertion accidentally verified this test's own finally).
+        post_run_text = backend_pyproject.read_text()
     finally:
         # Always restore the canonical backend config regardless of outcome.
         backend_pyproject.write_text(original_text)
 
     assert result.execution_status == "PASS", result.error
     # Evidence must have been collected while the TARGET (credit_card_engine)
-    # config was active — NOT the original (reconciliation_engine) config.
-    assert active_scope_at_results["scope"] == [
-        "src/engines/credit_card_engine"
-    ], (
+    # config was active — NOT the seeded resting config.
+    assert active_scope_at_results["scope"] == target_scope, (
         "evidence collected with wrong config scope: "
         f"{active_scope_at_results['scope']}"
     )
-    # And the config must be restored to the original afterward.
-    assert extract_source_paths(backend_pyproject.read_text()) == [
-        "src/engines/reconciliation_engine.py"
-    ]
+    # And the runner must have restored the seeded resting scope afterward.
+    assert extract_source_paths(post_run_text) == resting_scope

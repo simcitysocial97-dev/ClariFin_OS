@@ -23,7 +23,12 @@ from src.engines.financial_intelligence.optimization import (
 
 
 def test_cash_advance_entry_effective_rate():
-    event = {"id": 42, "provider": "XYZ", "liability_change_paise": 100_000, "expense_paise": 3_000}
+    event = {
+        "id": 42,
+        "provider": "XYZ",
+        "liability_change_paise": 100_000,
+        "expense_paise": 3_000,
+    }
     entry = derive_cash_advance_debt_entry(event, holding_period_days=30)
     assert entry["id"] == "cash_advance_42"
     assert entry["type"] == "cash_advance_liability"
@@ -52,17 +57,29 @@ def test_cash_advance_entry_zero_liability_zero_rate():
 
 
 def test_cash_advance_entry_explicit_outstanding_wins():
-    event = {"id": 1, "liability_change_paise": 100_000, "expense_paise": 1_000, "outstanding_paise": 55_000}
+    event = {
+        "id": 1,
+        "liability_change_paise": 100_000,
+        "expense_paise": 1_000,
+        "outstanding_paise": 55_000,
+    }
     assert derive_cash_advance_debt_entry(event, 10)["outstanding_paise"] == 55_000
 
 
 def test_cash_advance_entry_settled_outstanding_zero_preserved():
-    event = {"id": 1, "liability_change_paise": 100_000, "expense_paise": 1_000, "outstanding_paise": 0}
+    event = {
+        "id": 1,
+        "liability_change_paise": 100_000,
+        "expense_paise": 1_000,
+        "outstanding_paise": 0,
+    }
     assert derive_cash_advance_debt_entry(event, 10)["outstanding_paise"] == 0
 
 
 def test_cash_advance_entry_missing_metadata_defaults():
-    entry = derive_cash_advance_debt_entry({"liability_change_paise": 1, "expense_paise": 1}, 5)
+    entry = derive_cash_advance_debt_entry(
+        {"liability_change_paise": 1, "expense_paise": 1}, 5
+    )
     assert entry["id"] == "cash_advance_unknown"
     assert entry["name"] == "Unknown cash advance"
     assert entry["source_event_id"] is None
@@ -120,7 +137,11 @@ def test_allocation_emergency_swallows_all_surplus():
 def test_allocation_no_deficit_skips_emergency():
     result = optimize_surplus_allocation(100_000, [], [], {"deficit_paise": 0})
     assert result["allocation"] == [
-        {"category": "investment", "amount_paise": 100_000, "reason": "remaining_surplus"}
+        {
+            "category": "investment",
+            "amount_paise": 100_000,
+            "reason": "remaining_surplus",
+        }
     ]
 
 
@@ -149,8 +170,12 @@ def test_allocation_boundary_rates_1800_high_800_medium():
     reasons = [a.get("reason") for a in result["allocation"]]
     assert "high_interest_debt" in reasons
     assert "medium_interest_debt" in reasons
-    high = next(a for a in result["allocation"] if a.get("reason") == "high_interest_debt")
-    medium = next(a for a in result["allocation"] if a.get("reason") == "medium_interest_debt")
+    high = next(
+        a for a in result["allocation"] if a.get("reason") == "high_interest_debt"
+    )
+    medium = next(
+        a for a in result["allocation"] if a.get("reason") == "medium_interest_debt"
+    )
     assert high["debt_ids"] == ["at1800"]
     assert medium["debt_ids"] == ["at800"]
 
@@ -160,9 +185,24 @@ def test_allocation_boundary_rates_1800_high_800_medium():
 # ============================================================
 
 DEBTS = [
-    {"id": "low_rate_big", "type": "loan", "interest_rate_bps": 800, "outstanding_paise": 1_000_000},
-    {"id": "high_rate_small", "type": "credit_card", "interest_rate_bps": 3600, "outstanding_paise": 100_000},
-    {"id": "mid_rate_mid", "type": "loan", "interest_rate_bps": 1200, "outstanding_paise": 400_000},
+    {
+        "id": "low_rate_big",
+        "type": "loan",
+        "interest_rate_bps": 800,
+        "outstanding_paise": 1_000_000,
+    },
+    {
+        "id": "high_rate_small",
+        "type": "credit_card",
+        "interest_rate_bps": 3600,
+        "outstanding_paise": 100_000,
+    },
+    {
+        "id": "mid_rate_mid",
+        "type": "loan",
+        "interest_rate_bps": 1200,
+        "outstanding_paise": 400_000,
+    },
 ]
 
 
@@ -297,7 +337,12 @@ def test_goal_prioritization_no_recommendations_when_healthy():
 
 def test_action_score_invalid_action():
     result = calculate_financial_action_score("fly_to_moon", {})
-    assert result == {"action": "fly_to_moon", "score": Decimal("0"), "impact": "low", "drivers": []}
+    assert result == {
+        "action": "fly_to_moon",
+        "score": Decimal("0"),
+        "impact": "low",
+        "drivers": [],
+    }
 
 
 def test_action_score_pay_credit_card_high_context():
@@ -369,7 +414,9 @@ def test_action_score_reduce_expenses():
 
 
 def test_action_score_increase_investment_with_goals():
-    result = calculate_financial_action_score("increase_investment", {"investment_goals_count": 2})
+    result = calculate_financial_action_score(
+        "increase_investment", {"investment_goals_count": 2}
+    )
     assert result["score"] == Decimal("0.40")
 
 
@@ -421,7 +468,12 @@ def test_plan_full_state():
 
 
 def test_plan_no_surplus_warning_and_zero_confidence():
-    state = {"surplus": {"monthly_surplus_paise": 0}, "debts": [], "goals": [], "forecast": {}}
+    state = {
+        "surplus": {"monthly_surplus_paise": 0},
+        "debts": [],
+        "goals": [],
+        "forecast": {},
+    }
     result = generate_optimization_plan(state)
     assert "No surplus available for optimization" in result["warnings"]
     assert result["confidence"] == Decimal("0")
@@ -440,7 +492,10 @@ def test_plan_invalid_forecast_confidence_raises_pinned_fin_e3():
 
     import pytest
 
-    state = {"surplus": {"monthly_surplus_paise": 100}, "forecast": {"confidence": "junk"}}
+    state = {
+        "surplus": {"monthly_surplus_paise": 100},
+        "forecast": {"confidence": "junk"},
+    }
     with pytest.raises(InvalidOperation):
         generate_optimization_plan(state)
 

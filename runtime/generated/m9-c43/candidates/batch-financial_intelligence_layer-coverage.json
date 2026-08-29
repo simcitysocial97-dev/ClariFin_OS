@@ -1,0 +1,157 @@
+{
+  "schema": "m9-c43-test-generation/v1",
+  "batch_id": "gen::6c977dd7215e",
+  "generated_at": "2026-08-27T02:06:54.168074+00:00",
+  "source_evidence": {
+    "kind": "coverage_gaps",
+    "path": "backend/tests/generated/raw-coverage.json",
+    "component": "financial_intelligence_layer",
+    "target_files": [
+      "src/services/financial_intelligence_service.py",
+      "src/engines/financial_intelligence/optimization.py",
+      "src/engines/financial_intelligence/goal_planner.py"
+    ]
+  },
+  "proposals": [
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::221b0dd6bb6f",
+      "component": "financial_intelligence_layer",
+      "capability": "financial-intelligence",
+      "source_location": "src/services/financial_intelligence_service.py (missing lines: 105)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/services/financial_intelligence_service.py::105",
+        "component": "financial_intelligence_layer",
+        "capability": "financial-intelligence",
+        "location": "src/services/financial_intelligence_service.py:148",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "105 uncovered line(s), 37 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/services/financial_intelligence_service.py is consequential: 142 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/financial_intelligence_layer/test_coverage_gap_221b0dd6bb6f.py",
+      "proposed_test": "def test_221b0dd6bb6f_covers_missing_behavior():\n    # Exercises the uncovered surface of src/services/financial_intelligence_service.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/financial_intelligence_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    },
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::94a0d95478ba",
+      "component": "financial_intelligence_layer",
+      "capability": "financial-intelligence",
+      "source_location": "src/engines/financial_intelligence/optimization.py (missing lines: 18)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/engines/financial_intelligence/optimization.py::18",
+        "component": "financial_intelligence_layer",
+        "capability": "financial-intelligence",
+        "location": "src/engines/financial_intelligence/optimization.py:371",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "18 uncovered line(s), 12 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/engines/financial_intelligence/optimization.py is consequential: 30 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/financial_intelligence_layer/test_coverage_gap_94a0d95478ba.py",
+      "proposed_test": "def test_94a0d95478ba_covers_missing_behavior():\n    # Exercises the uncovered surface of src/engines/financial_intelligence/optimization.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/financial_intelligence_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    },
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::0ebbe12c921d",
+      "component": "financial_intelligence_layer",
+      "capability": "financial-intelligence",
+      "source_location": "src/engines/financial_intelligence/goal_planner.py (missing lines: 15)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/engines/financial_intelligence/goal_planner.py::15",
+        "component": "financial_intelligence_layer",
+        "capability": "financial-intelligence",
+        "location": "src/engines/financial_intelligence/goal_planner.py:69",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "15 uncovered line(s), 10 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/engines/financial_intelligence/goal_planner.py is consequential: 25 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/financial_intelligence_layer/test_coverage_gap_0ebbe12c921d.py",
+      "proposed_test": "def test_0ebbe12c921d_covers_missing_behavior():\n    # Exercises the uncovered surface of src/engines/financial_intelligence/goal_planner.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/financial_intelligence_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    }
+  ],
+  "rejections": [],
+  "candidates": [
+    {
+      "candidate_id": "22fc26ffaf98",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/services/financial_intelligence_service.py",
+      "module_under_test": "src/services/financial_intelligence_service.py",
+      "import_target": "services.financial_intelligence_service",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 148)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate 22fc26ffaf98 \u2014 evidence: coverage gap src/services/financial_intelligence_service.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport services.financial_intelligence_service as target_mod  # services.financial_intelligence_service\n\n\ndef test_22fc26ffaf98_discriminates():\n    \"\"\"Target: src/services/financial_intelligence_service.py:148\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    },
+    {
+      "candidate_id": "9b8651cf32fa",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/engines/financial_intelligence/optimization.py",
+      "module_under_test": "src/engines/financial_intelligence/optimization.py",
+      "import_target": "engines.financial_intelligence.optimization",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 371)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate 9b8651cf32fa \u2014 evidence: coverage gap src/engines/financial_intelligence/optimization.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport engines.financial_intelligence.optimization as target_mod  # engines.financial_intelligence.optimization\n\n\ndef test_9b8651cf32fa_discriminates():\n    \"\"\"Target: src/engines/financial_intelligence/optimization.py:371\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    },
+    {
+      "candidate_id": "843114bf35ed",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/engines/financial_intelligence/goal_planner.py",
+      "module_under_test": "src/engines/financial_intelligence/goal_planner.py",
+      "import_target": "engines.financial_intelligence.goal_planner",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 69)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate 843114bf35ed \u2014 evidence: coverage gap src/engines/financial_intelligence/goal_planner.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport engines.financial_intelligence.goal_planner as target_mod  # engines.financial_intelligence.goal_planner\n\n\ndef test_843114bf35ed_discriminates():\n    \"\"\"Target: src/engines/financial_intelligence/goal_planner.py:69\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    }
+  ],
+  "counts": {
+    "proposals": 3,
+    "rejections": 0,
+    "candidates": 3
+  }
+}

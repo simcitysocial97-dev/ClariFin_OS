@@ -777,6 +777,244 @@ class TestDaysSinceActivityEdgeCases:
         assert result == 1
 
 
+# ============================================================
+# M9-C43.6 — Mutation-Strengthening Tests (Targeted at C42 Class-A Survivors)
+# ============================================================
+#
+# These tests were generated from the C42.17 forensic survivor inventory
+# and are designed to discriminate the EXACT mutants that survived.
+# Each test targets a specific surviving mutant identified by its
+# source location and mutation operator.
+#
+# MUTANT TARGET KEY (from C42.17 inventory):
+#   dormant.py:1           - default threshold 365 -> 366
+#   cashflow.py:19         - ratio quantize HALF_UP -> None/quantize(2)
+#   cashflow.py:20         - rate quantize HALF_UP -> None/quantize(2)
+#   balance.py:19          - empty list return 0 -> 1
+#   balance.py:22/23       - avg/growth quantize HALF_UP -> None/quantize(2)
+#   lifecycle.py:32        - explicit default 365 removed (equiv/Class-B)
+#   metrics.py:4           - default threshold 365 -> 366
+#   history.py:24          - velocity quantize HALF_UP -> None/quantize(2)
+#
+# CLASSIFICATION: All surviving mutants are Class-A (genuine behavioral
+# gap) except lifecycle.py:32 which is EQUIVALENT (default value 365
+# is functionally identical to explicit 365). This test module does not
+# target equivalent mutants per C43 constraints.
+# ============================================================
+
+
+class TestMutationStrengthening_DormantDefaultThreshold:
+    """M9-C43.6: Discriminate default threshold mutant at dormant.py:1.
+
+    Mutant: threshold_days: int = 365 -> 366
+    Target: is_account_dormant(365) WITHOUT explicit threshold.
+    Evidence: survivor calls function relying on default 365.
+    """
+
+    def test_is_account_dormant_default_threshold_365(self):
+        """Default threshold is exactly 365 days."""
+        # Call WITHOUT explicit threshold - exercises the default argument
+        assert is_account_dormant(364) is False
+        assert is_account_dormant(365) is True
+        assert is_account_dormant(366) is True
+
+
+class TestMutationStrengthening_CashflowQuantization:
+    """M9-C43.6: Discriminate quantization mutants at cashflow.py:19,20.
+
+    Mutants:
+      - quantize(Decimal(1), rounding=ROUND_HALF_UP) -> quantize(1, rounding=None) [HALF_EVEN]
+      - quantize(Decimal(1), rounding=ROUND_HALF_UP) -> quantize(2) [truncation]
+
+    Target: .5 boundary where HALF_UP != HALF_EVEN.
+    Evidence: survivor at .5 boundary escapes both rounding changes.
+    """
+
+    def test_compute_cash_flow_rate_half_up_boundary(self):
+        """ROUND_HALF_UP at .5 boundary discriminates HALF_UP vs HALF_EVEN.
+
+        net=1, days=2 -> 0.5 -> HALF_UP=1, HALF_EVEN=0.
+        Mutant with rounding=None uses context default (HALF_EVEN) -> 0.
+        Mutant with quantize(2) -> 0.50 -> int=0.
+        """
+        # net=1, days=2 -> 0.5 paise/day
+        # HALF_UP(0.5) = 1, HALF_EVEN(0.5) = 0
+        result = compute_cash_flow_rate(1, 2)
+        assert result == 1  # HALF_UP rounds 0.5 UP to 1
+
+    def test_compute_income_expense_ratio_half_up_boundary(self):
+        """ROUND_HALF_UP at .5 boundary for income/expense ratio.
+
+        income=1, expense=20000 -> 0.5 bps -> HALF_UP=1, HALF_EVEN=0.
+        quantize(2) -> 0.50 -> int=0.
+        """
+        # income=1, expense=20000 -> 1*10000/20000 = 0.5 bps
+        result = compute_income_expense_ratio(1, 20000)
+        assert result == 1  # HALF_UP rounds 0.5 UP to 1
+
+    def test_compute_cash_flow_rate_negative_half_up_boundary(self):
+        """Negative .5 boundary: HALF_UP rounds away from zero."""
+        # net=-1, days=2 -> -0.5 -> HALF_UP=-1, HALF_EVEN=0
+        result = compute_cash_flow_rate(-1, 2)
+        assert result == -1  # HALF_UP rounds -0.5 away from zero to -1
+
+
+class TestMutationStrengthening_AverageBalancePrecision:
+    """M9-C43.6: Discriminate average_balance quantization mutants at balance.py:22.
+
+    Mutants: quantize(1, HALF_UP) -> None (HALF_EVEN) or quantize(2) (truncation).
+    Target: .5 boundary where HALF_UP != HALF_EVEN.
+
+    Existing test: [100, 101] -> avg 100.5 -> 101 with HALF_UP (already discriminates).
+    Adding explicit .5 boundary tests for the growth/velocity functions.
+    """
+
+    def test_compute_average_balance_explicit_half_up_boundary(self):
+        """[100, 101] average = 100.5 -> HALF_UP=101, HALF_EVEN=100."""
+        # This test already exists but make it explicit for mutation discrimination
+        result = compute_average_balance([100, 101])
+        assert result == 101  # HALF_UP: 100.5 -> 101 (101 is odd, HALF_EVEN would go to 100)
+
+    def test_compute_average_balance_half_even_discrimination(self):
+        """2.5 boundary: HALF_UP=3, HALF_EVEN=2 (2 is even)."""
+        # [2, 3] -> avg 2.5
+        result = compute_average_balance([2, 3])
+        assert result == 3  # HALF_UP: 2.5 -> 3; HALF_EVEN: 2.5 -> 2
+
+
+class TestMutationStrengthening_BalanceGrowthVelocity:
+    """M9-C43.6: Discriminate growth/velocity quantization mutants.
+
+    Mutants at balance.py:23 (growth) and history.py:24 (velocity):
+      quantize(1, HALF_UP) -> None (HALF_EVEN) or quantize(2) (truncation).
+    Target: .5 boundary in basis points / paise-per-day.
+    """
+
+    def test_compute_balance_growth_percentage_half_up_boundary(self):
+        """Growth percentage .5 boundary in basis points.
+
+        100 -> 115 is 15% = 1500 bps (exact).
+        Need x where change/prev * 10000 = x.5 bps.
+        prev=200, curr=201 -> change=1, growth=1/200*10000 = 50 bps (exact).
+        prev=200, curr=202 -> change=2, growth=2/200*10000 = 100 bps (exact).
+        Need non-exact: prev=300, curr=301 -> 1/300*10000 = 33.33... bps (not .5).
+        prev=100, curr=101 -> 1/100*10000 = 100 bps (exact).
+        prev=100, curr=102 -> 2/100*10000 = 200 bps (exact).
+        prev=200, curr=203 -> 3/200*10000 = 150 bps (exact).
+        prev=200, curr=201 -> 1/200*10000 = 50 bps (exact).
+        prev=20000, curr=20001 -> 1/20000*10000 = 0.5 bps -> HALF_UP=1, HALF_EVEN=0!
+        """
+        # prev=20000, curr=20001 -> change=1 -> growth=0.5 bps
+        result = compute_balance_growth_percentage(20000, 20001)
+        assert result == 1  # HALF_UP: 0.5 -> 1; HALF_EVEN: 0.5 -> 0
+
+    def test_compute_balance_growth_percentage_negative_half_up(self):
+        """Negative .5 boundary."""
+        # prev=20000, curr=19999 -> change=-1 -> -0.5 bps
+        result = compute_balance_growth_percentage(20000, 19999)
+        assert result == -1  # HALF_UP: -0.5 -> -1; HALF_EVEN: -0.5 -> 0
+
+    def test_compute_balance_velocity_half_up_boundary(self):
+        """Velocity .5 boundary in paise/day.
+
+        opening=0, closing=1, days=2 -> velocity=0.5 -> HALF_UP=1, HALF_EVEN=0.
+        """
+        result = compute_balance_velocity(0, 1, 2)
+        assert result == 1  # HALF_UP: 0.5 -> 1; HALF_EVEN: 0.5 -> 0
+
+    def test_compute_balance_velocity_quantize_two_discrimination(self):
+        """quantize(2) truncation discriminated by velocity > 1.
+
+        opening=0, closing=1, days=2 -> 0.5 -> quantize(2)=0.50 -> int=0.
+        HALF_UP=1, quantize(2)=0.
+        """
+        result = compute_balance_velocity(0, 1, 2)
+        assert result == 1  # kills quantize(2) mutant
+
+
+class TestMutationStrengthening_HistoryVelocity:
+    """M9-C43.6: Discriminate history.py:24 velocity quantize mutants."""
+
+    def test_compute_balance_velocity_history_half_up(self):
+        """Direct test of history module's velocity function."""
+        from src.engines.account_engine.history import compute_balance_velocity
+
+        # 0 -> 1 over 2 days = 0.5 paise/day
+        result = compute_balance_velocity(0, 1, 2)
+        assert result == 1  # HALF_UP rounds 0.5 up to 1
+
+    def test_compute_balance_velocity_history_quantize_two(self):
+        """quantize(2) mutant would produce 0 for 0.5 velocity."""
+        from src.engines.account_engine.history import compute_balance_velocity
+
+        result = compute_balance_velocity(0, 1, 2)
+        assert result == 1  # HALF_UP=1, quantize(2)->0.50->int=0
+
+
+class TestMutationStrengthening_MetricsDefaultThreshold:
+    """M9-C43.6: Discriminate default threshold mutant at metrics.py:4.
+
+    Mutant: dormancy_threshold_days: int = 365 -> 366
+    Target: compute_account_metrics called without explicit threshold
+    at exactly 365 days of inactivity.
+    """
+
+    def test_compute_account_metrics_default_threshold_365(self):
+        """Default dormancy threshold is exactly 365 days."""
+        # days=365 should be dormant with default threshold
+        result = compute_account_metrics(
+            current_balance_paise=100000,
+            average_balance_paise=100000,
+            cash_in_paise=100000,
+            cash_out_paise=100000,
+            days_since_activity=365,  # exactly at default 365
+        )
+        assert result["is_dormant"] is True
+
+    def test_compute_account_metrics_default_threshold_364(self):
+        """One day before default threshold."""
+        result = compute_account_metrics(
+            current_balance_paise=100000,
+            average_balance_paise=100000,
+            cash_in_paise=100000,
+            cash_out_paise=100000,
+            days_since_activity=364,  # one day before default 365
+        )
+        assert result["is_dormant"] is False
+
+
+class TestMutationStrengthening_EmptyListZero:
+    """M9-C43.6: Discriminate empty list return 0 -> 1 mutant at balance.py:19."""
+
+    def test_compute_average_balance_empty_returns_zero(self):
+        """Empty list must return exactly 0."""
+        result = compute_average_balance([])
+        assert result == 0  # mutant returns 1
+
+
+class TestMutationStrengthening_LifecycleDefaultEquivalent:
+    """M9-C43.6: Classify lifecycle.py:32 as EQUIVALENT (not killable).
+
+    Mutant: explicit threshold_days=365 removed -> relies on default 365.
+    Behaviorally IDENTICAL to original. Classified as Class-B equivalent.
+    """
+
+    def test_lifecycle_default_threshold_is_365_equiv(self):
+        """Explicit 365 and default 365 are behaviorally identical."""
+        from src.engines.account_engine.lifecycle import compute_account_status
+
+        # Both should produce identical results
+        with_explicit = compute_account_status(True, "2025-07-08", "2026-07-07")
+        # The default is 365, so explicit=365 and default=365 are equivalent
+        # This test documents the equivalence - the mutant is NOT killable
+        assert with_explicit == "ACTIVE"  # 364 days
+
+
+# ============================================================
+# END M9-C43.6 Mutation-Strengthening Tests
+# ============================================================
+
+
 class TestIsAccountDormantBoundary:
     """Boundary tests for dormancy detection."""
 
@@ -912,3 +1150,49 @@ class TestAccountMetricsIntegration:
         assert result["net_flow_paise"] == 100000
         assert result["days_since_activity"] == 30
         assert result["is_dormant"] is False
+
+
+class TestDormancyDefaultThresholdMutants:
+    """Exact default threshold assertions to kill constant mutants in dormancy check."""
+
+    def test_default_dormancy_threshold_is_365(self) -> None:
+        """Default dormancy threshold must be exactly 365 days."""
+        # At exactly 365 days with default threshold, account is dormant
+        assert is_account_dormant(365) is True
+        # At 364 days with default threshold, account is NOT dormant
+        assert is_account_dormant(364) is False
+
+    def test_explicit_threshold_365_same_as_default(self) -> None:
+        """Explicit threshold of 365 behaves identically to default."""
+        assert is_account_dormant(365, threshold_days=365) is True
+        assert is_account_dormant(364, threshold_days=365) is False
+
+    def test_custom_threshold_100_days(self) -> None:
+        """Custom threshold of 100 days works correctly."""
+        assert is_account_dormant(100, threshold_days=100) is True
+        assert is_account_dormant(99, threshold_days=100) is False
+
+    def test_threshold_zero_means_always_dormant(self) -> None:
+        """Threshold of 0 means any account is dormant (even 0 days since activity)."""
+        assert is_account_dormant(0, threshold_days=0) is True
+        assert is_account_dormant(1, threshold_days=0) is True
+
+    def test_negative_threshold_raises_value_error(self) -> None:
+        """Negative threshold must raise ValueError."""
+        with pytest.raises(ValueError, match="threshold_days must be non-negative"):
+            is_account_dormant(100, threshold_days=-1)
+
+    def test_compute_days_since_activity_zero_at_same_date(self) -> None:
+        """Days since activity is 0 when last activity equals reference date."""
+        days = compute_days_since_activity("2025-01-15", "2025-01-15")
+        assert days == 0
+
+    def test_compute_days_since_activity_exact_difference(self) -> None:
+        """Exact day difference calculation."""
+        days = compute_days_since_activity("2025-01-01", "2025-01-15")
+        assert days == 14
+
+    def test_compute_days_since_activity_future_raises(self) -> None:
+        """Last activity after reference date must raise ValueError."""
+        with pytest.raises(ValueError, match="cannot be after reference_date"):
+            compute_days_since_activity("2025-01-20", "2025-01-15")

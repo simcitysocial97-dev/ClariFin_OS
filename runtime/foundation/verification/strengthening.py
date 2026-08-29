@@ -34,6 +34,7 @@ Automation boundary (first version):
     modification stays behind the explicit approval boundary until the
     evidence system proves sufficient reliability.
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -66,6 +67,7 @@ CLASS_DESCRIPTIONS: dict[SurvivorClass, str] = {
 # Survivor evidence model (input)
 # ===========================================================================
 
+
 @dataclass(frozen=True, slots=True)
 class SurvivorEvidence:
     """One surviving mutant (or failing verification signal) with the
@@ -75,11 +77,11 @@ class SurvivorEvidence:
     survivor_id: str
     component: str
     capability: str
-    location: str                  # file:function or file:line
-    mutation_operator: str         # e.g. "comparison", "arithmetic", "boolean"
+    location: str  # file:function or file:line
+    mutation_operator: str  # e.g. "comparison", "arithmetic", "boolean"
     original_snippet: str = ""
     mutated_snippet: str = ""
-    status: str = "survived"       # survived|no_tests|timeout|suspicious
+    status: str = "survived"  # survived|no_tests|timeout|suspicious
     notes: str = ""
     covering_tests: tuple[str, ...] = ()
 
@@ -105,8 +107,13 @@ class SurvivorEvidence:
 # Defensive-code patterns: mutations inside logging/observability code
 # are not behavioral business logic.
 DEFENSIVE_PATTERNS: tuple[str, ...] = (
-    "logger.", "logging.", "console.", "print(",
-    "metrics.", "_record(", "audit(",
+    "logger.",
+    "logging.",
+    "console.",
+    "print(",
+    "metrics.",
+    "_record(",
+    "audit(",
 )
 
 # Measurement-integrity signals: the mutant's outcome reflects the
@@ -115,7 +122,9 @@ MEASUREMENT_STATUSES: tuple[str, ...] = ("timeout", "suspicious")
 
 # Explicit escalation markers (set upstream by forensic analysis).
 ESCALATION_MARKERS: tuple[str, ...] = (
-    "production_defect_candidate", "ambiguous_behavior", "design_question",
+    "production_defect_candidate",
+    "ambiguous_behavior",
+    "design_question",
 )
 
 
@@ -170,6 +179,7 @@ _HYPOTHESIS_TEMPLATES: dict[str, str] = {
 # Strengthening proposal contract + refusals
 # ===========================================================================
 
+
 @dataclass(frozen=True, slots=True)
 class RejectionRecord:
     """Explicit refusal to chase a non-Class-A survivor."""
@@ -200,7 +210,7 @@ class StrengtheningProposal:
     behavioral_hypothesis: str
     expected_invariant: str
     proposed_test_surface: str
-    proposed_test: str                 # concrete pytest skeleton
+    proposed_test: str  # concrete pytest skeleton
     reason: str
     expected_mutation_discrimination: str
     regression_risk: Literal["low", "medium", "high"]
@@ -221,9 +231,7 @@ class StrengtheningProposal:
             "proposed_test_surface": self.proposed_test_surface,
             "proposed_test": self.proposed_test,
             "reason": self.reason,
-            "expected_mutation_discrimination": (
-                self.expected_mutation_discrimination
-            ),
+            "expected_mutation_discrimination": (self.expected_mutation_discrimination),
             "regression_risk": self.regression_risk,
             "validation_command": self.validation_command,
             "acceptance_criteria": list(self.acceptance_criteria),
@@ -238,25 +246,29 @@ def generate_proposal(s: SurvivorEvidence) -> StrengtheningProposal | RejectionR
 
     if cls == "B":
         return RejectionRecord(
-            s.survivor_id, "B",
+            s.survivor_id,
+            "B",
             "equivalent/observable-equivalent behavior; targeting it "
             "would inflate the score without improving defect detection",
         )
     if cls == "C":
         return RejectionRecord(
-            s.survivor_id, "C",
+            s.survivor_id,
+            "C",
             "defensive/observability code; manufacturing a test here "
             "optimizes the metric, not behavior",
         )
     if cls == "D":
         return RejectionRecord(
-            s.survivor_id, "D",
+            s.survivor_id,
+            "D",
             "measurement integrity problem (timeout/suspicious); repair "
             "measurement before interpreting behavior",
         )
     if cls == "E":
         return RejectionRecord(
-            s.survivor_id, "E",
+            s.survivor_id,
+            "E",
             "ambiguous/design/possible production defect; requires human "
             "review before any test is written",
         )
@@ -286,13 +298,11 @@ def generate_proposal(s: SurvivorEvidence) -> StrengtheningProposal | RejectionR
             f"`{s.mutated_snippet.strip()}` must be rejected by the "
             "proposed test"
         ),
-        proposed_test_surface=(
-            f"{test_dir}/test_strengthening_{pid}.py"
-        ),
+        proposed_test_surface=(f"{test_dir}/test_strengthening_{pid}.py"),
         proposed_test=(
             f"def test_{pid}():\n"
-            f"    \"\"\"Discriminates survivor {s.survivor_id}: "
-            f"{hypothesis}\"\"\"\n"
+            f'    """Discriminates survivor {s.survivor_id}: '
+            f'{hypothesis}"""\n'
             f"    ...  # exercise {s.location}; assert the original "
             "semantics\n"
         ),
@@ -328,11 +338,12 @@ def generate_proposal(s: SurvivorEvidence) -> StrengtheningProposal | RejectionR
 # Approval boundary (explicit — section 15 of the phase directive)
 # ===========================================================================
 
+
 @dataclass(frozen=True, slots=True)
 class ApprovalDecision:
     proposal_id: str
     approved: bool
-    approver: str                     # "human:<id>" | "controlled-loop"
+    approver: str  # "human:<id>" | "controlled-loop"
     conditions: tuple[str, ...]
     decided_at: str
 
@@ -404,13 +415,16 @@ class RevalidationOutcome:
     hypothesis_validated: bool
     accepted: bool
     rationale: str
-    used_full_campaign: bool = False   # MUST remain False by construction
+    used_full_campaign: bool = False  # MUST remain False by construction
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "proposal_id": self.proposal_id,
             "component": self.component,
-            "before": {"killed": self.before_killed, "generated": self.before_generated},
+            "before": {
+                "killed": self.before_killed,
+                "generated": self.before_generated,
+            },
             "after": {"killed": self.after_killed, "generated": self.after_generated},
             "target_mutant_killed": self.target_mutant_killed,
             "kill_regressions": self.kill_regressions,
@@ -447,12 +461,15 @@ def targeted_revalidation(
 
     statuses = getattr(result, "mutant_statuses", None) or {}
     sid = target_survivor_id or _extract_survivor_id(proposal)
-    target_killed = statuses.get(sid) == "killed" if statuses else (
-        after_killed > before_killed
+    target_killed = (
+        statuses.get(sid) == "killed" if statuses else (after_killed > before_killed)
     )
 
-    regressions = max(0, min(before_killed, after_generated) - after_killed) \
-        if after_generated < before_generated else max(0, before_killed - after_killed)
+    regressions = (
+        max(0, min(before_killed, after_generated) - after_killed)
+        if after_generated < before_generated
+        else max(0, before_killed - after_killed)
+    )
 
     validated = bool(target_killed and regressions == 0)
     if regressions > 0:
@@ -492,9 +509,7 @@ def targeted_revalidation(
 
 
 def _extract_survivor_id(proposal: StrengtheningProposal) -> str:
-    return str(
-        (proposal.survivor_evidence or {}).get("survivor_id", "")
-    )
+    return str((proposal.survivor_evidence or {}).get("survivor_id", ""))
 
 
 # ===========================================================================

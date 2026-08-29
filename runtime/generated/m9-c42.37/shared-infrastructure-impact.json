@@ -1,0 +1,81 @@
+{
+  "schema": "m9-c42.37-shared-infrastructure-impact/v1",
+  "generated_at": "2026-08-26T18:47:11.230096+00:00",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "shared_infrastructure_components": [
+    "core_domain_money",
+    "common_calculations",
+    "financial_events"
+  ],
+  "dependency_map": {
+    "core_domain_money": [
+      "credit_card_engine",
+      "account_engine",
+      "loan_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine"
+    ],
+    "common_calculations": [
+      "credit_card_engine",
+      "loan_engine",
+      "balance_engine",
+      "cashflow_engine"
+    ],
+    "financial_events": [
+      "reconciliation_engine",
+      "transaction_intelligence",
+      "financial_intelligence"
+    ]
+  },
+  "impact_scenarios": [
+    {
+      "name": "isolated_engine_change",
+      "changed_files": [
+        "backend/src/engines/credit_card_engine/risk.py"
+      ],
+      "affected_components": [
+        "credit_card"
+      ],
+      "selected_tasks": [
+        "credit_card_engine"
+      ],
+      "excluded_tasks_count": 13,
+      "correctly_bounded": true
+    },
+    {
+      "name": "shared_infra_change",
+      "changed_files": [
+        "backend/src/common/calculations/interest.py"
+      ],
+      "affected_components": [],
+      "selected_tasks": [],
+      "correctly_bounded": false,
+      "gap": "No automatic dependency propagation from common_calculations to dependent engines",
+      "expected_affected": [
+        "credit_card_engine",
+        "loan_engine",
+        "balance_engine",
+        "cashflow_engine"
+      ]
+    }
+  ],
+  "gaps_identified": [
+    {
+      "gap": "R-SRC-002 shared module invalidation requires explicit shared:: prefix in Change.target",
+      "severity": "HIGH",
+      "current_behavior": "Change to common_calculations/interest.py only invalidates common_calculations itself",
+      "expected_behavior": "Should also invalidate credit_card_engine, loan_engine, balance_engine, cashflow_engine",
+      "fix_required": "Enhance evidence_reuse.py R-SRC-002 evaluator to detect shared module paths without explicit prefix"
+    },
+    {
+      "gap": "ENGINE_TO_CAPABILITY does not encode reverse-dependency mapping",
+      "severity": "MEDIUM",
+      "current_behavior": "Forward mapping: engine -> capability only",
+      "expected_behavior": "Reverse mapping: shared_module -> [dependent_engines]",
+      "fix_required": "Add SHARED_MODULE_DEPENDENTS to evidence_reuse.py"
+    }
+  ],
+  "current_precision": "CAPABILITY_LEVEL (single-engine changes correctly bounded)",
+  "enhancement_needed": "SHARED_DEPS_LEVEL (cross-engine invalidation from shared infrastructure changes)"
+}

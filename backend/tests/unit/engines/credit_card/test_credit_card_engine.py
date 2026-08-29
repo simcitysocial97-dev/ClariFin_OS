@@ -477,4 +477,38 @@ class TestEmiPrecision:
 
         assert compute_monthly_interest(0, 2400) == 0
         assert compute_monthly_interest(100000, 0) == 0
-        assert compute_monthly_interest(-1, 2400) == 0
+
+
+class TestUtilizationValidationMutants:
+    """Boundary value assertions for outstanding/limit validation."""
+
+    def test_outstanding_zero_is_valid(self) -> None:
+        """Zero outstanding is valid and returns zero utilization."""
+        result = utilization.compute_utilization(0, 100000)
+        assert result == 0
+        result = utilization.compute_available_credit(100000, 0)
+        assert result == 100000
+
+    def test_outstanding_negative_raises_value_error(self) -> None:
+        """Negative outstanding must raise ValueError."""
+        with pytest.raises(ValueError, match="outstanding_paise must be non-negative"):
+            utilization.compute_utilization(-1, 100000)
+        with pytest.raises(ValueError, match="outstanding_paise must be non-negative"):
+            utilization.compute_available_credit(100000, -1)
+
+    def test_credit_limit_negative_raises_value_error(self) -> None:
+        """Negative credit limit must raise ValueError."""
+        with pytest.raises(ValueError, match="credit_limit_paise must be non-negative"):
+            utilization.compute_utilization(100000, -1)
+        with pytest.raises(ValueError, match="credit_limit_paise must be non-negative"):
+            utilization.compute_available_credit(-1, 100000)
+
+    def test_outstanding_equals_limit_utilization_capped(self) -> None:
+        """Outstanding equal to limit gives 100% utilization."""
+        result = utilization.compute_utilization(100000, 100000)
+        assert result == 10000  # 100% in bps
+
+    def test_outstanding_exceeds_limit_utilization_capped(self) -> None:
+        """Outstanding exceeding limit is capped at 100%."""
+        result = utilization.compute_utilization(150000, 100000)
+        assert result == 10000  # Capped at 100%

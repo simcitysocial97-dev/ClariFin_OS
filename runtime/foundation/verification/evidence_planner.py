@@ -73,11 +73,7 @@ import importlib.util
 from pathlib import Path as _Path
 
 _graph_module_path = (
-    REPO_ROOT
-    / "runtime"
-    / "generated"
-    / "m9-c42.27"
-    / "m27_2_graph_inventory.py"
+    REPO_ROOT / "runtime" / "generated" / "m9-c42.27" / "m27_2_graph_inventory.py"
 )
 _spec = importlib.util.spec_from_file_location(
     "m27_2_graph_inventory", _graph_module_path
@@ -115,10 +111,10 @@ class PlannedTask:
 
     task_id: str
     task_kind: str
-    target: str                       # component, capability, or scope
+    target: str  # component, capability, or scope
     disposition: TaskDisposition
-    cause: str                        # why this task is selected/excluded
-    evidence_id: str | None = None    # for selected_revalidation / aggregate
+    cause: str  # why this task is selected/excluded
+    evidence_id: str | None = None  # for selected_revalidation / aggregate
     invalidations: tuple[str, ...] = ()
     reuse_disposition: ReuseDisposition | None = None
     notes: str = ""
@@ -183,12 +179,13 @@ class EvidenceAwarePlan:
 # Affected scope resolver
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True, slots=True)
 class ChangeDescriptor:
     """A single change + its class."""
 
     path: str
-    kind: str                # "source_change" | "test_change" | ...
+    kind: str  # "source_change" | "test_change" | ...
     component: str | None
     capability: str | None
 
@@ -205,14 +202,20 @@ def describe_change(path: str) -> ChangeDescriptor:
         kind = "test_change"
         comp = _extract_engine(path)
         cap = ENGINE_TO_CAPABILITY.get(comp or "", (comp or "").replace("_", "-"))
-    elif path == "pyproject.toml" or path.endswith(("/pyproject.toml", "ruff.toml", ".coveragerc")):
+    elif path == "pyproject.toml" or path.endswith(
+        ("/pyproject.toml", "ruff.toml", ".coveragerc")
+    ):
         kind = "config_change"
         comp = None
         cap = None
     elif path.startswith("backend/src/"):
         kind = "source_change"
         comp = _extract_engine(path) or _extract_service(path)
-        cap = ENGINE_TO_CAPABILITY.get(comp or "", (comp or "").replace("_", "-")) if comp else None
+        cap = (
+            ENGINE_TO_CAPABILITY.get(comp or "", (comp or "").replace("_", "-"))
+            if comp
+            else None
+        )
     else:
         kind = "other"
         comp = None
@@ -240,6 +243,7 @@ def _extract_service(path: str) -> str | None:
 # ---------------------------------------------------------------------------
 # Planner
 # ---------------------------------------------------------------------------
+
 
 class EvidenceAwarePlanner:
     """Plans verification proportionally to actual change impact."""
@@ -271,7 +275,11 @@ class EvidenceAwarePlanner:
                 affected_caps.append(d.capability)
             if d.component and d.component not in affected_comps:
                 affected_comps.append(d.component)
-        affected_cap_ids = tuple(capability_id(c) for c in affected_caps if capability_id(c) in self._graph.capabilities)
+        affected_cap_ids = tuple(
+            capability_id(c)
+            for c in affected_caps
+            if capability_id(c) in self._graph.capabilities
+        )
 
         # 3. Detect drift — a capability claims coverage that the
         # executable surface cannot actually reach. C42.24-style.
@@ -469,16 +477,16 @@ class EvidenceAwarePlanner:
         )
 
         # 8. Plan id = hash of inputs
-        plan_id = hashlib.sha256(
-            "\n".join(sorted(files)).encode()
-        ).hexdigest()[:12]
+        plan_id = hashlib.sha256("\n".join(sorted(files)).encode()).hexdigest()[:12]
 
         return EvidenceAwarePlan(
             plan_id=plan_id,
             generated_at=datetime.now(UTC).isoformat(),
             repository_state={"population_id": self._population.population_id},
             changed_files=files,
-            affected_sources=tuple(d.path for d in descriptors if d.kind != "excluded_generated"),
+            affected_sources=tuple(
+                d.path for d in descriptors if d.kind != "excluded_generated"
+            ),
             affected_capabilities=tuple(affected_caps),
             affected_components=tuple(affected_comps),
             population_id=self._population.population_id,
@@ -548,9 +556,7 @@ class EvidenceAwarePlanner:
                 # other kind (e.g. "audit") is observation-only and
                 # does not establish an executable binding.
                 executable_kinds = {"unit", "integration", "property", "invariant"}
-                has_executable = any(
-                    s.kind in executable_kinds for s in surfaces
-                )
+                has_executable = any(s.kind in executable_kinds for s in surfaces)
                 if not has_executable:
                     blockers.append(
                         f"capability {cap_id} has no executable test "
@@ -565,9 +571,7 @@ class EvidenceAwarePlanner:
 
         return _MAP.get(component, component.replace("_", "-"))
 
-    def _build_aggregate(
-        self, reuses: list[EvidenceReuse]
-    ) -> DerivedAggregate | None:
+    def _build_aggregate(self, reuses: list[EvidenceReuse]) -> DerivedAggregate | None:
         """Build the derived aggregate using only *valid* measurements."""
         valid_components: list[ComponentMeasurement] = []
         for reuse in reuses:
@@ -633,6 +637,7 @@ class EvidenceAwarePlanner:
 # Convenience constructor
 # ---------------------------------------------------------------------------
 
+
 def default_planner() -> EvidenceAwarePlanner:
     """Construct a planner with the C42.26 baseline + graph inventory.
 
@@ -662,7 +667,9 @@ def main() -> int:
     out.write_text(json.dumps(plan.to_dict(), indent=2))
     print(f"Sample no-op plan: {out.relative_to(REPO_ROOT)}")
     print(f"Selected: {len(plan.selected_tasks)}; Excluded: {len(plan.excluded_tasks)}")
-    print(f"Derived aggregate: {plan.derived_aggregates[0].result if plan.derived_aggregates else 'n/a'}")
+    print(
+        f"Derived aggregate: {plan.derived_aggregates[0].result if plan.derived_aggregates else 'n/a'}"
+    )
     return 0
 
 

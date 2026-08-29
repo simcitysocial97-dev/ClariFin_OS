@@ -16,6 +16,7 @@ Covers:
 Run with:
     .venv/bin/python -m pytest runtime/tests/test_m9_c42_28.py -v
 """
+
 from __future__ import annotations
 
 import json
@@ -59,10 +60,10 @@ from runtime.foundation.verification.evidence_reuse import (  # noqa: E402
     c42_26_population,
 )
 
-
 # ---------------------------------------------------------------------------
 # M28.2 — Executable verification-plan contract
 # ---------------------------------------------------------------------------
+
 
 class TestExecutablePlanContract:
     def test_plan_contains_required_fields(self) -> None:
@@ -76,10 +77,19 @@ class TestExecutablePlanContract:
         for t in exe.tasks:
             d = t.to_dict()
             for key in (
-                "task_id", "component", "capability", "verification_kind",
-                "execution_command", "working_directory", "required_environment",
-                "evidence_kind", "expected_artifact", "timeout_policy",
-                "fingerprints", "reason", "executable",
+                "task_id",
+                "component",
+                "capability",
+                "verification_kind",
+                "execution_command",
+                "working_directory",
+                "required_environment",
+                "evidence_kind",
+                "expected_artifact",
+                "timeout_policy",
+                "fingerprints",
+                "reason",
+                "executable",
             ):
                 assert key in d, f"task {t.task_id} missing {key}"
 
@@ -110,6 +120,7 @@ class TestExecutablePlanContract:
 # M28.3 — Adapter layer
 # ---------------------------------------------------------------------------
 
+
 class TestAdapterLayer:
     def test_known_kinds_have_adapters(self) -> None:
         # The current planner emits "mutation" tasks; mutation and unit
@@ -133,6 +144,7 @@ class TestAdapterLayer:
         from runtime.foundation.verification.executor_pipeline import (
             ADAPTERS,
         )
+
         # Synthesize a task with an unknown kind by bypassing the
         # resolver — build the executable plan with a manually
         # constructed PlannedTask and a custom adapter table.
@@ -173,6 +185,7 @@ class TestAdapterLayer:
 # M28.5 — Evidence capture
 # ---------------------------------------------------------------------------
 
+
 class TestEvidenceCapture:
     def test_evidence_records_required_fields(self) -> None:
         ev = ExecutionEvidence(
@@ -196,12 +209,24 @@ class TestEvidenceCapture:
         )
         d = ev.to_dict()
         for k in (
-            "execution_id", "task_id", "component", "capability",
-            "verification_kind", "started_at", "completed_at",
-            "duration_seconds", "command", "exit_code",
-            "failure_kind", "failure_message",
-            "source_fingerprint", "test_fingerprint", "config_fingerprint",
-            "toolchain_fingerprint", "artifact_paths", "counts",
+            "execution_id",
+            "task_id",
+            "component",
+            "capability",
+            "verification_kind",
+            "started_at",
+            "completed_at",
+            "duration_seconds",
+            "command",
+            "exit_code",
+            "failure_kind",
+            "failure_message",
+            "source_fingerprint",
+            "test_fingerprint",
+            "config_fingerprint",
+            "toolchain_fingerprint",
+            "artifact_paths",
+            "counts",
         ):
             assert k in d, f"missing {k}"
 
@@ -238,6 +263,7 @@ class TestEvidenceCapture:
 # M28.6 — Evidence reconciliation
 # ---------------------------------------------------------------------------
 
+
 class TestReconciliation:
     def test_reconcile_no_change_yields_reused(self) -> None:
         planner = default_planner()
@@ -258,7 +284,10 @@ class TestReconciliation:
         fps = collect_repo_fingerprints(sel)
         fresh = {
             sel: ExecutionEvidence(
-                execution_id="e1", task_id="t", component=sel, capability=sel.replace("_","-"),
+                execution_id="e1",
+                task_id="t",
+                component=sel,
+                capability=sel.replace("_", "-"),
                 verification_kind="mutation",
                 started_at="2026-01-01T00:00:00+00:00",
                 completed_at="2026-01-01T00:00:01+00:00",
@@ -292,7 +321,10 @@ class TestReconciliation:
         fps = collect_repo_fingerprints(sel)
         fresh = {
             sel: ExecutionEvidence(
-                execution_id="e1", task_id="t", component=sel, capability=sel.replace("_","-"),
+                execution_id="e1",
+                task_id="t",
+                component=sel,
+                capability=sel.replace("_", "-"),
                 verification_kind="mutation",
                 started_at="2026-01-01T00:00:00+00:00",
                 completed_at="2026-01-01T00:00:01+00:00",
@@ -317,6 +349,7 @@ class TestReconciliation:
 # ---------------------------------------------------------------------------
 # M28.7 — Labelled aggregate
 # ---------------------------------------------------------------------------
+
 
 class TestLabelledAggregate:
     def test_authoritative_measured_label(self) -> None:
@@ -344,7 +377,10 @@ class TestLabelledAggregate:
     def test_aggregate_never_collapses(self) -> None:
         # Authoritative + targeted + reconciled are all distinct.
         a = _compute_labelled_aggregate(
-            tuple(ReconciledComponent(f"c{i}", "fresh_measured", None, None) for i in range(2)),
+            tuple(
+                ReconciledComponent(f"c{i}", "fresh_measured", None, None)
+                for i in range(2)
+            ),
             default_population(),
         )
         b = _compute_labelled_aggregate(
@@ -365,6 +401,7 @@ class TestLabelledAggregate:
 # ---------------------------------------------------------------------------
 # M28.8 — Scope enforcement
 # ---------------------------------------------------------------------------
+
 
 class TestScopeEnforcement:
     def test_scope_mismatch_blocks_execution(self) -> None:
@@ -409,6 +446,7 @@ class TestScopeEnforcement:
 # M28.9 — Failure classification
 # ---------------------------------------------------------------------------
 
+
 class TestFailureClassification:
     def test_failure_kind_values_are_distinct(self) -> None:
         values = {k.value for k in FailureKind}
@@ -431,6 +469,7 @@ class TestFailureClassification:
 # M28.13 — Forensic execution record
 # ---------------------------------------------------------------------------
 
+
 class TestForensicRecord:
     def test_record_captures_full_chain(self) -> None:
         planner = default_planner()
@@ -442,11 +481,21 @@ class TestForensicRecord:
         forensic = build_forensic_record(plan, exe, {}, reconciled)
         d = forensic.to_dict()
         for k in (
-            "record_id", "generated_at", "repository_sha", "change",
-            "affected_graph_nodes", "invalidations", "reused_evidence",
-            "selected_tasks", "executed_tasks", "execution_results",
-            "new_evidence", "derived_evidence", "failures",
-            "uncertainties", "certification_decision",
+            "record_id",
+            "generated_at",
+            "repository_sha",
+            "change",
+            "affected_graph_nodes",
+            "invalidations",
+            "reused_evidence",
+            "selected_tasks",
+            "executed_tasks",
+            "execution_results",
+            "new_evidence",
+            "derived_evidence",
+            "failures",
+            "uncertainties",
+            "certification_decision",
         ):
             assert k in d, f"missing {k}"
 
@@ -455,24 +504,38 @@ class TestForensicRecord:
 # M28.14 — CLI integration smoke
 # ---------------------------------------------------------------------------
 
+
 class TestCLIIntegration:
     def test_evidence_plan_subcommand_exists(self) -> None:
         # We verify the dispatch by reading verify.py
         verify_py = (REPO_ROOT / "runtime" / "verify.py").read_text()
-        for cmd in ("evidence-plan", "evidence-execute",
-                    "evidence-reconcile", "evidence-certify"):
-            assert f'"{cmd}"' in verify_py or f'== "{cmd}"' in verify_py or f'== "{cmd}"' in verify_py, (
-                f"verify.py missing {cmd} dispatch"
-            )
+        for cmd in (
+            "evidence-plan",
+            "evidence-execute",
+            "evidence-reconcile",
+            "evidence-certify",
+        ):
+            assert (
+                f'"{cmd}"' in verify_py
+                or f'== "{cmd}"' in verify_py
+                or f'== "{cmd}"' in verify_py
+            ), f"verify.py missing {cmd} dispatch"
 
 
 # ---------------------------------------------------------------------------
 # C42.28 — Baseline freeze integrity
 # ---------------------------------------------------------------------------
 
+
 class TestBaselineIntegrity:
     def test_baseline_artifact_present(self) -> None:
-        p = REPO_ROOT / "runtime" / "generated" / "m9-c42.28" / "m9-c42.28-baseline.json"
+        p = (
+            REPO_ROOT
+            / "runtime"
+            / "generated"
+            / "m9-c42.28"
+            / "m9-c42.28-baseline.json"
+        )
         assert p.exists()
         data = json.loads(p.read_text())
         assert data["frozen_artifact_count"] == 19
@@ -480,14 +543,26 @@ class TestBaselineIntegrity:
         assert data["frozen_aggregate_sha256"] != ""
 
     def test_baseline_scenarios_present(self) -> None:
-        p = REPO_ROOT / "runtime" / "generated" / "m9-c42.28" / "m9-c42.28-scenarios.json"
+        p = (
+            REPO_ROOT
+            / "runtime"
+            / "generated"
+            / "m9-c42.28"
+            / "m9-c42.28-scenarios.json"
+        )
         assert p.exists()
         data = json.loads(p.read_text())
         assert data["overall_passed"] is True
         assert len(data["scenarios"]) == 7
 
     def test_resource_efficiency_demonstrated(self) -> None:
-        p = REPO_ROOT / "runtime" / "generated" / "m9-c42.28" / "resource-efficiency-benchmark.json"
+        p = (
+            REPO_ROOT
+            / "runtime"
+            / "generated"
+            / "m9-c42.28"
+            / "resource-efficiency-benchmark.json"
+        )
         assert p.exists()
         data = json.loads(p.read_text())
         assert data["saved_fraction"] > 0.5

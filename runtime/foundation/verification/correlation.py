@@ -118,7 +118,8 @@ def correlate(plan: EvidenceAwarePlan) -> Correlation:
     tested = tuple(
         t.target
         for t in plan.selected_tasks
-        if t.disposition in ("selected_fresh", "selected_revalidation", "selected_aggregate")
+        if t.disposition
+        in ("selected_fresh", "selected_revalidation", "selected_aggregate")
     )
     untested = tuple(
         t.target
@@ -128,7 +129,10 @@ def correlate(plan: EvidenceAwarePlan) -> Correlation:
 
     # Reused evidence
     reused = tuple(
-        r for r in plan.reuses if r.disposition in ("reusable", "reusable_aggregate", "reusable_with_revalidation")
+        r
+        for r in plan.reuses
+        if r.disposition
+        in ("reusable", "reusable_aggregate", "reusable_with_revalidation")
     )
 
     # Fresh evidence targets
@@ -154,10 +158,7 @@ def correlate(plan: EvidenceAwarePlan) -> Correlation:
     certifiable = (
         len(plan.drift_blockers) == 0
         and len(plan.certification_gaps) == 0
-        and all(
-            r.disposition != "no_evidence"
-            for r in plan.reuses
-        )
+        and all(r.disposition != "no_evidence" for r in plan.reuses)
     )
 
     rationale_parts: list[str] = []
@@ -166,13 +167,15 @@ def correlate(plan: EvidenceAwarePlan) -> Correlation:
             f"blocked by {len(plan.drift_blockers)} drift blocker(s)"
         )
     if plan.certification_gaps:
-        rationale_parts.append(
-            f"{len(plan.certification_gaps)} certification gap(s)"
-        )
+        rationale_parts.append(f"{len(plan.certification_gaps)} certification gap(s)")
     if not rationale_parts:
         rationale_parts.append("all components have valid reusable evidence")
 
-    rationale = "certifiable: " + "; ".join(rationale_parts) if certifiable else "NOT certifiable: " + "; ".join(rationale_parts)
+    rationale = (
+        "certifiable: " + "; ".join(rationale_parts)
+        if certifiable
+        else "NOT certifiable: " + "; ".join(rationale_parts)
+    )
 
     return Correlation(
         correlation_id=f"corr::{plan.plan_id}",

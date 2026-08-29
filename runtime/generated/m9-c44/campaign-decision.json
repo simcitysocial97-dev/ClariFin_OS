@@ -1,0 +1,73 @@
+{
+  "schema": "m9-c44-campaign-decision/v1",
+  "generated_at": "2026-08-27T16:10:25Z",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "decision": "DEFERRED_TO_FINAL_CERTIFICATION_CHECKPOINT",
+  "rationale": "Full authoritative mutation campaign is justified only under formal triggers per C42 constraint 11 / C43 governance. Current triggers evaluated:",
+  "trigger_evaluation": {
+    "population_expansion": {
+      "triggered": false,
+      "reason": "No new mutation components added in C44"
+    },
+    "major_verification_architecture_change": {
+      "triggered": false,
+      "reason": "C44 extends C42 architecture; no architectural changes"
+    },
+    "mutation_infrastructure_change": {
+      "triggered": false,
+      "reason": "No mutation infrastructure changes in C44"
+    },
+    "mutation_configuration_semantic_change": {
+      "triggered": false,
+      "reason": "No mutmut configuration semantic changes"
+    },
+    "significant_cross_component_architecture_change": {
+      "triggered": false,
+      "reason": "No cross-component architecture changes in C44"
+    },
+    "periodic_measurement_checkpoint": {
+      "triggered": false,
+      "reason": "Not a periodic checkpoint; C43 full campaign was the most recent"
+    },
+    "final_certification_milestone": {
+      "triggered": true,
+      "reason": "C44 final certification requires authoritative measurement to verify 80% threshold status"
+    }
+  },
+  "current_evidence": {
+    "latest_full_campaign": {
+      "sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+      "mode": "full",
+      "total_generated": 16905,
+      "killed": 11925,
+      "survived": 4971,
+      "no_tests": 4,
+      "timeout": 5,
+      "mutation_score_pct": 70.6,
+      "threshold_pct": 80,
+      "gap_to_threshold": 9.4
+    },
+    "c43_strengthening_impact": {
+      "behaviour_engine": "+30.2pp (35.7% -> 65.9%)",
+      "full_campaign": "+10.3pp (60.3% -> 70.6%)",
+      "tests_added": "~300 new tests across 5 files (behaviour) + strengthening tests for account/reconciliation"
+    }
+  },
+  "if_executed_today": {
+    "expected_score": "70.6% (same as C43 full campaign — no new tests added to production code in C44)",
+    "expected_gate_c_result": "FAIL (9.4pp below 80% threshold)",
+    "expected_survivors": 4971,
+    "expected_class_a": 3826
+  },
+  "authorized_execution_conditions": [
+    "Final C44 certification checkpoint (current decision)",
+    "Formal campaign gate approval after C44 test strengthening implementation",
+    "Human authorization for full campaign re-execution"
+  ],
+  "evidence_preservation": {
+    "c43_full_campaign_evidence": "preserved in backend/tests/generated/mutation/",
+    "c43_strengthening_evidence": "preserved in backend/tests/unit/engines/behaviour/ and runtime/generated/m9-c43/",
+    "c44_proposals_evidence": "preserved in runtime/generated/m9-c44/strengthening-proposals.json",
+    "reuse_eligibility": "C43 full campaign evidence remains valid for baseline comparison; no production changes invalidate it"
+  }
+}

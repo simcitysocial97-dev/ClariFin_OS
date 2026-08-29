@@ -93,8 +93,18 @@ def test_forecast_cashflow_uses_explicit_surplus_for_confidence():
     # Surplus keys override income-expense in the variance input but not in
     # the projected values (which come from income/expense averages).
     history = [
-        {"month": "2026-01", "income_paise": 100, "expense_paise": 50, "surplus_paise": 50},
-        {"month": "2026-02", "income_paise": 100, "expense_paise": 50, "surplus_paise": 50},
+        {
+            "month": "2026-01",
+            "income_paise": 100,
+            "expense_paise": 50,
+            "surplus_paise": 50,
+        },
+        {
+            "month": "2026-02",
+            "income_paise": 100,
+            "expense_paise": 50,
+            "surplus_paise": 50,
+        },
     ]
     result = forecast_cashflow(history)
     assert result["forecast"][0]["expected_surplus_paise"] == 50
@@ -178,7 +188,11 @@ def test_forecast_liquidity_stress_month_two_is_high():
 def test_forecast_liquidity_stress_month_three_is_medium():
     result = forecast_liquidity(
         3_000_000,
-        [forecast_row("2026-01", 0), forecast_row("2026-02", 0), forecast_row("2026-03", -1)],
+        [
+            forecast_row("2026-01", 0),
+            forecast_row("2026-02", 0),
+            forecast_row("2026-03", -1),
+        ],
         emergency_threshold_paise=3_000_000,
     )
     assert result["months_until_stress"] == 3
@@ -205,7 +219,9 @@ def test_forecast_liquidity_stress_beyond_three_is_low_when_min_positive():
 def test_forecast_liquidity_no_stress_but_min_below_threshold_positive_low():
     # Start below threshold, recover immediately: no crossing after start.
     result = forecast_liquidity(
-        2_000_000, [forecast_row("2026-01", 2_000_000)], emergency_threshold_paise=3_000_000
+        2_000_000,
+        [forecast_row("2026-01", 2_000_000)],
+        emergency_threshold_paise=3_000_000,
     )
     assert result["months_until_stress"] is None
     assert result["projected_min_balance_paise"] == 2_000_000
@@ -217,7 +233,10 @@ def test_forecast_liquidity_projected_min_reconciles():
     result = forecast_liquidity(
         3_000_000, [forecast_row(f"2026-0{i}", s) for i, s in enumerate(surpluses, 1)]
     )
-    assert result["projected_min_balance_paise"] == 3_000_000 - 1_000_000 + 500_000 - 2_000_000
+    assert (
+        result["projected_min_balance_paise"]
+        == 3_000_000 - 1_000_000 + 500_000 - 2_000_000
+    )
     assert result["months_until_stress"] == 1
 
 
@@ -233,13 +252,19 @@ def test_forecast_liquidity_default_threshold():
 
 
 def test_credit_dependency_from_history_average():
-    history = [{"utilization_ratio": Decimal("0.2")}, {"utilization_ratio": Decimal("0.4")}]
+    history = [
+        {"utilization_ratio": Decimal("0.2")},
+        {"utilization_ratio": Decimal("0.4")},
+    ]
     result = forecast_credit_utilization([], history)
     assert result["current_dependency_ratio"] == Decimal("0.3")
 
 
 def test_credit_utilization_worsening_trend_projects_increase():
-    history = [{"utilization_ratio": Decimal("0.2")}, {"utilization_ratio": Decimal("0.4")}]
+    history = [
+        {"utilization_ratio": Decimal("0.2")},
+        {"utilization_ratio": Decimal("0.4")},
+    ]
     result = forecast_credit_utilization([], history)
     assert result["trend"] == "worsening"
     assert result["forecast_dependency_ratio"] == Decimal("0.3") * Decimal("1.1")
@@ -247,7 +272,10 @@ def test_credit_utilization_worsening_trend_projects_increase():
 
 def test_credit_utilization_worsening_capped_at_one():
     # [0.9, 1.0]: current 0.95, diff 0.111 -> worsening; 0.95*1.1 > 1 -> capped.
-    history = [{"utilization_ratio": Decimal("0.9")}, {"utilization_ratio": Decimal("1.0")}]
+    history = [
+        {"utilization_ratio": Decimal("0.9")},
+        {"utilization_ratio": Decimal("1.0")},
+    ]
     result = forecast_credit_utilization([], history)
     assert result["trend"] == "worsening"
     assert result["forecast_dependency_ratio"] == Decimal("1.0")
@@ -255,14 +283,20 @@ def test_credit_utilization_worsening_capped_at_one():
 
 def test_credit_utilization_worsening_low_dependency_stays_stable_projection():
     # Worsening trend but current <= 0.1 -> forecast equals current.
-    history = [{"utilization_ratio": Decimal("0.01")}, {"utilization_ratio": Decimal("0.09")}]
+    history = [
+        {"utilization_ratio": Decimal("0.01")},
+        {"utilization_ratio": Decimal("0.09")},
+    ]
     result = forecast_credit_utilization([], history)
     assert result["trend"] == "worsening"
     assert result["forecast_dependency_ratio"] == result["current_dependency_ratio"]
 
 
 def test_credit_utilization_improving_trend_projects_decrease():
-    history = [{"utilization_ratio": Decimal("0.4")}, {"utilization_ratio": Decimal("0.2")}]
+    history = [
+        {"utilization_ratio": Decimal("0.4")},
+        {"utilization_ratio": Decimal("0.2")},
+    ]
     result = forecast_credit_utilization([], history)
     assert result["trend"] == "improving"
     assert result["forecast_dependency_ratio"] == Decimal("0.3") * Decimal("0.9")
@@ -318,7 +352,11 @@ def test_credit_dependency_negative_liability_change_ignored():
 
 def test_credit_dependency_ignores_other_event_types():
     events = [
-        {"event_type": "grocery", "liability_change_paise": 999_999, "expense_paise": 999_999}
+        {
+            "event_type": "grocery",
+            "liability_change_paise": 999_999,
+            "expense_paise": 999_999,
+        }
     ]
     # No credit events, no revolver behavior -> base 0.1
     assert _compute_current_credit_dependency(events, []) == Decimal("0.1")
@@ -364,7 +402,9 @@ def liquidity(months_until_stress, projected_min=0, risk_level="low"):
 
 def test_shortfall_stress_month_one_critical():
     forecast = [forecast_row("2026-01", -500_000)]
-    result = detect_future_cash_shortfall(forecast, liquidity(1, projected_min=-100_000))
+    result = detect_future_cash_shortfall(
+        forecast, liquidity(1, projected_min=-100_000)
+    )
     assert result["flag"] is True
     assert result["severity"] == "critical"
     assert result["expected_month"] == "2026-01"

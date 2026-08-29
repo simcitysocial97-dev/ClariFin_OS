@@ -20,7 +20,13 @@ from src.engines.transaction_intelligence.loan_emi_detector import (
 
 
 def test_is_emi_description_matches_keywords():
-    for desc in ["HDFC LOAN EMI", "emi payment", "INSTALLMENT", "REPAYMENT", "MORTGAGE"]:
+    for desc in [
+        "HDFC LOAN EMI",
+        "emi payment",
+        "INSTALLMENT",
+        "REPAYMENT",
+        "MORTGAGE",
+    ]:
         assert _is_emi_description(desc) is True
 
 
@@ -80,7 +86,13 @@ def test_date_near_expected_custom_window():
 
 
 def make_txn(debit=1_000_000, date="2026-08-01", desc="COFFEE SHOP", **extra):
-    txn = {"id": 1, "account_id": "A1", "debit": debit, "date_iso": date, "description": desc}
+    txn = {
+        "id": 1,
+        "account_id": "A1",
+        "debit": debit,
+        "date_iso": date,
+        "description": desc,
+    }
     txn.update(extra)
     return txn
 
@@ -109,7 +121,12 @@ def test_detect_skips_loans_without_positive_emi():
 
 
 def test_detect_uses_amount_paise_fallback_key():
-    txn = {"id": 1, "amount_paise": 1_000_000, "date_iso": "2026-08-01", "description": "COFFEE"}
+    txn = {
+        "id": 1,
+        "amount_paise": 1_000_000,
+        "date_iso": "2026-08-01",
+        "description": "COFFEE",
+    }
     result = detect_emi_payment(txn, [LOAN], {})
     assert result is not None
     assert result.match_reason == "amount_only"

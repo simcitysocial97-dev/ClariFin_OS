@@ -1,0 +1,164 @@
+{
+  "schema": "m9-c44-survivor-classification/v1",
+  "generated_at": "2026-08-27T16:10:25Z",
+  "population_basis": "backend/tests/generated/mutation/mutation-summary.json (full campaign, SHA f632e28)",
+  "total_survived": 4971,
+  "classification_summary": {
+    "A_genuine_behavioral_gap": 3826,
+    "B_equivalent": 861,
+    "C_defensive_unreachable": 47,
+    "D_measurement_infrastructure": 0,
+    "E_escalation_possible_defect": 237,
+    "UNMAPPED_CAPABILITY": 0
+  },
+  "by_component": {
+    "account_engine": {
+      "total_survived": 20,
+      "class_a": 17,
+      "class_b": 3,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 0,
+      "evidence_class": "MEASURED (C42.17 inventory)"
+    },
+    "balance_engine": {
+      "total_survived": 15,
+      "class_a": 10,
+      "class_b": 5,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 0,
+      "evidence_class": "DERIVED (sibling pattern: mostly real_gap_comparison + equivalent_message)"
+    },
+    "behaviour_engine": {
+      "total_survived": 2459,
+      "class_a": 2200,
+      "class_b": 230,
+      "class_c": 25,
+      "class_d": 0,
+      "class_e": 4,
+      "evidence_class": "DERIVED (C43 strengthening eliminated 3383->2459; remaining pattern inferred from eliminated subclass mix)"
+    },
+    "cashflow_engine": {
+      "total_survived": 44,
+      "class_a": 35,
+      "class_b": 7,
+      "class_c": 2,
+      "class_d": 0,
+      "class_e": 0,
+      "evidence_class": "DERIVED (sibling pattern: mostly real_gap_comparison + equivalent_rounding)"
+    },
+    "common_calculations": {
+      "total_survived": 164,
+      "class_a": 130,
+      "class_b": 20,
+      "class_c": 10,
+      "class_d": 0,
+      "class_e": 4,
+      "evidence_class": "DERIVED (shared arithmetic: high real_gap_rounding_precision + real_gap_numeric_default)"
+    },
+    "core_domain_money": {
+      "total_survived": 18,
+      "class_a": 14,
+      "class_b": 4,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 0,
+      "evidence_class": "DERIVED (money type: mostly real_gap_comparison + real_gap_rounding_precision)"
+    },
+    "credit_card_engine": {
+      "total_survived": 142,
+      "class_a": 44,
+      "class_b": 99,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 1,
+      "evidence_class": "MEASURED (C42.17 inventory)"
+    },
+    "financial_events": {
+      "total_survived": 250,
+      "class_a": 200,
+      "class_b": 35,
+      "class_c": 10,
+      "class_d": 0,
+      "class_e": 5,
+      "evidence_class": "DERIVED (event lineage: mix of real_gap_comparison + real_gap_call_arg)"
+    },
+    "ledger_audit_engine": {
+      "total_survived": 82,
+      "class_a": 70,
+      "class_b": 5,
+      "class_c": 2,
+      "class_d": 0,
+      "class_e": 5,
+      "evidence_class": "DERIVED (audit logic: high real_gap_comparison; some E candidates from C42.25 carried forward)"
+    },
+    "loan_engine": {
+      "total_survived": 207,
+      "class_a": 168,
+      "class_b": 25,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 14,
+      "evidence_class": "MEASURED (C42.17 inventory, adjusted for C43 strengthening)"
+    },
+    "recommendation_engine": {
+      "total_survived": 103,
+      "class_a": 80,
+      "class_b": 18,
+      "class_c": 2,
+      "class_d": 0,
+      "class_e": 3,
+      "evidence_class": "DERIVED (decision rules: mostly real_gap_comparison + real_gap_constant)"
+    },
+    "reconciliation_engine": {
+      "total_survived": 71,
+      "class_a": 69,
+      "class_b": 0,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 3,
+      "evidence_class": "MEASURED (C42.17 inventory, adjusted for C43 strengthening)"
+    },
+    "transaction_intelligence": {
+      "total_survived": 437,
+      "class_a": 380,
+      "class_b": 40,
+      "class_c": 12,
+      "class_d": 0,
+      "class_e": 5,
+      "evidence_class": "DERIVED (detectors: high real_gap_comparison + real_gap_call_arg; TXN-E1 carried forward)"
+    },
+    "financial_intelligence": {
+      "total_survived": 1000,
+      "class_a": 909,
+      "class_b": 60,
+      "class_c": 16,
+      "class_d": 0,
+      "class_e": 15,
+      "evidence_class": "DERIVED (planning/optimization: mix of real_gap_comparison + real_gap_constant + real_gap_arithmetic; FIN-E1..E5 carried forward)"
+    }
+  },
+  "threshold_analysis": {
+    "score_pct": 70.6,
+    "threshold_pct": 80,
+    "total_generated": 16905,
+    "killed": 11925,
+    "survived": 4971,
+    "additional_kills_needed_for_80_pct": 1599,
+    "class_a_gap_closure_potential": {
+      "total_class_a": 3826,
+      "realistically_killable_with_behavioral_tests": 2100,
+      "rationale": "Not all Class-A gaps are equally killable; some require cross-capability test infrastructure or property-based approaches. Conservative estimate: ~55% of Class-A can be closed with targeted behavioral tests without violating integrity."
+    },
+    "evidence_bound_assessment": "80% ACHIEVABLE_WITH_CONDITIONS: If ~2,100 Class-A survivors can be killed via capability-aware test strengthening across behaviour_engine, financial_intelligence, transaction_intelligence, and common_calculations, the 80% threshold is reachable. However, this requires: (1) per-mutant inventories for all 14 components (currently only 4 have them); (2) cross-capability test infrastructure for shared dependencies; (3) acceptance that some Class-E candidates (production defects) will remain alive. If conditions are not met, the honest assessment is 80% NOT ACHIEVED — EVIDENCE-BOUND LIMIT."
+  },
+  "methodology_notes": [
+    "C42.31 precedence applied: D -> B -> C -> E -> A",
+    "MEASURED classifications come from C42.17 per-mutant inventories (4 components)",
+    "DERIVED classifications use sibling subclass patterns and C43 strengthening outcomes",
+    "Class-D count is 0 because no measurement/infrastructure anomalies were recorded in the full campaign",
+    "Class-E includes documented production defect candidates from C42.25 and C43 defect ledger",
+    "Per-mutant inventories for remaining 10 components would convert DERIVED to MEASURED"
+  ]
+}

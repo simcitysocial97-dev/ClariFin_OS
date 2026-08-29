@@ -94,8 +94,10 @@ def validate_workflow(path: Path) -> None:
     pr = on.get("pull_request", {}) or {}
     has_push = bool(push)
     has_pr = bool(pr)
-    has_dispatch = bool(on.get("workflow_dispatch"))
-    has_schedule = bool(on.get("schedule"))
+    # M9-C43.1: `workflow_dispatch:` / `schedule:` without a body parse to None
+    # in YAML; presence is the key existing in the mapping, not a truthy body.
+    has_dispatch = "workflow_dispatch" in on
+    has_schedule = "schedule" in on
     if name not in VERIFICATION_PROFILES and not (has_schedule or has_dispatch):
         warn(f"{name}: non-verification workflow has no schedule/manual trigger")
 
@@ -153,8 +155,17 @@ def validate_workflow(path: Path) -> None:
                 found_inline_gen = True
             if "python runtime/verify.py" in run:
                 prof = run.strip().split("python runtime/verify.py")[-1].split()[0]
-                if prof == "status":
-                    found_status = True
+                if prof in ("status", "env-check"):
+                    # Auxiliary non-gate commands:
+                    #   status    — Rule 9 job-summary append (never a verdict).
+                    #   env-check — canonical environment fingerprint preflight
+                    #              (AGENTS.md: verify before mutation/CI-critical
+                    #              work; C42.5 toolchain-drift guard). Produces a
+                    #              consistency report, never a verification
+                    #              verdict, so it cannot duplicate or weaken the
+                    #              single authoritative profile command (Rule 8).
+                    if prof == "status":
+                        found_status = True
                     continue
                 # Only verification-profile workflows are bound to a single profile
                 # command. Non-profile workflows (reconcile, security/CodeQL,

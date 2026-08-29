@@ -12,8 +12,9 @@
 
 from __future__ import annotations
 
+import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 # Canonical mutmut 3.7.0 status vocabulary -> our bucket.
@@ -178,6 +179,190 @@ def parse_mutmut_results(text: str) -> MutationCounts:
         suspicious=buckets["suspicious"],
         not_checked=buckets["not_checked"],
     )
+
+
+# ============================================================
+# Structured mutant result collection from mutmut .meta files
+# ============================================================
+# mutmut 3.7.0 stores per-mutant results in JSON meta files at
+# ``mutants/<relative_path>.meta``. Each file contains an
+# ``exit_code_by_key`` mapping mutant_key -> subprocess_exit_code.
+# The authoritative exit_code -> status mapping (from mutmut 3.7.0
+# mutmut/__main__.py) is:
+#   0    -> survived   (tests passed; mutation undetected)
+#   1    -> killed     (tests failed; mutation detected)
+#   3    -> killed     (internal pytest error counts as a kill)
+#   -24  -> killed     (OS-level forced kill counts as a kill)
+#   5    -> no_tests
+#   33   -> no_tests
+#   34   -> skipped
+#   35   -> suspicious
+#   36   -> timeout
+#   2    -> interrupted
+#   None -> not_checked
+#   default -> suspicious
+
+_MUTMUT_EXIT_CODE_TO_STATUS: dict[int | None, str] = {
+    0: "survived",
+    1: "killed",
+    3: "killed",
+    -24: "killed",
+    5: "no_tests",
+    33: "no_tests",
+    34: "skipped",
+    35: "suspicious",
+    36: "timeout",
+    2: "interrupted",
+    None: "not_checked",
+}
+
+
+@dataclass
+class FunctionMutantStats:
+    """Per-function mutation statistics."""
+
+    function: str
+    total: int = 0
+    killed: int = 0
+    survived: int = 0
+    no_tests: int = 0
+    timeout: int = 0
+    suspicious: int = 0
+    not_checked: int = 0
+    survivor_keys: list[str] = field(default_factory=list)
+
+    @property
+    def score(self) -> float | None:
+        denom = self.killed + self.survived + self.timeout
+        if denom == 0:
+            return None
+        return round(self.killed * 100.0 / denom, 2)
+
+
+@dataclass
+class MutantResultReport:
+    """Structured, categorized mutation result report.
+
+    Built directly from mutmut 3.7.0 .meta files. Eliminates the need
+    to parse ``mutmut results`` text or search for files/folders afterward.
+    """
+
+    meta_dir: str
+    total: int = 0
+    killed: int = 0
+    survived: int = 0
+    no_tests: int = 0
+    timeout: int = 0
+    suspicious: int = 0
+    not_checked: int = 0
+    by_function: dict[str, FunctionMutantStats] = field(default_factory=dict)
+
+    @property
+    def score(self) -> float | None:
+        denom = self.killed + self.survived + self.timeout
+        if denom == 0:
+            return None
+        return round(self.killed * 100.0 / denom, 2)
+
+    def to_dict(self) -> dict:
+        return {
+            "meta_dir": self.meta_dir,
+            "total": self.total,
+            "killed": self.killed,
+            "survived": self.survived,
+            "no_tests": self.no_tests,
+            "timeout": self.timeout,
+            "suspicious": self.suspicious,
+            "not_checked": self.not_checked,
+            "mutation_score": self.score,
+            "by_function": {
+                name: {
+                    "function": s.function,
+                    "total": s.total,
+                    "killed": s.killed,
+                    "survived": s.survived,
+                    "no_tests": s.no_tests,
+                    "timeout": s.timeout,
+                    "suspicious": s.suspicious,
+                    "not_checked": s.not_checked,
+                    "score": s.score,
+                    "survivors": s.survivor_keys,
+                }
+                for name, s in sorted(
+                    self.by_function.items(),
+                    key=lambda kv: -kv[1].survived,
+                )
+            },
+        }
+
+
+def _extract_function_name(mutant_key: str) -> str:
+    """Extract the canonical function name from a mutmut key.
+
+    Key format: ``engines.behaviour_engine.core.x_detect_india_risk_patterns__mutmut_1``
+    Returns: ``x_detect_india_risk_patterns`` (the function name with its ``x_`` prefix
+    intact, which is how mutmut 3.7.0 mangles function names).
+    """
+    base = mutant_key.rsplit("__mutmut_", 1)[0]
+    return base.rsplit(".", 1)[-1]
+
+
+def collect_mutant_results(meta_dir: Path) -> MutantResultReport:
+    """Collect structured per-function mutation results from mutmut 3.7.0 meta files.
+
+    Reads every ``<meta_dir>/**/*.meta`` file (JSON), applies the authoritative
+    exit_code -> status mapping, and groups by function name.
+
+    This is the single authoritative source for post-run mutation data.
+    No need to call ``mutmut results`` and parse text, or to search for
+    files and folders manually.
+    """
+    report = MutantResultReport(meta_dir=str(meta_dir))
+    if not meta_dir.is_dir():
+        return report
+
+    for meta_file in meta_dir.rglob("*.meta"):
+        try:
+            with open(meta_file) as f:
+                meta = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            continue
+        exit_codes = meta.get("exit_code_by_key") or {}
+        for key, ec in exit_codes.items():
+            status = _MUTMUT_EXIT_CODE_TO_STATUS.get(ec, "suspicious")
+            report.total += 1
+            if status == "killed":
+                report.killed += 1
+            elif status == "survived":
+                report.survived += 1
+            elif status == "no_tests":
+                report.no_tests += 1
+            elif status == "timeout":
+                report.timeout += 1
+            elif status == "suspicious":
+                report.suspicious += 1
+            else:  # skipped, interrupted, not_checked
+                report.not_checked += 1
+
+            func_name = _extract_function_name(key)
+            if func_name not in report.by_function:
+                report.by_function[func_name] = FunctionMutantStats(function=func_name)
+            stats = report.by_function[func_name]
+            stats.total += 1
+            if status == "killed":
+                stats.killed += 1
+            elif status == "survived":
+                stats.survived += 1
+                stats.survivor_keys.append(key)
+            elif status == "no_tests":
+                stats.no_tests += 1
+            elif status == "timeout":
+                stats.timeout += 1
+            elif status == "suspicious":
+                stats.suspicious += 1
+            else:
+                stats.not_checked += 1
+    return report
 
 
 def reconcile_counts(counts: MutationCounts, generated: int | None = None) -> bool:
@@ -384,6 +569,35 @@ ENGINE_SELECTION: dict[str, EngineSelection] = {
         ),
         tier="P1",
     ),
+    # ── M9-C43.0: population-contract completion. The certified 14-component
+    # population (pop-14-c42.26) admitted transaction_intelligence and
+    # financial_intelligence in M9-C42.26 with C42.25 targeted-smoke evidence,
+    # but the executable selection contract was never extended to them — a
+    # scope seam C43 must close so the final authoritative campaign measures
+    # ALL admitted components (no hidden scope reduction, G16 population
+    # reconciliation). Test selections are exactly the C42.25 readiness-
+    # validated surfaces (runtime/generated/m9-c42.25/{transaction,financial}/
+    # test-surface.json).
+    "transaction_intelligence": EngineSelection(
+        engine="transaction_intelligence",
+        source_paths=("src/engines/transaction_intelligence",),
+        test_selection=(
+            "tests/unit/engines/transaction_intelligence",
+            "tests/properties/transaction_intelligence",
+            "tests/capability/transaction_intelligence",
+        ),
+        tier="P1",
+    ),
+    "financial_intelligence": EngineSelection(
+        engine="financial_intelligence",
+        source_paths=("src/engines/financial_intelligence",),
+        test_selection=(
+            "tests/unit/engines/financial_intelligence",
+            "tests/properties/financial_intelligence",
+            "tests/capability/financial_intelligence",
+        ),
+        tier="P1",
+    ),
 }
 
 # Selection method is fixed and deterministic for the whole contract.
@@ -461,7 +675,7 @@ def write_backend_mutmut_config(engine: str | None, backend_pyproject: Path) -> 
     pattern = re.compile(r"\[tool\.mutmut\].*?(?=\n\[[^\s]|\Z)", re.S)
     if not pattern.search(text):
         raise RuntimeError("backend/pyproject.toml has no [tool.mutmut] section")
-    new_text = pattern.sub(block.rstrip("\n") + "\n", text, count=1)
+    new_text = pattern.sub(block.rstrip("\n") + "\n", text, count=0)
     backend_pyproject.write_text(new_text)
     return text
 

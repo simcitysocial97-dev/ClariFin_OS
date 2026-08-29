@@ -61,15 +61,28 @@ def test_extract_liquidity_months_missing():
 
 
 def test_get_action_reason_map():
-    assert _get_action_reason("increase_emergency_fund", {}, {}) == "emergency_fund_below_target"
+    assert (
+        _get_action_reason("increase_emergency_fund", {}, {})
+        == "emergency_fund_below_target"
+    )
     assert _get_action_reason("reduce_expenses", {}, {}) == "negative_surplus_detected"
-    assert _get_action_reason("increase_investment", {}, {}) == "surplus_available_for_investing"
-    assert _get_action_reason("unknown_action", {}, {}) == "financial_optimization_identified"
+    assert (
+        _get_action_reason("increase_investment", {}, {})
+        == "surplus_available_for_investing"
+    )
+    assert (
+        _get_action_reason("unknown_action", {}, {})
+        == "financial_optimization_identified"
+    )
 
 
 def test_get_action_reason_credit_card_depends_on_revolver():
-    low = _get_action_reason("pay_credit_card", {}, {"credit_revolver_ratio": Decimal("0.1")})
-    high = _get_action_reason("pay_credit_card", {}, {"credit_revolver_ratio": Decimal("0.6")})
+    low = _get_action_reason(
+        "pay_credit_card", {}, {"credit_revolver_ratio": Decimal("0.1")}
+    )
+    high = _get_action_reason(
+        "pay_credit_card", {}, {"credit_revolver_ratio": Decimal("0.6")}
+    )
     assert low == "optimizing_debt"
     assert high == "high_revolving_dependency"
 
@@ -104,7 +117,9 @@ def test_priorities_passthrough_ranked_in_order():
 
 
 def test_priorities_emergency_injected_when_liquidity_low():
-    result = generate_financial_priorities(plan([]), {}, {"projected_min_balance_paise": 0}, [])
+    result = generate_financial_priorities(
+        plan([]), {}, {"projected_min_balance_paise": 0}, []
+    )
     assert result[0]["action"] == "increase_emergency_fund"
     assert result[0]["reason"] == "emergency_fund_below_target"
     assert result[0]["impact"] == "high"
@@ -141,7 +156,9 @@ def test_priorities_emergency_rank_gate_blocks_fourth_slot():
         {"action": "a2"},
         {"action": "a3"},
     ]
-    result = generate_financial_priorities(plan(actions), {}, {"projected_min_balance_paise": 0}, [])
+    result = generate_financial_priorities(
+        plan(actions), {}, {"projected_min_balance_paise": 0}, []
+    )
     assert "increase_emergency_fund" not in [p["action"] for p in result]
 
 
@@ -182,7 +199,9 @@ def test_priorities_capped_at_five():
 
 
 def test_confidence_perfect_inputs_excellent():
-    result = calculate_intelligence_confidence(3, Decimal("1"), Decimal("1"), Decimal("0"))
+    result = calculate_intelligence_confidence(
+        3, Decimal("1"), Decimal("1"), Decimal("0")
+    )
     assert result["confidence"] == Decimal("1")
     assert result["data_quality"] == "excellent"
 
@@ -196,20 +215,28 @@ def test_confidence_good_band():
 
 
 def test_confidence_fair_band():
-    result = calculate_intelligence_confidence(1, Decimal("0.5"), Decimal("0.5"), Decimal("0"))
+    result = calculate_intelligence_confidence(
+        1, Decimal("0.5"), Decimal("0.5"), Decimal("0")
+    )
     # 0.25 * (0.3333 + 0.5 + 0.5 + 1) ~= 0.5833 -> fair
     assert result["data_quality"] == "fair"
 
 
 def test_confidence_poor_band():
-    result = calculate_intelligence_confidence(0, Decimal("0"), Decimal("0"), Decimal("0"))
+    result = calculate_intelligence_confidence(
+        0, Decimal("0"), Decimal("0"), Decimal("0")
+    )
     # 0.25 * (0 + 0 + 0 + 1) = 0.25 -> poor
     assert result["data_quality"] == "poor"
 
 
 def test_confidence_months_score_capped_at_three():
-    capped = calculate_intelligence_confidence(10, Decimal("1"), Decimal("1"), Decimal("0"))
-    exact = calculate_intelligence_confidence(3, Decimal("1"), Decimal("1"), Decimal("0"))
+    capped = calculate_intelligence_confidence(
+        10, Decimal("1"), Decimal("1"), Decimal("0")
+    )
+    exact = calculate_intelligence_confidence(
+        3, Decimal("1"), Decimal("1"), Decimal("0")
+    )
     assert capped["confidence"] == exact["confidence"] == Decimal("1")
 
 
@@ -224,7 +251,9 @@ def test_confidence_clamps_out_of_range_inputs():
 
 
 def test_confidence_factors_recorded():
-    result = calculate_intelligence_confidence(6, Decimal("1"), Decimal("1"), Decimal("0"))
+    result = calculate_intelligence_confidence(
+        6, Decimal("1"), Decimal("1"), Decimal("0")
+    )
     assert result["factors"]["data_months"] == 6
     assert result["factors"]["transaction_completeness"] == Decimal("1")
     assert result["factors"]["account_coverage"] == Decimal("1")
@@ -238,13 +267,20 @@ def test_confidence_factors_recorded():
 
 def test_aggregate_risks_empty_when_all_healthy():
     risks = _aggregate_risks(
-        {"risk_level": "low"}, {"trend": "stable", "current_dependency_ratio": Decimal("0.1")}, {}, {}
+        {"risk_level": "low"},
+        {"trend": "stable", "current_dependency_ratio": Decimal("0.1")},
+        {},
+        {},
     )
     assert risks == []
 
 
 def test_aggregate_risks_high_liquidity_critical():
-    liquidity = {"risk_level": "high", "months_until_stress": 1, "projected_min_balance_paise": -5}
+    liquidity = {
+        "risk_level": "high",
+        "months_until_stress": 1,
+        "projected_min_balance_paise": -5,
+    }
     risks = _aggregate_risks(liquidity, {}, {}, {})
     assert risks[0]["type"] == "liquidity_stress"
     assert risks[0]["severity"] == "critical"
@@ -253,12 +289,16 @@ def test_aggregate_risks_high_liquidity_critical():
 
 
 def test_aggregate_risks_medium_liquidity_warning():
-    risks = _aggregate_risks({"risk_level": "medium", "months_until_stress": 3}, {}, {}, {})
+    risks = _aggregate_risks(
+        {"risk_level": "medium", "months_until_stress": 3}, {}, {}, {}
+    )
     assert risks[0]["severity"] == "warning"
 
 
 def test_aggregate_risks_credit_trend_worsening():
-    risks = _aggregate_risks({}, {"trend": "worsening", "current_dependency_ratio": Decimal("0")}, {}, {})
+    risks = _aggregate_risks(
+        {}, {"trend": "worsening", "current_dependency_ratio": Decimal("0")}, {}, {}
+    )
     assert risks[0]["type"] == "credit_dependency"
 
 
@@ -274,7 +314,9 @@ def test_aggregate_risks_dependency_ratio_decimal_gate():
 
 def test_aggregate_risks_dependency_ratio_float_not_flagged():
     # Pinned behavior: only Decimal-typed ratios trigger the >0.3 gate.
-    risks = _aggregate_risks({}, {"trend": "stable", "current_dependency_ratio": 0.4}, {}, {})
+    risks = _aggregate_risks(
+        {}, {"trend": "stable", "current_dependency_ratio": 0.4}, {}, {}
+    )
     assert risks == []
 
 
@@ -386,7 +428,11 @@ def test_report_empty_state_structure():
 def test_report_full_state_aggregates_all_sections():
     state = {
         "cashflow": {"monthly_surplus_paise": 600_000},
-        "liquidity": {"risk_level": "high", "months_until_stress": 1, "projected_min_balance_paise": -1},
+        "liquidity": {
+            "risk_level": "high",
+            "months_until_stress": 1,
+            "projected_min_balance_paise": -1,
+        },
         "debts": [],
         "goals": [
             {
@@ -396,12 +442,29 @@ def test_report_full_state_aggregates_all_sections():
                 "current_amount_paise": 100_000,
             }
         ],
-        "behaviour": {"wellness_score": 82, "credit_revolver_ratio": Decimal("0.6"), "debt_cycle_score": 71},
-        "forecasts": {
-            "cashflow": {"forecast": [{"month": "2026-01"}, {"month": "2026-02"}, {"month": "2026-03"}], "confidence": 0.9},
-            "credit": {"trend": "worsening", "current_dependency_ratio": Decimal("0.5")},
+        "behaviour": {
+            "wellness_score": 82,
+            "credit_revolver_ratio": Decimal("0.6"),
+            "debt_cycle_score": 71,
         },
-        "optimization": {"recommended_actions": [{"action": "pay_credit_card", "impact": "high"}], "warnings": ["w"]},
+        "forecasts": {
+            "cashflow": {
+                "forecast": [
+                    {"month": "2026-01"},
+                    {"month": "2026-02"},
+                    {"month": "2026-03"},
+                ],
+                "confidence": 0.9,
+            },
+            "credit": {
+                "trend": "worsening",
+                "current_dependency_ratio": Decimal("0.5"),
+            },
+        },
+        "optimization": {
+            "recommended_actions": [{"action": "pay_credit_card", "impact": "high"}],
+            "warnings": ["w"],
+        },
     }
     report = generate_financial_intelligence_report(state)
     assert report["health_score"] == Decimal("82")

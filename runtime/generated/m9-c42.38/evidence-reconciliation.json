@@ -1,0 +1,62 @@
+{
+  "schema": "m9-c42.38-evidence-reconciliation/v1",
+  "generated_at": "2026-08-27T01:38:00.000000+00:00",
+  "phase": "M9-C42.38",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "methodology": "Reconstruct the 14-component mutation population strictly from existing evidence. No full mutation campaign re-run: repository SHA unchanged since C42.37 (f632e28f), no formal invalidation trigger fired, no certified full-campaign gate active. The 60.297% figure is mathematically reconciled, NOT a fresh repository-wide measurement.",
+  "expected_baseline": {
+    "components": 14,
+    "scored_mutants": 14951,
+    "killed_mutants": 9015,
+    "aggregate_pct": 60.297
+  },
+  "population_reconciliation": [
+    {"component": "account_engine",         "underlying_evidence": "AUTHORITATIVE_MEASURED (C42.24-B)", "c42_38_label": "REUSED", "scored": 183,  "killed": 163, "score_pct": 89.1, "invalidated": false},
+    {"component": "balance_engine",         "underlying_evidence": "AUTHORITATIVE_MEASURED (C42.24-B)", "c42_38_label": "REUSED", "scored": 285,  "killed": 270, "score_pct": 94.7, "invalidated": false},
+    {"component": "behaviour_engine",       "underlying_evidence": "AUTHORITATIVE_MEASURED (C42.24-B)", "c42_38_label": "REUSED", "scored": 5258, "killed": 1875, "score_pct": 35.7, "invalidated": false},
+    {"component": "cashflow_engine",        "underlying_evidence": "AUTHORITATIVE_MEASURED (C42.24-B)", "c42_38_label": "REUSED", "scored": 172,  "killed": 128, "score_pct": 74.4, "invalidated": false},
+    {"component": "common_calculations",    "underlying_evidence": "AUTHORITATIVE_MEASURED (C42.24-B)", "c42_38_label": "REUSED", "scored": 377,  "killed": 213, "score_pct": 56.4, "invalidated": false},
+    {"component": "core_domain_money",      "underlying_evidence": "AUTHORITATIVE_MEASURED (C42.24-B)", "c42_38_label": "REUSED", "scored": 102,  "killed": 84,  "score_pct": 82.4, "invalidated": false},
+    {"component": "credit_card_engine",     "underlying_evidence": "AUTHORITATIVE_MEASURED (C42.24-B) + AUTHORITATIVE_TARGETED (C42.32-36 master scenario)", "c42_38_label": "REUSED", "scored": 582, "killed": 440, "score_pct": 75.6, "invalidated": false},
+    {"component": "financial_events",       "underlying_evidence": "AUTHORITATIVE_MEASURED (C42.24-B)", "c42_38_label": "REUSED", "scored": 704,  "killed": 454, "score_pct": 64.5, "invalidated": false},
+    {"component": "ledger_audit_engine",    "underlying_evidence": "AUTHORITATIVE_MEASURED (C42.24-B)", "c42_38_label": "REUSED", "scored": 190,  "killed": 108, "score_pct": 56.8, "invalidated": false},
+    {"component": "loan_engine",            "underlying_evidence": "AUTHORITATIVE_MEASURED (C42.24-B)", "c42_38_label": "REUSED", "scored": 1273, "killed": 1066, "score_pct": 84.0, "invalidated": false},
+    {"component": "recommendation_engine",  "underlying_evidence": "AUTHORITATIVE_MEASURED (C42.24-B)", "c42_38_label": "REUSED", "scored": 282,  "killed": 179, "score_pct": 63.5, "invalidated": false},
+    {"component": "reconciliation_engine",  "underlying_evidence": "AUTHORITATIVE_MEASURED (C42.24-B)", "c42_38_label": "REUSED", "scored": 368,  "killed": 297, "score_pct": 80.7, "invalidated": false},
+    {"component": "transaction_intelligence","underlying_evidence": "AUTHORITATIVE_TARGETED_MEASURED (C42.25-txn)", "c42_38_label": "REUSED", "scored": 1465, "killed": 1028, "score_pct": 70.2, "invalidated": false},
+    {"component": "financial_intelligence", "underlying_evidence": "AUTHORITATIVE_TARGETED_MEASURED (C42.25-fin)", "c42_38_label": "REUSED", "scored": 3710, "killed": 2710, "score_pct": 73.0, "invalidated": false}
+  ],
+  "label_legend": {
+    "AUTHORITATIVE_MEASURED": "Component was part of an executed mutmut run with full evidence.",
+    "AUTHORITATIVE_TARGETED": "Component was freshly measured by a planner-authorized targeted run (C42.32-36 credit_card_engine master scenario).",
+    "MATHEMATICALLY_RECONCILED": "Aggregate derived arithmetically from authoritative inputs; NOT an executed measurement.",
+    "REUSED": "Existing evidence reused in C42.38 because no invalidation trigger fired (SHA stable, no source/test/config/toolchain drift).",
+    "INVALIDATED": "Evidence discarded because an invalidation rule fired.",
+    "NOT_EXECUTED": "No measurement run for this component."
+  },
+  "aggregate": {
+    "components": 14,
+    "scored_mutants": 14951,
+    "killed_mutants": 9015,
+    "aggregate_pct": 60.297,
+    "raw_pct": 60.2970,
+    "formula": "9015 / 14951 * 100 = 60.30%",
+    "label": "MATHEMATICALLY_RECONCILED",
+    "interpretation": "Repository-wide mathematically reconciled mutation effectiveness",
+    "do_not_call_fresh_full_campaign_score": true,
+    "recomputed_independently": true
+  },
+  "invalidation_engine_status": {
+    "triggered": false,
+    "reason": "Repository SHA f632e28f unchanged since C42.37; working-tree difference limited to runtime/generated/m9-c42.38 (certification artifacts) + progress.md; no production/backend/src change; no config/toolchain drift detected.",
+    "components_invalidated": 0,
+    "components_reused": 14
+  },
+  "full_campaign_status": {
+    "executed_this_phase": false,
+    "permitted_only_if": "formal campaign gate independently triggers under C42.26/C42.31 policy",
+    "trigger_fired": false
+  },
+  "verdict": "CERTIFIED",
+  "critical_statement": "The 60.297% figure is a mathematically reconciled aggregate of prior authoritative measurements (12 full + 2 targeted). It is NOT a fresh repository-wide mutation measurement executed in C42.38."
+}

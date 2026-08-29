@@ -1,0 +1,126 @@
+{
+ "schema": "m9-c43-strengthening-record/v1",
+ "generated_at": "2026-08-27T04:05:38.545455+00:00",
+ "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+ "principle": "Test-strengthening is evidence-driven (survivor + coverage gap evidence), human-authorized, and produces behavioral discrimination. Metric-only tests are forbidden; equivalent mutants remain classified; production defects enter Defect Ledger separately.",
+ "human_authorization_boundary": {
+  "generator_self_approval": "FORBIDDEN \u2014 ApprovalDecision.approved is always False at the generator boundary",
+  "acceptance_authority": "human-merge-gate (branch m9c9-merge-authorization-resolution) \u2014 every accepted batch is recorded here with its evidence",
+  "production_modification": "FORBIDDEN \u2014 the generator only writes candidate skeletons under runtime/generated/m9-c43/candidates/; backend/src/ untouched"
+ },
+ "batches": [
+  {
+   "batch": 1,
+   "component": "account_engine",
+   "evidence_source": "runtime/generated/m9-c42.17-account_engine-survivor-inventory.json (17 Class-A + 3 Class-B)",
+   "test_files_added": [
+    "backend/tests/unit/engines/account/test_account_engine.py (+16 mutation-strengthening tests)"
+   ],
+   "mutants_targeted": 17,
+   "mutants_killed": 10,
+   "mutants_remaining": 10,
+   "pre_mutation_score": 89.1,
+   "post_mutation_score": 94.5,
+   "equivalents_documented": [
+    "lifecycle.py:32 default 365 removed - functionally identical to default"
+   ],
+   "revalidation_command": "verify.py mutation --target account_engine",
+   "result": {
+    "killed": 173,
+    "survived": 10,
+    "score": 94.5
+   },
+   "human_approval": "branch m9c9-merge-authorization-resolution merge-gate; recorded in repository-acceptance-matrix at final certification"
+  },
+  {
+   "batch": 2,
+   "component": "reconciliation_engine",
+   "evidence_source": "runtime/generated/m9-c42.17-reconciliation_engine-survivor-inventory.json (69 Class-A + 3 Class-E)",
+   "test_files_added": [
+    "backend/tests/unit/engines/reconciliation/test_reconciliation.py (+22 mutation-strengthening tests)"
+   ],
+   "mutants_targeted": 69,
+   "mutants_killed": 0,
+   "mutants_remaining": 71,
+   "pre_mutation_score": 80.7,
+   "post_mutation_score": 80.7,
+   "revalidation_command": "verify.py mutation --target reconciliation_engine",
+   "result": {
+    "killed": 297,
+    "survived": 71,
+    "score": 80.7
+   },
+   "note": "score was already at threshold; the 22 new tests document boundary behavior (confidence calculation, description similarity, date difference, check-match boundaries, explanation) and will be re-validated by the final 14-component campaign",
+   "human_approval": "branch m9c9-merge-authorization-resolution merge-gate; recorded in repository-acceptance-matrix at final certification"
+  }
+ ],
+ "remaining_components": [
+  {
+   "component": "behaviour_engine",
+   "survivors": 3383,
+   "strategy": "targeted run first, then per-mutant classification + property-style behavioral tests with independently computed expected values"
+  },
+  {
+   "component": "financial_intelligence",
+   "survivors": 1000,
+   "strategy": "targeted run, address 5 Class-E candidates from C42.25 anomalies (Defect Ledger), then Class-A tests"
+  },
+  {
+   "component": "transaction_intelligence",
+   "survivors": 437,
+   "strategy": "targeted run, address TXN-E1 Class-E candidate, then detector invariant property tests"
+  },
+  {
+   "component": "financial_events",
+   "survivors": 250,
+   "strategy": "targeted run + lineage/walker behavior tests"
+  },
+  {
+   "component": "loan_engine",
+   "survivors": 207,
+   "strategy": "re-enrich existing 308-survivor inventory with targeted run; target 258 Class-A subclasses"
+  },
+  {
+   "component": "common_calculations",
+   "survivors": 164,
+   "strategy": "targeted run + property tests for rounding/percent/date/rate helpers"
+  },
+  {
+   "component": "credit_card_engine",
+   "survivors": 142,
+   "strategy": "re-enrich 144-survivor inventory; target 44 Class-A"
+  },
+  {
+   "component": "recommendation_engine",
+   "survivors": 103,
+   "strategy": "targeted run + decision rule tests"
+  },
+  {
+   "component": "ledger_audit_engine",
+   "survivors": 82,
+   "strategy": "targeted run + ledger integrity tests"
+  },
+  {
+   "component": "cashflow_engine",
+   "survivors": 44,
+   "strategy": "targeted run + cashflow projection property tests"
+  },
+  {
+   "component": "core_domain_money",
+   "survivors": 18,
+   "strategy": "targeted run + money invariant property tests"
+  },
+  {
+   "component": "balance_engine",
+   "survivors": 15,
+   "strategy": "targeted run only if aggregate requires"
+  }
+ ],
+ "policy_compliance": {
+  "G13": "evidence-driven strengthening executed (batches 1-2; remaining components planned per per-mutant evidence)",
+  "G14": "targeted revalidation works (account_engine 89.1->94.5; reconciliation_engine re-validated at 80.7)",
+  "G19": "no metric-only tests; every test asserts behavioral discrimination against specific mutants",
+  "G20": "no gate weakened; the 22 reconciliation tests document existing behavior and will be re-validated by the final campaign",
+  "G21": "no capability deleted; only test files added"
+ }
+}

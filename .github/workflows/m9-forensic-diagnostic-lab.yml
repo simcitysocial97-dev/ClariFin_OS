@@ -5,6 +5,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -596,12 +600,11 @@ jobs:
           } > runtime/generated/evidence/generated-artifacts.txt
 
       - name: Upload complete M9 forensic evidence
-        if: always()
-        uses: actions/upload-artifact@v4
+        uses: ./.github/actions/upload-runtime
         with:
           name: m9-execution-forensic-${{ github.run_id }}
           if-no-files-found: warn
-          retention-days: 30
+          retention-days: "30"
           path: |
             runtime/generated/evidence/
             runtime/generated/verification-report.md

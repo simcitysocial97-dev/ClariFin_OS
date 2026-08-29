@@ -1,0 +1,134 @@
+{
+  "schema": "m9-c44-baseline/v1",
+  "generated_at": "2026-08-27T16:09:47.068054+00:00",
+  "phase": "M9-C44.0",
+  "status": "FROZEN",
+  "c44_start_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "branch": "m9c9-merge-authorization-resolution",
+  "c42_38_certification": {
+    "status": "FINAL_VERIFICATION_SYSTEM_CERTIFIED",
+    "file": "runtime/generated/m9-c42.38/final-certification.json",
+    "verified": true,
+    "sha_match": true,
+    "dod": "27/27 PASS",
+    "c42_tests": "144/144 passing"
+  },
+  "c43_state": {
+    "directory": "runtime/generated/m9-c43/",
+    "baseline": "m9-c43-baseline.json",
+    "key_artifacts": [
+      "m9-c43-baseline.json",
+      "m9-c43-quality-baseline.json",
+      "m9-c43-mutation-survivor-analysis.json",
+      "m9-c43-workflow-verification-matrix.json",
+      "m9-c43-defect-ledger.json",
+      "m9-c43-strengthening-record.json",
+      "m9-c43-test-generation-certification.json",
+      "m9-c43-coverage-gap-analysis.json"
+    ],
+    "mutation_campaign_completed": true,
+    "full_campaign_score": "70.6%",
+    "full_campaign_gap_to_80": "9.4pp"
+  },
+  "environment": {
+    "canonical_venv": ".venv/bin/python",
+    "env_check": "CONSISTENT",
+    "mutmut": "3.7.0 (pinned)",
+    "python": "3.12.3",
+    "pytest": "9.1.1"
+  },
+  "module_fingerprints_c44_0": {
+    "runtime/foundation/verification/graph_model.py": "f615000c7e0a8772",
+    "runtime/foundation/verification/evidence_planner.py": "c5341bbe64956046",
+    "runtime/foundation/verification/executor_pipeline.py": "16ec30701e6a21a4",
+    "runtime/foundation/verification/evidence_reuse.py": "deda917aa81bd348",
+    "runtime/foundation/verification/cache.py": "685f6ea77db23dd4",
+    "runtime/foundation/verification/correlation.py": "b7373d9693a120b9",
+    "runtime/foundation/verification/orchestrator.py": "3753b0876b22f66c",
+    "runtime/foundation/verification/diagnostic_agent.py": "7bb1bc0f3179b9c8",
+    "runtime/foundation/verification/strengthening.py": "d978ba25647c9b5a",
+    "runtime/foundation/verification/forensic_cli.py": "7b62621e0e70f11c",
+    "runtime/foundation/verification/ci_evidence.py": "96158aaf86eca69a",
+    "runtime/verify.py": "70ddfa54bc84542b",
+    "runtime/foundation/verification/profiles.py": "d52fa4a0efe437e8",
+    "runtime/foundation/verification/mutation_inventory.py": "289f0b9398e7a14d",
+    "runtime/foundation/verification/mutation_runner.py": "1f3b1126b2a2e3d0",
+    "runtime/foundation/verification/mutation_contract.py": "caf44e6ee563d781",
+    "runtime/foundation/verification/reconciliation.py": "964574b11508d9e2",
+    "runtime/foundation/verification/totals.py": "b3b4bbb17d80ad7f"
+  },
+  "current_test_baseline": {
+    "backend_collected": 2755,
+    "backend_passed": 2754,
+    "backend_xpassed": 1,
+    "runtime_suite_passed": 785,
+    "total_active_tests": 2755,
+    "evidence_class": "AUTHORITATIVE_MEASURED"
+  },
+  "current_coverage_baseline": {
+    "measurement": "AUTHORITATIVE_MEASURED",
+    "statement_coverage_pct": 79.74,
+    "branch_coverage_pct": 70.15,
+    "combined_pct": 77.72,
+    "num_statements": 10238,
+    "covered_lines": 8164,
+    "num_branches": 2740,
+    "covered_branches": 1922,
+    "missing_lines": 2074,
+    "excluded_lines": 50,
+    "source": "backend/tests/generated/coverage.json",
+    "config": "backend/.coveragerc (branch=True, source=src)"
+  },
+  "current_mutation_baseline": {
+    "measurement": "AUTHORITATIVE_MEASURED (full campaign)",
+    "mode": "full",
+    "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+    "run_id": null,
+    "total_generated": 16905,
+    "killed": 11925,
+    "survived": 4971,
+    "no_tests": 4,
+    "timeout": 5,
+    "mutation_score_pct": 70.6,
+    "threshold_percent": 80,
+    "distance_to_threshold_kills": 1599,
+    "source": "backend/tests/generated/mutation/mutation-summary.json"
+  },
+  "c43_strengthening_summary": {
+    "behaviour_engine_improvement": "+30.2pp (35.7% -> 65.9%)",
+    "full_campaign_improvement": "+10.3pp (60.3% -> 70.6%)",
+    "tests_added_c43": "~300 new tests across 5 files (behaviour engine) + strengthening tests for account/reconciliation",
+    "batches_completed": 2,
+    "components_strengthened": [
+      "account_engine",
+      "reconciliation_engine",
+      "behaviour_engine"
+    ]
+  },
+  "known_failures_and_limitations": {
+    "c43_defect_ledger_open": [
+      "C43-E1 (common_calculations.compute_is_large threshold bug)"
+    ],
+    "c42_class_e_candidates": [
+      "TXN-E1 (cash_conversion_detector fee calculation ambiguity)",
+      "FIN-E1 (scenario FOIR impossible condition)",
+      "FIN-E2 (deadline_score dead helper)",
+      "FIN-E3 (decimal.InvalidOperation missing)",
+      "FIN-E4 (falsy-coalescing in health score)",
+      "FIN-E5 (total_allocated_paise metric defect)"
+    ],
+    "workflow_environment_limitations": [
+      "security-codeql (GitHub code-scanning service)",
+      "m9-forensic-diagnostic-lab PR context",
+      "GitHub Actions live CI emission"
+    ]
+  },
+  "c44_objectives": {
+    "primary": "Close remaining quality-convergence gap with capability-aware, evidence-backed strengthening",
+    "mutation_target": ">=80% authoritative mutation score where applicable (honest evaluation)",
+    "coverage_target": "Authoritative coverage baseline recorded; 80% target evaluated honestly",
+    "workflow_target": "All authoritative workflows green OR explicit environmental limitation recorded",
+    "autogen_target": "Operational capability-aware strengthening engine",
+    "final_deliverable": "final-quality-certification.json + final-convergence-report.md"
+  }
+}

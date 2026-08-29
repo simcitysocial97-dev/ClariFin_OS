@@ -1,0 +1,43 @@
+{
+  "schema": "m9-c42.38-final-certification/v1",
+  "generated_at": "2026-08-27T02:02:00.000000+00:00",
+  "phase": "M9-C42.38",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "branch": "m9c9-merge-authorization-resolution",
+  "primary_verdict": "FINAL_VERIFICATION_SYSTEM_CERTIFIED",
+  "basis": {
+    "m38_1_baseline_frozen": "Repository SHA f632e28f stable; module fingerprints captured; C42.37 architecture verified unchanged (no drift).",
+    "m38_2_program_definition": "19 C42.21-37 objectives reconstructed with executable evidence; 12 fully certified, 6 certified-with-limitation, 0 blockers.",
+    "m38_3_completeness": "14/14 components reconciled across graph/capability/surface/task/evidence/planner/executor/CI/diagnostic/strengthening/cache/certification; 0 drift categories.",
+    "m38_4_evidence": "14 components, 14,951 scored, 9,015 killed, 60.297% mathematically reconciled (NOT a fresh campaign); no full rerun (no trigger).",
+    "m38_5_ci_boundary": "CI contract proven by 36 executable tests; live emission ENVIRONMENTAL_LIMITATION (no GitHub Actions env).",
+    "m38_6_shared_infra": "Explicit shared:: mechanism sufficient; single-engine bounded; planner never repo-wide. Auto-detection enhancement deferred.",
+    "m38_7_self_adaptive": "Class A-E chain verified by 27 C42.31 tests; human boundary intact; production never autonomously modified.",
+    "m38_8_longitudinal": "Survivor history + cache replay + evidence persistence CERTIFIED; Class-E/calibration DEFERRED_FOR_DATA.",
+    "m38_9_acceptance": "20 scenarios (A-T) validated with full-chain proof; blocking scenarios correctly block.",
+    "m38_10_efficiency": "1/14 targeted, 13/14 reused, 92.86% avoided, 116s vs ~5400s (estimated); figures preserved and tagged.",
+    "m38_11_blockers": "0 final certification blockers across 8 classified findings.",
+    "m38_12_dod": "27/27 Definition-of-Done items PASS; 144 C42.27-31 tests pass."
+  },
+  "secondary_classifications": [
+    {"item": "Live CI evidence emission wiring", "classification": "NONBLOCKING_LIMITATION", "subtype": "ENVIRONMENTAL_LIMITATION", "detail": "Canonical logic implemented and tested; wiring into GitHub Actions workflows requires CI environment."},
+    {"item": "Shared-infrastructure automatic dependency detection", "classification": "POST_CERTIFICATION_ENHANCEMENT", "detail": "Explicit shared:: mechanism works; auto-propagation from file paths deferred to post-certification evolution."},
+    {"item": "Class-E escalation threshold calibration", "classification": "DEFERRED_DATA", "detail": "Contract enforced; empirical thresholds require accumulated historical observations."},
+    {"item": "Forensic-aware cache layer", "classification": "POST_CERTIFICATION_ENHANCEMENT", "detail": "Base cache cannot bypass invalidation; component-scoped wrapper recommended."},
+    {"item": "SurvivorRegistry persistent tracking", "classification": "POST_CERTIFICATION_ENHANCEMENT", "detail": "Per-run classification sufficient for current certification; registry improves longitudinal intelligence."},
+    {"item": "Class-A acceptance empirical cycle", "classification": "DEFERRED_DATA", "detail": "Proposals generated and human gate enforced; no completed real approval cycle yet (data accumulation)."}
+  ],
+  "exit_condition_met": true,
+  "exit_condition_evidence": {
+    "what_changed": "No production change in C42.38; prior credit_card_engine/risk.py change (C42.32-36) is the canonical worked example.",
+    "what_is_affected": "EvidenceAwarePlanner.plan() -> 1 affected component, 13 unaffected (deterministic).",
+    "what_evidence_remains_valid": "13/14 components reused with intact fingerprints (decide_reuse deterministic).",
+    "what_must_run": "1 mutation task selected (credit_card_engine only) under formal C42.26 policy.",
+    "what_actually_ran": "Targeted mutation executed; forensic record complete (12 stages).",
+    "what_happened": "DiagnosticForensicAgent.diagnose() -> CERTIFIABLE with AUTHORITATIVE_TARGETED aggregate.",
+    "what_was_not_tested": "13 reused components not re-measured (valid evidence); explicitly recorded as MATHEMATICALLY_RECONCILED.",
+    "what_remains_uncertain": "Class-E threshold calibration and live CI emission (both non-blocking, classified).",
+    "is_result_certifiable": "YES — reproducible from artifacts alone."
+  },
+  "final_statement": "FINAL_VERIFICATION_SYSTEM_CERTIFIED — the M9-C42 verification system reliably answers the nine canonical questions from executable framework artifacts, with all residual items explicitly classified as non-blocking limitations, environmental limitations, deferred data, or post-certification enhancements."
+}

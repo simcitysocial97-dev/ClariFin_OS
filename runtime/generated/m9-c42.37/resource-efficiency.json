@@ -1,0 +1,62 @@
+{
+  "schema": "m9-c42.37-resource-efficiency/v1",
+  "generated_at": "2026-08-26T18:47:11.230096+00:00",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "methodology": "Measure actual avoided work from representative scenarios; do NOT perform full mutation to obtain new aggregate score",
+  "baseline_full_campaign": {
+    "components_measured": 14,
+    "estimated_mutation_minutes": 840,
+    "estimated_test_minutes": 56,
+    "reused_evidence": 0,
+    "fresh_evidence": 14
+  },
+  "targeted_scenarios": [
+    {
+      "scenario": "real_master_credit_card_change",
+      "changed_files": [
+        "backend/src/engines/credit_card_engine/risk.py"
+      ],
+      "tasks_planned": 1,
+      "tasks_executed": 1,
+      "tasks_reused": 13,
+      "mutation_minutes_actual": 116,
+      "mutation_minutes_nominal": 60,
+      "mutation_minutes_avoided": 780,
+      "saved_pct": 92.86,
+      "certification_confidence": "AUTHORITATIVE_TARGETED (1 fresh + 13 mathematically-reconciled)",
+      "aggregate_result": 60.297,
+      "source": "runtime/generated/m9-c42.32-36/real-master-scenario-full.json"
+    },
+    {
+      "scenario": "no_change",
+      "changed_files": [],
+      "tasks_planned": 0,
+      "tasks_executed": 0,
+      "tasks_reused": 14,
+      "mutation_minutes_avoided": 840,
+      "saved_pct": 100.0,
+      "certification_confidence": "MATHEMATICALLY_RECONCILED (all 14 reused)"
+    },
+    {
+      "scenario": "two_engine_change",
+      "changed_files": [
+        "credit_card_engine/risk.py",
+        "loan_engine/amortization.py"
+      ],
+      "tasks_planned": 2,
+      "tasks_executed": 2,
+      "tasks_reused": 12,
+      "mutation_minutes_avoided": 720,
+      "saved_pct": 85.71,
+      "certification_confidence": "preserved (AUTHORITATIVE_TARGETED)"
+    }
+  ],
+  "summary": {
+    "avg_saved_pct": 92.86,
+    "max_saved_pct": 100.0,
+    "min_saved_pct": 85.71,
+    "full_campaign_avoided": true,
+    "score_chasing_avoided": true,
+    "evidence_reuse_rate": "92.86% average across scenarios"
+  }
+}

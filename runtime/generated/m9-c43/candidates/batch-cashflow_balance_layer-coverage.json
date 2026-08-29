@@ -1,0 +1,247 @@
+{
+  "schema": "m9-c43-test-generation/v1",
+  "batch_id": "gen::0785124d449e",
+  "generated_at": "2026-08-27T02:06:54.229291+00:00",
+  "source_evidence": {
+    "kind": "coverage_gaps",
+    "path": "backend/tests/generated/raw-coverage.json",
+    "component": "cashflow_balance_layer",
+    "target_files": [
+      "src/repositories/cashflow_repository.py",
+      "src/engines/balance_engine.py",
+      "src/repositories/loan_repository.py",
+      "src/services/loan_analysis_service.py",
+      "src/services/credit_card_service.py"
+    ]
+  },
+  "proposals": [
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::d4fce42e499a",
+      "component": "cashflow_balance_layer",
+      "capability": "cashflow_projection",
+      "source_location": "src/repositories/cashflow_repository.py (missing lines: 49)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/repositories/cashflow_repository.py::49",
+        "component": "cashflow_balance_layer",
+        "capability": "cashflow_projection",
+        "location": "src/repositories/cashflow_repository.py:29",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "49 uncovered line(s), 29 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/repositories/cashflow_repository.py is consequential: 78 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/cashflow_balance_layer/test_coverage_gap_d4fce42e499a.py",
+      "proposed_test": "def test_d4fce42e499a_covers_missing_behavior():\n    # Exercises the uncovered surface of src/repositories/cashflow_repository.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/cashflow_balance_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    },
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::f22e206d437e",
+      "component": "cashflow_balance_layer",
+      "capability": "cashflow_projection",
+      "source_location": "src/engines/balance_engine.py (missing lines: 39)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/engines/balance_engine.py::39",
+        "component": "cashflow_balance_layer",
+        "capability": "cashflow_projection",
+        "location": "src/engines/balance_engine.py:32",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "39 uncovered line(s), 8 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/engines/balance_engine.py is consequential: 47 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/cashflow_balance_layer/test_coverage_gap_f22e206d437e.py",
+      "proposed_test": "def test_f22e206d437e_covers_missing_behavior():\n    # Exercises the uncovered surface of src/engines/balance_engine.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/cashflow_balance_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    },
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::7bc273087137",
+      "component": "cashflow_balance_layer",
+      "capability": "cashflow_projection",
+      "source_location": "src/repositories/loan_repository.py (missing lines: 53)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/repositories/loan_repository.py::53",
+        "component": "cashflow_balance_layer",
+        "capability": "cashflow_projection",
+        "location": "src/repositories/loan_repository.py:95",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "53 uncovered line(s), 5 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/repositories/loan_repository.py is consequential: 58 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/cashflow_balance_layer/test_coverage_gap_7bc273087137.py",
+      "proposed_test": "def test_7bc273087137_covers_missing_behavior():\n    # Exercises the uncovered surface of src/repositories/loan_repository.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/cashflow_balance_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    },
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::cd732b28d9cc",
+      "component": "cashflow_balance_layer",
+      "capability": "cashflow_projection",
+      "source_location": "src/services/loan_analysis_service.py (missing lines: 26)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/services/loan_analysis_service.py::26",
+        "component": "cashflow_balance_layer",
+        "capability": "cashflow_projection",
+        "location": "src/services/loan_analysis_service.py:30",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "26 uncovered line(s), 14 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/services/loan_analysis_service.py is consequential: 40 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/cashflow_balance_layer/test_coverage_gap_cd732b28d9cc.py",
+      "proposed_test": "def test_cd732b28d9cc_covers_missing_behavior():\n    # Exercises the uncovered surface of src/services/loan_analysis_service.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/cashflow_balance_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    },
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::d77aee292399",
+      "component": "cashflow_balance_layer",
+      "capability": "cashflow_projection",
+      "source_location": "src/services/credit_card_service.py (missing lines: 56)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/services/credit_card_service.py::56",
+        "component": "cashflow_balance_layer",
+        "capability": "cashflow_projection",
+        "location": "src/services/credit_card_service.py:49",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "56 uncovered line(s), 23 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/services/credit_card_service.py is consequential: 79 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/cashflow_balance_layer/test_coverage_gap_d77aee292399.py",
+      "proposed_test": "def test_d77aee292399_covers_missing_behavior():\n    # Exercises the uncovered surface of src/services/credit_card_service.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/cashflow_balance_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    }
+  ],
+  "rejections": [],
+  "candidates": [
+    {
+      "candidate_id": "8e61f9f58272",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/repositories/cashflow_repository.py",
+      "module_under_test": "src/repositories/cashflow_repository.py",
+      "import_target": "repositories.cashflow_repository",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 29)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate 8e61f9f58272 \u2014 evidence: coverage gap src/repositories/cashflow_repository.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport repositories.cashflow_repository as target_mod  # repositories.cashflow_repository\n\n\ndef test_8e61f9f58272_discriminates():\n    \"\"\"Target: src/repositories/cashflow_repository.py:29\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    },
+    {
+      "candidate_id": "26755d6fcb09",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/engines/balance_engine.py",
+      "module_under_test": "src/engines/balance_engine.py",
+      "import_target": "engines.balance_engine",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 32)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate 26755d6fcb09 \u2014 evidence: coverage gap src/engines/balance_engine.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport engines.balance_engine as target_mod  # engines.balance_engine\n\n\ndef test_26755d6fcb09_discriminates():\n    \"\"\"Target: src/engines/balance_engine.py:32\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    },
+    {
+      "candidate_id": "8195ba48f641",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/repositories/loan_repository.py",
+      "module_under_test": "src/repositories/loan_repository.py",
+      "import_target": "repositories.loan_repository",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 95)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate 8195ba48f641 \u2014 evidence: coverage gap src/repositories/loan_repository.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport repositories.loan_repository as target_mod  # repositories.loan_repository\n\n\ndef test_8195ba48f641_discriminates():\n    \"\"\"Target: src/repositories/loan_repository.py:95\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    },
+    {
+      "candidate_id": "b2f4ed6a6514",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/services/loan_analysis_service.py",
+      "module_under_test": "src/services/loan_analysis_service.py",
+      "import_target": "services.loan_analysis_service",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 30)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate b2f4ed6a6514 \u2014 evidence: coverage gap src/services/loan_analysis_service.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport services.loan_analysis_service as target_mod  # services.loan_analysis_service\n\n\ndef test_b2f4ed6a6514_discriminates():\n    \"\"\"Target: src/services/loan_analysis_service.py:30\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    },
+    {
+      "candidate_id": "a9d6e94effb3",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/services/credit_card_service.py",
+      "module_under_test": "src/services/credit_card_service.py",
+      "import_target": "services.credit_card_service",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 49)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate a9d6e94effb3 \u2014 evidence: coverage gap src/services/credit_card_service.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport services.credit_card_service as target_mod  # services.credit_card_service\n\n\ndef test_a9d6e94effb3_discriminates():\n    \"\"\"Target: src/services/credit_card_service.py:49\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    }
+  ],
+  "counts": {
+    "proposals": 5,
+    "rejections": 0,
+    "candidates": 5
+  }
+}

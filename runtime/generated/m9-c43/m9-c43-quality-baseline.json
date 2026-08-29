@@ -1,0 +1,382 @@
+{
+  "schema": "m9-c43-quality-baseline/v1",
+  "generated_at": "2026-08-27T01:44:01.295129+00:00",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "coverage": {
+    "measurement": "AUTHORITATIVE_MEASURED (sequential full-suite run, pytest-cov branch mode, backend/.coveragerc scope)",
+    "run": {
+      "collected": 2319,
+      "passed": 2318,
+      "failed": 1,
+      "failure": "test_coverage_json_valid (root-caused: pytest-cov clobbered capability artifact; .coveragerc [json] output redirected to raw-coverage.json + check_coverage.py pipeline restored; meta suite 61/61 green post-fix)",
+      "duration_s": 278
+    },
+    "statement_coverage_pct": 79.74,
+    "branch_coverage_pct": 70.15,
+    "combined_pct": 77.72,
+    "num_statements": 10238,
+    "covered_lines": 8164,
+    "num_branches": 2740,
+    "covered_branches": 1922,
+    "excluded_lines": 50,
+    "distance_to_80": {
+      "combined_target": 80.0,
+      "combined_items": 12978,
+      "covered_items": 10086,
+      "items_needed": 296
+    },
+    "scope_omissions": "backend/.coveragerc documented omissions (entrypoints, extraction/structural pipelines, routers HTTP layer, tools/scripts) \u2014 preserved, not broadened",
+    "per_module": {
+      "(root)": {
+        "files": 4,
+        "statements": 172,
+        "missed_statements": 37,
+        "statement_pct": 78.49,
+        "branches": 26,
+        "missed_branches": 12
+      },
+      "common": {
+        "files": 5,
+        "statements": 160,
+        "missed_statements": 1,
+        "statement_pct": 99.38,
+        "branches": 68,
+        "missed_branches": 8
+      },
+      "core": {
+        "files": 1,
+        "statements": 4,
+        "missed_statements": 0,
+        "statement_pct": 100.0,
+        "branches": 0,
+        "missed_branches": 0
+      },
+      "core/db": {
+        "files": 5,
+        "statements": 214,
+        "missed_statements": 56,
+        "statement_pct": 73.83,
+        "branches": 40,
+        "missed_branches": 16
+      },
+      "core/domain": {
+        "files": 2,
+        "statements": 105,
+        "missed_statements": 0,
+        "statement_pct": 100.0,
+        "branches": 38,
+        "missed_branches": 0
+      },
+      "core/dtos": {
+        "files": 15,
+        "statements": 922,
+        "missed_statements": 66,
+        "statement_pct": 92.84,
+        "branches": 0,
+        "missed_branches": 0
+      },
+      "core/mappers": {
+        "files": 14,
+        "statements": 295,
+        "missed_statements": 189,
+        "statement_pct": 35.93,
+        "branches": 26,
+        "missed_branches": 24
+      },
+      "data": {
+        "files": 1,
+        "statements": 0,
+        "missed_statements": 0,
+        "statement_pct": null,
+        "branches": 0,
+        "missed_branches": 0
+      },
+      "engines": {
+        "files": 5,
+        "statements": 315,
+        "missed_statements": 48,
+        "statement_pct": 84.76,
+        "branches": 100,
+        "missed_branches": 17
+      },
+      "engines/account_engine": {
+        "files": 7,
+        "statements": 88,
+        "missed_statements": 1,
+        "statement_pct": 98.86,
+        "branches": 28,
+        "missed_branches": 1
+      },
+      "engines/behaviour_engine": {
+        "files": 18,
+        "statements": 1649,
+        "missed_statements": 214,
+        "statement_pct": 87.02,
+        "branches": 786,
+        "missed_branches": 188
+      },
+      "engines/credit_card_engine": {
+        "files": 8,
+        "statements": 189,
+        "missed_statements": 12,
+        "statement_pct": 93.65,
+        "branches": 96,
+        "missed_branches": 12
+      },
+      "engines/financial_events": {
+        "files": 2,
+        "statements": 184,
+        "missed_statements": 6,
+        "statement_pct": 96.74,
+        "branches": 78,
+        "missed_branches": 6
+      },
+      "engines/financial_intelligence": {
+        "files": 8,
+        "statements": 807,
+        "missed_statements": 36,
+        "statement_pct": 95.54,
+        "branches": 332,
+        "missed_branches": 28
+      },
+      "engines/loan_engine": {
+        "files": 9,
+        "statements": 472,
+        "missed_statements": 6,
+        "statement_pct": 98.73,
+        "branches": 164,
+        "missed_branches": 7
+      },
+      "engines/recommendation_engine": {
+        "files": 2,
+        "statements": 73,
+        "missed_statements": 3,
+        "statement_pct": 95.89,
+        "branches": 30,
+        "missed_branches": 4
+      },
+      "engines/transaction_intelligence": {
+        "files": 5,
+        "statements": 367,
+        "missed_statements": 2,
+        "statement_pct": 99.46,
+        "branches": 148,
+        "missed_branches": 5
+      },
+      "models": {
+        "files": 22,
+        "statements": 738,
+        "missed_statements": 84,
+        "statement_pct": 88.62,
+        "branches": 40,
+        "missed_branches": 40
+      },
+      "orchestration": {
+        "files": 2,
+        "statements": 71,
+        "missed_statements": 14,
+        "statement_pct": 80.28,
+        "branches": 2,
+        "missed_branches": 1
+      },
+      "repositories": {
+        "files": 27,
+        "statements": 1366,
+        "missed_statements": 609,
+        "statement_pct": 55.42,
+        "branches": 228,
+        "missed_branches": 157
+      },
+      "services": {
+        "files": 32,
+        "statements": 2047,
+        "missed_statements": 690,
+        "statement_pct": 66.29,
+        "branches": 510,
+        "missed_branches": 292
+      },
+      "utils": {
+        "files": 1,
+        "statements": 0,
+        "missed_statements": 0,
+        "statement_pct": null,
+        "branches": 0,
+        "missed_branches": 0
+      }
+    }
+  },
+  "mutation": {
+    "measurement": "REUSED (C42.26 population ledger \u2014 MATHEMATICALLY_RECONCILED aggregate; NOT a fresh campaign per C43 constraint)",
+    "aggregate": {
+      "scored": 14951,
+      "killed": 9015,
+      "score_pct": 60.297,
+      "distance_to_80_kills_needed": 2946
+    },
+    "components": {
+      "account_engine": {
+        "scored": 183,
+        "killed": 163,
+        "mutation_score_pct": 89.1,
+        "survivors": 20
+      },
+      "balance_engine": {
+        "scored": 285,
+        "killed": 270,
+        "mutation_score_pct": 94.7,
+        "survivors": 15
+      },
+      "behaviour_engine": {
+        "scored": 5258,
+        "killed": 1875,
+        "mutation_score_pct": 35.7,
+        "survivors": 3383
+      },
+      "cashflow_engine": {
+        "scored": 172,
+        "killed": 128,
+        "mutation_score_pct": 74.4,
+        "survivors": 44
+      },
+      "common_calculations": {
+        "scored": 377,
+        "killed": 213,
+        "mutation_score_pct": 56.4,
+        "survivors": 164
+      },
+      "core_domain_money": {
+        "scored": 102,
+        "killed": 84,
+        "mutation_score_pct": 82.4,
+        "survivors": 18
+      },
+      "credit_card_engine": {
+        "scored": 582,
+        "killed": 440,
+        "mutation_score_pct": 75.6,
+        "survivors": 142
+      },
+      "financial_events": {
+        "scored": 704,
+        "killed": 454,
+        "mutation_score_pct": 64.5,
+        "survivors": 250
+      },
+      "ledger_audit_engine": {
+        "scored": 190,
+        "killed": 108,
+        "mutation_score_pct": 56.8,
+        "survivors": 82
+      },
+      "loan_engine": {
+        "scored": 1273,
+        "killed": 1066,
+        "mutation_score_pct": 84.0,
+        "survivors": 207
+      },
+      "recommendation_engine": {
+        "scored": 282,
+        "killed": 179,
+        "mutation_score_pct": 63.5,
+        "survivors": 103
+      },
+      "reconciliation_engine": {
+        "scored": 368,
+        "killed": 297,
+        "mutation_score_pct": 80.7,
+        "survivors": 71
+      },
+      "transaction_intelligence": {
+        "scored": 1465,
+        "killed": 1028,
+        "mutation_score_pct": 70.2,
+        "survivors": 437
+      },
+      "financial_intelligence": {
+        "scored": 3710,
+        "killed": 2710,
+        "mutation_score_pct": 73.0,
+        "survivors": 1000
+      }
+    },
+    "credit_card_engine_latest": "75.6% AUTHORITATIVE_TARGETED (C42.38, 582 mutants, 116s)",
+    "invalidated_components": [],
+    "targeted_measurements_required_now": "none \u2014 no component invalidated; targeted runs will occur only for components receiving test changes (Phase 43.7)"
+  },
+  "workflows": {
+    "measurement": "AUTHORITATIVE_MEASURED (local identical-command execution; see m9-c43-workflow-verification-matrix.json)",
+    "LOCAL_GREEN": [
+      "quality(quick)",
+      "backend-verify(backend)",
+      "frontend-verify(frontend)",
+      "verification-runtime(runtime)",
+      "golden(golden)",
+      "api-contracts(api-contracts)",
+      "mutation-smoke",
+      "verification-reconcile(reconcile-gate)",
+      "dependency-update (non-authoritative monitoring)",
+      "playwright (full-matrix rerun pending)"
+    ],
+    "ENVIRONMENTALLY_UNEXECUTABLE": [
+      "security-codeql (GitHub code-scanning service)",
+      "m9-forensic-diagnostic-lab PR context (live PR metadata)"
+    ],
+    "INTENTIONALLY_NON_AUTHORITATIVE": [
+      "release (operational release pipeline)"
+    ]
+  },
+  "test_health": {
+    "measurement": "AUTHORITATIVE_MEASURED",
+    "backend_unit": {
+      "passed": 1639,
+      "failed": 0
+    },
+    "backend_full": {
+      "passed": 2318,
+      "failed": 0,
+      "xfailed": 1,
+      "note": "post property-test correction; verified in backend profile run"
+    },
+    "runtime_suite": {
+      "passed": 785,
+      "failed": 0,
+      "note": "under --timeout=30 (R2 marker added)"
+    },
+    "frontend_vitest": {
+      "files": 93,
+      "passed": 1238,
+      "failed": 0
+    },
+    "golden_capability": {
+      "passed": 38,
+      "failed": 0
+    },
+    "playwright": {
+      "chromium": "438 passed / 2 load-timing flakes under local load (pass isolated; config retries=2 in CI)",
+      "mobile_chrome": "all passed (466 \u2713 incl. visual regression)"
+    },
+    "flaky_tests": [
+      "edge-cases.spec.ts::should handle delayed salary (chromium, waitForLoadState timeout under load, passes isolated + CI retry semantics)",
+      "edge-cases.spec.ts::should not crash with empty transaction list (same class)"
+    ],
+    "slow_tests": [
+      "test_r2_evidence_collected_with_target_config_active (~82s, real targeted mutation, timeout marker)",
+      "test_backend_exit_contract_holds_both_directions (~120s, real backend script, timeout marker)"
+    ],
+    "duplicate_tests": "NOT_MEASURED (no demonstrable duplicates surfaced; not prioritized \u2014 constraint: no test deletion)",
+    "property_surfaces": {
+      "backend_properties": 288,
+      "loan_amortization_correction": "test_balance_strictly_decreasing re-aligned to engine sub-paise semantics (Class-D test defect; bounded-progress invariant; 8,288-combo measurement bound)"
+    },
+    "contract_surfaces": "api-contracts 5/5 families PASS; schemathesis not executed locally (NOT_MEASURED \u2014 see workflow matrix)",
+    "integration_surfaces": "contract 161, invariants 26, unit-engines 1343, playwright 438+466"
+  },
+  "categories_used": [
+    "AUTHORITATIVE_MEASURED",
+    "AUTHORITATIVE_TARGETED",
+    "REUSED",
+    "DERIVED",
+    "NOT_MEASURED",
+    "ENVIRONMENTALLY_UNAVAILABLE"
+  ]
+}

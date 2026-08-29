@@ -53,9 +53,9 @@ fast-uri  3.0.0 - 3.1.4
 Severity: high
 fast-uri vulnerable to host confusion via literal backslash authority delimiter - https://github.com/advisories/GHSA-v2hh-gcrm-f6hx
 fast-uri vulnerable to host confusion via backslash authority introducer - https://github.com/advisories/GHSA-7p8r-x3mc-p8w7
-fast-uri vulnerable to host confusion via failed IDN canonicalization - https://github.com/advisories/GHSA-4c8g-83qw-93j6
 fast-uri vulnerable to path traversal via percent-encoded dot segments - https://github.com/advisories/GHSA-q3j6-qgpj-74h6
 fast-uri vulnerable to host confusion via percent-encoded authority delimiters - https://github.com/advisories/GHSA-v39h-62p7-jpjc
+fast-uri vulnerable to host confusion via failed IDN canonicalization - https://github.com/advisories/GHSA-4c8g-83qw-93j6
 fix available via `npm audit fix`
 node_modules/fast-uri
 
@@ -168,7 +168,7 @@ Next.js: Unauthenticated disclosure of internal Server Function endpoints - http
 Depends on vulnerable versions of postcss
 Depends on vulnerable versions of sharp
 fix available via `npm audit fix --force`
-Will install next@16.3.1, which is outside the stated dependency range
+Will install next@16.3.3, which is outside the stated dependency range
 node_modules/next
 
 path-to-regexp  8.0.0 - 8.3.0
@@ -195,7 +195,7 @@ PostCSS: Arbitrary file read and information disclosure via attacker-controlled 
 PostCSS: incomplete fix of GHSA-6g55-p6wh-862q — attacker-controlled sourceMappingURL reads arbitrary .map files when `from` is unset - https://github.com/advisories/GHSA-fxqj-rqcc-2cmp
 PostCSS: Path Traversal in Previous Source Map Auto-Loading (sourceMappingURL) leads to Arbitrary .map File Disclosure - https://github.com/advisories/GHSA-r28c-9q8g-f849
 fix available via `npm audit fix --force`
-Will install next@16.3.1, which is outside the stated dependency range
+Will install next@16.3.3, which is outside the stated dependency range
 node_modules/next/node_modules/postcss
 node_modules/postcss
 
@@ -210,7 +210,7 @@ sharp  <0.35.0
 Severity: high
 sharp inherited vulnerabilities in libvips: CVE-2026-33327, CVE-2026-33328, CVE-2026-35590, CVE-2026-35591 - https://github.com/advisories/GHSA-f88m-g3jw-g9cj
 fix available via `npm audit fix --force`
-Will install next@16.3.1, which is outside the stated dependency range
+Will install next@16.3.3, which is outside the stated dependency range
 node_modules/sharp
 
 shell-quote  <=1.8.4

@@ -66,4 +66,10 @@ exclude_lines =
 directory = tests/generated/coverage-html
 
 [json]
-output = tests/generated/coverage.json
+# M9-C43.1 root-cause fix: pytest-cov must write the RAW pytest-cov payload to
+# raw-coverage.json — the exact input tools/development/check_coverage.py
+# consumes. coverage.json itself is the capability-aware artifact OWNED by
+# check_coverage.py (meta test test_coverage_integrity.py::test_coverage_json_valid
+# enforces its 'capabilities' structure); the previous path made pytest-cov
+# silently clobber it.
+output = tests/generated/raw-coverage.json

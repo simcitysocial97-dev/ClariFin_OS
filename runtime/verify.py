@@ -1320,6 +1320,7 @@ def main() -> int:
     if command == "evidence-plan":
         from runtime.foundation.verification.executor_pipeline import main as _plan_main
         import sys as _sys
+
         saved = _sys.argv
         _sys.argv = ["verify.py evidence-plan", *saved[2:]]
         try:
@@ -1330,6 +1331,7 @@ def main() -> int:
     if command == "evidence-execute":
         from runtime.foundation.verification.executor_pipeline import main as _exec_main
         import sys as _sys
+
         saved = _sys.argv
         _sys.argv = ["verify.py evidence-execute", *saved[2:], "--run-mutation"]
         try:
@@ -1342,8 +1344,11 @@ def main() -> int:
         # reconciliation phase does not require fresh runs to produce
         # a verified state — it consumes whatever evidence is on disk
         # plus the planner output.
-        from runtime.foundation.verification.executor_pipeline import main as _recon_main
+        from runtime.foundation.verification.executor_pipeline import (
+            main as _recon_main,
+        )
         import sys as _sys
+
         saved = _sys.argv
         _sys.argv = ["verify.py evidence-reconcile", *saved[2:]]
         try:
@@ -1355,13 +1360,13 @@ def main() -> int:
         # Certify = execute + reconcile, the full M28.10 flow.
         from runtime.foundation.verification.executor_pipeline import main as _cert_main
         import sys as _sys
+
         saved = _sys.argv
         _sys.argv = ["verify.py evidence-certify", *saved[2:], "--run-mutation"]
         try:
             return _cert_main()
         finally:
             _sys.argv = saved
-
 
     if command == "mutation-inventory":
         from runtime.foundation.verification.mutation_inventory import (
@@ -1397,7 +1402,6 @@ def main() -> int:
         )
 
         return run_strengthen_validate(sys.argv[2:])
-
 
     if command == "env-check":
         from runtime.foundation.verification.env import main_env_check

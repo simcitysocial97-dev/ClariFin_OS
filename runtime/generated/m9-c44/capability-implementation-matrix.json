@@ -1,0 +1,249 @@
+{
+  "schema": "m9-c44-capability-matrix/v1",
+  "generated_at": "2026-08-27T16:10:25Z",
+  "capabilities": [
+    "accounts",
+    "behaviour",
+    "cashflow",
+    "credit-cards",
+    "transactions",
+    "transaction-intelligence",
+    "financial-intelligence",
+    "loans",
+    "reconciliation",
+    "investments",
+    "net-worth",
+    "recommendations",
+    "financial-events",
+    "common-calculations",
+    "core-domain",
+    "ledger",
+    "dashboard",
+    "api-contracts",
+    "migrations",
+    "runtime-verification",
+    "golden-regression",
+    "mutation-analysis",
+    "e2e-tests"
+  ],
+  "source_modules_count": 1155,
+  "component_coverage": {
+    "account_engine": ["accounts"],
+    "behaviour_engine": ["behaviour"],
+    "cashflow_engine": ["cashflow"],
+    "credit_card_engine": ["credit-cards"],
+    "transaction_intelligence": ["transaction-intelligence"],
+    "financial_intelligence": ["financial-intelligence"],
+    "loan_engine": ["loans"],
+    "reconciliation_engine": ["reconciliation"],
+    "recommendation_engine": ["recommendations"],
+    "financial_events": ["financial-events"],
+    "common_calculations": ["common-calculations"],
+    "core_domain_money": ["core-domain"],
+    "ledger_audit_engine": ["ledger"],
+    "balance_engine": ["accounts"]
+  },
+  "capability_to_source": {
+    "accounts": [
+      "backend/src/engines/account_engine",
+      "backend/src/services/account_service.py",
+      "backend/src/models/account.py",
+      "backend/src/repositories/account_repository.py",
+      "backend/src/routers/accounts.py"
+    ],
+    "behaviour": [
+      "backend/src/engines/behaviour_engine/",
+      "backend/src/services/behaviour_service.py",
+      "backend/src/models/behaviour.py",
+      "backend/src/engines/insight_generator.py",
+      "backend/src/engines/nudge_engine.py"
+    ],
+    "cashflow": [
+      "backend/src/engines/cashflow_engine.py",
+      "backend/src/services/cashflow_service.py",
+      "backend/src/models/financial_goal.py",
+      "backend/src/repositories/cashflow_repository.py"
+    ],
+    "credit-cards": [
+      "backend/src/engines/credit_card_engine/",
+      "backend/src/services/credit_card_service.py",
+      "backend/src/models/credit_card.py",
+      "backend/src/repositories/credit_card_repository.py"
+    ],
+    "transactions": [
+      "backend/src/services/transaction_service.py",
+      "backend/src/models/transaction.py",
+      "backend/src/repositories/transaction_repository.py",
+      "backend/src/routers/transactions.py"
+    ],
+    "transaction-intelligence": [
+      "backend/src/engines/transaction_intelligence/",
+      "backend/src/services/transaction_intelligence_service.py",
+      "backend/src/repositories/transaction_classification_repository.py"
+    ],
+    "financial-intelligence": [
+      "backend/src/engines/financial_intelligence/",
+      "backend/src/services/financial_intelligence_service.py",
+      "backend/src/services/forecast_service.py",
+      "backend/src/models/financial_goal.py"
+    ],
+    "loans": [
+      "backend/src/engines/loan_engine/",
+      "backend/src/services/loan_service.py",
+      "backend/src/models/loan.py",
+      "backend/src/repositories/loan_repository.py"
+    ],
+    "reconciliation": [
+      "backend/src/engines/reconciliation_engine.py",
+      "backend/src/services/reconciliation_service.py",
+      "backend/src/repositories/reconciliation_repository.py"
+    ],
+    "investments": [
+      "backend/src/services/investment_service.py",
+      "backend/src/models/investment.py",
+      "backend/src/repositories/investment_repository.py"
+    ],
+    "net-worth": [
+      "backend/src/services/networth_service.py",
+      "backend/src/repositories/networth_repository.py"
+    ],
+    "recommendations": [
+      "backend/src/engines/recommendation_engine/",
+      "backend/src/services/recommendation_service.py"
+    ],
+    "financial-events": [
+      "backend/src/engines/financial_events/",
+      "backend/src/services/financial_events_service.py",
+      "backend/src/repositories/financial_event_repository.py"
+    ],
+    "common-calculations": [
+      "backend/src/common/calculations.py",
+      "backend/src/common/enrichment.py",
+      "backend/src/common/formatting.py",
+      "backend/src/common/parsing.py"
+    ],
+    "core-domain": [
+      "backend/src/core/domain/",
+      "backend/src/core/db/"
+    ],
+    "ledger": [
+      "backend/src/engines/ledger_audit_engine.py",
+      "backend/src/services/audit_service.py",
+      "backend/src/repositories/reconciliation_audit_repository.py"
+    ],
+    "dashboard": [
+      "backend/src/services/dashboard_service.py",
+      "backend/src/core/dtos/dashboard_dto.py"
+    ],
+    "api-contracts": [
+      "backend/src/routers/",
+      "backend/src/core/dtos/",
+      "backend/src/api.py"
+    ],
+    "migrations": [
+      "backend/src/migrations/"
+    ],
+    "runtime-verification": [
+      "runtime/foundation/verification/",
+      "runtime/verify.py"
+    ],
+    "golden-regression": [
+      "runtime/tests/golden/",
+      "backend/tests/capability/"
+    ],
+    "mutation-analysis": [
+      "runtime/foundation/verification/mutation_runner.py",
+      "runtime/foundation/verification/mutation_inventory.py",
+      "runtime/foundation/verification/diagnostic_agent.py"
+    ],
+    "e2e-tests": [
+      "frontend/tests/e2e/"
+    ]
+  },
+  "capability_to_tests": {
+    "accounts": [
+      "backend/tests/unit/engines/account/",
+      "backend/tests/integration/"
+    ],
+    "behaviour": [
+      "backend/tests/unit/engines/behaviour/",
+      "backend/tests/unit/core/mappers/test_behaviour_mapper.py"
+    ],
+    "cashflow": [
+      "backend/tests/unit/engines/cashflow/"
+    ],
+    "credit-cards": [
+      "backend/tests/unit/engines/credit_card/",
+      "backend/tests/unit/engines/credit_card/test_mutation_gap_repairs.py"
+    ],
+    "transactions": [
+      "backend/tests/unit/test_calculations.py",
+      "backend/tests/unit/test_calculations_strengthening.py"
+    ],
+    "transaction-intelligence": [
+      "backend/tests/unit/engines/transaction_intelligence/",
+      "backend/tests/properties/transaction_intelligence/",
+      "backend/tests/capability/transaction_intelligence/"
+    ],
+    "financial-intelligence": [
+      "backend/tests/unit/engines/financial_intelligence/",
+      "backend/tests/properties/financial_intelligence/",
+      "backend/tests/capability/financial_intelligence/"
+    ],
+    "loans": [
+      "backend/tests/unit/engines/loan/",
+      "backend/tests/properties/loan_engine/"
+    ],
+    "reconciliation": [
+      "backend/tests/unit/engines/reconciliation/"
+    ],
+    "investments": [
+      "backend/tests/capability/financial_intelligence/"
+    ],
+    "net-worth": [
+      "backend/tests/capability/financial_intelligence/"
+    ],
+    "recommendations": [
+      "backend/tests/unit/engines/recommendation/",
+      "backend/tests/capability/financial_intelligence/"
+    ],
+    "financial-events": [
+      "backend/tests/unit/engines/financial_events/",
+      "backend/tests/capability/financial_intelligence/"
+    ],
+    "common-calculations": [
+      "backend/tests/unit/test_calculations.py",
+      "backend/tests/unit/test_calculations_strengthening.py"
+    ],
+    "core-domain": [
+      "backend/tests/unit/core/",
+      "backend/tests/architecture/"
+    ],
+    "ledger": [
+      "backend/tests/unit/engines/ledger/"
+    ],
+    "dashboard": [
+      "backend/tests/capability/financial_intelligence/"
+    ],
+    "api-contracts": [
+      "backend/tests/integration/contracts/",
+      "runtime/tests/test_api_contracts.py"
+    ],
+    "migrations": [],
+    "runtime-verification": [
+      "runtime/tests/"
+    ],
+    "golden-regression": [
+      "runtime/tests/golden/",
+      "backend/tests/capability/"
+    ],
+    "mutation-analysis": [
+      "runtime/tests/test_mutation_infra.py",
+      "runtime/tests/test_mutation_inventory.py"
+    ],
+    "e2e-tests": [
+      "frontend/tests/e2e/specs/"
+    ]
+  },
+  "unmapped_sources_count": 7
+}

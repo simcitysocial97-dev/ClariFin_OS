@@ -1,0 +1,335 @@
+{
+  "schema": "m9-c44-capability-coverage-reconciliation/v1",
+  "generated_at": "2026-08-27T16:10:25Z",
+  "levels": {
+    "level_1_source_coverage": {
+      "description": "Traditional code coverage",
+      "overall_pct": 77.72,
+      "by_capability": {
+        "loan-engine": {
+          "statement_pct": 98.73,
+          "branch_pct": 95.73,
+          "missing_critical_paths": [
+            "6 missed statements in engines/loan_engine",
+            "7 missed branches in engines/loan_engine",
+            "Service layer coverage 32-78% (loan_analysis_service 44.44%, loan_service 67.80%, loan_simulation_service 78.57%, transaction_intelligence_service 32.62%)",
+            "Repository layer coverage 41-60% (loan_repository 40.82%, account_repository 57.23%, credit_card_repository 63.41%, financial_event_repository 44.26%)"
+          ]
+        },
+        "reconciliation": {
+          "statement_pct": 93.44,
+          "branch_pct": 88.46,
+          "missing_critical_paths": [
+            "6 missed statements in reconciliation_engine.py",
+            "6 missed branches in reconciliation_engine.py",
+            "reconciliation_service.py 75.00% (5 missed statements)",
+            "reconciliation_repository.py 82.98% (8 missed statements)"
+          ]
+        },
+        "ledger": {
+          "statement_pct": 90.32,
+          "branch_pct": 81.25,
+          "missing_critical_paths": [
+            "3 missed statements in ledger_audit_engine.py",
+            "3 missed branches in ledger_audit_engine.py",
+            "Shared repository reconciliation_audit_repository.py 100% but limited scope"
+          ]
+        },
+        "api-contracts": {
+          "statement_pct": null,
+          "branch_pct": null,
+          "missing_critical_paths": [
+            "No implementation_modules in scope; routers excluded by .coveragerc",
+            "DTO layer (core/dtos) measured at 92.84% but not exclusively attributed to api-contracts"
+          ]
+        },
+        "migrations": {
+          "statement_pct": null,
+          "branch_pct": null,
+          "missing_critical_paths": [
+            "Migration files outside coverage scope (backend/src/migrations)"
+          ]
+        },
+        "runtime-verification": {
+          "statement_pct": null,
+          "branch_pct": null,
+          "missing_critical_paths": [
+            "Runtime verification files outside src/ scope (runtime/)"
+          ]
+        },
+        "golden-regression": {
+          "statement_pct": null,
+          "branch_pct": null,
+          "missing_critical_paths": [
+            "Golden dataset test files excluded by .coveragerc"
+          ]
+        },
+        "mutation-analysis": {
+          "statement_pct": null,
+          "branch_pct": null,
+          "missing_critical_paths": [
+            "Mutation analysis runtime files outside src/ scope"
+          ]
+        },
+        "e2e-tests": {
+          "statement_pct": null,
+          "branch_pct": null,
+          "missing_critical_paths": [
+            "E2E Playwright test files excluded by .coveragerc"
+          ]
+        }
+      }
+    },
+    "level_2_component_coverage": {
+      "description": "Mutation/test measurement coverage",
+      "overall_pct": 60.3,
+      "by_component": {
+        "account_engine": {
+          "mutation_score_pct": 89.1,
+          "scored": 183,
+          "killed": 163,
+          "survived": 20
+        },
+        "balance_engine": {
+          "mutation_score_pct": 94.7,
+          "scored": 285,
+          "killed": 270,
+          "survived": 15
+        },
+        "behaviour_engine": {
+          "mutation_score_pct": 35.7,
+          "scored": 5258,
+          "killed": 1875,
+          "survived": 3383
+        },
+        "cashflow_engine": {
+          "mutation_score_pct": 74.4,
+          "scored": 172,
+          "killed": 128,
+          "survived": 44
+        },
+        "common_calculations": {
+          "mutation_score_pct": 56.4,
+          "scored": 377,
+          "killed": 213,
+          "survived": 164
+        },
+        "core_domain_money": {
+          "mutation_score_pct": 82.4,
+          "scored": 102,
+          "killed": 84,
+          "survived": 18
+        },
+        "credit_card_engine": {
+          "mutation_score_pct": 75.6,
+          "scored": 582,
+          "killed": 440,
+          "survived": 142
+        },
+        "financial_events": {
+          "mutation_score_pct": 64.5,
+          "scored": 704,
+          "killed": 454,
+          "survived": 250
+        },
+        "ledger_audit_engine": {
+          "mutation_score_pct": 56.8,
+          "scored": 190,
+          "killed": 108,
+          "survived": 82
+        },
+        "loan_engine": {
+          "mutation_score_pct": 84.0,
+          "scored": 1273,
+          "killed": 1066,
+          "survived": 207
+        },
+        "recommendation_engine": {
+          "mutation_score_pct": 63.5,
+          "scored": 282,
+          "killed": 179,
+          "survived": 103
+        },
+        "reconciliation_engine": {
+          "mutation_score_pct": 80.7,
+          "scored": 368,
+          "killed": 297,
+          "survived": 71
+        },
+        "transaction_intelligence": {
+          "mutation_score_pct": 70.2,
+          "scored": 1465,
+          "killed": 1028,
+          "survived": 437
+        },
+        "financial_intelligence": {
+          "mutation_score_pct": 73.0,
+          "scored": 3710,
+          "killed": 2710,
+          "survived": 1000
+        }
+      }
+    },
+    "level_3_capability_behavioral_coverage": {
+      "description": "Whether each capability has executable behavioral evidence covering its meaningful invariants/contracts",
+      "by_capability": {
+        "loan-engine": {
+          "has_behavioral_evidence": true,
+          "invariant_coverage": "partial",
+          "contract_coverage": "partial",
+          "assertion_strength": "strong",
+          "gaps": []
+        },
+        "reconciliation": {
+          "has_behavioral_evidence": true,
+          "invariant_coverage": "partial",
+          "contract_coverage": "partial",
+          "assertion_strength": "moderate",
+          "gaps": [
+            "Limited behavioral evidence",
+            "Assertion strength needs strengthening"
+          ]
+        },
+        "ledger": {
+          "has_behavioral_evidence": true,
+          "invariant_coverage": "minimal",
+          "contract_coverage": "minimal",
+          "assertion_strength": "weak",
+          "gaps": [
+            "Limited behavioral evidence",
+            "Assertion strength needs strengthening",
+            "Validation maturity NONE"
+          ]
+        },
+        "api-contracts": {
+          "has_behavioral_evidence": false,
+          "invariant_coverage": "none",
+          "contract_coverage": "none",
+          "assertion_strength": "unknown",
+          "gaps": [
+            "No executable behavioral evidence"
+          ]
+        },
+        "migrations": {
+          "has_behavioral_evidence": false,
+          "invariant_coverage": "none",
+          "contract_coverage": "none",
+          "assertion_strength": "unknown",
+          "gaps": [
+            "Workflow-only; no executable behavioral evidence"
+          ]
+        },
+        "runtime-verification": {
+          "has_behavioral_evidence": false,
+          "invariant_coverage": "none",
+          "contract_coverage": "none",
+          "assertion_strength": "unknown",
+          "gaps": [
+            "Workflow-only; no executable behavioral evidence"
+          ]
+        },
+        "golden-regression": {
+          "has_behavioral_evidence": false,
+          "invariant_coverage": "none",
+          "contract_coverage": "none",
+          "assertion_strength": "unknown",
+          "gaps": [
+            "Workflow-only; no executable behavioral evidence"
+          ]
+        },
+        "mutation-analysis": {
+          "has_behavioral_evidence": false,
+          "invariant_coverage": "none",
+          "contract_coverage": "none",
+          "assertion_strength": "unknown",
+          "gaps": [
+            "Workflow-only; no executable behavioral evidence"
+          ]
+        },
+        "e2e-tests": {
+          "has_behavioral_evidence": false,
+          "invariant_coverage": "none",
+          "contract_coverage": "none",
+          "assertion_strength": "unknown",
+          "gaps": [
+            "Workflow-only; no executable behavioral evidence"
+          ]
+        }
+      }
+    }
+  },
+  "critical_gaps": [
+    {
+      "capability": "ledger",
+      "gap_type": "component",
+      "severity": "high",
+      "description": "Mutation score 56.8% below 80% target; 82 surviving mutants in ledger_audit_engine"
+    },
+    {
+      "capability": "behaviour_engine",
+      "gap_type": "component",
+      "severity": "high",
+      "description": "Mutation score 35.7% critically below 80% target; 3,383 surviving mutants — largest survivor population in the corpus"
+    },
+    {
+      "capability": "common_calculations",
+      "gap_type": "component",
+      "severity": "medium",
+      "description": "Mutation score 56.4% below 80% target; 164 surviving mutants"
+    },
+    {
+      "capability": "ledger",
+      "gap_type": "behavioral",
+      "severity": "medium",
+      "description": "Assertion strength is weak; behavioral coverage needs strengthening — only 1 test, validation maturity NONE"
+    },
+    {
+      "capability": "reconciliation",
+      "gap_type": "behavioral",
+      "severity": "medium",
+      "description": "Assertion strength is moderate; behavioral coverage needs strengthening — only 4 tests"
+    },
+    {
+      "capability": "api-contracts",
+      "gap_type": "behavioral",
+      "severity": "high",
+      "description": "Capability has no executable behavioral evidence"
+    },
+    {
+      "capability": "migrations",
+      "gap_type": "behavioral",
+      "severity": "high",
+      "description": "Capability has no executable behavioral evidence"
+    },
+    {
+      "capability": "runtime-verification",
+      "gap_type": "behavioral",
+      "severity": "high",
+      "description": "Capability has no executable behavioral evidence"
+    },
+    {
+      "capability": "golden-regression",
+      "gap_type": "behavioral",
+      "severity": "high",
+      "description": "Capability has no executable behavioral evidence"
+    },
+    {
+      "capability": "mutation-analysis",
+      "gap_type": "behavioral",
+      "severity": "high",
+      "description": "Capability has no executable behavioral evidence"
+    },
+    {
+      "capability": "e2e-tests",
+      "gap_type": "behavioral",
+      "severity": "high",
+      "description": "Capability has no executable behavioral evidence"
+    },
+    {
+      "capability": "overall",
+      "gap_type": "source",
+      "severity": "medium",
+      "description": "Combined coverage 77.72% is 2.28pp below 80% target; 296 additional covered items (statements+branches) required"
+    }
+  ]
+}

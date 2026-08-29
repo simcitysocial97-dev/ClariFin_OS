@@ -1,0 +1,1280 @@
+{
+  "schema": "m9-c42.37-workflow-verification-matrix/v1",
+  "generated_at": "2026-08-26T18:51:43.938837+00:00",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "methodology": "Parse all .github/workflows/*.yml; match run: commands against COMMAND_MATCHERS; map to VerificationGraph tasks",
+  "workflows_audited": [
+    {
+      "workflow": "api-contracts.yml",
+      "jobs": [
+        {
+          "job_id": "api-contracts",
+          "steps": [
+            {
+              "index": 0,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "actions/checkout@v4"
+            },
+            {
+              "index": 1,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/bootstrap-runtime"
+            },
+            {
+              "index": 2,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/setup-node-runtime"
+            },
+            {
+              "index": 3,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "python runtime/verify.py api-contracts"
+            },
+            {
+              "index": 4,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 5,
+              "is_verification": true,
+              "task_kind": "static",
+              "command_preview": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP"
+            }
+          ],
+          "verification_tasks": [
+            {
+              "step_index": 5,
+              "task": "task::static::status-summary",
+              "kind": "static",
+              "scope": "infra_health",
+              "reusable_evidence": false,
+              "command": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY",
+              "derivation": "api-contracts.yml#jobs.api-contracts.steps[5]"
+            }
+          ]
+        }
+      ],
+      "verification_step_count": 1,
+      "non_verification_step_count": 1
+    },
+    {
+      "workflow": "backend-verify.yml",
+      "jobs": [
+        {
+          "job_id": "verify",
+          "steps": [
+            {
+              "index": 0,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "actions/checkout@v4"
+            },
+            {
+              "index": 1,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/bootstrap-runtime"
+            },
+            {
+              "index": 2,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/setup-node-runtime"
+            },
+            {
+              "index": 3,
+              "is_verification": true,
+              "task_kind": "unit",
+              "command_preview": "python runtime/verify.py backend"
+            },
+            {
+              "index": 4,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 5,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 6,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 7,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 8,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 9,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 10,
+              "is_verification": true,
+              "task_kind": "static",
+              "command_preview": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP"
+            }
+          ],
+          "verification_tasks": [
+            {
+              "step_index": 3,
+              "task": "task::unit::backend-suite",
+              "kind": "unit",
+              "scope": "capability_all",
+              "reusable_evidence": true,
+              "command": "python runtime/verify.py backend",
+              "derivation": "backend-verify.yml#jobs.verify.steps[3]"
+            },
+            {
+              "step_index": 10,
+              "task": "task::static::status-summary",
+              "kind": "static",
+              "scope": "infra_health",
+              "reusable_evidence": false,
+              "command": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY",
+              "derivation": "backend-verify.yml#jobs.verify.steps[10]"
+            }
+          ]
+        }
+      ],
+      "verification_step_count": 2,
+      "non_verification_step_count": 0
+    },
+    {
+      "workflow": "dependency-update.yml",
+      "jobs": [
+        {
+          "job_id": "dependency-health",
+          "steps": [
+            {
+              "index": 0,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "actions/checkout@v4"
+            },
+            {
+              "index": 1,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/bootstrap-runtime"
+            },
+            {
+              "index": 2,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/setup-node-runtime"
+            },
+            {
+              "index": 3,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "bash .github/scripts/run_dependency_checks.sh"
+            },
+            {
+              "index": 4,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 5,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 6,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 7,
+              "is_verification": true,
+              "task_kind": "static",
+              "command_preview": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP"
+            }
+          ],
+          "verification_tasks": [
+            {
+              "step_index": 7,
+              "task": "task::static::status-summary",
+              "kind": "static",
+              "scope": "infra_health",
+              "reusable_evidence": false,
+              "command": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY",
+              "derivation": "dependency-update.yml#jobs.dependency-health.steps[7]"
+            }
+          ]
+        }
+      ],
+      "verification_step_count": 1,
+      "non_verification_step_count": 1
+    },
+    {
+      "workflow": "frontend-verify.yml",
+      "jobs": [
+        {
+          "job_id": "verify",
+          "steps": [
+            {
+              "index": 0,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "actions/checkout@v4"
+            },
+            {
+              "index": 1,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/bootstrap-runtime"
+            },
+            {
+              "index": 2,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/setup-node-runtime"
+            },
+            {
+              "index": 3,
+              "is_verification": true,
+              "task_kind": "static",
+              "command_preview": "python runtime/verify.py frontend"
+            },
+            {
+              "index": 4,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 5,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 6,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 7,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 8,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 9,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 10,
+              "is_verification": true,
+              "task_kind": "static",
+              "command_preview": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP"
+            }
+          ],
+          "verification_tasks": [
+            {
+              "step_index": 3,
+              "task": "task::static::frontend-suite",
+              "kind": "static",
+              "scope": "surface_only",
+              "reusable_evidence": true,
+              "command": "python runtime/verify.py frontend",
+              "derivation": "frontend-verify.yml#jobs.verify.steps[3]"
+            },
+            {
+              "step_index": 10,
+              "task": "task::static::status-summary",
+              "kind": "static",
+              "scope": "infra_health",
+              "reusable_evidence": false,
+              "command": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY",
+              "derivation": "frontend-verify.yml#jobs.verify.steps[10]"
+            }
+          ]
+        }
+      ],
+      "verification_step_count": 2,
+      "non_verification_step_count": 0
+    },
+    {
+      "workflow": "golden.yml",
+      "jobs": [
+        {
+          "job_id": "golden",
+          "steps": [
+            {
+              "index": 0,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "actions/checkout@v4"
+            },
+            {
+              "index": 1,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/bootstrap-runtime"
+            },
+            {
+              "index": 2,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "python runtime/verify.py golden"
+            },
+            {
+              "index": 3,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 4,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 5,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 6,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 7,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 8,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 9,
+              "is_verification": true,
+              "task_kind": "static",
+              "command_preview": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP"
+            }
+          ],
+          "verification_tasks": [
+            {
+              "step_index": 9,
+              "task": "task::static::status-summary",
+              "kind": "static",
+              "scope": "infra_health",
+              "reusable_evidence": false,
+              "command": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY",
+              "derivation": "golden.yml#jobs.golden.steps[9]"
+            }
+          ]
+        }
+      ],
+      "verification_step_count": 1,
+      "non_verification_step_count": 1
+    },
+    {
+      "workflow": "m9-forensic-diagnostic-lab.yml",
+      "jobs": [
+        {
+          "job_id": "diagnostician",
+          "steps": [
+            {
+              "index": 0,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "actions/checkout@v4"
+            },
+            {
+              "index": 1,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "set -u\n\nmkdir -p runtime/generated/evidence\n\n{\n  echo \"=== GITHUB CONTEXT ===\"\n "
+            },
+            {
+              "index": 2,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "set -euxo pipefail\n\nBASE_SHA=\"${{ github.event.pull_request.base.sha }}\"\n\ngit ca"
+            },
+            {
+              "index": 3,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "set +e\n\nBASE_SHA=\"${{ github.event.pull_request.base.sha }}\"\nHEAD_SHA=\"${{ githu"
+            },
+            {
+              "index": 4,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "{\n  echo \"=== verify.py identity ===\"\n  sha256sum runtime/verify.py\n  git status"
+            },
+            {
+              "index": 5,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "{\n  echo \"=== SYSTEM ===\"\n  uname -a\n  echo\n\n  echo \"=== PYTHON ===\"\n  python --"
+            },
+            {
+              "index": 6,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "set -euxo pipefail\n\nif [ -f runtime/bootstrap.sh ]; then\n  bash runtime/bootstra"
+            },
+            {
+              "index": 7,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "set +e\n\n{\n  echo \"=== IMPORT CHECKS ===\"\n\n  python - <<'PY'\n  import sys\n\n  modu"
+            },
+            {
+              "index": 8,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "{\n  echo \"=== BLACK IDENTITY ===\"\n  black --version\n  echo\n  python --version\n  "
+            },
+            {
+              "index": 9,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "{\n  echo \"=== FILE INVENTORY (from backend/) ===\"\n  cd backend\n  echo \"Total fil"
+            },
+            {
+              "index": 10,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "set +e\n{\n  echo \"=== BEFORE BLACK ===\"\n  git status --porcelain=v1\n  echo\n  echo"
+            },
+            {
+              "index": 11,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "set +e\n{\n  echo \"==================================================\"\n  echo \"BLA"
+            },
+            {
+              "index": 12,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "set +e\n{\n  echo \"=== run_fast_checks.sh identity ===\"\n  sed -n '1,240p' .github/"
+            },
+            {
+              "index": 13,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "set +e\n{\n  echo \"=== SHELL BEHAVIOUR DIFFERENTIAL ===\"\n  echo\n\n  for shell_invoc"
+            },
+            {
+              "index": 14,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "set +e\n\nSTART=$(date +%s)\n\npython runtime/verify.py quick \\\n  > runtime/generate"
+            },
+            {
+              "index": 15,
+              "is_verification": true,
+              "task_kind": "unit",
+              "command_preview": "set +e\n\nSTART=$(date +%s)\n\npython runtime/verify.py backend \\\n  > runtime/genera"
+            },
+            {
+              "index": 16,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "{\n  echo \"=== AFTER DIAGNOSTICS ===\"\n  git status --porcelain=v1\n  echo\n  echo \""
+            },
+            {
+              "index": 17,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "python - <<'PY'\nfrom pathlib import Path\nimport json\nimport subprocess\n\nevidence"
+            },
+            {
+              "index": 18,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "{\n  echo \"=== GENERATED FILES ===\"\n  find runtime/generated \\\n    -type f \\\n    "
+            },
+            {
+              "index": 19,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "actions/upload-artifact@v4"
+            }
+          ],
+          "verification_tasks": [
+            {
+              "step_index": 15,
+              "task": "task::unit::backend-suite",
+              "kind": "unit",
+              "scope": "capability_all",
+              "reusable_evidence": true,
+              "command": "set +e\n\nSTART=$(date +%s)\n\npython runtime/verify.py backend \\\n  > runtime/generated/evidence/verify-backend.stdout.log 2",
+              "derivation": "m9-forensic-diagnostic-lab.yml#jobs.diagnostician.steps[15]"
+            }
+          ]
+        }
+      ],
+      "verification_step_count": 1,
+      "non_verification_step_count": 4
+    },
+    {
+      "workflow": "mutation.yml",
+      "jobs": [
+        {
+          "job_id": "mutation",
+          "steps": [
+            {
+              "index": 0,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "actions/checkout@v4"
+            },
+            {
+              "index": 1,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/bootstrap-runtime"
+            },
+            {
+              "index": 2,
+              "is_verification": true,
+              "task_kind": "static",
+              "command_preview": "python runtime/verify.py env-check"
+            },
+            {
+              "index": 3,
+              "is_verification": true,
+              "task_kind": "mutation",
+              "command_preview": "python runtime/verify.py mutation"
+            },
+            {
+              "index": 4,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 5,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 6,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 7,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 8,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 9,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 10,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "SUMMARY=\"backend/tests/generated/mutation/mutation-summary.json\"\nif [ ! -f \"$SUM"
+            },
+            {
+              "index": 11,
+              "is_verification": true,
+              "task_kind": "static",
+              "command_preview": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP"
+            },
+            {
+              "index": 12,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "CODE=\"${{ steps.mutation.outputs.mutation_exit_code }}\"\nif [ \"$CODE\" = \"0\" ]; th"
+            }
+          ],
+          "verification_tasks": [
+            {
+              "step_index": 2,
+              "task": "task::static::env-check",
+              "kind": "static",
+              "scope": "infra_health",
+              "reusable_evidence": false,
+              "command": "python runtime/verify.py env-check",
+              "derivation": "mutation.yml#jobs.mutation.steps[2]"
+            },
+            {
+              "step_index": 3,
+              "task": "task::mutation::full",
+              "kind": "mutation",
+              "scope": "population",
+              "reusable_evidence": true,
+              "command": "python runtime/verify.py mutation",
+              "derivation": "mutation.yml#jobs.mutation.steps[3]"
+            },
+            {
+              "step_index": 11,
+              "task": "task::static::status-summary",
+              "kind": "static",
+              "scope": "infra_health",
+              "reusable_evidence": false,
+              "command": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY",
+              "derivation": "mutation.yml#jobs.mutation.steps[11]"
+            }
+          ]
+        },
+        {
+          "job_id": "mutation-smoke",
+          "steps": [
+            {
+              "index": 0,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "actions/checkout@v4"
+            },
+            {
+              "index": 1,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/bootstrap-runtime"
+            },
+            {
+              "index": 2,
+              "is_verification": true,
+              "task_kind": "static",
+              "command_preview": "python runtime/verify.py env-check"
+            },
+            {
+              "index": 3,
+              "is_verification": true,
+              "task_kind": "mutation",
+              "command_preview": "python runtime/verify.py mutation --smoke"
+            }
+          ],
+          "verification_tasks": [
+            {
+              "step_index": 2,
+              "task": "task::static::env-check",
+              "kind": "static",
+              "scope": "infra_health",
+              "reusable_evidence": false,
+              "command": "python runtime/verify.py env-check",
+              "derivation": "mutation.yml#jobs.mutation-smoke.steps[2]"
+            },
+            {
+              "step_index": 3,
+              "task": "task::mutation::smoke",
+              "kind": "mutation",
+              "scope": "infra_health",
+              "reusable_evidence": false,
+              "command": "python runtime/verify.py mutation --smoke",
+              "derivation": "mutation.yml#jobs.mutation-smoke.steps[3]"
+            }
+          ]
+        }
+      ],
+      "verification_step_count": 5,
+      "non_verification_step_count": 0
+    },
+    {
+      "workflow": "playwright.yml",
+      "jobs": [
+        {
+          "job_id": "test",
+          "steps": [
+            {
+              "index": 0,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "actions/checkout@v4"
+            },
+            {
+              "index": 1,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/bootstrap-runtime"
+            },
+            {
+              "index": 2,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/setup-node-runtime"
+            },
+            {
+              "index": 3,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/setup-playwright"
+            },
+            {
+              "index": 4,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "python runtime/verify.py playwright"
+            },
+            {
+              "index": 5,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 6,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 7,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 8,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 9,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 10,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 11,
+              "is_verification": true,
+              "task_kind": "static",
+              "command_preview": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }} \u2014 ${{ matrix.pro"
+            }
+          ],
+          "verification_tasks": [
+            {
+              "step_index": 11,
+              "task": "task::static::status-summary",
+              "kind": "static",
+              "scope": "infra_health",
+              "reusable_evidence": false,
+              "command": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }} \u2014 ${{ matrix.project }}\" >> $GITHUB_STEP_SUMMARY\necho \"\"",
+              "derivation": "playwright.yml#jobs.test.steps[11]"
+            }
+          ]
+        }
+      ],
+      "verification_step_count": 1,
+      "non_verification_step_count": 1
+    },
+    {
+      "workflow": "quality.yml",
+      "jobs": [
+        {
+          "job_id": "quality",
+          "steps": [
+            {
+              "index": 0,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "actions/checkout@v4"
+            },
+            {
+              "index": 1,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/bootstrap-runtime"
+            },
+            {
+              "index": 2,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/setup-node-runtime"
+            },
+            {
+              "index": 3,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "python runtime/verify.py quick"
+            },
+            {
+              "index": 4,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 5,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 6,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 7,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 8,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 9,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 10,
+              "is_verification": true,
+              "task_kind": "static",
+              "command_preview": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP"
+            }
+          ],
+          "verification_tasks": [
+            {
+              "step_index": 10,
+              "task": "task::static::status-summary",
+              "kind": "static",
+              "scope": "infra_health",
+              "reusable_evidence": false,
+              "command": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY",
+              "derivation": "quality.yml#jobs.quality.steps[10]"
+            }
+          ]
+        }
+      ],
+      "verification_step_count": 1,
+      "non_verification_step_count": 1
+    },
+    {
+      "workflow": "release.yml",
+      "jobs": [
+        {
+          "job_id": "build",
+          "steps": [
+            {
+              "index": 0,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "actions/checkout@v4"
+            },
+            {
+              "index": 1,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/setup-node-runtime"
+            },
+            {
+              "index": 2,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/bootstrap-runtime"
+            },
+            {
+              "index": 3,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "cd frontend\nnpm ci && npm run build"
+            },
+            {
+              "index": 4,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 5,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "bash .github/scripts/generate_release_notes.sh \"${{ github.event.release.tag_nam"
+            },
+            {
+              "index": 6,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 7,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP"
+            }
+          ],
+          "verification_tasks": []
+        }
+      ],
+      "verification_step_count": 0,
+      "non_verification_step_count": 0
+    },
+    {
+      "workflow": "security-codeql.yml",
+      "jobs": [
+        {
+          "job_id": "analyze",
+          "steps": [
+            {
+              "index": 0,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "actions/checkout@v4"
+            },
+            {
+              "index": 1,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "github/codeql-action/init@v3"
+            },
+            {
+              "index": 2,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "github/codeql-action/autobuild@v3"
+            },
+            {
+              "index": 3,
+              "is_verification": true,
+              "task_kind": "static",
+              "command_preview": "github/codeql-action/analyze@v3"
+            },
+            {
+              "index": 4,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP"
+            }
+          ],
+          "verification_tasks": [
+            {
+              "step_index": 3,
+              "task": "task::static::codeql",
+              "kind": "static",
+              "scope": "surface_only",
+              "reusable_evidence": false,
+              "command": "github/codeql-action/analyze@v3",
+              "derivation": "security-codeql.yml#jobs.analyze.steps[3]"
+            }
+          ]
+        }
+      ],
+      "verification_step_count": 1,
+      "non_verification_step_count": 0
+    },
+    {
+      "workflow": "verification-reconcile.yml",
+      "jobs": [
+        {
+          "job_id": "reconcile-gate",
+          "steps": [
+            {
+              "index": 0,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "actions/checkout@v4"
+            },
+            {
+              "index": 1,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/bootstrap-runtime"
+            },
+            {
+              "index": 2,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "python runtime/verify.py plan \\\n  --tier pr \\\n  --base \"${GITHUB_BASE_REF:-main}"
+            },
+            {
+              "index": 3,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "python runtime/verify.py runtime"
+            },
+            {
+              "index": 4,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "python runtime/verify.py exec-evidence \\\n  --plan runtime/generated/vea5-tier-pl"
+            },
+            {
+              "index": 5,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "python runtime/verify.py reconcile \\\n  --plan runtime/generated/vea5-tier-plan.p"
+            },
+            {
+              "index": 6,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 7,
+              "is_verification": true,
+              "task_kind": "static",
+              "command_preview": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP"
+            }
+          ],
+          "verification_tasks": [
+            {
+              "step_index": 7,
+              "task": "task::static::status-summary",
+              "kind": "static",
+              "scope": "infra_health",
+              "reusable_evidence": false,
+              "command": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY",
+              "derivation": "verification-reconcile.yml#jobs.reconcile-gate.steps[7]"
+            }
+          ]
+        }
+      ],
+      "verification_step_count": 1,
+      "non_verification_step_count": 4
+    },
+    {
+      "workflow": "verification-runtime.yml",
+      "jobs": [
+        {
+          "job_id": "verify-runtime",
+          "steps": [
+            {
+              "index": 0,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "actions/checkout@v4"
+            },
+            {
+              "index": 1,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/bootstrap-runtime"
+            },
+            {
+              "index": 2,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/setup-node-runtime"
+            },
+            {
+              "index": 3,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "python runtime/verify.py runtime"
+            },
+            {
+              "index": 4,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 5,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 6,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 7,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 8,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 9,
+              "is_verification": false,
+              "task_kind": null,
+              "command_preview": "./.github/actions/upload-runtime"
+            },
+            {
+              "index": 10,
+              "is_verification": true,
+              "task_kind": "static",
+              "command_preview": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP"
+            }
+          ],
+          "verification_tasks": [
+            {
+              "step_index": 10,
+              "task": "task::static::status-summary",
+              "kind": "static",
+              "scope": "infra_health",
+              "reusable_evidence": false,
+              "command": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY",
+              "derivation": "verification-runtime.yml#jobs.verify-runtime.steps[10]"
+            }
+          ]
+        }
+      ],
+      "verification_step_count": 1,
+      "non_verification_step_count": 1
+    }
+  ],
+  "canonical_graph_reference": {
+    "graph_file": "runtime/generated/m9-c42.27/m27_2_graph_inventory.py",
+    "total_nodes": 495,
+    "capability_count": 14,
+    "task_count": 13,
+    "surface_count": 57,
+    "graph_task_ids": [
+      "task::contract::contracts",
+      "task::contract::frontend",
+      "task::integration::integration",
+      "task::integration::playwright",
+      "task::mutation::mutation",
+      "task::property::property",
+      "task::unit::backend",
+      "task::unit::full",
+      "task::unit::golden",
+      "task::unit::migration",
+      "task::unit::quick",
+      "task::unit::repository",
+      "task::unit::runtime"
+    ]
+  },
+  "command_matcher_coverage": {
+    "verify.py mutation --smoke": "task::mutation::smoke",
+    "verify.py mutation --target": "task::mutation::targeted",
+    "verify.py mutation": "task::mutation::full",
+    "verify.py backend": "task::unit::backend-suite",
+    "verify.py frontend": "task::static::frontend-suite",
+    "verify.py env-check": "task::static::env-check",
+    "verify.py status": "task::static::status-summary",
+    "verify.py playwright": "NO_MATCH",
+    "verify.py golden": "NO_MATCH"
+  },
+  "task_coverage": {
+    "workflow_tasks": [
+      "task::mutation::full",
+      "task::mutation::smoke",
+      "task::static::codeql",
+      "task::static::env-check",
+      "task::static::frontend-suite",
+      "task::static::status-summary",
+      "task::unit::backend-suite"
+    ],
+    "ci_matcher_tasks": [
+      "task::mutation::full",
+      "task::mutation::smoke",
+      "task::mutation::targeted",
+      "task::static::env-check",
+      "task::static::frontend-suite",
+      "task::static::status-summary",
+      "task::unit::backend-suite"
+    ],
+    "graph_tasks": [
+      "task::contract::contracts",
+      "task::contract::frontend",
+      "task::integration::integration",
+      "task::integration::playwright",
+      "task::mutation::mutation",
+      "task::property::property",
+      "task::unit::backend",
+      "task::unit::full",
+      "task::unit::golden",
+      "task::unit::migration",
+      "task::unit::quick",
+      "task::unit::repository",
+      "task::unit::runtime"
+    ],
+    "workflow_in_graph": [],
+    "workflow_not_in_graph": [
+      "task::mutation::full",
+      "task::mutation::smoke",
+      "task::static::codeql",
+      "task::static::env-check",
+      "task::static::frontend-suite",
+      "task::static::status-summary",
+      "task::unit::backend-suite"
+    ],
+    "graph_not_in_workflow": [
+      "task::contract::contracts",
+      "task::contract::frontend",
+      "task::integration::integration",
+      "task::integration::playwright",
+      "task::mutation::mutation",
+      "task::property::property",
+      "task::unit::backend",
+      "task::unit::full",
+      "task::unit::golden",
+      "task::unit::migration",
+      "task::unit::quick",
+      "task::unit::repository",
+      "task::unit::runtime"
+    ]
+  },
+  "unmatched_commands": []
+}

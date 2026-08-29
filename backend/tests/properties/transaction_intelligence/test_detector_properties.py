@@ -78,7 +78,10 @@ class TestCashConversionProperties:
     @SETTINGS
     @given(amount=st.integers(max_value=0))
     def test_non_positive_debit_never_detects(self, amount: int) -> None:
-        assert detect(make_debit(amount), [make_credit(1, 500_000)], [PROVIDER], []) is None
+        assert (
+            detect(make_debit(amount), [make_credit(1, 500_000)], [PROVIDER], [])
+            is None
+        )
 
     @SETTINGS
     @given(amount=st.integers(min_value=100_000, max_value=10_000_000))
@@ -101,7 +104,9 @@ class TestCashConversionProperties:
     def test_fee_arithmetic_reconciles(self, amount: int) -> None:
         credit_amount = amount - (amount // 40)  # ~2.5% fee
         assume(credit_amount > 0)
-        result = detect(make_debit(amount), [make_credit(1, credit_amount)], [PROVIDER], [])
+        result = detect(
+            make_debit(amount), [make_credit(1, credit_amount)], [PROVIDER], []
+        )
         if result is not None:
             assert result.fee_paise == amount - credit_amount
             assert result.fee_bps == _calculate_fee_bps(amount, credit_amount)
@@ -111,7 +116,9 @@ class TestCashConversionProperties:
         debit=st.integers(min_value=1, max_value=10_000_000),
         credit=st.integers(min_value=0, max_value=10_000_000),
     )
-    def test_fee_bps_non_negative_when_credit_leq_debit(self, debit: int, credit: int) -> None:
+    def test_fee_bps_non_negative_when_credit_leq_debit(
+        self, debit: int, credit: int
+    ) -> None:
         assume(credit <= debit)
         assert _calculate_fee_bps(debit, credit) >= 0
 
@@ -126,7 +133,17 @@ class TestCashConversionProperties:
             assert 301 <= fee <= 500
 
     @SETTINGS
-    @given(matrix=st.lists(st.lists(st.floats(min_value=0, max_value=1e9, allow_nan=False), min_size=2, max_size=2), min_size=2, max_size=2))
+    @given(
+        matrix=st.lists(
+            st.lists(
+                st.floats(min_value=0, max_value=1e9, allow_nan=False),
+                min_size=2,
+                max_size=2,
+            ),
+            min_size=2,
+            max_size=2,
+        )
+    )
     def test_hungarian_assignments_are_one_to_one(self, matrix) -> None:
         assignments = _hungarian_inline([list(row) for row in matrix])
         rows = [i for i, _ in assignments]
@@ -135,9 +152,15 @@ class TestCashConversionProperties:
         assert len(cols) == len(set(cols))
 
     @SETTINGS
-    @given(account_type=st.sampled_from(["savings", "current", "loan", "credit_card", "od"]))
+    @given(
+        account_type=st.sampled_from(
+            ["savings", "current", "loan", "credit_card", "od"]
+        )
+    )
     def test_savings_or_current_predicate(self, account_type: str) -> None:
-        assert _is_savings_or_current(account_type) == (account_type in ("savings", "current"))
+        assert _is_savings_or_current(account_type) == (
+            account_type in ("savings", "current")
+        )
 
     @SETTINGS
     @given(
@@ -184,7 +207,12 @@ class TestCcPaymentProperties:
         self, due: int, payment: int, min_due: int
     ) -> None:
         assume(min_due <= due)
-        txn = {"id": 1, "description": "CC", "amount_paise": payment, "date_iso": "2026-08-01"}
+        txn = {
+            "id": 1,
+            "description": "CC",
+            "amount_paise": payment,
+            "date_iso": "2026-08-01",
+        }
         statement = {"id": 9, "total_amount_due": due, "minimum_amount_due": min_due}
         result = classify_cc_payment(txn, statement)
         if payment >= due - 100:
@@ -200,7 +228,12 @@ class TestCcPaymentProperties:
     @SETTINGS
     @given(payment=st.integers(min_value=0, max_value=10_000_000))
     def test_unmatched_statement_zeroes_ledger_fields(self, payment: int) -> None:
-        txn = {"id": 1, "description": "CC", "amount_paise": payment, "date_iso": "2026-08-01"}
+        txn = {
+            "id": 1,
+            "description": "CC",
+            "amount_paise": payment,
+            "date_iso": "2026-08-01",
+        }
         result = classify_cc_payment(txn, None)
         assert result.statement_amount_paise == 0
         assert result.minimum_due_paise == 0
@@ -226,9 +259,9 @@ class TestLoanEmiProperties:
         amount_low = expected - delta
         amount_high = expected + delta
         assume(amount_low > 0)
-        assert _amount_within_tolerance(amount_low, expected) == _amount_within_tolerance(
-            amount_high, expected
-        )
+        assert _amount_within_tolerance(
+            amount_low, expected
+        ) == _amount_within_tolerance(amount_high, expected)
 
     @SETTINGS
     @given(expected=st.integers(min_value=1, max_value=10_000_000))
@@ -250,7 +283,9 @@ class TestLoanEmiProperties:
         amount=st.integers(max_value=0),
         date=st.sampled_from(["", "2026-08-01"]),
     )
-    def test_zero_amount_or_guarded_inputs_return_none(self, amount: int, date: str) -> None:
+    def test_zero_amount_or_guarded_inputs_return_none(
+        self, amount: int, date: str
+    ) -> None:
         txn = {"id": 1, "debit": amount, "date_iso": date, "description": "LOAN EMI"}
         assert detect_emi_payment(txn, [{"id": 1, "emi_paise": 100_000}], {}) is None
 
@@ -259,7 +294,9 @@ class TestLoanEmiProperties:
         emi=st.integers(min_value=1_000, max_value=10_000_000),
         desc=st.sampled_from(["LOAN EMI", "COFFEE", "EMI", "GROCERY"]),
     )
-    def test_result_priority_and_confidence_in_vocabulary(self, emi: int, desc: str) -> None:
+    def test_result_priority_and_confidence_in_vocabulary(
+        self, emi: int, desc: str
+    ) -> None:
         txn = {
             "id": 1,
             "debit": emi,

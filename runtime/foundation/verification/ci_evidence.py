@@ -42,6 +42,7 @@ M29.5  Local/CI semantic-equivalence checking across six dimensions
 
 Pure logic + explicit filesystem reads. No subprocess except git SHA.
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -83,6 +84,7 @@ CertificationDisposition = ReuseDisposition
 # M29.1 — Canonical CI evidence contract
 # ===========================================================================
 
+
 @dataclass(frozen=True, slots=True)
 class CIEvidenceRecord:
     """One CI verification task's canonical evidence record.
@@ -94,13 +96,13 @@ class CIEvidenceRecord:
 
     record_id: str
     repository_sha: str
-    workflow: str                       # e.g. "mutation.yml"
-    job: str                            # e.g. "mutation"
-    step: str                           # step index or step name
-    verification_task: str              # enumerated task id, e.g. "task::mutation::full"
-    component: str | None               # full population component or None
+    workflow: str  # e.g. "mutation.yml"
+    job: str  # e.g. "mutation"
+    step: str  # step index or step name
+    verification_task: str  # enumerated task id, e.g. "task::mutation::full"
+    component: str | None  # full population component or None
     capability: str | None
-    evidence_kind: str                  # "mutation-summary", "test-report", ...
+    evidence_kind: str  # "mutation-summary", "test-report", ...
     execution_mode: ExecutionMode
     source_fingerprint: str
     test_fingerprint: str
@@ -108,10 +110,10 @@ class CIEvidenceRecord:
     toolchain_fingerprint: str
     population_fingerprint: str
     evidence_artifact_fingerprint: str  # sha256 of the artifact bytes ("" if none)
-    artifact_path: str                  # repo-relative path ("" if none)
+    artifact_path: str  # repo-relative path ("" if none)
     started_at: str
     ended_at: str
-    exit_status: int                    # 0 == success
+    exit_status: int  # 0 == success
     failure_classification: str | None  # FailureKind value or None
     certification_disposition: CertificationDisposition | None = None
     summary: dict[str, Any] = field(default_factory=dict)
@@ -228,21 +230,22 @@ def load_ci_evidence(path: Path | str) -> list[CIEvidenceRecord]:
 # the first match wins. A command that matches nothing is explicitly
 # recorded as a non-verification step — never guessed into a binding.
 
+
 @dataclass(frozen=True, slots=True)
 class CommandSemantics:
-    task_kind: str                       # graph TaskKind vocabulary
-    verification_task: str               # stable task id template
+    task_kind: str  # graph TaskKind vocabulary
+    verification_task: str  # stable task id template
     evidence_kind: str
     execution_mode: ExecutionMode
-    reusable_evidence: bool              # can produce reusable measurement evidence
+    reusable_evidence: bool  # can produce reusable measurement evidence
     scope: Literal[
-        "population",     # whole 14-component population
-        "component",      # one component (--target)
-        "capability_all", # all capabilities' test surface (behavioral suite)
-        "surface_only",   # exercises a test surface, no measurement claim
-        "infra_health",   # environment/infrastructure probe, not evidence
+        "population",  # whole 14-component population
+        "component",  # one component (--target)
+        "capability_all",  # all capabilities' test surface (behavioral suite)
+        "surface_only",  # exercises a test surface, no measurement claim
+        "infra_health",  # environment/infrastructure probe, not evidence
     ]
-    depends_on_config: bool              # semantics depend on mutation/config files
+    depends_on_config: bool  # semantics depend on mutation/config files
     description: str
 
 
@@ -272,81 +275,172 @@ def _sem(
 COMMAND_MATCHERS: tuple[tuple[str, CommandSemantics], ...] = (
     (
         "verify.py mutation --smoke",
-        _sem("mutation", "task::mutation::smoke", "mutation-smoke-summary",
-             "observational", False, "infra_health", True,
-             "bounded mutation infrastructure health check"),
+        _sem(
+            "mutation",
+            "task::mutation::smoke",
+            "mutation-smoke-summary",
+            "observational",
+            False,
+            "infra_health",
+            True,
+            "bounded mutation infrastructure health check",
+        ),
     ),
     (
         "run_mutation_selective.sh",
-        _sem("mutation", "task::mutation::full", "mutation-summary",
-             "authoritative", True, "population", True,
-             "authoritative full/selective mutation campaign"),
+        _sem(
+            "mutation",
+            "task::mutation::full",
+            "mutation-summary",
+            "authoritative",
+            True,
+            "population",
+            True,
+            "authoritative full/selective mutation campaign",
+        ),
     ),
     (
         "verify.py mutation --target",
-        _sem("mutation", "task::mutation::targeted", "mutation-summary",
-             "targeted", True, "component", True,
-             "planner-selected single-component mutation measurement"),
+        _sem(
+            "mutation",
+            "task::mutation::targeted",
+            "mutation-summary",
+            "targeted",
+            True,
+            "component",
+            True,
+            "planner-selected single-component mutation measurement",
+        ),
     ),
     (
         "verify.py mutation",
-        _sem("mutation", "task::mutation::full", "mutation-summary",
-             "authoritative", True, "population", True,
-             "authoritative full mutation campaign"),
+        _sem(
+            "mutation",
+            "task::mutation::full",
+            "mutation-summary",
+            "authoritative",
+            True,
+            "population",
+            True,
+            "authoritative full mutation campaign",
+        ),
     ),
     (
         "run_backend_verification.sh",
-        _sem("unit", "task::unit::backend-suite", "test-report",
-             "observational", True, "capability_all", False,
-             "backend behavioral suite (unit/integration/property/contract)"),
+        _sem(
+            "unit",
+            "task::unit::backend-suite",
+            "test-report",
+            "observational",
+            True,
+            "capability_all",
+            False,
+            "backend behavioral suite (unit/integration/property/contract)",
+        ),
     ),
     (
         "verify.py backend",
-        _sem("unit", "task::unit::backend-suite", "test-report",
-             "observational", True, "capability_all", False,
-             "backend behavioral suite via verify.py profile"),
+        _sem(
+            "unit",
+            "task::unit::backend-suite",
+            "test-report",
+            "observational",
+            True,
+            "capability_all",
+            False,
+            "backend behavioral suite via verify.py profile",
+        ),
     ),
     (
         "run_frontend_verification.sh",
-        _sem("static", "task::static::frontend-suite", "test-report",
-             "observational", True, "surface_only", False,
-             "frontend unit/typecheck/build suite"),
+        _sem(
+            "static",
+            "task::static::frontend-suite",
+            "test-report",
+            "observational",
+            True,
+            "surface_only",
+            False,
+            "frontend unit/typecheck/build suite",
+        ),
     ),
     (
         "verify.py frontend",
-        _sem("static", "task::static::frontend-suite", "test-report",
-             "observational", True, "surface_only", False,
-             "frontend suite via verify.py profile"),
+        _sem(
+            "static",
+            "task::static::frontend-suite",
+            "test-report",
+            "observational",
+            True,
+            "surface_only",
+            False,
+            "frontend suite via verify.py profile",
+        ),
     ),
     (
         "run_playwright_tests.sh",
-        _sem("e2e", "task::e2e::playwright", "test-report",
-             "observational", True, "surface_only", False,
-             "Playwright interaction verification"),
+        _sem(
+            "e2e",
+            "task::e2e::playwright",
+            "test-report",
+            "observational",
+            True,
+            "surface_only",
+            False,
+            "Playwright interaction verification",
+        ),
     ),
     (
         "run_golden_tests.sh",
-        _sem("golden", "task::golden::regression", "golden",
-             "observational", True, "surface_only", False,
-             "golden dataset regression comparison"),
+        _sem(
+            "golden",
+            "task::golden::regression",
+            "golden",
+            "observational",
+            True,
+            "surface_only",
+            False,
+            "golden dataset regression comparison",
+        ),
     ),
     (
         "codeql-action/analyze",
-        _sem("static", "task::static::codeql", "security-scan",
-             "observational", False, "surface_only", False,
-             "CodeQL security analysis (GitHub-native action)"),
+        _sem(
+            "static",
+            "task::static::codeql",
+            "security-scan",
+            "observational",
+            False,
+            "surface_only",
+            False,
+            "CodeQL security analysis (GitHub-native action)",
+        ),
     ),
     (
         "verify.py env-check",
-        _sem("static", "task::static::env-check", "environment-fingerprint",
-             "observational", False, "infra_health", False,
-             "canonical environment fingerprint check"),
+        _sem(
+            "static",
+            "task::static::env-check",
+            "environment-fingerprint",
+            "observational",
+            False,
+            "infra_health",
+            False,
+            "canonical environment fingerprint check",
+        ),
     ),
     (
         "verify.py status",
-        _sem("static", "task::static::status-summary", "status-summary",
-             "observational", False, "infra_health", False,
-             "engineering runtime status summary (not evidence)"),
+        _sem(
+            "static",
+            "task::static::status-summary",
+            "status-summary",
+            "observational",
+            False,
+            "infra_health",
+            False,
+            "engineering runtime status summary (not evidence)",
+        ),
     ),
 )
 
@@ -379,6 +473,7 @@ def normalize_component(short: str | None) -> str | None:
 # Workflow parsing + binding construction
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True, slots=True)
 class CIBinding:
     """A documented binding of one CI job step into the graph."""
@@ -387,9 +482,9 @@ class CIBinding:
     workflow: str
     job: str
     step_index: int
-    command: str                 # literal command text (derivation source)
-    derivation: str              # "<workflow>#jobs.<job>.steps[<i>].run"
-    semantics: CommandSemantics | None   # None => explicitly non-verification
+    command: str  # literal command text (derivation source)
+    derivation: str  # "<workflow>#jobs.<job>.steps[<i>].run"
+    semantics: CommandSemantics | None  # None => explicitly non-verification
     component: str | None
     capability: str | None
     rationale: str
@@ -469,9 +564,7 @@ def build_ci_bindings(
                 if not raw_cmd:
                     continue
                 sem = resolve_command_semantics(raw_cmd)
-                comp = (
-                    _extract_target_engine(raw_cmd) if sem is not None else None
-                )
+                comp = _extract_target_engine(raw_cmd) if sem is not None else None
                 cap = None
                 if comp:
                     from runtime.foundation.verification.evidence_reuse import (
@@ -511,6 +604,7 @@ def verification_bindings(bindings: Iterable[CIBinding]) -> list[CIBinding]:
 # Graph binding — add CI tasks into the VerificationGraph
 # ---------------------------------------------------------------------------
 
+
 def bind_into_graph(graph, bindings: Iterable[CIBinding]):
     """Bind CI verification steps into an existing VerificationGraph.
 
@@ -537,8 +631,7 @@ def bind_into_graph(graph, bindings: Iterable[CIBinding]):
             command=None,
             script=f".github/workflows/{b.workflow}",
             description=(
-                f"CI-bound: {b.workflow}#{b.job} "
-                f"({b.semantics.description})"
+                f"CI-bound: {b.workflow}#{b.job} " f"({b.semantics.description})"
             ),
             capability_ids=(b.capability,) if b.capability else (),
             estimated_duration_seconds=0,
@@ -603,7 +696,9 @@ class CIRepositoryContext:
     configuration_fingerprint: str = ""
     toolchain_fingerprint: str = ""
     population_fingerprint: str = ""
-    task_definitions: dict[str, str] = field(default_factory=dict)  # task_id -> definition hash
+    task_definitions: dict[str, str] = field(
+        default_factory=dict
+    )  # task_id -> definition hash
 
     @classmethod
     def capture(
@@ -639,8 +734,12 @@ class CIRepositoryContext:
             repository_sha=repository_sha or "",
             component_source_fingerprints=src,
             component_test_fingerprints=tst,
-            configuration_fingerprint=collect_repo_fingerprints(comps[0]).config if comps else "",
-            toolchain_fingerprint=collect_repo_fingerprints(comps[0]).toolchain if comps else "",
+            configuration_fingerprint=(
+                collect_repo_fingerprints(comps[0]).config if comps else ""
+            ),
+            toolchain_fingerprint=(
+                collect_repo_fingerprints(comps[0]).toolchain if comps else ""
+            ),
             population_fingerprint=pop_fp,
         )
 
@@ -649,7 +748,7 @@ class CIRepositoryContext:
 class DetectedDrift:
     drift_kind: DriftKind
     detail: str
-    rule_id: str | None = None     # C42.27 invalidation rule that covers it
+    rule_id: str | None = None  # C42.27 invalidation rule that covers it
 
 
 @dataclass(frozen=True, slots=True)
@@ -709,9 +808,13 @@ def classify_ci_failure(
     """
     if artifact_state in ("missing", "corrupt"):
         return FailureKind.EVIDENCE
-    notes = (record.notes or "").lower() + " " + (record.summary or {}).get(
-        "error", ""
-    ).lower() if isinstance(record.summary, dict) else (record.notes or "").lower()
+    notes = (
+        (record.notes or "").lower()
+        + " "
+        + (record.summary or {}).get("error", "").lower()
+        if isinstance(record.summary, dict)
+        else (record.notes or "").lower()
+    )
     if record.exit_status in (-1, -9, -15) or any(
         m in notes for m in INFRASTRUCTURE_MARKERS
     ):
@@ -734,13 +837,17 @@ def validate_ci_evidence(
     drifts: list[DetectedDrift] = []
 
     # Repository drift
-    if record.repository_sha and context.repository_sha and (
-        record.repository_sha != context.repository_sha
+    if (
+        record.repository_sha
+        and context.repository_sha
+        and (record.repository_sha != context.repository_sha)
     ):
-        drifts.append(DetectedDrift(
-            "repository_drift",
-            f"record sha {record.repository_sha[:12]} != current {context.repository_sha[:12]}",
-        ))
+        drifts.append(
+            DetectedDrift(
+                "repository_drift",
+                f"record sha {record.repository_sha[:12]} != current {context.repository_sha[:12]}",
+            )
+        )
 
     # Source drift (component-scoped; global sha differences alone do
     # not invalidate component evidence — only the component's own
@@ -748,11 +855,13 @@ def validate_ci_evidence(
     if record.component and record.source_fingerprint:
         current = context.component_source_fingerprints.get(record.component)
         if current is not None and current != record.source_fingerprint:
-            drifts.append(DetectedDrift(
-                "source_drift",
-                f"source fingerprint changed for {record.component}",
-                rule_id="R-SRC-001",
-            ))
+            drifts.append(
+                DetectedDrift(
+                    "source_drift",
+                    f"source fingerprint changed for {record.component}",
+                    rule_id="R-SRC-001",
+                )
+            )
 
     # Test drift (component-scoped test surface, per R-SRC-003)
     if record.test_fingerprint:
@@ -762,14 +871,16 @@ def validate_ci_evidence(
             else None
         )
         if current_t is not None and current_t != record.test_fingerprint:
-            drifts.append(DetectedDrift(
-                "test_drift",
-                (
-                    f"test surface fingerprint changed for "
-                    f"{record.component or 'surface'}"
-                ),
-                rule_id="R-SRC-003",
-            ))
+            drifts.append(
+                DetectedDrift(
+                    "test_drift",
+                    (
+                        f"test surface fingerprint changed for "
+                        f"{record.component or 'surface'}"
+                    ),
+                    rule_id="R-SRC-003",
+                )
+            )
         elif record.component is None:
             # Surface-scoped record (e.g. whole-suite run): its test
             # fingerprint must match at least one currently-known
@@ -779,11 +890,13 @@ def validate_ci_evidence(
                 record.test_fingerprint
                 not in context.component_test_fingerprints.values()
             ):
-                drifts.append(DetectedDrift(
-                    "test_drift",
-                    "suite test fingerprint matches no current test surface",
-                    rule_id="R-SRC-003",
-                ))
+                drifts.append(
+                    DetectedDrift(
+                        "test_drift",
+                        "suite test fingerprint matches no current test surface",
+                        rule_id="R-SRC-003",
+                    )
+                )
 
     # Configuration drift — only for evidence whose semantics depend on it
     if (
@@ -795,19 +908,23 @@ def validate_ci_evidence(
             record.verification_task.startswith("task::mutation")
         )
         if sem_dependent:
-            drifts.append(DetectedDrift(
-                "configuration_drift",
-                "mutation configuration fingerprint changed",
-                rule_id="R-CFG-001",
-            ))
+            drifts.append(
+                DetectedDrift(
+                    "configuration_drift",
+                    "mutation configuration fingerprint changed",
+                    rule_id="R-CFG-001",
+                )
+            )
         elif record.execution_mode == "authoritative":
             # Authoritative population evidence treats any config drift
             # as task-definition relevant.
-            drifts.append(DetectedDrift(
-                "configuration_drift",
-                "authoritative evidence configuration fingerprint changed",
-                rule_id="R-TASK-001",
-            ))
+            drifts.append(
+                DetectedDrift(
+                    "configuration_drift",
+                    "authoritative evidence configuration fingerprint changed",
+                    rule_id="R-TASK-001",
+                )
+            )
 
     # Toolchain drift (R-CFG-002 — measurement not comparable across
     # toolchains; applies to mutation-kind evidence)
@@ -817,11 +934,13 @@ def validate_ci_evidence(
         and record.toolchain_fingerprint != context.toolchain_fingerprint
     ):
         if record.evidence_kind.startswith("mutation"):
-            drifts.append(DetectedDrift(
-                "toolchain_drift",
-                "mutmut/pytest toolchain changed; measurement not comparable",
-                rule_id="R-CFG-002",
-            ))
+            drifts.append(
+                DetectedDrift(
+                    "toolchain_drift",
+                    "mutmut/pytest toolchain changed; measurement not comparable",
+                    rule_id="R-CFG-002",
+                )
+            )
 
     # Population drift
     if (
@@ -829,11 +948,13 @@ def validate_ci_evidence(
         and context.population_fingerprint
         and record.population_fingerprint != context.population_fingerprint
     ):
-        drifts.append(DetectedDrift(
-            "population_drift",
-            "population snapshot fingerprint changed; aggregate recomputation required",
-            rule_id="R-POP-001",
-        ))
+        drifts.append(
+            DetectedDrift(
+                "population_drift",
+                "population snapshot fingerprint changed; aggregate recomputation required",
+                rule_id="R-POP-001",
+            )
+        )
 
     # Task-definition drift (R-TASK-001): the task's command/script
     # definition changed since the record was produced.
@@ -843,11 +964,13 @@ def validate_ci_evidence(
             f"{record.workflow}|{record.job}|{record.verification_task}".encode()
         ).hexdigest()
         if current_def != record_def:
-            drifts.append(DetectedDrift(
-                "task_definition_drift",
-                f"definition of {record.verification_task} changed since measurement",
-                rule_id="R-TASK-001",
-            ))
+            drifts.append(
+                DetectedDrift(
+                    "task_definition_drift",
+                    f"definition of {record.verification_task} changed since measurement",
+                    rule_id="R-TASK-001",
+                )
+            )
 
     # Artifact corruption / incompleteness
     artifact_state: Literal["present", "missing", "corrupt", "absent_by_design"] = (
@@ -864,18 +987,25 @@ def validate_ci_evidence(
             blob = resolved.read_bytes()
         if blob is None:
             artifact_state = "missing"
-            drifts.append(DetectedDrift(
-                "artifact_corruption",
-                f"declared artifact missing: {record.artifact_path}",
-            ))
+            drifts.append(
+                DetectedDrift(
+                    "artifact_corruption",
+                    f"declared artifact missing: {record.artifact_path}",
+                )
+            )
         else:
             actual = hashlib.sha256(blob).hexdigest()
-            if record.evidence_artifact_fingerprint and actual != record.evidence_artifact_fingerprint:
+            if (
+                record.evidence_artifact_fingerprint
+                and actual != record.evidence_artifact_fingerprint
+            ):
                 artifact_state = "corrupt"
-                drifts.append(DetectedDrift(
-                    "artifact_corruption",
-                    "artifact checksum mismatch (corrupt or incomplete)",
-                ))
+                drifts.append(
+                    DetectedDrift(
+                        "artifact_corruption",
+                        "artifact checksum mismatch (corrupt or incomplete)",
+                    )
+                )
             else:
                 artifact_state = "present"
 
@@ -890,6 +1020,7 @@ def validate_ci_evidence(
 # ---------------------------------------------------------------------------
 # Reuse decision — green is never sufficient
 # ---------------------------------------------------------------------------
+
 
 @dataclass(frozen=True, slots=True)
 class CIReuseDecision:
@@ -947,17 +1078,21 @@ def ci_reuse_decision(
             f"artifact state={drift_report.artifact_state}; evidence_failure"
         )
         return CIReuseDecision(
-            record.record_id, "invalidated_evidence_only", False, fk,
+            record.record_id,
+            "invalidated_evidence_only",
+            False,
+            fk,
             tuple(reasons),
         )
 
     if drift_report.exit_status != 0:
         fk = classify_ci_failure(record, artifact_state=drift_report.artifact_state)
-        reasons.append(
-            f"exit_status={drift_report.exit_status}; classified {fk.value}"
-        )
+        reasons.append(f"exit_status={drift_report.exit_status}; classified {fk.value}")
         return CIReuseDecision(
-            record.record_id, "invalidated_evidence_only", False, fk.value,
+            record.record_id,
+            "invalidated_evidence_only",
+            False,
+            fk.value,
             tuple(reasons),
         )
 
@@ -966,9 +1101,7 @@ def ci_reuse_decision(
             f"task {semantics.verification_task} is {semantics.scope}; "
             "observational evidence is not reusable measurement"
         )
-        return CIReuseDecision(
-            record.record_id, "stale", False, None, tuple(reasons)
-        )
+        return CIReuseDecision(record.record_id, "stale", False, None, tuple(reasons))
 
     # Repository drift is an inherent invalidation: the code at
     # measurement time differs from the code now, regardless of which
@@ -979,7 +1112,10 @@ def ci_reuse_decision(
             "reusable for the current SHA"
         )
         return CIReuseDecision(
-            record.record_id, "invalidated_evidence_only", False, None,
+            record.record_id,
+            "invalidated_evidence_only",
+            False,
+            None,
             tuple(reasons),
         )
 
@@ -1005,9 +1141,7 @@ def ci_reuse_decision(
         disp = disposition_map[scope]
         if disp != "reusable":
             reasons.extend(d.detail for d in drift_report.drifts)
-            return CIReuseDecision(
-                record.record_id, disp, False, None, tuple(reasons)
-            )
+            return CIReuseDecision(record.record_id, disp, False, None, tuple(reasons))
         reasons.append("drift present but rules do not invalidate")
 
     # No drift, green, reusable task kind.
@@ -1074,6 +1208,7 @@ def validate_and_decide(
 # M29.4 — Ingestion into the canonical local representation
 # ===========================================================================
 
+
 def ingest_ci_evidence(
     record: CIEvidenceRecord,
     *,
@@ -1099,9 +1234,11 @@ def ingest_ci_evidence(
         verification_kind=(
             "mutation"
             if record.evidence_kind.startswith("mutation")
-            else record.verification_task.split("::")[1]
-            if "::" in record.verification_task
-            else "unknown"
+            else (
+                record.verification_task.split("::")[1]
+                if "::" in record.verification_task
+                else "unknown"
+            )
         ),
         started_at=record.started_at,
         completed_at=record.ended_at,
@@ -1112,10 +1249,22 @@ def ingest_ci_evidence(
         command=f"ci:{record.workflow}/{record.job}#{record.step}",
         exit_code=record.exit_status,
         failure_kind=fk,
-        failure_message=(decision.reasons[0] if decision and decision.reasons else record.notes),
-        counts=dict(record.summary.get("counts", {})) if isinstance(record.summary, dict) else {},
-        coverage=record.summary.get("coverage") if isinstance(record.summary, dict) else None,
-        test_count=record.summary.get("test_count") if isinstance(record.summary, dict) else None,
+        failure_message=(
+            decision.reasons[0] if decision and decision.reasons else record.notes
+        ),
+        counts=(
+            dict(record.summary.get("counts", {}))
+            if isinstance(record.summary, dict)
+            else {}
+        ),
+        coverage=(
+            record.summary.get("coverage") if isinstance(record.summary, dict) else None
+        ),
+        test_count=(
+            record.summary.get("test_count")
+            if isinstance(record.summary, dict)
+            else None
+        ),
         source_fingerprint=record.source_fingerprint,
         test_fingerprint=record.test_fingerprint,
         config_fingerprint=record.configuration_fingerprint,
@@ -1123,7 +1272,7 @@ def ingest_ci_evidence(
         repository_sha=record.repository_sha,
         artifact_paths=(record.artifact_path,) if record.artifact_path else (),
         notes=f"ingested from CI ({record.workflow}/{record.job}); "
-              f"disposition={decision.disposition if decision else 'unevaluated'}",
+        f"disposition={decision.disposition if decision else 'unevaluated'}",
     )
 
 
@@ -1210,7 +1359,11 @@ class EquivalenceReport:
             "ci_record_id": self.ci_record_id,
             "semantically_equivalent": self.semantically_equivalent,
             "dimensions": [
-                {"dimension": d.dimension, "equivalent": d.equivalent, "detail": d.detail}
+                {
+                    "dimension": d.dimension,
+                    "equivalent": d.equivalent,
+                    "detail": d.detail,
+                }
                 for d in self.dimensions
             ],
         }
@@ -1235,52 +1388,72 @@ def semantic_equivalence(
         and local.config_fingerprint == ingested.config_fingerprint
         and local.toolchain_fingerprint == ingested.toolchain_fingerprint
     )
-    dims.append(EquivalenceDimension(
-        "identity", ident,
-        "four fingerprints match" if ident else "fingerprint quad differs",
-    ))
+    dims.append(
+        EquivalenceDimension(
+            "identity",
+            ident,
+            "four fingerprints match" if ident else "fingerprint quad differs",
+        )
+    )
 
     # Scope: same component/capability/verification kind.
     scope_eq = (
         local.component == ingested.component
         and local.verification_kind == ingested.verification_kind
     )
-    dims.append(EquivalenceDimension(
-        "scope", scope_eq,
-        f"component={local.component!r} kind={local.verification_kind!r}"
-        + ("" if scope_eq else " differs from CI ingestion"),
-    ))
+    dims.append(
+        EquivalenceDimension(
+            "scope",
+            scope_eq,
+            f"component={local.component!r} kind={local.verification_kind!r}"
+            + ("" if scope_eq else " differs from CI ingestion"),
+        )
+    )
 
     # Execution: both carry command + timing + exit code shape.
-    exec_eq = all([
-        bool(local.command),
-        bool(ingested.command),
-        local.completed_at is not None,
-        ingested.completed_at is not None,
-        isinstance(local.exit_code, int),
-        isinstance(ingested.exit_code, int),
-    ])
-    dims.append(EquivalenceDimension(
-        "execution", exec_eq,
-        "command/timing/exit shape present on both sides"
-        if exec_eq else "execution shape incomplete",
-    ))
+    exec_eq = all(
+        [
+            bool(local.command),
+            bool(ingested.command),
+            local.completed_at is not None,
+            ingested.completed_at is not None,
+            isinstance(local.exit_code, int),
+            isinstance(ingested.exit_code, int),
+        ]
+    )
+    dims.append(
+        EquivalenceDimension(
+            "execution",
+            exec_eq,
+            (
+                "command/timing/exit shape present on both sides"
+                if exec_eq
+                else "execution shape incomplete"
+            ),
+        )
+    )
 
     # Result: success/failure agreement (semantic, not byte-level).
     local_ok = local.failure_kind is None and local.exit_code == 0
     ingested_ok = ingested.failure_kind is None and ingested.exit_code == 0
     result_eq = local_ok == ingested_ok
-    dims.append(EquivalenceDimension(
-        "result", result_eq,
-        f"outcome agreement (local_ok={local_ok}, ci_ok={ingested_ok})",
-    ))
+    dims.append(
+        EquivalenceDimension(
+            "result",
+            result_eq,
+            f"outcome agreement (local_ok={local_ok}, ci_ok={ingested_ok})",
+        )
+    )
 
     # Validity: same repository identity spine.
     validity_eq = local.repository_sha == ingested.repository_sha
-    dims.append(EquivalenceDimension(
-        "validity", validity_eq,
-        f"repository_sha {'match' if validity_eq else 'mismatch'}",
-    ))
+    dims.append(
+        EquivalenceDimension(
+            "validity",
+            validity_eq,
+            f"repository_sha {'match' if validity_eq else 'mismatch'}",
+        )
+    )
 
     # Reuse disposition: same verdict under the same invalidation model.
     if local_decision is not None and ci_decision is not None:

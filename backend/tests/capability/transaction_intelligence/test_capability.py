@@ -47,7 +47,12 @@ class TestTransactionIntelligenceCapability:
     def test_emi_detection_capability_wiring(self) -> None:
         """EMI detector must classify a schedule-backed payment end to end."""
         result = detect_emi_payment(
-            {"id": 1, "debit": 1_000_000, "date_iso": "2026-08-01", "description": "EMI"},
+            {
+                "id": 1,
+                "debit": 1_000_000,
+                "date_iso": "2026-08-01",
+                "description": "EMI",
+            },
             [{"id": 5, "emi_paise": 1_000_000, "next_emi_date": None}],
             {},
         )
@@ -101,4 +106,3 @@ class TestTransactionIntelligenceCapability:
         classified = classify_cc_payment(txn, statement)
         assert classified.lifecycle_state == "fully_paid"
         assert classified.remaining_outstanding_paise == 0
-

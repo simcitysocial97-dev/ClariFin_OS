@@ -1,0 +1,28 @@
+{
+  "schema": "m9-c42.38-resource-efficiency/v1",
+  "generated_at": "2026-08-27T01:56:00.000000+00:00",
+  "phase": "M9-C42.38",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "methodology": "Reconcile the already-demonstrated efficiency model from C42.28/C42.32-36/C42.37. Figures are preserved exactly; each is tagged measured / derived / estimated. No inflation.",
+  "properties": [
+    {"property": "targeted component execution", "status": "PRESENT", "evidence": "executor_pipeline.execute_mutation_task targets single component; planner selects exactly the changed component"},
+    {"property": "evidence reuse", "status": "PRESENT", "evidence": "13/14 components reused with intact fingerprints in real master scenario"},
+    {"property": "derived aggregates", "status": "PRESENT", "evidence": "DerivedAggregate computed from ComponentMeasurement; 60.297% is mathematically reconciled, not measured"},
+    {"property": "no unnecessary full campaign", "status": "PRESENT", "evidence": "C42.26/C42.31 gate_full_campaign NOT_TRIGGERS excludes score_improvement/test_addition; no formal trigger fired in C42.38"},
+    {"property": "bounded strengthening", "status": "PRESENT", "evidence": "targeted_revalidation used_full_campaign always False; only the affected component re-measured"}
+  ],
+  "figures": {
+    "components_targeted": {"value": "1/14", "tag": "measured", "source": "C42.32-36 real-master-scenario-full.json"},
+    "components_reused": {"value": "13/14", "tag": "measured", "source": "C42.32-36 real-master-scenario-full.json"},
+    "nominal_mutation_work_avoided_pct": {"value": 92.86, "tag": "derived", "formula": "(14-1)/14 = 0.9286", "source": "C42.28 resource-efficiency + C42.37 resource-efficiency"},
+    "targeted_path_seconds": {"value": 116, "tag": "measured", "source": "C42.37 resource-efficiency.json (real_master_credit_card_change)"},
+    "estimated_full_campaign_seconds": {"value": 5400, "tag": "estimated", "basis": "14 components * nominal per-component mutation cost; order-of-magnitude from C42.28 cost model (840 cost-units, 60 min total) reconciled to seconds", "note": "Approximate; used only for contrast, never presented as a measured value."}
+  },
+  "integrity_checks": [
+    "92.86% derived as (14-1)/14, consistent with 1 targeted / 13 reused.",
+    "116s is a measured targeted path; 5400s is an explicit ESTIMATE and labelled as such.",
+    "60.297% aggregate is a DERIVED mathematically-reconciled value, never relabelled as a fresh measurement.",
+    "No full mutation campaign was executed in C42.38; the avoided work is realized, not hypothetical."
+  ],
+  "verdict": "CERTIFIED"
+}

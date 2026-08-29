@@ -16,6 +16,7 @@ Covers:
 Run with:
     .venv/bin/python -m pytest runtime/tests/test_m9_c42_30.py -v
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -63,6 +64,7 @@ def agent() -> DiagnosticForensicAgent:
 # Record validation + canonicalization
 # ---------------------------------------------------------------------------
 
+
 class TestRecordValidation:
     def test_canonical_record_is_complete(self) -> None:
         _, _, _, _, forensic = _harness()._run_pipeline(
@@ -101,10 +103,7 @@ class TestRecordValidation:
         assert not validation.silently_empty
 
     def test_canonicalization_does_not_mutate_input(self) -> None:
-        record = {
-            stage: {}
-            for stage in ("change", "failures", "uncertainties")
-        }
+        record = {stage: {} for stage in ("change", "failures", "uncertainties")}
         frozen = json.dumps(record, sort_keys=True)
         canonicalize_forensic_record(record)
         assert json.dumps(record, sort_keys=True) == frozen
@@ -113,6 +112,7 @@ class TestRecordValidation:
 # ---------------------------------------------------------------------------
 # Nine questions + verdicts (via scenario pipeline)
 # ---------------------------------------------------------------------------
+
 
 class TestNineQuestions:
     def test_all_nine_answered_for_source_change(self, agent) -> None:
@@ -133,9 +133,7 @@ class TestNineQuestions:
         assert "credit_card_engine" in q3["revalidated"]
         # Q4 — planner authority
         assert "never invents scope" in report.q4_required_execution["authority"]
-        assert report.q4_required_execution["required_tasks"] == [
-            "credit_card_engine"
-        ]
+        assert report.q4_required_execution["required_tasks"] == ["credit_card_engine"]
         # Q5 — actual execution
         assert report.q5_actual_execution["executed"] == ["credit_card_engine"]
         assert not report.q5_actual_execution["failed"]
@@ -192,9 +190,7 @@ class TestVerdicts:
         r = _harness().scenario_ff()
         assert r["verdict"] == "CERTIFICATION_BLOCKED"
 
-    def test_infrastructure_failure_insufficient_not_verification(
-        self, agent
-    ) -> None:
+    def test_infrastructure_failure_insufficient_not_verification(self, agent) -> None:
         r = _harness().scenario_fe()
         assert r["pass"]
         assert r["by_kind"]["infrastructure_failure"] == ["account_engine"]
@@ -268,22 +264,34 @@ class TestDeterminism:
 # Scenario suite FA–FH
 # ---------------------------------------------------------------------------
 
+
 class TestScenarioSuiteFAtoFH:
     def test_full_suite_passes_and_is_deterministic(self) -> None:
-        payload = json.loads(
-            (REPO_ROOT / "runtime/generated/m9-c42.30/m9-c42.30-scenarios.json")
-            .read_text()
-        ) if (REPO_ROOT / "runtime/generated/m9-c42.30/m9-c42.30-scenarios.json").exists() else None
+        payload = (
+            json.loads(
+                (
+                    REPO_ROOT / "runtime/generated/m9-c42.30/m9-c42.30-scenarios.json"
+                ).read_text()
+            )
+            if (
+                REPO_ROOT / "runtime/generated/m9-c42.30/m9-c42.30-scenarios.json"
+            ).exists()
+            else None
+        )
         if payload is None:
             import subprocess
 
             result = subprocess.run(
                 [".venv/bin/python", "runtime/generated/m9-c42.30/m30_9_scenarios.py"],
-                cwd=str(REPO_ROOT), capture_output=True, text=True,
+                cwd=str(REPO_ROOT),
+                capture_output=True,
+                text=True,
             )
             assert result.returncode == 0, result.stderr
             payload = json.loads(
-                (REPO_ROOT / "runtime/generated/m9-c42.30/m9-c42.30-scenarios.json").read_text()
+                (
+                    REPO_ROOT / "runtime/generated/m9-c42.30/m9-c42.30-scenarios.json"
+                ).read_text()
             )
         scenarios = payload["scenarios"]
         assert len(scenarios) == 8

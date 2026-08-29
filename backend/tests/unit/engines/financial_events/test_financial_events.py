@@ -614,27 +614,73 @@ class TestInternalHelpers:
     def test_is_revocable_event(self) -> None:
         """Test _is_revocable_event."""
 
-        assert _is_revocable_event({"event_type": "fund_transfer_out", "lifecycle_state": "open"}) is True
-        assert _is_revocable_event({"event_type": "fund_transfer_in", "lifecycle_state": "partially_settled"}) is True
-        assert _is_revocable_event({"event_type": "fund_transfer_out", "lifecycle_state": "settled"}) is False
-        assert _is_revocable_event({"event_type": "fund_transfer_out", "lifecycle_state": "revoked"}) is False
-        assert _is_revocable_event({"event_type": "cash_advance", "lifecycle_state": "open"}) is False
+        assert (
+            _is_revocable_event(
+                {"event_type": "fund_transfer_out", "lifecycle_state": "open"}
+            )
+            is True
+        )
+        assert (
+            _is_revocable_event(
+                {
+                    "event_type": "fund_transfer_in",
+                    "lifecycle_state": "partially_settled",
+                }
+            )
+            is True
+        )
+        assert (
+            _is_revocable_event(
+                {"event_type": "fund_transfer_out", "lifecycle_state": "settled"}
+            )
+            is False
+        )
+        assert (
+            _is_revocable_event(
+                {"event_type": "fund_transfer_out", "lifecycle_state": "revoked"}
+            )
+            is False
+        )
+        assert (
+            _is_revocable_event(
+                {"event_type": "cash_advance", "lifecycle_state": "open"}
+            )
+            is False
+        )
 
     def test_merge_lifecycle_update(self) -> None:
         """Test _merge_lifecycle_update state merging."""
 
         # None existing -> return candidate
-        result = _merge_lifecycle_update(None, {"event_id": 1, "lifecycle_state": "open", "outstanding_paise": 100})
+        result = _merge_lifecycle_update(
+            None, {"event_id": 1, "lifecycle_state": "open", "outstanding_paise": 100}
+        )
         assert result["lifecycle_state"] == "open"
 
         # settled > partially_settled > revoked > open
-        existing = {"event_id": 1, "lifecycle_state": "partially_settled", "outstanding_paise": 50}
-        candidate = {"event_id": 1, "lifecycle_state": "settled", "outstanding_paise": 0}
+        existing = {
+            "event_id": 1,
+            "lifecycle_state": "partially_settled",
+            "outstanding_paise": 50,
+        }
+        candidate = {
+            "event_id": 1,
+            "lifecycle_state": "settled",
+            "outstanding_paise": 0,
+        }
         result = _merge_lifecycle_update(existing, candidate)
         assert result["lifecycle_state"] == "settled"
 
         # Same state -> smaller outstanding wins
-        existing = {"event_id": 1, "lifecycle_state": "partially_settled", "outstanding_paise": 100}
-        candidate = {"event_id": 1, "lifecycle_state": "partially_settled", "outstanding_paise": 50}
+        existing = {
+            "event_id": 1,
+            "lifecycle_state": "partially_settled",
+            "outstanding_paise": 100,
+        }
+        candidate = {
+            "event_id": 1,
+            "lifecycle_state": "partially_settled",
+            "outstanding_paise": 50,
+        }
         result = _merge_lifecycle_update(existing, candidate)
         assert result["outstanding_paise"] == 50

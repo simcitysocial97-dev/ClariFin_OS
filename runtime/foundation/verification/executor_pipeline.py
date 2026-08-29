@@ -53,6 +53,7 @@ Design contract:
   * No fabricated evidence. Fields that do not apply to a verification
     kind are explicitly absent.
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -73,9 +74,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-assert (REPO_ROOT / "backend").is_dir(), (
-    f"REPO_ROOT sanity check failed: {REPO_ROOT}"
-)
+assert (REPO_ROOT / "backend").is_dir(), f"REPO_ROOT sanity check failed: {REPO_ROOT}"
 
 # C42.27 imports (the authoritative planner + evidence model)
 from runtime.foundation.verification.evidence_planner import (  # noqa: E402
@@ -111,10 +110,10 @@ from runtime.foundation.verification.env import (  # noqa: E402
     hash_file,
 )
 
-
 # ===========================================================================
 # M28.9 — Failure classification taxonomy (placed early; everything depends on it)
 # ===========================================================================
+
 
 class FailureKind(str, Enum):
     """Closed taxonomy of execution outcomes.
@@ -130,6 +129,7 @@ class FailureKind(str, Enum):
     Certification failure  — all required evidence exists but the
                              certification criteria are not satisfied.
     """
+
     VERIFICATION = "verification_failure"
     INFRASTRUCTURE = "infrastructure_failure"
     EVIDENCE = "evidence_failure"
@@ -200,7 +200,7 @@ class ExecutableVerificationTask:
     component: str
     capability: str
     verification_kind: VerificationKind
-    source_task_id: str               # the planner task_id this expands
+    source_task_id: str  # the planner task_id this expands
     execution_command: str
     working_directory: str
     required_environment: tuple[str, ...]
@@ -272,6 +272,7 @@ class ExecutableVerificationPlan:
 # Fingerprinting helpers (deterministic, pure)
 # ===========================================================================
 
+
 def _hash_text(s: str | None) -> str:
     if s is None:
         return ""
@@ -300,7 +301,11 @@ def collect_repo_fingerprints(component: str) -> TaskFingerprints:
     test = backend / "tests" / "unit" / "engines" / component
     if not src.exists():
         # The component name may not include _engine suffix
-        for cand in (backend / "src" / "engines").iterdir() if (backend / "src" / "engines").exists() else []:
+        for cand in (
+            (backend / "src" / "engines").iterdir()
+            if (backend / "src" / "engines").exists()
+            else []
+        ):
             if cand.name.startswith(component):
                 src = cand
                 break
@@ -346,6 +351,7 @@ def collect_repo_fingerprints(component: str) -> TaskFingerprints:
 # ExecutableVerificationTask. Adapters that cannot safely represent
 # the task return executable="not_executable_yet" rather than faking it.
 
+
 def _engine_selection_for(component: str) -> dict | None:
     sel = ENGINE_SELECTION.get(component)
     if sel is not None:
@@ -384,10 +390,7 @@ def adapt_mutation_task(
             },
         )
     sel = _engine_selection_for(component) or {}
-    cmd = (
-        f".venv/bin/python runtime/verify.py mutation "
-        f"--target {component} --json"
-    )
+    cmd = f".venv/bin/python runtime/verify.py mutation " f"--target {component} --json"
     return ExecutableVerificationTask(
         task_id=f"exec::{planned.task_id}",
         component=component,
@@ -443,7 +446,10 @@ def adapt_unit_task(
 
 
 # A small, enumerated table. Inference is prohibited.
-ADAPTERS: dict[VerificationKind, Callable[[PlannedTask, TaskFingerprints], ExecutableVerificationTask]] = {
+ADAPTERS: dict[
+    VerificationKind,
+    Callable[[PlannedTask, TaskFingerprints], ExecutableVerificationTask],
+] = {
     "mutation": adapt_mutation_task,
     "unit": adapt_unit_task,
 }
@@ -538,6 +544,7 @@ def build_executable_plan(plan: EvidenceAwarePlan) -> ExecutableVerificationPlan
 # M28.5 — Evidence capture (immutable execution record)
 # ===========================================================================
 
+
 @dataclass(frozen=True, slots=True)
 class ExecutionEvidence:
     """An immutable record of a single executable task's execution.
@@ -606,13 +613,16 @@ class ExecutionEvidence:
 
 def _git_sha() -> str:
     try:
-        return subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            cwd=str(REPO_ROOT),
-            capture_output=True,
-            text=True,
-            timeout=30,
-        ).stdout.strip() or "unknown"
+        return (
+            subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=str(REPO_ROOT),
+                capture_output=True,
+                text=True,
+                timeout=30,
+            ).stdout.strip()
+            or "unknown"
+        )
     except Exception:
         return "unknown"
 
@@ -810,7 +820,16 @@ def execute_mutation_task(
         config_fingerprint=result.config_hash or task.config_fingerprint,
         toolchain_fingerprint=task.toolchain_fingerprint,
         repository_sha=repo_sha,
-        artifact_paths=(str(REPO_ROOT / "backend" / "tests" / "generated" / "mutation" / "mutation-summary.json"),),
+        artifact_paths=(
+            str(
+                REPO_ROOT
+                / "backend"
+                / "tests"
+                / "generated"
+                / "mutation"
+                / "mutation-summary.json"
+            ),
+        ),
         notes=(
             f"mode=target; run_id={result.run_id}; threshold={result.threshold_percent}%; "
             f"score={result.mutation_score}"
@@ -822,10 +841,13 @@ def execute_mutation_task(
 # M28.6 — Evidence reconciliation
 # ===========================================================================
 
+
 @dataclass(frozen=True, slots=True)
 class ReconciledComponent:
     component: str
-    source: str                  # "fresh_measured" | "reused" | "derived" | "invalidated" | "no_evidence"
+    source: (
+        str  # "fresh_measured" | "reused" | "derived" | "invalidated" | "no_evidence"
+    )
     evidence: ExecutionEvidence | None
     prior_measurement: ComponentMeasurement | None
 
@@ -834,7 +856,9 @@ class ReconciledComponent:
             "component": self.component,
             "source": self.source,
             "evidence": self.evidence.to_dict() if self.evidence else None,
-            "prior_measurement": self.prior_measurement.to_dict() if self.prior_measurement else None,
+            "prior_measurement": (
+                self.prior_measurement.to_dict() if self.prior_measurement else None
+            ),
         }
 
 
@@ -848,9 +872,9 @@ class LabelledAggregate:
         "MATHEMATICALLY_RECONCILED",
     ]
     result: float
-    numerator: int            # sum(killed)
-    denominator: int          # sum(scored)
-    scope: str                # population_id or selected components
+    numerator: int  # sum(killed)
+    denominator: int  # sum(scored)
+    scope: str  # population_id or selected components
     decided_at: str
     rationale: str
 
@@ -915,9 +939,13 @@ def reconcile(
         prior = prior_by_component.get(comp)
 
         if evidence is not None:
-            if evidence.failure_kind in (FailureKind.INFRASTRUCTURE, FailureKind.SCOPE,
-                                         FailureKind.CONFIGURATION, FailureKind.EVIDENCE,
-                                         FailureKind.VERIFICATION):
+            if evidence.failure_kind in (
+                FailureKind.INFRASTRUCTURE,
+                FailureKind.SCOPE,
+                FailureKind.CONFIGURATION,
+                FailureKind.EVIDENCE,
+                FailureKind.VERIFICATION,
+            ):
                 # Any failure means the component is invalidated — the
                 # prior measurement is no longer authoritative for
                 # certification until a subsequent fresh_measured
@@ -932,19 +960,13 @@ def reconcile(
             continue
         if sel_task is not None:
             # Planner said re-measure, but we have no fresh evidence.
-            components.append(
-                ReconciledComponent(comp, "invalidated", None, prior)
-            )
+            components.append(ReconciledComponent(comp, "invalidated", None, prior))
             continue
         if exc_task is not None and reuse is not None and prior is not None:
-            components.append(
-                ReconciledComponent(comp, "reused", None, prior)
-            )
+            components.append(ReconciledComponent(comp, "reused", None, prior))
             continue
         # No prior and no fresh — no evidence.
-        components.append(
-            ReconciledComponent(comp, "no_evidence", None, prior)
-        )
+        components.append(ReconciledComponent(comp, "no_evidence", None, prior))
 
     # M28.7 — Mathematically aggregate
     aggregate = _compute_labelled_aggregate(
@@ -958,12 +980,22 @@ def reconcile(
 
     parts: list[str] = []
     if has_invalidated:
-        parts.append(f"{sum(1 for c in components if c.source == 'invalidated')} invalidated component(s)")
+        parts.append(
+            f"{sum(1 for c in components if c.source == 'invalidated')} invalidated component(s)"
+        )
     if has_no_evidence:
-        parts.append(f"{sum(1 for c in components if c.source == 'no_evidence')} no-evidence component(s)")
+        parts.append(
+            f"{sum(1 for c in components if c.source == 'no_evidence')} no-evidence component(s)"
+        )
     if not parts:
-        parts.append("every component has either fresh measured evidence or a reused prior measurement")
-    rationale = "certifiable: " + "; ".join(parts) if certifiable else "NOT certifiable: " + "; ".join(parts)
+        parts.append(
+            "every component has either fresh measured evidence or a reused prior measurement"
+        )
+    rationale = (
+        "certifiable: " + "; ".join(parts)
+        if certifiable
+        else "NOT certifiable: " + "; ".join(parts)
+    )
 
     return ReconciledVerificationState(
         plan_id=plan.plan_id,
@@ -1084,6 +1116,7 @@ def _compute_labelled_aggregate(
 # M28.13 — Forensic execution record
 # ===========================================================================
 
+
 @dataclass(frozen=True, slots=True)
 class ForensicExecutionRecord:
     """The single artifact the Diagnostic & Forensic Agent will consume.
@@ -1141,9 +1174,7 @@ def build_forensic_record(
     invalidations = {
         "by_component": {
             comp: [inv for inv in reuses if inv]
-            for comp, reuses in (
-                (r.scope_id, r.invalidations) for r in plan.reuses
-            )
+            for comp, reuses in ((r.scope_id, r.invalidations) for r in plan.reuses)
         }
     }
     reused_evidence = {
@@ -1175,7 +1206,11 @@ def build_forensic_record(
     failures = {
         "by_component": {
             c.component: {
-                "kind": c.evidence.failure_kind.value if c.evidence and c.evidence.failure_kind else None,
+                "kind": (
+                    c.evidence.failure_kind.value
+                    if c.evidence and c.evidence.failure_kind
+                    else None
+                ),
                 "message": c.evidence.failure_message if c.evidence else None,
             }
             for c in reconciled.components
@@ -1188,8 +1223,12 @@ def build_forensic_record(
         ),
     }
     uncertainties = {
-        "no_evidence": [c.component for c in reconciled.components if c.source == "no_evidence"],
-        "invalidated": [c.component for c in reconciled.components if c.source == "invalidated"],
+        "no_evidence": [
+            c.component for c in reconciled.components if c.source == "no_evidence"
+        ],
+        "invalidated": [
+            c.component for c in reconciled.components if c.source == "invalidated"
+        ],
         "drift_blockers": list(plan.drift_blockers),
         "certification_gaps": list(plan.certification_gaps),
     }
@@ -1197,7 +1236,9 @@ def build_forensic_record(
         "certifiable": reconciled.certifiable,
         "rationale": reconciled.rationale,
         "aggregate_label": reconciled.aggregate.label if reconciled.aggregate else None,
-        "aggregate_result": reconciled.aggregate.result if reconciled.aggregate else None,
+        "aggregate_result": (
+            reconciled.aggregate.result if reconciled.aggregate else None
+        ),
     }
 
     return ForensicExecutionRecord(
@@ -1230,6 +1271,7 @@ def build_forensic_record(
 # M28.10 — Convenience entry point
 # ===========================================================================
 
+
 def default_population() -> PopulationSnapshot:
     return c42_26_population()
 
@@ -1242,7 +1284,9 @@ def main() -> int:
     """CLI entry point for ad-hoc execution (used by the orchestrator)."""
     import argparse
 
-    parser = argparse.ArgumentParser(prog="runtime.foundation.verification.executor_pipeline")
+    parser = argparse.ArgumentParser(
+        prog="runtime.foundation.verification.executor_pipeline"
+    )
     parser.add_argument(
         "--changed-file",
         action="append",
@@ -1284,12 +1328,20 @@ def main() -> int:
     out_path = (
         Path(args.out)
         if args.out
-        else REPO_ROOT / "runtime" / "generated" / "m9-c42.28" / "forensic-execution-record.json"
+        else REPO_ROOT
+        / "runtime"
+        / "generated"
+        / "m9-c42.28"
+        / "forensic-execution-record.json"
     )
     out_path.write_text(json.dumps(forensic.to_dict(), indent=2))
 
-    print(f"plan: {plan.plan_id}  selected={len(plan.selected_tasks)}  excluded={len(plan.excluded_tasks)}")
-    print(f"executable: {len(executable.tasks)}  not_executable={len(executable.not_executable)}")
+    print(
+        f"plan: {plan.plan_id}  selected={len(plan.selected_tasks)}  excluded={len(plan.excluded_tasks)}"
+    )
+    print(
+        f"executable: {len(executable.tasks)}  not_executable={len(executable.not_executable)}"
+    )
     print(f"executed: {len(fresh)}")
     print(f"certifiable: {reconciled.certifiable}  rationale: {reconciled.rationale}")
     print(f"forensic: {out_path.relative_to(REPO_ROOT)}")

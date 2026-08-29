@@ -37,17 +37,17 @@ from typing import Literal
 # ---------------------------------------------------------------------------
 
 SourceKind = Literal[
-    "engine",          # backend/src/engines/<name>/*.py
-    "service",         # backend/src/services/<name>/*.py
-    "router",          # backend/src/routers/<name>/*.py
-    "model",           # backend/src/models/*.py / core/dtos / core/domain
-    "core",            # backend/src/core/* (non-DTO)
-    "common",          # backend/src/common/*
-    "config",          # configuration files
-    "test",            # backend/tests/** (excluding generated)
-    "runtime",         # runtime/** (verification framework itself)
-    "frontend",        # frontend/**
-    "other",           # anything not otherwise classified
+    "engine",  # backend/src/engines/<name>/*.py
+    "service",  # backend/src/services/<name>/*.py
+    "router",  # backend/src/routers/<name>/*.py
+    "model",  # backend/src/models/*.py / core/dtos / core/domain
+    "core",  # backend/src/core/* (non-DTO)
+    "common",  # backend/src/common/*
+    "config",  # configuration files
+    "test",  # backend/tests/** (excluding generated)
+    "runtime",  # runtime/** (verification framework itself)
+    "frontend",  # frontend/**
+    "other",  # anything not otherwise classified
 ]
 
 
@@ -56,10 +56,10 @@ class SourceNode:
     """A production source file (or test file) that may be verified."""
 
     id: str
-    path: str                # repo-relative path
+    path: str  # repo-relative path
     kind: SourceKind
-    component: str | None    # engine name, service name, router name, etc.
-    fingerprint: str         # sha256 of file contents (or "" if unknown)
+    component: str | None  # engine name, service name, router name, etc.
+    fingerprint: str  # sha256 of file contents (or "" if unknown)
 
     def to_dict(self) -> dict:
         return {
@@ -82,8 +82,8 @@ CapabilityLayer = Literal["domain", "intelligence", "platform", "api", "frontend
 class CapabilityNode:
     """A user/system capability the application delivers."""
 
-    id: str                       # e.g. "cashflow" or "credit-card-risk"
-    name: str                     # human-readable
+    id: str  # e.g. "cashflow" or "credit-card-risk"
+    name: str  # human-readable
     layer: CapabilityLayer
     description: str = ""
     source_ids: tuple[str, ...] = field(default_factory=tuple)
@@ -103,17 +103,17 @@ class CapabilityNode:
 # ---------------------------------------------------------------------------
 
 TestSurfaceKind = Literal[
-    "unit",           # backend/tests/unit/**
-    "property",       # backend/tests/properties/**
-    "invariant",      # backend/tests/invariants/**
-    "contract",       # backend/tests/contract/**
-    "integration",    # backend/tests/integration/**
-    "golden",         # backend/tests/golden/**
-    "capability",     # backend/tests/capability/**
-    "e2e_frontend",   # frontend e2e (playwright)
-    "runtime",        # runtime/tests/**
-    "audit",          # backend/tests/audits/**
-    "architecture",   # backend/tests/architecture/**
+    "unit",  # backend/tests/unit/**
+    "property",  # backend/tests/properties/**
+    "invariant",  # backend/tests/invariants/**
+    "contract",  # backend/tests/contract/**
+    "integration",  # backend/tests/integration/**
+    "golden",  # backend/tests/golden/**
+    "capability",  # backend/tests/capability/**
+    "e2e_frontend",  # frontend e2e (playwright)
+    "runtime",  # runtime/tests/**
+    "audit",  # backend/tests/audits/**
+    "architecture",  # backend/tests/architecture/**
 ]
 
 
@@ -214,14 +214,14 @@ class EvidenceNode:
 
     id: str
     kind: EvidenceKind
-    component_id: str | None    # engine/component or capability this evidence is for
+    component_id: str | None  # engine/component or capability this evidence is for
     task_id: str | None
     run_id: str
-    measured_at: str            # ISO timestamp
+    measured_at: str  # ISO timestamp
     repository_sha: str
-    config_hash: str            # fingerprint of toolchain/config used
-    population_id: str | None   # which population snapshot this evidence belongs to
-    fingerprint: str            # sha256 of (run_id + config_hash + measurement)
+    config_hash: str  # fingerprint of toolchain/config used
+    population_id: str | None  # which population snapshot this evidence belongs to
+    fingerprint: str  # sha256 of (run_id + config_hash + measurement)
     status: EvidenceStatus
     summary: dict[str, str | int | float | None] = field(default_factory=dict)
     notes: str = ""
@@ -249,10 +249,10 @@ class EvidenceNode:
 # ---------------------------------------------------------------------------
 
 CertificationStatus = Literal[
-    "certified",            # all required evidence present and valid
+    "certified",  # all required evidence present and valid
     "certified_by_composition",  # evidence composed/derived from multiple sub-evidence
-    "uncertified",          # missing evidence or invalidation
-    "blocked_by_drift",     # discovered inconsistency (e.g. C42.24-style)
+    "uncertified",  # missing evidence or invalidation
+    "blocked_by_drift",  # discovered inconsistency (e.g. C42.24-style)
 ]
 
 
@@ -261,7 +261,7 @@ class CertificationNode:
     """A certification conclusion for a component or capability."""
 
     id: str
-    scope_id: str            # capability_id or component_id
+    scope_id: str  # capability_id or component_id
     scope_kind: Literal["component", "capability", "population", "repository"]
     status: CertificationStatus
     evidence_ids: tuple[str, ...]
@@ -288,6 +288,7 @@ class CertificationNode:
 # Graph container
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class VerificationGraph:
     """The complete verification graph for the repository."""
@@ -310,7 +311,9 @@ class VerificationGraph:
         cap_ids = self.source_to_capability.get(source_id, ())
         return tuple(self.capabilities[c] for c in cap_ids if c in self.capabilities)
 
-    def surfaces_for_capability(self, capability_id: str) -> tuple[TestSurfaceNode, ...]:
+    def surfaces_for_capability(
+        self, capability_id: str
+    ) -> tuple[TestSurfaceNode, ...]:
         s_ids = self.capability_to_surface.get(capability_id, ())
         return tuple(self.test_surfaces[s] for s in s_ids if s in self.test_surfaces)
 
@@ -322,9 +325,7 @@ class VerificationGraph:
         e_ids = self.task_to_evidence.get(task_id, ())
         return tuple(self.evidence[e] for e in e_ids if e in self.evidence)
 
-    def evidence_for_component(
-        self, component_id: str
-    ) -> tuple[EvidenceNode, ...]:
+    def evidence_for_component(self, component_id: str) -> tuple[EvidenceNode, ...]:
         return tuple(
             e for e in self.evidence.values() if e.component_id == component_id
         )
@@ -353,9 +354,7 @@ class VerificationGraph:
             existing.append(capability_id)
             self.source_to_capability[source_id] = tuple(existing)
 
-    def link_capability_surface(
-        self, capability_id: str, surface_id: str
-    ) -> None:
+    def link_capability_surface(self, capability_id: str, surface_id: str) -> None:
         existing = list(self.capability_to_surface.get(capability_id, ()))
         if surface_id not in existing:
             existing.append(surface_id)
@@ -385,14 +384,10 @@ class VerificationGraph:
         return {
             "sources": {k: v.to_dict() for k, v in self.sources.items()},
             "capabilities": {k: v.to_dict() for k, v in self.capabilities.items()},
-            "test_surfaces": {
-                k: v.to_dict() for k, v in self.test_surfaces.items()
-            },
+            "test_surfaces": {k: v.to_dict() for k, v in self.test_surfaces.items()},
             "tasks": {k: v.to_dict() for k, v in self.tasks.items()},
             "evidence": {k: v.to_dict() for k, v in self.evidence.items()},
-            "certifications": {
-                k: v.to_dict() for k, v in self.certifications.items()
-            },
+            "certifications": {k: v.to_dict() for k, v in self.certifications.items()},
             "edges": {
                 "source_to_capability": {
                     k: list(v) for k, v in self.source_to_capability.items()
@@ -416,6 +411,7 @@ class VerificationGraph:
 # ---------------------------------------------------------------------------
 # Identity helpers
 # ---------------------------------------------------------------------------
+
 
 def source_id(path: str) -> str:
     return f"src::{path}"

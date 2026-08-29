@@ -1,0 +1,116 @@
+{
+  "schema": "vea5-reconciliation/v1",
+  "policy_version": "vea5-tier-policy-v1",
+  "classification": {
+    "status": "same-plan",
+    "reason": "CI plan is consistent with complete passing execution evidence",
+    "diverging_units": [],
+    "tier_differs": false,
+    "environment_diverges": false,
+    "planning_diverges": false
+  },
+  "local_fingerprint": {
+    "tier": "pr",
+    "change_set": "49c473358b0e",
+    "selected": [
+      "unit-targeted",
+      "backend-unit",
+      "backend-integration",
+      "contracts-schemathesis",
+      "frontend-unit",
+      "frontend-typecheck-build",
+      "playwright-e2e",
+      "runtime-self-test",
+      "mutation-run"
+    ],
+    "excluded": [
+      "golden-regression"
+    ],
+    "estimated_seconds": 3610,
+    "digest": "c6d9506ad1150d70"
+  },
+  "ci_fingerprint": {
+    "tier": "pr",
+    "change_set": "49c473358b0e",
+    "selected": [
+      "unit-targeted",
+      "backend-unit",
+      "backend-integration",
+      "contracts-schemathesis",
+      "frontend-unit",
+      "frontend-typecheck-build",
+      "playwright-e2e",
+      "runtime-self-test",
+      "mutation-run"
+    ],
+    "excluded": [
+      "golden-regression"
+    ],
+    "estimated_seconds": 3610,
+    "digest": "c6d9506ad1150d70"
+  },
+  "change_set_local": "49c473358b0e",
+  "change_set_ci": "49c473358b0e",
+  "evidence_identity": {
+    "commit": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+    "change_set_fingerprint": "49c473358b0e",
+    "tier": "pr",
+    "plan_fingerprint": "c6d9506ad1150d70",
+    "units": [
+      {
+        "unit_id": "unit-targeted",
+        "status": "pass",
+        "exit_code": 0,
+        "evidence_ref": "runtime/generated/verification-report.md"
+      },
+      {
+        "unit_id": "backend-unit",
+        "status": "pass",
+        "exit_code": 0,
+        "evidence_ref": "runtime/generated/verification-report.md"
+      },
+      {
+        "unit_id": "backend-integration",
+        "status": "pass",
+        "exit_code": 0,
+        "evidence_ref": "runtime/generated/verification-report.md"
+      },
+      {
+        "unit_id": "contracts-schemathesis",
+        "status": "pass",
+        "exit_code": 0,
+        "evidence_ref": "runtime/generated/verification-report.md"
+      },
+      {
+        "unit_id": "frontend-unit",
+        "status": "pass",
+        "exit_code": 0,
+        "evidence_ref": "runtime/generated/verification-report.md"
+      },
+      {
+        "unit_id": "frontend-typecheck-build",
+        "status": "pass",
+        "exit_code": 0,
+        "evidence_ref": "runtime/generated/verification-report.md"
+      },
+      {
+        "unit_id": "playwright-e2e",
+        "status": "pass",
+        "exit_code": 0,
+        "evidence_ref": "runtime/generated/verification-report.md"
+      },
+      {
+        "unit_id": "runtime-self-test",
+        "status": "pass",
+        "exit_code": 0,
+        "evidence_ref": "runtime/generated/verification-report.md"
+      },
+      {
+        "unit_id": "mutation-run",
+        "status": "pass",
+        "exit_code": 0,
+        "evidence_ref": "runtime/generated/verification-report.md"
+      }
+    ]
+  }
+}

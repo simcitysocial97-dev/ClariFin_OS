@@ -24,7 +24,9 @@ from src.engines.financial_intelligence.scenario import (
     simulate_new_loan,
 )
 
-SETTINGS = settings(max_examples=30, suppress_health_check=[HealthCheck.differing_executors])
+SETTINGS = settings(
+    max_examples=30, suppress_health_check=[HealthCheck.differing_executors]
+)
 
 pos_paise = st.integers(min_value=1, max_value=10_000_000)
 months_st = st.integers(min_value=1, max_value=24)
@@ -33,8 +35,12 @@ months_st = st.integers(min_value=1, max_value=24)
 class TestExpenseReductionProperties:
     @SETTINGS
     @given(reduction=pos_paise, months=months_st)
-    def test_cumulative_is_savings_times_months(self, reduction: int, months: int) -> None:
-        result = simulate_expense_reduction(100_000, reduction, [], forecast_months=months)
+    def test_cumulative_is_savings_times_months(
+        self, reduction: int, months: int
+    ) -> None:
+        result = simulate_expense_reduction(
+            100_000, reduction, [], forecast_months=months
+        )
         assert result["cumulative_benefit_paise"] == reduction * months
         assert len(result["forecast"]) == months
 
@@ -42,23 +48,32 @@ class TestExpenseReductionProperties:
     @given(base=pos_paise, reduction=pos_paise)
     def test_each_month_improved_by_savings(self, base: int, reduction: int) -> None:
         forecast = [{"expected_surplus_paise": base}]
-        result = simulate_expense_reduction(100_000, reduction, forecast, forecast_months=1)
+        result = simulate_expense_reduction(
+            100_000, reduction, forecast, forecast_months=1
+        )
         assert result["forecast"][0]["projected_surplus_paise"] == base + reduction
 
 
 class TestIncomeChangeProperties:
     @SETTINGS
-    @given(change=st.integers(min_value=-5_000_000, max_value=5_000_000), months=months_st)
+    @given(
+        change=st.integers(min_value=-5_000_000, max_value=5_000_000), months=months_st
+    )
     def test_cumulative_is_change_times_months(self, change: int, months: int) -> None:
         result = simulate_income_change(100_000, change, [], forecast_months=months)
         assert result["cumulative_income_change_paise"] == change * months
 
     @SETTINGS
-    @given(base=pos_paise, change=st.integers(min_value=-5_000_000, max_value=5_000_000))
+    @given(
+        base=pos_paise, change=st.integers(min_value=-5_000_000, max_value=5_000_000)
+    )
     def test_revised_surplus_shifted(self, base: int, change: int) -> None:
         forecast = [{"expected_surplus_paise": base}]
         result = simulate_income_change(100_000, change, forecast, forecast_months=1)
-        assert result["revised_surplus_forecast"][0]["expected_surplus_paise"] == base + change
+        assert (
+            result["revised_surplus_forecast"][0]["expected_surplus_paise"]
+            == base + change
+        )
 
 
 class TestNewLoanProperties:
@@ -87,7 +102,9 @@ class TestNewLoanProperties:
         principal=st.integers(min_value=100_000, max_value=10_000_000),
         tenure=st.integers(min_value=1, max_value=240),
     )
-    def test_zero_rate_emi_is_principal_over_tenure(self, principal: int, tenure: int) -> None:
+    def test_zero_rate_emi_is_principal_over_tenure(
+        self, principal: int, tenure: int
+    ) -> None:
         result = simulate_new_loan(principal, 0, tenure, 1_000_000)
         assert result["monthly_emi_paise"] == principal // tenure
 
@@ -98,7 +115,9 @@ class TestCreditBehaviourProperties:
         dependency=st.decimals(min_value=0, max_value=1, places=2),
         revolver=st.decimals(min_value=0, max_value=1, places=2),
     )
-    def test_projection_never_exceeds_current(self, dependency: Decimal, revolver: Decimal) -> None:
+    def test_projection_never_exceeds_current(
+        self, dependency: Decimal, revolver: Decimal
+    ) -> None:
         assume(not dependency.is_nan() and not revolver.is_nan())
         result = simulate_credit_behaviour_change(
             dependency, revolver, average_interest_rate_bps=1200
@@ -144,14 +163,18 @@ class TestIntelligenceConfidenceProperties:
         self, months: int, completeness: Decimal, coverage: Decimal
     ) -> None:
         assume(not completeness.is_nan() and not coverage.is_nan())
-        result = calculate_intelligence_confidence(months, completeness, coverage, Decimal("0"))
+        result = calculate_intelligence_confidence(
+            months, completeness, coverage, Decimal("0")
+        )
         assert Decimal("0") <= result["confidence"] <= Decimal("1")
         assert result["data_quality"] in ("excellent", "good", "fair", "poor")
 
     @SETTINGS
     @given(months=st.integers(min_value=3, max_value=100))
     def test_months_score_caps_at_three(self, months: int) -> None:
-        capped = calculate_intelligence_confidence(months, Decimal("1"), Decimal("1"), Decimal("0"))
+        capped = calculate_intelligence_confidence(
+            months, Decimal("1"), Decimal("1"), Decimal("0")
+        )
         assert capped["confidence"] == Decimal("1")
 
 
@@ -209,4 +232,6 @@ class TestHealthScoreProperties:
     @SETTINGS
     @given(min_balance=st.integers(min_value=-10_000_000, max_value=10_000_000))
     def test_liquidity_months_non_negative(self, min_balance: int) -> None:
-        assert _extract_liquidity_months({"projected_min_balance_paise": min_balance}) >= 0
+        assert (
+            _extract_liquidity_months({"projected_min_balance_paise": min_balance}) >= 0
+        )

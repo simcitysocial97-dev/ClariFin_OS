@@ -54,6 +54,7 @@ from runtime.foundation.verification.mutation_contract import (
     reconcile_counts,
     write_backend_mutmut_config,
 )
+from runtime.foundation.verification.survivor_catalog import run_catalog_cli
 
 BACKEND_DIR = REPO_ROOT / "backend"
 SMOKE_DIR = BACKEND_DIR / "tests" / "mutation_infra"
@@ -540,7 +541,9 @@ def execute_mutation(
             # Mutmut changes cwd to `mutants/` before invoking pytest; set PYTHONPATH
             # so that test-fixture plugins (e.g. tests.fixtures.database) remain
             # importable from that working directory.
-            _pytest_pythonpath = f"{REPO_ROOT / 'backend' / 'src'}:{REPO_ROOT / 'backend' / 'tests'}"
+            _pytest_pythonpath = (
+                f"{REPO_ROOT / 'backend' / 'src'}:{REPO_ROOT / 'backend' / 'tests'}"
+            )
             proc = subprocess.Popen(
                 cmd,
                 cwd=str(cwd),
@@ -590,7 +593,11 @@ def execute_mutation(
             if not infra_failure and rc is not None:
                 try:
                     low = (log_tail or "").lower()
-                    if "missing argument" in low or "error:" in low or "traceback" in low:
+                    if (
+                        "missing argument" in low
+                        or "error:" in low
+                        or "traceback" in low
+                    ):
                         infra_failure = True
                         infra_error = "mutmut reported an error during execution"
                 except Exception:
@@ -786,6 +793,12 @@ def run_mutation_cli(argv: list[str]) -> int:
     )
     parser.add_argument("--json", action="store_true", help="emit summary path only")
     parser.add_argument(
+        "--catalog",
+        action="store_true",
+        help="emit a structured, categorized per-function survivor breakdown "
+        "(mutation-survivors.json + console report)",
+    )
+    parser.add_argument(
         "--allow-dirty",
         action="store_true",
         help="allow dirty worktree in mutation scope (D5 override)",
@@ -810,6 +823,22 @@ def run_mutation_cli(argv: list[str]) -> int:
     out_path = _write_summary(result, mode)
     if args.json:
         print(str(out_path))
+
+    # Structured, categorized per-function survivor breakdown (C43.7).
+    # Reconstructs surviving mutants from the generated mutant population via
+    # mutmut's own libcst reconstruction — no post-hoc file searching required.
+    # Runs automatically for full/target campaigns that have survivors; or on
+    # demand with --catalog. Skipped for smoke (a surviving mutant is intended
+    # there) and for restore-only invocations.
+    if (
+        not args.restore
+        and (args.catalog or mode in ("full", "target"))
+        and result.survived > 0
+    ):
+        try:
+            run_catalog_cli(BACKEND_DIR / "mutants", BACKEND_DIR)
+        except Exception as exc:  # pragma: no cover - defensive reporting
+            print(f"  [catalog] survivor breakdown unavailable: {exc}")
 
     gate_a, gate_b, gate_c, verdict = classify_gates(result)
     if not gate_a or not gate_b:

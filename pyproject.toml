@@ -141,6 +141,7 @@ extend-exclude = '''
   | backend/mutants
   | backend/tests/mutation_infra/mutants
   | backend/tests/generated
+  | runtime/generated
   | build
   | dist
 )/
@@ -166,17 +167,4 @@ markers = [
     "unit: marks unit tests",
     "performance: marks performance tests",
 ]
-
-[tool.mutmut]
-source_paths = ["backend/src/engines/"]
-also_copy = ["backend/src"]
-runner = "python3 -m pytest"
-pytest_add_cli_args_test_selection = [
-    "backend/tests/unit/",
-    "backend/tests/properties/",
-    "backend/tests/invariants/",
-    "backend/tests/contract/",
-    "backend/tests/integration/",
-]
-no_progress = true
 

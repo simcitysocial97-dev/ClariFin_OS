@@ -1,0 +1,264 @@
+{
+  "schema": "m9-c44-coverage-baseline/v1",
+  "generated_at": "2026-08-27T16:10:25Z",
+  "measurement": "AUTHORITATIVE_MEASURED",
+  "overall": {
+    "statement_pct": 79.74,
+    "branch_pct": 70.15,
+    "combined_pct": 77.72,
+    "num_statements": 10238,
+    "covered_lines": 8164,
+    "num_branches": 2740,
+    "covered_branches": 1922
+  },
+  "per_module_summary": {
+    "(root)": {
+      "files": 4,
+      "statements": 172,
+      "missed_statements": 37,
+      "statement_pct": 78.49,
+      "branches": 26,
+      "missed_branches": 12
+    },
+    "common": {
+      "files": 5,
+      "statements": 160,
+      "missed_statements": 1,
+      "statement_pct": 99.38,
+      "branches": 68,
+      "missed_branches": 8
+    },
+    "core": {
+      "files": 1,
+      "statements": 4,
+      "missed_statements": 0,
+      "statement_pct": 100.0,
+      "branches": 0,
+      "missed_branches": 0
+    },
+    "core/db": {
+      "files": 5,
+      "statements": 214,
+      "missed_statements": 56,
+      "statement_pct": 73.83,
+      "branches": 40,
+      "missed_branches": 16
+    },
+    "core/domain": {
+      "files": 2,
+      "statements": 105,
+      "missed_statements": 0,
+      "statement_pct": 100.0,
+      "branches": 38,
+      "missed_branches": 0
+    },
+    "core/dtos": {
+      "files": 15,
+      "statements": 922,
+      "missed_statements": 66,
+      "statement_pct": 92.84,
+      "branches": 0,
+      "missed_branches": 0
+    },
+    "core/mappers": {
+      "files": 14,
+      "statements": 295,
+      "missed_statements": 189,
+      "statement_pct": 35.93,
+      "branches": 26,
+      "missed_branches": 24
+    },
+    "data": {
+      "files": 1,
+      "statements": 0,
+      "missed_statements": 0,
+      "statement_pct": null,
+      "branches": 0,
+      "missed_branches": 0
+    },
+    "engines": {
+      "files": 5,
+      "statements": 315,
+      "missed_statements": 48,
+      "statement_pct": 84.76,
+      "branches": 100,
+      "missed_branches": 17
+    },
+    "engines/account_engine": {
+      "files": 7,
+      "statements": 88,
+      "missed_statements": 1,
+      "statement_pct": 98.86,
+      "branches": 28,
+      "missed_branches": 1
+    },
+    "engines/behaviour_engine": {
+      "files": 18,
+      "statements": 1649,
+      "missed_statements": 214,
+      "statement_pct": 87.02,
+      "branches": 786,
+      "missed_branches": 188
+    },
+    "engines/credit_card_engine": {
+      "files": 8,
+      "statements": 189,
+      "missed_statements": 12,
+      "statement_pct": 93.65,
+      "branches": 96,
+      "missed_branches": 12
+    },
+    "engines/financial_events": {
+      "files": 2,
+      "statements": 184,
+      "missed_statements": 6,
+      "statement_pct": 96.74,
+      "branches": 78,
+      "missed_branches": 6
+    },
+    "engines/financial_intelligence": {
+      "files": 8,
+      "statements": 807,
+      "missed_statements": 36,
+      "statement_pct": 95.54,
+      "branches": 332,
+      "missed_branches": 28
+    },
+    "engines/loan_engine": {
+      "files": 9,
+      "statements": 472,
+      "missed_statements": 6,
+      "statement_pct": 98.73,
+      "branches": 164,
+      "missed_branches": 7
+    },
+    "engines/recommendation_engine": {
+      "files": 2,
+      "statements": 73,
+      "missed_statements": 3,
+      "statement_pct": 95.89,
+      "branches": 30,
+      "missed_branches": 4
+    },
+    "engines/transaction_intelligence": {
+      "files": 5,
+      "statements": 367,
+      "missed_statements": 2,
+      "statement_pct": 99.46,
+      "branches": 148,
+      "missed_branches": 5
+    },
+    "models": {
+      "files": 22,
+      "statements": 738,
+      "missed_statements": 84,
+      "statement_pct": 88.62,
+      "branches": 40,
+      "missed_branches": 40
+    },
+    "orchestration": {
+      "files": 2,
+      "statements": 71,
+      "missed_statements": 14,
+      "statement_pct": 80.28,
+      "branches": 2,
+      "missed_branches": 1
+    },
+    "repositories": {
+      "files": 27,
+      "statements": 1366,
+      "missed_statements": 609,
+      "statement_pct": 55.42,
+      "branches": 228,
+      "missed_branches": 157
+    },
+    "services": {
+      "files": 32,
+      "statements": 2047,
+      "missed_statements": 690,
+      "statement_pct": 66.29,
+      "branches": 510,
+      "missed_branches": 292
+    },
+    "utils": {
+      "files": 1,
+      "statements": 0,
+      "missed_statements": 0,
+      "statement_pct": null,
+      "branches": 0,
+      "missed_branches": 0
+    }
+  },
+  "per_capability_summary": {
+    "loan-engine": {
+      "statement_pct": 98.73,
+      "branch_pct": 95.73,
+      "mutation_score_pct": 84.0,
+      "test_count": 9,
+      "behavioral_coverage_assessment": "strong"
+    },
+    "reconciliation": {
+      "statement_pct": 93.44,
+      "branch_pct": 88.46,
+      "mutation_score_pct": 80.7,
+      "test_count": 4,
+      "behavioral_coverage_assessment": "moderate"
+    },
+    "ledger": {
+      "statement_pct": 90.32,
+      "branch_pct": 81.25,
+      "mutation_score_pct": 56.8,
+      "test_count": 1,
+      "behavioral_coverage_assessment": "weak"
+    },
+    "api-contracts": {
+      "statement_pct": null,
+      "branch_pct": null,
+      "mutation_score_pct": null,
+      "test_count": 0,
+      "behavioral_coverage_assessment": "unknown"
+    },
+    "migrations": {
+      "statement_pct": null,
+      "branch_pct": null,
+      "mutation_score_pct": null,
+      "test_count": 0,
+      "behavioral_coverage_assessment": "unknown"
+    },
+    "runtime-verification": {
+      "statement_pct": null,
+      "branch_pct": null,
+      "mutation_score_pct": null,
+      "test_count": 0,
+      "behavioral_coverage_assessment": "unknown"
+    },
+    "golden-regression": {
+      "statement_pct": null,
+      "branch_pct": null,
+      "mutation_score_pct": null,
+      "test_count": 0,
+      "behavioral_coverage_assessment": "unknown"
+    },
+    "mutation-analysis": {
+      "statement_pct": null,
+      "branch_pct": null,
+      "mutation_score_pct": null,
+      "test_count": 0,
+      "behavioral_coverage_assessment": "unknown"
+    },
+    "e2e-tests": {
+      "statement_pct": null,
+      "branch_pct": null,
+      "mutation_score_pct": null,
+      "test_count": 0,
+      "behavioral_coverage_assessment": "unknown"
+    }
+  },
+  "distance_to_targets": {
+    "overall_80_pct": {
+      "combined_items_needed": 296,
+      "statements_needed": 27,
+      "branches_needed": 269
+    }
+  }
+}

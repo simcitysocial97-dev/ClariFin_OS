@@ -13,7 +13,9 @@ from typing import Any
 from src.common.calculations import compute_behavioral_insights
 
 
-def _drift_txns(other_paise: int, this_paise: int, cat: str = "food") -> list[dict[str, Any]]:
+def _drift_txns(
+    other_paise: int, this_paise: int, cat: str = "food"
+) -> list[dict[str, Any]]:
     return [
         {
             "type": "debit",

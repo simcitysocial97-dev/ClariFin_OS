@@ -1,0 +1,248 @@
+{
+  "schema": "m9-c42.37-verification-profile-certification/v1",
+  "generated_at": "2026-08-26T18:47:11.230096+00:00",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "methodology": "Reconciled profile\u2192capabilities\u2192sources\u2192surfaces\u2192tasks\u2192evidence\u2192invalidation\u2192execution\u2192CI\u2192certification chain from canonical runtime modules",
+  "population": {
+    "id": "pop-14-c42.26",
+    "component_count": 14,
+    "components": [
+      "credit_card_engine",
+      "account_engine",
+      "loan_engine",
+      "reconciliation_engine",
+      "behaviour_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine",
+      "financial_events",
+      "core_domain_money",
+      "common_calculations",
+      "recommendation_engine",
+      "transaction_intelligence",
+      "financial_intelligence"
+    ]
+  },
+  "capabilities": {
+    "total_declared": 14,
+    "mapped_in_graph": 14,
+    "unmapped": [],
+    "tested": 14,
+    "source_bound_untested": []
+  },
+  "capability_chains": {
+    "cap::account-engine": {
+      "name": "account-engine",
+      "source_count": 7,
+      "surface_count": 37,
+      "executable_surface_count": 37,
+      "task_count": 0,
+      "has_testable_surface": true,
+      "chain_complete": true
+    },
+    "cap::balance-engine": {
+      "name": "balance-engine",
+      "source_count": 1,
+      "surface_count": 37,
+      "executable_surface_count": 37,
+      "task_count": 0,
+      "has_testable_surface": true,
+      "chain_complete": true
+    },
+    "cap::behaviour-engine": {
+      "name": "behaviour-engine",
+      "source_count": 18,
+      "surface_count": 37,
+      "executable_surface_count": 37,
+      "task_count": 0,
+      "has_testable_surface": true,
+      "chain_complete": true
+    },
+    "cap::cashflow-engine": {
+      "name": "cashflow-engine",
+      "source_count": 1,
+      "surface_count": 37,
+      "executable_surface_count": 37,
+      "task_count": 0,
+      "has_testable_surface": true,
+      "chain_complete": true
+    },
+    "cap::common-calculations": {
+      "name": "common-calculations",
+      "source_count": 1,
+      "surface_count": 37,
+      "executable_surface_count": 37,
+      "task_count": 0,
+      "has_testable_surface": true,
+      "chain_complete": true
+    },
+    "cap::core-domain-money": {
+      "name": "core-domain-money",
+      "source_count": 1,
+      "surface_count": 37,
+      "executable_surface_count": 37,
+      "task_count": 0,
+      "has_testable_surface": true,
+      "chain_complete": true
+    },
+    "cap::credit-card-engine": {
+      "name": "credit-card-engine",
+      "source_count": 8,
+      "surface_count": 37,
+      "executable_surface_count": 37,
+      "task_count": 0,
+      "has_testable_surface": true,
+      "chain_complete": true
+    },
+    "cap::financial-events": {
+      "name": "financial-events",
+      "source_count": 2,
+      "surface_count": 37,
+      "executable_surface_count": 37,
+      "task_count": 0,
+      "has_testable_surface": true,
+      "chain_complete": true
+    },
+    "cap::financial-intelligence": {
+      "name": "financial-intelligence",
+      "source_count": 8,
+      "surface_count": 37,
+      "executable_surface_count": 37,
+      "task_count": 0,
+      "has_testable_surface": true,
+      "chain_complete": true
+    },
+    "cap::ledger-audit-engine": {
+      "name": "ledger-audit-engine",
+      "source_count": 1,
+      "surface_count": 37,
+      "executable_surface_count": 37,
+      "task_count": 0,
+      "has_testable_surface": true,
+      "chain_complete": true
+    },
+    "cap::loan-engine": {
+      "name": "loan-engine",
+      "source_count": 9,
+      "surface_count": 37,
+      "executable_surface_count": 37,
+      "task_count": 0,
+      "has_testable_surface": true,
+      "chain_complete": true
+    },
+    "cap::recommendation-engine": {
+      "name": "recommendation-engine",
+      "source_count": 2,
+      "surface_count": 37,
+      "executable_surface_count": 37,
+      "task_count": 0,
+      "has_testable_surface": true,
+      "chain_complete": true
+    },
+    "cap::reconciliation-engine": {
+      "name": "reconciliation-engine",
+      "source_count": 1,
+      "surface_count": 37,
+      "executable_surface_count": 37,
+      "task_count": 0,
+      "has_testable_surface": true,
+      "chain_complete": true
+    },
+    "cap::transaction-intelligence": {
+      "name": "transaction-intelligence",
+      "source_count": 5,
+      "surface_count": 37,
+      "executable_surface_count": 37,
+      "task_count": 0,
+      "has_testable_surface": true,
+      "chain_complete": true
+    }
+  },
+  "profile_task_coverage": {
+    "mutation_smoke": {
+      "task": "task::mutation::smoke",
+      "scope": "infra_health",
+      "executable": true
+    },
+    "mutation_targeted": {
+      "task": "task::mutation::targeted",
+      "scope": "component",
+      "executable": true
+    },
+    "mutation_full": {
+      "task": "task::mutation::full",
+      "scope": "population",
+      "executable": true
+    },
+    "backend_suite": {
+      "task": "task::unit::backend-suite",
+      "scope": "capability_all",
+      "executable": true
+    },
+    "frontend_suite": {
+      "task": "task::static::frontend-suite",
+      "scope": "surface_only",
+      "executable": true
+    },
+    "playwright": {
+      "task": "task::e2e::playwright",
+      "scope": "surface_only",
+      "executable": true
+    },
+    "golden": {
+      "task": "task::golden::regression",
+      "scope": "surface_only",
+      "executable": true
+    },
+    "env_check": {
+      "task": "task::static::env-check",
+      "scope": "infra_health",
+      "executable": true
+    },
+    "status_summary": {
+      "task": "task::static::status-summary",
+      "scope": "infra_health",
+      "executable": false
+    }
+  },
+  "invalidation_rules": {
+    "total": 14,
+    "rules": [
+      "R-SRC-001",
+      "R-SRC-002",
+      "R-SRC-003",
+      "R-CFG-001",
+      "R-CFG-002",
+      "R-DEP-001",
+      "R-DEP-002",
+      "R-POP-001",
+      "R-POP-002",
+      "R-CAP-001",
+      "R-SCHEMA-001",
+      "R-ENV-001",
+      "R-INFRA-001",
+      "R-TASK-001"
+    ]
+  },
+  "evidence_models": {
+    "local_execution": "ExecutionEvidence (executor_pipeline.py)",
+    "ci_evidence": "CIEvidenceRecord (ci_evidence.py)",
+    "component_measurement": "ComponentMeasurement (evidence_reuse.py)",
+    "derived_aggregate": "DerivedAggregate (evidence_reuse.py)",
+    "forensic_record": "ForensicExecutionRecord (executor_pipeline.py)"
+  },
+  "certification_chain": {
+    "profile": "verification.yaml / profiles.py",
+    "capabilities": "14 declared, 14 tested",
+    "sources": "411 source nodes in graph",
+    "surfaces": "57 test surface nodes",
+    "tasks": "13 verification task nodes",
+    "evidence": "CIEvidenceRecord \u2194 ExecutionEvidence unified model",
+    "invalidation": "14 enumerated rules",
+    "execution": "executor_pipeline.build_executable_plan + execute_mutation_task",
+    "ci": "ci_evidence.validate_and_decide + ingest_ci_evidence",
+    "certification": "DiagnosticForensicAgent.diagnose() \u2192 q9 verdict"
+  },
+  "detected_gaps": [],
+  "certified": true
+}

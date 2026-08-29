@@ -13,6 +13,7 @@ Covers:
 Run with:
     .venv/bin/python -m pytest runtime/tests/test_m9_c42_29.py -v
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -92,8 +93,10 @@ def _record(
         execution_mode=mode,  # type: ignore[arg-type]
         source_fingerprint=fps.source if component else "",
         test_fingerprint=test_fp if test_fp is not None else fps.test,
-        configuration_fingerprint=cfg_fp if cfg_fp is not None else (
-            fps.config if evidence_kind.startswith("mutation") else ""
+        configuration_fingerprint=(
+            cfg_fp
+            if cfg_fp is not None
+            else (fps.config if evidence_kind.startswith("mutation") else "")
         ),
         toolchain_fingerprint=tool_fp if tool_fp is not None else fps.toolchain,
         population_fingerprint="pop-fp",
@@ -128,6 +131,7 @@ def _ctx(**kw) -> CIRepositoryContext:
 # M29.1 — Contract
 # ---------------------------------------------------------------------------
 
+
 class TestCIEvidenceContract:
     def test_schema_version(self) -> None:
         assert CI_EVIDENCE_SCHEMA == "m9-ci-evidence/v1"
@@ -135,13 +139,26 @@ class TestCIEvidenceContract:
     def test_record_has_all_required_identity_fields(self) -> None:
         d = _record().to_dict()
         required = [
-            "repository_sha", "workflow", "job", "step", "verification_task",
-            "component", "capability", "evidence_kind", "execution_mode",
-            "source_fingerprint", "test_fingerprint",
-            "configuration_fingerprint", "toolchain_fingerprint",
-            "population_fingerprint", "evidence_artifact_fingerprint",
-            "started_at", "ended_at", "exit_status",
-            "failure_classification", "certification_disposition",
+            "repository_sha",
+            "workflow",
+            "job",
+            "step",
+            "verification_task",
+            "component",
+            "capability",
+            "evidence_kind",
+            "execution_mode",
+            "source_fingerprint",
+            "test_fingerprint",
+            "configuration_fingerprint",
+            "toolchain_fingerprint",
+            "population_fingerprint",
+            "evidence_artifact_fingerprint",
+            "started_at",
+            "ended_at",
+            "exit_status",
+            "failure_classification",
+            "certification_disposition",
         ]
         missing = [k for k in required if k not in d]
         assert not missing, f"missing fields: {missing}"
@@ -172,14 +189,13 @@ class TestCIEvidenceContract:
         records = [_record(), _record("loan_engine")]
         p = save_ci_evidence(records, tmp_path / "ci.json")
         loaded = load_ci_evidence(p)
-        assert [r.fingerprint() for r in loaded] == [
-            r.fingerprint() for r in records
-        ]
+        assert [r.fingerprint() for r in loaded] == [r.fingerprint() for r in records]
 
 
 # ---------------------------------------------------------------------------
 # M29.2 — Graph binding
 # ---------------------------------------------------------------------------
+
 
 class TestGraphBinding:
     def test_bindings_have_derivation_sources(self) -> None:
@@ -237,8 +253,7 @@ class TestGraphBinding:
         bindings = verification_bindings(build_ci_bindings())
         g2 = bind_into_graph(g, bindings)
         ci_tasks = [
-            t for t in g2.tasks.values()
-            if t.metadata.get("origin") == "ci-binding"
+            t for t in g2.tasks.values() if t.metadata.get("origin") == "ci-binding"
         ]
         assert ci_tasks, "CI tasks must be bound into the graph"
         # No duplication on rebind.
@@ -250,6 +265,7 @@ class TestGraphBinding:
 # ---------------------------------------------------------------------------
 # M29.3 — Fingerprint validation + reuse decision
 # ---------------------------------------------------------------------------
+
 
 class TestFingerprintValidation:
     def test_intact_record_is_reusable(self) -> None:
@@ -271,9 +287,7 @@ class TestFingerprintValidation:
                 "loan_engine": _fps("loan_engine").source,
             }
         )
-        _, dec = validate_and_decide(
-            _record(), ctx, expected_artifact_bytes=b"{}"
-        )
+        _, dec = validate_and_decide(_record(), ctx, expected_artifact_bytes=b"{}")
         assert dec.disposition == "invalidated_component"
         assert not dec.reusable
 
@@ -286,17 +300,13 @@ class TestFingerprintValidation:
             }
         )
         record = _record(exit_status=0)
-        report, dec = validate_and_decide(
-            record, ctx, expected_artifact_bytes=b"{}"
-        )
+        report, dec = validate_and_decide(record, ctx, expected_artifact_bytes=b"{}")
         assert report.exit_status == 0
         assert not dec.reusable
 
     def test_configuration_drift_scoped_to_config_dependent_evidence(self) -> None:
         ctx = _ctx(configuration_fingerprint="NEWCONFIG")
-        _, dec_mut = validate_and_decide(
-            _record(), ctx, expected_artifact_bytes=b"{}"
-        )
+        _, dec_mut = validate_and_decide(_record(), ctx, expected_artifact_bytes=b"{}")
         assert not dec_mut.reusable
         # A behavioral suite record without config semantics stays valid.
         suite = _record(
@@ -316,9 +326,7 @@ class TestFingerprintValidation:
 
     def test_toolchain_drift_triggers_rcfg002(self) -> None:
         ctx = _ctx(toolchain_fingerprint="mutmut-99")
-        report, dec = validate_and_decide(
-            _record(), ctx, expected_artifact_bytes=b"{}"
-        )
+        report, dec = validate_and_decide(_record(), ctx, expected_artifact_bytes=b"{}")
         assert "R-CFG-002" in {d.rule_id for d in report.drifts}
         assert not dec.reusable
 
@@ -370,6 +378,7 @@ class TestFailureClassification:
 # M29.4 — Ingestion
 # ---------------------------------------------------------------------------
 
+
 class TestIngestion:
     def test_ingested_record_is_canonical_execution_evidence(self) -> None:
         record = _record()
@@ -404,6 +413,7 @@ class TestIngestion:
 # ---------------------------------------------------------------------------
 # M29.5 — Semantic equivalence
 # ---------------------------------------------------------------------------
+
 
 class TestSemanticEquivalence:
     def _pair(self):

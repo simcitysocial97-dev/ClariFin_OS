@@ -48,6 +48,7 @@ if str(REPO_ROOT) not in sys.path:
 # Population snapshot
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True, slots=True)
 class PopulationSnapshot:
     """A frozen set of components under verification."""
@@ -104,7 +105,7 @@ class ComponentMeasurement:
     measured_at: str
     repository_sha: str
     source_fingerprint: str  # fingerprint of mutated source
-    test_fingerprint: str    # fingerprint of test surface
+    test_fingerprint: str  # fingerprint of test surface
     config_hash: str
     toolchain_hash: str
     summary: dict[str, float | int | str | None] = field(default_factory=dict)
@@ -147,6 +148,7 @@ class ComponentMeasurement:
 # Derived aggregate
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True, slots=True)
 class DerivedAggregate:
     """A measurement derived from authoritative component measurements."""
@@ -180,15 +182,15 @@ class DerivedAggregate:
 # ---------------------------------------------------------------------------
 
 ReuseDisposition = Literal[
-    "reusable",                # measurement is still valid
+    "reusable",  # measurement is still valid
     "reusable_with_revalidation",  # same config/source, but new run recommended
-    "reusable_aggregate",      # aggregate derived from valid components
-    "stale",                   # evidence is old but not invalidated
-    "invalidated_component",   # source/config changed for this component
+    "reusable_aggregate",  # aggregate derived from valid components
+    "stale",  # evidence is old but not invalidated
+    "invalidated_component",  # source/config changed for this component
     "invalidated_capability",  # capability-level invalidation
-    "invalidated_task",        # only this specific task's evidence
+    "invalidated_task",  # only this specific task's evidence
     "invalidated_evidence_only",  # only this specific evidence record
-    "no_evidence",             # no prior evidence exists
+    "no_evidence",  # no prior evidence exists
 ]
 
 
@@ -266,8 +268,8 @@ class InvalidationRule:
 class Change:
     """A single change delta being evaluated."""
 
-    kind: str          # source_change, test_change, config_change, ...
-    target: str        # the component / file / capability being changed
+    kind: str  # source_change, test_change, config_change, ...
+    target: str  # the component / file / capability being changed
     fingerprint_before: str = ""
     fingerprint_after: str = ""
 
@@ -308,20 +310,24 @@ INVALIDATION_RULES: list[InvalidationRule] = [
         category="config",
         scope="INVALIDATES_TASK",
     ),
-    InvalidationRule(
-        rule_id="R-CFG-002",
-        description="Toolchain version change (mutmut/pytest) invalidates "
-        "all mutation evidence — measurement is not comparable across "
-        "toolchains.",
-        category="toolchain",
-        scope="INVALIDATES_POPULATION",
-        # corrected below via scope override
-    ) if False else InvalidationRule(  # placeholder, replaced
-        rule_id="R-CFG-002",
-        description="Toolchain version change invalidates population-level "
-        "mutation evidence — measurement is not comparable across toolchains.",
-        category="toolchain",
-        scope="INVALIDATES_COMPONENT",
+    (
+        InvalidationRule(
+            rule_id="R-CFG-002",
+            description="Toolchain version change (mutmut/pytest) invalidates "
+            "all mutation evidence — measurement is not comparable across "
+            "toolchains.",
+            category="toolchain",
+            scope="INVALIDATES_POPULATION",
+            # corrected below via scope override
+        )
+        if False
+        else InvalidationRule(  # placeholder, replaced
+            rule_id="R-CFG-002",
+            description="Toolchain version change invalidates population-level "
+            "mutation evidence — measurement is not comparable across toolchains.",
+            category="toolchain",
+            scope="INVALIDATES_COMPONENT",
+        )
     ),
     InvalidationRule(
         rule_id="R-DEP-001",
@@ -394,6 +400,7 @@ INVALIDATION_RULES: list[InvalidationRule] = [
 # ---------------------------------------------------------------------------
 # Evaluator
 # ---------------------------------------------------------------------------
+
 
 @dataclass(frozen=True, slots=True)
 class InvalidationVerdict:
@@ -480,7 +487,9 @@ def evaluate_rule(
             else "no removal affecting this component"
         )
     elif rule.rule_id == "R-CAP-001":
-        triggered = change.kind == "capability_mapping_change" and component in change.target
+        triggered = (
+            change.kind == "capability_mapping_change" and component in change.target
+        )
         rationale = (
             f"capability mapping changed for {component}"
             if triggered
@@ -495,11 +504,7 @@ def evaluate_rule(
         )
     elif rule.rule_id == "R-ENV-001":
         triggered = change.kind == "environment_change"
-        rationale = (
-            "environment change"
-            if triggered
-            else "no environment change"
-        )
+        rationale = "environment change" if triggered else "no environment change"
     elif rule.rule_id == "R-INFRA-001":
         triggered = change.kind == "infra_change" and component in change.target
         rationale = (
@@ -558,6 +563,7 @@ def aggregate_invalidation(
 # Reuse decision — combines invalidation with measurement fingerprint check
 # ---------------------------------------------------------------------------
 
+
 def decide_reuse(
     component: str,
     change: Change,
@@ -576,9 +582,7 @@ def decide_reuse(
             reasons=("no prior measurement for this component",),
         )
 
-    verdicts = [
-        evaluate_rule(rule, change, component) for rule in INVALIDATION_RULES
-    ]
+    verdicts = [evaluate_rule(rule, change, component) for rule in INVALIDATION_RULES]
     triggered = [v for v in verdicts if v.triggered]
     scope = aggregate_invalidation(triggered)
 
@@ -835,7 +839,9 @@ def c42_26_derived_aggregate(
 SNAPSHOT_DIR = REPO_ROOT / "runtime" / "generated" / "m9-c42.27" / "snapshots"
 
 
-def save_snapshot(snapshot: PopulationSnapshot, measurements: list[ComponentMeasurement]) -> Path:
+def save_snapshot(
+    snapshot: PopulationSnapshot, measurements: list[ComponentMeasurement]
+) -> Path:
     SNAPSHOT_DIR.mkdir(parents=True, exist_ok=True)
     path = SNAPSHOT_DIR / f"{snapshot.population_id}.json"
     payload = {
@@ -846,7 +852,9 @@ def save_snapshot(snapshot: PopulationSnapshot, measurements: list[ComponentMeas
     return path
 
 
-def load_snapshot(population_id: str) -> tuple[PopulationSnapshot, list[ComponentMeasurement]]:
+def load_snapshot(
+    population_id: str,
+) -> tuple[PopulationSnapshot, list[ComponentMeasurement]]:
     path = SNAPSHOT_DIR / f"{population_id}.json"
     data = json.loads(path.read_text())
     snap_data = data["snapshot"]
@@ -887,10 +895,10 @@ def main() -> int:
     snap_24 = PopulationSnapshot(
         population_id=C42_24_B_POPULATION_ID,
         created_at="2026-08-24T18:00:00+00:00",
-        components=tuple(
-            m.component for m in c42_24_b_measurements()
-        ),
-        component_fingerprints={m.component: m.source_fingerprint for m in c42_24_b_measurements()},
+        components=tuple(m.component for m in c42_24_b_measurements()),
+        component_fingerprints={
+            m.component: m.source_fingerprint for m in c42_24_b_measurements()
+        },
         config_hash="c42-24-B-config-v1",
         toolchain_hash="mutmut-3.7.0|pytest-8.x",
         repository_sha="6bb27a89",

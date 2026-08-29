@@ -576,9 +576,7 @@ class TestFloatingRate:
             cumulative_interest_paise=0,
         )
         schedule = [closed_row]
-        new_schedule = apply_floating_rate_change(
-            schedule, 1, 950, mode="adjust_emi"
-        )
+        new_schedule = apply_floating_rate_change(schedule, 1, 950, mode="adjust_emi")
         assert len(new_schedule) == 1
         assert new_schedule[0].emi_paise == 0
         assert new_schedule[0].balance_paise == 0
@@ -627,9 +625,7 @@ class TestFloatingRate:
     def test_rate_change_first_month_has_empty_prefix(self):
         """A rate change at month 1 must not prepend any unchanged rows."""
         schedule = generate_schedule(100000000, 850, 120, "2025-01-01")
-        new_schedule = apply_floating_rate_change(
-            schedule, 1, 950, mode="adjust_emi"
-        )
+        new_schedule = apply_floating_rate_change(schedule, 1, 950, mode="adjust_emi")
         # Month numbers must start at 1, not 2 — proves prefix is empty.
         assert new_schedule[0].month_number == 1
         assert len(new_schedule) == 120
@@ -853,7 +849,9 @@ class TestMetrics:
         original = generate_schedule(100000000, 850, 120, "2025-01-01")
         new = generate_schedule(100000000, 850, 60, "2025-01-01")
         saved_with_default = calculate_interest_saved(original, new)
-        saved_explicit_zero = calculate_interest_saved(original, new, prepayment_paise=0)
+        saved_explicit_zero = calculate_interest_saved(
+            original, new, prepayment_paise=0
+        )
         assert saved_with_default == saved_explicit_zero
         assert saved_with_default > 0
 
@@ -1049,8 +1047,9 @@ class TestForeclosureSurvivors:
             prepayment_penalty_bps=15,
         )
         expected = int(
-            (Decimal(15) * Decimal(1000) / Decimal(10000))
-            .quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
+            (Decimal(15) * Decimal(1000) / Decimal(10000)).quantize(
+                Decimal(1), rounding=ROUND_HALF_EVEN
+            )
         )
         assert result.penalty_paise == expected
 
@@ -1338,9 +1337,9 @@ class TestAmortizationMutationKillers:
         # Find first month where balance becomes 0
         for i, row in enumerate(schedule):
             if row.balance_paise == 0:
-                assert row.interest_paise == 0, (
-                    f"Month {i+1}: balance=0 but interest={row.interest_paise}"
-                )
+                assert (
+                    row.interest_paise == 0
+                ), f"Month {i+1}: balance=0 but interest={row.interest_paise}"
                 break
 
     # --- Comparison mutations (early payoff exact boundary) ---
@@ -1459,7 +1458,10 @@ class TestAmortizationMutationKillers:
         """
         schedule = generate_schedule(100000, 850, 12, "2025-01-01")
         for i in range(1, len(schedule)):
-            assert schedule[i].cumulative_interest_paise >= schedule[i - 1].cumulative_interest_paise
+            assert (
+                schedule[i].cumulative_interest_paise
+                >= schedule[i - 1].cumulative_interest_paise
+            )
 
     # --- Error message content (validate_schedule exception) ---
 
@@ -1590,7 +1592,10 @@ class TestAmortizationMutationKillers:
         # The last row's principal should clear the remaining reported balance
         assert schedule[-1].balance_paise == 0
         # Principal + interest = EMI in last month (self-consistent ledger)
-        assert schedule[-1].principal_paise + schedule[-1].interest_paise == schedule[-1].emi_paise
+        assert (
+            schedule[-1].principal_paise + schedule[-1].interest_paise
+            == schedule[-1].emi_paise
+        )
 
     # --- Arithmetic mutations (actual_emi computation in early payoff) ---
 
@@ -1637,10 +1642,13 @@ class TestPrepaymentSurvivors:
         principal = 100000000
         rate = 850
         from decimal import Decimal
+
         monthly_rate = Decimal(rate) / Decimal(120000)
-        emi_exact = int((Decimal(principal) * monthly_rate).quantize(
-            Decimal(1), rounding=ROUND_HALF_EVEN
-        ))
+        emi_exact = int(
+            (Decimal(principal) * monthly_rate).quantize(
+                Decimal(1), rounding=ROUND_HALF_EVEN
+            )
+        )
         result = _compute_tenure_from_emi(principal, rate, emi_exact)
         assert result == 999
 
@@ -1715,10 +1723,7 @@ class TestPrepaymentSurvivors:
             prepayment_penalty_bps=200,
         )
         assert result_with_pen.penalty_paise > 0
-        assert (
-            result_with_pen.interest_saved_paise
-            < result_no_pen.interest_saved_paise
-        )
+        assert result_with_pen.interest_saved_paise < result_no_pen.interest_saved_paise
 
     def test_interest_saved_formula_subtracts_penalty(self):
         """interest_saved = original_interest - new_interest - penalty (not +)."""
@@ -1749,9 +1754,7 @@ class TestPrepaymentSurvivors:
         """Unsorted prepayments must be processed in month order."""
         schedule = generate_schedule(100000000, 850, 24, "2025-01-01")
         prepayments = [(18, 5000000), (6, 3000000)]
-        _, results = apply_multiple_prepayments(
-            schedule, prepayments, 850
-        )
+        _, results = apply_multiple_prepayments(schedule, prepayments, 850)
         assert len(results) == 2
         # First result corresponds to month 6 (earlier), second to month 18
         assert results[0].prepayment_paise == 3000000
@@ -1763,9 +1766,7 @@ class TestPrepaymentSurvivors:
         """Month 0 in multiple prepayments should be skipped, not crash."""
         schedule = generate_schedule(100000000, 850, 12, "2025-01-01")
         prepayments = [(0, 1000000), (6, 5000000)]
-        new_schedule, results = apply_multiple_prepayments(
-            schedule, prepayments, 850
-        )
+        new_schedule, results = apply_multiple_prepayments(schedule, prepayments, 850)
         assert len(results) == 1
         assert results[0].prepayment_paise == 5000000
 
@@ -1773,9 +1774,7 @@ class TestPrepaymentSurvivors:
         """Month beyond schedule length should be skipped."""
         schedule = generate_schedule(100000000, 850, 12, "2025-01-01")
         prepayments = [(13, 1000000), (6, 5000000)]
-        _, results = apply_multiple_prepayments(
-            schedule, prepayments, 850
-        )
+        _, results = apply_multiple_prepayments(schedule, prepayments, 850)
         assert len(results) == 1
         assert results[0].prepayment_paise == 5000000
 
@@ -1786,7 +1785,11 @@ class TestPrepaymentSurvivors:
         schedule = generate_schedule(100000000, 850, 120, "2025-01-01")
         tail = schedule[11:]
         result = regenerate_schedule(
-            tail, 0, 850, "reduce_tenure", "2025-06-01",
+            tail,
+            0,
+            850,
+            "reduce_tenure",
+            "2025-06-01",
             original_emi=1239857,
         )
         assert result == []
@@ -1796,7 +1799,11 @@ class TestPrepaymentSurvivors:
         schedule = generate_schedule(100000000, 850, 120, "2025-01-01")
         tail = schedule[11:]
         result = regenerate_schedule(
-            tail, -1, 850, "reduce_tenure", "2025-06-01",
+            tail,
+            -1,
+            850,
+            "reduce_tenure",
+            "2025-06-01",
             original_emi=1239857,
         )
         assert result == []
@@ -1808,7 +1815,11 @@ class TestPrepaymentSurvivors:
         schedule = generate_schedule(100000000, 850, 120, "2025-01-01")
         tail = schedule[11:]
         result = regenerate_schedule(
-            tail, 50000000, 850, "reduce_tenure", "2025-06-01",
+            tail,
+            50000000,
+            850,
+            "reduce_tenure",
+            "2025-06-01",
         )
         assert len(result) > 0
         assert result[0].emi_paise == tail[0].emi_paise
@@ -1818,7 +1829,11 @@ class TestPrepaymentSurvivors:
         schedule = generate_schedule(100000000, 850, 120, "2025-01-01")
         tail = schedule[11:]
         result = regenerate_schedule(
-            tail, 50000000, 850, "reduce_emi", "2025-06-01",
+            tail,
+            50000000,
+            850,
+            "reduce_emi",
+            "2025-06-01",
         )
         assert len(result) == 109  # 120 - 11 = 109 remaining months
         assert result[0].emi_paise < tail[0].emi_paise
@@ -1827,14 +1842,22 @@ class TestPrepaymentSurvivors:
         """Empty previous_schedule with no original_emi must raise ValueError."""
         with pytest.raises(ValueError, match="original_emi is required"):
             regenerate_schedule(
-                [], 50000000, 850, "reduce_tenure", "2025-06-01",
+                [],
+                50000000,
+                850,
+                "reduce_tenure",
+                "2025-06-01",
             )
 
     def test_regenerate_empty_schedule_without_tenure_raises(self):
         """Empty previous_schedule with no original_tenure in reduce_emi raises."""
         with pytest.raises(ValueError, match="original_tenure is required"):
             regenerate_schedule(
-                [], 50000000, 850, "reduce_emi", "2025-06-01",
+                [],
+                50000000,
+                850,
+                "reduce_emi",
+                "2025-06-01",
             )
 
     # --- Line 187: tail_start_index > 0 boundary (prepayment at month 1) ---
@@ -1865,6 +1888,7 @@ class TestPrepaymentSurvivors:
     def test_prepayment_with_enum_mode_reduce_tenure(self):
         """Passing PrepaymentMode.REDUCE_TENURE enum must work like string."""
         from src.engines.loan_engine.models import PrepaymentMode
+
         result = apply_prepayment(
             outstanding_paise=100000000,
             annual_rate_bps=850,
@@ -1878,6 +1902,7 @@ class TestPrepaymentSurvivors:
     def test_prepayment_with_enum_mode_reduce_emi(self):
         """Passing PrepaymentMode.REDUCE_EMI enum must work like string."""
         from src.engines.loan_engine.models import PrepaymentMode
+
         result = apply_prepayment(
             outstanding_paise=100000000,
             annual_rate_bps=850,
@@ -1914,18 +1939,24 @@ class TestPrepaymentSurvivors:
     def test_penalty_affects_interest_saved(self):
         """Higher penalty must reduce interest_saved proportionally."""
         r0 = apply_prepayment(
-            outstanding_paise=100000000, annual_rate_bps=850,
-            remaining_months=120, prepayment_paise=10000000,
+            outstanding_paise=100000000,
+            annual_rate_bps=850,
+            remaining_months=120,
+            prepayment_paise=10000000,
             prepayment_penalty_bps=0,
         )
         r1 = apply_prepayment(
-            outstanding_paise=100000000, annual_rate_bps=850,
-            remaining_months=120, prepayment_paise=10000000,
+            outstanding_paise=100000000,
+            annual_rate_bps=850,
+            remaining_months=120,
+            prepayment_paise=10000000,
             prepayment_penalty_bps=100,
         )
         r2 = apply_prepayment(
-            outstanding_paise=100000000, annual_rate_bps=850,
-            remaining_months=120, prepayment_paise=10000000,
+            outstanding_paise=100000000,
+            annual_rate_bps=850,
+            remaining_months=120,
+            prepayment_paise=10000000,
             prepayment_penalty_bps=200,
         )
         assert r0.penalty_paise == 0
@@ -1948,8 +1979,9 @@ class TestPrepaymentSurvivors:
         assert result.new_schedule is not None
         first_emi = result.new_schedule[0].emi_paise
         for row in result.new_schedule:
-            assert row.emi_paise <= first_emi, \
-                f"Balloon detected: month {row.month_number} emi={row.emi_paise} > {first_emi}"
+            assert (
+                row.emi_paise <= first_emi
+            ), f"Balloon detected: month {row.month_number} emi={row.emi_paise} > {first_emi}"
 
     def test_reduce_tenure_tenure_shorter_than_original(self):
         """Reduce-tenure prepayment must shorten the schedule."""
@@ -1963,3 +1995,32 @@ class TestPrepaymentSurvivors:
         assert result.new_schedule is not None
         assert len(result.new_schedule) < 120
         assert result.new_remaining_months < 120
+
+
+class TestFinalPaymentPrincipalAllocationMutants:
+    """Exact paise-level assertions for final payment to kill rounding/arithmetic mutants."""
+
+    def test_final_payment_principal_clears_remaining_balance(self) -> None:
+        """Final payment principal must equal remaining balance exactly (within 1 paise rounding)."""
+        schedule = generate_schedule(100000000, 850, 120, "2025-01-01")
+        last_row = schedule[-1]
+        # Principal paid in final payment should clear the remaining balance
+        assert last_row.principal_paise == last_row.balance_paise + last_row.principal_paise
+        # Balance after final payment must be zero
+        assert last_row.balance_paise == 0
+
+    def test_final_payment_emi_equals_principal_plus_interest(self) -> None:
+        """Final EMI must equal principal + interest for that month."""
+        schedule = generate_schedule(100000000, 850, 120, "2025-01-01")
+        last_row = schedule[-1]
+        assert last_row.emi_paise == last_row.principal_paise + last_row.interest_paise
+
+    def test_final_payment_principal_exact_rounding_boundary(self) -> None:
+        """Final principal allocation must match exact rounding (within 1 paise)."""
+        # Use a loan that produces exact rounding at boundary
+        schedule = generate_schedule(10000000, 850, 12, "2025-01-01")  # ₹1L, 1 year
+        last_row = schedule[-1]
+        # The exact remaining balance before final payment
+        prev_balance = schedule[-2].balance_paise
+        # Final principal should equal prev_balance (within rounding)
+        assert abs(last_row.principal_paise - prev_balance) <= 1

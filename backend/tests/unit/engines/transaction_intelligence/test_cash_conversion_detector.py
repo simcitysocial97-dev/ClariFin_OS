@@ -50,7 +50,9 @@ DEBIT = {
 }
 
 
-def credit(txn_id=11, amount=975_000, date="2026-08-02", household=7, account_type="savings"):
+def credit(
+    txn_id=11, amount=975_000, date="2026-08-02", household=7, account_type="savings"
+):
     row = {
         "id": txn_id,
         "account_id": 100 + txn_id,
@@ -280,9 +282,7 @@ def test_detect_rejects_credit_from_other_household():
 
 
 def test_detect_rejects_non_savings_or_current_account():
-    assert (
-        detect(DEBIT, [credit(account_type="loan")], [PROVIDER], PURPOSES) is None
-    )
+    assert detect(DEBIT, [credit(account_type="loan")], [PROVIDER], PURPOSES) is None
 
 
 def test_detect_missing_account_type_defaults_to_savings():
