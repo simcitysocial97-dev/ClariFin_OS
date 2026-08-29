@@ -13,6 +13,7 @@ Phase 2 Router Extraction Complete:
 - This file now contains only app setup, middleware, and router registration
 """
 
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -29,7 +30,7 @@ from src.startup import run_startup_validation
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Ensure the SQLite schema exists/is current before serving requests.
     # Delegates to the canonical startup-validation owner (src/startup.py),
     # which now performs idempotent schema initialization.

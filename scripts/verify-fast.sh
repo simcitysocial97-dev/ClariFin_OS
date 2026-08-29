@@ -33,8 +33,8 @@ cd "$BACKEND_DIR"
 echo "[Stage] ruff check --fix"
 "$PY" -m ruff check src/ --fix
 
-echo "[Stage] ruff format --check"
-"$PY" -m ruff format --check src/
+echo "[Stage] black --check (canonical repo-root formatter)"
+"$PY" -m black --check src/
 
 echo "[Stage] mypy (backend strict)"
 "$PY" -m mypy src/
