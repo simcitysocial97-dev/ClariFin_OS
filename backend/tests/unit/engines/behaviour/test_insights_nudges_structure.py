@@ -132,7 +132,9 @@ class TestInsightExactStructure:
                 }
             }
         }
-        ins = _find(generate_behavioral_insights(profile), "High Micro-Transaction Rate")
+        ins = _find(
+            generate_behavioral_insights(profile), "High Micro-Transaction Rate"
+        )
         assert ins["type"] == "warning"
         assert ins["metric"] == "micro_txn_ratio"
         assert ins["value"] == 0.5
@@ -171,7 +173,9 @@ class TestInsightExactStructure:
                 }
             }
         }
-        ins = _find(generate_behavioral_insights(profile), "High Discretionary Spending")
+        ins = _find(
+            generate_behavioral_insights(profile), "High Discretionary Spending"
+        )
         assert ins["type"] == "warning"
         assert ins["metric"] == "discretionary_ratio"
         assert ins["value"] == 0.5
@@ -411,7 +415,9 @@ class TestInsightExactStructure:
                 }
             }
         }
-        ins = _find(generate_behavioral_insights(profile), "Gaming/Gambling Transactions")
+        ins = _find(
+            generate_behavioral_insights(profile), "Gaming/Gambling Transactions"
+        )
         assert ins["type"] == "warning"
         assert ins["metric"] == "gambling_flag"
         assert ins["value"] is True
@@ -481,7 +487,9 @@ class TestInsightExactStructure:
 
     def test_weak_health_exact(self) -> None:
         profile = {"financial_health_score": 30}
-        ins = _find(generate_behavioral_insights(profile), "Financial Health Needs Attention")
+        ins = _find(
+            generate_behavioral_insights(profile), "Financial Health Needs Attention"
+        )
         assert ins["type"] == "warning"
         assert ins["metric"] == "financial_health_score"
         assert ins["value"] == 30
@@ -525,7 +533,10 @@ class TestNudgeExactStructure:
     def test_every_nudge_has_exact_keys(self) -> None:
         profile = {
             "behavioral_indices": {
-                "loss_aversion": {"post_income_velocity": 0.7, "large_expense_count": 0},
+                "loss_aversion": {
+                    "post_income_velocity": 0.7,
+                    "large_expense_count": 0,
+                },
                 "impulsivity": {
                     "micro_txn_ratio": 0.6,
                     "weekend_ratio": 1.0,

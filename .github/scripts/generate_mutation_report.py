@@ -9,6 +9,7 @@ Usage:
     python generate_mutation_report.py
 """
 
+import contextlib
 import json
 import subprocess
 import sys
@@ -45,20 +46,14 @@ def get_mutation_results() -> dict:
     for line in output.splitlines():
         line = line.strip()
         if "Killed:" in line:
-            try:
+            with contextlib.suppress(ValueError, IndexError):
                 results["killed"] = int(line.split(":")[1].strip())
-            except (ValueError, IndexError):
-                pass
         elif "Survived:" in line:
-            try:
+            with contextlib.suppress(ValueError, IndexError):
                 results["survived"] = int(line.split(":")[1].strip())
-            except (ValueError, IndexError):
-                pass
         elif "Timeout:" in line:
-            try:
+            with contextlib.suppress(ValueError, IndexError):
                 results["timeout"] = int(line.split(":")[1].strip())
-            except (ValueError, IndexError):
-                pass
 
     total = results["killed"] + results["survived"]
     results["total"] = total
@@ -89,8 +84,8 @@ def generate_report(results: dict, survivors: list[str]) -> str:
 
     report = f"""# Mutation Testing Report
 
-**Generated:** {timestamp}  
-**Status:** {status}  
+**Generated:** {timestamp}
+**Status:** {status}
 **Mutation Score:** {score}%
 
 ---

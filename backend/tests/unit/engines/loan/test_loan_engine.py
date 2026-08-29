@@ -2005,7 +2005,10 @@ class TestFinalPaymentPrincipalAllocationMutants:
         schedule = generate_schedule(100000000, 850, 120, "2025-01-01")
         last_row = schedule[-1]
         # Principal paid in final payment should clear the remaining balance
-        assert last_row.principal_paise == last_row.balance_paise + last_row.principal_paise
+        assert (
+            last_row.principal_paise
+            == last_row.balance_paise + last_row.principal_paise
+        )
         # Balance after final payment must be zero
         assert last_row.balance_paise == 0
 

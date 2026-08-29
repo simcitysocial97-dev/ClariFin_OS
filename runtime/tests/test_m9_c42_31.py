@@ -42,17 +42,17 @@ from runtime.foundation.verification.strengthening import (  # noqa: E402
 
 
 def _class_a(**kw) -> SurvivorEvidence:
-    defaults = dict(
-        survivor_id="mut-cc-0001",
-        component="credit_card_engine",
-        capability="credit-card-risk",
-        location="risk.py:compute_apr",
-        mutation_operator="comparison",
-        original_snippet="if utilization >= threshold:",
-        mutated_snippet="if utilization > threshold:",
-        status="survived",
-        covering_tests=("t1",),
-    )
+    defaults = {
+        "survivor_id": "mut-cc-0001",
+        "component": "credit_card_engine",
+        "capability": "credit-card-risk",
+        "location": "risk.py:compute_apr",
+        "mutation_operator": "comparison",
+        "original_snippet": "if utilization >= threshold:",
+        "mutated_snippet": "if utilization > threshold:",
+        "status": "survived",
+        "covering_tests": ("t1",),
+    }
     defaults.update(kw)
     return SurvivorEvidence(**defaults)
 

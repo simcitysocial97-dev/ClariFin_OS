@@ -220,9 +220,10 @@ class BackendScanner(BaseScanner):
     def _is_inside_function(node: ast.AST, tree: ast.AST) -> bool:
         """Check if an AST node is inside a function/method definition."""
         for parent in ast.walk(tree):
-            if isinstance(parent, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                if node in ast.walk(parent):
-                    return True
+            if isinstance(
+                parent, (ast.FunctionDef, ast.AsyncFunctionDef)
+            ) and node in ast.walk(parent):
+                return True
         return False
 
     # -- helpers -------------------------------------------------------------
@@ -323,9 +324,10 @@ class BackendScanner(BaseScanner):
 
                         if is_router:
                             for kw in node.value.keywords:
-                                if kw.arg == "prefix":
-                                    if isinstance(kw.value, ast.Constant):
-                                        return kw.value.value
+                                if kw.arg == "prefix" and isinstance(
+                                    kw.value, ast.Constant
+                                ):
+                                    return kw.value.value
         return None
 
     def _extract_endpoints(

@@ -45,7 +45,9 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 BACKEND_DIR = REPO_ROOT / "backend"
-DEFAULT_INTEL_PATH = BACKEND_DIR / "tests" / "generated" / "mutation" / "mutation-survivor-intel.json"
+DEFAULT_INTEL_PATH = (
+    BACKEND_DIR / "tests" / "generated" / "mutation" / "mutation-survivor-intel.json"
+)
 
 # Component -> capability (single source of truth derived from the C44
 # survivor-capability-attribution summary). Multi-capability components are
@@ -200,9 +202,7 @@ def build_survivor_intel(
 
         by_class[class_code] = by_class.get(class_code, 0) + 1
 
-        primary_cap, capabilities = capability_for(
-            entry.key, entry.source_file
-        )
+        primary_cap, capabilities = capability_for(entry.key, entry.source_file)
 
         covering_tests: list[str] = []
         tests_provenance = "not_enriched"
@@ -217,9 +217,7 @@ def build_survivor_intel(
 
         record_fields = {
             "survivor_id": entry.key,
-            "component": (
-                component_for_source(entry.source_file) or "unknown"
-            ),
+            "component": (component_for_source(entry.source_file) or "unknown"),
             "source_file": f"src/{entry.source_file}",
             "source_location": f"{entry.source_file}:{entry.function}",
             "function": entry.function,
@@ -293,9 +291,7 @@ def run_intel_cli(argv: list[str]) -> int:
     then derive the scaffold for the behavioural assertion to consider."""
     import argparse
 
-    parser = argparse.ArgumentParser(
-        prog="verify.py mutation-intel", add_help=False
-    )
+    parser = argparse.ArgumentParser(prog="verify.py mutation-intel", add_help=False)
     parser.add_argument(
         "survivor_id",
         nargs="?",
@@ -332,11 +328,15 @@ def run_intel_cli(argv: list[str]) -> int:
         print(f"  mutation type      : {rec['mutation_type']}")
         print(f"  mutated            : {rec['original_expression']!r}")
         print(f"                       -> {rec['mutated_expression']!r}")
-        print(f"  classification     : {rec['classification']} ({rec['subclassification']})")
+        print(
+            f"  classification     : {rec['classification']} ({rec['subclassification']})"
+        )
         print("  classification ev. :", rec["classification_evidence"])
         print(f"  capability         : {rec['capability']} {rec['capabilities']}")
-        print(f"  covering tests     : {len(rec['covering_tests'])}  "
-              f"(provenance={rec['tests_enrichment_provenance']})")
+        print(
+            f"  covering tests     : {len(rec['covering_tests'])}  "
+            f"(provenance={rec['tests_enrichment_provenance']})"
+        )
         for t in rec["covering_test_surface"][:15]:
             print(f"      {t}")
         print(f"  investigation      : {rec['investigation_status']}")

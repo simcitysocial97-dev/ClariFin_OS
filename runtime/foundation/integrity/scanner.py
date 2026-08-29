@@ -319,9 +319,7 @@ def _should_exclude(rel_path: str) -> bool:
     filename = parts[-1]
     if filename.startswith("test_") or filename.startswith("conftest"):
         return True
-    if filename in _EXCLUDE_FILES:
-        return True
-    return False
+    return filename in _EXCLUDE_FILES
 
 
 def discover_source_files(repo_root: Path) -> list[str]:
@@ -603,9 +601,7 @@ class ArchitecturalScanner:
         for node in ast.walk(tree):
             if isinstance(node, ast.ClassDef):
                 class_names.append(node.name)
-            elif isinstance(node, ast.FunctionDef) or isinstance(
-                node, ast.AsyncFunctionDef
-            ):
+            elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 function_names.append(node.name)
 
         return ScannedFile(

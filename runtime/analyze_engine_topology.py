@@ -217,13 +217,13 @@ def main():
 
     # Build service -> routers map (routers that import a service)
     service_to_routers = defaultdict(set)
-    for rel, (engs, svcs, repos) in tokens.items():
+    for rel, (_engs, svcs, _repos) in tokens.items():
         if classify_importer(rel) == "Router":
             for s in svcs:
                 service_to_routers[s].add(rel)
     # service -> repositories
     service_to_repos = defaultdict(set)
-    for rel, (engs, svcs, repos) in tokens.items():
+    for rel, (_engs, _svcs, repos) in tokens.items():
         if classify_importer(rel) == "Service":
             for r in repos:
                 service_to_repos[rel.split("/")[-1].replace(".py", "")].add(r)

@@ -682,7 +682,7 @@ def benchmark_resource_efficiency() -> EfficiencyBenchmark:
     # to a per-component estimate of 60 minutes (the conventional CI
     # mutation budget per engine).
     full_cost = 0
-    for m in measurements:
+    for _m in measurements:
         # The C42.24-B/C42.25/C42.26 measurements are not time-stamped
         # with a duration field, so use a stable proxy: 60 minutes per
         # component (the conventional budget for an engine mutation

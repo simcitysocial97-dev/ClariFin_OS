@@ -26,16 +26,16 @@ from runtime.system.evidence.collectors.test_results import ResultsCollector
 
 
 def _summary(**overrides):
-    base = dict(
-        profile="test",
-        total_tasks=4,
-        passed=3,
-        failed=1,
-        skipped=0,
-        duration_seconds=1.0,
-        report_path="",
-        cache_path="",
-    )
+    base = {
+        "profile": "test",
+        "total_tasks": 4,
+        "passed": 3,
+        "failed": 1,
+        "skipped": 0,
+        "duration_seconds": 1.0,
+        "report_path": "",
+        "cache_path": "",
+    }
     base.update(overrides)
     return VerificationSummary(**base)
 

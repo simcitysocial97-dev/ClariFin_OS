@@ -47,7 +47,7 @@ class TestExecutorArtifactPersistence:
 
     def test_temp_files_are_cleaned_up(self, executor: Executor):
         """The original NamedTemporaryFile handles are gone; only durable copies remain."""
-        result = executor.execute(
+        executor.execute(
             "echo ok",
             task_id="test-a-cleanup",
         )

@@ -111,6 +111,7 @@ class TestMovingAverageMutants:
 class TestParseDateMutants:
     def test_iso_format(self) -> None:
         from datetime import datetime
+
         result = _parse_date("2025-01-15")
         assert result == datetime(2025, 1, 15)
 
@@ -125,11 +126,13 @@ class TestParseDateMutants:
 
     def test_ddmmyyyy_format(self) -> None:
         from datetime import datetime
+
         result = _parse_date("15/01/2025")
         assert result == datetime(2025, 1, 15)
 
     def test_whitespace_trimmed(self) -> None:
         from datetime import datetime
+
         result = _parse_date("  2025-01-15  ")
         assert result == datetime(2025, 1, 15)
 
@@ -151,18 +154,38 @@ class TestImpulsivityScoreMutants:
     def test_micro_txn_boundary_at_500_rupees(self) -> None:
         """Micro transactions are < ₹500 (i.e., < 50000 paise)."""
         txns = [
-            {"type": "debit", "amount_paise": 49999, "date_iso": "2025-01-01", "category": "food"},
-            {"type": "debit", "amount_paise": 50000, "date_iso": "2025-01-02", "category": "food"},
-            {"type": "debit", "amount_paise": 50001, "date_iso": "2025-01-03", "category": "food"},
+            {
+                "type": "debit",
+                "amount_paise": 49999,
+                "date_iso": "2025-01-01",
+                "category": "food",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 50000,
+                "date_iso": "2025-01-02",
+                "category": "food",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 50001,
+                "date_iso": "2025-01-03",
+                "category": "food",
+            },
         ]
         result = _compute_impulsivity_score(txns)
         # 1 of 3 is micro (< 50000) → micro_ratio ≈ 0.333
         assert result["micro_txn_count"] == 1
-        assert result["micro_txn_ratio"] == pytest.approx(1/3, abs=1e-4)
+        assert result["micro_txn_ratio"] == pytest.approx(1 / 3, abs=1e-4)
 
     def test_all_micro_transactions_high_micro_ratio(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": i * 1000, "date_iso": f"2025-01-{i+1:02d}", "category": "food"}
+            {
+                "type": "debit",
+                "amount_paise": i * 1000,
+                "date_iso": f"2025-01-{i+1:02d}",
+                "category": "food",
+            }
             for i in range(1, 11)
         ]
         result = _compute_impulsivity_score(txns)
@@ -171,8 +194,18 @@ class TestImpulsivityScoreMutants:
     def test_weekend_vs_weekday_ratio(self) -> None:
         """Jan 4, 2025 is Saturday; Jan 6, 2025 is Monday."""
         txns = [
-            {"type": "debit", "amount_paise": 100000, "date_iso": "2025-01-04", "category": "entertainment"},  # Sat
-            {"type": "debit", "amount_paise": 100000, "date_iso": "2025-01-06", "category": "groceries"},      # Mon
+            {
+                "type": "debit",
+                "amount_paise": 100000,
+                "date_iso": "2025-01-04",
+                "category": "entertainment",
+            },  # Sat
+            {
+                "type": "debit",
+                "amount_paise": 100000,
+                "date_iso": "2025-01-06",
+                "category": "groceries",
+            },  # Mon
         ]
         result = _compute_impulsivity_score(txns)
         # Weekend total = 100000, weekday total = 100000 → ratio = 1.0
@@ -180,8 +213,18 @@ class TestImpulsivityScoreMutants:
 
     def test_discretionary_category_ratio(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 100000, "date_iso": "2025-01-01", "category": "Food & Dining"},
-            {"type": "debit", "amount_paise": 100000, "date_iso": "2025-01-02", "category": "Rent"},
+            {
+                "type": "debit",
+                "amount_paise": 100000,
+                "date_iso": "2025-01-01",
+                "category": "Food & Dining",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 100000,
+                "date_iso": "2025-01-02",
+                "category": "Rent",
+            },
         ]
         result = _compute_impulsivity_score(txns)
         # Food & Dining is discretionary, Rent is not → 0.5
@@ -205,7 +248,11 @@ class TestLossAversionIndexMutants:
         """Spending within 72 hours (0 <= days_diff <= 3) counts as post-income velocity."""
         txns = [
             {"type": "credit", "amount_paise": 500000, "date_iso": "2025-01-01"},
-            {"type": "debit", "amount_paise": 100000, "date_iso": "2025-01-02"},  # 1 day after
+            {
+                "type": "debit",
+                "amount_paise": 100000,
+                "date_iso": "2025-01-02",
+            },  # 1 day after
         ]
         result = _compute_loss_aversion_index(txns)
         # velocity = 100000/500000 = 0.2
@@ -215,7 +262,11 @@ class TestLossAversionIndexMutants:
         """Spending beyond 3 days is NOT counted as post-income velocity."""
         txns = [
             {"type": "credit", "amount_paise": 500000, "date_iso": "2025-01-01"},
-            {"type": "debit", "amount_paise": 100000, "date_iso": "2025-01-05"},  # 4 days after (> 3)
+            {
+                "type": "debit",
+                "amount_paise": 100000,
+                "date_iso": "2025-01-05",
+            },  # 4 days after (> 3)
         ]
         result = _compute_loss_aversion_index(txns)
         assert result["post_income_velocity"] == pytest.approx(0.0, rel=1e-5)
@@ -255,9 +306,24 @@ class TestHabitStabilityMutants:
     def test_recurring_detection_threshold_3_payments(self) -> None:
         """At least 3 similar payments needed to count as recurring."""
         txns = [
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-01-01", "description": "Netflix"},
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-02-01", "description": "Netflix"},
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-03-01", "description": "Netflix"},
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-01-01",
+                "description": "Netflix",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-02-01",
+                "description": "Netflix",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-03-01",
+                "description": "Netflix",
+            },
         ]
         result = _compute_habit_stability_score(txns)
         assert result["recurring_count"] >= 1
@@ -265,8 +331,18 @@ class TestHabitStabilityMutants:
     def test_recurring_not_detected_with_only_2_payments(self) -> None:
         """Only 2 payments → below threshold of 3."""
         txns = [
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-01-01", "description": "Netflix"},
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-02-01", "description": "Netflix"},
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-01-01",
+                "description": "Netflix",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-02-01",
+                "description": "Netflix",
+            },
         ]
         result = _compute_habit_stability_score(txns)
         assert result["recurring_count"] == 0
@@ -289,7 +365,9 @@ class TestFinancialStressMutants:
         ]
         result = _compute_financial_stress_index(txns)
         # Total = 1100000, EOM = 1000000 → ratio = 1000000/1100000 ≈ 0.909
-        assert result["eom_depletion_ratio"] == pytest.approx(1000000/1100000, rel=1e-4)
+        assert result["eom_depletion_ratio"] == pytest.approx(
+            1000000 / 1100000, rel=1e-4
+        )
 
     def test_credit_dependency_ratio(self) -> None:
         """Credit dependency = total credits / total debits."""
@@ -358,7 +436,12 @@ class TestIndiaRiskPatternsMutants:
     def test_upi_micro_spend_boundary_10_per_day(self) -> None:
         """>10 micro transactions per day flags UPI spend."""
         txns = [
-            {"type": "debit", "amount_paise": 10000, "date_iso": "2025-01-01", "description": "UPI pay"}
+            {
+                "type": "debit",
+                "amount_paise": 10000,
+                "date_iso": "2025-01-01",
+                "description": "UPI pay",
+            }
             for _ in range(11)  # 11 micro txns on same day
         ]
         result = detect_india_risk_patterns(txns)
@@ -367,7 +450,12 @@ class TestIndiaRiskPatternsMutants:
     def test_upi_micro_spend_below_threshold(self) -> None:
         """<=10 micro transactions per day does NOT flag UPI spend."""
         txns = [
-            {"type": "debit", "amount_paise": 10000, "date_iso": "2025-01-01", "description": "UPI pay"}
+            {
+                "type": "debit",
+                "amount_paise": 10000,
+                "date_iso": "2025-01-01",
+                "description": "UPI pay",
+            }
             for _ in range(10)  # exactly 10
         ]
         result = detect_india_risk_patterns(txns)
@@ -375,7 +463,12 @@ class TestIndiaRiskPatternsMutants:
 
     def test_gambling_keyword_detection(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 50000, "date_iso": "2025-01-01", "description": "Dream11 payment"},
+            {
+                "type": "debit",
+                "amount_paise": 50000,
+                "date_iso": "2025-01-01",
+                "description": "Dream11 payment",
+            },
         ]
         result = detect_india_risk_patterns(txns)
         assert result["gambling_flag"] is True
@@ -384,8 +477,18 @@ class TestIndiaRiskPatternsMutants:
     def test_loan_app_clustering_flag(self) -> None:
         """Multiple small loan credits (>=2) flag loan app pattern."""
         txns = [
-            {"type": "credit", "amount_paise": 10000, "date_iso": "2025-01-01", "description": "Loan from NBFC"},
-            {"type": "credit", "amount_paise": 15000, "date_iso": "2025-01-03", "description": "Instant cash loan"},
+            {
+                "type": "credit",
+                "amount_paise": 10000,
+                "date_iso": "2025-01-01",
+                "description": "Loan from NBFC",
+            },
+            {
+                "type": "credit",
+                "amount_paise": 15000,
+                "date_iso": "2025-01-03",
+                "description": "Instant cash loan",
+            },
         ]
         result = detect_india_risk_patterns(txns)
         assert result["loan_app_pattern_flag"] is True
@@ -393,8 +496,18 @@ class TestIndiaRiskPatternsMutants:
 
     def test_emi_ratio_calculation(self) -> None:
         txns = [
-            {"type": "credit", "amount_paise": 1000000, "date_iso": "2025-01-01", "description": "Salary"},
-            {"type": "debit", "amount_paise": 300000, "date_iso": "2025-01-05", "description": "EMI payment"},
+            {
+                "type": "credit",
+                "amount_paise": 1000000,
+                "date_iso": "2025-01-01",
+                "description": "Salary",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 300000,
+                "date_iso": "2025-01-05",
+                "description": "EMI payment",
+            },
         ]
         result = detect_india_risk_patterns(txns)
         # emi_ratio = 300000 / 1000000 = 0.3
@@ -403,8 +516,18 @@ class TestIndiaRiskPatternsMutants:
     def test_amount_below_200_rupees_for_upi(self) -> None:
         """UPI micro-spend threshold is < ₹200 (20000 paise)."""
         txns = [
-            {"type": "debit", "amount_paise": 19999, "date_iso": "2025-01-01", "description": "UPI"},
-            {"type": "debit", "amount_paise": 20000, "date_iso": "2025-01-01", "description": "UPI"},  # exactly 200
+            {
+                "type": "debit",
+                "amount_paise": 19999,
+                "date_iso": "2025-01-01",
+                "description": "UPI",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 20000,
+                "date_iso": "2025-01-01",
+                "description": "UPI",
+            },  # exactly 200
         ]
         result = detect_india_risk_patterns(txns)
         # Only 1 txn < 200, so even with 11 txns we'd need more. Here just checking boundary.
@@ -422,20 +545,27 @@ class TestIndiaRiskPatternsMutants:
 class TestInsightsBoundaryMutants:
     def test_empty_profile_returns_empty_insights(self) -> None:
         from src.engines.behaviour_engine.insights import generate_behavioral_insights
+
         assert generate_behavioral_insights({}) == []
         assert generate_behavioral_insights(None) == []
 
     def test_velocity_threshold_0_5_excluded(self) -> None:
         """velocity == 0.5 is NOT > 0.5, so no insight generated."""
         from src.engines.behaviour_engine.insights import generate_behavioral_insights
-        profile = {"behavioral_indices": {"loss_aversion": {"post_income_velocity": 0.5}}}
+
+        profile = {
+            "behavioral_indices": {"loss_aversion": {"post_income_velocity": 0.5}}
+        }
         insights = generate_behavioral_insights(profile)
         assert not any("Post-Income" in i["title"] for i in insights)
 
     def test_velocity_threshold_0_51_included(self) -> None:
         """velocity > 0.5 triggers post-income spending insight."""
         from src.engines.behaviour_engine.insights import generate_behavioral_insights
-        profile = {"behavioral_indices": {"loss_aversion": {"post_income_velocity": 0.51}}}
+
+        profile = {
+            "behavioral_indices": {"loss_aversion": {"post_income_velocity": 0.51}}
+        }
         insights = generate_behavioral_insights(profile)
         assert any("Post-Income" in i["title"] for i in insights)
         assert insights[0]["type"] == "warning"
@@ -443,6 +573,7 @@ class TestInsightsBoundaryMutants:
     def test_micro_ratio_boundary_0_4_excluded(self) -> None:
         """micro_ratio == 0.4 is NOT > 0.4."""
         from src.engines.behaviour_engine.insights import generate_behavioral_insights
+
         profile = {"behavioral_indices": {"impulsivity": {"micro_txn_ratio": 0.4}}}
         insights = generate_behavioral_insights(profile)
         assert not any("Micro-Transaction" in i["title"] for i in insights)
@@ -450,6 +581,7 @@ class TestInsightsBoundaryMutants:
     def test_weekend_ratio_boundary_1_3_excluded(self) -> None:
         """weekend_ratio == 1.3 is NOT > 1.3."""
         from src.engines.behaviour_engine.insights import generate_behavioral_insights
+
         profile = {"behavioral_indices": {"impulsivity": {"weekend_ratio": 1.3}}}
         insights = generate_behavioral_insights(profile)
         assert not any("Weekend Spending" in i["title"] for i in insights)
@@ -457,6 +589,7 @@ class TestInsightsBoundaryMutants:
     def test_category_cv_high_boundary(self) -> None:
         """category_cv > 0.5 triggers unstable pattern warning."""
         from src.engines.behaviour_engine.insights import generate_behavioral_insights
+
         profile = {"behavioral_indices": {"habit_stability": {"category_cv": 0.51}}}
         insights = generate_behavioral_insights(profile)
         assert any("Unstable" in i["title"] for i in insights)
@@ -464,6 +597,7 @@ class TestInsightsBoundaryMutants:
     def test_category_cv_low_boundary(self) -> None:
         """category_cv < 0.2 triggers consistent habits positive."""
         from src.engines.behaviour_engine.insights import generate_behavioral_insights
+
         profile = {"behavioral_indices": {"habit_stability": {"category_cv": 0.19}}}
         insights = generate_behavioral_insights(profile)
         assert any("Consistent" in i["title"] for i in insights)
@@ -471,6 +605,7 @@ class TestInsightsBoundaryMutants:
     def test_recurring_count_threshold_5(self) -> None:
         """recurring >= 5 triggers strong pattern insight."""
         from src.engines.behaviour_engine.insights import generate_behavioral_insights
+
         profile = {"behavioral_indices": {"habit_stability": {"recurring_count": 5}}}
         insights = generate_behavioral_insights(profile)
         assert any("Recurring" in i["title"] for i in insights)
@@ -482,12 +617,14 @@ class TestInsightsBoundaryMutants:
 class TestNudgesBoundaryMutants:
     def test_empty_profile_returns_empty_nudges(self) -> None:
         from src.engines.behaviour_engine.nudges import generate_nudges
+
         assert generate_nudges({}) == []
         assert generate_nudges(None) == []
 
     def test_impulse_score_boundary_0_7_excluded(self) -> None:
         """impulse_score == 0.7 is NOT > 0.7."""
         from src.engines.behaviour_engine.nudges import generate_nudges
+
         profile = {"behavioral_indices": {"impulsivity": {"score": 0.7}}}
         nudges = generate_nudges(profile)
         assert not any("24-Hour Rule" in n["title"] for n in nudges)
@@ -495,6 +632,7 @@ class TestNudgesBoundaryMutants:
     def test_impulse_score_above_0_7_included(self) -> None:
         """impulse_score > 0.7 triggers friction nudge."""
         from src.engines.behaviour_engine.nudges import generate_nudges
+
         profile = {"behavioral_indices": {"impulsivity": {"score": 0.71}}}
         nudges = generate_nudges(profile)
         assert any("24-Hour Rule" in n["title"] for n in nudges)
@@ -503,6 +641,7 @@ class TestNudgesBoundaryMutants:
     def test_micro_ratio_nudge_boundary_0_5(self) -> None:
         """micro_ratio == 0.5 is NOT > 0.5."""
         from src.engines.behaviour_engine.nudges import generate_nudges
+
         profile = {"behavioral_indices": {"impulsivity": {"micro_txn_ratio": 0.5}}}
         nudges = generate_nudges(profile)
         assert not any("Micro-Transactions" in n["title"] for n in nudges)
@@ -510,6 +649,7 @@ class TestNudgesBoundaryMutants:
     def test_savings_score_below_0_3_trigger(self) -> None:
         """savings_score < 0.3 triggers automate savings nudge."""
         from src.engines.behaviour_engine.nudges import generate_nudges
+
         profile = {"behavioral_indices": {"savings_discipline": {"score": 0.29}}}
         nudges = generate_nudges(profile)
         assert any("Automate Savings" in n["title"] for n in nudges)
@@ -517,6 +657,7 @@ class TestNudgesBoundaryMutants:
     def test_savings_rate_below_0_1_trigger(self) -> None:
         """savings_rate < 0.1 triggers 10% target nudge."""
         from src.engines.behaviour_engine.nudges import generate_nudges
+
         profile = {"behavioral_indices": {"savings_discipline": {"savings_rate": 0.09}}}
         nudges = generate_nudges(profile)
         assert any("10% Target" in n["title"] for n in nudges)
@@ -524,13 +665,19 @@ class TestNudgesBoundaryMutants:
     def test_stress_score_above_0_6_trigger(self) -> None:
         """stress_score > 0.6 triggers emergency buffer nudge."""
         from src.engines.behaviour_engine.nudges import generate_nudges
-        profile = {"behavioral_indices": {"financial_stress": {"score": 0.61, "buffer_days": 5}}}
+
+        profile = {
+            "behavioral_indices": {
+                "financial_stress": {"score": 0.61, "buffer_days": 5}
+            }
+        }
         nudges = generate_nudges(profile)
         assert any("Emergency Buffer" in n["title"] for n in nudges)
 
     def test_buffer_days_below_7_trigger(self) -> None:
         """buffer_days < 7 triggers pause spending nudge."""
         from src.engines.behaviour_engine.nudges import generate_nudges
+
         profile = {"behavioral_indices": {"financial_stress": {"buffer_days": 6.5}}}
         nudges = generate_nudges(profile)
         assert any("Pause Non-Essential" in n["title"] for n in nudges)
@@ -538,7 +685,10 @@ class TestNudgesBoundaryMutants:
     def test_velocity_nudge_boundary_0_6(self) -> None:
         """velocity > 0.6 triggers delay post-income nudge."""
         from src.engines.behaviour_engine.nudges import generate_nudges
-        profile = {"behavioral_indices": {"loss_aversion": {"post_income_velocity": 0.61}}}
+
+        profile = {
+            "behavioral_indices": {"loss_aversion": {"post_income_velocity": 0.61}}
+        }
         nudges = generate_nudges(profile)
         assert any("Delay Post-Income" in n["title"] for n in nudges)
 

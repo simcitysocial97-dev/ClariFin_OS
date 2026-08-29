@@ -879,22 +879,25 @@ def validate_ci_evidence(
                     rule_id="R-SRC-003",
                 )
             )
-        elif record.component is None:
+        elif (
+            record.component is None
+            and context.component_test_fingerprints
+            and (
+                record.test_fingerprint
+                not in context.component_test_fingerprints.values()
+            )
+        ):
             # Surface-scoped record (e.g. whole-suite run): its test
             # fingerprint must match at least one currently-known
             # component test surface; otherwise the exercised surface
             # has drifted since measurement.
-            if context.component_test_fingerprints and (
-                record.test_fingerprint
-                not in context.component_test_fingerprints.values()
-            ):
-                drifts.append(
-                    DetectedDrift(
-                        "test_drift",
-                        "suite test fingerprint matches no current test surface",
-                        rule_id="R-SRC-003",
-                    )
+            drifts.append(
+                DetectedDrift(
+                    "test_drift",
+                    "suite test fingerprint matches no current test surface",
+                    rule_id="R-SRC-003",
                 )
+            )
 
     # Configuration drift — only for evidence whose semantics depend on it
     if (
@@ -930,15 +933,14 @@ def validate_ci_evidence(
         record.toolchain_fingerprint
         and context.toolchain_fingerprint
         and record.toolchain_fingerprint != context.toolchain_fingerprint
-    ):
-        if record.evidence_kind.startswith("mutation"):
-            drifts.append(
-                DetectedDrift(
-                    "toolchain_drift",
-                    "mutmut/pytest toolchain changed; measurement not comparable",
-                    rule_id="R-CFG-002",
-                )
+    ) and record.evidence_kind.startswith("mutation"):
+        drifts.append(
+            DetectedDrift(
+                "toolchain_drift",
+                "mutmut/pytest toolchain changed; measurement not comparable",
+                rule_id="R-CFG-002",
             )
+        )
 
     # Population drift
     if (

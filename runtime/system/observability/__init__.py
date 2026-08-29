@@ -41,6 +41,7 @@ __all__ = [
     "EngineeringEvent",
     "EngineeringEventStore",
     "EngineeringHealthReport",
+    "FlakyTestIntelligence",
     "ExecutionContext",
     "ExecutionEnvironment",
     "GitHubMetricsRepository",

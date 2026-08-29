@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from runtime.system.evidence.collectors import (
     ContractTestCollector,

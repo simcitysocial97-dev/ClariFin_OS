@@ -20,6 +20,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import json
 import shutil
@@ -231,7 +232,7 @@ def build_fingerprint(
 
     # Repository revision
     repo_sha = "unknown"
-    try:
+    with contextlib.suppress(Exception):
         repo_sha = (
             subprocess.run(
                 ["git", "rev-parse", "HEAD"],
@@ -242,8 +243,6 @@ def build_fingerprint(
             ).stdout.strip()
             or "unknown"
         )
-    except Exception:
-        pass
 
     return {
         # Core tools

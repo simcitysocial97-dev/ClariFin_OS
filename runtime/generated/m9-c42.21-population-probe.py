@@ -91,7 +91,7 @@ def main() -> int:
             all_names.extend(names)
             files[str(path)] = {
                 "mutants": len(names),
-                "functions": sorted(set(n.rpartition("__mutmut_")[0] for n in names)),
+                "functions": sorted({n.rpartition("__mutmut_")[0] for n in names}),
                 "mutant_names": names,
             }
 

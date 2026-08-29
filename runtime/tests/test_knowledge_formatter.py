@@ -32,7 +32,6 @@ class TestKnowledgeFormatter:
         assert "Knowledge Catalog Summary" in output
 
     def test_format_query_result_contains_result_header(self) -> None:
-        index = build_index()
         from runtime.foundation.knowledge.query import query_endpoint
 
         result = query_endpoint("/api/loans/{loan_id}/schedule")

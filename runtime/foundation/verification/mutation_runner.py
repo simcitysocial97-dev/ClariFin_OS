@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import atexit
+import contextlib
 import hashlib
 import json
 import os
@@ -173,10 +174,8 @@ class _MutationSafety:
         """Restore backend/pyproject.toml if we modified it."""
         if self.config_restored or self.original_config_text is None:
             return
-        try:
+        with contextlib.suppress(Exception):
             FULL_CONFIG.write_text(self.original_config_text)
-        except Exception:
-            pass
         self.config_restored = True
 
     def enter(self) -> None:
@@ -209,10 +208,8 @@ class _MutationSafety:
             )
 
         # Clean up atexit
-        try:
+        with contextlib.suppress(Exception):
             atexit.unregister(self._restore_config)
-        except Exception:
-            pass
 
 
 # Default bounded runtimes (seconds). CI job timeout is 90 min; the full
@@ -728,10 +725,8 @@ def execute_mutation(
     except Exception:
         # Ensure safety context cleanup on any exception
         if safety_entered:
-            try:
+            with contextlib.suppress(Exception):
                 safety.exit(installed_config_original)
-            except Exception:
-                pass
         raise
 
 

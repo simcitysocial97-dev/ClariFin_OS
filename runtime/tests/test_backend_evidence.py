@@ -120,6 +120,11 @@ class TestExitCodeContract:
         """
         # Locate the canonical probe file and inject it into the invariants
         # collection path so the backend verification script discovers it.
+        # M9-C46 (pre-existing defect since M9-C42.16): the previous injection
+        # target `tests/invariants/_m4_exit_probe/` is excluded by the backend
+        # pytest norecursedirs, so the injected probe was never collected and
+        # the failure-attribution direction could never fire. Inject into a
+        # non-excluded subdirectory instead.
         probe_file = REPO_ROOT / "backend/tests/probes/test_m4_exit_probe.py"
         evidence = tmp_path / "evidence"
 
@@ -127,7 +132,10 @@ class TestExitCodeContract:
         assert probe_file.exists(), f"Probe file not found at {probe_file}"
 
         # Clean up any leftover probe from previous interrupted runs
-        probe_dir = REPO_ROOT / "backend/tests/invariants/_m4_exit_probe"
+        probe_dir = REPO_ROOT / "backend/tests/invariants/_m4_probe_live"
+        legacy_probe_dir = REPO_ROOT / "backend/tests/invariants/_m4_exit_probe"
+        if legacy_probe_dir.exists():
+            shutil.rmtree(legacy_probe_dir, ignore_errors=True)
         if probe_dir.exists():
             shutil.rmtree(probe_dir, ignore_errors=True)
 

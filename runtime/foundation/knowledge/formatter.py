@@ -403,14 +403,18 @@ def _render_table(headers: list[str], rows: list[list[Any]]) -> str:
     header_line = _TL + _H * (sum(col_widths) + (len(col_widths) - 1) * 3) + _TR
     result: list[str] = [header_line]
 
-    header_cells = [_pad(_truncate(h, w), w) for h, w in zip(headers, col_widths)]
+    header_cells = [
+        _pad(_truncate(h, w), w) for h, w in zip(headers, col_widths, strict=False)
+    ]
     result.append(_V + " " + " ".join(header_cells) + " " + _V)
 
     sep = _LR + _H * (sum(col_widths) + (len(col_widths) - 1) * 3) + _CR
     result.append(sep)
 
     for row in rows:
-        cells = [_pad(_truncate(str(c), w), w) for c, w in zip(row, col_widths)]
+        cells = [
+            _pad(_truncate(str(c), w), w) for c, w in zip(row, col_widths, strict=False)
+        ]
         result.append(_V + " " + " ".join(cells) + " " + _V)
 
     footer_line = _BL + _H * (sum(col_widths) + (len(col_widths) - 1) * 3) + _BR

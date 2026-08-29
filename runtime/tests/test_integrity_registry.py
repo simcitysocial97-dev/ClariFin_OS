@@ -33,7 +33,7 @@ class TestConstitutionalRegistry:
         ids = [r.id for r in registry.all_rules()]
         # Rules are grouped by category (structural, ownership, evolution)
         # but all 28 IDs from ARCH-001 to ARCH-028 must be present
-        expected = set(f"ARCH-{i:03d}" for i in range(1, 29))
+        expected = {f"ARCH-{i:03d}" for i in range(1, 29)}
         assert set(ids) == expected
         assert len(ids) == 28
 

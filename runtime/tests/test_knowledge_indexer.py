@@ -79,7 +79,6 @@ class TestKnowledgeIndexer:
 
     def test_save_index_creates_file(self, tmp_path: Path) -> None:
         index = build_index()
-        output_path = tmp_path / "knowledge-index.json"
         result = save_index(index)
         assert result.exists()
 

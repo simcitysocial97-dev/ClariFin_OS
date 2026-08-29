@@ -450,10 +450,8 @@ class VerificationPlanner:
     ) -> list[VerificationTarget]:
         """Build verification targets from requirements."""
         targets = []
-        target_id = 0
 
-        for req in requirements:
-            target_id += 1
+        for target_id, req in enumerate(requirements, start=1):
             target = VerificationTarget(
                 id=f"target-{target_id:04d}",
                 name=f"{req.category.value}: {req.description}",
@@ -507,17 +505,16 @@ class VerificationPlanner:
                 )
 
                 # Dependencies flow from lower to higher in hierarchy
-                if other_idx < target_idx:
-                    # Check if same capability or module
-                    if (
-                        target.capability and target.capability == other.capability
-                    ) or (target.module and target.module == other.module):
-                        dep = VerificationDependency(
-                            target_id=other.id,
-                            dependency_type="requires",
-                            reason=f"{other.category.value} must pass before {target.category.value}",
-                        )
-                        deps.append(dep)
+                if other_idx < target_idx and (
+                    (target.capability and target.capability == other.capability)
+                    or (target.module and target.module == other.module)
+                ):
+                    dep = VerificationDependency(
+                        target_id=other.id,
+                        dependency_type="requires",
+                        reason=f"{other.category.value} must pass before {target.category.value}",
+                    )
+                    deps.append(dep)
 
             # Also check for explicit dependency requirements
             for req in target.requirements:

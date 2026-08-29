@@ -28,9 +28,10 @@ for wf in workflows:
             path = match.replace('"', "").replace('"', "")
             if "." in path or "$" in path:
                 continue
-            if "." in os.path.basename(path) or path.endswith("/"):
-                if not os.path.exists(path):
-                    problems.append(f"{wf}:{i}: {path} does not exist")
+            if (
+                "." in os.path.basename(path) or path.endswith("/")
+            ) and not os.path.exists(path):
+                problems.append(f"{wf}:{i}: {path} does not exist")
 
 if problems:
     print("PATH PROBLEMS:")

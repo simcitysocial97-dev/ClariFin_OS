@@ -59,7 +59,7 @@ def test_m9_analyzes_repository_languages():
         for s in analyze["steps"]
         if (s.get("uses") or "").endswith("codeql-action/init@v3")
     )
-    langs = {l.strip() for l in init["with"]["languages"].split(",")}
+    langs = {lang.strip() for lang in init["with"]["languages"].split(",")}
     # Exactly python + javascript; nothing else blindly enabled.
     assert langs == VALID_LANGS, f"unexpected CodeQL languages: {langs}"
 

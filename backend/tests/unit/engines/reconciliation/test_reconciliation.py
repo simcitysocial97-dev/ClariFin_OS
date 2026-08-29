@@ -1172,62 +1172,86 @@ class TestCalculateConfidenceMutants:
 
     def test_exact_date_match_confidence_0_4(self) -> None:
         """Exact same date with exact amount gives 0.4 + 0.4 = 0.8 (no description bonus)."""
-        conf = _calculate_confidence(date_diff_days=0, amount_exact=True, description_similarity=0.0)
+        conf = _calculate_confidence(
+            date_diff_days=0, amount_exact=True, description_similarity=0.0
+        )
         assert conf == 0.8
 
     def test_exact_date_match_confidence_with_description(self) -> None:
         """Exact same date with exact amount and high description similarity = 1.0 (capped)."""
-        conf = _calculate_confidence(date_diff_days=0, amount_exact=True, description_similarity=0.8)
+        conf = _calculate_confidence(
+            date_diff_days=0, amount_exact=True, description_similarity=0.8
+        )
         assert conf == 1.0
 
     def test_within_1_day_match_confidence_0_3(self) -> None:
         """Within 1 day with exact amount gives 0.3 + 0.4 = 0.7."""
-        conf = _calculate_confidence(date_diff_days=1, amount_exact=True, description_similarity=0.0)
+        conf = _calculate_confidence(
+            date_diff_days=1, amount_exact=True, description_similarity=0.0
+        )
         assert conf == 0.7
 
     def test_within_1_day_match_confidence_with_description(self) -> None:
         """Within 1 day with exact amount and high description = 0.3 + 0.4 + 0.2 = 0.9."""
-        conf = _calculate_confidence(date_diff_days=1, amount_exact=True, description_similarity=0.8)
+        conf = _calculate_confidence(
+            date_diff_days=1, amount_exact=True, description_similarity=0.8
+        )
         assert conf == 0.9
 
     def test_exact_date_amount_mismatch_confidence(self) -> None:
         """Exact date but amount mismatch: 0.4 + 0.0 = 0.4."""
-        conf = _calculate_confidence(date_diff_days=0, amount_exact=False, description_similarity=0.0)
+        conf = _calculate_confidence(
+            date_diff_days=0, amount_exact=False, description_similarity=0.0
+        )
         assert conf == 0.4
 
     def test_within_1_day_amount_mismatch_confidence(self) -> None:
         """Within 1 day but amount mismatch: 0.3 + 0.0 = 0.3."""
-        conf = _calculate_confidence(date_diff_days=1, amount_exact=False, description_similarity=0.0)
+        conf = _calculate_confidence(
+            date_diff_days=1, amount_exact=False, description_similarity=0.0
+        )
         assert conf == 0.3
 
     def test_outside_window_confidence(self) -> None:
         """Date diff > 1 with exact amount: 0.0 + 0.4 = 0.4."""
-        conf = _calculate_confidence(date_diff_days=2, amount_exact=True, description_similarity=0.0)
+        conf = _calculate_confidence(
+            date_diff_days=2, amount_exact=True, description_similarity=0.0
+        )
         assert conf == 0.4
 
     def test_description_similarity_boundary(self) -> None:
         """Description similarity exactly at 0.7 boundary gives no bonus."""
-        conf = _calculate_confidence(date_diff_days=0, amount_exact=True, description_similarity=0.7)
+        conf = _calculate_confidence(
+            date_diff_days=0, amount_exact=True, description_similarity=0.7
+        )
         assert conf == 0.8  # No description bonus at exactly 0.7
 
     def test_description_similarity_above_boundary(self) -> None:
         """Description similarity above 0.7 gives bonus."""
-        conf = _calculate_confidence(date_diff_days=0, amount_exact=True, description_similarity=0.71)
+        conf = _calculate_confidence(
+            date_diff_days=0, amount_exact=True, description_similarity=0.71
+        )
         assert conf == 1.0  # 0.4 + 0.4 + 0.2 = 1.0 (capped)
 
     def test_confidence_cap_at_1_0(self) -> None:
         """Confidence never exceeds 1.0 even with all bonuses."""
-        conf = _calculate_confidence(date_diff_days=0, amount_exact=True, description_similarity=1.0)
+        conf = _calculate_confidence(
+            date_diff_days=0, amount_exact=True, description_similarity=1.0
+        )
         assert conf == 1.0
 
     def test_confidence_rounding_4_decimals(self) -> None:
         """Confidence rounded to 4 decimals for determinism."""
         # 0.3 + 0.4 = 0.7, exact
-        conf = _calculate_confidence(date_diff_days=1, amount_exact=True, description_similarity=0.0)
+        conf = _calculate_confidence(
+            date_diff_days=1, amount_exact=True, description_similarity=0.0
+        )
         assert conf == 0.7
         assert isinstance(conf, float)
 
     def test_confidence_no_date_no_amount(self) -> None:
         """No date match, no amount match = 0.0."""
-        conf = _calculate_confidence(date_diff_days=5, amount_exact=False, description_similarity=0.0)
+        conf = _calculate_confidence(
+            date_diff_days=5, amount_exact=False, description_similarity=0.0
+        )
         assert conf == 0.0

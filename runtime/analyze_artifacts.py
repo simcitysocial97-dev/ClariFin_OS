@@ -587,7 +587,6 @@ def enumerate_artifacts():
 def build():
     arts = enumerate_artifacts()
     records = []
-    unknown = 0
     for f in arts:
         rel = str(f.relative_to(REPO))
         producer, stage, pipeline, lifecycle, retention = meta_for(rel)

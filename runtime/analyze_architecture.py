@@ -9,6 +9,7 @@ using imports, registrations, runtime usage, dependency graph and execution flow
 """
 
 import ast
+import contextlib
 import json
 import re
 from collections import Counter, defaultdict
@@ -81,9 +82,7 @@ def should_exclude(path: Path) -> bool:
     name = path.name
     if name.startswith(EXCLUDE_FILES) or name.endswith("_test.py"):
         return True
-    if name == "__init__.py" and path.parent.name == "tests":
-        return True
-    return False
+    return bool(name == "__init__.py" and path.parent.name == "tests")
 
 
 def find_python_files():
@@ -340,10 +339,8 @@ def main():
 
     for f in ts_files:
         content = ""
-        try:
+        with contextlib.suppress(Exception):
             content = f.read_text(encoding="utf-8")
-        except Exception:
-            pass
         exports = re.findall(
             r"export\s+(?:default\s+)?(?:class|function|const|interface|type)\s+(\w+)",
             content,

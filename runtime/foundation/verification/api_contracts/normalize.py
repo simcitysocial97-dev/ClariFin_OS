@@ -108,7 +108,7 @@ def _diff_dicts(a: dict, b: dict, prefix: str, out: list) -> None:
                         }
                     )
                 else:
-                    for i, (xi, xj) in enumerate(zip(va, vb)):
+                    for i, (xi, xj) in enumerate(zip(va, vb, strict=False)):
                         if isinstance(xi, dict) and isinstance(xj, dict):
                             _diff_dicts(xi, xj, f"{cur}[{i}]", out)
                         elif xi != xj:

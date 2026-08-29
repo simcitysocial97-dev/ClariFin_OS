@@ -312,9 +312,8 @@ def run_strengthen_analyze(argv: list[str]) -> int:
     parser.add_argument("--out", default=None)
     args, _ = parser.parse_known_args(argv)
 
-
     raw = json.loads(Path(args.survivors).read_text())
-    survivors = [s for s in (raw if isinstance(raw, list) else [raw])]
+    survivors = list(raw if isinstance(raw, list) else [raw])
 
     proposals = []
     refusals = []
@@ -515,30 +514,29 @@ def run_strengthen_discover(argv: list[str]) -> int:
     )
     parser.add_argument(
         "--from-classification",
-        default=str(REPO_ROOT / "runtime/generated/m9-c44/survivor-classification.json"),
+        default=str(
+            REPO_ROOT / "runtime/generated/m9-c44/survivor-classification.json"
+        ),
         help="Path to survivor-classification.json (aggregate summary)",
     )
     parser.add_argument(
         "--from-attribution",
         default=str(
-            REPO_ROOT
-            / "runtime/generated/m9-c44/survivor-capability-attribution.json"
+            REPO_ROOT / "runtime/generated/m9-c44/survivor-capability-attribution.json"
         ),
         help="Path to survivor-capability-attribution.json",
     )
     parser.add_argument(
         "--from-survivors",
         default=str(
-            REPO_ROOT
-            / "backend/tests/generated/mutation/mutation-survivors.json"
+            REPO_ROOT / "backend/tests/generated/mutation/mutation-survivors.json"
         ),
         help="Path to mutation-survivors.json (per-function survivor data)",
     )
     parser.add_argument(
         "--from-intel",
         default=str(
-            REPO_ROOT
-            / "backend/tests/generated/mutation/mutation-survivor-intel.json"
+            REPO_ROOT / "backend/tests/generated/mutation/mutation-survivor-intel.json"
         ),
         help="Preferred durable per-mutant intel (M9-C45.2). When present, "
         "per-component records with correct classification/capability are "
@@ -580,20 +578,22 @@ def run_strengthen_discover(argv: list[str]) -> int:
             cls = str(e.get("classification", "A")).upper()
             if cls not in class_filter:
                 continue
-            discovered.append({
-                "survivor_id": e.get("survivor_id", ""),
-                "component": e.get("component", "unknown"),
-                "capability": e.get("capability", "unknown"),
-                "location": f"{e.get('source_file', '')}:{e.get('function', '')}",
-                "mutation_operator": e.get("mutation_type", "unknown"),
-                "original_snippet": e.get("original_expression", ""),
-                "mutated_snippet": e.get("mutated_expression", ""),
-                "status": "survived",
-                "classification": cls,
-                "notes": e.get("classification_evidence", ""),
-                "covering_tests": tuple(e.get("covering_tests", ())),
-                "recommended_action": e.get("recommended_action", ""),
-            })
+            discovered.append(
+                {
+                    "survivor_id": e.get("survivor_id", ""),
+                    "component": e.get("component", "unknown"),
+                    "capability": e.get("capability", "unknown"),
+                    "location": f"{e.get('source_file', '')}:{e.get('function', '')}",
+                    "mutation_operator": e.get("mutation_type", "unknown"),
+                    "original_snippet": e.get("original_expression", ""),
+                    "mutated_snippet": e.get("mutated_expression", ""),
+                    "status": "survived",
+                    "classification": cls,
+                    "notes": e.get("classification_evidence", ""),
+                    "covering_tests": tuple(e.get("covering_tests", ())),
+                    "recommended_action": e.get("recommended_action", ""),
+                }
+            )
 
     # Legacy fallback: per-function survivor data from mutation-survivors.json
     # (used only when no durable intel is available).
@@ -602,28 +602,36 @@ def run_strengthen_discover(argv: list[str]) -> int:
             surv_data = json.loads(Path(args.from_survivors).read_text())
             entries = surv_data.get("entries", [])
             cat_to_cls: dict[str, str] = {
-                "control_flow": "A", "arithmetic": "A", "comparison": "A",
-                "boolean": "A", "default_value": "A", "dict_key": "A",
-                "string_literal": "B", "numeric_literal": "B", "other": "B",
+                "control_flow": "A",
+                "arithmetic": "A",
+                "comparison": "A",
+                "boolean": "A",
+                "default_value": "A",
+                "dict_key": "A",
+                "string_literal": "B",
+                "numeric_literal": "B",
+                "other": "B",
             }
             for e in entries:
                 cat = e.get("category", "other")
                 cls = cat_to_cls.get(cat, "B")
                 if cls not in class_filter:
                     continue
-                discovered.append({
-                    "survivor_id": e.get("key", ""),
-                    "component": "behaviour_engine",
-                    "capability": "behaviour-analysis",
-                    "location": f"src/{e.get('source_file', '')}:{e.get('function', '')}",
-                    "mutation_operator": cat,
-                    "original_snippet": e.get("old", ""),
-                    "mutated_snippet": e.get("new", ""),
-                    "status": "survived",
-                    "classification": cls,
-                    "notes": e.get("signature", ""),
-                    "covering_tests": (),
-                })
+                discovered.append(
+                    {
+                        "survivor_id": e.get("key", ""),
+                        "component": "behaviour_engine",
+                        "capability": "behaviour-analysis",
+                        "location": f"src/{e.get('source_file', '')}:{e.get('function', '')}",
+                        "mutation_operator": cat,
+                        "original_snippet": e.get("old", ""),
+                        "mutated_snippet": e.get("new", ""),
+                        "status": "survived",
+                        "classification": cls,
+                        "notes": e.get("signature", ""),
+                        "covering_tests": (),
+                    }
+                )
         except Exception:
             pass
 
@@ -632,15 +640,19 @@ def run_strengthen_discover(argv: list[str]) -> int:
         try:
             classifications = json.loads(Path(args.from_classification).read_text())
             attribution = json.loads(Path(args.from_attribution).read_text())
-            cs = classifications.get("classification_summary", {})
             by_comp = classifications.get("by_component", {})
             attribs = attribution.get("attributions", {})
             cls_key_map = {
-                "class_a": "A", "a_genuine_behavioral_gap": "A",
-                "class_b": "B", "b_equivalent": "B",
-                "class_c": "C", "c_defensive_unreachable": "C",
-                "class_d": "D", "d_measurement_infrastructure": "D",
-                "class_e": "E", "e_escalation_possible_defect": "E",
+                "class_a": "A",
+                "a_genuine_behavioral_gap": "A",
+                "class_b": "B",
+                "b_equivalent": "B",
+                "class_c": "C",
+                "c_defensive_unreachable": "C",
+                "class_d": "D",
+                "d_measurement_infrastructure": "D",
+                "class_e": "E",
+                "e_escalation_possible_defect": "E",
             }
             for comp, stats in by_comp.items():
                 for key, count in stats.items():
@@ -652,19 +664,21 @@ def run_strengthen_discover(argv: list[str]) -> int:
                     attr = attribs.get(comp, {})
                     cap = attr.get("primary_capability", comp.replace("_", "-"))
                     for i in range(count):
-                        discovered.append({
-                            "survivor_id": f"{comp}-{key}-{i}",
-                            "component": comp,
-                            "capability": cap,
-                            "location": f"src/engines/{comp}/...",
-                            "mutation_operator": "unknown",
-                            "original_snippet": "",
-                            "mutated_snippet": "",
-                            "status": "survived",
-                            "classification": cls,
-                            "notes": f"aggregate; {count} {key}",
-                            "covering_tests": (),
-                        })
+                        discovered.append(
+                            {
+                                "survivor_id": f"{comp}-{key}-{i}",
+                                "component": comp,
+                                "capability": cap,
+                                "location": f"src/engines/{comp}/...",
+                                "mutation_operator": "unknown",
+                                "original_snippet": "",
+                                "mutated_snippet": "",
+                                "status": "survived",
+                                "classification": cls,
+                                "notes": f"aggregate; {count} {key}",
+                                "covering_tests": (),
+                            }
+                        )
         except Exception:
             pass
 
@@ -685,9 +699,7 @@ def run_strengthen_discover(argv: list[str]) -> int:
                 tests = []
             if tests:
                 record["covering_tests"] = tuple(tests)
-                record["test_surface"] = sorted(
-                    {t.rsplit("::", 1)[0] for t in tests}
-                )
+                record["test_surface"] = sorted({t.rsplit("::", 1)[0] for t in tests})
         os.chdir(prev)
 
     payload = {
@@ -701,8 +713,10 @@ def run_strengthen_discover(argv: list[str]) -> int:
         },
         "evidence": discovered[:200],
         "full_count_note": (
-            f"Showing up to 200 of {len(discovered)} records."
-        ) if len(discovered) > 200 else None,
+            (f"Showing up to 200 of {len(discovered)} records.")
+            if len(discovered) > 200
+            else None
+        ),
     }
     out_path = (
         Path(args.out)
@@ -796,9 +810,7 @@ def run_strengthen_report(argv: list[str]) -> int:
     how many proposals generated, how many accepted, how many killed,
     how many rejected/refused, and the current mutation posture."""
 
-    parser = argparse.ArgumentParser(
-        prog="verify.py strengthen-report", add_help=False
-    )
+    parser = argparse.ArgumentParser(prog="verify.py strengthen-report", add_help=False)
     parser.add_argument(
         "--proposals",
         default=str(
@@ -814,8 +826,7 @@ def run_strengthen_report(argv: list[str]) -> int:
     parser.add_argument(
         "--mutation-summary",
         default=str(
-            REPO_ROOT
-            / "backend/tests/generated/mutation/mutation-summary.json"
+            REPO_ROOT / "backend/tests/generated/mutation/mutation-summary.json"
         ),
     )
     parser.add_argument("--out", default=None)

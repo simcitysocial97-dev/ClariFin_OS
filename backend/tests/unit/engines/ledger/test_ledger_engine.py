@@ -12,10 +12,18 @@ import pytest
 from src.engines.ledger_audit_engine import validate_ledger_integrity
 
 
-def _insert_transaction(conn, amount_paise=100000, txn_type="debit", account_id="Account_A", description="Test", hash_signature=None):
+def _insert_transaction(
+    conn,
+    amount_paise=100000,
+    txn_type="debit",
+    account_id="Account_A",
+    description="Test",
+    hash_signature=None,
+):
     """Insert a transaction using the actual schema (debit/credit are generated)."""
     if hash_signature is None:
         import hashlib
+
         hash_input = f"TestBank|2025-01-01|{description}|{amount_paise}|{txn_type}"
         hash_signature = hashlib.sha256(hash_input.encode()).hexdigest().lower()
 
@@ -83,7 +91,7 @@ class TestValidateLedgerIntegrity:
 
     def test_fails_dual_entry(self, temp_db: str) -> None:
         """Ledger with both debit and credit > 0 fails validation.
-        
+
         Note: With generated columns (debit/credit derived from type+amount),
         a single transaction cannot have both > 0. This test verifies the
         validation logic would catch it if such data existed.
@@ -92,7 +100,9 @@ class TestValidateLedgerIntegrity:
         # because debit/credit are computed from type. We verify the validation
         # query is correct by checking it returns no results on valid data.
         conn = sqlite3.connect(temp_db)
-        _insert_transaction(conn, amount_paise=100000, txn_type="debit", description="DualTest")
+        _insert_transaction(
+            conn, amount_paise=100000, txn_type="debit", description="DualTest"
+        )
         conn.commit()
         conn.close()
 
@@ -133,7 +143,9 @@ class TestValidateLedgerIntegrity:
         conn.commit()
         # Second insertion with same hash should fail due to UNIQUE constraint
         with pytest.raises(sqlite3.IntegrityError, match="UNIQUE constraint"):
-            _insert_transaction(conn, description="Dup2", hash_signature="duplicate_hash")
+            _insert_transaction(
+                conn, description="Dup2", hash_signature="duplicate_hash"
+            )
         conn.close()
 
 
@@ -172,12 +184,14 @@ class TestLedgerAuditToleranceBoundaryMutants:
 
     def test_dual_entry_exactly_at_boundary(self, temp_db: str) -> None:
         """Both debit > 0 and credit > 0 fails (dual entry).
-        
+
         Note: With generated columns, a single transaction cannot have both
         debit and credit > 0. This test verifies valid data passes validation.
         """
         conn = sqlite3.connect(temp_db)
-        _insert_transaction(conn, amount_paise=100000, txn_type="debit", description="DualA")
+        _insert_transaction(
+            conn, amount_paise=100000, txn_type="debit", description="DualA"
+        )
         conn.commit()
         conn.close()
 

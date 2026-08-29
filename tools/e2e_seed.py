@@ -47,7 +47,6 @@ def seed():
         f"{BASE}/api/members", json={"name": "Self", "color": "#3b82f6"}
     )
     assert member_resp.status_code in (200, 201), f"Members: {member_resp.status_code}"
-    member_id = member_resp.json().get("id", 1)
 
     # Seed accounts
     for acc_name, acc_type in [("Savings", "savings"), ("Credit Card", "credit_card")]:

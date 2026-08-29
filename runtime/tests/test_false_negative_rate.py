@@ -215,7 +215,7 @@ class TestFalseNegativeRate:
         missed = []
         for consumer in expected_consumers:
             found = False
-            for key, values in chain.items():
+            for _key, values in chain.items():
                 if isinstance(values, list) and consumer in values:
                     found = True
                     break

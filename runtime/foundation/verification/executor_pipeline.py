@@ -1019,7 +1019,6 @@ def _compute_labelled_aggregate(
     """
     fresh = [c for c in components if c.source == "fresh_measured"]
     reused = [c for c in components if c.source == "reused"]
-    invalidated = [c for c in components if c.source == "invalidated"]
 
     def _score_for(c: ReconciledComponent) -> tuple[int, int] | None:
         if c.evidence is not None and c.evidence.counts:

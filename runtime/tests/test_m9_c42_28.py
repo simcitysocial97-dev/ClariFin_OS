@@ -125,7 +125,7 @@ class TestAdapterLayer:
             disposition="selected_fresh",
             cause="test",
         )
-        fps = collect_repo_fingerprints("credit_card_engine")
+        collect_repo_fingerprints("credit_card_engine")
         # Resolve to a kind the adapter table doesn't know
         # Override the resolver? No — we test the *behaviour* through
         # the contract: any task whose verification_kind has no

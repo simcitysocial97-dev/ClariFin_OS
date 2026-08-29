@@ -53,7 +53,10 @@ def synthetic_catalog_factory(monkeypatch, tmp_path):
         )
         monkeypatch.setattr(
             "runtime.foundation.verification.survivor_intel._run_tests_for_mutant",
-            lambda survivor_id: (["tests/unit/engines/behaviour/test_x.py::test_1"], "derived_from_tests-for-mutant"),
+            lambda survivor_id: (
+                ["tests/unit/engines/behaviour/test_x.py::test_1"],
+                "derived_from_tests-for-mutant",
+            ),
         )
         return catalog
 
@@ -63,9 +66,20 @@ def synthetic_catalog_factory(monkeypatch, tmp_path):
 def test_component_for_source_maps_engines():
     from runtime.foundation.verification.survivor_intel import component_for_source
 
-    assert component_for_source("engines/financial_intelligence/scenario.py") == "financial_intelligence"
-    assert component_for_source("engines/transaction_intelligence/cash_conversion_detector.py") == "transaction_intelligence"
-    assert component_for_source("engines/behaviour_engine/core/x_f.py") == "behaviour_engine"
+    assert (
+        component_for_source("engines/financial_intelligence/scenario.py")
+        == "financial_intelligence"
+    )
+    assert (
+        component_for_source(
+            "engines/transaction_intelligence/cash_conversion_detector.py"
+        )
+        == "transaction_intelligence"
+    )
+    assert (
+        component_for_source("engines/behaviour_engine/core/x_f.py")
+        == "behaviour_engine"
+    )
 
 
 def test_component_for_source_none_when_unmapped():
@@ -230,14 +244,18 @@ def test_source_path_from_meta_uses_meta_layout():
     from runtime.foundation.verification.survivor_catalog import source_path_from_meta
 
     meta_dir = Path("/mut")
-    meta_file = meta_dir / "src" / "engines" / "financial_intelligence" / "optimization.py.meta"
+    meta_file = (
+        meta_dir / "src" / "engines" / "financial_intelligence" / "optimization.py.meta"
+    )
     assert (
         source_path_from_meta(meta_file, meta_dir)
         == "src/engines/financial_intelligence/optimization.py"
     )
 
     # Files outside meta_dir (defensive) yield None -> caller falls back.
-    assert source_path_from_meta(Path("/elsewhere/optimization.py.meta"), meta_dir) is None
+    assert (
+        source_path_from_meta(Path("/elsewhere/optimization.py.meta"), meta_dir) is None
+    )
 
 
 def test_classify_diff_real_gap_vs_control():
@@ -262,6 +280,6 @@ def test_classify_diff_real_gap_vs_control():
     # control_flow (the classifier deliberately does not manufacture a stronger
     # signal for label-only mutations, preserving honest reporting).
     cat3, _, _ = _classify_diff(
-        "--- src.py\n+++ src.py\n@@ -1 +1 @@\n-    d[\"key\"] = 1\n+    d[\"KEY\"] = 1\n"
+        '--- src.py\n+++ src.py\n@@ -1 +1 @@\n-    d["key"] = 1\n+    d["KEY"] = 1\n'
     )
     assert cat3 == "control_flow"

@@ -297,9 +297,12 @@ def _verify_py_commands() -> dict[str, list[str]]:
         if isinstance(node, ast.FunctionDef) and node.name.startswith("cmd_"):
             imports = []
             for sub in ast.walk(node):
-                if isinstance(sub, ast.ImportFrom) and sub.module:
-                    if sub.module.startswith("runtime.foundation.intelligence"):
-                        imports.append(sub.module)
+                if (
+                    isinstance(sub, ast.ImportFrom)
+                    and sub.module
+                    and sub.module.startswith("runtime.foundation.intelligence")
+                ):
+                    imports.append(sub.module)
             result[node.name] = imports
     return result
 

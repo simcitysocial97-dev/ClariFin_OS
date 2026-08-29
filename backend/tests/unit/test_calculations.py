@@ -581,7 +581,11 @@ class TestMutationStrengthening_ComputeIsLarge:
         txns = [
             {"type": "debit", "amount_paise": 100, "description": "tiny"},
             {"type": "debit", "amount_paise": 200, "description": "tiny2"},
-            {"type": "debit", "amount_paise": 301, "description": "big"},  # > 2.5 * 150 = 375? no
+            {
+                "type": "debit",
+                "amount_paise": 301,
+                "description": "big",
+            },  # > 2.5 * 150 = 375? no
         ]
         result = compute_is_large(txns)
         # avg = (100+200+301)/3 = 200, threshold = 200 * 250000 = 50M
@@ -597,8 +601,22 @@ class TestMutationStrengthening_BehavioralInsights:
         txns = []
         # 2 months: month 1 has 1000, month 2 has 1500 -> 50% increase
         for cat in ["food"]:
-            txns.append({"type": "debit", "month_key": "2025-01", "amount_paise": 100000, "category": cat})
-            txns.append({"type": "debit", "month_key": "2025-02", "amount_paise": 150000, "category": cat})
+            txns.append(
+                {
+                    "type": "debit",
+                    "month_key": "2025-01",
+                    "amount_paise": 100000,
+                    "category": cat,
+                }
+            )
+            txns.append(
+                {
+                    "type": "debit",
+                    "month_key": "2025-02",
+                    "amount_paise": 150000,
+                    "category": cat,
+                }
+            )
         result = compute_behavioral_insights(txns)
         # Should have a "Spending Up" warning
         up_warnings = [r for r in result if r["title"] == f"{'food'} Spending Up"]
@@ -609,8 +627,22 @@ class TestMutationStrengthening_BehavioralInsights:
         """Spending < -30% triggers positive insight."""
         txns = []
         for cat in ["food"]:
-            txns.append({"type": "debit", "month_key": "2025-01", "amount_paise": 200000, "category": cat})
-            txns.append({"type": "debit", "month_key": "2025-02", "amount_paise": 100000, "category": cat})
+            txns.append(
+                {
+                    "type": "debit",
+                    "month_key": "2025-01",
+                    "amount_paise": 200000,
+                    "category": cat,
+                }
+            )
+            txns.append(
+                {
+                    "type": "debit",
+                    "month_key": "2025-02",
+                    "amount_paise": 100000,
+                    "category": cat,
+                }
+            )
         result = compute_behavioral_insights(txns)
         savings = [r for r in result if r["title"] == f"{'food'} Savings"]
         assert len(savings) == 1
@@ -620,8 +652,22 @@ class TestMutationStrengthening_BehavioralInsights:
         """Spending change just below 30% should NOT trigger insight."""
         txns = []
         for cat in ["food"]:
-            txns.append({"type": "debit", "month_key": "2025-01", "amount_paise": 100000, "category": cat})
-            txns.append({"type": "debit", "month_key": "2025-02", "amount_paise": 128000, "category": cat})
+            txns.append(
+                {
+                    "type": "debit",
+                    "month_key": "2025-01",
+                    "amount_paise": 100000,
+                    "category": cat,
+                }
+            )
+            txns.append(
+                {
+                    "type": "debit",
+                    "month_key": "2025-02",
+                    "amount_paise": 128000,
+                    "category": cat,
+                }
+            )
         result = compute_behavioral_insights(txns)
         # 28% change - should NOT trigger
         assert not any("Spending Up" in r["title"] for r in result)
@@ -630,8 +676,18 @@ class TestMutationStrengthening_BehavioralInsights:
     def test_insights_overall_spending_up_threshold(self) -> None:
         """Overall spending > 15% triggers warning."""
         txns = [
-            {"type": "debit", "month_key": "2025-01", "amount_paise": 100000, "category": "food"},
-            {"type": "debit", "month_key": "2025-02", "amount_paise": 120000, "category": "food"},
+            {
+                "type": "debit",
+                "month_key": "2025-01",
+                "amount_paise": 100000,
+                "category": "food",
+            },
+            {
+                "type": "debit",
+                "month_key": "2025-02",
+                "amount_paise": 120000,
+                "category": "food",
+            },
         ]
         result = compute_behavioral_insights(txns)
         overall_up = [r for r in result if r["title"] == "Spending Trending Up"]
@@ -641,8 +697,18 @@ class TestMutationStrengthening_BehavioralInsights:
     def test_insights_overall_spending_down_threshold(self) -> None:
         """Overall spending < -15% triggers positive."""
         txns = [
-            {"type": "debit", "month_key": "2025-01", "amount_paise": 200000, "category": "food"},
-            {"type": "debit", "month_key": "2025-02", "amount_paise": 100000, "category": "food"},
+            {
+                "type": "debit",
+                "month_key": "2025-01",
+                "amount_paise": 200000,
+                "category": "food",
+            },
+            {
+                "type": "debit",
+                "month_key": "2025-02",
+                "amount_paise": 100000,
+                "category": "food",
+            },
         ]
         result = compute_behavioral_insights(txns)
         overall_down = [r for r in result if r["title"] == "Spending Down"]
@@ -651,8 +717,20 @@ class TestMutationStrengthening_BehavioralInsights:
     def test_insights_largest_expense_uses_amount(self) -> None:
         """Largest expense should be the debit with max amount in this month."""
         txns = [
-            {"type": "debit", "month_key": "2025-01", "amount_paise": 50000, "category": "food", "description": "small"},
-            {"type": "debit", "month_key": "2025-01", "amount_paise": 200000, "category": "food", "description": "big"},
+            {
+                "type": "debit",
+                "month_key": "2025-01",
+                "amount_paise": 50000,
+                "category": "food",
+                "description": "small",
+            },
+            {
+                "type": "debit",
+                "month_key": "2025-01",
+                "amount_paise": 200000,
+                "category": "food",
+                "description": "big",
+            },
         ]
         result = compute_behavioral_insights(txns)
         largest = [r for r in result if r["title"] == "Largest Expense"]
@@ -663,20 +741,35 @@ class TestMutationStrengthening_BehavioralInsights:
         """At most 6 insights returned."""
         txns = []
         for i in range(10):
-            for cat in ["food", "travel", "shopping", "utilities", "entertainment", "health", "education"]:
-                txns.append({
-                    "type": "debit",
-                    "month_key": f"2025-{(i%12)+1:02d}",
-                    "amount_paise": 10000 + (i * 5000),
-                    "category": cat,
-                })
+            for cat in [
+                "food",
+                "travel",
+                "shopping",
+                "utilities",
+                "entertainment",
+                "health",
+                "education",
+            ]:
+                txns.append(
+                    {
+                        "type": "debit",
+                        "month_key": f"2025-{(i%12)+1:02d}",
+                        "amount_paise": 10000 + (i * 5000),
+                        "category": cat,
+                    }
+                )
         result = compute_behavioral_insights(txns)
         assert len(result) <= 6
 
     def test_insights_no_debits(self) -> None:
         """No debit transactions -> empty insights."""
         txns = [
-            {"type": "credit", "month_key": "2025-01", "amount_paise": 100000, "category": "salary"},
+            {
+                "type": "credit",
+                "month_key": "2025-01",
+                "amount_paise": 100000,
+                "category": "salary",
+            },
         ]
         result = compute_behavioral_insights(txns)
         assert result == []
@@ -684,7 +777,12 @@ class TestMutationStrengthening_BehavioralInsights:
     def test_insights_single_month(self) -> None:
         """Single month -> no spending change insights (no comparison)."""
         txns = [
-            {"type": "debit", "month_key": "2025-01", "amount_paise": 100000, "category": "food"},
+            {
+                "type": "debit",
+                "month_key": "2025-01",
+                "amount_paise": 100000,
+                "category": "food",
+            },
         ]
         result = compute_behavioral_insights(txns)
         # Only "Largest Expense" insight expected
@@ -714,13 +812,22 @@ class TestMutationStrengthening_BehavioralInsights:
         """Description in Largest Expense should be truncated to 30 chars."""
         long_desc = "A" * 50
         txns = [
-            {"type": "debit", "month_key": "2025-01", "amount_paise": 100000, "category": "food", "description": long_desc},
+            {
+                "type": "debit",
+                "month_key": "2025-01",
+                "amount_paise": 100000,
+                "category": "food",
+                "description": long_desc,
+            },
         ]
         result = compute_behavioral_insights(txns)
         largest = [r for r in result if r["title"] == "Largest Expense"]
         assert len(largest) == 1
         # Description in insight should be truncated
-        assert len(largest[0]["description"].split("Your biggest: ")[1].split(" at ")[0]) <= 30
+        assert (
+            len(largest[0]["description"].split("Your biggest: ")[1].split(" at ")[0])
+            <= 30
+        )
 
 
 # ============================================================================

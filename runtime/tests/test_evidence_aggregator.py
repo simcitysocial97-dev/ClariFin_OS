@@ -192,7 +192,7 @@ class TestEvidenceAggregator:
             time="0.05",
         )
         ET.SubElement(tc1, "failure", message="AssertionError", type="AssertionError")
-        tc2 = ET.SubElement(
+        ET.SubElement(
             root, "testcase", name="test_amortization.py", classname="test", time="0.05"
         )
 

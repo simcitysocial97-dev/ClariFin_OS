@@ -51,7 +51,11 @@ def test_golden_allocation_emergency_swallows_surplus():
         500_000,
         [{"id": "d1", "interest_rate_bps": 2500, "outstanding_paise": 1_000_000}],
         [],
-        {"current_paise": 1_000_000, "target_paise": 3_000_000, "deficit_paise": 2_000_000},
+        {
+            "current_paise": 1_000_000,
+            "target_paise": 3_000_000,
+            "deficit_paise": 2_000_000,
+        },
     )
     assert got == {
         "allocation": [
@@ -74,7 +78,11 @@ def test_golden_allocation_no_deficit_goes_investment():
     )
     assert got == {
         "allocation": [
-            {"category": "investment", "amount_paise": 500_000, "reason": "remaining_surplus"}
+            {
+                "category": "investment",
+                "amount_paise": 500_000,
+                "reason": "remaining_surplus",
+            }
         ],
         "expected_impact": {"total_allocated_paise": 0, "remaining_paise": 500_000},
     }
@@ -96,7 +104,11 @@ def test_golden_allocation_long_term_goal_then_investment():
             "reason": "long_term_goals",
             "goal_ids": ["g1"],
         },
-        {"category": "investment", "amount_paise": 240_000, "reason": "remaining_surplus"},
+        {
+            "category": "investment",
+            "amount_paise": 240_000,
+            "reason": "remaining_surplus",
+        },
     ]
     assert get_result["expected_impact"]["total_allocated_paise"] == 160_000
 
@@ -190,9 +202,7 @@ def test_golden_health_no_projection_low_progress_behind():
 
 
 def test_golden_health_on_track_meets_target_date():
-    got = calculate_goal_health(
-        100_000, 30_000, 10, "2026-10-01", "2026-12-01"
-    )
+    got = calculate_goal_health(100_000, 30_000, 10, "2026-10-01", "2026-12-01")
     assert got["status"] == "on_track"
     assert got["score"] == Decimal("0.3")
 

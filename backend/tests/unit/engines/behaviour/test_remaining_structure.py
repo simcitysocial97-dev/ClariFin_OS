@@ -96,7 +96,10 @@ class TestGenerateSummaryTextStructure:
                 "financial_stress": {"score": 0.7},
             }
         }
-        assert "financial stress indicators are elevated" in insights.generate_summary_text(p)
+        assert (
+            "financial stress indicators are elevated"
+            in insights.generate_summary_text(p)
+        )
 
     def test_confidence_branch(self) -> None:
         p = {
@@ -299,7 +302,7 @@ class TestCoreHelperStructure:
         ]
         r = core._get_daily_spending_data(txns, "2025-01-01")
         assert isinstance(r, dict)
-        assert all(isinstance(k, str) for k in r.keys())
+        assert all(isinstance(k, str) for k in r)
         assert all(isinstance(v, float) for v in r.values())
 
     def test_get_monthly_category_empty(self) -> None:
@@ -332,7 +335,14 @@ class TestCoreHelperStructure:
 class TestNudgeHelpersStructure:
     def test_get_top_nudge_empty(self) -> None:
         r = nudges.get_top_nudge({})
-        assert set(r.keys()) == {"type", "priority", "title", "message", "trigger", "actionable"}
+        assert set(r.keys()) == {
+            "type",
+            "priority",
+            "title",
+            "message",
+            "trigger",
+            "actionable",
+        }
         assert r["title"] == "Keep Tracking"
         assert r["actionable"] is False
 
@@ -347,11 +357,16 @@ class TestNudgeHelpersStructure:
                 "impulsivity": {"score": 0.71},
                 "habit_stability": {"category_cv": 0.0, "recurring_count": 5},
                 "financial_stress": {"score": 0.0, "buffer_days": 30},
-                "loss_aversion": {"post_income_velocity": 0.0, "large_expense_count": 0},
+                "loss_aversion": {
+                    "post_income_velocity": 0.0,
+                    "large_expense_count": 0,
+                },
                 "savings_discipline": {"score": 0.6, "savings_rate": 0.5},
             }
         }
-        assert nudges.get_nudge_summary(p) == "Recommended action: Implement 24-Hour Rule."
+        assert (
+            nudges.get_nudge_summary(p) == "Recommended action: Implement 24-Hour Rule."
+        )
 
     def test_get_nudge_summary_two(self) -> None:
         p = {
@@ -359,7 +374,10 @@ class TestNudgeHelpersStructure:
                 "impulsivity": {"score": 0.71, "micro_txn_ratio": 0.51},
                 "habit_stability": {"category_cv": 0.0, "recurring_count": 5},
                 "financial_stress": {"score": 0.0, "buffer_days": 30},
-                "loss_aversion": {"post_income_velocity": 0.0, "large_expense_count": 0},
+                "loss_aversion": {
+                    "post_income_velocity": 0.0,
+                    "large_expense_count": 0,
+                },
                 "savings_discipline": {"score": 0.6, "savings_rate": 0.5},
             }
         }
@@ -373,7 +391,10 @@ class TestNudgeHelpersStructure:
                 "impulsivity": {"score": 0.71, "micro_txn_ratio": 0.51},
                 "habit_stability": {"category_cv": 0.61, "recurring_count": 5},
                 "financial_stress": {"score": 0.0, "buffer_days": 30},
-                "loss_aversion": {"post_income_velocity": 0.0, "large_expense_count": 0},
+                "loss_aversion": {
+                    "post_income_velocity": 0.0,
+                    "large_expense_count": 0,
+                },
                 "savings_discipline": {"score": 0.6, "savings_rate": 0.5},
             }
         }

@@ -316,11 +316,8 @@ class RepositoryBuilder:
                 edge.relationship == "depends_on"
                 and edge.source.startswith("capability:")
                 and edge.target.startswith("capability:")
-            ):
-                if edge.target not in all_node_ids:
-                    missing_dependencies.append(
-                        f"{edge.source} depends_on {edge.target}"
-                    )
+            ) and edge.target not in all_node_ids:
+                missing_dependencies.append(f"{edge.source} depends_on {edge.target}")
 
         return {
             "missing_modules": sorted(set(missing_modules)),

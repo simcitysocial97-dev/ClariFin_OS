@@ -109,6 +109,14 @@ ignore = [
     "E402",   # module level import not at top of file (common in scripts/tests)
     "B008",   # do not perform function calls in default arguments (FastAPI uses this)
     "SIM108", # ternary operator — sometimes less readable
+    # M9-C46 (Category F — intentional architectural pattern, documented):
+    # UP042 suggests migrating `class X(str, Enum)` -> `enum.StrEnum`. The
+    # certified C42.38 verification models (runtime/foundation/verification/*)
+    # intentionally use the `str` + `Enum` mixin because evidence serializers
+    # rely on `str(member)` == "ClassName.MEMBER" semantics; `StrEnum` changes
+    # `__str__` to return the bare value, which would silently alter evidence
+    # JSON contracts. Conversion is deferred until serializers are contract-tested.
+    "UP042",
 ]
 
 exclude = [
@@ -120,6 +128,10 @@ exclude = [
     "backend/mutants",
     "backend/tests/mutation_infra/mutants/**",
     "*.pyc",
+    # M9-C46 (Category E — generated surface): milestone evidence/scenario
+    # scripts produced by verification runs. Mirrors the existing Black
+    # extend-exclude; hand-editing generated artifacts is forbidden.
+    "runtime/generated/**",
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -149,10 +161,42 @@ extend-exclude = '''
 
 [tool.mypy]
 python_version = "3.12"
-exclude = ['servers/src/fetch/tests/', 'backend/mutants/']
+# backend/src modules (`src.*`) are imported by runtime verification code;
+# the root pytest config already puts backend/src on the path — mirror it here.
+mypy_path = ["backend/src"]
+# M9-C46 typing boundaries (documented):
+#   * backend/ is its own STRICT typing boundary (backend/pyproject.toml
+#     [tool.mypy] strict=true, rootdir=backend), gated by scripts/verify-fast.sh.
+#     It MUST be excluded here: including it under repo-scope settings creates
+#     duplicate module identities (backend/src as "src.*" vs "<repo-relative>")
+#     and re-checks strict-passing code under a weaker, conflicting config.
+#     Cross-boundary `src.*` imports from runtime code are covered by the
+#     targeted src.* override below.
+#   * runtime/generated/ holds non-importable milestone evidence scripts
+#     (hyphenated dirs abort discovery entirely).
+exclude = [
+    'backend/',
+    'servers/src/fetch/tests/',
+    'backend/mutants/',
+    'runtime/generated/',
+]
+
+[[tool.mypy.overrides]]
+# Cross-boundary imports: runtime verification code imports backend `src.*`
+# modules. backend/src is type-checked by its own strict boundary; at repo
+# scope the module source is excluded (see above), so these imports are
+# treated as untyped rather than errors.
+module = ["src.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# Third-party libraries without py.typed markers / stubs in the dependency
+# contract (pyyaml, jinja2). Not code defects.
+module = ["yaml", "jinja2"]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-norecursedirs = ["backend/mutants", "backend/tests/mutation_infra/mutants", "backend/tests/invariants/_m4_exit_probe/**", ".git", "__pycache__", ".venv", "venv", "node_modules", "frontend/node_modules"]
+norecursedirs = ["backend/mutants", "backend/tests/mutation_infra/mutants", "backend/tests/invariants/_m4_exit_probe/**", "backend/tests/probes", ".git", "__pycache__", ".venv", "venv", "node_modules", "frontend/node_modules"]
 pythonpath = ["backend/src", "backend/tests"]
 markers = [
     "capability: mark test as capability smoke test",

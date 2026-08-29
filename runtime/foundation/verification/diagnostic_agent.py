@@ -693,6 +693,10 @@ class DiagnosticForensicAgent:
         return {
             "excluded_capabilities": q4.get("excluded_by_planner", []),
             "covered_by_reused_evidence": q3["reused"] + q3["ci_reused"],
+            # M9-C46: wire the previously-dead `executed_and_selected` set into
+            # the Q7 answer (incomplete integration — the set was computed but
+            # never surfaced). Additive key; existing consumers unaffected.
+            "executed_and_selected_components": sorted(executed_and_selected),
             "unavailable_evidence": q3["unavailable"]
             + [u.get("record_id") for u in q3["ci_unavailable"]],
             "deferred_components": deferred,
@@ -748,7 +752,6 @@ class DiagnosticForensicAgent:
         for comp, ev in results.items():
             counts = ev.get("counts") or {}
             no_tests = int(counts.get("no_tests", 0) or 0)
-            survived = int(counts.get("survived", 0) or 0)
             suspicious = int(counts.get("suspicious", 0) or 0)
             notes = str(ev.get("notes", ""))
             if no_tests:

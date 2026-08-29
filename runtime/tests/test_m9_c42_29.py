@@ -109,14 +109,14 @@ def _record(
 def _ctx(**kw) -> CIRepositoryContext:
     base_src = {c: _fps(c).source for c in ("credit_card_engine", "loan_engine")}
     base_tst = {c: _fps(c).test for c in ("credit_card_engine", "loan_engine")}
-    defaults = dict(
-        repository_sha="084359346b3b",
-        component_source_fingerprints=base_src,
-        component_test_fingerprints=base_tst,
-        configuration_fingerprint=_fps("credit_card_engine").config,
-        toolchain_fingerprint=_fps("credit_card_engine").toolchain,
-        population_fingerprint="pop-fp",
-    )
+    defaults = {
+        "repository_sha": "084359346b3b",
+        "component_source_fingerprints": base_src,
+        "component_test_fingerprints": base_tst,
+        "configuration_fingerprint": _fps("credit_card_engine").config,
+        "toolchain_fingerprint": _fps("credit_card_engine").toolchain,
+        "population_fingerprint": "pop-fp",
+    }
     defaults.update(kw)
     return CIRepositoryContext(**defaults)
 
@@ -201,8 +201,7 @@ class TestGraphBinding:
             assert b.command, "literal command must be preserved"
 
     def test_target_binding_resolves_component(self) -> None:
-        bindings = verification_bindings(build_ci_bindings())
-        targeted = [b for b in bindings if "--target" in b.command]
+        verification_bindings(build_ci_bindings())
         # The repo's mutation workflow does not use --target today; the
         # matcher table must still resolve one synthetically.
         from runtime.foundation.verification.ci_evidence import (
@@ -420,7 +419,7 @@ class TestSemanticEquivalence:
         local, record, ingested = self._pair()
         rep = semantic_equivalence(local, record, ingested)
         assert rep.semantically_equivalent
-        assert set(d.dimension for d in rep.dimensions) == set(EQUIVALENCE_DIMENSIONS)
+        assert {d.dimension for d in rep.dimensions} == set(EQUIVALENCE_DIMENSIONS)
 
     def test_result_divergence_breaks_equivalence(self) -> None:
         local, record, ingested = self._pair()

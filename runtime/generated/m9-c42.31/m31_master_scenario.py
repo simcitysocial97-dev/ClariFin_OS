@@ -276,7 +276,7 @@ def run_master() -> dict[str, Any]:
         "step": "11 survivor classification",
         "survivors": [
             {"id": s.survivor_id, "class": c}
-            for s, c in zip(survivors, classifications)
+            for s, c in zip(survivors, classifications, strict=False)
         ],
     })
 

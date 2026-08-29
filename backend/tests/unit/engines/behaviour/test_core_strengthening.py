@@ -47,38 +47,47 @@ class TestParseDateMutants:
 
     def test_iso(self) -> None:
         from datetime import datetime
+
         assert core._parse_date("2025-01-15") == datetime(2025, 1, 15)
 
     def test_dmy_slash(self) -> None:
         from datetime import datetime
+
         assert core._parse_date("15/01/2025") == datetime(2025, 1, 15)
 
     def test_dmy_dash(self) -> None:
         from datetime import datetime
+
         assert core._parse_date("15-01-2025") == datetime(2025, 1, 15)
 
     def test_dmy_short_year(self) -> None:
         from datetime import datetime
+
         assert core._parse_date("15/01/25") == datetime(2025, 1, 15)
 
     def test_d_b_m_y(self) -> None:
         from datetime import datetime
+
         assert core._parse_date("15 Jan 2025") == datetime(2025, 1, 15)
 
     def test_d_b_short(self) -> None:
         from datetime import datetime
+
         assert core._parse_date("15 Jan 25") == datetime(2025, 1, 15)
 
     def test_d_dash_b_dash(self) -> None:
         from datetime import datetime
+
         assert core._parse_date("15-Jan-2025") == datetime(2025, 1, 15)
 
     def test_d_dash_b_short(self) -> None:
         from datetime import datetime
+
         assert core._parse_date("15-Jan-25") == datetime(2025, 1, 15)
 
     def test_strip_whitespace(self) -> None:
         from datetime import datetime
+
         assert core._parse_date("  2025-01-15  ") == datetime(2025, 1, 15)
 
     def test_invalid(self) -> None:
@@ -133,9 +142,24 @@ class TestDailySpendingDataMutants:
 class TestMonthlyCategorySpendingMutants:
     def test_basic(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 100, "date_iso": "2025-01-01", "category": "Food"},
-            {"type": "debit", "amount_paise": 200, "date_iso": "2025-01-15", "category": "Food"},
-            {"type": "debit", "amount_paise": 300, "date_iso": "2025-02-01", "category": "Rent"},
+            {
+                "type": "debit",
+                "amount_paise": 100,
+                "date_iso": "2025-01-01",
+                "category": "Food",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 200,
+                "date_iso": "2025-01-15",
+                "category": "Food",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 300,
+                "date_iso": "2025-02-01",
+                "category": "Rent",
+            },
             {"type": "credit", "amount_paise": 999, "date_iso": "2025-01-01"},
         ]
         result = core._get_monthly_category_spending_data(txns, "2025-01-01")
@@ -144,8 +168,18 @@ class TestMonthlyCategorySpendingMutants:
 
     def test_cutoff(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 100, "date_iso": "2025-01-01", "category": "Food"},
-            {"type": "debit", "amount_paise": 200, "date_iso": "2025-03-01", "category": "Food"},
+            {
+                "type": "debit",
+                "amount_paise": 100,
+                "date_iso": "2025-01-01",
+                "category": "Food",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 200,
+                "date_iso": "2025-03-01",
+                "category": "Food",
+            },
         ]
         result = core._get_monthly_category_spending_data(txns, "2025-03-01")
         assert "2025-01" not in result
@@ -183,8 +217,16 @@ class TestMonthlyIncomeExpensesMutants:
 class TestTransactionStatsMutants:
     def test_basic(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-04"},   # micro (<50000)
-            {"type": "debit", "amount_paise": 60000, "date_iso": "2025-01-06"},   # not micro
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-04",
+            },  # micro (<50000)
+            {
+                "type": "debit",
+                "amount_paise": 60000,
+                "date_iso": "2025-01-06",
+            },  # not micro
             {"type": "credit", "amount_paise": 100000, "date_iso": "2025-01-01"},
         ]
         stats = core._get_transaction_stats_data(txns, "2025-01-01")
@@ -245,8 +287,12 @@ class TestTransactionWindowMutants:
 class TestTemporalPatternsMutants:
     def test_empty(self) -> None:
         assert core._compute_temporal_patterns([]) == {
-            "trend": 0.0, "seasonality": 0.0, "residual_volatility": 0.0,
-            "coefficient_of_variation": 0.0, "daily_spending": {}, "weekly_pattern": {},
+            "trend": 0.0,
+            "seasonality": 0.0,
+            "residual_volatility": 0.0,
+            "coefficient_of_variation": 0.0,
+            "daily_spending": {},
+            "weekly_pattern": {},
         }
 
     def test_no_debits(self) -> None:
@@ -272,7 +318,9 @@ class TestTemporalPatternsMutants:
 class TestLossAversionIndexMutants:
     def test_empty(self) -> None:
         assert core._compute_loss_aversion_index([]) == {
-            "score": 0.5, "post_income_velocity": 0.0, "recovery_time_days": 0,
+            "score": 0.5,
+            "post_income_velocity": 0.0,
+            "recovery_time_days": 0,
         }
 
     def test_credits_only(self) -> None:
@@ -285,9 +333,13 @@ class TestLossAversionIndexMutants:
 
     def test_velocity_case(self) -> None:
         txns = [
-            {"type": "credit", "amount_paise": 100000, "date_iso": "2025-01-01"},  # Rs1000
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-01"},     # Rs300
-            {"type": "debit", "amount_paise": 40000, "date_iso": "2025-01-02"},     # Rs400
+            {
+                "type": "credit",
+                "amount_paise": 100000,
+                "date_iso": "2025-01-01",
+            },  # Rs1000
+            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-01"},  # Rs300
+            {"type": "debit", "amount_paise": 40000, "date_iso": "2025-01-02"},  # Rs400
         ]
         result = core._compute_loss_aversion_index(txns)
         # median_debit = 400; velocity = (300+400)/1000 = 0.7
@@ -302,7 +354,11 @@ class TestLossAversionIndexMutants:
             {"type": "credit", "amount_paise": 100000, "date_iso": "2025-01-01"},
             {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-01"},
             {"type": "debit", "amount_paise": 40000, "date_iso": "2025-01-02"},
-            {"type": "debit", "amount_paise": 2000000, "date_iso": "2025-01-03"},  # Rs20000 > 2*400
+            {
+                "type": "debit",
+                "amount_paise": 2000000,
+                "date_iso": "2025-01-03",
+            },  # Rs20000 > 2*400
         ]
         result = core._compute_loss_aversion_index(txns)
         # large expense Rs20000 within 72h inflates velocity to (300+400+20000)/1000 = 20.7
@@ -320,7 +376,9 @@ class TestLossAversionIndexMutants:
 class TestImpulsivityScoreCoreMutants:
     def test_empty(self) -> None:
         assert core._compute_impulsivity_score([]) == {
-            "score": 0.5, "micro_txn_ratio": 0.0, "late_night_ratio": 0.0,
+            "score": 0.5,
+            "micro_txn_ratio": 0.0,
+            "late_night_ratio": 0.0,
         }
 
     def test_debits_only(self) -> None:
@@ -333,8 +391,18 @@ class TestImpulsivityScoreCoreMutants:
 
     def test_all_discretionary_weekend(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-04", "category": "Food & Dining"},
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-04", "category": "Food & Dining"},
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-04",
+                "category": "Food & Dining",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-04",
+                "category": "Food & Dining",
+            },
         ]
         result = core._compute_impulsivity_score(txns)
         # micro_ratio=1, weekend_ratio=1, disc_ratio=1
@@ -351,7 +419,9 @@ class TestImpulsivityScoreCoreMutants:
 class TestHabitStabilityCoreMutants:
     def test_empty(self) -> None:
         assert core._compute_habit_stability_score([]) == {
-            "score": 0.5, "category_cv": 0.0, "recurring_predictability": 0.0,
+            "score": 0.5,
+            "category_cv": 0.0,
+            "recurring_predictability": 0.0,
         }
 
     def test_debits_only(self) -> None:
@@ -360,8 +430,20 @@ class TestHabitStabilityCoreMutants:
 
     def test_single_category_two_days(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 10000, "date_iso": "2025-01-01", "category": "Food", "description": "X"},
-            {"type": "debit", "amount_paise": 10000, "date_iso": "2025-01-02", "category": "Food", "description": "X"},
+            {
+                "type": "debit",
+                "amount_paise": 10000,
+                "date_iso": "2025-01-01",
+                "category": "Food",
+                "description": "X",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 10000,
+                "date_iso": "2025-01-02",
+                "category": "Food",
+                "description": "X",
+            },
         ]
         result = core._compute_habit_stability_score(txns)
         # avg_category_cv=0, recurring=0, rhythm cv([1,1])=0 -> rhythm_score=1
@@ -377,7 +459,9 @@ class TestHabitStabilityCoreMutants:
 class TestFinancialStressCoreMutants:
     def test_empty(self) -> None:
         assert core._compute_financial_stress_index([]) == {
-            "score": 0.5, "balance_volatility": 0.0, "credit_dependency": 0.0,
+            "score": 0.5,
+            "balance_volatility": 0.0,
+            "credit_dependency": 0.0,
         }
 
     def test_no_debits(self) -> None:
@@ -408,7 +492,9 @@ class TestFinancialStressCoreMutants:
 class TestSavingsDisciplineCoreMutants:
     def test_empty(self) -> None:
         assert core._compute_savings_discipline_score([]) == {
-            "score": 0.5, "savings_rate": 0.0, "momentum": 0.0,
+            "score": 0.5,
+            "savings_rate": 0.0,
+            "momentum": 0.0,
         }
 
     def test_single_month(self) -> None:
@@ -430,27 +516,57 @@ class TestSavingsDisciplineCoreMutants:
 class TestComputeBehaviorProfileMutants:
     def _sample_txns(self) -> list[dict]:
         return [
-            {"type": "credit", "amount_paise": 100000, "date_iso": "2025-01-01", "category": "Salary"},
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-04", "category": "Food & Dining", "description": "X"},
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-04", "category": "Food & Dining", "description": "X"},
+            {
+                "type": "credit",
+                "amount_paise": 100000,
+                "date_iso": "2025-01-01",
+                "category": "Salary",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-04",
+                "category": "Food & Dining",
+                "description": "X",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-04",
+                "category": "Food & Dining",
+                "description": "X",
+            },
             {"type": "debit", "amount_paise": 50000, "date_iso": "2025-01-01"},
         ]
 
     def test_structure(self) -> None:
         profile = core.compute_behavior_profile(self._sample_txns())
         assert set(profile.keys()) == {
-            "temporal_patterns", "behavioral_indices", "risk_signals",
-            "confidence", "financial_health_score", "data_quality",
+            "temporal_patterns",
+            "behavioral_indices",
+            "risk_signals",
+            "confidence",
+            "financial_health_score",
+            "data_quality",
         }
         assert set(profile["temporal_patterns"].keys()) == {
-            "trend", "seasonality", "volatility", "weekly_pattern",
+            "trend",
+            "seasonality",
+            "volatility",
+            "weekly_pattern",
         }
         assert set(profile["behavioral_indices"].keys()) == {
-            "loss_aversion", "impulsivity", "habit_stability",
-            "financial_stress", "savings_discipline",
+            "loss_aversion",
+            "impulsivity",
+            "habit_stability",
+            "financial_stress",
+            "savings_discipline",
         }
         assert set(profile["risk_signals"].keys()) == {
-            "india_specific", "high_impulsivity", "high_stress", "low_savings",
+            "india_specific",
+            "high_impulsivity",
+            "high_stress",
+            "low_savings",
         }
 
     def test_confidence_density(self) -> None:
@@ -541,8 +657,17 @@ class TestMissingKeyEdgeCases:
 class TestMonthlyCategoryEdgeCases:
     def test_missing_category(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 50000, "date_iso": "2025-01-01"},  # no category
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-15", "category": "Food"},
+            {
+                "type": "debit",
+                "amount_paise": 50000,
+                "date_iso": "2025-01-01",
+            },  # no category
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-15",
+                "category": "Food",
+            },
         ]
         result = core._get_monthly_category_spending_data(txns, "2025-01-01")
         assert isinstance(result, dict)
@@ -553,7 +678,12 @@ class TestMonthlyCategoryEdgeCases:
     def test_missing_date_iso_in_monthly(self) -> None:
         txns = [
             {"type": "debit", "amount_paise": 50000},  # missing date_iso
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-15", "category": "Food"},
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-15",
+                "category": "Food",
+            },
         ]
         result = core._get_monthly_category_spending_data(txns, "2025-01-01")
         assert isinstance(result, dict)
@@ -593,6 +723,7 @@ class TestParseDateBoundaryMutants:
 
     def test_various_valid_formats(self) -> None:
         from datetime import datetime
+
         assert core._parse_date("2025-01-15") == datetime(2025, 1, 15)
         assert core._parse_date("15/01/2025") == datetime(2025, 1, 15)
         assert core._parse_date("15-01-2025") == datetime(2025, 1, 15)

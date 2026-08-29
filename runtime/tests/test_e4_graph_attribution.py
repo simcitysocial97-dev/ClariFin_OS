@@ -289,7 +289,7 @@ class TestE4Negative:
                 return {}
             cap = list(unit_provenance.values())[0]["capabilities"][0]
             short = cap.lower().replace("use", "").replace("capability", "").strip()
-            for engine_path, chain in chain_map.items():
+            for engine_path, _chain in chain_map.items():
                 if short and short in engine_path.lower():
                     return {
                         "dependency_chain": [engine_path],

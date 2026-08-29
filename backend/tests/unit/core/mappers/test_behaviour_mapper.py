@@ -13,26 +13,43 @@ def test_to_dto_full() -> None:
     data = {
         "wellness_score": {"score": 72, "label": "Good", "factors": ["a", "b"]},
         "spending_patterns": [
-            {"category": "Food", "amount_paise": 1000, "percentage": 0.3,
-             "trend": "up", "month_over_month_change": 0.1},
+            {
+                "category": "Food",
+                "amount_paise": 1000,
+                "percentage": 0.3,
+                "trend": "up",
+                "month_over_month_change": 0.1,
+            },
         ],
         "savings_rate": {
-            "savings_rate_bps": 2500, "income_paise": 100000,
-            "savings_paise": 25000, "period": "1M",
+            "savings_rate_bps": 2500,
+            "income_paise": 100000,
+            "savings_paise": 25000,
+            "period": "1M",
         },
         "debt_health": {
-            "debt_to_income_bps": 4000, "total_debt_paise": 40000,
-            "total_income_paise": 100000, "health_score": 60,
+            "debt_to_income_bps": 4000,
+            "total_debt_paise": 40000,
+            "total_income_paise": 100000,
+            "health_score": 60,
         },
         "wellness_radar": [
             {"dimension": "Calm", "score": 800, "max_score": 1000},
         ],
         "insights": [
-            {"type": "warning", "severity": "high", "message": "x", "action_url": "http://y"},
+            {
+                "type": "warning",
+                "severity": "high",
+                "message": "x",
+                "action_url": "http://y",
+            },
         ],
         "evidence_chain": {
-            "summary": "ok", "confidence_score": 80.0,
-            "evidence": [], "calculation_steps": [], "source_references": [],
+            "summary": "ok",
+            "confidence_score": 80.0,
+            "evidence": [],
+            "calculation_steps": [],
+            "source_references": [],
         },
     }
     dto = BehaviourMapper.to_dto(data)

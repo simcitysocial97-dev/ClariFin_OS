@@ -1,0 +1,43 @@
+{
+  "schema": "m9-c46-code-quality-baseline/v1",
+  "generated_at": "2026-08-30T02:00:00+05:30",
+  "repository_sha": "1fc689dc + C46 quality commits",
+  "ruff": {
+    "start": 129,
+    "end": 0,
+    "verdict": "PASS — repository-wide clean (canonical root config)",
+    "config_changes": [
+      "UP042 added to ignore — Category F: 22 `str, Enum` classes in certified C42.38 verification models rely on str(member) == 'Class.MEMBER' evidence-serialization semantics; StrEnum would change __str__ output. Documented in root pyproject.",
+      "runtime/generated/** added to exclude — Category E: generated milestone evidence scripts; mirrors Black extend-exclude."
+    ],
+    "fixes_applied": {
+      "mechanical_auto": 63,
+      "manual_investigated": 66,
+      "notes": "Every F841 investigated (dead local vs incomplete integration). diagnostic_agent Q7 executed_and_selected WIRED into Q7 answer (additive key) following the C45 `sem` precedent; executor_pipeline/strengthening/forensic_cli dead locals removed as behaviour-preserving; F811 superseded golden-test block (private `_compute_temporal_patterns`, drifted) removed — public-API replacements at line ~4263 are the live definitions."
+    }
+  },
+  "black": {
+    "start": "25 files needing reformat (plus C46 edits)",
+    "end": 0,
+    "verdict": "PASS — 800 files unchanged after formatting",
+    "note": "verify-fast.sh formatter gate corrected from non-canonical `ruff format` to canonical Black (commit 1fc689dc): the two formatters disagree on chained ternaries and 4 backend/src files were Black-clean but ruff-format-dirty."
+  },
+  "mypy": {
+    "backend_strict": {"verdict": "PASS", "detail": "Success: no issues found in 242 source files (1 pre-existing missing-annotation defect fixed: src/api.py lifespan)."},
+    "repo_scope": {
+      "start_state": "DISCOVERY DEFECT — `mypy .` aborted on runtime/generated/m9-c42.27 invalid package name; repo-scope mypy has NEVER run to completion in this repository.",
+      "after_config_repair": 201,
+      "final": "See gate: backend/ excluded as its own strict boundary (dual module-identity defect documented in root pyproject); src.*/yaml/jinja2 targeted overrides; residual ~170 genuine typing issues in one-off analysis scripts, development tools and runtime tests.",
+      "classification": "Newly-exposed latent debt (Class B backlog), NOT a C46 regression. Enforced canonical boundary (backend strict) is PASS; certified verification control-plane errors reduced 67 -> 49 -> further fixes applied (cli.py VerificationPlan wrong-symbol import fixed: 29 errors removed)."
+    }
+  },
+  "pytest": {
+    "baseline": "3887 passed / 4 failed / 1 xpassed (full suite, 789s)",
+    "failures_resolved": [
+      {"test": "backend/tests/probes/test_m4_exit_probe::test_m4_probe", "class": "D", "fix": "root norecursedirs += backend/tests/probes (backend-scoped config already excluded it; intentionally-failing probe must not be collected repo-wide)"},
+      {"test": "test_mutation_infra (2 tests)", "class": "concurrency-artifact", "fix": "pass in isolation (21/21) — earlier failures were overlapping baseline runs"},
+      {"test": "test_backend_exit_contract_holds_both_directions", "class": "D (pre-existing since M9-C42.16, documented in m9-c42.38-baseline.json as pre_existing_failures=1)", "fix": "probe injection moved from norecursedirs-excluded tests/invariants/_m4_exit_probe/ to collectable _m4_probe_live/; verified PASS (89s)"}
+    ],
+    "mutation_infra_isolated": "21 passed in 146.82s"
+  }
+}

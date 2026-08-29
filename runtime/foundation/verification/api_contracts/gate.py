@@ -24,6 +24,8 @@ BACKEND_DIR = Path(__file__).resolve().parents[4] / "backend"
 if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
+import contextlib
+
 from runtime.foundation.verification.api_contracts.inventory import (
     REPO_ROOT,
     ContractInventory,
@@ -231,14 +233,14 @@ class ApiContractGate:
 
             # Write temp OpenAPI (no sort_keys — preserve insertion order so
             # openapi-typescript output matches what `npm run gen:types` produces).
-            oapi_tmp = tempfile.NamedTemporaryFile(
+            with tempfile.NamedTemporaryFile(
                 suffix=".json", mode="w", delete=False, dir="/tmp"
-            )
-            oapi_tmp.write(json.dumps(live_openapi, indent=2))
-            oapi_tmp.close()
+            ) as oapi_tmp:
+                oapi_tmp.write(json.dumps(live_openapi, indent=2))
+                oapi_tmp_name = oapi_tmp.name
 
             gen_proc = subprocess.run(
-                ["npx", "openapi-typescript", oapi_tmp.name, "-o", tmp_path],
+                ["npx", "openapi-typescript", oapi_tmp_name, "-o", tmp_path],
                 capture_output=True,
                 text=True,
                 timeout=60,
@@ -254,7 +256,9 @@ class ApiContractGate:
                     curr_lines = current_content.splitlines()
                     new_lines = new_content.splitlines()
                     diff_line = 1
-                    for i, (c, n) in enumerate(zip(curr_lines, new_lines), 1):
+                    for i, (c, n) in enumerate(
+                        zip(curr_lines, new_lines, strict=False), 1
+                    ):
                         if c.strip() != n.strip():
                             diff_line = i
                             break
@@ -295,10 +299,8 @@ class ApiContractGate:
             import os
 
             for p in (tmp_path,):
-                try:
+                with contextlib.suppress(OSError):
                     os.unlink(p)
-                except OSError:
-                    pass
 
     # ====================================================================
     # C27.4 — Runtime schema compatibility (Zod vs OpenAPI)
@@ -444,25 +446,25 @@ class ApiContractGate:
                         zod_max_val is not None
                         and zod_max_val >= 100
                         and openapi_max is None
-                    ):
-                        if (
+                        and (
                             "ratio" in op_desc.lower()
                             or "(0-1)" in op_desc
                             or "(0 – 1)" in op_desc
-                        ):
-                            failures.append(
-                                _failure(
-                                    FailureClassification.SCHEMA_DRIFT,
-                                    operation=f"schema:{zod_name}",
-                                    path=f"{op_api_name}.{field_name}",
-                                    method="",
-                                    source="schema_compat",
-                                    expected=f"{field_name} range consistent with backend",
-                                    actual=f"{field_name} Zod max={zod_max_val} but OpenAPI description says {op_desc!r} (backend may return ratio 0-1)",
-                                    details="Potential percentage-vs-ratio scale mismatch — backend returns a ratio but Zod expects percentages",
-                                    boundary=f"Backend {op_api_name} -> frontend {zod_name}",
-                                )
+                        )
+                    ):
+                        failures.append(
+                            _failure(
+                                FailureClassification.SCHEMA_DRIFT,
+                                operation=f"schema:{zod_name}",
+                                path=f"{op_api_name}.{field_name}",
+                                method="",
+                                source="schema_compat",
+                                expected=f"{field_name} range consistent with backend",
+                                actual=f"{field_name} Zod max={zod_max_val} but OpenAPI description says {op_desc!r} (backend may return ratio 0-1)",
+                                details="Potential percentage-vs-ratio scale mismatch — backend returns a ratio but Zod expects percentages",
+                                boundary=f"Backend {op_api_name} -> frontend {zod_name}",
                             )
+                        )
 
             # Extra optional fields in Zod are acceptable; only flag unexpected required
             for field_name in zod_shape:
@@ -504,7 +506,7 @@ class ApiContractGate:
         if len(c_parts) != len(o_parts):
             return False
 
-        for c, o in zip(c_parts, o_parts):
+        for c, o in zip(c_parts, o_parts, strict=False):
             # Parameterized segment in backend
             if o.startswith("{") and o.endswith("}"):
                 continue
@@ -768,10 +770,8 @@ class ApiContractGate:
 
         finally:
             settings._database_path_override = original_db
-            try:
+            with contextlib.suppress(OSError):
                 os.unlink(tmp_db_path)
-            except OSError:
-                pass
 
         status = "pass" if not failures else "fail"
         return DimensionResult(name="wire", status=status, failures=tuple(failures))

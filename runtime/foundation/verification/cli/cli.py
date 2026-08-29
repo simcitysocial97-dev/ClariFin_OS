@@ -36,6 +36,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from runtime.foundation.verification.models import (  # noqa: E402
+    VerificationPlan,
     VerificationScope,
 )
 from runtime.foundation.verification.models.scope import (  # noqa: E402
@@ -45,9 +46,6 @@ from runtime.foundation.verification.models.scope import (  # noqa: E402
     get_scope_resolver,
 )
 from runtime.foundation.verification.planner import plan_verification  # noqa: E402
-from runtime.foundation.verification.planner.plan_models import (  # noqa: E402
-    VerificationPlan,
-)
 from runtime.foundation.verification.registry import VerificationRegistry  # noqa: E402
 
 
@@ -163,11 +161,11 @@ def resolve(file_paths: tuple[str, ...]):
     all_modules = resolver.get_affected_modules(list(file_paths))
 
     click.echo("\nSummary:")
-    click.echo("  Affected scopes: {0}".format(", ".join(s.value for s in all_scopes)))
+    click.echo("  Affected scopes: {}".format(", ".join(s.value for s in all_scopes)))
     click.echo(
-        "  Affected capabilities: {0}".format(", ".join(all_capabilities) or "none")
+        "  Affected capabilities: {}".format(", ".join(all_capabilities) or "none")
     )
-    click.echo("  Affected modules: {0}".format(", ".join(all_modules) or "none"))
+    click.echo("  Affected modules: {}".format(", ".join(all_modules) or "none"))
 
 
 @cli.command()

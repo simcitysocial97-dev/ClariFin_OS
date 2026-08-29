@@ -20,6 +20,7 @@ dependency any more; this script documents and verifies that state.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import time
 from datetime import UTC, datetime
@@ -95,9 +96,7 @@ def _is_migrated(rel: str, art: str) -> bool:
         return True
     if rel.startswith("tools/generators/build_cross_layer_map.py"):
         return True
-    if rel.startswith("runtime/analyze_"):
-        return True
-    return False
+    return bool(rel.startswith("runtime/analyze_"))
 
 
 def build_provider_consumer_inventory() -> dict:
@@ -419,10 +418,8 @@ def main() -> int:
     status = "CERTIFIED"
     ap = GENERATED / "engineering-platform-audit-v3.json"
     if ap.exists():
-        try:
+        with contextlib.suppress(OSError, json.JSONDecodeError):
             status = json.loads(ap.read_text()).get("certification_status", status)
-        except (OSError, json.JSONDecodeError):
-            pass
     (GENERATED / "runtime-consumer-migration.md").write_text(build_narrative(status))
     print("Program 13.3 deliverables written to runtime/generated/")
     return 0

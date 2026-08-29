@@ -232,7 +232,7 @@ def scenario_fc() -> dict:
         and len(report.q3_valid_evidence["reused"]) >= 13
         and v == "CERTIFIABLE"
         and all(d != "selected_fresh" or t.target == "credit_card_engine"
-                for t, d in zip(plan.selected_tasks, sel))
+                for t, d in zip(plan.selected_tasks, sel, strict=False))
     )
     return {
         "scenario": "FC",

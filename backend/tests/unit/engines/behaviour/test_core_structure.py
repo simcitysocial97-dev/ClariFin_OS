@@ -17,9 +17,28 @@ from __future__ import annotations
 import pytest
 from src.engines.behaviour_engine import core
 
-FSTRESS_KEYS = {"score", "balance_volatility", "credit_dependency", "eom_depletion_ratio", "buffer_days"}
-SAV_KEYS = {"score", "savings_rate", "momentum", "consistency", "positive_savings_months"}
-IMP_KEYS = {"score", "micro_txn_ratio", "late_night_ratio", "weekend_ratio", "discretionary_ratio", "micro_txn_count"}
+FSTRESS_KEYS = {
+    "score",
+    "balance_volatility",
+    "credit_dependency",
+    "eom_depletion_ratio",
+    "buffer_days",
+}
+SAV_KEYS = {
+    "score",
+    "savings_rate",
+    "momentum",
+    "consistency",
+    "positive_savings_months",
+}
+IMP_KEYS = {
+    "score",
+    "micro_txn_ratio",
+    "late_night_ratio",
+    "weekend_ratio",
+    "discretionary_ratio",
+    "micro_txn_count",
+}
 TEMPORAL_KEYS = {
     "trend",
     "seasonality",
@@ -95,9 +114,24 @@ class TestCoreImpulsivityStructure:
 
     def test_all_micro_weekend(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-04", "category": "Food & Dining"},
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-04", "category": "Food & Dining"},
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-05", "category": "Food & Dining"},
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-04",
+                "category": "Food & Dining",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-04",
+                "category": "Food & Dining",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-05",
+                "category": "Food & Dining",
+            },
         ]
         r = core._compute_impulsivity_score(txns)
         assert set(r.keys()) <= IMP_KEYS
@@ -155,22 +189,48 @@ class TestComputeBehaviorProfileStructure:
 
     def test_keys_present(self) -> None:
         txns = [
-            {"type": "credit", "amount_paise": 100000, "date_iso": "2025-01-01", "category": "Salary"},
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-04", "category": "Food & Dining", "description": "X"},
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-04", "category": "Food & Dining", "description": "X"},
+            {
+                "type": "credit",
+                "amount_paise": 100000,
+                "date_iso": "2025-01-01",
+                "category": "Salary",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-04",
+                "category": "Food & Dining",
+                "description": "X",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-04",
+                "category": "Food & Dining",
+                "description": "X",
+            },
             {"type": "debit", "amount_paise": 50000, "date_iso": "2025-01-01"},
         ]
         profile = core.compute_behavior_profile(txns)
         # top-level keys + nested key names are exactly as declared
         assert set(profile["temporal_patterns"].keys()) == {
-            "trend", "seasonality", "volatility", "weekly_pattern",
+            "trend",
+            "seasonality",
+            "volatility",
+            "weekly_pattern",
         }
         assert set(profile["behavioral_indices"].keys()) == {
-            "loss_aversion", "impulsivity", "habit_stability",
-            "financial_stress", "savings_discipline",
+            "loss_aversion",
+            "impulsivity",
+            "habit_stability",
+            "financial_stress",
+            "savings_discipline",
         }
         assert set(profile["risk_signals"].keys()) == {
-            "india_specific", "high_impulsivity", "high_stress", "low_savings",
+            "india_specific",
+            "high_impulsivity",
+            "high_stress",
+            "low_savings",
         }
         assert "confidence" in profile
         assert "financial_health_score" in profile

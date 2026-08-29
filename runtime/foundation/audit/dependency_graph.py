@@ -11,6 +11,7 @@ Verifies the repository dependency graph for:
 
 from __future__ import annotations
 
+import contextlib
 import json
 import time
 from pathlib import Path
@@ -508,10 +509,8 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
             RepositoryGraphService,
         )
 
-        try:
+        with contextlib.suppress(Exception):
             svc = RepositoryGraphService(index_path=index_path)
-        except Exception:
-            pass
 
         findings.append(_verify_no_duplicate_nodes(data))
         findings.append(_verify_edge_referential_integrity(data))

@@ -19,11 +19,41 @@ import pytest
 from src.engines.behaviour_engine import stress
 
 # Exact key sets observed from source
-LOSS_KEYS = {"score", "post_income_velocity", "recovery_time_days", "large_expense_count"}
-IMP_KEYS = {"score", "micro_txn_ratio", "late_night_ratio", "weekend_ratio", "discretionary_ratio", "micro_txn_count"}
-HABIT_KEYS = {"score", "category_cv", "recurring_predictability", "recurring_count", "rhythm_score"}
-FSTRESS_KEYS = {"score", "balance_volatility", "buffer_days", "credit_dependency", "eom_depletion_ratio"}
-SAV_KEYS = {"score", "savings_rate", "momentum", "consistency", "positive_savings_months"}
+LOSS_KEYS = {
+    "score",
+    "post_income_velocity",
+    "recovery_time_days",
+    "large_expense_count",
+}
+IMP_KEYS = {
+    "score",
+    "micro_txn_ratio",
+    "late_night_ratio",
+    "weekend_ratio",
+    "discretionary_ratio",
+    "micro_txn_count",
+}
+HABIT_KEYS = {
+    "score",
+    "category_cv",
+    "recurring_predictability",
+    "recurring_count",
+    "rhythm_score",
+}
+FSTRESS_KEYS = {
+    "score",
+    "balance_volatility",
+    "buffer_days",
+    "credit_dependency",
+    "eom_depletion_ratio",
+}
+SAV_KEYS = {
+    "score",
+    "savings_rate",
+    "momentum",
+    "consistency",
+    "positive_savings_months",
+}
 
 
 class TestLossAversionStructure:
@@ -88,9 +118,24 @@ class TestImpulsivityStructure:
 
     def test_all_micro_weekend(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-04", "category": "Food & Dining"},
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-04", "category": "Food & Dining"},
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-05", "category": "Food & Dining"},
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-04",
+                "category": "Food & Dining",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-04",
+                "category": "Food & Dining",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-05",
+                "category": "Food & Dining",
+            },
         ]
         r = stress.impulsivity_score(txns)
         assert set(r.keys()) <= IMP_KEYS
@@ -103,8 +148,18 @@ class TestImpulsivityStructure:
 
     def test_discretionary_weekday(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-06", "category": "Food & Dining"},
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-07", "category": "Food & Dining"},
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-06",
+                "category": "Food & Dining",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-07",
+                "category": "Food & Dining",
+            },
         ]
         r = stress.impulsivity_score(txns)
         assert set(r.keys()) <= IMP_KEYS
@@ -129,9 +184,27 @@ class TestHabitStabilityStressStructure:
 
     def test_recurring(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-01-01", "description": "NETFLIX", "category": "X"},
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-02-01", "description": "NETFLIX", "category": "X"},
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-03-01", "description": "NETFLIX", "category": "X"},
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-01-01",
+                "description": "NETFLIX",
+                "category": "X",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-02-01",
+                "description": "NETFLIX",
+                "category": "X",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-03-01",
+                "description": "NETFLIX",
+                "category": "X",
+            },
         ]
         r = stress.habit_stability_score(txns)
         assert set(r.keys()) <= HABIT_KEYS
@@ -142,8 +215,18 @@ class TestHabitStabilityStressStructure:
 
     def test_missing_category(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-01-01", "description": "X"},
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-02-01", "description": "X"},
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-01-01",
+                "description": "X",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-02-01",
+                "description": "X",
+            },
         ]
         r = stress.habit_stability_score(txns)
         assert set(r.keys()) <= HABIT_KEYS

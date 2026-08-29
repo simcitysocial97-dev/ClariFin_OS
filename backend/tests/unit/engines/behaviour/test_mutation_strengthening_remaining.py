@@ -121,9 +121,7 @@ class TestUtilsRoundDecimalMutants:
 # ============================================================
 class TestIsDebtDependentMutants:
     def test_high_borrowed_ratio(self) -> None:
-        assert profile._is_debt_dependent(
-            Decimal("0.21"), Decimal("0"), Decimal("0.5")
-        )
+        assert profile._is_debt_dependent(Decimal("0.21"), Decimal("0"), Decimal("0.5"))
 
     def test_revolver_and_low_savings(self) -> None:
         assert profile._is_debt_dependent(
@@ -183,36 +181,61 @@ class TestIsSpenderMutants:
 class TestClassifyFinancialPersonalityMutants:
     def test_debt_dependent(self) -> None:
         result = profile.classify_financial_personality(
-            Decimal("0.10"), Decimal("0.21"), Decimal("0"),
-            Decimal("0"), Decimal("0"), Decimal("0"), 100,
+            Decimal("0.10"),
+            Decimal("0.21"),
+            Decimal("0"),
+            Decimal("0"),
+            Decimal("0"),
+            Decimal("0"),
+            100,
         )
         assert result[0] == "DEBT_DEPENDENT"
 
     def test_saver(self) -> None:
         result = profile.classify_financial_personality(
-            Decimal("0.30"), Decimal("0.10"), Decimal("0.10"),
-            Decimal("0"), Decimal("0"), Decimal("0"), 100,
+            Decimal("0.30"),
+            Decimal("0.10"),
+            Decimal("0.10"),
+            Decimal("0"),
+            Decimal("0"),
+            Decimal("0"),
+            100,
         )
         assert result[0] == "SAVER"
 
     def test_debt_optimizer(self) -> None:
         result = profile.classify_financial_personality(
-            Decimal("0.10"), Decimal("0.05"), Decimal("0.10"),
-            Decimal("0"), Decimal("0"), Decimal("0"), 100,
+            Decimal("0.10"),
+            Decimal("0.05"),
+            Decimal("0.10"),
+            Decimal("0"),
+            Decimal("0"),
+            Decimal("0"),
+            100,
         )
         assert result[0] == "DEBT_OPTIMIZER"
 
     def test_spender(self) -> None:
         result = profile.classify_financial_personality(
-            Decimal("0.05"), Decimal("0.05"), Decimal("0"),
-            Decimal("0.40"), Decimal("0"), Decimal("0"), 100,
+            Decimal("0.05"),
+            Decimal("0.05"),
+            Decimal("0"),
+            Decimal("0.40"),
+            Decimal("0"),
+            Decimal("0"),
+            100,
         )
         assert result[0] == "SPENDER"
 
     def test_balanced_default(self) -> None:
         result = profile.classify_financial_personality(
-            Decimal("0.05"), Decimal("0.05"), Decimal("0"),
-            Decimal("0.10"), Decimal("0.10"), Decimal("0.10"), 100,
+            Decimal("0.05"),
+            Decimal("0.05"),
+            Decimal("0"),
+            Decimal("0.10"),
+            Decimal("0.10"),
+            Decimal("0.10"),
+            100,
         )
         assert result[0] == "BALANCED"
 
@@ -221,45 +244,70 @@ class TestConfidenceMutants:
     def test_saver_confidence_75(self) -> None:
         # 0.5 + 0.10 (strong savings) + 0.05 (revolver>0) + 0.10 (200 txns) = 0.75
         _p, conf, _e = profile.classify_financial_personality(
-            Decimal("0.30"), Decimal("0.10"), Decimal("0.10"),
-            Decimal("0"), Decimal("0"), Decimal("0"), 200,
+            Decimal("0.30"),
+            Decimal("0.10"),
+            Decimal("0.10"),
+            Decimal("0"),
+            Decimal("0"),
+            Decimal("0"),
+            200,
         )
         assert conf == Decimal("0.75")
 
     def test_debt_dependent_confidence_65(self) -> None:
         # 0.5 + 0.10 (borrowed>=0.30) + 0 txn-volume(0.05*0) ... txn=100 -> 0.05 => 0.65
         _p, conf, _e = profile.classify_financial_personality(
-            Decimal("0.10"), Decimal("0.35"), Decimal("0"),
-            Decimal("0"), Decimal("0"), Decimal("0"), 100,
+            Decimal("0.10"),
+            Decimal("0.35"),
+            Decimal("0"),
+            Decimal("0"),
+            Decimal("0"),
+            Decimal("0"),
+            100,
         )
         assert conf == Decimal("0.65")
 
     def test_debt_optimizer_confidence_65(self) -> None:
         # 0.5 + 0.05 (optimizer) + 0.05 (revolver>0) + 0.05 (100 txn) = 0.65
         _p, conf, _e = profile.classify_financial_personality(
-            Decimal("0.10"), Decimal("0.05"), Decimal("0.10"),
-            Decimal("0"), Decimal("0"), Decimal("0"), 100,
+            Decimal("0.10"),
+            Decimal("0.05"),
+            Decimal("0.10"),
+            Decimal("0"),
+            Decimal("0"),
+            Decimal("0"),
+            100,
         )
         assert conf == Decimal("0.65")
 
     def test_spender_confidence_65(self) -> None:
         # 0.5 + 0.10 (borrowed>0.30) + 0.05 (100 txn) = 0.65
         _p, conf, _e = profile.classify_financial_personality(
-            Decimal("0.05"), Decimal("0.40"), Decimal("0"),
-            Decimal("0.10"), Decimal("0"), Decimal("0"), 100,
+            Decimal("0.05"),
+            Decimal("0.40"),
+            Decimal("0"),
+            Decimal("0.10"),
+            Decimal("0"),
+            Decimal("0"),
+            100,
         )
         assert conf == Decimal("0.65")
 
     def test_balanced_confidence_55(self) -> None:
         # 0.5 + 0.05 (100 txn) = 0.55
         _p, conf, _e = profile.classify_financial_personality(
-            Decimal("0.05"), Decimal("0.05"), Decimal("0"),
-            Decimal("0.10"), Decimal("0.10"), Decimal("0.10"), 100,
+            Decimal("0.05"),
+            Decimal("0.05"),
+            Decimal("0"),
+            Decimal("0.10"),
+            Decimal("0.10"),
+            Decimal("0.10"),
+            100,
         )
         assert conf == Decimal("0.55")
 
     def test_explanation_non_empty(self) -> None:
-        for prof, args in [
+        for _prof, args in [
             ("DEBT_DEPENDENT", (Decimal("0.10"), Decimal("0.21"), Decimal("0"))),
             ("SAVER", (Decimal("0.30"), Decimal("0.10"), Decimal("0.10"))),
             ("DEBT_OPTIMIZER", (Decimal("0.10"), Decimal("0.05"), Decimal("0.10"))),
@@ -278,8 +326,13 @@ class TestConfidenceBoundaryMutants:
     def test_saver_confidence_at_strong_threshold(self) -> None:
         # At exactly SAVER_STRONG_SAVINGS_THRESHOLD (0.25), strong bonus applies
         _p, conf, _e = profile.classify_financial_personality(
-            Decimal("0.25"), Decimal("0.10"), Decimal("0.10"),
-            Decimal("0"), Decimal("0"), Decimal("0"), 100,
+            Decimal("0.25"),
+            Decimal("0.10"),
+            Decimal("0.10"),
+            Decimal("0"),
+            Decimal("0"),
+            Decimal("0"),
+            100,
         )
         # base 0.5 + strong 0.10 + secondary 0.05 (revolver>0) + txn 0.05 = 0.70
         assert conf == Decimal("0.70")
@@ -287,8 +340,13 @@ class TestConfidenceBoundaryMutants:
     def test_saver_confidence_below_strong_threshold(self) -> None:
         # Just below 0.25, no strong bonus
         _p, conf, _e = profile.classify_financial_personality(
-            Decimal("0.24"), Decimal("0.10"), Decimal("0.10"),
-            Decimal("0"), Decimal("0"), Decimal("0"), 100,
+            Decimal("0.24"),
+            Decimal("0.10"),
+            Decimal("0.10"),
+            Decimal("0"),
+            Decimal("0"),
+            Decimal("0"),
+            100,
         )
         # base 0.5 + secondary 0.05 (revolver>0) + txn 0.05 = 0.60
         assert conf == Decimal("0.60")
@@ -296,8 +354,13 @@ class TestConfidenceBoundaryMutants:
     def test_debt_dependent_confidence_at_revolver_threshold(self) -> None:
         # At exactly DEBT_DEPENDENT_MAX_REVOLVER_FOR_POSITIVE (0.5) with low savings
         _p, conf, _e = profile.classify_financial_personality(
-            Decimal("0.05"), Decimal("0.10"), Decimal("0.50"),
-            Decimal("0"), Decimal("0"), Decimal("0"), 100,
+            Decimal("0.05"),
+            Decimal("0.10"),
+            Decimal("0.50"),
+            Decimal("0"),
+            Decimal("0"),
+            Decimal("0"),
+            100,
         )
         # base 0.5 + secondary 0.05 (negative savings) + txn 0.05 = 0.55
         # Note: DEBT_DEPENDENT secondary requires savings < 0, not < threshold
@@ -306,8 +369,13 @@ class TestConfidenceBoundaryMutants:
     def test_debt_dependent_confidence_above_revolver_threshold(self) -> None:
         # Above 0.5 revolver with low savings - strong condition
         _p, conf, _e = profile.classify_financial_personality(
-            Decimal("0.05"), Decimal("0.10"), Decimal("0.60"),
-            Decimal("0"), Decimal("0"), Decimal("0"), 100,
+            Decimal("0.05"),
+            Decimal("0.10"),
+            Decimal("0.60"),
+            Decimal("0"),
+            Decimal("0"),
+            Decimal("0"),
+            100,
         )
         # base 0.5 + strong 0.10 (revolver>=0.60) + txn 0.05 = 0.65
         assert conf == Decimal("0.65")
@@ -315,8 +383,13 @@ class TestConfidenceBoundaryMutants:
     def test_spender_confidence_at_borrowed_threshold(self) -> None:
         # At borrowed_lifestyle_ratio > 0.30, strong bonus for SPENDER
         _p, conf, _e = profile.classify_financial_personality(
-            Decimal("0.05"), Decimal("0.31"), Decimal("0"),
-            Decimal("0.10"), Decimal("0"), Decimal("0"), 100,
+            Decimal("0.05"),
+            Decimal("0.31"),
+            Decimal("0"),
+            Decimal("0.10"),
+            Decimal("0"),
+            Decimal("0"),
+            100,
         )
         # base 0.5 + strong 0.10 (borrowed>0.30) + txn 0.05 = 0.65
         assert conf == Decimal("0.65")
@@ -324,8 +397,13 @@ class TestConfidenceBoundaryMutants:
     def test_confidence_volume_bonus_cap(self) -> None:
         # 500 transactions -> 5 * 0.05 = 0.25, capped at 0.20
         _p, conf, _e = profile.classify_financial_personality(
-            Decimal("0.30"), Decimal("0.10"), Decimal("0.10"),
-            Decimal("0"), Decimal("0"), Decimal("0"), 500,
+            Decimal("0.30"),
+            Decimal("0.10"),
+            Decimal("0.10"),
+            Decimal("0"),
+            Decimal("0"),
+            Decimal("0"),
+            500,
         )
         # base 0.5 + strong 0.10 + secondary 0.05 + capped 0.20 = 0.85
         assert conf == Decimal("0.85")
@@ -333,8 +411,13 @@ class TestConfidenceBoundaryMutants:
     def test_confidence_clamp_max(self) -> None:
         # Max possible: base 0.5 + strong 0.10 + cap 0.20 = 0.80
         _p, conf, _e = profile.classify_financial_personality(
-            Decimal("0.30"), Decimal("0.35"), Decimal("0.60"),
-            Decimal("0"), Decimal("0"), Decimal("0"), 500,
+            Decimal("0.30"),
+            Decimal("0.35"),
+            Decimal("0.60"),
+            Decimal("0"),
+            Decimal("0"),
+            Decimal("0"),
+            500,
         )
         assert conf <= Decimal("1.0")
         assert conf == Decimal("0.80")
@@ -342,8 +425,13 @@ class TestConfidenceBoundaryMutants:
     def test_confidence_clamp_min(self) -> None:
         # Edge case with negative values should still clamp
         _p, conf, _e = profile.classify_financial_personality(
-            Decimal("-0.50"), Decimal("0.50"), Decimal("0.80"),
-            Decimal("0"), Decimal("0"), Decimal("0"), 0,
+            Decimal("-0.50"),
+            Decimal("0.50"),
+            Decimal("0.80"),
+            Decimal("0"),
+            Decimal("0"),
+            Decimal("0"),
+            0,
         )
         # base 0.5 + strong 0.10 (borrowed>=0.30 or revolver>=0.60) + secondary 0.05 = 0.65
         assert conf >= Decimal("0")
@@ -404,43 +492,68 @@ class TestIsNightTimeMutants:
 class TestDetectImpulseTransactionsMutants:
     def test_amount_boundary_excluded(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 50000, "date_iso": "2025-01-04",
-             "category": "shopping"},
+            {
+                "type": "debit",
+                "amount_paise": 50000,
+                "date_iso": "2025-01-04",
+                "category": "shopping",
+            },
         ]
         assert patterns.detect_impulse_transactions(txns) == []
 
     def test_weekend_included(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 60000, "date_iso": "2025-01-04",
-             "category": "shopping"},
+            {
+                "type": "debit",
+                "amount_paise": 60000,
+                "date_iso": "2025-01-04",
+                "category": "shopping",
+            },
         ]
         assert len(patterns.detect_impulse_transactions(txns)) == 1
 
     def test_night_included(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 60000, "date_iso": "2025-01-06",
-             "category": "food", "time_iso": "23:00"},
+            {
+                "type": "debit",
+                "amount_paise": 60000,
+                "date_iso": "2025-01-06",
+                "category": "food",
+                "time_iso": "23:00",
+            },
         ]
         assert len(patterns.detect_impulse_transactions(txns)) == 1
 
     def test_wrong_category_excluded(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 60000, "date_iso": "2025-01-04",
-             "category": "rent"},
+            {
+                "type": "debit",
+                "amount_paise": 60000,
+                "date_iso": "2025-01-04",
+                "category": "rent",
+            },
         ]
         assert patterns.detect_impulse_transactions(txns) == []
 
     def test_weekday_no_time_excluded(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 60000, "date_iso": "2025-01-06",
-             "category": "shopping"},
+            {
+                "type": "debit",
+                "amount_paise": 60000,
+                "date_iso": "2025-01-06",
+                "category": "shopping",
+            },
         ]
         assert patterns.detect_impulse_transactions(txns) == []
 
     def test_custom_min_amount(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 60000, "date_iso": "2025-01-04",
-             "category": "shopping"},
+            {
+                "type": "debit",
+                "amount_paise": 60000,
+                "date_iso": "2025-01-04",
+                "category": "shopping",
+            },
         ]
         assert patterns.detect_impulse_transactions(txns, min_amount_paise=100000) == []
 
@@ -473,10 +586,18 @@ class TestNightSpendRatioMutants:
 
     def test_half_night(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 100, "date_iso": "2025-01-06",
-             "time_iso": "23:00"},
-            {"type": "debit", "amount_paise": 100, "date_iso": "2025-01-06",
-             "time_iso": "12:00"},
+            {
+                "type": "debit",
+                "amount_paise": 100,
+                "date_iso": "2025-01-06",
+                "time_iso": "23:00",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 100,
+                "date_iso": "2025-01-06",
+                "time_iso": "12:00",
+            },
         ]
         assert patterns.compute_night_spend_ratio(txns) == Decimal("0.5")
 
@@ -486,18 +607,26 @@ class TestRecurringMerchantsMutants:
         txns = []
         for month in ("2025-01", "2025-02"):
             for day in (1, 2, 3):
-                txns.append({
-                    "type": "debit", "amount_paise": 500000,
-                    "date_iso": f"{month}-{day:02d}", "description": "NETFLIX",
-                })
+                txns.append(
+                    {
+                        "type": "debit",
+                        "amount_paise": 500000,
+                        "date_iso": f"{month}-{day:02d}",
+                        "description": "NETFLIX",
+                    }
+                )
         result = patterns.detect_recurring_merchants(txns)
         assert len(result) == 1
         assert result[0]["merchant"] == "NETFLIX"
 
     def test_single_month_not_recurring(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 500000, "date_iso": f"2025-01-{day:02d}",
-             "description": "NETFLIX"}
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": f"2025-01-{day:02d}",
+                "description": "NETFLIX",
+            }
             for day in (1, 2, 3)
         ]
         assert patterns.detect_recurring_merchants(txns) == []
@@ -505,10 +634,14 @@ class TestRecurringMerchantsMutants:
     def test_insufficient_occurrences(self) -> None:
         txns = []
         for month in ("2025-01", "2025-02"):
-            txns.append({
-                "type": "debit", "amount_paise": 500000,
-                "date_iso": f"{month}-01", "description": "NETFLIX",
-            })
+            txns.append(
+                {
+                    "type": "debit",
+                    "amount_paise": 500000,
+                    "date_iso": f"{month}-01",
+                    "description": "NETFLIX",
+                }
+            )
         # Only 1 occurrence per month (< min_occurrences=3)
         assert patterns.detect_recurring_merchants(txns) == []
 
@@ -516,12 +649,24 @@ class TestRecurringMerchantsMutants:
 class TestSubscriptionPatternsMutants:
     def test_same_day_amount_across_months(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 15000, "date_iso": "2025-01-15",
-             "description": "SPOTIFY"},
-            {"type": "debit", "amount_paise": 15000, "date_iso": "2025-02-15",
-             "description": "SPOTIFY"},
-            {"type": "debit", "amount_paise": 15000, "date_iso": "2025-03-15",
-             "description": "SPOTIFY"},
+            {
+                "type": "debit",
+                "amount_paise": 15000,
+                "date_iso": "2025-01-15",
+                "description": "SPOTIFY",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 15000,
+                "date_iso": "2025-02-15",
+                "description": "SPOTIFY",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 15000,
+                "date_iso": "2025-03-15",
+                "description": "SPOTIFY",
+            },
         ]
         result = patterns.detect_subscription_patterns(txns)
         assert len(result) == 1
@@ -529,8 +674,12 @@ class TestSubscriptionPatternsMutants:
 
     def test_single_month_not_subscription(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 15000, "date_iso": f"2025-01-{day:02d}",
-             "description": "SPOTIFY"}
+            {
+                "type": "debit",
+                "amount_paise": 15000,
+                "date_iso": f"2025-01-{day:02d}",
+                "description": "SPOTIFY",
+            }
             for day in (15, 16, 17)
         ]
         assert patterns.detect_subscription_patterns(txns) == []
@@ -542,7 +691,9 @@ class TestSubscriptionPatternsMutants:
 class TestStressBaselinesMutants:
     def test_loss_aversion_empty(self) -> None:
         assert stress.loss_aversion_index([]) == {
-            "score": 0.5, "post_income_velocity": 0.0, "recovery_time_days": 0
+            "score": 0.5,
+            "post_income_velocity": 0.0,
+            "recovery_time_days": 0,
         }
 
     def test_loss_aversion_credits_only(self) -> None:
@@ -555,22 +706,30 @@ class TestStressBaselinesMutants:
 
     def test_impulsivity_empty(self) -> None:
         assert stress.impulsivity_score([]) == {
-            "score": 0.5, "micro_txn_ratio": 0.0, "late_night_ratio": 0.0
+            "score": 0.5,
+            "micro_txn_ratio": 0.0,
+            "late_night_ratio": 0.0,
         }
 
     def test_habit_stability_empty(self) -> None:
         assert stress.habit_stability_score([]) == {
-            "score": 0.5, "category_cv": 0.0, "recurring_predictability": 0.0
+            "score": 0.5,
+            "category_cv": 0.0,
+            "recurring_predictability": 0.0,
         }
 
     def test_financial_stress_empty(self) -> None:
         assert stress.financial_stress_index([]) == {
-            "score": 0.5, "balance_volatility": 0.0, "credit_dependency": 0.0
+            "score": 0.5,
+            "balance_volatility": 0.0,
+            "credit_dependency": 0.0,
         }
 
     def test_savings_discipline_empty(self) -> None:
         assert stress.savings_discipline_score([]) == {
-            "score": 0.5, "savings_rate": 0.0, "momentum": 0.0
+            "score": 0.5,
+            "savings_rate": 0.0,
+            "momentum": 0.0,
         }
 
     def test_detect_risk_empty(self) -> None:
@@ -584,55 +743,83 @@ class TestStressBaselinesMutants:
 
 class TestStressGamblingMutants:
     def test_gambling_keyword_detected(self) -> None:
-        txns = [{
-            "type": "debit", "amount_paise": 50000, "date_iso": "2025-01-01",
-            "description": "Dream11 payment",
-        }]
+        txns = [
+            {
+                "type": "debit",
+                "amount_paise": 50000,
+                "date_iso": "2025-01-01",
+                "description": "Dream11 payment",
+            }
+        ]
         result = stress.detect_risk_patterns(txns)
         assert result["gambling_flag"] is True
         assert result["gambling_transaction_count"] == 1
 
     def test_no_gambling(self) -> None:
-        txns = [{
-            "type": "debit", "amount_paise": 50000, "date_iso": "2025-01-01",
-            "description": "Grocery store",
-        }]
+        txns = [
+            {
+                "type": "debit",
+                "amount_paise": 50000,
+                "date_iso": "2025-01-01",
+                "description": "Grocery store",
+            }
+        ]
         assert stress.detect_risk_patterns(txns)["gambling_flag"] is False
 
 
 class TestStressLoanAppMutants:
     def test_loan_clustering_flag(self) -> None:
         txns = [
-            {"type": "credit", "amount_paise": 10000, "date_iso": "2025-01-01",
-             "description": "Loan from NBFC"},
-            {"type": "credit", "amount_paise": 15000, "date_iso": "2025-01-03",
-             "description": "Instant cash loan"},
+            {
+                "type": "credit",
+                "amount_paise": 10000,
+                "date_iso": "2025-01-01",
+                "description": "Loan from NBFC",
+            },
+            {
+                "type": "credit",
+                "amount_paise": 15000,
+                "date_iso": "2025-01-03",
+                "description": "Instant cash loan",
+            },
         ]
         result = stress.detect_risk_patterns(txns)
         assert result["loan_app_pattern_flag"] is True
         assert result["loan_credit_count"] == 2
 
     def test_single_loan_no_flag(self) -> None:
-        txns = [{
-            "type": "credit", "amount_paise": 10000, "date_iso": "2025-01-01",
-            "description": "Loan from NBFC",
-        }]
+        txns = [
+            {
+                "type": "credit",
+                "amount_paise": 10000,
+                "date_iso": "2025-01-01",
+                "description": "Loan from NBFC",
+            }
+        ]
         assert stress.detect_risk_patterns(txns)["loan_app_pattern_flag"] is False
 
 
 class TestStressUpiMicroMutants:
     def test_upi_micro_threshold(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 19900, "date_iso": "2025-01-01",
-             "description": "UPI"}
+            {
+                "type": "debit",
+                "amount_paise": 19900,
+                "date_iso": "2025-01-01",
+                "description": "UPI",
+            }
             for _ in range(11)
         ]
         assert stress.detect_risk_patterns(txns)["upi_micro_spend_flag"] is True
 
     def test_upi_micro_below_threshold(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 19900, "date_iso": "2025-01-01",
-             "description": "UPI"}
+            {
+                "type": "debit",
+                "amount_paise": 19900,
+                "date_iso": "2025-01-01",
+                "description": "UPI",
+            }
             for _ in range(10)
         ]
         assert stress.detect_risk_patterns(txns)["upi_micro_spend_flag"] is False
@@ -640,10 +827,15 @@ class TestStressUpiMicroMutants:
 
 class TestStressImpulsivityMutants:
     def test_all_micro_transactions(self) -> None:
-        txns = [{
-            "type": "debit", "amount_paise": i * 1000, "date_iso": f"2025-01-{i+1:02d}",
-            "category": "food",
-        } for i in range(1, 11)]
+        txns = [
+            {
+                "type": "debit",
+                "amount_paise": i * 1000,
+                "date_iso": f"2025-01-{i+1:02d}",
+                "category": "food",
+            }
+            for i in range(1, 11)
+        ]
         result = stress.impulsivity_score(txns)
         assert result["micro_txn_ratio"] == pytest.approx(1.0, rel=1e-5)
         assert result["micro_txn_count"] == 10
@@ -703,22 +895,42 @@ class TestStressSavingsDisciplineMutants:
 class TestStressHabitStabilityMutants:
     def test_recurring_detection_threshold_3(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-01-01",
-             "description": "NETFLIX"},
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-02-01",
-             "description": "NETFLIX"},
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-03-01",
-             "description": "NETFLIX"},
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-01-01",
+                "description": "NETFLIX",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-02-01",
+                "description": "NETFLIX",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-03-01",
+                "description": "NETFLIX",
+            },
         ]
         result = stress.habit_stability_score(txns)
         assert result["recurring_count"] >= 1
 
     def test_recurring_not_detected_with_2(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-01-01",
-             "description": "NETFLIX"},
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-02-01",
-             "description": "NETFLIX"},
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-01-01",
+                "description": "NETFLIX",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-02-01",
+                "description": "NETFLIX",
+            },
         ]
         assert stress.habit_stability_score(txns)["recurring_count"] == 0
 

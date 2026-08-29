@@ -28,8 +28,19 @@ EXPECTED_INDIA_KEYS = {
     "monthly_emi_total",
 }
 
-EXPECTED_HABIT_KEYS = {"category_cv", "recurring_predictability", "score", "recurring_count", "rhythm_score"}
-EXPECTED_LOSS_KEYS = {"post_income_velocity", "recovery_time_days", "score", "large_expense_count"}
+EXPECTED_HABIT_KEYS = {
+    "category_cv",
+    "recurring_predictability",
+    "score",
+    "recurring_count",
+    "rhythm_score",
+}
+EXPECTED_LOSS_KEYS = {
+    "post_income_velocity",
+    "recovery_time_days",
+    "score",
+    "large_expense_count",
+}
 
 
 class TestDetectIndiaRiskStructure:
@@ -44,7 +55,12 @@ class TestDetectIndiaRiskStructure:
     def test_upi_micro_spend_flag(self) -> None:
         # 11 micro debits (< ₹200) on the same day -> flag True
         txns = [
-            {"type": "debit", "amount_paise": 15000, "date_iso": "2025-01-01", "description": f"UPI{i}"}
+            {
+                "type": "debit",
+                "amount_paise": 15000,
+                "date_iso": "2025-01-01",
+                "description": f"UPI{i}",
+            }
             for i in range(11)
         ]
         result = core.detect_india_risk_patterns(txns)
@@ -56,22 +72,42 @@ class TestDetectIndiaRiskStructure:
 
     def test_gambling_flag(self) -> None:
         txns = [
-            {"type": "debit", "amount_paise": 50000, "date_iso": "2025-01-01", "description": "dream11 entry"},
+            {
+                "type": "debit",
+                "amount_paise": 50000,
+                "date_iso": "2025-01-01",
+                "description": "dream11 entry",
+            },
         ]
         result = core.detect_india_risk_patterns(txns)
         assert set(result.keys()) <= EXPECTED_INDIA_KEYS
         assert result["gambling_flag"] is True
         # Keyword "rummy"
         txns2 = [
-            {"type": "debit", "amount_paise": 50000, "date_iso": "2025-01-01", "description": "rummy circle"},
+            {
+                "type": "debit",
+                "amount_paise": 50000,
+                "date_iso": "2025-01-01",
+                "description": "rummy circle",
+            },
         ]
         assert core.detect_india_risk_patterns(txns2)["gambling_flag"] is True
 
     def test_loan_app_flag(self) -> None:
         # Two small loan credits within 7 days -> flag True
         txns = [
-            {"type": "credit", "amount_paise": 300000, "date_iso": "2025-01-01", "description": "loan from nbfc"},
-            {"type": "credit", "amount_paise": 300000, "date_iso": "2025-01-03", "description": "instant cash"},
+            {
+                "type": "credit",
+                "amount_paise": 300000,
+                "date_iso": "2025-01-01",
+                "description": "loan from nbfc",
+            },
+            {
+                "type": "credit",
+                "amount_paise": 300000,
+                "date_iso": "2025-01-03",
+                "description": "instant cash",
+            },
         ]
         result = core.detect_india_risk_patterns(txns)
         assert set(result.keys()) <= EXPECTED_INDIA_KEYS
@@ -83,8 +119,18 @@ class TestDetectIndiaRiskStructure:
     def test_emi_ratio_exact(self) -> None:
         # EMI debit 5000 in 2025-01, income credit 10000 in 2025-01 -> ratio 0.5
         txns = [
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-01-10", "description": "emi payment"},
-            {"type": "credit", "amount_paise": 1000000, "date_iso": "2025-01-05", "description": "salary"},
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-01-10",
+                "description": "emi payment",
+            },
+            {
+                "type": "credit",
+                "amount_paise": 1000000,
+                "date_iso": "2025-01-05",
+                "description": "salary",
+            },
         ]
         result = core.detect_india_risk_patterns(txns)
         assert set(result.keys()) <= EXPECTED_INDIA_KEYS
@@ -116,12 +162,42 @@ class TestHabitStabilityStructure:
     def test_exact_computation(self) -> None:
         # 3 identical Netflix debits -> recurring; some variance in amounts
         txns = [
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-01-01", "description": "NETFLIX"},
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-02-01", "description": "NETFLIX"},
-            {"type": "debit", "amount_paise": 500000, "date_iso": "2025-03-01", "description": "NETFLIX"},
-            {"type": "debit", "amount_paise": 100000, "date_iso": "2025-01-02", "category": "X"},
-            {"type": "debit", "amount_paise": 200000, "date_iso": "2025-02-02", "category": "X"},
-            {"type": "debit", "amount_paise": 300000, "date_iso": "2025-03-02", "category": "X"},
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-01-01",
+                "description": "NETFLIX",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-02-01",
+                "description": "NETFLIX",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 500000,
+                "date_iso": "2025-03-01",
+                "description": "NETFLIX",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 100000,
+                "date_iso": "2025-01-02",
+                "category": "X",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 200000,
+                "date_iso": "2025-02-02",
+                "category": "X",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 300000,
+                "date_iso": "2025-03-02",
+                "category": "X",
+            },
         ]
         r = core._compute_habit_stability_score(txns)
         assert set(r.keys()) <= EXPECTED_HABIT_KEYS
@@ -166,9 +242,24 @@ class TestStressDetectRiskStructure:
     def test_known_flags(self) -> None:
         # high impulse score -> high_impulsivity True
         txns = [
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-04", "category": "food"},
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-04", "category": "food"},
-            {"type": "debit", "amount_paise": 30000, "date_iso": "2025-01-05", "category": "food"},
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-04",
+                "category": "food",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-04",
+                "category": "food",
+            },
+            {
+                "type": "debit",
+                "amount_paise": 30000,
+                "date_iso": "2025-01-05",
+                "category": "food",
+            },
         ]
         r = stress.detect_risk_patterns(txns)
         assert isinstance(r, dict)

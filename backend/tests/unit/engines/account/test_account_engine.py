@@ -873,7 +873,9 @@ class TestMutationStrengthening_AverageBalancePrecision:
         """[100, 101] average = 100.5 -> HALF_UP=101, HALF_EVEN=100."""
         # This test already exists but make it explicit for mutation discrimination
         result = compute_average_balance([100, 101])
-        assert result == 101  # HALF_UP: 100.5 -> 101 (101 is odd, HALF_EVEN would go to 100)
+        assert (
+            result == 101
+        )  # HALF_UP: 100.5 -> 101 (101 is odd, HALF_EVEN would go to 100)
 
     def test_compute_average_balance_half_even_discrimination(self):
         """2.5 boundary: HALF_UP=3, HALF_EVEN=2 (2 is even)."""

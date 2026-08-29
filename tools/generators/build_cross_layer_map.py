@@ -30,7 +30,7 @@ def main() -> int:
 
     chains = cross_layer.load_chains()
     legacy = {}
-    for name, chain in chains.items():
+    for _name, chain in chains.items():
         eng = chain.get("engine", "")
         key = eng[: -len("/__init__.py")] if eng.endswith("/__init__.py") else eng
         endpoints = sorted(

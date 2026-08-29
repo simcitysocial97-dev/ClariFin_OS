@@ -367,20 +367,15 @@ def evaluate_auto_approval_eligibility(p: StrengtheningProposal) -> ApprovalDeci
     Production code is NEVER eligible.
     """
     conditions: list[str] = []
-    eligible = True
 
     if p.classification != "A":
-        eligible = False
         conditions.append("only Class-A proposals are ever eligible")
     if not p.survivor_evidence:
-        eligible = False
         conditions.append("missing survivor evidence provenance")
     if "..." in p.proposed_test and len(p.proposed_test.splitlines()) <= 3:
         # Skeleton-only proposals need human authorship of the body.
-        eligible = False
         conditions.append("test body requires human authorship")
     if p.regression_risk != "low":
-        eligible = False
         conditions.append("non-low regression risk requires human review")
 
     return ApprovalDecision(

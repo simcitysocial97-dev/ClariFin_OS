@@ -496,16 +496,6 @@ def phase2():
             .get(f"engine:{eng_name}", {})
             .get("components", [])
         )
-        mappers = (
-            cross_layer.get("chains", {})
-            .get(f"engine:{eng_name}", {})
-            .get("mappers", [])
-        )
-        view_models = (
-            cross_layer.get("chains", {})
-            .get(f"engine:{eng_name}", {})
-            .get("viewModels", [])
-        )
 
         chain = {
             "chain_id": f"engine:{eng_name}",
@@ -802,18 +792,21 @@ def phase4():
         if n.get("type") == "Router"
     }
     for path, m in modules.items():
-        if m.get("node_type") == "Router" and path.startswith("backend/src/routers/"):
-            if path not in exec_routers:
-                reachable["never_reachable"].append(
-                    {
-                        "id": f"router:{path}",
-                        "path": path,
-                        "style": "router",
-                        "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
-                        "confidence": "HIGH",
-                        "evidence": f"execution-graph.json has no node for {path}",
-                    }
-                )
+        if (
+            m.get("node_type") == "Router"
+            and path.startswith("backend/src/routers/")
+            and path not in exec_routers
+        ):
+            reachable["never_reachable"].append(
+                {
+                    "id": f"router:{path}",
+                    "path": path,
+                    "style": "router",
+                    "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+                    "confidence": "HIGH",
+                    "evidence": f"execution-graph.json has no node for {path}",
+                }
+            )
 
     result = {
         "schema": "runtime-reachability/v1",
@@ -1120,7 +1113,6 @@ def phase8():
     # Load data from previous phases
     canon = load("repository-canonicalization.json")
     overlap = load("duplicate-implementation.json")
-    mod = load("repository-modernization.json")
 
     # Merge canonicalization items as debt
     for item in canon["items"]:
@@ -1185,7 +1177,7 @@ def phase8():
             "low_severity": sum(1 for d in debt if d["severity"] == "LOW"),
             "by_category": {
                 cat: sum(1 for d in debt if d["category"] == cat)
-                for cat in set(d["category"] for d in debt)
+                for cat in {d["category"] for d in debt}
             },
         },
     }

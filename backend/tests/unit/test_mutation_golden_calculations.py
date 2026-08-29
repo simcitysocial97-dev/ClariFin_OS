@@ -20,9 +20,24 @@ from src.common.calculations import compute_behavioral_insights
 
 def test_golden_category_spend_up_exact_output():
     txns = [
-        {"type": "debit", "amount_paise": 100000, "month_key": "2026-01", "category": "Food"},
-        {"type": "debit", "amount_paise": 100000, "month_key": "2026-02", "category": "Food"},
-        {"type": "debit", "amount_paise": 200000, "month_key": "2026-02", "category": "Food"},
+        {
+            "type": "debit",
+            "amount_paise": 100000,
+            "month_key": "2026-01",
+            "category": "Food",
+        },
+        {
+            "type": "debit",
+            "amount_paise": 100000,
+            "month_key": "2026-02",
+            "category": "Food",
+        },
+        {
+            "type": "debit",
+            "amount_paise": 200000,
+            "month_key": "2026-02",
+            "category": "Food",
+        },
     ]
     got = compute_behavioral_insights(txns)
     assert {
@@ -35,8 +50,18 @@ def test_golden_category_spend_up_exact_output():
 
 def test_golden_category_spend_down_exact_output():
     txns = [
-        {"type": "debit", "amount_paise": 300000, "month_key": "2026-01", "category": "Travel"},
-        {"type": "debit", "amount_paise": 100000, "month_key": "2026-02", "category": "Travel"},
+        {
+            "type": "debit",
+            "amount_paise": 300000,
+            "month_key": "2026-01",
+            "category": "Travel",
+        },
+        {
+            "type": "debit",
+            "amount_paise": 100000,
+            "month_key": "2026-02",
+            "category": "Travel",
+        },
     ]
     got = compute_behavioral_insights(txns)
     assert {
@@ -49,9 +74,24 @@ def test_golden_category_spend_down_exact_output():
 
 def test_golden_overall_spend_up_exact_output():
     txns = [
-        {"type": "debit", "amount_paise": 100000, "month_key": "2026-01", "category": "Food"},
-        {"type": "debit", "amount_paise": 300000, "month_key": "2026-02", "category": "Food"},
-        {"type": "debit", "amount_paise": 500000, "month_key": "2026-02", "category": "Rent"},
+        {
+            "type": "debit",
+            "amount_paise": 100000,
+            "month_key": "2026-01",
+            "category": "Food",
+        },
+        {
+            "type": "debit",
+            "amount_paise": 300000,
+            "month_key": "2026-02",
+            "category": "Food",
+        },
+        {
+            "type": "debit",
+            "amount_paise": 500000,
+            "month_key": "2026-02",
+            "category": "Rent",
+        },
     ]
     got = compute_behavioral_insights(txns)
     assert {
@@ -64,7 +104,14 @@ def test_golden_overall_spend_up_exact_output():
 
 def test_golden_largest_expense_inr_format():
     txns = [
-        {"type": "debit", "amount_paise": 500000, "month_key": "2026-02", "category": "Rent", "description_display": "Monthly Apartment Rent", "description": "x"},
+        {
+            "type": "debit",
+            "amount_paise": 500000,
+            "month_key": "2026-02",
+            "category": "Rent",
+            "description_display": "Monthly Apartment Rent",
+            "description": "x",
+        },
     ]
     got = compute_behavioral_insights(txns)
     assert {

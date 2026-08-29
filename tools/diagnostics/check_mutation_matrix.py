@@ -10,7 +10,7 @@ with open(".github/workflows/mutation.yml") as f:
 # Extract engine matrix
 jobs = mutation.get("jobs", {})
 matrix_engines = []
-for job_name, job in jobs.items():
+for _job_name, job in jobs.items():
     strategy = job.get("strategy", {})
     matrix = strategy.get("matrix", {})
     engines = matrix.get("engine", [])

@@ -52,9 +52,7 @@ def test_changed(file_path: str) -> bool:
     """Rule 5: Returns True if file is in backend/tests/ (excluding generated artifacts)"""
     if not file_path.startswith("backend/tests/"):
         return False
-    if file_path.startswith("backend/tests/generated/"):
-        return False
-    return True
+    return not file_path.startswith("backend/tests/generated/")
 
 
 def config_changed(file_path: str) -> bool:

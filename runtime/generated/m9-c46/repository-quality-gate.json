@@ -1,0 +1,48 @@
+{
+  "schema": "m9-c46-repository-quality-gate/v1",
+  "generated_at": "2026-08-30T02:30:00+05:30",
+  "repository_sha": "post-1fc689dc C46 quality commits",
+  "dimensions": {
+    "canonical_config_verified": {
+      "status": "PASS",
+      "evidence": "runtime/generated/m9-c46/effective-toolchain-config.json — root pyproject (Ruff/Black), backend pyproject (mypy-strict/pytest/mutmut), proven from live gate runs"
+    },
+    "ruff_clean": {"status": "PASS", "evidence": "ruff check . -> All checks passed (129 -> 0); config suppressions limited to documented UP042 (F) and runtime/generated (E)"},
+    "black_clean": {"status": "PASS", "evidence": "black --check . -> 800 files unchanged; verify-fast.sh gate aligned to canonical Black"},
+    "mypy_clean": {
+      "status": "RECONCILED — enforced boundary PASS, latent repo-scope backlog documented",
+      "backend_strict": "PASS (242 files, gate enforced by verify-fast.sh)",
+      "verification_control_plane": "cli.py wrong-symbol VerificationPlan import fixed (genuine interface defect); residual control-plane errors tracked",
+      "repo_scope_latent_debt": "~170 Class-B typing issues in one-off analysis scripts / development tools / runtime tests — newly exposed in C46 (repo-scope mypy never previously completed); recorded as backlog, NOT suppressed",
+      "evidence": "runtime/generated/m9-c46/code-quality-baseline.json"
+    },
+    "pytest_green": {
+      "status": "PASS",
+      "evidence": "All 4 baseline failures resolved or explained: m4_probe collection (root norecursedirs), mutation-infra x2 (concurrency artifacts; 21/21 isolated), exit-contract (pre-existing structural defect since M9-C42.16 — REPAIRED and verified passing)"
+    },
+    "verification_architecture_regression_free": {
+      "status": "PASS",
+      "evidence": "C42.27-31 tests green; mutation-infra 21/21; planner/evidence/forensic fixes behaviour-preserving (diagnostic Q7 additive key only); no C42.38 redesign; strengthening authorization boundary untouched"
+    },
+    "workflow_status_reconciled": {
+      "status": "RECONCILED",
+      "evidence": "C45 matrix carried forward (9 GREEN / 3 GREEN-BY-DESIGN / 2 ENVIRONMENTAL_LIMITATION / 0 FAILED); verify-fast formatter-gate defect fixed; no workflow command used a non-canonical formatter after fix"
+    },
+    "mutation_evidence_reconciled": {
+      "status": "RECONCILED",
+      "evidence": "C46 code-quality changes are outside all mutmut source_paths (engine populations): backend/src/api.py (annotation only, not a mutation target), runtime/verification infra (runner, not target). behaviour_engine 83.5% and FI/CC/Calc evidence remain VALID; no campaign invalidation; no score-chasing rerun."
+    },
+    "coverage_ge_80": {"status": "PASS", "evidence": "80.58% statement (C44/C45 authoritative) preserved — no production logic changed"},
+    "production_integrity_preserved": {"status": "PASS", "evidence": "Zero production behaviour changes (only typing annotations, import ordering, test-infrastructure repair); defect ledger (C43-E1, TXN-E1, FIN-E1..E5) unchanged, human-authorization boundary intact"}
+  },
+  "mutation_gate": {
+    "repository_wide_mutation_ge_80": {
+      "status": "NOT MEASURED — CI-designated authority",
+      "authoritative_command": "python runtime/verify.py mutation (.github/workflows/mutation.yml)",
+      "last_derived_value": "~78.3% (C45, non-authoritative)",
+      "note": "Unchanged by C46: no mutation-target source modified"
+    }
+  },
+  "final_decision": "FINAL QUALITY CERTIFICATION — NOT YET ACHIEVED (carried from C45). Code-quality convergence COMPLETE (Ruff/Black/pytest/backend-mypy PASS). Remaining gaps: (1) authoritative CI mutation campaign; (2) repo-scope mypy latent Class-B backlog (~170, newly exposed, documented); (3) human authorization of documented production defects (C43-E1, TXN-E1, FIN-E1..E5).",
+  "do_not_fabricate": "No mutation score is projected or extrapolated."
+}

@@ -37,8 +37,6 @@ def first_docstring(rel):
 
 def build():
     topo = load("engine-topology.json")
-    own = load("ownership-graph.json")
-    inv = load("architecture-inventory.json")
 
     knowledge = {"generated_at": datetime.now().isoformat(), "entities": {}}
 
@@ -130,9 +128,7 @@ def build():
                 "No direct DB access (delegates to repositories).",
             ],
             "consumers": (
-                [r for r in topo["engines"][sorted(engines)[0]]["routers"]]
-                if engines
-                else []
+                list(topo["engines"][sorted(engines)[0]]["routers"]) if engines else []
             ),
             "dependencies": sorted(engines),
             "verification_profiles": ["backend"],

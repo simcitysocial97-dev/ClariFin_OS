@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 import signal
@@ -104,10 +105,8 @@ class Executor:
                 # Give processes a moment to terminate gracefully
                 time.sleep(0.5)
                 # Force kill any remaining
-                try:
-                    os.killpg(pgid, signal.SIGKILL)
-                except ProcessLookupError:
-                    pass  # Already gone
+                with contextlib.suppress(ProcessLookupError):
+                    os.killpg(pgid, signal.SIGKILL)  # Already gone
             except ProcessLookupError:
                 pass  # Process group already gone
             except PermissionError:
@@ -119,10 +118,8 @@ class Executor:
 
         # Also try direct proc kill as fallback
         if proc is not None:
-            try:
+            with contextlib.suppress(Exception):
                 proc.kill()
-            except Exception:
-                pass
 
     def _record_lifecycle_event(self, event_type: str, details: dict) -> None:
         """Record a lifecycle event for evidence tracking."""

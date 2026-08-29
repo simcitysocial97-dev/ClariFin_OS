@@ -22,19 +22,27 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 # ── Coarse type vocabulary (used for aggregation + reporting) ────────────────
-CATEGORY_STRING = "string_literal"      # quoted literal change (incl. dict keys)
-CATEGORY_NUMERIC = "numeric_literal"    # integer / float literal change
-CATEGORY_ARITHMETIC = "arithmetic"      # constant inside an arithmetic expression
-CATEGORY_COMPARISON = "comparison"      # >, <, >=, <=, ==, !=, in, is ...
-CATEGORY_BOOLEAN = "boolean"            # and / or / True / False / None flips
-CATEGORY_DEFAULT = "default_value"      # .get(k, X) -> .get(k, Y)
-CATEGORY_KEY = "dict_key"               # string used as a mapping key
-CATEGORY_CONTROL = "control_flow"       # return / if / loop body change
+CATEGORY_STRING = "string_literal"  # quoted literal change (incl. dict keys)
+CATEGORY_NUMERIC = "numeric_literal"  # integer / float literal change
+CATEGORY_ARITHMETIC = "arithmetic"  # constant inside an arithmetic expression
+CATEGORY_COMPARISON = "comparison"  # >, <, >=, <=, ==, !=, in, is ...
+CATEGORY_BOOLEAN = "boolean"  # and / or / True / False / None flips
+CATEGORY_DEFAULT = "default_value"  # .get(k, X) -> .get(k, Y)
+CATEGORY_KEY = "dict_key"  # string used as a mapping key
+CATEGORY_CONTROL = "control_flow"  # return / if / loop body change
 CATEGORY_OTHER = "other"
 
 _CMP_OPS = {
-    ">", "<", ">=", "<=", "==", "!=",
-    " in", " not in", " is", " is not",
+    ">",
+    "<",
+    ">=",
+    "<=",
+    "==",
+    "!=",
+    " in",
+    " not in",
+    " is",
+    " is not",
 }
 _BOOL_LITS = {"True", "False", "None"}
 _BOOL_OPS = {"and", "or"}
@@ -78,8 +86,12 @@ class SurvivorCatalog:
     def to_dict(self) -> dict:
         return {
             "total_survivors": self.total_survivors,
-            "by_category": dict(sorted(self.by_category.items(), key=lambda kv: -kv[1])),
-            "by_function": dict(sorted(self.by_function.items(), key=lambda kv: -kv[1])),
+            "by_category": dict(
+                sorted(self.by_category.items(), key=lambda kv: -kv[1])
+            ),
+            "by_function": dict(
+                sorted(self.by_function.items(), key=lambda kv: -kv[1])
+            ),
             "by_file": dict(sorted(self.by_file.items(), key=lambda kv: -kv[1])),
             "by_function_category": dict(
                 sorted(self.by_function_category.items(), key=lambda kv: -kv[1])
@@ -324,7 +336,9 @@ def build_survivor_catalog(meta_dir: Path, backend_dir: Path) -> SurvivorCatalog
     return catalog
 
 
-def run_catalog_cli(meta_dir: Path, backend_dir: Path, out_path: Path | None = None) -> SurvivorCatalog:
+def run_catalog_cli(
+    meta_dir: Path, backend_dir: Path, out_path: Path | None = None
+) -> SurvivorCatalog:
     import os
 
     prev = os.getcwd()
@@ -336,7 +350,9 @@ def run_catalog_cli(meta_dir: Path, backend_dir: Path, out_path: Path | None = N
 
     report = catalog.to_dict()
     if out_path is None:
-        out_path = backend_dir / "tests" / "generated" / "mutation" / "mutation-survivors.json"
+        out_path = (
+            backend_dir / "tests" / "generated" / "mutation" / "mutation-survivors.json"
+        )
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(report, indent=2))
 

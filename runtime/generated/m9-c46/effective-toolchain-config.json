@@ -1,0 +1,27 @@
+{
+  "schema": "m9-c46-effective-toolchain-config/v1",
+  "generated_at": "2026-08-30T00:00:00+05:30",
+  "repository_sha": "1fc689dc",
+  "authority_model": {
+    "principle": "Repository root is the canonical configuration authority for Ruff and Black (M10 decision record: backend [tool.ruff]/[tool.black] duplicates removed). Backend pyproject.toml remains scoped authority for mypy-strict, pytest, mutmut, hypothesis because backend tests resolve rootdir there.",
+    "single_python_env": ".venv at repo root; no backend/venv (M9-C42.5)"
+  },
+  "tools": [
+    {"tool": "ruff", "canonical_config": "/pyproject.toml [tool.ruff]", "effective_command": ".venv/bin/python -m ruff check .", "working_directory": "repo root", "discovered_config": ["pyproject.toml (root, ACTIVE)", "backend/ruff.toml (DOES NOT EXIST — stale reference in backend/pyproject.toml comment and M10 notes)", "no servers/tools nested configs found"], "precedence": "root pyproject authoritative; nothing overrides", "ci_equivalent": ".github/workflows use pip-installed ruff from [all] extras; m9-forensic-diagnostic-lab records config provenance"},
+    {"tool": "black", "canonical_config": "/pyproject.toml [tool.black]", "effective_command": ".venv/bin/python -m black --check .", "working_directory": "repo root", "discovered_config": ["pyproject.toml (root, ACTIVE)"], "precedence": "root authoritative; verify-fast.sh updated 1fc689dc to gate on black instead of ruff format", "ci_equivalent": "backend-verify + forensic-diagnostic-lab black checks"},
+    {"tool": "mypy", "canonical_config_repo_scope": "/pyproject.toml [tool.mypy] (non-strict, excludes servers/src/fetch/tests + backend/mutants)", "canonical_config_backend": "/backend/pyproject.toml [tool.mypy] (strict=true, excludes tests/ + mutants/)", "effective_commands": [".venv/bin/python -m mypy .  (repo scope)", ".venv/bin/python -m mypy src/  (from backend/, strict)"], "discovered_config": ["root pyproject", "backend pyproject"], "precedence": "backend/src is typed under backend strict config (verify-fast gate); repo scope covers runtime/tools/servers/.github/scripts", "defect": "Class D: root-scope discovery aborts on runtime/generated/m9-c42.27 (invalid package name) before checking anything"},
+    {"tool": "pytest", "canonical_config_backend": "/backend/pyproject.toml [tool.pytest.ini_options] (rootdir for backend tests; norecursedirs includes probes + mutants)", "canonical_config_root": "/pyproject.toml [tool.pytest.ini_options] (repo-wide runs; norecursedirs LACKS backend/tests/probes)", "defect": "Class D: root-wide collection picks up the intentionally-failing backend/tests/probes/test_m4_exit_probe.py"},
+    {"tool": "mutmut", "canonical_config": "/backend/pyproject.toml [tool.mutmut]", "note": "source_paths is DYNAMIC — rendered per-target by runtime/foundation/verification/mutation_contract.py; resting scope after C45 = src/engines/behaviour_engine", "ci_equivalent": ".github/workflows/mutation.yml -> python runtime/verify.py mutation"}
+  ],
+  "legacy_or_secondary_config_findings": [
+    {"item": "backend/ruff.toml", "state": "REFERENCED-BUT-ABSENT", "evidence": "backend/pyproject.toml comment lines 8-9 and memory-bank M10 notes cite backend/ruff.toml; file does not exist on disk", "classification": "H (obsolete documentation reference)", "action": "correct the stale comments; no functional config to consolidate"},
+    {"item": "runtime/generated/**/*.py", "state": "generated evidence/scenario scripts (m9-c42.x milestones)", "classification": "E (generated surface)", "action": "align Ruff exclude with existing Black exclude; do not hand-fix generated artifacts"},
+    {"item": "scripts/verify-fast.sh ruff-format gate", "state": "FIXED in 1fc689dc — was gating on non-canonical ruff format which conflicts with canonical Black on chained ternaries (4 files)"}
+  ],
+  "proof_of_authority": {
+    "backend_src_ruff_under_root_config": "All checks passed (0 violations)",
+    "backend_src_black": "242 files unchanged",
+    "backend_src_mypy_strict": "Success: no issues found in 242 source files",
+    "verify_fast_gate": "PASSES after 1fc689dc"
+  }
+}
