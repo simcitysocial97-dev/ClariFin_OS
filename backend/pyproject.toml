@@ -5,9 +5,9 @@
 #   * Dependencies are NOT declared here — root pyproject.toml is the SINGLE
 #     Python dependency authority (`.venv` single-venv architecture).
 #   * Ruff / Black configuration are canonicalized at repo root
-#     (root pyproject.toml [tool.ruff] / [tool.black]); backend/ruff.toml is the
-#     backend-scoped lint selection. No `[tool.ruff]` / `[tool.black]` here (the
-#     previous duplicate in this file conflicted with backend/ruff.toml).
+#     (root pyproject.toml [tool.ruff] / [tool.black]); there is NO
+#     backend/ruff.toml (an earlier M10 note referenced one — it never
+#     existed as a separate authority; root config is the single authority).
 #   * This file remains the authority for pytest / Mypy-strict / Mutmut /
 #     Hypothesis because backend tests resolve their rootdir here.
 
@@ -106,12 +106,14 @@ ignore_missing_imports = true
 # Scope: credit_card_engine
 # Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
 [tool.mutmut]
-source_paths = ["src/engines/credit_card_engine"]
+source_paths = ["src/engines/behaviour_engine"]
 also_copy = ["src"]
 runner = "python3 -m pytest"
 pytest_add_cli_args_test_selection = [
-    "tests/unit/engines/credit_card",
-    "tests/properties/credit_card_engine",
-    "tests/capability/credit_cards"
+    "tests/unit/engines/behaviour",
+    "tests/unit/engines/behaviour/test_metrics.py",
+    "tests/unit/engines/behaviour/test_integration.py",
+    "tests/properties/behaviour",
+    "tests/capability/pattern_analysis"
 ]
 no_progress = true
