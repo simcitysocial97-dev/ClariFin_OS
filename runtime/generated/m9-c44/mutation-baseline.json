@@ -44,5 +44,30 @@
     "runtime/generated/m9-c43/m9-c43-mutation-survivor-analysis.json",
     "runtime/generated/m9-c44/survivor-classification.json",
     "runtime/generated/m9-c44/survivor-capability-attribution.json"
-  ]
+  ],
+  "mutmut_builtin_result_analysis": {
+    "export_cicd_stats": {
+      "killed": 6021,
+      "survived": 1189,
+      "total": 7213,
+      "no_tests": 0,
+      "skipped": 0,
+      "suspicious": 0,
+      "timeout": 3,
+      "check_was_interrupted_by_user": 0,
+      "segfault": 0
+    },
+    "note": "Supplemented via mutmut export-cicd-stats (built-in machine-readable result analysis). Mirrors the meta-based collector; combines to corroborate behaviour_engine killed=6021/survived=1189.",
+    "supplementary_commands": [
+      "mutmut results",
+      "mutmut show",
+      "mutmut tests-for-mutant",
+      "mutmut browse",
+      "mutmut export-cicd-stats"
+    ],
+    "verified_match": {
+      "killed": true,
+      "survived": true
+    }
+  }
 }

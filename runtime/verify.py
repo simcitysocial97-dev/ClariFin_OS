@@ -1396,12 +1396,40 @@ def main() -> int:
 
         return run_strengthen_analyze(sys.argv[2:])
 
+    if command == "strengthen-discover":
+        from runtime.foundation.verification.forensic_cli import (
+            run_strengthen_discover,
+        )
+
+        return run_strengthen_discover(sys.argv[2:])
+
+    if command == "strengthen-propose":
+        from runtime.foundation.verification.forensic_cli import (
+            run_strengthen_propose,
+        )
+
+        return run_strengthen_propose(sys.argv[2:])
+
     if command == "strengthen-validate":
         from runtime.foundation.verification.forensic_cli import (
             run_strengthen_validate,
         )
 
         return run_strengthen_validate(sys.argv[2:])
+
+    if command == "strengthen-survivor":
+        from runtime.foundation.verification.forensic_cli import (
+            run_strengthen_survivor,
+        )
+
+        return run_strengthen_survivor(sys.argv[2:])
+
+    if command == "strengthen-report":
+        from runtime.foundation.verification.forensic_cli import (
+            run_strengthen_report,
+        )
+
+        return run_strengthen_report(sys.argv[2:])
 
     if command == "env-check":
         from runtime.foundation.verification.env import main_env_check
