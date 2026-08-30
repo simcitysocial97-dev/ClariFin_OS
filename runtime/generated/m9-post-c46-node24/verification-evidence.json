@@ -3,7 +3,19 @@
   "node_version_tested": "v24.13.0 (downloaded to ~/.local/node24/bin/node)",
   "npm_version_tested": "11.6.2 (bundled with Node 24.13.0)",
   "verification_date": "2026-08-30T15:30:00Z",
-  "caveat": "Local system node remains v20.20.2 (nodesource). Node 24 accessed via explicit PATH override for this session only. CI will install Node 24 via actions/setup-node@v4.",
+  "ci_verification_date": "2026-08-30T16:10:00Z",
+  "ci_commit": "0028c58b",
+  "ci_branch": "m9c9-merge-authorization-resolution",
+  "caveat": "Local system node remains v20.20.2 (nodesource). Node 24 accessed via explicit PATH override for local testing. CI installs Node 24 via actions/setup-node@v4 (canonical setup-node-runtime composite).",
+  "ci_workflow_results": [
+    {"name": "API Contract Integrity", "databaseId": 33321311320, "conclusion": "success", "duration": "1m23s"},
+    {"name": "Verification Reconcile", "databaseId": 33321311316, "conclusion": "success", "duration": "4m2s"},
+    {"name": "Frontend Verification", "databaseId": 33321311319, "conclusion": "success", "duration": "6m8s"},
+    {"name": "Verification Runtime", "databaseId": 33321311349, "conclusion": "success", "duration": "6m47s"},
+    {"name": "Quality Gate", "databaseId": 33321311331, "conclusion": "success", "duration": "7m2s"},
+    {"name": "Backend Verification", "databaseId": 33321311317, "conclusion": "success", "duration": "8m11s"}
+  ],
+  "ci_verdict": "ALL_6_SUCCESS",
   "checks": [
     {
       "name": "npm ci (frontend)",
@@ -120,16 +132,18 @@
     },
     {
       "item": "ee9c4f66 push workflow conclusion metadata",
-      "reason": "All 6 workflows succeeded on Node 20; will re-run on Node 24 after merge to re-establish evidence trail",
-      "remediation": "New verification evidence generated post-deploy"
+      "reason": "All 6 workflows succeeded on Node 20; re-run on Node 24 to re-establish evidence trail",
+      "remediation": "RESOLVED — 0028c58b CI ran all 6 workflows on Node 24: ALL SUCCESS"
     },
     {
       "item": "5e944ba9 Push failures (Ruff F841 in test_mutation_gap_repairs.py:323)",
-      "reason": "Pre-existing from mutation-strengthening commit; unrelated to Node change but must be tracked separately",
-      "remediation": "Fix via separate PR or included in next maintenance commit"
+      "reason": "Pre-existing from mutation-strengthening commit; fixed in 0028c58b by removing dead assignment",
+      "remediation": "RESOLVED — Ruff F841 fixed in 0028c58b; Quality Gate, Frontend Verification, Backend Verification all pass on Node 24 CI"
     }
   ],
   "verification_passed": true,
+  "ci_verification_passed": true,
   "production_build_on_node24": true,
-  "no_regression_in_python_toolchain": true
+  "no_regression_in_python_toolchain": true,
+  "node24_ci_evidence": "All 6 push workflows succeed on Node 24 LTS (commit 0028c58b)"
 }

@@ -20,7 +20,7 @@ runs:
   using: "composite"
   steps:
     - name: Set up Python ${{ inputs.python-version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v7.0.0
       with:
         python-version: ${{ inputs.python-version }}
 
@@ -32,7 +32,7 @@ runs:
         echo "LANG=C.UTF-8" >> $GITHUB_ENV
 
     - name: Cache pip packages
-      uses: actions/cache@v4
+      uses: actions/cache@v6.1.0
       with:
         path: ~/.cache/pip
         key: |

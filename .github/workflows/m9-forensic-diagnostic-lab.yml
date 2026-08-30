@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout exact PR commit with full history
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}

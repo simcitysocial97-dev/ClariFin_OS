@@ -100,5 +100,18 @@
     "no_production_behavior_changes_predicted": true,
     "no_unjustified_workflow_node_split": true,
     "all_clear": true
+  },
+  "post_ci_baseline_0028c58b": {
+    "note": "All 6 push workflows succeeded for 0028c58b on Node 24 LTS — authoritative post-migration evidence",
+    "runs": [
+      {"name": "API Contract Integrity", "databaseId": 33321311320, "conclusion": "success", "duration": "1m23s"},
+      {"name": "Verification Reconcile", "databaseId": 33321311316, "conclusion": "success", "duration": "4m2s"},
+      {"name": "Frontend Verification", "databaseId": 33321311319, "conclusion": "success", "duration": "6m8s"},
+      {"name": "Verification Runtime", "databaseId": 33321311349, "conclusion": "success", "duration": "6m47s"},
+      {"name": "Quality Gate", "databaseId": 33321311331, "conclusion": "success", "duration": "7m2s"},
+      {"name": "Backend Verification", "databaseId": 33321311317, "conclusion": "success", "duration": "8m11s"}
+    ],
+    "verdict": "ALL_6_SUCCESS",
+    "node_runtime": "24"
   }
 }

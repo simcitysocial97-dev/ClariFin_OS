@@ -74,7 +74,7 @@
       "new": "node-version default: \"24\""
     },
     "description_updated": "Installs Node.js 20... → Installs Node.js 24 LTS...",
-    "underlying_action": "actions/setup-node@v4 (unchanged)",
+    "underlying_action": "actions/setup-node@v7.0.0 (updated from v4 for Node 24 runner compatibility)",
     "cache_key_strategy": "npm cache keyed by lockfile hash, not Node version; lockfile unchanged means cache valid across upgrade"
   },
   "lockfile_status": {

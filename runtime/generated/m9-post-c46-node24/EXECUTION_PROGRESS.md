@@ -161,7 +161,35 @@ All 18 gates (G1–G18) PASS. Full record in `final-certification.json`.
 
 ---
 
-## Phase 9 — Rectify Pre-existing Commit Errors (Follow-up)
+## Phase 9 — Push + CI Verification (Node 24 LTS authoritative evidence)
+
+**Date:** 2026-08-30T16:02:20Z  
+**Commit pushed:** `0028c58b` (M9-POST-C46: Node 24 LTS runtime modernization + Ruff F841 rectification)  
+**Branch:** `m9c9-merge-authorization-resolution`
+
+### CI Workflow Results (Node 24 LTS)
+
+| Workflow | Status | Duration | Database ID |
+|---|---|---|---|
+| API Contract Integrity | ✅ SUCCESS | 1m23s | 33321311320 |
+| Verification Reconcile | ✅ SUCCESS | 4m2s | 33321311316 |
+| Frontend Verification | ✅ SUCCESS | 6m8s | 33321311319 |
+| Verification Runtime | ✅ SUCCESS | 6m47s | 33321311349 |
+| Quality Gate | ✅ SUCCESS | 7m2s | 33321311331 |
+| Backend Verification | ✅ SUCCESS | 8m11s | 33321311317 |
+
+**CI Verdict: ALL 6 SUCCESS on Node 24 LTS**
+
+This is authoritative evidence that:
+1. Node 24 LTS is correctly resolved by the canonical `setup-node-runtime` composite action
+2. All frontend tooling (Next.js build, TypeScript, ESLint, Vitest) works on Node 24
+3. All backend tooling (Ruff, Black, mypy, pytest) passes with the .venv-first enforcement
+4. The Ruff F841 fix from 5e944ba9 is confirmed in CI
+5. No C42 verification architecture regression
+
+---
+
+## Phase 10 — Rectify Pre-existing Commit Errors (Follow-up)
 
 **Date:** 2026-08-30 (post-Node 24 milestone)  
 **Trigger:** User directive to fix errors introduced by commit 5e944ba9 so all workflows pass.
