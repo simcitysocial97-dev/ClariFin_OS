@@ -999,7 +999,7 @@ downstream. Frontend artifacts MUST be regenerated from live OpenAPI.
 
 def verify_artifact_reproducibility() -> dict[str, Any]:
     """Prove artifacts are reproducible from clean state."""
-    results = {
+    results: dict[str, dict[str, Any]] = {
         "openapi_regeneration": {},
         "typescript_regeneration": {},
         "hash_consistency": {},

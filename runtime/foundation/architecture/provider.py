@@ -742,11 +742,11 @@ class ArchitectureProvider:
                 return GraphNode(id=fn(path), type=label_type, label=path)
             return None
 
-        for path, mod in modules_by_path.items():
+        for path, module_data in modules_by_path.items():
             source_node = node_for(path)
             if source_node is None:
                 continue
-            for imp in mod.get("imports", []):
+            for imp in module_data.get("imports", []):
                 target_path = resolver.resolve(imp, path)
                 if not target_path or target_path == path:
                     continue

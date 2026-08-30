@@ -63,6 +63,9 @@ class ContractInventory:
         self.generated_artifacts: list[str] = []
         self.openapi_hash: str = ""
         self.committed_artifacts: int = 0
+        self.generated_types_hash: str = ""
+        self.runtime_schemas_checked: int = 0
+        self.frontend_consumers_count: int = 0
 
     # ------------------------------------------------------------------
     # Backend operations — derive from live OpenAPI (authoritative source)

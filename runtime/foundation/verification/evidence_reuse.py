@@ -232,6 +232,7 @@ InvalidationScope = Literal[
     "INVALIDATES_TASK",
     "INVALIDATES_EVIDENCE_ONLY",
     "DOES_NOT_INVALIDATE",
+    "INVALIDATES_POPULATION",
 ]
 
 
@@ -814,8 +815,8 @@ def c42_25_measurements() -> list[ComponentMeasurement]:
 def c42_26_derived_aggregate(
     measurements: list[ComponentMeasurement],
 ) -> DerivedAggregate:
-    scored = sum(int(m.summary.get("scored", 0)) for m in measurements)
-    killed = sum(int(m.summary.get("killed", 0)) for m in measurements)
+    scored = sum(int(m.summary.get("scored") or 0) for m in measurements)
+    killed = sum(int(m.summary.get("killed") or 0) for m in measurements)
     pct = round(100.0 * killed / scored, 4) if scored else 0.0
     return DerivedAggregate(
         aggregate_id="agg::pop-14::c42.26",

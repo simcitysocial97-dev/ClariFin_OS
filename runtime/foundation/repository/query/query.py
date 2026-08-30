@@ -115,9 +115,8 @@ class RepositoryIndex:
             for e in self._outgoing_edges(cap_node["id"])
             if e["relationship"] == "implements"
             and e["target"].startswith("module:")
-            and self._find_node(e["target"]) is not None
-            and self._find_node(e["target"])["properties"].get("module_type")
-            == "router"
+            and (node := self._find_node(e["target"])) is not None
+            and node["properties"].get("module_type") == "router"
         ]
         routers = [self._find_node(e["target"]) for e in router_edges]
         routers = [r for r in routers if r is not None]
@@ -128,9 +127,8 @@ class RepositoryIndex:
             for e in self._outgoing_edges(cap_node["id"])
             if e["relationship"] == "implements"
             and e["target"].startswith("module:")
-            and self._find_node(e["target"]) is not None
-            and self._find_node(e["target"])["properties"].get("module_type")
-            == "service"
+            and (node := self._find_node(e["target"])) is not None
+            and node["properties"].get("module_type") == "service"
         ]
         services = [self._find_node(e["target"]) for e in service_edges]
         services = [s for s in services if s is not None]
@@ -141,9 +139,8 @@ class RepositoryIndex:
             for e in self._outgoing_edges(cap_node["id"])
             if e["relationship"] == "implements"
             and e["target"].startswith("module:")
-            and self._find_node(e["target"]) is not None
-            and self._find_node(e["target"])["properties"].get("module_type")
-            == "repository"
+            and (node := self._find_node(e["target"])) is not None
+            and node["properties"].get("module_type") == "repository"
         ]
         repositories = [self._find_node(e["target"]) for e in repo_edges]
         repositories = [r for r in repositories if r is not None]
@@ -154,8 +151,11 @@ class RepositoryIndex:
             for e in self._outgoing_edges(cap_node["id"])
             if e["relationship"] == "implements" and e["target"].startswith("endpoint:")
         ]
-        endpoints = [self._find_node(e["target"]) for e in endpoint_edges]
-        endpoints = [ep for ep in endpoints if ep is not None]
+        endpoints: list[dict[str, Any]] = []
+        for e in endpoint_edges:
+            ep = self._find_node(e["target"])
+            if ep is not None:
+                endpoints.append(ep)
 
         # Tests
         test_edges = [
@@ -201,7 +201,6 @@ class RepositoryIndex:
         # Frontend routes that consume this capability's endpoints
         route_edges: list[dict] = []
         for ep in endpoints:
-            ep["id"]
             consumers = self.find_frontend_consumers_of_endpoint(
                 ep["properties"].get("path", "")
             )
@@ -356,7 +355,7 @@ class RepositoryIndex:
                                 ),
                                 "api_client_path": client_func_obj["path"],
                                 "endpoint": endpoint_path,
-                                "method": ep_obj["properties"].get("method", ""),
+                                "method": ep_obj.properties.get("method", ""),
                             }
                         )
 
@@ -459,11 +458,11 @@ class RepositoryIndex:
             for e in inc_edges:
                 edges_list.append(e.to_dict())
 
-        for e in edges_list:
-            if e.get("relationship") == "verifies" and e.get("source").startswith(
-                "capability:"
-            ):
-                verified_cap_ids.add(e["source"])
+        for e_dict in edges_list:
+            if e_dict.get("relationship") == "verifies" and e_dict.get(
+                "source", ""
+            ).startswith("capability:"):
+                verified_cap_ids.add(e_dict["source"])
 
         result = []
         for node in service.get_nodes(node_type="capability"):
@@ -537,7 +536,7 @@ class RepositoryIndex:
 
     def impact(self, path: str, max_depth: int = 8) -> dict[str, Any]:
         """Compute impact of changes to a file using ImpactAnalyzer."""
-        from runtime.foundation.repository.impact import (
+        from runtime.foundation.repository.analysis.impact import (
             compute_impact,
         )  # avoid circular import
 
@@ -581,10 +580,10 @@ class RepositoryIndex:
 
     def health(self) -> dict[str, Any]:
         """Get comprehensive repository health metrics."""
-        from runtime.foundation.repository.graph.graph_service import load_graph_service
-        from runtime.foundation.repository.metrics import (
+        from runtime.foundation.repository.analysis.metrics import (
             calculate_metrics as calc_metrics,
         )
+        from runtime.foundation.repository.graph.graph_service import load_graph_service
 
         try:
             service = load_graph_service(self._index_path)

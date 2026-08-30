@@ -34,7 +34,7 @@ from runtime.foundation.repository.scanner import (
     MetadataScanner,
     MigrationScanner,
     ScriptScanner,
-    TestScanner,
+    SuiteDiscovery,
     WorkflowScanner,
 )
 
@@ -85,7 +85,7 @@ class RepositoryBuilder:
             BackendScanner(self.repo_root),
             FrontendScanner(self.repo_root),
             ApiScanner(self.repo_root),
-            TestScanner(self.repo_root),
+            SuiteDiscovery(self.repo_root),
             DocsScanner(self.repo_root),
             WorkflowScanner(self.repo_root),
             ScriptScanner(self.repo_root),

@@ -38,7 +38,7 @@ class ValidationFinding:
         self.evidence = evidence  # Why this finding exists
 
     def to_dict(self) -> dict[str, Any]:
-        result = {
+        result: dict[str, Any] = {
             "severity": self.severity,
             "code": self.code,
             "message": self.message,
@@ -62,7 +62,7 @@ class Validator:
             index_path
             or Path(__file__).parent.parent / "repo_intelligence" / "index.json"
         )
-        self._data = None
+        self._data: dict[str, Any] | None = None
 
     def load(self) -> None:
         """Load the index from disk."""
@@ -76,6 +76,7 @@ class Validator:
         """
         if self._data is None:
             self.load()
+        assert self._data is not None
 
         findings: list[ValidationFinding] = []
         nodes = self._data.get("nodes", [])

@@ -569,8 +569,8 @@ class EvidenceAwarePlanner:
                     valid_components.append(m)
         if not valid_components:
             return None
-        scored = sum(int(m.summary.get("scored", 0)) for m in valid_components)
-        killed = sum(int(m.summary.get("killed", 0)) for m in valid_components)
+        scored = sum(int(m.summary.get("scored") or 0) for m in valid_components)
+        killed = sum(int(m.summary.get("killed") or 0) for m in valid_components)
         pct = round(100.0 * killed / scored, 4) if scored else 0.0
         return DerivedAggregate(
             aggregate_id=f"agg::{self._population.population_id}::derived",

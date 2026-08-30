@@ -238,10 +238,10 @@ def analyze_changes(
     # Tests that the provider associates with a changed engine are themselves
     # part of the change surface.
     for engine_ref in list(buckets["engines"].values()):
-        engine = res.arch.engines.get(engine_ref.key)
-        if engine is None:
+        engine_obj = res.arch.engines.get(engine_ref.key)
+        if engine_obj is None:
             continue
-        for test_path in engine.tests:
+        for test_path in engine_obj.tests:
             test_ref = res.resolve_node(f"test:{test_path}")
             if test_ref is not None:
                 buckets["tests"].setdefault(test_ref.ref, test_ref)

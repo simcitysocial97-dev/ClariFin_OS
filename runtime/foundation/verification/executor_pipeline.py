@@ -960,7 +960,7 @@ def reconcile(
 
     # M28.7 — Mathematically aggregate
     aggregate = _compute_labelled_aggregate(
-        components, population, freshness_authority=freshness_authority
+        tuple(components), population, freshness_authority=freshness_authority
     )
 
     # Certifiability
@@ -1026,8 +1026,8 @@ def _compute_labelled_aggregate(
             g = c.evidence.counts.get("generated", 0)
             return k, g
         if c.prior_measurement is not None:
-            k = int(c.prior_measurement.summary.get("killed", 0))
-            g = int(c.prior_measurement.summary.get("scored", 0))
+            k = int(c.prior_measurement.summary.get("killed") or 0)
+            g = int(c.prior_measurement.summary.get("scored") or 0)
             return k, g
         return None
 

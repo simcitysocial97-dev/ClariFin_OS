@@ -143,6 +143,7 @@ def run_forensic_diagnose(argv: list[str]) -> int:
     ci_correlation = None
     if args.ci_evidence:
         from runtime.foundation.verification.ci_evidence import (
+            CommandSemantics,
             build_ci_bindings,
             load_ci_evidence,
             validate_and_decide,
@@ -150,7 +151,7 @@ def run_forensic_diagnose(argv: list[str]) -> int:
         )
 
         records = load_ci_evidence(args.ci_evidence)
-        sem_by_task = {}
+        sem_by_task: dict[str, CommandSemantics] = {}
         for b in verification_bindings(build_ci_bindings()):
             if b.semantics:
                 sem_by_task.setdefault(b.command, b.semantics)

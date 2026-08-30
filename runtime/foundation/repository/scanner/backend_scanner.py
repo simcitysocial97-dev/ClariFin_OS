@@ -327,7 +327,9 @@ class BackendScanner(BaseScanner):
                                 if kw.arg == "prefix" and isinstance(
                                     kw.value, ast.Constant
                                 ):
-                                    return kw.value.value
+                                    prefix_value = kw.value.value
+                                    if isinstance(prefix_value, str):
+                                        return prefix_value
         return None
 
     def _extract_endpoints(
@@ -377,7 +379,9 @@ class BackendScanner(BaseScanner):
             return None, None
 
         if decorator.args and isinstance(decorator.args[0], ast.Constant):
-            return method, decorator.args[0].value
+            path_value = decorator.args[0].value
+            if isinstance(path_value, str):
+                return method, path_value
 
         return None, None
 

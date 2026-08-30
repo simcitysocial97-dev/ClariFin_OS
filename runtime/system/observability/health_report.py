@@ -118,6 +118,8 @@ class EngineeringHealthReport:
             lines.append("")
 
     def _append_execution_context(self, lines: list[str]) -> None:
+        if self._analytics is None:
+            return
         env_freq = self._analytics.combined.get("environment_frequency", {})
         intent_freq = self._analytics.combined.get("intent_frequency", {})
         lines.append("### Environment Frequency")
@@ -130,6 +132,8 @@ class EngineeringHealthReport:
         lines.append("")
 
     def _append_local_metrics(self, lines: list[str]) -> None:
+        if self._analytics is None:
+            return
         metrics = self._analytics.local
         verif = metrics.get("verification", {})
         lines.append(f"- Total runs: {verif.get('total_runs', 0)}")
@@ -138,6 +142,8 @@ class EngineeringHealthReport:
         lines.append("")
 
     def _append_ci_metrics(self, lines: list[str]) -> None:
+        if self._analytics is None:
+            return
         metrics = self._analytics.ci
         verif = metrics.get("verification", {})
         lines.append(f"- Total runs: {verif.get('total_runs', 0)}")

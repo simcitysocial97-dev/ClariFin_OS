@@ -19,6 +19,7 @@ from __future__ import annotations
 import hashlib
 import sys
 from pathlib import Path
+from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -109,7 +110,7 @@ def _record(
 def _ctx(**kw) -> CIRepositoryContext:
     base_src = {c: _fps(c).source for c in ("credit_card_engine", "loan_engine")}
     base_tst = {c: _fps(c).test for c in ("credit_card_engine", "loan_engine")}
-    defaults = {
+    defaults: dict[str, Any] = {
         "repository_sha": "084359346b3b",
         "component_source_fingerprints": base_src,
         "component_test_fingerprints": base_tst,

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 REMEDIATION_PATH = REPO_ROOT / "runtime" / "generated" / "platform-remediation.md"
@@ -34,7 +35,7 @@ def _generate_remediation() -> str:
     lines.append("downstream before upstream.")
     lines.append("")
 
-    phases = [
+    phases: list[dict[str, Any]] = [
         {
             "phase": 1,
             "name": "Repository Graph Integrity",

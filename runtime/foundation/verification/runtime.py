@@ -274,6 +274,7 @@ class VerificationRuntime:
     def get_registry_summary(self) -> dict[str, Any]:
         """Get a summary of the registry."""
         self.load()
+        assert self._registry is not None
         return {
             "workflows": len(self._registry._workflows),
             "scripts": len(self._registry._scripts),

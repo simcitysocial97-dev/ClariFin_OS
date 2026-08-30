@@ -105,15 +105,22 @@ ignore_missing_imports = true
 # Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
 # Scope: credit_card_engine
 # Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: transaction_intelligence
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: credit_card_engine
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: transaction_intelligence
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
 [tool.mutmut]
-source_paths = ["src/engines/behaviour_engine"]
+source_paths = ["src/engines/transaction_intelligence"]
 also_copy = ["src"]
 runner = "python3 -m pytest"
 pytest_add_cli_args_test_selection = [
-    "tests/unit/engines/behaviour",
-    "tests/unit/engines/behaviour/test_metrics.py",
-    "tests/unit/engines/behaviour/test_integration.py",
-    "tests/properties/behaviour",
-    "tests/capability/pattern_analysis"
+    "tests/unit/engines/transaction_intelligence",
+    "tests/properties/transaction_intelligence",
+    "tests/capability/transaction_intelligence"
 ]
 no_progress = true

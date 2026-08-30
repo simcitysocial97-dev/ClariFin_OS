@@ -1,41 +1,86 @@
 {
   "schema": "m9-c46-baseline/v1",
-  "generated_at": "2026-08-30T00:00:00+05:30",
-  "repository_sha_at_baseline_freeze": "1fc689dc (C45 work committed as 09cc1147 on top of C45-certified 219cf557)",
+  "generated_at": "2026-08-29T20:31:00Z",
+  "repository_sha": "f92363b914353063b8813f5d61862197957ee7bd",
   "branch": "m9c9-merge-authorization-resolution",
   "c45_certification_state": {
     "verdict": "FINAL QUALITY CERTIFICATION — NOT YET ACHIEVED",
-    "evidence": "runtime/generated/m9-c45/evidence/final-certification.json",
-    "coverage_statement_pct": 80.58,
-    "mutation_derived_pct": 78.3,
-    "behaviour_engine_pct": 83.5,
-    "workflows": "9 GREEN / 3 GREEN-BY-DESIGN / 2 ENVIRONMENTAL_LIMITATION / 0 FAILED",
-    "production_changes": 0
+    "reason": "repository-wide mutation threshold below 80%; evidence-bound; authoritative full measurement CI-designated",
+    "evidence": "runtime/generated/m9-c45/evidence/final-certification.json"
   },
-  "tooling_configuration": {
-    "ruff": {"canonical": "pyproject.toml [tool.ruff] (repo root)", "command": ".venv/bin/python -m ruff check .", "cwd": "repo root"},
-    "black": {"canonical": "pyproject.toml [tool.black] (repo root)", "command": ".venv/bin/python -m black --check .", "cwd": "repo root"},
-    "mypy_backend_strict": {"canonical": "backend/pyproject.toml [tool.mypy] (strict=true)", "command": ".venv/bin/python -m mypy src/", "cwd": "backend"},
-    "mypy_repo_scope": {"canonical": "pyproject.toml [tool.mypy] (repo root, non-strict)", "status": "DISCOVERY_DEFECT — runtime/generated/m9-c42.27 invalid package name blocks `mypy .`/`mypy runtime/` (Class D)"},
-    "pytest": {"canonical": "backend/pyproject.toml rootdir (scoped) + root [tool.pytest.ini_options] (repo-wide)", "command": ".venv/bin/python -m pytest backend/tests runtime/tests"},
-    "mutmut": {"canonical": "backend/pyproject.toml [tool.mutmut]", "resting_scope": "src/engines/behaviour_engine (rendered by mutation_contract.py)"}
+  "current_coverage_evidence": {
+    "statement_pct": 80.58,
+    "branch_pct": 75.91,
+    "combined_pct": 80.58,
+    "80_target": "ACHIEVED",
+    "source": "runtime/generated/m9-c45/evidence/coverage-gap-reconciliation.json"
   },
-  "baseline_measurements": {
-    "ruff_repo_wide": {"violations": 129, "backend_src": 0, "runtime_non_generated": 93, "runtime_generated": 18, "tools_plus_github": 15, "backend_tests": 3, "top_rules": {"F841": 24, "UP042": 22, "SIM105": 14, "B007": 12, "SIM102": 11, "B905": 9, "F811": 5, "F401": 4}},
-    "black_repo_wide": {"files_needing_format": 25, "files_clean": 775, "note": "all backend/src files Black-clean; ruff-format gate previously conflicted (fixed in 1fc689dc)"},
-    "mypy_backend_strict": {"errors": 1, "error": "src/api.py:32 missing return annotation", "fixed_in": "1fc689dc; now SUCCESS 242 files"},
-    "mypy_repo_scope": {"status": "BLOCKED by invalid package name dirs under runtime/generated (Class D)"},
-    "pytest_full": {"passed": 3887, "failed": 4, "xpassed": 1, "duration_s": 789,
-      "failure_analysis": [
-        {"test": "backend/tests/probes/test_m4_exit_probe.py::test_m4_probe", "class": "G/by-design", "note": "intentionally-failing probe artifact; excluded in backend-scoped runs via norecursedirs but collected at root (Class D root config gap)"},
-        {"test": "runtime/tests/test_backend_evidence.py::TestExitCodeContract::test_backend_exit_contract_holds_both_directions", "class": "suspect-environmental", "note": "two overlapping concurrent full-suite runs interfered; re-verify in clean single run"},
-        {"test": "runtime/tests/test_mutation_infra.py::test_smoke_end_to_end_distinguishes_classifications", "class": "concurrency-artifact", "note": "PASSES in isolation (file: 21 passed)"},
-        {"test": "runtime/tests/test_mutation_infra.py::test_r2_evidence_collected_with_target_config_active", "class": "concurrency-artifact", "note": "PASSES in isolation (file: 21 passed in 146.82s)"}
-      ]},
-    "test_mutation_infra_isolated": "21 passed in 146.82s"
+  "current_mutation_evidence": {
+    "repository_wide_projected": 78.3,
+    "authoritative": "NOT_MEASURED (CI-designated)",
+    "threshold": 80.0,
+    "gap_pct": 1.7,
+    "gap_kills": 293,
+    "components_measured": {
+      "behaviour_engine": 83.5,
+      "financial_intelligence": 73.9,
+      "common_calculations": 64.1
+    }
   },
-  "gate_fixes_committed_at_baseline": [
-    "1fc689dc fix(tooling): verify-fast.sh ruff-format -> canonical black --check (4 backend/src files were Black-clean but ruff-format-disagreeing: formatter gate used a non-canonical tool)",
-    "1fc689dc backend/src/api.py lifespan return annotation (backend mypy strict: 1 error -> 0)"
-  ]
+  "current_workflow_state": {
+    "total": 14,
+    "GREEN": 9,
+    "GREEN_BY_DESIGN": 3,
+    "ENVIRONMENTAL_LIMITATION": 2,
+    "FAILED": 0
+  },
+  "current_test_state": {
+    "runtime_tests_collected": 871,
+    "backend_tests_collected": 3086,
+    "known_failures": "1 pre-existing TypeScript error (TS6133 unused var)",
+    "golden_tests": "22 passing (FI 17 + calculations 5)"
+  },
+  "effective_tooling_configuration": {
+    "ruff": {
+      "status": "PASS",
+      "violations": 0,
+      "command": ".venv/bin/ruff check ."
+    },
+    "black": {
+      "status": "PASS",
+      "files_requiring_format": 0,
+      "total_files": 800,
+      "command": ".venv/bin/black --check ."
+    },
+    "mypy": {
+      "status": "FAIL",
+      "errors": 185,
+      "errors_by_directory": {
+        "runtime/foundation/audit": 33,
+        "runtime/tests": 30,
+        "runtime/foundation/verification": 24,
+        "tools/generators": 14,
+        "runtime/ (top-level)": 14,
+        "runtime/system/observability": 11,
+        "runtime/foundation/repository/query": 11,
+        "tools/diagnostics": 7,
+        "runtime/foundation/verification/api_contracts": 6,
+        "runtime/foundation/knowledge": 6,
+        "runtime/foundation/intelligence/platform": 6,
+        "runtime/system/evidence/collectors": 4,
+        "runtime/foundation/repository/validation": 4,
+        "runtime/foundation/architecture": 4,
+        "runtime/system/evidence/ingestion": 3,
+        "other": 22
+      },
+      "command": ".venv/bin/mypy --config-file pyproject.toml ."
+    },
+    "pytest": {
+      "status": "PASS (runtime tests + targeted backend)",
+      "runtime_tests": "871 collected, passing",
+      "backend_tests": "3086 collected (full suite not run to completion)",
+      "collection_error": "backend/conftest.py pytest_plugins in non-top-level conftest (pre-existing)"
+    }
+  },
+  "production_changes_pending": "backend/pyproject.toml has unstaged changes (mutmut source_paths -> transaction_intelligence from prior session)"
 }

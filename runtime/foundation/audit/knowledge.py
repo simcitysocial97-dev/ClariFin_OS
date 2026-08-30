@@ -22,7 +22,7 @@ def _f(
     severity: str,
     priority: str,
     message: str,
-    details: dict[str, Any] = None,
+    details: dict[str, Any] | None = None,
     recommendation: str = "",
 ) -> AuditFinding:
     return AuditFinding(

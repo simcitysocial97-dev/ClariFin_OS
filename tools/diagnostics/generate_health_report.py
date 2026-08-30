@@ -8,12 +8,16 @@ Produces a comprehensive health summary including:
 - Top structural insights
 """
 
+from __future__ import annotations
+
 import json
 from pathlib import Path
 
-from repo_intelligence.index import RepositoryIndexer
-from repo_intelligence.metrics import calculate_metrics
-from repo_intelligence.validator import Validator
+from repo_intelligence.index import RepositoryIndexer  # type: ignore[import-not-found]
+from repo_intelligence.metrics import (  # type: ignore[import-not-found]
+    calculate_metrics,
+)
+from repo_intelligence.validator import Validator  # type: ignore[import-not-found]
 
 
 def main() -> None:

@@ -25,6 +25,7 @@ These tests protect two architectural invariants, not implementation details:
 from __future__ import annotations
 
 import dataclasses
+from typing import Any
 
 import pytest
 
@@ -56,7 +57,7 @@ def _target(target_id: str = "target-loan-engine") -> VerificationTarget:
 
 
 def _step(**overrides) -> VerificationStep:
-    kwargs = {
+    kwargs: dict[str, Any] = {
         "id": "step-0001",
         "target": _target(),
         "order": 1,
@@ -67,7 +68,7 @@ def _step(**overrides) -> VerificationStep:
 
 
 def _result(**overrides) -> ExecutionResult:
-    kwargs = {
+    kwargs: dict[str, Any] = {
         "task_id": "step-0001",
         "command": "bash .github/scripts/run_backend_verification.sh",
         "status": VerificationStatus.PASSED,

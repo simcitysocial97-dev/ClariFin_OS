@@ -18,6 +18,7 @@ import sys
 import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 # Add backend to path
 BACKEND_DIR = Path(__file__).resolve().parents[4] / "backend"
@@ -475,7 +476,7 @@ class ApiContractGate:
                     # Extra field — only flag if it's NOT optional in Zod
                     pass  # Optional extras are acceptable for forward-compat
 
-        self._inventory.runtime_schemas = checked
+        self._inventory.runtime_schemas_checked = checked
         status = "pass" if not failures else "fail"
         return DimensionResult(
             name="schema_compat", status=status, failures=tuple(failures)
@@ -595,7 +596,7 @@ class ApiContractGate:
                 )
 
         status = "pass" if not failures else "fail"
-        self._inventory.frontend_consumers = len(consumers)
+        self._inventory.frontend_consumers_count = len(consumers)
         return DimensionResult(
             name="consumer_integrity", status=status, failures=tuple(failures)
         )
@@ -783,6 +784,9 @@ class ApiContractGate:
     def run(self) -> GateReport:
         """Execute all dimensions and produce evidence report."""
         # Build inventory
+        ops: list[Any]
+        consumers: list[Any]
+        _artifacts: list[Any]
         try:
             from src.api import app
 
@@ -812,7 +816,7 @@ class ApiContractGate:
             inventory=InventorySnapshot(
                 backend_operations=len(ops),
                 frontend_consumers=len(consumers),
-                runtime_schemas=self._inventory.runtime_schemas,
+                runtime_schemas=self._inventory.runtime_schemas_checked,
                 committed_artifacts=self._inventory.committed_artifacts,
                 contract_inventory_hash=_compute_inventory_hash(ops, consumers),
             ),

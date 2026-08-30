@@ -76,7 +76,7 @@ def _collect_default() -> list[str]:
 
     if not _is_git_available():
         return []
-    return _collect_changed_files()
+    return _collect_changed_files().files
 
 
 def _files(changed_files: list[str] | None) -> list[str]:

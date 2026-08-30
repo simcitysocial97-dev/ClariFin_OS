@@ -89,17 +89,15 @@ def test_projection_uses_forecast_confidence():
     assert result["confidence"] == Decimal("0.7")
 
 
-def test_projection_invalid_confidence_raises_pinned_fin_e3():
-    # FIN-E3 anomaly pinned: confidence parsing catches (ValueError, TypeError)
-    # but Decimal(str(...)) raises decimal.InvalidOperation for non-numeric
-    # strings, which propagates. Documented; not silently fixed in C42.25.
-    from decimal import InvalidOperation
-
-    import pytest
-
+def test_projection_invalid_confidence_caught_fin_e3_fixed():
+    # FIN-E3 FIXED: decimal.InvalidOperation is now caught; confidence
+    # defaults to 0.5 and projection proceeds.
     forecast = [{**row("2026-01", 100_000), "confidence": "not-a-number"}]
-    with pytest.raises(InvalidOperation):
-        calculate_goal_projection(50_000, 0, forecast)
+    result = calculate_goal_projection(50_000, 0, forecast)
+    # Should not raise; uses default confidence=0.5. Goal is achieved
+    # because forecast surplus exceeds target.
+    assert result["achieved"] is True
+    assert result["projected_completion_month"] == "2026-01"
 
 
 def test_projection_custom_allocation_ratio():

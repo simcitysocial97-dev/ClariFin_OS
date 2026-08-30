@@ -11,7 +11,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 WF_DIR = REPO_ROOT / ".github" / "workflows"
@@ -51,7 +51,7 @@ def _audit_workflow(path: Path) -> list[dict[str, Any]]:
     name = path.name
     wf = _load_yaml(path)
 
-    on = wf.get("on") if "on" in wf else wf.get(True, {})
+    on = wf.get("on") if "on" in wf else cast(dict[Any, Any], wf).get(True, {})
     if not isinstance(on, dict):
         on = {on: {}} if not isinstance(on, list) else {k: {} for k in on}
 

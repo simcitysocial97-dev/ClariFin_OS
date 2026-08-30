@@ -17,7 +17,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 FLAKY_TESTS_PATH = REPO_ROOT / "runtime" / "generated" / "flaky-tests.json"
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(slots=True)
 class FlakyTestRecord:
     """Reliability record for a single test."""
 

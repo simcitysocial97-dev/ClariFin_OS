@@ -1,27 +1,94 @@
 {
   "schema": "m9-c46-effective-toolchain-config/v1",
-  "generated_at": "2026-08-30T00:00:00+05:30",
-  "repository_sha": "1fc689dc",
-  "authority_model": {
-    "principle": "Repository root is the canonical configuration authority for Ruff and Black (M10 decision record: backend [tool.ruff]/[tool.black] duplicates removed). Backend pyproject.toml remains scoped authority for mypy-strict, pytest, mutmut, hypothesis because backend tests resolve rootdir there.",
-    "single_python_env": ".venv at repo root; no backend/venv (M9-C42.5)"
-  },
+  "generated_at": "2026-08-29T20:31:00Z",
+  "repository_sha": "f92363b914353063b8813f5d61862197957ee7bd",
+  "authoritative_principle": "Repository root is the canonical configuration authority for Ruff, Black and (repo-scope) Mypy. Backend is source-only with scoped authority for pytest, mypy-strict, mutmut, and hypothesis.",
   "tools": [
-    {"tool": "ruff", "canonical_config": "/pyproject.toml [tool.ruff]", "effective_command": ".venv/bin/python -m ruff check .", "working_directory": "repo root", "discovered_config": ["pyproject.toml (root, ACTIVE)", "backend/ruff.toml (DOES NOT EXIST — stale reference in backend/pyproject.toml comment and M10 notes)", "no servers/tools nested configs found"], "precedence": "root pyproject authoritative; nothing overrides", "ci_equivalent": ".github/workflows use pip-installed ruff from [all] extras; m9-forensic-diagnostic-lab records config provenance"},
-    {"tool": "black", "canonical_config": "/pyproject.toml [tool.black]", "effective_command": ".venv/bin/python -m black --check .", "working_directory": "repo root", "discovered_config": ["pyproject.toml (root, ACTIVE)"], "precedence": "root authoritative; verify-fast.sh updated 1fc689dc to gate on black instead of ruff format", "ci_equivalent": "backend-verify + forensic-diagnostic-lab black checks"},
-    {"tool": "mypy", "canonical_config_repo_scope": "/pyproject.toml [tool.mypy] (non-strict, excludes servers/src/fetch/tests + backend/mutants)", "canonical_config_backend": "/backend/pyproject.toml [tool.mypy] (strict=true, excludes tests/ + mutants/)", "effective_commands": [".venv/bin/python -m mypy .  (repo scope)", ".venv/bin/python -m mypy src/  (from backend/, strict)"], "discovered_config": ["root pyproject", "backend pyproject"], "precedence": "backend/src is typed under backend strict config (verify-fast gate); repo scope covers runtime/tools/servers/.github/scripts", "defect": "Class D: root-scope discovery aborts on runtime/generated/m9-c42.27 (invalid package name) before checking anything"},
-    {"tool": "pytest", "canonical_config_backend": "/backend/pyproject.toml [tool.pytest.ini_options] (rootdir for backend tests; norecursedirs includes probes + mutants)", "canonical_config_root": "/pyproject.toml [tool.pytest.ini_options] (repo-wide runs; norecursedirs LACKS backend/tests/probes)", "defect": "Class D: root-wide collection picks up the intentionally-failing backend/tests/probes/test_m4_exit_probe.py"},
-    {"tool": "mutmut", "canonical_config": "/backend/pyproject.toml [tool.mutmut]", "note": "source_paths is DYNAMIC — rendered per-target by runtime/foundation/verification/mutation_contract.py; resting scope after C45 = src/engines/behaviour_engine", "ci_equivalent": ".github/workflows/mutation.yml -> python runtime/verify.py mutation"}
+    {
+      "tool": "ruff",
+      "canonical_config_file": "pyproject.toml",
+      "effective_command": ".venv/bin/ruff check .",
+      "working_directory": "repository root",
+      "discovered_config": "root pyproject.toml [tool.ruff]",
+      "configuration_precedence": "root pyproject.toml only (no backend/ruff.toml exists; no backend/pyproject.toml [tool.ruff]); root is sole authority",
+      "ci_equivalent": "python runtime/verify.py quick (includes ruff via verify runtime)",
+      "status": "PASS (0 violations)",
+      "notes": "backend/src excluded from ruff via per-file-ignores but code IS checked. No conflicting configs found in backend/, runtime/, tools/, or frontend/."
+    },
+    {
+      "tool": "black",
+      "canonical_config_file": "pyproject.toml",
+      "effective_command": ".venv/bin/black --check .",
+      "working_directory": "repository root",
+      "discovered_config": "root pyproject.toml [tool.black]",
+      "configuration_precedence": "root pyproject.toml only; no backend/.black config, no separate black config anywhere",
+      "ci_equivalent": "python runtime/verify.py quick (includes black via verify runtime)",
+      "status": "PASS (800 files unchanged)",
+      "notes": "extend-exclude covers .git, .venv, __pycache__, backend/mutants, backend/tests/mutation_infra/mutants, backend/tests/generated, runtime/generated, build, dist"
+    },
+    {
+      "tool": "mypy",
+      "canonical_config_file": "pyproject.toml (repo-scope) + backend/pyproject.toml (backend strict)",
+      "effective_command": ".venv/bin/mypy --config-file pyproject.toml .",
+      "working_directory": "repository root",
+      "discovered_config": "root pyproject.toml [tool.mypy]: python_version=3.12, mypy_path=[backend/src], excludes=[backend/, servers/src/fetch/tests/, backend/mutants/, runtime/generated/]; overrides for src.* (ignore_missing_imports) and yaml/jinja2",
+      "configuration_precedence": "Two typing boundaries: (1) repo-scope mypy root checks runtime/, tools/, conftest.py — non-strict, with cross-boundary import overrides; (2) backend strict mypy at backend/pyproject.toml checks backend/src with strict=true. Root explicitly excludes backend/ to avoid duplicate module identities. They do NOT conflict; they are separate surfaces.",
+      "ci_equivalent": "verify-fast.sh (scripts/) or python runtime/verify.py quick (backend-strict via scripts/verify-fast.sh)",
+      "status": "FAIL — 185 errors, all in runtime/ and tools/ (repo-scope boundary)",
+      "notes": "backend/ is correctly excluded from repo-scope (it's checked by its own strict boundary). The 185 errors are genuine typing defects in runtime/ and tools/ code. No config defect found — the config correctly identifies which code should be checked.",
+      "errors_classification": {
+        "repo_intelligence import-not-found": "Category D (tooling/config): tools/ scripts import from repo_intelligence package that is not part of the type-check surface; these are diagnostic scripts with optional dependencies",
+        "genuine_typing_defects": "Category B: 170+ errors in runtime/ foundation code (mutation_contract, evidence_reuse, evidence_planner, audit/reporter, audit/remediation, audit/cross_layer, architecture/provider, repository/query, repository/validation, system/observability, system/evidence, intelligence/platform)"
+      }
+    },
+    {
+      "tool": "pytest",
+      "canonical_config_file": "pyproject.toml (runtime tests) + backend/pyproject.toml (backend tests)",
+      "effective_command": ".venv/bin/pytest runtime/tests (repo scope) | .venv/bin/pytest backend/tests (backend scope)",
+      "working_directory": "repository root (runtime) | backend/ (backend)",
+      "discovered_config": "root pyproject.toml [tool.pytest.ini_options]: norecursedirs, pythonpath=[backend/src, backend/tests], markers; backend/pyproject.toml [tool.pytest.ini_options]: testpaths=[tests], asyncio, timeout=60, filterwarnings, pythonpath=[src,tests]",
+      "configuration_precedence": "Root pytest config is for direct .venv/bin/pytest invocation from root (discovers runtime/tests + top-level). Backend pytest config is for .venv/bin/pytest backend/tests invocation (rootdir resolves to backend/). Two distinct invocation patterns, no conflict.",
+      "ci_equivalent": ".github/workflows/verification-runtime.yml: python runtime/verify.py runtime",
+      "status": "PASS (871 runtime tests collected + passing; 3086 backend tests collected)",
+      "notes": "root conftest.py adds backend/src to sys.path. backend/conftest.py has pre-existing pytest_plugins warning (non-top-level)."
+    },
+    {
+      "tool": "mutmut",
+      "canonical_config_file": "backend/pyproject.toml",
+      "effective_command": "python runtime/verify.py mutation [--target <engine> | --smoke | (full)]",
+      "working_directory": "backend/ (mutmut discovers its pyproject.toml there)",
+      "discovered_config": "[tool.mutmut] in backend/pyproject.toml: source_paths, also_copy=[src], runner=python3 -m pytest, pytest_add_cli_args_test_selection, no_progress=true",
+      "configuration_precedence": "Single authority: backend/pyproject.toml [tool.mutmut]. mutation_runner.py dynamically rewrites source_paths/pytest selection before each run and restores after. No other mutmut config exists.",
+      "ci_equivalent": ".github/workflows/mutation.yml: python runtime/verify.py mutation (job 'mutation', 90min timeout)",
+      "status": "OPERATIONAL",
+      "notes": "Current resting scope is transaction_intelligence (stale from C45 session). Restores to canonical default before full campaigns."
+    },
+    {
+      "tool": "hypothesis",
+      "canonical_config_file": "backend/pyproject.toml",
+      "effective_command": "(invoked via pytest; profile from [tool.hypothesis])",
+      "working_directory": "backend/",
+      "discovered_config": "[tool.hypothesis]: default_profile=default, profiles: default(max_examples=20,deadline=5000), ci(150,10000), nightly(1000,30000)",
+      "configuration_precedence": "backend/pyproject.toml [tool.hypothesis] — sole authority",
+      "ci_equivalent": "n/a (invoked via pytest in CI)",
+      "status": "OPERATIONAL"
+    },
+    {
+      "tool": "python-packaging",
+      "canonical_config_file": "pyproject.toml",
+      "effective_command": "pip install -e '.[all]'",
+      "working_directory": "repository root",
+      "discovered_config": "[project], [project.optional-dependencies], [project.scripts], [build-system], [tool.setuptools.packages.find]",
+      "configuration_precedence": "Root is the SINGLE Python dependency authority (M10). No backend/requirements.txt or other dependency files exist.",
+      "ci_equivalent": ".github/actions/setup-python-runtime: pip install -e '.[all]'",
+      "status": "OPERATIONAL",
+      "notes": "Single venv at ./.venv. Forbidden: backend/venv, backend/.venv."
+    }
   ],
-  "legacy_or_secondary_config_findings": [
-    {"item": "backend/ruff.toml", "state": "REFERENCED-BUT-ABSENT", "evidence": "backend/pyproject.toml comment lines 8-9 and memory-bank M10 notes cite backend/ruff.toml; file does not exist on disk", "classification": "H (obsolete documentation reference)", "action": "correct the stale comments; no functional config to consolidate"},
-    {"item": "runtime/generated/**/*.py", "state": "generated evidence/scenario scripts (m9-c42.x milestones)", "classification": "E (generated surface)", "action": "align Ruff exclude with existing Black exclude; do not hand-fix generated artifacts"},
-    {"item": "scripts/verify-fast.sh ruff-format gate", "state": "FIXED in 1fc689dc — was gating on non-canonical ruff format which conflicts with canonical Black on chained ternaries (4 files)"}
-  ],
-  "proof_of_authority": {
-    "backend_src_ruff_under_root_config": "All checks passed (0 violations)",
-    "backend_src_black": "242 files unchanged",
-    "backend_src_mypy_strict": "Success: no issues found in 242 source files",
-    "verify_fast_gate": "PASSES after 1fc689dc"
-  }
+  "legacy_or_secondary_configs": {
+    "backend/tests/mutation_infra/pyproject.toml": "EXISTS — mutmut test infrastructure fixture (not a live config authority; lives under mutation_infra/ and is excluded from all tool configs)",
+    "backend/mutants/": "EXISTS — transient mutmut workspace; excluded from ruff/black/mypy/pytest via config"
+  },
+  "no_conflicting_configs_found": true,
+  "repository_root_is_canonical": true
 }

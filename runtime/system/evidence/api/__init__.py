@@ -21,7 +21,12 @@ from runtime.system.evidence.models import (
 )
 
 # All available collectors
-COLLECTORS = [
+COLLECTORS: list[
+    type[CoverageCollector]
+    | type[MutationCollector]
+    | type[PropertyTestCollector]
+    | type[ContractTestCollector]
+] = [
     CoverageCollector,
     MutationCollector,
     PropertyTestCollector,

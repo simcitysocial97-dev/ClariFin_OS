@@ -35,7 +35,7 @@ class EvidenceIngestionPipeline:
 
     def discover_artifacts(self, workspace_root: Path) -> list[Path]:
         """Discover all relevant artifact files."""
-        artifacts = []
+        artifacts: list[Path] = []
         for artifact_dir in self.config.artifact_dirs:
             dir_path = workspace_root / artifact_dir
             if dir_path.exists():
@@ -46,7 +46,7 @@ class EvidenceIngestionPipeline:
 
     def ingest_coverage(self, artifacts: list[Path]) -> dict[str, Any]:
         """Extract and normalize coverage data."""
-        coverage_data = {
+        coverage_data: dict[str, dict[str, Any] | None] = {
             "backend": None,
             "frontend": None,
             "combined": None,
@@ -95,7 +95,7 @@ class EvidenceIngestionPipeline:
             "lines_total": 0,
         }
 
-    def _combine_coverage(self, backend: dict, frontend: dict) -> dict:
+    def _combine_coverage(self, backend: dict | None, frontend: dict | None) -> dict:
         """Combine backend and frontend coverage."""
         b_cov = backend.get("total_coverage", 0) if backend else 0
         f_cov = frontend.get("total_coverage", 0) if frontend else 0

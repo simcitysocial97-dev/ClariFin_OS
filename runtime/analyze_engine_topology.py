@@ -94,7 +94,9 @@ def extract_service_modules(text: str):
 def file_tokens(rel: str):
     """Return sets of engine / service_module / repo_module tokens referenced."""
     f = REPO / rel
-    engines, services, repos = set(), set(), set()
+    engines: set[str] = set()
+    services: set[str] = set()
+    repos: set[str] = set()
     if not f.exists():
         return engines, services, repos
     text = f.read_text(encoding="utf-8", errors="ignore")

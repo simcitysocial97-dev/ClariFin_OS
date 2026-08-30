@@ -630,7 +630,7 @@ def render_mutmut_config_block(engine: str | None) -> str:
     engine-aware: mutmut runs ONLY the listed test paths for the listed source
     paths — it can never silently fall back to the entire test suite.
     """
-    if engine in (None, "all", "full"):
+    if engine is None or engine in ("all", "full"):
         source_paths = _FULL_SOURCE_PATHS
         test_selection = _FULL_TEST_SELECTION
         also_copy = ["src"]

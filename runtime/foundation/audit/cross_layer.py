@@ -119,7 +119,9 @@ def _check_provider_available() -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-def _verify_chain_field_completeness(data: dict[str, dict[str, Any]]) -> dict[str, Any]:
+def _verify_chain_field_completeness(
+    data: dict[str, dict[str, Any]],
+) -> list[dict[str, Any]]:
     findings: list[dict[str, Any]] = []
     missing_fields: dict[str, list[str]] = {}
 
@@ -333,7 +335,7 @@ def _verify_no_duplicate_engines(data: dict[str, dict[str, Any]]) -> dict[str, A
     }
 
 
-def _verify_chain_completeness(data: dict[str, dict[str, Any]]) -> dict[str, Any]:
+def _verify_chain_completeness(data: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
     incomplete: list[str] = []
     internal_engines: list[str] = []
     for chain_key, chain in data.items():
@@ -342,7 +344,7 @@ def _verify_chain_completeness(data: dict[str, dict[str, Any]]) -> dict[str, Any
             continue
         has_engine = bool(chain.get("engine", ""))
         has_any_component = any(
-            isinstance(chain.get(f), list) and len(chain.get(f)) > 0
+            (val := chain.get(f)) is not None and isinstance(val, list) and len(val) > 0
             for f in OPTIONAL_LIST_FIELDS
         )
         if not (has_engine and has_any_component):
@@ -392,7 +394,9 @@ def _verify_chain_completeness(data: dict[str, dict[str, Any]]) -> dict[str, Any
     return findings
 
 
-def _verify_component_ownership(data: dict[str, dict[str, Any]]) -> dict[str, Any]:
+def _verify_component_ownership(
+    data: dict[str, dict[str, Any]],
+) -> list[dict[str, Any]]:
     no_cap_external: list[str] = []
     no_rtr_external: list[str] = []
     internal_engines: list[str] = []

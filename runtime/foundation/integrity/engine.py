@@ -46,9 +46,10 @@ class ArchitecturalIntegrityEngine:
             Immutable IntegrityReport with all violations, summary
             counts, and suggested engineering actions.
         """
-        scanner = self._scanner or ArchitecturalScanner(
-            repo_root=(self._repo_root and __import__("pathlib").Path(self._repo_root))
+        repo_root = (
+            __import__("pathlib").Path(self._repo_root) if self._repo_root else None
         )
+        scanner = self._scanner or ArchitecturalScanner(repo_root=repo_root)
         graph = scanner.scan()
         violations: list[Violation] = []
 

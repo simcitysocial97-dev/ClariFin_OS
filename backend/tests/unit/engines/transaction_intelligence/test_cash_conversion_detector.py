@@ -530,9 +530,11 @@ def test_detect_unknown_provider_no_keyword_returns_none():
     assert detect(debit, [credit()], [], PURPOSES) is None
 
 
-def test_detect_unknown_provider_picks_credit_closest_to_shifted_fee():
-    # TXN-E1 anomaly pinned: selection key is fee_bps computed against
-    # (credit_paise - 225). B (fee 102 shifted bps) beats A (302 shifted bps).
+def test_detect_unknown_provider_picks_credit_closest_to_225_bps():
+    # TXN-E1 FIXED: selection key is now fee_bps vs 225 bps (not shifted by 225 bps).
+    # credit 21: 970_000 -> fee=30_000 -> 300 bps (diff 75 from 225)
+    # credit 22: 990_000 -> fee=10_000 -> 100 bps (diff 125 from 225)
+    # credit 21 is closer to 225 bps target.
     debit = {**DEBIT, "description": "CASH TRANSFER SERVICE"}
     credits = [
         credit(txn_id=21, amount=970_000),
@@ -540,10 +542,9 @@ def test_detect_unknown_provider_picks_credit_closest_to_shifted_fee():
     ]
     result = detect(debit, credits, [], PURPOSES)
     assert result is not None
-    assert result.matched_credit_transaction_id == 22
-    # Reported fee uses the unshifted credit amount.
-    assert result.fee_paise == 10_000
-    assert result.fee_bps == 100
+    assert result.matched_credit_transaction_id == 21
+    assert result.fee_paise == 30_000
+    assert result.fee_bps == 300
 
 
 def test_detect_unknown_provider_requires_credit_above_10000():

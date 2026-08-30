@@ -373,25 +373,23 @@ def test_compute_health_score_wellness_passthrough():
     assert _compute_health_score({"wellness_score": "82.5"}) == Decimal("82.5")
 
 
-def test_compute_health_score_invalid_wellness_raises_pinned_fin_e3():
-    # FIN-E3 anomaly pinned: the (ValueError, TypeError) guard does not catch
-    # decimal.InvalidOperation raised by non-numeric wellness strings.
-    from decimal import InvalidOperation
-
-    import pytest
-
-    with pytest.raises(InvalidOperation):
-        _compute_health_score({"wellness_score": "abc"})
+def test_compute_health_score_invalid_wellness_caught_fin_e3_fixed():
+    # FIN-E3 FIXED: decimal.InvalidOperation is now caught; falls back to
+    # computing score from other metrics (defaults to health=70).
+    result = _compute_health_score({"wellness_score": "abc"})
+    # With invalid wellness, falls back to debt_cycle=50, revolver=0, stability=0.5
+    # health = 0.4*(1-0.5) + 0.4*(1-0) + 0.2*0.5 = 0.2 + 0.4 + 0.1 = 0.7
+    assert result == Decimal("70.0")
 
 
-def test_compute_health_score_falsy_zero_inputs_coalesce_pinned_fin_e4():
-    # FIN-E4 anomaly pinned: falsy values (0) coalesce to defaults
-    # (debt_cycle 0 -> 50, stability 0 -> 0.5), so the naive minimum is 10,
-    # not 0. Documented; negative stability reaches the true clamp.
+def test_compute_health_score_falsy_zero_inputs_fin_e4_fixed():
+    # FIN-E4 FIXED: falsy zero values are NO LONGER coalesced to defaults.
+    # debt_cycle=100, revolver=1, stability=0 (not default 0.5)
+    # health = 0.4*(1-1) + 0.4*(1-1) + 0.2*0 = 0
     result = _compute_health_score(
         {"debt_cycle_score": 100, "credit_revolver_ratio": 1, "cashflow_stability": 0}
     )
-    assert result == Decimal("10.0")
+    assert result == Decimal("0")
 
 
 def test_compute_health_score_clamped_at_zero():
@@ -401,12 +399,14 @@ def test_compute_health_score_clamped_at_zero():
     assert result == Decimal("0")
 
 
-def test_compute_health_score_max_with_falsy_defaults_pinned_fin_e4():
-    # debt_cycle 0 -> default 50, revolver 0 -> 0, stability 1 -> 0.8 scaled.
+def test_compute_health_score_max_with_falsy_inputs_fin_e4_fixed():
+    # FIN-E4 FIXED: falsy zero values are used as-is, not replaced with defaults.
+    # debt_cycle=0, revolver=0, stability=1
+    # health = 0.4*(1-0) + 0.4*(1-0) + 0.2*1 = 1.0
     result = _compute_health_score(
         {"debt_cycle_score": 0, "credit_revolver_ratio": 0, "cashflow_stability": 1}
     )
-    assert result == Decimal("80")
+    assert result == Decimal("100")
 
 
 # ============================================================

@@ -574,7 +574,7 @@ def _check_cross_layer_determinism() -> dict[str, Any]:
             else "Cross-layer impact analysis is NOT deterministic"
         )
 
-        findings_data = {
+        findings_data: dict[str, Any] = {
             "same_engines": same_engines,
             "same_capabilities": same_capabilities,
             "same_endpoints": same_endpoints,

@@ -429,7 +429,7 @@ def _inject_graph_corruption(repo_root: Path) -> dict[str, Any]:
         ],
     }
 
-    corrupted_graph = {
+    corrupted_graph: dict[str, Any] = {
         "nodes": [
             {"id": "node-1", "type": "engine", "label": "AccountEngine"},
             {"id": None, "type": None, "label": None},
@@ -611,7 +611,7 @@ def _inject_knowledge_corruption(repo_root: Path) -> dict[str, Any]:
     null_fields = [k for k, v in corrupted_knowledge_index.items() if v is None]
     invalid_counts = {
         k: v
-        for k, v in corrupted_knowledge_index["counts"].items()
+        for k, v in (corrupted_knowledge_index["counts"] or {}).items()
         if not isinstance(v, int) or v < 0
     }
 

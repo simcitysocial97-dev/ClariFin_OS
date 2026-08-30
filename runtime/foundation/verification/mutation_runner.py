@@ -57,6 +57,7 @@ from runtime.foundation.verification.mutation_contract import (
 )
 from runtime.foundation.verification.survivor_catalog import run_catalog_cli
 from runtime.foundation.verification.survivor_intel import (
+    DEFAULT_INTEL_PATH,
     build_survivor_intel,
     write_survivor_intel,
 )
@@ -449,7 +450,6 @@ def execute_mutation(
         # The [tool.mutmut] block is rendered ONLY from ENGINE_SELECTION (the single
         # source of truth in mutation_contract.py). This removes the fragile implicit
         # coverage-mapping fallback and guarantees the selected test scope is recorded.
-        installed_config_original: str | None = None
         selected_test_scope = ""
         source_scope = ""
         selection_method = SELECTION_METHOD
@@ -497,6 +497,9 @@ def execute_mutation(
             if cache_dir.exists():
                 shutil.rmtree(cache_dir)
             if mode == "target":
+                assert (
+                    target is not None
+                )  # guaranteed by the is_valid_engine gate above
                 sel = ENGINE_SELECTION[target]
                 selected_test_scope = " ".join(sel.test_selection)
                 source_scope = " ".join(sel.source_paths)
@@ -559,7 +562,7 @@ def execute_mutation(
                     "PYTHONPATH": _pytest_pythonpath,
                 },
             )
-            pgid = os.getpgid(proc.pid)
+            pgid: int | None = os.getpgid(proc.pid)
 
             try:
                 stdout, stderr = proc.communicate(timeout=timeout)
@@ -567,6 +570,7 @@ def execute_mutation(
                 log_tail = (stdout or "") + (stderr or "")
             except subprocess.TimeoutExpired:
                 # F19: Kill entire process group on timeout
+                assert pgid is not None  # assigned before communicate() above
                 try:
                     os.killpg(pgid, signal.SIGTERM)
                     time.sleep(0.5)
@@ -730,10 +734,12 @@ def execute_mutation(
         raise
 
 
-def _write_summary(result: MutationResult, mode: str) -> Path:
+def _write_summary(result: MutationResult, mode: str, target: str | None = None) -> Path:
     GENERATED_DIR.mkdir(parents=True, exist_ok=True)
     if mode == "smoke":
         out = GENERATED_DIR / "local-smoke" / "mutation-summary.json"
+    elif target:
+        out = GENERATED_DIR / f"mutation-summary-{target}.json"
     else:
         out = GENERATED_DIR / "mutation-summary.json"
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -827,7 +833,7 @@ def run_mutation_cli(argv: list[str]) -> int:
     if not args.json:
         _print_report(result)
 
-    out_path = _write_summary(result, mode)
+    out_path = _write_summary(result, mode, target=args.target)
     if args.json:
         print(str(out_path))
 
@@ -843,7 +849,8 @@ def run_mutation_cli(argv: list[str]) -> int:
         and result.survived > 0
     ):
         try:
-            run_catalog_cli(BACKEND_DIR / "mutants", BACKEND_DIR)
+            catalog_path = GENERATED_DIR / f"mutation-survivors-{args.target}.json" if args.target else GENERATED_DIR / "mutation-survivors.json"
+            run_catalog_cli(BACKEND_DIR / "mutants", BACKEND_DIR, out_path=catalog_path)
         except Exception as exc:  # pragma: no cover - defensive reporting
             print(f"  [catalog] survivor breakdown unavailable: {exc}")
 
@@ -864,7 +871,8 @@ def run_mutation_cli(argv: list[str]) -> int:
                 enrich_tests=True,
                 max_enrich=args.intel_enrich,
             )
-            intel_path = write_survivor_intel(intel)
+            intel_path = GENERATED_DIR / f"mutation-survivor-intel-{args.target}.json" if args.target else DEFAULT_INTEL_PATH
+            write_survivor_intel(intel, out_path=intel_path)
             print(
                 f"  [intel] durable survivor-intel persisted ({intel['total_survivors']} "
                 f"survivors; {intel['tests_enriched_count']} tests-enriched): "

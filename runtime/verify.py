@@ -243,7 +243,9 @@ def cmd_diagnose() -> int:
         format_diagnostic,
     )
 
-    changed_files = _collect_changed_files() if _is_git_available() else []
+    changed_files: list[str] = (
+        _collect_changed_files().files if _is_git_available() else []
+    )
     if not changed_files:
         print("No changed files detected.", file=sys.stderr)
         return 1
@@ -276,7 +278,9 @@ def cmd_diagnose_failures() -> int:
     from runtime.foundation.intelligence.platform.optimizer import optimize_verification
     from runtime.system.evidence.aggregator import EvidenceAggregator
 
-    changed_files = _collect_changed_files() if _is_git_available() else []
+    changed_files: list[str] = (
+        _collect_changed_files().files if _is_git_available() else []
+    )
     if not changed_files:
         print("No changed files detected.", file=sys.stderr)
         return 1
@@ -323,7 +327,9 @@ def cmd_affected() -> int:
         verification_plan,
     )
 
-    changed_files = _collect_changed_files() if _is_git_available() else []
+    changed_files: list[str] = (
+        _collect_changed_files().files if _is_git_available() else []
+    )
     if not changed_files:
         print("No changed files detected.", file=sys.stderr)
         return 1
@@ -337,7 +343,9 @@ def cmd_affected() -> int:
 def cmd_repair() -> int:
     from runtime.foundation.intelligence import format_repair, repair_plan
 
-    changed_files = _collect_changed_files() if _is_git_available() else []
+    changed_files: list[str] = (
+        _collect_changed_files().files if _is_git_available() else []
+    )
     if not changed_files:
         print("No changed files detected.", file=sys.stderr)
         return 1
@@ -350,7 +358,9 @@ def cmd_repair() -> int:
 def cmd_risk() -> int:
     from runtime.foundation.intelligence import engineering_risk, format_risk
 
-    changed_files = _collect_changed_files() if _is_git_available() else []
+    changed_files: list[str] = (
+        _collect_changed_files().files if _is_git_available() else []
+    )
     if not changed_files:
         print("No changed files detected.", file=sys.stderr)
         return 1

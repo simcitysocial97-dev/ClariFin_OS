@@ -21,9 +21,9 @@ print(f"Engines in matrix: {sorted(matrix_engines)}")
 # Find actual engine files in src/engines/
 actual_engines = []
 engine_dir = os.path.join("backend", "src", "engines")
-for f in os.listdir(engine_dir):
-    if f.endswith("_engine.py") and not f.startswith("test_"):
-        name = f.replace("_engine.py", "")
+for fname in os.listdir(engine_dir):
+    if fname.endswith("_engine.py") and not fname.startswith("test_"):
+        name = fname.replace("_engine.py", "")
         actual_engines.append(name)
 
 print(f"Actual engines: {sorted(actual_engines)}")

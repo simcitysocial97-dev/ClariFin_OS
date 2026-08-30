@@ -66,9 +66,11 @@ def test_mutation_is_a_distinct_profile_not_in_quick() -> None:
 def test_mutation_workflow_is_independent_not_gate_needed() -> None:
     """The mutation workflow registry entry is its own verification dimension."""
     mut = get_registry().get_workflow("mutation")
+    assert mut is not None
     assert mut.id == "mutation"
     assert mut.category.value == "mutation"
     # Confirm the workflow command is the selective mutation script, not a gate.
+    assert mut.command is not None
     assert "mutation" in mut.command
 
 

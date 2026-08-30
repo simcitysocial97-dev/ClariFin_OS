@@ -23,6 +23,7 @@ import importlib.util
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -86,14 +87,14 @@ class TestRecordValidation:
         assert "certification_decision" in validation.missing
 
     def test_silent_empty_stage_detected(self) -> None:
-        record = {stage: {} for stage in CAUSAL_CHAIN_STAGES}
+        record: dict[str, Any] = {stage: {} for stage in CAUSAL_CHAIN_STAGES}
         record["record_id"] = "x"
         validation = validate_forensic_record(record)
         assert not validation.complete
         assert "failures" in validation.silently_empty
 
     def test_explicit_emptiness_marker_accepted(self) -> None:
-        record = {
+        record: dict[str, Any] = {
             stage: {"empty_because": "nothing happened"}
             for stage in CAUSAL_CHAIN_STAGES
         }
@@ -103,7 +104,9 @@ class TestRecordValidation:
         assert not validation.silently_empty
 
     def test_canonicalization_does_not_mutate_input(self) -> None:
-        record = {stage: {} for stage in ("change", "failures", "uncertainties")}
+        record: dict[str, Any] = {
+            stage: {} for stage in ("change", "failures", "uncertainties")
+        }
         frozen = json.dumps(record, sort_keys=True)
         canonicalize_forensic_record(record)
         assert json.dumps(record, sort_keys=True) == frozen

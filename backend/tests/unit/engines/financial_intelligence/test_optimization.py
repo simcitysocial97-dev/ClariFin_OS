@@ -120,11 +120,9 @@ def test_allocation_full_cascade():
     assert result["allocation"][1]["reason"] == "high_interest_debt"
     assert result["allocation"][1]["debt_ids"] == ["hd"]
     assert result["allocation"][2]["reason"] == "medium_interest_debt"
-    # FIN-E5 anomaly pinned: the investment append does not decrement
-    # remaining_surplus, so expected_impact excludes the investment slice
-    # while the allocation entries still sum to the full surplus.
+    # FIN-E5 FIXED: total_allocated_paise now correctly includes investment slice
     assert sum(a["amount_paise"] for a in result["allocation"]) == 100_000
-    assert result["expected_impact"]["total_allocated_paise"] == 94_240
+    assert result["expected_impact"]["total_allocated_paise"] == 100_000
     assert result["expected_impact"]["remaining_paise"] == 5_760
 
 

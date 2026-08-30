@@ -18,6 +18,7 @@ from __future__ import annotations
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -42,7 +43,7 @@ from runtime.foundation.verification.strengthening import (  # noqa: E402
 
 
 def _class_a(**kw) -> SurvivorEvidence:
-    defaults = {
+    defaults: dict[str, Any] = {
         "survivor_id": "mut-cc-0001",
         "component": "credit_card_engine",
         "capability": "credit-card-risk",

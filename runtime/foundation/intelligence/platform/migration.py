@@ -17,7 +17,7 @@ import json
 import re
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, TypedDict
 
 from runtime.foundation.intelligence.platform.api import (
     analyze,
@@ -31,9 +31,17 @@ GENERATED_DIR = REPO_ROOT / "runtime" / "generated"
 INTELLIGENCE_DIR = REPO_ROOT / "runtime" / "foundation" / "intelligence"
 VERIFY_PY = REPO_ROOT / "runtime" / "verify.py"
 
+
 # Static constitutional knowledge of the legacy modules that Program 14.1
 # removed. Recorded so the audit trail survives the deletion.
-_LEGACY_MODULES = {
+class _LegacyModuleSpec(TypedDict):
+    responsibility: str
+    replacement: str
+    violations: list[str]
+    lines: int
+
+
+_LEGACY_MODULES: dict[str, _LegacyModuleSpec] = {
     "affected.py": {
         "responsibility": "Affected test planning for changed files",
         "replacement": "runtime/foundation/intelligence/platform/optimizer.py + blast.py + api.verification_plan",

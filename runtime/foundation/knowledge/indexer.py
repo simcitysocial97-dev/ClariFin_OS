@@ -302,7 +302,7 @@ def _extract_integrity_rules() -> list[IntegrityRuleEntry]:
 
         registry = get_constitution()
         for rule in registry.rules:
-            rule_id = rule.id if hasattr(rule, "id") else rule.rule_id
+            rule_id = rule.id
             references = {
                 "rule_id": rule_id,
                 "name": rule.name,
@@ -394,16 +394,19 @@ def _merge_from_provider(
             )
         )
 
-    for name, cap in arch.capabilities.items():
+    for name, cap_entry in arch.capabilities.items():
         if name in existing_caps:
             continue
         existing_caps.add(name)
-        refs = {"source_file": cap.path or "", "provider": "architecture-provider"}
-        for eng in cap.engines:
+        refs = {
+            "source_file": cap_entry.path or "",
+            "provider": "architecture-provider",
+        }
+        for eng in cap_entry.engines:
             refs[f"engine:{eng}"] = f"engine:{eng}"
-        for ep in cap.endpoints:
-            refs[f"endpoint:{ep}"] = f"endpoint:{ep}"
-        tag = "provider" if cap.engines else "provider-frontend-only"
+        for endpoint in cap_entry.endpoints:
+            refs[f"endpoint:{endpoint}"] = f"endpoint:{endpoint}"
+        tag = "provider" if cap_entry.engines else "provider-frontend-only"
         out_caps.append(CapabilityEntry(name=name, references=refs, tags=(tag,)))
 
     for name, ws in arch.workspaces.items():

@@ -158,7 +158,7 @@ def build_cross_layer_map_v2(arch: Architecture | None = None) -> dict[str, Any]
             {"module": path, "ownedByEngine": det.engine, "wasTreatedAsEngine": True}
             for path, det in architecture.detectors.items()
         ],
-        key=lambda d: d["module"],
+        key=lambda d: str(d["module"]),
     )
 
     return {

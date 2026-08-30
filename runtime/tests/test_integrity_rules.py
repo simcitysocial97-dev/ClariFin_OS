@@ -6,6 +6,8 @@ scan results. Deterministic. No network. No git mutation.
 
 from __future__ import annotations
 
+from typing import Any
+
 from runtime.foundation.integrity.models import (
     ArchitectureLayer,
     ViolationSeverity,
@@ -31,7 +33,7 @@ from runtime.foundation.integrity.scanner import (
 
 
 def _make_graph(
-    files: list[ScannedFile], cross_layer_map: dict = None
+    files: list[ScannedFile], cross_layer_map: dict[str, Any] | None = None
 ) -> ArchitecturalGraph:
     return ArchitecturalGraph(
         files=tuple(files),

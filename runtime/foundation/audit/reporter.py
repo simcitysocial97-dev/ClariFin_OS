@@ -269,7 +269,7 @@ class AuditReporter:
         gh_section = next(
             (s for s in self._report.sections if s.section == "github_actions"), None
         )
-        data = {"overall_status": "unknown", "findings": []}
+        data: dict[str, Any] = {"overall_status": "unknown", "findings": []}
         if gh_section:
             data["overall_status"] = gh_section.status.value
             data["findings"] = [
@@ -287,7 +287,7 @@ class AuditReporter:
             (s for s in self._report.sections if s.section == "artifact_ownership"),
             None,
         )
-        data = {"overall_status": "unknown", "artifacts": []}
+        data: dict[str, Any] = {"overall_status": "unknown", "artifacts": []}
         if ao_section:
             data["overall_status"] = ao_section.status.value
             data["artifacts"] = [

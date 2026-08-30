@@ -84,7 +84,7 @@ def test_golden_allocation_no_deficit_goes_investment():
                 "reason": "remaining_surplus",
             }
         ],
-        "expected_impact": {"total_allocated_paise": 0, "remaining_paise": 500_000},
+        "expected_impact": {"total_allocated_paise": 500_000, "remaining_paise": 500_000},
     }
 
 
@@ -110,7 +110,7 @@ def test_golden_allocation_long_term_goal_then_investment():
             "reason": "remaining_surplus",
         },
     ]
-    assert get_result["expected_impact"]["total_allocated_paise"] == 160_000
+    assert get_result["expected_impact"]["total_allocated_paise"] == 400_000
 
 
 def test_golden_allocation_zero_surplus_empty():

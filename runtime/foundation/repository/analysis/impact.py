@@ -85,7 +85,7 @@ class ImpactAnalyzer:
         )  # (node_id, incoming_reason, depth)
 
         # Accumulate findings per entity type
-        results: dict[str, list[dict[str, Any]]] = {
+        results: dict[str, Any] = {
             "capabilities": [],
             "endpoints": [],
             "frontend_consumers": [],

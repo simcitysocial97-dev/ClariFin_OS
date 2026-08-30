@@ -25,6 +25,7 @@ import json
 import time
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 GENERATED = PROJECT_ROOT / "runtime" / "generated"
@@ -209,7 +210,7 @@ def build_performance() -> dict:
 
 
 def build_retirement_plan() -> dict:
-    candidates = [
+    candidates: list[dict[str, Any]] = [
         {
             "file": "tools/generators/build_cross_layer_map.py",
             "role": "Legacy cross-layer map generator (now a delegating shim)",

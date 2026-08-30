@@ -259,6 +259,7 @@ class TestUnmappedIsVisibleAndNonFatal:
         )
         assert quick["unit_id"] == UNMAPPED
         assert any(u["step_id"] == quick["step_id"] for u in manifest["unmapped"])
+        assert orchestrator.plan is not None
         assert len(results) == len(orchestrator.plan.steps)
 
     def test_unmapped_entries_state_a_reason(self, tmp_path: Path):

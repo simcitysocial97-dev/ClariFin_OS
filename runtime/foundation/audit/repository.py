@@ -58,7 +58,7 @@ def _verify_json_validity(index_path: Path) -> dict[str, Any]:
         data = json.loads(index_path.read_text(encoding="utf-8"))
         status = "pass"
         message = "Index JSON is valid"
-        details = {"top_level_keys": list(data.keys())}
+        details: dict[str, Any] = {"top_level_keys": list(data.keys())}
     except (json.JSONDecodeError, OSError) as exc:
         status = "fail"
         message = f"Index JSON is invalid: {exc}"

@@ -103,7 +103,7 @@ class TestJunitEnumeration:
         p.write_text(_JUNIT_OK, encoding="utf-8")
         t = compute_totals_from_junit(p)
         assert (t.total, t.passed, t.failed, t.skipped) == (4, 1, 2, 1)
-        assert assert_totals_consistent(t.total, t.passed, t.failed, t.skipped) is None
+        assert_totals_consistent(t.total, t.passed, t.failed, t.skipped)
 
     def test_verify_detects_lying_counters(self, tmp_path: Path) -> None:
         p = tmp_path / "junit.xml"
