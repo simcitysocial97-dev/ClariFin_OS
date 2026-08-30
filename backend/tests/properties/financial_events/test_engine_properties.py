@@ -210,11 +210,21 @@ def test_walk_lineage_settled_outstanding_non_negative(events):
     suppress_health_check=[HealthCheck.differing_executors],
 )
 def test_walk_lineage_link_count_matches_updates(events):
-    """Property: Number of proposed links equals number of lifecycle updates."""
+    """Property: Each lifecycle update corresponds to a distinct event that
+    was affected by at least one link. Multiple links to the same event
+    collapse to a single authoritative update (lifecycle_updates_by_event
+    deduplication), so update count equals distinct affected-event count."""
     proposal = walk_lineage(events)
-    assert len(proposal.proposed_links) == len(
-        proposal.lifecycle_updates
-    ), f"Mismatch: {len(proposal.proposed_links)} links vs {len(proposal.lifecycle_updates)} updates"
+    linked_event_ids = {link["linked_event_id"] for link in proposal.proposed_links}
+    update_event_ids = {u["event_id"] for u in proposal.lifecycle_updates}
+    # Every affected event must have exactly one authoritative update.
+    assert set(update_event_ids) == linked_event_ids, (
+        f"Update/link event mismatch: updates={sorted(update_event_ids)} "
+        f"vs linked={sorted(linked_event_ids)}"
+    )
+    # Because multiple repayments can settle the same advance, link count
+    # may exceed the (deduplicated) update count; updates are per-event.
+    assert len(proposal.proposed_links) >= len(proposal.lifecycle_updates)
 
 
 @given(event_list_strategy(max_events=20))

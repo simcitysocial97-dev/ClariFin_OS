@@ -11,7 +11,7 @@ No database access. No LLM calls. No prompt generation.
 All monetary values are integers in paise (₹1.00 = 100 paise).
 """
 
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from typing import Any
 
 from .models import (
@@ -463,12 +463,20 @@ def _compute_health_score(behaviour: dict[str, Any]) -> Decimal:
     if wellness is not None:
         try:
             return Decimal(str(wellness))
-        except (ValueError, TypeError):
+        except (ValueError, TypeError, InvalidOperation):
             pass
 
-    debt_cycle = Decimal(str(behaviour.get("debt_cycle_score", 50) or 50))
-    credit_revolver = Decimal(str(behaviour.get("credit_revolver_ratio", 0) or 0))
-    cashflow_stability = Decimal(str(behaviour.get("cashflow_stability", 0.5) or 0.5))
+    debt_cycle_raw = behaviour.get("debt_cycle_score")
+    credit_revolver_raw = behaviour.get("credit_revolver_ratio")
+    cashflow_stability_raw = behaviour.get("cashflow_stability")
+
+    debt_cycle = Decimal(str(debt_cycle_raw if debt_cycle_raw is not None else 50))
+    credit_revolver = Decimal(
+        str(credit_revolver_raw if credit_revolver_raw is not None else 0)
+    )
+    cashflow_stability = Decimal(
+        str(cashflow_stability_raw if cashflow_stability_raw is not None else 0.5)
+    )
 
     health = (
         Decimal("0.4") * (Decimal("1") - debt_cycle / Decimal("100"))

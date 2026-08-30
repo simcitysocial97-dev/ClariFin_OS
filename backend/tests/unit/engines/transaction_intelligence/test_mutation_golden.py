@@ -59,7 +59,12 @@ def _credit(txn_id=11, amount=90_000, date="2026-08-02", household=7):
     }
 
 
-TXN_CC = {"id": 1, "description": "CC PAYMENT", "amount_paise": 1_000_000, "date_iso": "2026-08-01"}
+TXN_CC = {
+    "id": 1,
+    "description": "CC PAYMENT",
+    "amount_paise": 1_000_000,
+    "date_iso": "2026-08-01",
+}
 STATEMENT = {"id": 9, "total_amount_due": 1_000_000, "minimum_amount_due": 50_000}
 
 
@@ -69,13 +74,14 @@ STATEMENT = {"id": 9, "total_amount_due": 1_000_000, "minimum_amount_due": 50_00
 # Genuine contract: if a card reference is in the description, the
 # 10_000 < amount <= 500_000 window rejection is NOT applied.
 
+
 @pytest.mark.parametrize(
     "desc,amount,expected_none",
     [
         # Pattern present → bypasses window even at/in/out range
-        ("TXN 5678 DONE", 100_000, False),   # in window but pattern → unmatched
-        ("TXN 5678 DONE", 500_000, False),   # at upper boundary, pattern
-        ("TXN 5678 DONE", 500_001, False),   # above upper, pattern → still unmatched
+        ("TXN 5678 DONE", 100_000, False),  # in window but pattern → unmatched
+        ("TXN 5678 DONE", 500_000, False),  # at upper boundary, pattern
+        ("TXN 5678 DONE", 500_001, False),  # above upper, pattern → still unmatched
     ],
 )
 def test_card_pattern_bypasses_amount_window(desc, amount, expected_none):
@@ -98,6 +104,7 @@ def test_no_pattern_in_window_no_statement_returns_none():
 # ═══════════════════════════════════════════════════════════════════════════════
 # A3: Amount window boundaries (no keyword, no pattern)
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def test_window_boundary_10000_not_rejected():
     """Amount EXACTLY 10_000: the check is `10000 < amount` so 10_000
@@ -133,19 +140,20 @@ def test_window_above_500000_not_rejected():
 # A2: Each CC keyword triggers detection
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 @pytest.mark.parametrize(
     "keyword_desc",
     [
-        "PAYMENT XX1234",          # XX + digits pattern
-        "CREDIT CARD PAYMENT",     # "CREDIT CARD" keyword
-        "CC PAYMENT REF",          # "CC PAYMENT" keyword
-        "CARD PAYMENT 4567",       # "CARD PAYMENT" keyword
-        "HDFC CREDIT MONTHLY",     # "HDFC CREDIT" keyword
-        "ICICI CREDIT BILL",       # "ICICI CREDIT" keyword
-        "AXIS CREDIT MONTHLY",     # "AXIS CREDIT" keyword
-        "SBI CARD MONTHLY",        # "SBI CARD" keyword
-        "IDFC FIRST BILL",         # "IDFC FIRST"
-        "INDUSIND CARD PAY",       # "INDUSIND"
+        "PAYMENT XX1234",  # XX + digits pattern
+        "CREDIT CARD PAYMENT",  # "CREDIT CARD" keyword
+        "CC PAYMENT REF",  # "CC PAYMENT" keyword
+        "CARD PAYMENT 4567",  # "CARD PAYMENT" keyword
+        "HDFC CREDIT MONTHLY",  # "HDFC CREDIT" keyword
+        "ICICI CREDIT BILL",  # "ICICI CREDIT" keyword
+        "AXIS CREDIT MONTHLY",  # "AXIS CREDIT" keyword
+        "SBI CARD MONTHLY",  # "SBI CARD" keyword
+        "IDFC FIRST BILL",  # "IDFC FIRST"
+        "INDUSIND CARD PAY",  # "INDUSIND"
     ],
 )
 def test_cc_keyword_triggers_detection(keyword_desc):
@@ -162,6 +170,7 @@ def test_cc_keyword_triggers_detection(keyword_desc):
 # ═══════════════════════════════════════════════════════════════════════════════
 # A17: Payment channel priority order (first-match wins in ordered list)
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def test_channel_cred_beats_cheq_spaylater_nobroker():
     assert determine_payment_channel("CRED CHEQ S-PA NOBROKER PAY") == "CRED"
@@ -187,6 +196,7 @@ def test_channel_direct_for_unknown():
 # A18: _convert_to_paise edge cases
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def test_convert_to_paise_truncates_float_down():
     """int(12.345 * 100) = int(1234.5) = 1234 (truncation, not rounding)."""
     assert _convert_to_paise(12.345) == 1234
@@ -208,6 +218,7 @@ def test_convert_to_paise_comma_string():
 # ═══════════════════════════════════════════════════════════════════════════════
 # A8: Overpayment pins remaining at 0
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def test_overpayment_fully_paid_zero_remaining():
     """Payment > full due → fully_paid, remaining hardcoded 0.
@@ -242,13 +253,23 @@ def test_payment_at_due_minus_101_revolving():
 # A7: Cross-loan tier interaction (higher priority wins regardless of order)
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def test_earlier_loan_lower_tier_loses_to_later_loan_higher_tier():
     """Loan1 first in list matches only by keyword (p60). Loan2 matches by
     amount (p80). Loan2 must win: `80 > 60` replaces."""
-    txn = {"id": 1, "debit": 500_000, "date_iso": "2026-08-01", "description": "EMI PAYMENT"}
+    txn = {
+        "id": 1,
+        "debit": 500_000,
+        "date_iso": "2026-08-01",
+        "description": "EMI PAYMENT",
+    }
     loans = [
-        {"id": 1, "emi_paise": 1_000_000, "lender": "HDFC"},  # no amount match, keyword match
-        {"id": 2, "emi_paise": 500_000, "lender": "ICICI"},   # amount match → p80
+        {
+            "id": 1,
+            "emi_paise": 1_000_000,
+            "lender": "HDFC",
+        },  # no amount match, keyword match
+        {"id": 2, "emi_paise": 500_000, "lender": "ICICI"},  # amount match → p80
     ]
     result = detect_emi_payment(txn, loans, schedule_lookup={})
     assert result is not None
@@ -258,10 +279,15 @@ def test_earlier_loan_lower_tier_loses_to_later_loan_higher_tier():
 
 def test_single_loan_amount_match_wins_over_no_match():
     """Only one loan matches the amount; the other doesn't match at all."""
-    txn = {"id": 1, "debit": 1_000_000, "date_iso": "2026-08-01", "description": "SOME PAYMENT"}
+    txn = {
+        "id": 1,
+        "debit": 1_000_000,
+        "date_iso": "2026-08-01",
+        "description": "SOME PAYMENT",
+    }
     loans = [
         {"id": 1, "emi_paise": 1_000_000, "lender": "HDFC"},  # amount match
-        {"id": 2, "emi_paise": 500_000, "lender": "ICICI"},   # no match
+        {"id": 2, "emi_paise": 500_000, "lender": "ICICI"},  # no match
     ]
     result = detect_emi_payment(txn, loans, schedule_lookup={})
     assert result is not None
@@ -275,11 +301,18 @@ def test_single_loan_amount_match_wins_over_no_match():
 # A6: EMI or-fallback quirk (debit=0 falls through to amount_paise)
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def test_emi_debit_zero_uses_amount_paise_fallback():
     """`int(debit or amount_paise or 0)`: debit=0 is falsy → amount_paise
     is used. This is a documented quirk (Category E5 — latent defect).
     The test pins CURRENT behavior so a future fix is intentional."""
-    txn = {"id": 1, "debit": 0, "amount_paise": 1_000_000, "date_iso": "2026-08-01", "description": "MONTHLY EMI"}
+    txn = {
+        "id": 1,
+        "debit": 0,
+        "amount_paise": 1_000_000,
+        "date_iso": "2026-08-01",
+        "description": "MONTHLY EMI",
+    }
     loans = [{"id": 1, "emi_paise": 1_000_000, "lender": "HDFC"}]
     result = detect_emi_payment(txn, loans, schedule_lookup={})
     assert result is not None
@@ -288,7 +321,13 @@ def test_emi_debit_zero_uses_amount_paise_fallback():
 
 def test_emi_debit_zero_amount_zero_returns_none():
     """Both zero → 0 after `or` chain → rejected by `<= 0` guard."""
-    txn = {"id": 1, "debit": 0, "amount_paise": 0, "date_iso": "2026-08-01", "description": "EMI"}
+    txn = {
+        "id": 1,
+        "debit": 0,
+        "amount_paise": 0,
+        "date_iso": "2026-08-01",
+        "description": "EMI",
+    }
     loans = [{"id": 1, "emi_paise": 1_000_000, "lender": "HDFC"}]
     assert detect_emi_payment(txn, loans, schedule_lookup={}) is None
 
@@ -296,6 +335,7 @@ def test_emi_debit_zero_amount_zero_returns_none():
 # ═══════════════════════════════════════════════════════════════════════════════
 # A10: Fee bps truncation
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def test_fee_bps_sub_paise_truncates_to_zero():
     """A 1-paise fee on a 1_000_001 debit → int(1*10000/1_000_001) = int(0.0099...) = 0."""
@@ -322,6 +362,7 @@ def test_fee_bps_negative_debit_returns_zero():
 # A11: Hungarian 1e8 exclusion boundary
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def test_hungarian_excludes_cost_at_1e8():
     assert _hungarian_inline([[1e8]]) == []
 
@@ -342,6 +383,7 @@ def test_hungarian_empty_matrix():
 # ═══════════════════════════════════════════════════════════════════════════════
 # A16: Card number extraction edge cases
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def test_card_extract_rejects_standalone_when_desc_starts_20xx():
     """Description starting '20xx' (year-like) → standalone 4-digit rejection."""
@@ -366,6 +408,7 @@ def test_card_extract_masked_format():
 # A20: Tolerance truncation for non-round EMIs
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def test_tolerance_truncation_non_round_emi():
     """int(101_001 * 0.01) = int(1010.01) = 1010 (truncation).
     ±1010 → within; ±1011 → outside."""
@@ -387,6 +430,7 @@ def test_tolerance_zero_expected_rejected():
 # ═══════════════════════════════════════════════════════════════════════════════
 # A4: Each liquidity keyword triggers unknown-provider path
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 @pytest.mark.parametrize(
     "keyword",
@@ -413,6 +457,7 @@ def test_liquidity_keyword_triggers_unknown_provider_path(keyword):
 # A5: Unknown-provider path has no date window filter (Category E6 documented)
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def test_unknown_provider_allows_large_settlement_gap():
     """The unknown-provider path does NOT enforce [0, settlement+2] window.
     A credit 365 days after debit is still eligible. Documents current
@@ -435,6 +480,7 @@ def test_unknown_provider_allows_large_settlement_gap():
 # ═══════════════════════════════════════════════════════════════════════════════
 # A22: Disambiguation tie-break (min() stability → first in list wins)
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def test_cash_disambiguation_first_credit_on_fee_tie():
     """Two credits with identical fee_bps → min() picks first in list.

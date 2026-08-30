@@ -1502,13 +1502,22 @@ def main() -> int:
     )
     from runtime.foundation.verification.env import resolve_environment
 
-    cache = VerificationCache(VERIFICATION_CACHE_PATH)
+    cache = VerificationCache(VERIFICATION_CACHE_PATH, root=REPO_ROOT)
     # Get execution fingerprint for cache invalidation (R11)
     fp_report = resolve_environment(profile=profile_name)
     fingerprint = fp_report.fingerprint
-    replay: ReplayResult = cache.replay(
-        commit, changed_files, profile_name, fingerprint
-    )
+    # R-CACHE-1: allow an explicit bypass so a developer/CI can force a fresh
+    # execution instead of replaying a (possibly stale) cached verdict.
+    _force_fresh = any(a in sys.argv for a in ("--force", "--fresh", "--no-cache"))
+    if _force_fresh:
+        replay = ReplayResult(
+            reusable=False,
+            overall_status=None,
+            exit_code=None,
+            reason="force-fresh",
+        )
+    else:
+        replay = cache.replay(commit, changed_files, profile_name, fingerprint)
 
     if replay.reusable:
         verdict_status = replay.overall_status or "unknown"

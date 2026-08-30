@@ -14,6 +14,7 @@ recorded failure into success merely because the result was cached.
 
 from __future__ import annotations
 
+import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -50,8 +51,34 @@ class VerificationCache:
     status is "fail".
     """
 
-    def __init__(self, path: Path | str):
+    def __init__(self, path: Path | str, root: Path | str | None = None):
         self.path = Path(path)
+        self.root = Path(root) if root is not None else None
+
+    # ── Content-aware invalidation (R-CACHE-1) ───────────────────────────────
+    # The historical cache key was (commit, changed_files, fingerprint) where
+    # ``changed_files`` was a *list of filenames*. Editing the contents of the
+    # same files (e.g. a local bug fix) left the filename set unchanged, so a
+    # stale PASS/FAIL verdict was replayed instead of re-executing. We now hash
+    # the working-tree contents of every changed file and fold that digest into
+    # the cache key, so any content change on disk forces a fresh run.
+    def _compute_tree_digest(self, changed_files: list[str]) -> str:
+        h = hashlib.sha256()
+        for rel in sorted(changed_files):
+            h.update(rel.encode("utf-8"))
+            h.update(b"\0")
+            data = b""
+            if self.root is not None:
+                p = self.root / rel
+                try:
+                    if p.is_file():
+                        data = p.read_bytes()
+                    else:
+                        data = b"\x00missing\x00"
+                except (OSError, IsADirectoryError):
+                    data = b"\x00missing\x00"
+            h.update(hashlib.sha256(data).digest())
+        return h.hexdigest()
 
     def _load(self) -> dict[str, Any]:
         if not self.path.exists():
@@ -92,6 +119,15 @@ class VerificationCache:
             cached_fp = raw.get("fingerprint")
             if cached_fp is not None and cached_fp != fingerprint:
                 return False
+        # Content-aware invalidation (R-CACHE-1): any change to the working-tree
+        # contents of the changed files forces a fresh run. Legacy cache entries
+        # without a stored tree_digest are tolerated (treated as a match) so old
+        # caches still degrade gracefully instead of crashing.
+        if self.root is not None:
+            cached_digest = raw.get("tree_digest")
+            if cached_digest is not None:
+                if cached_digest != self._compute_tree_digest(changed_files):
+                    return False
         return True
 
     def get_verdict(self, profile: str) -> CachedVerdict | None:
@@ -176,5 +212,10 @@ class VerificationCache:
             "unit_statuses": list(verdict.unit_statuses),
             "changed_files": changed_files,
             "fingerprint": fingerprint,
+            "tree_digest": (
+                self._compute_tree_digest(changed_files)
+                if self.root is not None
+                else None
+            ),
         }
         self._save(cache)

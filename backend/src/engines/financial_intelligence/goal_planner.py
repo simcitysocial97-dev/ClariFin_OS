@@ -13,7 +13,7 @@ Uses configurable allocation percentage to determine available funds.
 Does NOT recalculate income, expenses, debt schedules, or interest.
 """
 
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from typing import Any
 
 # Default allocation percentage of surplus to goals
@@ -93,7 +93,7 @@ def calculate_goal_projection(
             try:
                 confidence = Decimal(str(forecast["confidence"]))
                 break
-            except (ValueError, TypeError):
+            except (ValueError, TypeError, InvalidOperation):
                 pass
 
     for months_count, month_data in enumerate(monthly_surplus_forecast, 1):
