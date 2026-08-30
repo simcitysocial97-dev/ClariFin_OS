@@ -20,6 +20,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_ROOT" || { echo "repo root not found"; exit 1; }
 
+# Canonical Python resolver (venv-first)
+if [ -x "$REPO_ROOT/.venv/bin/python" ]; then
+  PY="$REPO_ROOT/.venv/bin/python"
+else
+  PY="$(command -v python3 || command -v python)"
+fi
+
 EVIDENCE_DIR="${API_CONTRACTS_EVIDENCE_DIR:-$REPO_ROOT/runtime/generated/evidence/api-contracts}"
 mkdir -p "$EVIDENCE_DIR"
 
@@ -27,11 +34,11 @@ echo "================================================"
 echo "  M9-C27 — API Contract Integrity Gate"
 echo "================================================"
 
-python3 runtime/verify.py api-contracts
+"$PY" runtime/verify.py api-contracts
 rc=$?
 
 # Persist the human summary as evidence
-python3 runtime/verify.py api-contracts > "$EVIDENCE_DIR/api-contracts.log" 2>&1 || true
+"$PY" runtime/verify.py api-contracts > "$EVIDENCE_DIR/api-contracts.log" 2>&1 || true
 
 if [ "$rc" -eq 0 ]; then
   echo ""

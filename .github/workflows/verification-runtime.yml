@@ -53,7 +53,7 @@ jobs:
       - name: Setup Node.js runtime
         uses: ./.github/actions/setup-node-runtime
         with:
-          node-version: "20"
+          node-version: "24"
           working-directory: "frontend"
 
       - name: Run runtime verification

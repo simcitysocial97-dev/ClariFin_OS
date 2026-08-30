@@ -9,10 +9,17 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_ROOT/backend" || { echo "backend/ not found"; exit 1; }
 
+# Canonical Python resolver (venv-first)
+if [ -x "$REPO_ROOT/.venv/bin/python" ]; then
+  PY="$REPO_ROOT/.venv/bin/python"
+else
+  PY="$(command -v python3 || command -v python)"
+fi
+
 fail=0
 if [ -f "alembic.ini" ]; then
   echo ">> alembic heads (dry-run resolution)"
-  python3 -c "
+  "$PY" -c "
 from alembic.config import Config
 from alembic.script import ScriptDirectory
 cfg = Config('alembic.ini')
@@ -25,7 +32,7 @@ fi
 
 if [ -d tests ]; then
   echo ">> pytest tests (migration tagged)"
-  python3 -m pytest tests/ -k "migration or alembic" -q --no-header --tb=short
+  "$PY" -m pytest tests/ -k "migration or alembic" -q --no-header --tb=short
   rc=$?
   [ "$rc" -eq 5 ] && rc=0
   [ "$rc" -ne 0 ] && fail=1

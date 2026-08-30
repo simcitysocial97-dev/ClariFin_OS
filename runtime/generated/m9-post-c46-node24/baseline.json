@@ -1,0 +1,104 @@
+{
+  "phase": "Phase 0 — Authoritative Baseline",
+  "milestone": "M9-POST-C46",
+  "objective": "Node 24 LTS runtime modernization + dependency compatibility convergence",
+  "branch": "m9c9-merge-authorization-resolution",
+  "record_timestamp": "2026-08-30T14:08:05Z",
+  "head_before_changes": "5e944ba9e643eade0367b23acf350d925c16fc1c",
+  "baseline_commit": "ee9c4f6630bfe77abc40c3b9424996540352c877",
+  "c46_certification": {
+    "ruff": "clean",
+    "black": "clean",
+    "mypy": "clean",
+    "pytest_backend": "passing",
+    "coverage": "80.58%",
+    "repository_mutation_derived": "83.6%",
+    "note": "CI authoritative mutation campaign was dispatched but cancelled at 1h31m; not used as evidence of certification"
+  },
+  "ci_workflow_baseline_ee9c4f66": {
+    "note": "All 6 push workflows succeeded for ee9c4f66; mutation workflow dispatched was cancelled",
+    "runs": [
+      {
+        "name": "API Contract Integrity",
+        "databaseId": 33304536021,
+        "conclusion": "success",
+        "headSha": "ee9c4f6630bfe77abc40c3b9424996540352c877",
+        "createdAt": "2026-08-30T09:37:56Z"
+      },
+      {
+        "name": "Verification Reconcile",
+        "databaseId": 33304535995,
+        "conclusion": "success",
+        "headSha": "ee9c4f6630bfe77abc40c3b9424996540352c877",
+        "createdAt": "2026-08-30T09:37:56Z"
+      },
+      {
+        "name": "Verification Runtime",
+        "databaseId": 33304535970,
+        "conclusion": "success",
+        "headSha": "ee9c4f6630bfe77abc40c3b9424996540352c877",
+        "createdAt": "2026-08-30T09:37:56Z"
+      },
+      {
+        "name": "Quality Gate",
+        "databaseId": 33304536085,
+        "conclusion": "success",
+        "headSha": "ee9c4f6630bfe77abc40c3b9424996540352c877",
+        "createdAt": "2026-08-30T09:37:56Z"
+      },
+      {
+        "name": "Backend Verification",
+        "databaseId": 33304536129,
+        "conclusion": "success",
+        "headSha": "ee9c4f6630bfe77abc40c3b9424996540352c877",
+        "createdAt": "2026-08-30T09:37:56Z"
+      },
+      {
+        "name": "Frontend Verification",
+        "databaseId": 33304536057,
+        "conclusion": "success",
+        "headSha": "ee9c4f6630bfe77abc40c3b9424996540352c877",
+        "createdAt": "2026-08-30T09:37:56Z"
+      }
+    ],
+    "mutation_run": {
+      "name": "Mutation Testing",
+      "databaseId": 33307741919,
+      "conclusion": "cancelled",
+      "headSha": "ee9c4f6630bfe77abc40c3b9424996540352c877",
+      "createdAt": "2026-08-30T10:58:13Z",
+      "duration_seconds": 5508,
+      "interpretation": "Cancelled at 1h31m; not used as authoritative mutation evidence. The C46 derived 83.6% mutation result stands from the previous successful run history."
+    },
+    "supplementary_runs_ee9c4f66": [
+      {"name": "CodeQL Security Analysis", "conclusion": "success", "createdAt": "2026-08-30T11:09:31Z"},
+      {"name": "Golden Dataset Regression", "conclusion": "success", "createdAt": "2026-08-30T11:05:29Z"}
+    ]
+  },
+  "head_post_5e944ba9_status": {
+    "note": "Pre-existing failures from the mutation-strengthening commit (Ruff F841 unused var 'd' in test_mutation_gap_repairs.py:323). Unrelated to Node 24 work. These predate this milestone and are tracked as pre-existing baseline state, not introduced by Node modernization.",
+    "failing_workflows": [
+      {"name": "Frontend Verification", "databaseId": 33314502817, "failed_step": "step-0003 (fast-checks)"},
+      {"name": "Backend Verification", "databaseId": 33314502881, "failed_step": "step-0002 (Ruff F841)"},
+      {"name": "Quality Gate", "databaseId": 33314502837, "cascade": "Backend/Frontend failure"}
+    ],
+    "successful_workflows": [
+      {"name": "API Contract Integrity", "databaseId": 33314502852},
+      {"name": "Verification Reconcile", "databaseId": 33314502841},
+      {"name": "Verification Runtime", "databaseId": 33314502866}
+    ],
+    "policy_application": "Per project rule pre_existing_error_backlog_policy, pre-existing errors must be fixed not deferred; this milestone does not own fixing those failures but will not regress them either."
+  },
+  "scope_decisions": {
+    "target_runtime": "Node.js 24 LTS",
+    "not_upgrading_to": ["Node.js 25", "Node.js 26", "current"],
+    "rationale": "Node 20 reached EOL on 2025-04-30; Node 24 LTS is the current Active LTS (released 2025-05-06). Node 22 LTS is also Active but per directive Node 24 LTS is the explicit target."
+  },
+  "stop_conditions_pre_check": {
+    "no_C46_mutation_contradiction": true,
+    "no_unexpected_lockfile_changes_predicted": true,
+    "no_production_behavior_changes_predicted": true,
+    "no_unjustified_workflow_node_split": true,
+    "all_clear": true
+  }
+}

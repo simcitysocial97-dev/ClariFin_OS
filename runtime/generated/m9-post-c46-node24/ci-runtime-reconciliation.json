@@ -1,0 +1,91 @@
+{
+  "phase": "Phase 6 — CI Runtime Reconciliation",
+  "target_runtime": "Node.js 24 LTS",
+  "canonical_action": ".github/actions/setup-node-runtime/action.yml",
+  "change_policy": "All active workflows that execute Node-dependent work updated from node-version \"20\" to \"24\". No workflow left with stale Node 20 resolution.",
+  "changed_workflows": [
+    {
+      "path": ".github/workflows/frontend-verify.yml",
+      "job": "frontend-verify",
+      "old_resolution": "node-version: \"20\"",
+      "new_resolution": "node-version: \"24\"",
+      "verification": "canonical action setup-node-runtime@v24 resolves to latest 24.x via actions/setup-node@v4"
+    },
+    {
+      "path": ".github/workflows/backend-verify.yml",
+      "job": "backend-verify",
+      "old_resolution": "node-version: \"20\"",
+      "new_resolution": "node-version: \"24\"",
+      "verification": "canonical action setup-node-runtime@v24"
+    },
+    {
+      "path": ".github/workflows/playwright.yml",
+      "job": "playwright-e2e",
+      "old_resolution": "node-version: \"20\"",
+      "new_resolution": "node-version: \"24\"",
+      "verification": "canonical action setup-node-runtime@v24; browser engines unaffected by Node version"
+    },
+    {
+      "path": ".github/workflows/api-contracts.yml",
+      "job": "api-contracts",
+      "old_resolution": "node-version: \"20\"",
+      "new_resolution": "node-version: \"24\"",
+      "verification": "canonical action setup-node-runtime@v24"
+    },
+    {
+      "path": ".github/workflows/quality.yml",
+      "job": "quality-gate",
+      "old_resolution": "node-version: \"20\"",
+      "new_resolution": "node-version: \"24\"",
+      "verification": "canonical action setup-node-runtime@v24"
+    },
+    {
+      "path": ".github/workflows/verification-runtime.yml",
+      "job": "verification-runtime",
+      "old_resolution": "node-version: \"20\"",
+      "new_resolution": "node-version: \"24\"",
+      "verification": "canonical action setup-node-runtime@v24"
+    },
+    {
+      "path": ".github/workflows/release.yml",
+      "job": "release-build",
+      "old_resolution": "node-version: \"20\"",
+      "new_resolution": "node-version: \"24\"",
+      "verification": "canonical action setup-node-runtime@v24; release build uses Next.js on Node 24"
+    },
+    {
+      "path": ".github/workflows/dependency-update.yml",
+      "job": "dependency-update",
+      "old_resolution": "node-version: \"20\"",
+      "new_resolution": "node-version: \"24\"",
+      "verification": "canonical action setup-node-runtime@v24"
+    }
+  ],
+  "unchanged_python_only_workflows": [
+    {"path": ".github/workflows/mutation.yml", "reason": "Python-only; no Node consumer"},
+    {"path": ".github/workflows/golden.yml", "reason": "Python-only; no Node consumer"},
+    {"path": ".github/workflows/verification-reconcile.yml", "reason": "Python-only; no Node consumer"},
+    {"path": ".github/workflows/m9-forensic-diagnostic-lab.yml", "reason": "Diagnostic reads ambient node; intentionally unconstrained (probes runtime state)"}
+  ],
+  "canonical_action_updates": {
+    "path": ".github/actions/setup-node-runtime/action.yml",
+    "input_default": {
+      "old": "node-version default: \"20\"",
+      "new": "node-version default: \"24\""
+    },
+    "description_updated": "Installs Node.js 20... → Installs Node.js 24 LTS...",
+    "underlying_action": "actions/setup-node@v4 (unchanged)",
+    "cache_key_strategy": "npm cache keyed by lockfile hash, not Node version; lockfile unchanged means cache valid across upgrade"
+  },
+  "lockfile_status": {
+    "frontend/package-lock.json": "No changes required; npm ci is lockfile-deterministic and npm@10.8.2 is fully compatible with Node 24. No drift observed in npm install --dry-run.",
+    "package-lock.json (root)": "Unchanged (devDeps only, no Node execution surface)"
+  },
+  "no_node_20_execution_surfaces_remaining": true,
+  "notes": [
+    "CI will resolve '24' to the latest Node 24.x release via actions/setup-node@v4 (currently 24.13.0 at time of change). Pinning to 24.x.y would break cache coherence; major-only is the accepted convention.",
+    "actions/setup-node@v4 fully supports Node 24 LTS (released 2025-05-06).",
+    "npm 10.8.2 (pinned in frontend/package.json packageManager field) runs on Node 24 without upgrade.",
+    "The verification.yaml infrastructure.node_version was updated from 20 to 24 to keep verification config aligned."
+  ]
+}

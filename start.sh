@@ -31,7 +31,7 @@ fi
 # Check if Node.js is installed
 if ! command -v node &> /dev/null; then
     echo -e "${RED}Error: Node.js is not installed${NC}"
-    echo "Please install Node.js 18 or higher"
+    echo "Please install Node.js 24 or higher"
     exit 1
 fi
 

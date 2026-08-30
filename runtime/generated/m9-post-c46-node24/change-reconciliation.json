@@ -1,0 +1,48 @@
+{
+  "phase": "Phase 8 — Final Artifact Set",
+  "generated_at": "2026-08-30T15:30:00Z",
+  "branch": "m9c9-merge-authorization-resolution",
+  "target_runtime": "Node.js 24 LTS",
+  "baseline_commit": "ee9c4f6630bfe77abc40c3b9424996540352c877",
+  "head_before_changes": "5e9c4f6630bfe77abc40c3b9424996540352c877→5e944ba9e643eade0367b23acf350d925c16fc1c (pre-existing Ruff F841 baseline failure)",
+  "artifacts": [
+    {"file": "baseline.json", "phase": "0", "status": "written", "description": "Authoritative CI baseline for ee9c4f66 (all 6 push workflows success, mutation cancelled)"},
+    {"file": "node-runtime-inventory.json", "phase": "1", "status": "written", "description": "Complete inventory of every Node declaration in repo (31 findings, 12 must-change, 4 immutable historical)"},
+    {"file": "canonical-runtime-contract.json", "phase": "2", "status": "written", "description": "Chosen canonical mechanism: existing composite action .github/actions/setup-node-runtime, bumped default to 24"},
+    {"file": "dependency-compatibility.json", "phase": "3", "status": "written", "description": "23 dependencies audited; 22 compatible unchanged, 1 deferred (@types/node)"},
+    {"file": "change-reconciliation.json", "phase": "4/6", "status": "written", "description": "17 files changed: 8 workflows, 1 action, 4 scripts (.venv-first enforcement), 3 manifest/config files, 1 launcher message"},
+    {"file": "verification-evidence.json", "phase": "5", "status": "written", "description": "Local Node 24.13.0 verification results (build, lint, typecheck all pass)"},
+    {"file": "ci-runtime-reconciliation.json", "phase": "6", "status": "written", "description": "Full workflow-by-workflow reconciliation table"},
+    {"file": "final-certification.json", "phase": "8", "status": "written", "description": "G1-G18 gate checklist with PASS/FAIL/N/A per gate"},
+    {"file": "EXECUTION_PROGRESS.md", "phase": "0-8", "status": "written", "description": "Chronological execution log with evidence"}
+  ],
+  "files_changed": [
+    ".github/actions/setup-node-runtime/action.yml",
+    ".github/scripts/run_api_contracts.sh",
+    ".github/scripts/run_contract_tests.sh",
+    ".github/scripts/run_migration_verification.sh",
+    ".github/scripts/run_property_tests.sh",
+    ".github/workflows/api-contracts.yml",
+    ".github/workflows/backend-verify.yml",
+    ".github/workflows/dependency-update.yml",
+    ".github/workflows/frontend-verify.yml",
+    ".github/workflows/playwright.yml",
+    ".github/workflows/quality.yml",
+    ".github/workflows/release.yml",
+    ".github/workflows/verification-runtime.yml",
+    "frontend/.nvmrc",
+    "frontend/package.json",
+    "runtime/foundation/verification/verification.yaml",
+    "start.sh"
+  ],
+  "files_intentionally_unchanged": [
+    "frontend/package-lock.json — lockfile-deterministic, npm 10.8.2 compatible with Node 24, no drift in dry-run",
+    "runtime/generated/c31.1-provenance.json — historical certification provenance (immutable)",
+    "runtime/generated/c31.2-change-preservation.json — same",
+    "runtime/generated/c33-chromium-certification.json — same",
+    "runtime/generated/c40-provenance.json — same",
+    ".github/workflows/mutation.yml — Python-only, no Node consumer",
+    ".github/workflows/golden.yml — Python-only, no Node consumer",
+    ".github/workflows/verification-reconcile.yml — Python-only, no Node consumer"
+  ]
+}

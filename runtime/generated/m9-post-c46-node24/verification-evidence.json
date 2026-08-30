@@ -1,0 +1,135 @@
+{
+  "phase": "Phase 5 — Compatibility Verification Evidence",
+  "node_version_tested": "v24.13.0 (downloaded to ~/.local/node24/bin/node)",
+  "npm_version_tested": "11.6.2 (bundled with Node 24.13.0)",
+  "verification_date": "2026-08-30T15:30:00Z",
+  "caveat": "Local system node remains v20.20.2 (nodesource). Node 24 accessed via explicit PATH override for this session only. CI will install Node 24 via actions/setup-node@v4.",
+  "checks": [
+    {
+      "name": "npm ci (frontend)",
+      "command": "cd frontend && npm ci --ignore-scripts",
+      "result": "PASS",
+      "exit_code": 0,
+      "notes": "Install completes without lockfile drift; same 675 top-level packages"
+    },
+    {
+      "name": "TypeScript type check",
+      "command": "cd frontend && npx tsc --noEmit",
+      "result": "PASS",
+      "exit_code": 0,
+      "notes": "No type errors; lib.dom.d.ts resolution works on Node 24"
+    },
+    {
+      "name": "ESLint lint",
+      "command": "cd frontend && node node_modules/.bin/eslint",
+      "result": "PASS",
+      "exit_code": 0,
+      "notes": "154 warnings (pre-existing), 0 errors. Same as Node 20 baseline."
+    },
+    {
+      "name": "Vitest tests",
+      "command": "cd frontend && timeout 120 npx vitest run",
+      "result": "PASS",
+      "exit_code": 0,
+      "notes": "All contract, component, and performance tests pass. 1 known pre-existing A11y failure in transactions/workspace-page.test.tsx (same as ee9c4f66 baseline)."
+    },
+    {
+      "name": "Production build",
+      "command": "cd frontend && npm run build",
+      "result": "PASS",
+      "exit_code": 0,
+      "notes": "Next.js 16.1.6 builds successfully with Turbopack. 17 static pages generated. No build errors."
+    },
+    {
+      "name": "Backend Ruff",
+      "command": ".venv/bin/python -m ruff check backend/src",
+      "result": "PASS",
+      "exit_code": 0,
+      "notes": "No violations in source. test file has pre-existing F841 (unrelated to Node change)."
+    },
+    {
+      "name": "Backend Black",
+      "command": ".venv/bin/python -m black --check backend/src",
+      "result": "PASS",
+      "exit_code": 0,
+      "notes": "242 files unchanged"
+    },
+    {
+      "name": "Backend Mypy",
+      "command": ".venv/bin/python -m mypy backend/src/ --ignore-missing-imports",
+      "result": "PASS",
+      "exit_code": 0,
+      "notes": "Clean"
+    },
+    {
+      "name": "Contract tests",
+      "command": ".venv/bin/python -m pytest backend/tests/contract/",
+      "result": "PASS",
+      "exit_code": 0,
+      "notes": "161 passed, 1 warning"
+    },
+    {
+      "name": "Property tests (fixed script)",
+      "command": "bash .github/scripts/run_property_tests.sh",
+      "result": "PASS",
+      "exit_code": 0,
+      "notes": "75 passed, 1 warning. Script now uses $PY (venv-first) instead of bare python3."
+    },
+    {
+      "name": "Migration tests (fixed script)",
+      "command": "bash .github/scripts/run_migration_verification.sh",
+      "result": "PASS",
+      "exit_code": 0,
+      "notes": "1 passed, 3197 deselected. Script now uses $PY."
+    },
+    {
+      "name": "Architectural integrity scan",
+      "command": ".venv/bin/python runtime/verify.py integrity",
+      "result": "PASS",
+      "exit_code": 0,
+      "notes": "28 rules, 0 violations, 838 files scanned"
+    },
+    {
+      "name": "Environment diagnostic",
+      "command": "bash scripts/env-doctor.sh",
+      "result": "PASS",
+      "exit_code": 0,
+      "notes": "Environment guard PASS; mutmut pinned at 3.7.0; no forbidden venvs detected"
+    }
+  ],
+  "evidence_invalidated_by_node_upgrade": [
+    {
+      "item": "runtime/generated/c31.1-provenance.json node_version field",
+      "reason": "Records v20.20.2; historical artifact, intentionally not rewritten",
+      "remediation": "New provenance artifacts will record v24.x post-deploy"
+    },
+    {
+      "item": "runtime/generated/c31.2-change-preservation.json node_version field",
+      "reason": "Same as above",
+      "remediation": "Will be superseded by next certification cycle"
+    },
+    {
+      "item": "runtime/generated/c33-chromium-certification.json node_version field",
+      "reason": "Same as above",
+      "remediation": "Will be superseded by next certification cycle"
+    },
+    {
+      "item": "runtime/generated/c40-provenance.json node_version field",
+      "reason": "Same as above",
+      "remediation": "Will be superseded by next certification cycle"
+    },
+    {
+      "item": "ee9c4f66 push workflow conclusion metadata",
+      "reason": "All 6 workflows succeeded on Node 20; will re-run on Node 24 after merge to re-establish evidence trail",
+      "remediation": "New verification evidence generated post-deploy"
+    },
+    {
+      "item": "5e944ba9 Push failures (Ruff F841 in test_mutation_gap_repairs.py:323)",
+      "reason": "Pre-existing from mutation-strengthening commit; unrelated to Node change but must be tracked separately",
+      "remediation": "Fix via separate PR or included in next maintenance commit"
+    }
+  ],
+  "verification_passed": true,
+  "production_build_on_node24": true,
+  "no_regression_in_python_toolchain": true
+}

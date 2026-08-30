@@ -9,7 +9,7 @@ version: "1.0"
 # Program 1: Infrastructure foundation
 infrastructure:
   python_version: "3.12"
-  node_version: "20"
+  node_version: "24"
   cache_strategy: "dependency-hash"
 
 # Program 2: Repository Intelligence (implemented)

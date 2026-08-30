@@ -7,6 +7,17 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+cd "$REPO_ROOT"
+
+# Canonical Python resolver (venv-first)
+if [ -x "$REPO_ROOT/.venv/bin/python" ]; then
+  PY="$REPO_ROOT/.venv/bin/python"
+else
+  PY="$(command -v python3 || command -v python)"
+fi
+
 BACKEND_DIR="${1:-backend}"
 CHANGED_FILES="${2:-}"
 
@@ -45,7 +56,7 @@ else
 fi
 
 # Run contract tests with coverage
-pytest $TEST_PATH \
+"$PY" -m pytest $TEST_PATH \
   --timeout=60 \
   --tb=short \
   -v \

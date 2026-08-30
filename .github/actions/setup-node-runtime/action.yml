@@ -4,13 +4,13 @@
 # Rule 1 & 3: all Node setup lives here; no workflow inlines npm logic.
 
 name: "Setup Node.js Runtime"
-description: "Installs Node.js 20, configures npm, installs frontend dependencies with caching."
+description: "Installs Node.js 24 LTS, configures npm, installs frontend dependencies with caching."
 
 inputs:
   node-version:
     description: "Node.js version"
     required: false
-    default: "20"
+    default: "24"
   working-directory:
     description: "Directory containing package.json"
     required: false

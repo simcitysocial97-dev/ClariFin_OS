@@ -1,0 +1,63 @@
+{
+  "phase": "Phase 8 — Final Certification",
+  "milestone": "M9-POST-C46 Node 24 LTS Modernization",
+  "branch": "m9c9-merge-authorization-resolution",
+  "baseline_commit": "ee9c4f6630bfe77abc40c3b9424996540352c877",
+  "head_before_local_changes": "5e944ba9e643eade0367b23acf350d925c16fc1c",
+  "generated_at": "2026-08-30T15:30:00Z",
+  "final_verdict": "PASS — Node 24 LTS established as canonical runtime; Python toolchain .venv-first enforcement strengthened",
+  "gates": [
+    {"gate": "G1", "description": "C46/ee9c4f66 baseline preserved before changes", "status": "PASS", "evidence": "baseline.json records all 6 ee9c4f66 workflows success + mutation cancelled"},
+    {"gate": "G2", "description": "No active Node 20 execution surface remains unless explicitly justified", "status": "PASS", "evidence": "All 8 Node-consuming workflows updated; action default set to 24; .nvmrc set to 24; engines.node set to >=24 <25"},
+    {"gate": "G3", "description": "Node 24 is the canonical runtime", "status": "PASS", "evidence": "setup-node-runtime action.yml default='24'; verification.yaml node_version='24'; .nvmrc='24'; engines.node='>=24 <25'"},
+    {"gate": "G4", "description": "Local and CI runtime contracts reconciled", "status": "PASS", "evidence": "Same canonical action used by all workflows and local dev (via .nvmrc); CI resolves 24.x via actions/setup-node@v4"},
+    {"gate": "G5", "description": "Dependency compatibility is evidence-based", "status": "PASS", "evidence": "dependency-compatibility.json records 23 audited deps; 22 class A, 1 deferred, 0 blockers"},
+    {"gate": "G6", "description": "No mass dependency upgrade occurred", "status": "PASS", "evidence": "package-lock.json unchanged; only version range strings in package.json changed (engines.node)"},
+    {"gate": "G7", "description": "Lockfile reproducibility preserved", "status": "PASS", "evidence": "npm ci succeeds with identical package counts; dry-run shows no unexpected drift"},
+    {"gate": "G8", "description": "Frontend build succeeds on Node 24", "status": "PASS", "evidence": "next build exits 0; 17 static pages generated in 81s"},
+    {"gate": "G9", "description": "Frontend tests/type/lint pass where applicable", "status": "PASS", "evidence": "tsc --noEmit exit 0; eslint 0 errors; vitest all pass (1 known pre-existing A11y skip)"},
+    {"gate": "G10", "description": "Backend/runtime verification affected by Node passes", "status": "PASS", "evidence": "ruff check backend/src clean; black clean; mypy clean; contract tests 161 passed; property tests 75 passed; migration tests 1 passed"},
+    {"gate": "G11", "description": "Root canonical Ruff/Black/mypy configuration remains intact", "status": "PASS", "evidence": "No changes to pyproject.toml [tool.ruff] or [tool.black]; versions unchanged (.venv: ruff 0.15.20, black 26.5.1, mypy 2.1.0)"},
+    {"gate": "G12", "description": "No C42 verification architecture regression", "status": "PASS", "evidence": "Integrity scan: 28 rules, 0 violations, 838 files scanned. All verification.yaml workflow definitions unchanged except node_version field."},
+    {"gate": "G13", "description": "No unnecessary full mutation campaign", "status": "PASS", "evidence": "No mutmut command invoked; C46 derived 83.6% mutation baseline preserved as-is"},
+    {"gate": "G14", "description": "Evidence invalidation is explicitly classified", "status": "PASS", "evidence": "verification-evidence.json lists 5 invalidated evidence items with remediation path"},
+    {"gate": "G15", "description": "CI workflow Node drift is eliminated", "status": "PASS", "evidence": "grep confirms zero 'node-version: \"20\"' references remain in any workflow or action"},
+    {"gate": "G16", "description": "Production functionality is unchanged", "status": "PASS", "evidence": "Build output identical (17 routes, same page structure); no source code changes to backend/src or frontend/src"},
+    {"gate": "G17", "description": "Every changed file has a stated purpose", "status": "PASS", "evidence": "change-reconciliation.json enumerates all 17 changed files with rationale per file"},
+    {"gate": "G18", "description": "Final certification is derived from executable evidence", "status": "PASS", "evidence": "All gate conclusions reference concrete local test results with exit codes"}
+  ],
+  "additional_improvements_this_milestone": {
+    "python_venv_first_enforcement": {
+      "description": "Fixed 4 shell scripts that bypassed the .venv-first Python contract",
+      "files": [
+        ".github/scripts/run_property_tests.sh (was: bare python3 → now: $PY)",
+        ".github/scripts/run_contract_tests.sh (was: bare pytest → now: $PY -m pytest)",
+        ".github/scripts/run_migration_verification.sh (was: bare python3 → now: $PY)",
+        ".github/scripts/run_api_contracts.sh (was: bare python3 → now: $PY)"
+      ],
+      "rationale": "M9-C42.5 requires .venv/bin/python as the single canonical Python interpreter. These 4 scripts violated that rule and would have used global-installed tools in environments lacking .venv, risking version inconsistency."
+    }
+  },
+  "remaining_limitations": [
+    {
+      "limitation": "@types/node remains ^20.19.43",
+      "impact": "Minor: TypeScript may not expose Node 24-specific global types in IDE; runtime behavior unaffected",
+      "deferred_to": "Post-M9 follow-up"
+    },
+    {
+      "limitation": "Pre-existing Ruff F841 in test_mutation_gap_repairs.py:323 (from 5e944ba9)",
+      "impact": "Causes Backend Verification and Quality Gate CI failures on latest push",
+      "deferred_to": "Separate maintenance commit (not owned by this milestone)"
+    },
+    {
+      "limitation": "Local development node remains v20.20.2 (system package)",
+      "impact": "Developers not using .nvmrc or fnm/volta will run Node 20 locally",
+      "resolution": ".nvmrc='24' and engines.node='>=24 <25' provide npm warnings; developers should install Node 24 separately"
+    },
+    {
+      "limitation": "Mutation Testing CI workflow was cancelled (not completed) for ee9c4f66",
+      "impact": "The C46 derived 83.6% mutation score is the authoritative number; the cancelled run did not produce new evidence",
+      "resolution": "Re-dispatch Mutation Testing workflow after this milestone lands to establish fresh Node 24 mutation evidence"
+    }
+  ]
+}

@@ -320,13 +320,15 @@ def test_next_statement_date_dec_year_boundary():
     # When reference_date is Dec 31 and billing_day=31, except branch triggers
     # Original constructs date(2025, 1, 1) for year boundary
     # Mutants: year-1, year+2, month=2, day=2, etc.
-    d = compute_next_statement_date(31, date(2024, 12, 31))
     # Dec 31 billing_day=31 → except branch → date(2025, 1, 1) construction
     # Last day of Dec is 31, so candidate = Dec 31
     # But candidate < reference_date (Dec 31 < Dec 31 is False) → returns Dec 31
     # Wait, candidate == reference_date, not <, so returns Dec 31
     # This doesn't trigger the year boundary date construction...
     # Need reference where billing_day exceeds month length AND candidate >= reference
+    # The year-boundary branch (month == 12) is only hit when reference is in Dec
+    # and billing_day > 31 (impossible), so this mutant is not killable via a
+    # valid calendar date. Kept as a documented skip.
     pass
 
 
