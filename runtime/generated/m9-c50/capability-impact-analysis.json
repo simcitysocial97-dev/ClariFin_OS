@@ -1,0 +1,80 @@
+{
+  "directly_affected": [
+    "api-contracts",
+    "loan-engine"
+  ],
+  "transitively_affected": [],
+  "shared_infrastructure_affected": [],
+  "unmapped": [],
+  "capability_impacts": [
+    {
+      "capability_id": "api-contracts",
+      "impact_kind": "directly_affected",
+      "affected_components": [],
+      "required_verification_surfaces": [
+        "backend",
+        "contract",
+        "frontend",
+        "unit"
+      ],
+      "required_tests": [
+        "frontend/tests/src"
+      ],
+      "required_workflows": [
+        "backend",
+        "contracts",
+        "frontend",
+        "run_backend_verification",
+        "run_contract_tests",
+        "run_frontend_verification"
+      ],
+      "invalidated_evidence": [],
+      "reusable_evidence": [],
+      "revalidation_required": [],
+      "sources": [
+        "direct: capability contract path match"
+      ],
+      "is_mapped": true
+    },
+    {
+      "capability_id": "loan-engine",
+      "impact_kind": "directly_affected",
+      "affected_components": [
+        "loan"
+      ],
+      "required_verification_surfaces": [
+        "backend",
+        "contract",
+        "property",
+        "unit"
+      ],
+      "required_tests": [
+        "backend/tests/unit/engines/loan_engine"
+      ],
+      "required_workflows": [
+        "backend",
+        "contracts",
+        "property",
+        "run_backend_verification",
+        "run_contract_tests",
+        "run_fast_checks",
+        "run_property_tests"
+      ],
+      "invalidated_evidence": [],
+      "reusable_evidence": [],
+      "revalidation_required": [],
+      "sources": [
+        "direct: capability contract path match"
+      ],
+      "is_mapped": true
+    }
+  ],
+  "decision_provenance": {
+    "api-contracts": [
+      "direct: capability contract path match"
+    ],
+    "loan-engine": [
+      "direct: capability contract path match"
+    ]
+  }
+}

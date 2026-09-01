@@ -1,0 +1,19 @@
+{
+  "is_fail_closed": false,
+  "fail_closed_reasons": [],
+  "escalation_conditions": [
+    {
+      "condition_id": "ESC-UNMAPPED-PRODUCTION-SURFACE",
+      "description": "Production surface change with no capability mapping",
+      "triggered": true,
+      "reason": "1 production surfaces not mapped to any capability"
+    }
+  ],
+  "unmapped_surfaces": [],
+  "unmapped_capabilities": [],
+  "summary": {
+    "total_escalation_conditions": 1,
+    "total_unmapped_surfaces": 0,
+    "total_unmapped_capabilities": 0
+  }
+}

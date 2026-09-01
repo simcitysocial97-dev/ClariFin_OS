@@ -1,0 +1,44 @@
+[
+  {
+    "problem": "mutation_survivor",
+    "action": "direct_test_edit",
+    "verdict": "UNSAFE_BYPASS",
+    "reason": "Mutation survivor requires durable intel classification before any test writing. Direct test edit bypasses survivor-intel and may introduce equivalent mutants or false fixes."
+  },
+  {
+    "problem": "changed_file",
+    "action": "direct_test_run",
+    "verdict": "SUBOPTIMAL_PATH",
+    "reason": "Changed production file should route through blast-radius first to identify transitive/shared impact. Direct pytest may miss transitively affected capabilities."
+  },
+  {
+    "problem": "coverage_drop",
+    "action": "direct_tool_run",
+    "verdict": "SUBOPTIMAL_PATH",
+    "reason": "Coverage drop requires measurement-truth record before reuse. Raw `coverage run` bypasses the authoritative record."
+  },
+  {
+    "problem": "workflow_failure",
+    "action": "direct_rerun",
+    "verdict": "SUBOPTIMAL_PATH",
+    "reason": "Workflow failure requires failure semantics classification before rerun. Direct rerun may repeat an infra timeout."
+  },
+  {
+    "problem": "stale_evidence",
+    "action": "evidence_reuse",
+    "verdict": "UNSAFE_BYPASS",
+    "reason": "Stale evidence must NOT be reused per C47 governing constraint. Reuse invalidates certification from incomplete evidence."
+  },
+  {
+    "problem": "changed_file",
+    "action": "engine_only",
+    "verdict": "UNSAFE_BYPASS",
+    "reason": "Shared infrastructure changes require blast-radius expansion. Engine-only validation ignores transitive impact."
+  },
+  {
+    "problem": "unknown_failure",
+    "action": "no_action",
+    "verdict": "NO_CANONICAL_CAPABILITY",
+    "reason": "No canonical capability identified for this unknown failure. Escalate to integrity audit + manual review."
+  }
+]

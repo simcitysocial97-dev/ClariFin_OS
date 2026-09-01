@@ -1,0 +1,11 @@
+{
+  "blast_radius_contract_id": "brc-6ef351b5148f",
+  "minimum_safe_verification_count": 1,
+  "verification_surfaces_count": 13,
+  "execution_plan_ready": true,
+  "c49_integration": {
+    "orchestrator": "ExecutionOrchestrator",
+    "plan_contract": "ExecutionPlan",
+    "task_contract": "ExecutionTaskSpec"
+  }
+}

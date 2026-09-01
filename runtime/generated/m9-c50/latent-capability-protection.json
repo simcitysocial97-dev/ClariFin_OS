@@ -1,0 +1,549 @@
+{
+  "schema": "m9-c50-latent-capability-report/v1",
+  "audited_paths": [
+    "runtime/foundation/verification/change_surface.py",
+    "runtime/foundation/verification/blast_radius.py",
+    "runtime/foundation/verification/blast_radius_cli.py"
+  ],
+  "latent_capabilities": [
+    {
+      "name": "BlastRadiusContract",
+      "path": "runtime/foundation/verification/blast_radius.py",
+      "kind": "import",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:126:        \"BlastRadiusContract\","
+      ],
+      "indirect_references": [],
+      "verdict": "protected",
+      "reason": "Found 1 references in control plane"
+    },
+    {
+      "name": "BlastRadiusEngine",
+      "path": "runtime/foundation/verification/blast_radius.py",
+      "kind": "import",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:127:        \"BlastRadiusEngine\","
+      ],
+      "indirect_references": [],
+      "verdict": "protected",
+      "reason": "Found 1 references in control plane"
+    },
+    {
+      "name": "compute_blast_radius",
+      "path": "runtime/foundation/verification/blast_radius.py",
+      "kind": "import",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py:273:    from runtime.foundation.intelligence.platform.blast import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py:289:    blast = compute_blast_radius(change)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_diagnostics.py:9:from runtime.foundation.intelligence.platform.blast import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_diagnostics.py:28:    blast = compute_blast_radius(change)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:55:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:57:        contract = compute_blast_radius(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:75:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:77:        contract = compute_blast_radius([\"backend/src/common/calculations.py\"])",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:97:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:100:        contract = compute_blast_radius(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:117:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:119:        contract = compute_blast_radius([\"backend/pyproject.toml\"])",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:131:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:133:        contract = compute_blast_radius(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:151:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:154:        contract = compute_blast_radius(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:172:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:174:        contract = compute_blast_radius(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:193:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:196:        contract = compute_blast_radius(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:218:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:220:        contract = compute_blast_radius(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:235:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:237:        contract = compute_blast_radius(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:256:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:259:        contract = compute_blast_radius([\"backend/src/common/calculations.py\"])",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:273:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:276:        contract = compute_blast_radius(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:308:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:311:        c1 = compute_blast_radius(files)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:312:        c2 = compute_blast_radius(files)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:330:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:332:        contract = compute_blast_radius(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:339:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:341:        contract = compute_blast_radius(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:347:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:349:        contract = compute_blast_radius(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:397:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:399:        contract = compute_blast_radius(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:414:        from runtime.foundation.verification.blast_radius import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:416:        contract = compute_blast_radius(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_diagnose_failures.py:22:from runtime.foundation.intelligence.platform.blast import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_diagnose_failures.py:46:    blast = compute_blast_radius(change)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_vea5_tier_plan.py:312:        compute_blast_radius,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_vea5_tier_plan.py:320:    blast = compute_blast_radius(change)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_failure_attribution.py:29:from runtime.foundation.intelligence.platform.blast import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_failure_attribution.py:52:    blast = compute_blast_radius(change)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:20:from runtime.foundation.intelligence.platform.blast import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:129:    blast = compute_blast_radius(change, resolver=resolver)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:138:    blast = compute_blast_radius(change, resolver=resolver)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:146:        data = compute_blast_radius(change, resolver=resolver).to_dict()",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:156:    blast = compute_blast_radius(change, resolver=resolver)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:174:    blast = compute_blast_radius(change, resolver=resolver)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:185:    blast = compute_blast_radius(change, resolver=resolver)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:196:    blast = compute_blast_radius(change, resolver=resolver)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:212:    plan = optimize_verification(compute_blast_radius(change, resolver=resolver))",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:220:    plan = optimize_verification(compute_blast_radius(change, resolver=resolver))",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:226:    plan = optimize_verification(compute_blast_radius(change, resolver=resolver))",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:233:    plan = optimize_verification(compute_blast_radius(change, resolver=resolver))",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:241:    plan = optimize_verification(compute_blast_radius(change, resolver=resolver))",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:261:    plan = optimize_verification(compute_blast_radius(change, resolver=resolver))",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:276:    blast = compute_blast_radius(change, resolver=resolver)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:322:    blast = compute_blast_radius(change, resolver=resolver)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:340:    blast = compute_blast_radius(change, resolver=resolver)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_engineering_intelligence.py:379:    plan = optimize_verification(compute_blast_radius(change, resolver=resolver))",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/system/observability/analytics.py:99:        blast_radius = self._compute_blast_radius(run_records)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/system/observability/analytics.py:239:    def _compute_blast_radius(self, records: list[RunRecord]) -> dict[str, Any]:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/workflow-validation.py:18:from runtime.foundation.intelligence.platform.blast import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/workflow-validation.py:69:    blast = compute_blast_radius(change, resolver=resolver)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/real-defect-validation.py:17:from runtime.foundation.intelligence.platform.blast import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/real-defect-validation.py:67:    blast = compute_blast_radius(change, resolver=resolver)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:128:        \"compute_blast_radius\",",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/planner/planner.py:918:        provider graph traversal via ``compute_blast_radius`` so that every",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/planner/planner.py:948:        platform's ``compute_blast_radius``) so that entity kinds like",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/planner/planner.py:954:                compute_blast_radius,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/planner/planner.py:961:            blast = compute_blast_radius(change)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/tier.py:4:(``analyze_changes`` -> ``compute_blast_radius`` -> ``optimize_verification``),",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/tier.py:50:from runtime.foundation.intelligence.platform.blast import compute_blast_radius",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/tier.py:358:    blast = compute_blast_radius(change)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/intelligence/platform/api.py:34:    compute_blast_radius,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/intelligence/platform/api.py:132:    return compute_blast_radius(change, resolver=resolver)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/intelligence/platform/api.py:150:    blast = compute_blast_radius(change, resolver=resolver)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/intelligence/platform/api.py:231:    blast = compute_blast_radius(change, resolver=resolver)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/intelligence/platform/migration.py:162:            \"canonical_replacement\": \"runtime/foundation/intelligence/platform/blast.py (compute_blast_radius)\",",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/intelligence/platform/blast.py:37:__all__ = [\"BlastRadius\", \"ImpactNode\", \"compute_blast_radius\", \"DEFAULT_MAX_DEPTH\"]",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/intelligence/platform/blast.py:390:def compute_blast_radius(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/intelligence/platform/pipeline.py:24:    compute_blast_radius,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/intelligence/platform/pipeline.py:127:    blast = compute_blast_radius(change, resolver=res)"
+      ],
+      "indirect_references": [],
+      "verdict": "protected",
+      "reason": "Found 88 references in control plane"
+    },
+    {
+      "name": "format_blast_radius",
+      "path": "runtime/foundation/verification/blast_radius.py",
+      "kind": "import",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:129:        \"format_blast_radius\","
+      ],
+      "indirect_references": [],
+      "verdict": "protected",
+      "reason": "Found 1 references in control plane"
+    },
+    {
+      "name": "ChangeSurfaceDiscovery",
+      "path": "runtime/foundation/verification/blast_radius.py",
+      "kind": "import",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:130:        \"ChangeSurfaceDiscovery\","
+      ],
+      "indirect_references": [],
+      "verdict": "protected",
+      "reason": "Found 1 references in control plane"
+    },
+    {
+      "name": "discover_change_surfaces",
+      "path": "runtime/foundation/verification/blast_radius.py",
+      "kind": "import",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:433:            discover_change_surfaces,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:436:        analysis = discover_change_surfaces(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:444:            discover_change_surfaces,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:447:        analysis = discover_change_surfaces(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:455:            discover_change_surfaces,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:459:        analysis = discover_change_surfaces(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:469:            discover_change_surfaces,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:473:        analysis = discover_change_surfaces(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:131:        \"discover_change_surfaces\","
+      ],
+      "indirect_references": [],
+      "verdict": "protected",
+      "reason": "Found 9 references in control plane"
+    },
+    {
+      "name": "format_surface_analysis",
+      "path": "runtime/foundation/verification/blast_radius.py",
+      "kind": "import",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:132:        \"format_surface_analysis\","
+      ],
+      "indirect_references": [],
+      "verdict": "protected",
+      "reason": "Found 1 references in control plane"
+    },
+    {
+      "name": "cli:blast-radius",
+      "path": "runtime/verify.py",
+      "kind": "command_matcher",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_vea5_m6_evidence_contract.py:68:        provenance={\"category\": \"unit\", \"source\": \"blast-radius\"},",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_e4_graph_attribution.py:132:                \"source\": \"blast-radius\",",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_e4_graph_attribution.py:147:                \"source\": \"blast-radius\",",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_e4_graph_attribution.py:161:                \"source\": \"blast-radius\",",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_e4_graph_attribution.py:166:                \"source\": \"blast-radius\",",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_e4_graph_attribution.py:182:                \"source\": \"blast-radius\",",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_e4_graph_attribution.py:205:                \"source\": \"blast-radius\",",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_e4_graph_attribution.py:225:                \"source\": \"blast-radius\",",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_e4_graph_attribution.py:276:                \"source\": \"blast-radius\",",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:163:    cli_commands = [\"blast-radius\", \"what-should-i-run\"]",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/intelligence/platform/optimizer.py:46:    source: str = \"blast-radius\"",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/intelligence/platform/optimizer.py:156:    cross_source = \"chain-map+blast-radius\" if chain_evidence else \"blast-radius\""
+      ],
+      "indirect_references": [],
+      "verdict": "protected",
+      "reason": "CLI command 'blast-radius' is wired in verify.py"
+    },
+    {
+      "name": "cli:what-should-i-run",
+      "path": "runtime/verify.py",
+      "kind": "command_matcher",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:163:    cli_commands = [\"blast-radius\", \"what-should-i-run\"]",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/operational_cli.py:627:    \"what-should-i-run\": cmd_what_should_i_run,"
+      ],
+      "indirect_references": [],
+      "verdict": "protected",
+      "reason": "CLI command 'what-should-i-run' is wired in verify.py"
+    },
+    {
+      "name": "ExecutionOrchestrator",
+      "path": "runtime/foundation/verification/execution_orchestrator.py",
+      "kind": "registry",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py:1538:            ExecutionOrchestrator,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py:1550:        orch = ExecutionOrchestrator()",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py:1565:            ExecutionOrchestrator,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py:1614:        orch = ExecutionOrchestrator(command_overrides=overrides)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c49.py:52:        ExecutionOrchestrator,"
+      ],
+      "indirect_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c49.py:55:    return ExecutionOrchestrator(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:28:        ExecutionOrchestrator,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c50.py:43:    return ExecutionOrchestrator(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:531:class ExecutionOrchestrator:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:2018:    changed_files: list[str], orchestrator: ExecutionOrchestrator | None = None",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:2020:    orch = orchestrator or ExecutionOrchestrator()",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:190:        \"ExecutionOrchestrator\","
+      ],
+      "verdict": "protected",
+      "reason": "Found 12 references \u2014 C49 module still active"
+    },
+    {
+      "name": "ExecutionPlan",
+      "path": "runtime/foundation/verification/execution_orchestrator.py",
+      "kind": "registry",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/schemathesis/engine/core.py:54:    def _create_execution_plan(self) -> ExecutionPlan:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/schemathesis/engine/core.py:80:        return ExecutionPlan(phases)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/schemathesis/engine/core.py:129:class ExecutionPlan:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py:1574:            \"--plan\", help=\"path to an existing ExecutionPlan JSON to execute\"",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py:1618:                ExecutionPlan,"
+      ],
+      "indirect_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py:1624:            # Reconstruct ExecutionPlan from JSON",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py:1658:            plan = ExecutionPlan(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c49.py:287:            ExecutionPlan,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c49.py:299:        plan = ExecutionPlan(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:347:class ExecutionPlan:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:574:    def build_execution_plan(self, changed_files: list[str]) -> ExecutionPlan:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:575:        \"\"\"Build a deterministic ExecutionPlan from a list of changed files.",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:610:        plan = ExecutionPlan(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1089:        self, plan: ExecutionPlan",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1103:    def verify_prerequisites(self, plan: ExecutionPlan) -> tuple[bool, list[str]]:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1131:        plan: ExecutionPlan,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1313:        plan: ExecutionPlan,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1334:        self, spec: ExecutionTaskSpec, plan: ExecutionPlan",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1438:        plan: ExecutionPlan,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1572:        plan: ExecutionPlan,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1720:        plan: ExecutionPlan,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1813:        plan: ExecutionPlan,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1863:        plan: ExecutionPlan,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1886:        self, plan: ExecutionPlan, live_fp: RepositoryFingerprint",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1907:        self, plan: ExecutionPlan, records: list[TaskExecutionRecord]",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:2019:) -> ExecutionPlan:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:2024:def format_plan(plan: ExecutionPlan) -> str:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:191:        \"ExecutionPlan\","
+      ],
+      "verdict": "protected",
+      "reason": "Found 28 references \u2014 C49 module still active"
+    },
+    {
+      "name": "ExecutionReport",
+      "path": "runtime/foundation/verification/execution_orchestrator.py",
+      "kind": "registry",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:461:class ExecutionReport:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1134:    ) -> ExecutionReport:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1135:        \"\"\"Execute the plan and produce an ExecutionReport.",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1294:        return ExecutionReport(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1866:    ) -> ExecutionReport:"
+      ],
+      "indirect_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1867:        return ExecutionReport(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1887:    ) -> ExecutionReport:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1888:        return ExecutionReport(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:2065:def format_report(report: ExecutionReport) -> str:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:192:        \"ExecutionReport\","
+      ],
+      "verdict": "protected",
+      "reason": "Found 10 references \u2014 C49 module still active"
+    },
+    {
+      "name": "RepositoryFingerprint",
+      "path": "runtime/foundation/verification/execution_orchestrator.py",
+      "kind": "registry",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py:1619:                RepositoryFingerprint,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py:1622:            fp = RepositoryFingerprint.from_dict(data[\"repository_fingerprint\"])",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c49.py:288:            RepositoryFingerprint,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c49.py:302:            repository_fingerprint=RepositoryFingerprint.from_dict(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:205:class RepositoryFingerprint:"
+      ],
+      "indirect_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:215:    def capture(cls) -> RepositoryFingerprint:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:243:    def matches(self, other: RepositoryFingerprint) -> bool:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:256:    def from_dict(cls, d: dict) -> RepositoryFingerprint:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:354:    repository_fingerprint: RepositoryFingerprint",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:595:        live_fp = RepositoryFingerprint.capture()",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:633:    def _expand_control_plane_tasks(self, cp, live_fp: RepositoryFingerprint):",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:999:        live_fp: RepositoryFingerprint,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1090:    ) -> tuple[list[str], RepositoryFingerprint]:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1094:        live_fp = RepositoryFingerprint.capture()",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1175:            current_fp = RepositoryFingerprint.capture()",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1314:        live_fp: RepositoryFingerprint,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1439:        live_fp: RepositoryFingerprint,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1573:        live_fp: RepositoryFingerprint,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1581:        self, spec: ExecutionTaskSpec, live_fp: RepositoryFingerprint",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1722:        live_fp: RepositoryFingerprint,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1865:        live_fp: RepositoryFingerprint,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1886:        self, plan: ExecutionPlan, live_fp: RepositoryFingerprint",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:193:        \"RepositoryFingerprint\","
+      ],
+      "verdict": "protected",
+      "reason": "Found 23 references \u2014 C49 module still active"
+    },
+    {
+      "name": "CAPABILITY_TO_MUTATION_TARGET",
+      "path": "runtime/foundation/verification/execution_orchestrator.py",
+      "kind": "registry",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:271:CAPABILITY_TO_MUTATION_TARGET: dict[str, str] = {",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:507:        target = CAPABILITY_TO_MUTATION_TARGET.get(c, \"\")",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:808:                    target = CAPABILITY_TO_MUTATION_TARGET.get(cap, \"\")",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:975:            return CAPABILITY_TO_MUTATION_TARGET.get(cap_id, \"\")",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:194:        \"CAPABILITY_TO_MUTATION_TARGET\","
+      ],
+      "indirect_references": [],
+      "verdict": "protected",
+      "reason": "Found 5 references \u2014 C49 module still active"
+    },
+    {
+      "name": "CapabilityResolver",
+      "path": "runtime/foundation/verification/capability_resolver.py",
+      "kind": "registry",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:151:class CapabilityResolver:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:483:    resolver = CapabilityResolver(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:213:        \"CapabilityResolver\","
+      ],
+      "indirect_references": [],
+      "verdict": "protected",
+      "reason": "Found 3 references \u2014 C48 module still active"
+    },
+    {
+      "name": "resolve_capabilities",
+      "path": "runtime/foundation/verification/capability_resolver.py",
+      "kind": "registry",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py:1497:        from runtime.foundation.verification.operational_cli import cmd_resolve_capabilities",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py:1499:        return cmd_resolve_capabilities(sys.argv[2:])",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c49.py:373:            resolve_capabilities,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_m9_c49.py:381:        res = resolve_capabilities(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:474:def resolve_capabilities("
+      ],
+      "indirect_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:562:    resolution = resolve_capabilities(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/control_plane.py:46:    resolve_capabilities,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/control_plane.py:172:        resolution = resolve_capabilities(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:214:        \"resolve_capabilities\",",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/planner/planner.py:121:        impacted_capabilities = self._resolve_capabilities(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/planner/planner.py:358:    def _resolve_capabilities(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/operational_cli.py:62:    resolve_capabilities,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/operational_cli.py:143:        resolution = resolve_capabilities(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/operational_cli.py:312:        resolution = resolve_capabilities(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/operational_cli.py:597:def cmd_resolve_capabilities(argv: list[str]) -> int:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/operational_cli.py:612:    resolution = resolve_capabilities(args.files, population=pop, measurements=measurements)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/operational_cli.py:630:    \"resolve-capabilities\": cmd_resolve_capabilities,"
+      ],
+      "verdict": "protected",
+      "reason": "Found 17 references \u2014 C48 module still active"
+    },
+    {
+      "name": "PLANNER_CAPABILITY_ALIASES",
+      "path": "runtime/foundation/verification/capability_resolver.py",
+      "kind": "registry",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:65:PLANNER_CAPABILITY_ALIASES: dict[str, str] = {",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:210:        #         via PLANNER_CAPABILITY_ALIASES),",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:218:            norm = PLANNER_CAPABILITY_ALIASES.get(raw_cap, raw_cap)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:215:        \"PLANNER_CAPABILITY_ALIASES\","
+      ],
+      "indirect_references": [],
+      "verdict": "protected",
+      "reason": "Found 4 references \u2014 C48 module still active"
+    },
+    {
+      "name": "SharedDependencyIndex",
+      "path": "runtime/foundation/verification/capability_resolver.py",
+      "kind": "registry",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:53:    SharedDependencyIndex,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:168:        shared_index: SharedDependencyIndex | None = None,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:480:    shared_index: SharedDependencyIndex | None = None,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:216:        \"SharedDependencyIndex\",",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/shared_impact.py:115:class SharedDependencyIndex:"
+      ],
+      "indirect_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/shared_impact.py:130:    def build(cls, contract_registry) -> SharedDependencyIndex:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/shared_impact.py:213:_INDEX: SharedDependencyIndex | None = None",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/shared_impact.py:216:def get_shared_dependency_index(contract_registry=None) -> SharedDependencyIndex:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/shared_impact.py:225:        _INDEX = SharedDependencyIndex.build(contract_registry)"
+      ],
+      "verdict": "protected",
+      "reason": "Found 9 references \u2014 C48 module still active"
+    },
+    {
+      "name": "get_shared_dependency_index",
+      "path": "runtime/foundation/verification/capability_resolver.py",
+      "kind": "registry",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:54:    get_shared_dependency_index,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:183:                self._shared_index = get_shared_dependency_index(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:217:        \"get_shared_dependency_index\",",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/shared_impact.py:216:def get_shared_dependency_index(contract_registry=None) -> SharedDependencyIndex:"
+      ],
+      "indirect_references": [],
+      "verdict": "protected",
+      "reason": "Found 4 references \u2014 C48 module still active"
+    },
+    {
+      "name": "CapabilityContractRegistry",
+      "path": "runtime/foundation/verification/capability_resolver.py",
+      "kind": "registry",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:35:    CapabilityContractRegistry,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:156:    - CapabilityContractRegistry for capability metadata",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:164:        contract_registry: CapabilityContractRegistry | None = None,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:476:    contract_registry: CapabilityContractRegistry | None = None,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/control_plane.py:36:    CapabilityContractRegistry,"
+      ],
+      "indirect_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/control_plane.py:151:        contract_registry: CapabilityContractRegistry | None = None,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/control_plane.py:543:    contract_registry: CapabilityContractRegistry | None = None,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:218:        \"CapabilityContractRegistry\",",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/command_inventory.py:37:    CapabilityContractRegistry,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/command_inventory.py:190:        contract_registry: CapabilityContractRegistry | None = None,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/measurement_truth_integration.py:37:    CapabilityContractRegistry,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/measurement_truth_integration.py:170:        contract_registry: CapabilityContractRegistry | None = None,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/operational_cli.py:56:    CapabilityContractRegistry,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/operational_cli.py:128:        contract_registry: CapabilityContractRegistry | None = None,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_contract.py:326:class CapabilityContractRegistry:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_contract.py:809:_contract_registry: CapabilityContractRegistry | None = None",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_contract.py:812:def get_capability_contract_registry(config_path: Path | None = None) -> CapabilityContractRegistry:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_contract.py:816:        _contract_registry = CapabilityContractRegistry(config_path)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/strengthening_pipeline.py:33:    CapabilityContractRegistry,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/strengthening_pipeline.py:197:        contract_registry: CapabilityContractRegistry | None = None,"
+      ],
+      "verdict": "protected",
+      "reason": "Found 20 references \u2014 C48 module still active"
+    },
+    {
+      "name": "get_capability_contract_registry",
+      "path": "runtime/foundation/verification/capability_resolver.py",
+      "kind": "registry",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:36:    get_capability_contract_registry,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py:171:            contract_registry or get_capability_contract_registry()",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:552:            get_capability_contract_registry,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:561:            contract_registry or get_capability_contract_registry()",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1970:                get_capability_contract_registry,"
+      ],
+      "indirect_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/execution_orchestrator.py:1976:            registry = get_capability_contract_registry()",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/control_plane.py:42:    get_capability_contract_registry,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/control_plane.py:158:        self._contract_registry = contract_registry or get_capability_contract_registry()",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/latent_capabilities.py:219:        \"get_capability_contract_registry\",",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/command_inventory.py:39:    get_capability_contract_registry,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/command_inventory.py:193:        self._contract_registry = contract_registry or get_capability_contract_registry()",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/shared_impact.py:221:                get_capability_contract_registry,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/shared_impact.py:224:            contract_registry = get_capability_contract_registry()",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/measurement_truth_integration.py:42:    get_capability_contract_registry,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/measurement_truth_integration.py:173:        self._contract_registry = contract_registry or get_capability_contract_registry()",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/operational_cli.py:57:    get_capability_contract_registry,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/operational_cli.py:134:        self._contract_registry = contract_registry or get_capability_contract_registry()",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_contract.py:812:def get_capability_contract_registry(config_path: Path | None = None) -> CapabilityContractRegistry:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_contract.py:828:    registry = get_capability_contract_registry()",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/strengthening_pipeline.py:36:    get_capability_contract_registry,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/strengthening_pipeline.py:202:        self._contract_registry = contract_registry or get_capability_contract_registry()"
+      ],
+      "verdict": "protected",
+      "reason": "Found 21 references \u2014 C48 module still active"
+    },
+    {
+      "name": "MeasurementTruthRecord",
+      "path": "runtime/foundation/verification/measurement_truth.py",
+      "kind": "registry",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_measurement_truth.py:28:def _base_record(**overrides) -> mt.MeasurementTruthRecord:",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_measurement_truth.py:39:    record = mt.MeasurementTruthRecord(",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_measurement_truth.py:240:    restored = mt.MeasurementTruthRecord.from_dict(serialized)",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_measurement_truth.py:257:    restored = mt.MeasurementTruthRecord.from_dict(json.loads(json.dumps(r.to_dict())))",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/measurement_truth_cli.py:25:    MeasurementTruthRecord,"
+      ],
+      "indirect_references": [],
+      "verdict": "protected",
+      "reason": "Found 37 references \u2014 C47 module still active"
+    },
+    {
+      "name": "certification_gate",
+      "path": "runtime/foundation/verification/measurement_truth.py",
+      "kind": "registry",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_measurement_truth.py:79:    assert mt.certification_gate(r) is False",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_measurement_truth.py:97:    assert mt.certification_gate(r) is False",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_measurement_truth.py:106:    assert mt.certification_gate(r) is False",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_measurement_truth.py:115:    assert mt.certification_gate(r) is False",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_measurement_truth.py:204:    assert mt.certification_gate(r) is False"
+      ],
+      "indirect_references": [],
+      "verdict": "protected",
+      "reason": "Found 21 references \u2014 C47 module still active"
+    },
+    {
+      "name": "MeasurementKind",
+      "path": "runtime/foundation/verification/measurement_truth.py",
+      "kind": "registry",
+      "direct_references": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_measurement_truth.py:41:        measurement_kind=mt.MeasurementKind.MUTATION.value,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_measurement_truth.py:135:        kind=mt.MeasurementKind.MUTATION.value,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_measurement_truth.py:148:        kind=mt.MeasurementKind.MUTATION.value,",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_measurement_truth.py:372:    cov.measurement_kind = mt.MeasurementKind.COVERAGE.value",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_measurement_truth.py:380:    assert cov.measurement_kind == mt.MeasurementKind.COVERAGE.value"
+      ],
+      "indirect_references": [],
+      "verdict": "protected",
+      "reason": "Found 57 references \u2014 C47 module still active"
+    }
+  ],
+  "protected_count": 24,
+  "potentially_orphaned_count": 0,
+  "genuinely_unused_count": 0,
+  "deletion_recommendations": []
+}

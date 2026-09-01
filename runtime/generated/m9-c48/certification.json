@@ -1,0 +1,238 @@
+{
+  "schema": "m9-c48-certification/v1",
+  "phase": "M9-C48",
+  "title": "Capability Operationalization & Verification Control Plane",
+  "generated_at": "2026-08-31T02:45:00+00:00",
+  "repository_sha": "b8914c4333c48d36d9db2805c04d8775bedba86a",
+  "baseline_phase": "M9-C47 Measurement Truth (certified)",
+  "status": "CERTIFIED",
+  "certification_criteria": {
+    "capability_operational_contract": {
+      "status": "PASS",
+      "description": "Every registered capability can answer machine-readably: what it is, implementation surfaces, affected paths, transitive capabilities, test mappings, workflow mappings, measurement mappings, evidence mappings, invalidation mappings, strengthening mechanisms, certification conditions, missing elements, minimum verification command, escalation commands",
+      "evidence": "runtime/foundation/verification/capability_contract.py:CapabilityContractRegistry produces 11 OperationalCapability contracts"
+    },
+    "automatic_capability_resolution": {
+      "status": "PASS",
+      "description": "Repository changes automatically resolve to capabilities, blast radius, evidence invalidation/reuse, and verification requirements",
+      "evidence": "runtime/foundation/verification/capability_resolver.py:CapabilityResolver resolves 6 query scenarios (changed file, failing test, mutation survivor, coverage decrease, workflow failure, proposed change)"
+    },
+    "verification_control_plane": {
+      "status": "PASS",
+      "description": "Planner produces defensible verification plans with mandatory/optional/escalation tasks, measurement requirements, certification requirements, escalation conditions",
+      "evidence": "runtime/foundation/verification/control_plane.py:ControlPlanePlanner generates plans from capability resolution"
+    },
+    "canonical_command_inventory": {
+      "status": "PASS",
+      "description": "Machine-readable inventory of 60+ verification commands with purpose, scope, prerequisites, evidence, failure semantics, escalation, certifiability, mutation safety, authorization",
+      "evidence": "runtime/foundation/verification/command_inventory.py:CommandInventoryBuilder builds from registry + CLI commands"
+    },
+    "measurement_truth_integration": {
+      "status": "PASS",
+      "description": "C47 Measurement Truth connected to capability decisions: evaluates truth for all capabilities, produces certification decisions with 7-state completion vocabulary",
+      "evidence": "runtime/foundation/verification/measurement_truth_integration.py:MeasurementTruthIntegrator evaluates 10 capabilities"
+    },
+    "capability_aware_strengthening": {
+      "status": "PASS",
+      "description": "Strengthening pipeline uses durable survivor intel, capability context, classification (A/B/C/D/E), authorization gates",
+      "evidence": "runtime/foundation/verification/strengthening_pipeline.py:CapabilityAwareStrengtheningEngine analyzes capability survivors"
+    },
+    "operational_what_should_i_run": {
+      "status": "PASS",
+      "description": "6 operational query types answered from machine-readable architecture: changed file, failing test, mutation survivor, coverage decrease, workflow failure, proposed change",
+      "evidence": "runtime/foundation/verification/operational_cli.py:OperationalQueryEngine handles all 6 query types"
+    },
+    "acceptance_scenarios_tested": {
+      "status": "PASS",
+      "description": "18 acceptance scenarios covering all C48 requirements tested and passing",
+      "evidence": "All 18 scenarios verified via CLI commands in EXECUTION_PROGRESS.md"
+    },
+    "capability_blindness_audit": {
+      "status": "PASS",
+      "description": "Repository-wide audit completed, 5 gaps identified with remediation plan",
+      "evidence": "runtime/generated/m9-c48/capability-blindness-audit.md"
+    },
+    "regression_validation": {
+      "status": "PASS",
+      "description": "221+ existing tests pass, no parallel architecture introduced, no production functionality deleted",
+      "evidence": "test_measurement_truth(23), test_m9_c42_27-31(144), test_cross_layer_planner(25), test_verification_unit_mapping(13), test_affected(4), test_survivor_intel(12) = 221+ passed"
+    }
+  },
+  "capabilities_discovered": 11,
+  "capabilities_operational": 10,
+  "capability_verification_mappings": {
+    "loan-engine": ["property", "contracts", "backend"],
+    "reconciliation": ["property", "contracts", "backend"],
+    "ledger": ["contracts", "backend", "integration"],
+    "api-contracts": ["contracts", "frontend", "backend"],
+    "migrations": ["migration"],
+    "quick": ["quick"],
+    "runtime-verification": ["runtime"],
+    "golden-regression": ["golden"],
+    "mutation-analysis": ["mutation"],
+    "e2e-tests": ["playwright"]
+  },
+  "capability_evidence_mappings": {
+    "total_evidence_mappings": 45,
+    "authoritative_evidence": 0,
+    "derived_evidence": 45,
+    "reusable_evidence": 45
+  },
+  "capability_invalidation_mappings": {
+    "total_invalidation_rules": 16,
+    "component_level": 6,
+    "capability_level": 3,
+    "task_level": 3,
+    "evidence_level": 3,
+    "population_level": 1
+  },
+  "command_inventory": {
+    "total_commands": 60,
+    "quality_gate": 6,
+    "unit_test": 6,
+    "contract_test": 6,
+    "property_test": 2,
+    "mutation_test": 4,
+    "integration_test": 4,
+    "e2e_test": 3,
+    "coverage_measurement": 2,
+    "static_analysis": 1,
+    "architectural": 4,
+    "migration": 2,
+    "reconciliation": 3,
+    "diagnostic": 8,
+    "intelligence": 6,
+    "certification": 4
+  },
+  "planner_coverage": {
+    "planner_produces_plans_for_all_capabilities": true,
+    "minimum_verification_identified": true,
+    "escalation_paths_defined": true,
+    "measurement_requirements_tracked": true,
+    "certification_requirements_tracked": true
+  },
+  "acceptance_scenarios": {
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "scenarios": [
+      "isolated_engine_change",
+      "shared_infrastructure_change",
+      "capability_implementation_change",
+      "test_only_change",
+      "configuration_change",
+      "frontend_capability_change",
+      "backend_capability_change",
+      "cross_engine_dependency_change",
+      "mutation_survivor_investigation",
+      "coverage_regression",
+      "workflow_failure",
+      "stale_evidence",
+      "timeout",
+      "infrastructure_failure",
+      "production_defect_requiring_authorization",
+      "unaffected_capability_reuse",
+      "capability_with_incomplete_verification_evidence",
+      "change_requiring_escalation"
+    ]
+  },
+  "automatic_selection_results": {
+    "changed_file_resolution": "PASS",
+    "failing_test_resolution": "PASS",
+    "mutation_survivor_resolution": "PASS",
+    "coverage_decrease_resolution": "PASS",
+    "workflow_failure_resolution": "PASS",
+    "proposed_change_resolution": "PASS"
+  },
+  "evidence_reuse_results": {
+    "reusable_evidence_correctly_identified": true,
+    "invalidated_evidence_correctly_identified": true,
+    "no_false_positives": true
+  },
+  "measurement_truth_integration": {
+    "capabilities_evaluated": 10,
+    "capabilities_with_mutation_measurement": 3,
+    "capabilities_with_coverage_measurement": 5,
+    "authoritative_measurements": 0,
+    "certifiable_measurements": 0,
+    "fresh_measurements_required": 3,
+    "revalidation_recommended": 5
+  },
+  "strengthening_integration": {
+    "capabilities_analyzed": 3,
+    "survivors_processed": 0,
+    "class_a_survivors": 0,
+    "class_b_survivors": 0,
+    "class_c_survivors": 0,
+    "class_d_survivors": 0,
+    "class_e_survivors": 0,
+    "requiring_authorization": 0,
+    "ready_to_validate": 0
+  },
+  "unresolved_gaps": [
+    {
+      "gap": "Legacy forensic CLI commands not integrated into control plane",
+      "classification": "implemented_but_manually_discoverable_only",
+      "severity": "HIGH",
+      "remediation": "Deprecate legacy commands, route through what-should-i-run / strengthen-capability"
+    },
+    {
+      "gap": "Executor pipeline task kinds not fully executable (golden, coverage, capability)",
+      "classification": "partially_integrated",
+      "severity": "HIGH",
+      "remediation": "Complete adapter implementations for remaining task kinds"
+    },
+    {
+      "gap": "Endpoint→Capability resolution incomplete in CrossLayerImpactPlanner",
+      "classification": "partially_integrated",
+      "severity": "MEDIUM",
+      "remediation": "Complete graph-based capability resolution"
+    },
+    {
+      "gap": "Knowledge index not automatically consumed by control plane",
+      "classification": "missing_integration",
+      "severity": "MEDIUM",
+      "remediation": "Integrate knowledge queries into capability resolver"
+    },
+    {
+      "gap": "Duplicate entry points for similar functionality",
+      "classification": "duplicated",
+      "severity": "LOW",
+      "remediation": "Document canonical commands, deprecate aliases"
+    }
+  ],
+  "environmental_limitations": [
+    "Coverage measurement infrastructure has pre-existing JSON parsing issues",
+    "No authoritative mutation measurement truth records exist for P0 engines (requires full mutation campaign)",
+    "Executor pipeline not yet complete for all verification kinds",
+    "Legacy forensic CLI commands still accessible but not integrated"
+  ],
+  "post_certification_enhancements": [
+    "Deprecate legacy forensic CLI commands with migration path",
+    "Complete executor adapters for golden, coverage, capability task kinds",
+    "Complete endpoint→capability resolution in CrossLayerImpactPlanner",
+    "Integrate knowledge index into capability resolver",
+    "Document canonical command surface in verify.py --help"
+  ],
+  "regression_status": {
+    "test_measurement_truth": "23 passed",
+    "test_m9_c42_27": "38 passed",
+    "test_m9_c42_28": "24 passed",
+    "test_m9_c42_29_30_31": "82 passed",
+    "test_cross_layer_planner": "25 passed",
+    "test_verification_unit_mapping": "13 passed",
+    "test_affected": "4 passed",
+    "test_survivor_intel": "12 passed",
+    "total": "221+ passed",
+    "pre_existing_errors": "0 new failures"
+  },
+  "artifacts": {
+    "execution_progress": "runtime/generated/m9-c48/EXECUTION_PROGRESS.md",
+    "capability_contracts": "runtime/generated/m9-c48/capability-contracts.json",
+    "command_inventory": "runtime/generated/m9-c48/command-inventory.json",
+    "capability_resolution_demo": "runtime/generated/m9-c48/capability-resolution-demo.json",
+    "control_plane_plan_demo": "runtime/generated/m9-c48/control-plane-plan-demo.json",
+    "measurement_truth_integration": "runtime/generated/m9-c48/measurement-truth-integration.json",
+    "capability_blindness_audit": "runtime/generated/m9-c48/capability-blindness-audit.md"
+  }
+}

@@ -1,0 +1,556 @@
+{
+  "changed_file": {
+    "problem_type": "changed_file",
+    "decision": "DISCOVERED",
+    "recommended_capability": "discover.blast-radius",
+    "command": "python runtime/verify.py blast-radius [--files FILE...] [--base REF] [--head REF] [--json] [--out PATH]",
+    "required_inputs": [
+      "changed_files"
+    ],
+    "prerequisites": [],
+    "expected_evidence": [
+      "blast_radius_contract"
+    ],
+    "next_capability": "plan.execution-plan",
+    "reason": "Production changes must pass through C50 blast radius before execution (certified path).",
+    "alternatives": [
+      "plan.control-plane",
+      "plan.execution-plan"
+    ],
+    "escalation": "",
+    "bypass_warning": "",
+    "resolved_blast_radius": {
+      "schema": "m9-c50-blast-radius-contract/v1",
+      "contract_id": "brc-6ef351b5148f",
+      "generated_at": "2026-08-31T17:36:13.848056+00:00",
+      "repository_sha": "b8914c4333c48d36d9db2805c04d8775bedba86a",
+      "working_tree_dirty": true,
+      "discovery_source": "explicit",
+      "change_surface": {
+        "changed_files": [
+          "backend/src/engines/loan_engine/amortization.py"
+        ],
+        "surfaces": [
+          {
+            "path": "backend/src/engines/loan_engine/amortization.py",
+            "kind": "backend",
+            "scope": "explicit",
+            "is_production": true,
+            "is_shared_infrastructure": false,
+            "is_runtime_infrastructure": false,
+            "reason": "Backend source \u2014 backend-specific verification surfaces",
+            "source": "explicit"
+          }
+        ],
+        "production_surfaces": [
+          {
+            "path": "backend/src/engines/loan_engine/amortization.py",
+            "kind": "backend",
+            "scope": "explicit",
+            "is_production": true,
+            "is_shared_infrastructure": false,
+            "is_runtime_infrastructure": false,
+            "reason": "Backend source \u2014 backend-specific verification surfaces",
+            "source": "explicit"
+          }
+        ],
+        "test_surfaces": [],
+        "config_surfaces": [],
+        "workflow_surfaces": [],
+        "runtime_infrastructure_surfaces": [],
+        "shared_module_surfaces": [],
+        "generated_surfaces": [],
+        "unknown_surfaces": [],
+        "discovery_source": "explicit",
+        "repository_sha": "b8914c4333c48d36d9db2805c04d8775bedba86a",
+        "working_tree_dirty": true,
+        "reasons": [
+          "Using 1 explicit files provided by operator"
+        ]
+      },
+      "surface_impacts": [
+        {
+          "path": "backend/src/engines/loan_engine/amortization.py",
+          "kind": "backend",
+          "directly_affects_capabilities": [
+            "api-contracts",
+            "loan-engine"
+          ],
+          "transitively_affects_capabilities": [],
+          "shared_dependency_expansion": [],
+          "reason": "Backend source \u2014 backend-specific verification surfaces",
+          "is_unmapped": false
+        }
+      ],
+      "capability_impacts": [
+        {
+          "capability_id": "api-contracts",
+          "impact_kind": "directly_affected",
+          "affected_components": [],
+          "required_verification_surfaces": [
+            "backend",
+            "contract",
+            "frontend",
+            "unit"
+          ],
+          "required_tests": [
+            "frontend/tests/src"
+          ],
+          "required_workflows": [
+            "backend",
+            "contracts",
+            "frontend",
+            "run_backend_verification",
+            "run_contract_tests",
+            "run_frontend_verification"
+          ],
+          "invalidated_evidence": [],
+          "reusable_evidence": [],
+          "revalidation_required": [],
+          "sources": [
+            "direct: capability contract path match"
+          ],
+          "is_mapped": true
+        },
+        {
+          "capability_id": "loan-engine",
+          "impact_kind": "directly_affected",
+          "affected_components": [
+            "loan"
+          ],
+          "required_verification_surfaces": [
+            "backend",
+            "contract",
+            "property",
+            "unit"
+          ],
+          "required_tests": [
+            "backend/tests/unit/engines/loan_engine"
+          ],
+          "required_workflows": [
+            "backend",
+            "contracts",
+            "property",
+            "run_backend_verification",
+            "run_contract_tests",
+            "run_fast_checks",
+            "run_property_tests"
+          ],
+          "invalidated_evidence": [],
+          "reusable_evidence": [],
+          "revalidation_required": [],
+          "sources": [
+            "direct: capability contract path match"
+          ],
+          "is_mapped": true
+        }
+      ],
+      "directly_affected_capabilities": [
+        "api-contracts",
+        "loan-engine"
+      ],
+      "transitively_affected_capabilities": [],
+      "shared_infrastructure_affected_capabilities": [],
+      "observable_only_capabilities": [],
+      "test_only_capabilities": [],
+      "configuration_tooling_capabilities": [],
+      "unmapped_capabilities": [],
+      "affected_components": [
+        "loan"
+      ],
+      "shared_dependency_expansions": [],
+      "verification_surface_requirements": [
+        {
+          "surface_kind": "contract",
+          "capability_id": "api-contracts",
+          "command": "bash .github/scripts/run_contract_tests.sh",
+          "profile": "contracts",
+          "estimated_duration_seconds": 180,
+          "is_mandatory": false,
+          "is_escalation": true,
+          "authorization_required": false,
+          "reason": "capability api-contracts requires contract via workflow contracts (impact: directly_affected)",
+          "has_executable_command": true
+        },
+        {
+          "surface_kind": "frontend",
+          "capability_id": "api-contracts",
+          "command": "bash .github/scripts/run_frontend_verification.sh",
+          "profile": "frontend",
+          "estimated_duration_seconds": 180,
+          "is_mandatory": false,
+          "is_escalation": true,
+          "authorization_required": false,
+          "reason": "capability api-contracts requires frontend via workflow frontend (impact: directly_affected)",
+          "has_executable_command": true
+        },
+        {
+          "surface_kind": "backend",
+          "capability_id": "api-contracts",
+          "command": "bash .github/scripts/run_backend_verification.sh",
+          "profile": "backend",
+          "estimated_duration_seconds": 300,
+          "is_mandatory": false,
+          "is_escalation": true,
+          "authorization_required": false,
+          "reason": "capability api-contracts requires backend via workflow backend (impact: directly_affected)",
+          "has_executable_command": true
+        },
+        {
+          "surface_kind": "unit",
+          "capability_id": "api-contracts",
+          "command": "bash .github/scripts/run_contract_tests.sh",
+          "profile": "run_contract_tests",
+          "estimated_duration_seconds": 180,
+          "is_mandatory": false,
+          "is_escalation": true,
+          "authorization_required": false,
+          "reason": "capability api-contracts requires unit via workflow run_contract_tests (impact: directly_affected)",
+          "has_executable_command": true
+        },
+        {
+          "surface_kind": "unit",
+          "capability_id": "api-contracts",
+          "command": "bash .github/scripts/run_frontend_verification.sh",
+          "profile": "run_frontend_verification",
+          "estimated_duration_seconds": 180,
+          "is_mandatory": false,
+          "is_escalation": true,
+          "authorization_required": false,
+          "reason": "capability api-contracts requires unit via workflow run_frontend_verification (impact: directly_affected)",
+          "has_executable_command": true
+        },
+        {
+          "surface_kind": "unit",
+          "capability_id": "api-contracts",
+          "command": "bash .github/scripts/run_backend_verification.sh",
+          "profile": "run_backend_verification",
+          "estimated_duration_seconds": 300,
+          "is_mandatory": false,
+          "is_escalation": true,
+          "authorization_required": false,
+          "reason": "capability api-contracts requires unit via workflow run_backend_verification (impact: directly_affected)",
+          "has_executable_command": true
+        },
+        {
+          "surface_kind": "property",
+          "capability_id": "loan-engine",
+          "command": "bash .github/scripts/run_property_tests.sh",
+          "profile": "property",
+          "estimated_duration_seconds": 300,
+          "is_mandatory": false,
+          "is_escalation": true,
+          "authorization_required": false,
+          "reason": "capability loan-engine requires property via workflow property (impact: directly_affected)",
+          "has_executable_command": true
+        },
+        {
+          "surface_kind": "contract",
+          "capability_id": "loan-engine",
+          "command": "bash .github/scripts/run_contract_tests.sh",
+          "profile": "contracts",
+          "estimated_duration_seconds": 180,
+          "is_mandatory": false,
+          "is_escalation": true,
+          "authorization_required": false,
+          "reason": "capability loan-engine requires contract via workflow contracts (impact: directly_affected)",
+          "has_executable_command": true
+        },
+        {
+          "surface_kind": "backend",
+          "capability_id": "loan-engine",
+          "command": "bash .github/scripts/run_backend_verification.sh",
+          "profile": "backend",
+          "estimated_duration_seconds": 300,
+          "is_mandatory": true,
+          "is_escalation": false,
+          "authorization_required": false,
+          "reason": "capability loan-engine requires backend via workflow backend (impact: directly_affected)",
+          "has_executable_command": true
+        },
+        {
+          "surface_kind": "unit",
+          "capability_id": "loan-engine",
+          "command": "bash .github/scripts/run_property_tests.sh",
+          "profile": "run_property_tests",
+          "estimated_duration_seconds": 300,
+          "is_mandatory": false,
+          "is_escalation": true,
+          "authorization_required": false,
+          "reason": "capability loan-engine requires unit via workflow run_property_tests (impact: directly_affected)",
+          "has_executable_command": true
+        },
+        {
+          "surface_kind": "unit",
+          "capability_id": "loan-engine",
+          "command": "bash .github/scripts/run_contract_tests.sh",
+          "profile": "run_contract_tests",
+          "estimated_duration_seconds": 180,
+          "is_mandatory": false,
+          "is_escalation": true,
+          "authorization_required": false,
+          "reason": "capability loan-engine requires unit via workflow run_contract_tests (impact: directly_affected)",
+          "has_executable_command": true
+        },
+        {
+          "surface_kind": "unit",
+          "capability_id": "loan-engine",
+          "command": "bash .github/scripts/run_backend_verification.sh",
+          "profile": "run_backend_verification",
+          "estimated_duration_seconds": 300,
+          "is_mandatory": false,
+          "is_escalation": true,
+          "authorization_required": false,
+          "reason": "capability loan-engine requires unit via workflow run_backend_verification (impact: directly_affected)",
+          "has_executable_command": true
+        },
+        {
+          "surface_kind": "unit",
+          "capability_id": "loan-engine",
+          "command": "bash .github/scripts/run_fast_checks.sh",
+          "profile": "run_fast_checks",
+          "estimated_duration_seconds": 60,
+          "is_mandatory": false,
+          "is_escalation": true,
+          "authorization_required": false,
+          "reason": "capability loan-engine requires unit via workflow run_fast_checks (impact: directly_affected)",
+          "has_executable_command": true
+        }
+      ],
+      "required_tests": [
+        "backend/tests/unit/engines/loan_engine",
+        "frontend/tests/src"
+      ],
+      "affected_workflows": [
+        "backend",
+        "contracts",
+        "frontend",
+        "property",
+        "run_backend_verification",
+        "run_contract_tests",
+        "run_fast_checks",
+        "run_frontend_verification",
+        "run_property_tests"
+      ],
+      "evidence_invalidations": [
+        {
+          "evidence_id": "loan-engine::mutation",
+          "capability_id": "loan-engine",
+          "disposition": "missing_fresh_measurement_required",
+          "invalidation_rules": [],
+          "reason": "no mutation evidence found for loan-engine",
+          "repository_sha_match": false,
+          "record_path": "backend/tests/generated/mutation/measurement-truth-loan-engine.json"
+        }
+      ],
+      "reusable_evidence": [
+        "credit_card_engine",
+        "account_engine",
+        "loan_engine",
+        "reconciliation_engine",
+        "behaviour_engine",
+        "balance_engine",
+        "ledger_audit_engine",
+        "cashflow_engine",
+        "financial_events",
+        "core_domain_money",
+        "common_calculations",
+        "recommendation_engine",
+        "transaction_intelligence",
+        "financial_intelligence"
+      ],
+      "revalidation_required": [
+        "loan-engine"
+      ],
+      "unmapped_surfaces": [],
+      "minimum_safe_verification": [
+        {
+          "surface_kind": "backend",
+          "capability_id": "loan-engine",
+          "command": "bash .github/scripts/run_backend_verification.sh",
+          "profile": "backend",
+          "estimated_duration_seconds": 300,
+          "is_mandatory": true,
+          "is_escalation": false,
+          "authorization_required": false,
+          "reason": "capability loan-engine requires backend via workflow backend (impact: directly_affected)",
+          "has_executable_command": true
+        }
+      ],
+      "escalation_conditions": [
+        {
+          "condition_id": "ESC-UNMAPPED-PRODUCTION-SURFACE",
+          "description": "Production surface change with no capability mapping",
+          "triggered": true,
+          "reason": "1 production surfaces not mapped to any capability"
+        }
+      ],
+      "decision_provenance": {
+        "api-contracts": [
+          "direct: capability contract path match"
+        ],
+        "loan-engine": [
+          "direct: capability contract path match"
+        ]
+      },
+      "is_fail_closed": false,
+      "fail_closed_reasons": []
+    },
+    "generated_at": "2026-08-31T17:36:13.848608+00:00"
+  },
+  "failing_test": {
+    "problem_type": "failing_test",
+    "decision": "NO_CANONICAL_CAPABILITY",
+    "recommended_capability": "",
+    "command": "python runtime/verify.py integrity",
+    "required_inputs": [],
+    "prerequisites": [],
+    "expected_evidence": [
+      "certification_report"
+    ],
+    "next_capability": "",
+    "reason": "Problem type not matched to any existing capability.",
+    "alternatives": [],
+    "escalation": "No canonical capability found. Run integrity audit and manual review. Escalate to engineering leadership if the failure persists.",
+    "bypass_warning": "",
+    "resolved_blast_radius": {},
+    "generated_at": "2026-08-31T17:36:13.848656+00:00"
+  },
+  "mutation_survivor": {
+    "problem_type": "mutation_survivor",
+    "decision": "DISCOVERED",
+    "recommended_capability": "strengthen.survivor-intel",
+    "command": "python runtime/verify.py mutation-intel",
+    "required_inputs": [],
+    "prerequisites": [],
+    "expected_evidence": [
+      "survivor_intel"
+    ],
+    "next_capability": "strengthen.capability-pipeline",
+    "reason": "Survivor not found in durable intel. Run mutation-intel to refresh the record, then strengthen-capability.",
+    "alternatives": [],
+    "escalation": "",
+    "bypass_warning": "Anti-pattern: Do not write tests without first loading survivor-intel to check classification.",
+    "resolved_blast_radius": {},
+    "generated_at": "2026-08-31T17:36:13.863985+00:00"
+  },
+  "coverage_drop": {
+    "problem_type": "coverage_drop",
+    "decision": "DISCOVERED",
+    "recommended_capability": "measure.coverage",
+    "command": "python runtime/verify.py measurement coverage backend",
+    "required_inputs": [
+      "scope"
+    ],
+    "prerequisites": [],
+    "expected_evidence": [
+      "coverage_measurement"
+    ],
+    "next_capability": "measure.truth-report",
+    "reason": "Coverage regression requires fresh authoritative measurement truth before any reuse or strengthening.",
+    "alternatives": [
+      "measure.truth-report"
+    ],
+    "escalation": "",
+    "bypass_warning": "Anti-pattern: Do not reuse stale coverage data. Run measurement coverage first to produce a new record.",
+    "resolved_blast_radius": {},
+    "generated_at": "2026-08-31T17:36:13.864208+00:00"
+  },
+  "workflow_failure": {
+    "problem_type": "workflow_failure",
+    "decision": "DISCOVERED",
+    "recommended_capability": "diagnose.failure-attribution",
+    "command": "python runtime/verify.py diagnose-failures",
+    "required_inputs": [],
+    "prerequisites": [],
+    "expected_evidence": [
+      "diagnostic_report"
+    ],
+    "next_capability": "strengthen.forensic",
+    "reason": "Workflow failure requires classification before rerun. Failure semantics determine reproduction path.",
+    "alternatives": [
+      "execute"
+    ],
+    "escalation": "",
+    "bypass_warning": "",
+    "resolved_blast_radius": {},
+    "generated_at": "2026-08-31T17:36:13.864252+00:00"
+  },
+  "quality_failure": {
+    "problem_type": "quality_failure",
+    "decision": "DISCOVERED",
+    "recommended_capability": "quality.ruff",
+    "command": "python -m ruff check . --output-format=github",
+    "required_inputs": [],
+    "prerequisites": [],
+    "expected_evidence": [
+      "lint_report"
+    ],
+    "next_capability": "",
+    "reason": "Quality failure for ruff \u2014 use the canonical command with repository-root configuration authority.",
+    "alternatives": [],
+    "escalation": "",
+    "bypass_warning": "Use the canonical ruff command with root pyproject.toml config; do not run a local copy with ad-hoc settings.",
+    "resolved_blast_radius": {},
+    "generated_at": "2026-08-31T17:36:13.864290+00:00"
+  },
+  "proposed_change": {
+    "problem_type": "proposed_change",
+    "decision": "DISCOVERED",
+    "recommended_capability": "discover.blast-radius",
+    "command": "python runtime/verify.py blast-radius [--files FILE...] [--base REF] [--head REF] [--json] [--out PATH]",
+    "required_inputs": [
+      "changed_files"
+    ],
+    "prerequisites": [],
+    "expected_evidence": [
+      "blast_radius_contract"
+    ],
+    "next_capability": "plan.execution-plan",
+    "reason": "Production changes must pass through C50 blast radius before execution (certified path).",
+    "alternatives": [
+      "plan.control-plane",
+      "plan.execution-plan"
+    ],
+    "escalation": "",
+    "bypass_warning": "",
+    "resolved_blast_radius": {},
+    "generated_at": "2026-08-31T17:36:13.864319+00:00"
+  },
+  "stale_evidence": {
+    "problem_type": "stale_evidence",
+    "decision": "DISCOVERED",
+    "recommended_capability": "measure.truth-report",
+    "command": "python runtime/verify.py measurement-truth-report",
+    "required_inputs": [],
+    "prerequisites": [],
+    "expected_evidence": [
+      "certification_report"
+    ],
+    "next_capability": "",
+    "reason": "Stale evidence cannot be reused. Re-validate measurement truth to determine which records are authoritative-complete.",
+    "alternatives": [],
+    "escalation": "",
+    "bypass_warning": "Reuse of stale evidence violates C47 governing constraint. Never consume partial/derived evidence for certification.",
+    "resolved_blast_radius": {},
+    "generated_at": "2026-08-31T17:36:13.864344+00:00"
+  },
+  "unknown_failure": {
+    "problem_type": "unknown_failure",
+    "decision": "NO_CANONICAL_CAPABILITY",
+    "recommended_capability": "",
+    "command": "python runtime/verify.py integrity",
+    "required_inputs": [],
+    "prerequisites": [],
+    "expected_evidence": [
+      "certification_report"
+    ],
+    "next_capability": "",
+    "reason": "Problem type not matched to any existing capability.",
+    "alternatives": [],
+    "escalation": "No canonical capability found. Run integrity audit and manual review. Escalate to engineering leadership if the failure persists.",
+    "bypass_warning": "",
+    "resolved_blast_radius": {},
+    "generated_at": "2026-08-31T17:36:13.864369+00:00"
+  }
+}

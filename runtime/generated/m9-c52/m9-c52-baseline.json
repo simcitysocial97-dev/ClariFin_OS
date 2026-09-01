@@ -1,0 +1,312 @@
+{
+  "schema": "m9-c52-baseline/v1",
+  "generated_at": "2026-08-31T18:00:45.244945+00:00",
+  "repository_sha": "b8914c4333c48d36d9db2805c04d8775bedba86a",
+  "branch": "m9c9-merge-authorization-resolution",
+  "working_tree_clean": false,
+  "uncommitted_porcelain": [
+    " M backend/pyproject.toml",
+    " M runtime/foundation/verification/cache.py",
+    " M runtime/foundation/verification/mutation_runner.py",
+    " M runtime/generated/git-fetch-events.jsonl",
+    " M runtime/verify.py",
+    "?? backend/tests/invariants/_m4_probe_live/",
+    "?? runtime/foundation/verification/blast_radius.py",
+    "?? runtime/foundation/verification/blast_radius_cli.py",
+    "?? runtime/foundation/verification/capability_catalog.py",
+    "?? runtime/foundation/verification/capability_catalog_data.py",
+    "?? runtime/foundation/verification/capability_contract.py",
+    "?? runtime/foundation/verification/capability_discovery.py",
+    "?? runtime/foundation/verification/capability_graph.py",
+    "?? runtime/foundation/verification/capability_latent_audit.py",
+    "?? runtime/foundation/verification/capability_resolver.py",
+    "?? runtime/foundation/verification/change_surface.py",
+    "?? runtime/foundation/verification/command_inventory.py",
+    "?? runtime/foundation/verification/configuration_authority.py",
+    "?? runtime/foundation/verification/control_plane.py",
+    "?? runtime/foundation/verification/coverage_measurement.py",
+    "?? runtime/foundation/verification/execution_orchestrator.py",
+    "?? runtime/foundation/verification/latent_capabilities.py",
+    "?? runtime/foundation/verification/measurement_truth.py",
+    "?? runtime/foundation/verification/measurement_truth_cli.py",
+    "?? runtime/foundation/verification/measurement_truth_integration.py",
+    "?? runtime/foundation/verification/operational_cli.py",
+    "?? runtime/foundation/verification/shared_impact.py",
+    "?? runtime/foundation/verification/strengthening_pipeline.py",
+    "?? runtime/generated/m9-c47/",
+    "?? runtime/generated/m9-c48/",
+    "?? runtime/generated/m9-c49/",
+    "?? runtime/generated/m9-c50/",
+    "?? runtime/generated/m9-c51/",
+    "?? runtime/tests/test_m9_c49.py",
+    "?? runtime/tests/test_m9_c50.py",
+    "?? runtime/tests/test_m9_c51.py",
+    "?? runtime/tests/test_measurement_truth.py"
+  ],
+  "c51_freeze_verification": {
+    "c51_tests": "33/33 passed (runtime/tests/test_m9_c51.py)",
+    "c50_tests": "24/24 passed (runtime/tests/test_m9_c50.py)",
+    "ruff": "0 errors after M52.0 lint pre-condition fixes (see pre_freeze_fixes)",
+    "black": "clean after M52.0 reformat",
+    "mypy_backend_strict": "0 errors (242 source files)",
+    "c51_certification_artifact": "runtime/generated/m9-c51/CERTIFICATION.md"
+  },
+  "pre_freeze_fixes": {
+    "rationale": "C51 certification claimed 'Ruff: 0 errors, Black: clean' but the working tree carried 51 ruff errors / 5 black violations in C47/C49/C50/C51 verification-framework files (mostly auto-fixable; plus 3x F821 undefined `sys` in strengthening_pipeline.cmd_strengthen_survivor \u2014 a latent NameError on the shadowed route). Fixed pre-freeze per project policy 'pre-existing errors must be fixed rather than deferred'.",
+    "files": [
+      "runtime/foundation/verification/cache.py (SIM102 merge, behavior-identical)",
+      "runtime/foundation/verification/measurement_truth.py (SIM103 direct return, behavior-identical)",
+      "runtime/foundation/verification/measurement_truth_integration.py (3x SIM102 merges + ruff --fix import sort / unused imports / f-strings / trailing newline)",
+      "runtime/foundation/verification/strengthening_pipeline.py (ruff --fix + added missing `import sys`)",
+      "runtime/foundation/verification/operational_cli.py (ruff --fix)",
+      "runtime/foundation/verification/command_inventory.py (ruff --fix)",
+      "runtime/tests/test_m9_c49.py (ruff --fix)",
+      "runtime/verify.py (ruff --fix + black)"
+    ],
+    "revalidations": "pytest runtime/tests/test_m9_c51.py runtime/tests/test_m9_c50.py -> 57 passed; ruff 0; black clean; mypy backend strict 0"
+  },
+  "surface_fingerprints": {
+    "C48_capability_control_plane": [
+      {
+        "path": "runtime/foundation/verification/capability_contract.py",
+        "sha256": "ba19e85fd977bdacc841b1959daaea5a98ec4d7b5b714b36b1413e37b0d7fded",
+        "bytes": 37012
+      },
+      {
+        "path": "runtime/foundation/verification/command_inventory.py",
+        "sha256": "ffb917b114581914c65a31edb2729705419cec6a454815c138c597d5f8dfc22a",
+        "bytes": 28500
+      },
+      {
+        "path": "runtime/foundation/verification/control_plane.py",
+        "sha256": "477271175d01c38a45412af19ce8ae547322431199dd45c100e375af38189087",
+        "bytes": 24287
+      },
+      {
+        "path": "runtime/foundation/verification/capability_resolver.py",
+        "sha256": "f9e0590699b8a8fd4cbffdcfc606347dfd7ddb49639063e7dc942019e6c9aa4a",
+        "bytes": 22646
+      },
+      {
+        "path": "runtime/foundation/verification/strengthening_pipeline.py",
+        "sha256": "dd7337eec5f66391b8734d72282b938927fe41e89e0ac91678c23d84bf60789a",
+        "bytes": 23157
+      },
+      {
+        "path": "runtime/foundation/verification/measurement_truth_integration.py",
+        "sha256": "f87cea5f48f85219b141a0fa1c52124d316651d5454f317014f1b4b1aa83f199",
+        "bytes": 26402
+      },
+      {
+        "path": "runtime/foundation/verification/operational_cli.py",
+        "sha256": "36d65dcb17f43e38e3d3c8afb1264e82c43a90cc0138b95986df5ca2f1e3a5cf",
+        "bytes": 27134
+      }
+    ],
+    "C49_orchestration": [
+      {
+        "path": "runtime/foundation/verification/execution_orchestrator.py",
+        "sha256": "8beae6771aef7003710125ae5378c0b1c29a53998887f20e2fc578f8e7dcb09c",
+        "bytes": 85214
+      },
+      {
+        "path": "runtime/foundation/verification/shared_impact.py",
+        "sha256": "4696f3c40c5c3d30c8e83938fbc7abb30db6769002d819490a1e936c917680dc",
+        "bytes": 8766
+      }
+    ],
+    "C50_blast_radius": [
+      {
+        "path": "runtime/foundation/verification/blast_radius.py",
+        "sha256": "7ae75548da13650df660f626e69cc61389a451edb15052d86a2c7dc28c444ccc",
+        "bytes": 47310
+      },
+      {
+        "path": "runtime/foundation/verification/blast_radius_cli.py",
+        "sha256": "be75c399dc9f034697725def5d4119e7e63c026b09076a94bb1b343170883c9f",
+        "bytes": 8841
+      },
+      {
+        "path": "runtime/foundation/verification/change_surface.py",
+        "sha256": "f2dff41d24b8221597e3e9fce1a7fb7adefa844243fcbd872491c3cd83b5a26e",
+        "bytes": 17602
+      }
+    ],
+    "C51_discovery_control_plane": [
+      {
+        "path": "runtime/foundation/verification/capability_catalog.py",
+        "sha256": "67fd7c138d9fedbf043f8b94a9b1f087028fcfefc5115ad5b96a20d7e129e595",
+        "bytes": 26415
+      },
+      {
+        "path": "runtime/foundation/verification/capability_catalog_data.py",
+        "sha256": "252ef3ab15d6477acbf93f2ceb6a6400dd666553d74d9acc1d0ea23b0e59bca6",
+        "bytes": 37829
+      },
+      {
+        "path": "runtime/foundation/verification/capability_discovery.py",
+        "sha256": "5e3bc0c74c24194ed33f6141208f00d8ea325e155a17c9b40c2145bb02c54986",
+        "bytes": 27661
+      },
+      {
+        "path": "runtime/foundation/verification/capability_graph.py",
+        "sha256": "b69fcb2069119e3c70ff08e1fec03f2f119e315638ba72ad897bfc47019a8e0d",
+        "bytes": 8845
+      },
+      {
+        "path": "runtime/foundation/verification/capability_latent_audit.py",
+        "sha256": "94a0eccefc8c74388623c272fd08fa0739aff6f01aba5cd09e2913dd39a05ffd",
+        "bytes": 13563
+      },
+      {
+        "path": "runtime/foundation/verification/configuration_authority.py",
+        "sha256": "e7f8d7882f7c579fa5a32d60fd5a5db54a8b78236921662891fc3595b10a0a29",
+        "bytes": 5807
+      }
+    ],
+    "C42_authoritative_baseline": [
+      {
+        "path": "runtime/foundation/verification/forensic_cli.py",
+        "sha256": "0afeacbd2a4a79adbb38d3a316b4d42a076b4ce603233e4dda73db2214817cb5",
+        "bytes": 36401
+      },
+      {
+        "path": "runtime/foundation/verification/strengthening.py",
+        "sha256": "a548047b64ffc62419b82d6b5dc988ccd73aac9136c832a4b2a34086f9e39bbe",
+        "bytes": 22618
+      },
+      {
+        "path": "runtime/foundation/verification/survivor_intel.py",
+        "sha256": "f5178076c0be0efe50bb641ac2771044f0ccb1ff8a25d153b467dd9d5fba9cdd",
+        "bytes": 14131
+      },
+      {
+        "path": "runtime/foundation/verification/mutation_inventory.py",
+        "sha256": "289f0b9398e7a14d241e58001bea348fe9257c66114759dc9843798bcc8486d1",
+        "bytes": 19574
+      },
+      {
+        "path": "runtime/foundation/verification/evidence_planner.py",
+        "sha256": "71c2bcf44b7d377ac9080721c82e94ff28f70506a32dbaa50c05f0540baebd94",
+        "bytes": 26232
+      },
+      {
+        "path": "runtime/foundation/verification/evidence_reuse.py",
+        "sha256": "4af9813f134f57d705ffae6fba4d836934f123993f6c87ed47115ccb1c73b438",
+        "bytes": 34696
+      },
+      {
+        "path": "runtime/foundation/verification/graph_model.py",
+        "sha256": "f615000c7e0a8772415161f89d04735722dba01a3dd457b77817cbe4d05f8414",
+        "bytes": 15945
+      },
+      {
+        "path": "runtime/foundation/verification/measurement_truth.py",
+        "sha256": "9273b6c3c7d8ca2b6f974c9a739025d8b6cb69f6bf6d938fee4b63307d219c48",
+        "bytes": 24992
+      },
+      {
+        "path": "runtime/foundation/verification/measurement_truth_cli.py",
+        "sha256": "f9ccef0b0073f74149dffc451087189accfb0309d8e1a883da49c9783dea7b22",
+        "bytes": 3876
+      },
+      {
+        "path": "runtime/foundation/verification/coverage_measurement.py",
+        "sha256": "a2240ed67edaaafff812daa3f0d647af3b70157bb483edb6d0ca96ecce05b821",
+        "bytes": 8006
+      },
+      {
+        "path": "runtime/foundation/verification/mutation_runner.py",
+        "sha256": "8300674b47b5bb5de29c07d11c531dea82d5c0ab2d750a34b472eb47e07f57ff",
+        "bytes": 42135
+      },
+      {
+        "path": "runtime/foundation/verification/mutation_contract.py",
+        "sha256": "8ee0fc185478365816da449011bf3dbaf9b031bfee4095a4f901e7dfdade28f4",
+        "bytes": 26740
+      },
+      {
+        "path": "runtime/foundation/verification/ci_evidence.py",
+        "sha256": "6c47f26aa8005dab6c681fbdf7b02897407359a33faff321ef53380ee6c4033a",
+        "bytes": 52127
+      },
+      {
+        "path": "runtime/foundation/verification/diagnostic_agent.py",
+        "sha256": "c795ff20de68ace2eb764ff67f2d440a67bae95a73848fd8af8fb05fcc2e30e0",
+        "bytes": 36830
+      },
+      {
+        "path": "runtime/foundation/verification/verification.yaml",
+        "sha256": "8f6e270c2b18f3c63efa3fb9bb64f44caf293d5cc50107e74d4e6556dfadc8c7",
+        "bytes": 11355
+      }
+    ],
+    "entrypoint": [
+      {
+        "path": "runtime/verify.py",
+        "sha256": "b1fa0ad7660516c4dc6db9eb45f1cec7ce344137d56b84342a3075acbc80fb76",
+        "bytes": 75445
+      }
+    ]
+  },
+  "c51_artifacts_frozen": {
+    "capability_inventory": "runtime/generated/m9-c51/capability-inventory.json (44 capabilities, 13 profiles, sha below) sha256=df8991789d081d3ce717487bd323acf09b5f34c1d74ae4c7858c424c247bcb64",
+    "pipeline_capability_graph": "runtime/generated/m9-c51/pipeline-capability-graph.json",
+    "bypass_risk_analysis": "runtime/generated/m9-c51/bypass-risk-analysis.json",
+    "latent_capability_audit": "runtime/generated/m9-c51/latent-capability-audit.json",
+    "configuration_authority": "runtime/generated/m9-c51/configuration-authority.json",
+    "c51_baseline": "runtime/generated/m9-c51/baseline.json"
+  },
+  "findings_frozen": {
+    "duplicate_strengthen_survivor_route": {
+      "route": "strengthen-survivor",
+      "dispatch_locations": [
+        "runtime/verify.py:1461 -> forensic_cli.run_strengthen_survivor (REACHABLE)",
+        "runtime/verify.py:1508 -> strengthening_pipeline.cmd_strengthen_survivor (UNREACHABLE: second `if command ==` branch)"
+      ],
+      "latent_defect": "strengthening_pipeline.cmd_strengthen_survivor referenced sys without importing it (fixed pre-freeze; route still unreachable)",
+      "c51_record": "C51 M51.6 'Shadowed C48 strengthen-survivor route detected and documented'"
+    },
+    "cli_routes_lacking_catalog_metadata": {
+      "c51_documented_count": 14,
+      "c52_reconciled_count": 28,
+      "derivation": "reconciled verify.py dispatcher routes (64 ground-truth) against frozen C51 catalog (44 entries; 28 CLI-facing entries covering 36 routes incl. multi-route entries)",
+      "unmapped_routes_28": [
+        "analytics",
+        "health",
+        "doctor",
+        "ci-doctor",
+        "diagnose",
+        "reconcile",
+        "exec-evidence",
+        "affected",
+        "repair",
+        "risk",
+        "knowledge",
+        "dashboard",
+        "certify-v4",
+        "certify-v5",
+        "intelligence-audit",
+        "evidence-execute",
+        "evidence-reconcile",
+        "evidence-certify",
+        "strengthen-analyze",
+        "strengthen-survivor",
+        "strengthen-report",
+        "env-check",
+        "execution-report",
+        "capabilities",
+        "capability-graph",
+        "bypass-audit",
+        "latent-audit",
+        "config-authority"
+      ],
+      "note": "All 28 (superset of the 14 documented in C51) must be classified in M52.3; no route may silently bypass the capability control plane."
+    },
+    "notes_metadata_corruption": {
+      "defect": "capability_catalog.VerificationCapabilityMetadata.notes is typed tuple[str,...] but capability_catalog_data passes str; to_dict() does list(self.notes) -> per-character corruption in all 9 affected entries",
+      "status": "recorded at freeze; fixed in M52.1 (catalog completeness)"
+    }
+  },
+  "issues": []
+}

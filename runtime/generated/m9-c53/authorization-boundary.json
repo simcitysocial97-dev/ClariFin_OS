@@ -1,0 +1,602 @@
+{
+  "schema": "m9-c53-authorization-boundary/v1",
+  "generated_at": "2026-09-01T11:16:07.127867+00:00",
+  "states": [
+    "AUTHORIZED",
+    "AWAITING_HUMAN_AUTHORIZATION",
+    "EXPIRED",
+    "PROPOSED",
+    "REJECTED",
+    "VALIDATED",
+    "capitalize",
+    "casefold",
+    "center",
+    "count",
+    "encode",
+    "endswith",
+    "expandtabs",
+    "find",
+    "format",
+    "format_map",
+    "index",
+    "isalnum",
+    "isalpha",
+    "isascii",
+    "isdecimal",
+    "isdigit",
+    "isidentifier",
+    "islower",
+    "isnumeric",
+    "isprintable",
+    "isspace",
+    "istitle",
+    "isupper",
+    "join",
+    "ljust",
+    "lower",
+    "lstrip",
+    "maketrans",
+    "partition",
+    "removeprefix",
+    "removesuffix",
+    "replace",
+    "rfind",
+    "rindex",
+    "rjust",
+    "rpartition",
+    "rsplit",
+    "rstrip",
+    "split",
+    "splitlines",
+    "startswith",
+    "strip",
+    "swapcase",
+    "title",
+    "translate",
+    "upper",
+    "zfill"
+  ],
+  "valid_transitions": {
+    "PROPOSED": [
+      "VALIDATED",
+      "REJECTED"
+    ],
+    "VALIDATED": [
+      "AWAITING_HUMAN_AUTHORIZATION",
+      "REJECTED"
+    ],
+    "AWAITING_HUMAN_AUTHORIZATION": [
+      "AUTHORIZED",
+      "REJECTED",
+      "EXPIRED"
+    ],
+    "AUTHORIZED": [],
+    "REJECTED": [],
+    "EXPIRED": []
+  },
+  "authorization_records": [
+    {
+      "record_id": "auth::c67a2448c653",
+      "candidate_id": "6e24e773b1c6",
+      "generation_id": "gen::a47bfcbea27a",
+      "state": "PROPOSED",
+      "previous_state": "",
+      "decided_at": "2026-09-01T11:16:07.126177+00:00",
+      "actor": "system",
+      "reason": "candidate test generated from evidence",
+      "conditions": [],
+      "evidence": {
+        "classification": {
+          "gap_id": "cand-001",
+          "gap_class": "A",
+          "description": "genuine behavioral verification gap; potentially eligible for test generation",
+          "source": "survivor",
+          "component": "cc",
+          "capability": "m.m",
+          "location": "backend/src/engines/credit_card_engine/core.py:42",
+          "eligible_for_generation": true,
+          "reason": "genuine behavioral verification gap; a real behavioral path lacks a distinguishing assertion/test. Potentially eligible for generation.",
+          "evidence": {
+            "gap_id": "cand-001",
+            "source": "survivor",
+            "component": "cc",
+            "capability": "m.m",
+            "location": "backend/src/engines/credit_card_engine/core.py:42",
+            "description": "d",
+            "evidence_kind": "comparison",
+            "evidence_detail": "if balance > 0:",
+            "status": "survived",
+            "notes": "",
+            "covering_tests": [],
+            "historical_count": 1,
+            "historical_evidence_refs": [],
+            "authorization_required": true
+          },
+          "classified_at": "2026-09-01T11:16:05.312413+00:00",
+          "c42_class": "A"
+        },
+        "eligibility": {
+          "gap_id": "cand-001",
+          "generation_allowed": true,
+          "generation_refused": false,
+          "refusal_reason": "",
+          "refusal_code": "NONE",
+          "gap_class": "A",
+          "source_evidence": "survivor",
+          "capability": "m.m",
+          "component": "cc",
+          "strategy": "example_based_unit",
+          "authorization_required": true,
+          "decided_at": "2026-09-01T11:16:05.312451+00:00",
+          "evidence": {
+            "gap_id": "cand-001",
+            "gap_class": "A",
+            "description": "genuine behavioral verification gap; potentially eligible for test generation",
+            "source": "survivor",
+            "component": "cc",
+            "capability": "m.m",
+            "location": "backend/src/engines/credit_card_engine/core.py:42",
+            "eligible_for_generation": true,
+            "reason": "genuine behavioral verification gap; a real behavioral path lacks a distinguishing assertion/test. Potentially eligible for generation.",
+            "evidence": {
+              "gap_id": "cand-001",
+              "source": "survivor",
+              "component": "cc",
+              "capability": "m.m",
+              "location": "backend/src/engines/credit_card_engine/core.py:42",
+              "description": "d",
+              "evidence_kind": "comparison",
+              "evidence_detail": "if balance > 0:",
+              "status": "survived",
+              "notes": "",
+              "covering_tests": [],
+              "historical_count": 1,
+              "historical_evidence_refs": [],
+              "authorization_required": true
+            },
+            "classified_at": "2026-09-01T11:16:05.312413+00:00",
+            "c42_class": "A"
+          }
+        },
+        "validation": {
+          "candidate_id": "6e24e773b1c6",
+          "generation_id": "gen::a47bfcbea27a",
+          "overall_passed": true,
+          "dimensions": [
+            {
+              "dimension": "syntax",
+              "passed": true,
+              "evidence": "ast.parse succeeded: candidate is valid Python",
+              "details": {
+                "candidate_id": "6e24e773b1c6"
+              }
+            },
+            {
+              "dimension": "static_quality",
+              "passed": true,
+              "evidence": "static quality checks passed",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "issues": []
+              }
+            },
+            {
+              "dimension": "focused_execution",
+              "passed": true,
+              "evidence": "candidate skeleton: collection error (exit=2) accepted for skeleton with pytest.skip",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "exit_code": 2,
+                "output": "\n==================================== ERRORS ====================================\n_ ERROR collecting runtime/generated/m9-c53/_tmp_validation/test_c53_candidate_6e24e773b1c6.py _\nImportError while importing test module '/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c53/_tmp_validation/test_c53_candidate_6e24e773b1c6.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/usr/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap",
+                "note": "skeleton candidate: import resolution expected to fail until authorized implementation replaces skip"
+              }
+            },
+            {
+              "dimension": "regression",
+              "passed": true,
+              "evidence": "no regression command specified; skeleton-only candidate cannot break existing tests",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "note": "skeleton-only"
+              }
+            },
+            {
+              "dimension": "behavioral_relevance",
+              "passed": true,
+              "evidence": "behavioral relevance confirmed: references location backend/src/engines/credit_card_engine/core.py; docstring present with target reference",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "capability": "m.m",
+                "location": "backend/src/engines/credit_card_engine/core.py:42",
+                "signals": [
+                  "references location backend/src/engines/credit_card_engine/core.py",
+                  "docstring present with target reference"
+                ]
+              }
+            },
+            {
+              "dimension": "distinguishing_power",
+              "passed": true,
+              "evidence": "candidate has discriminating assertion form",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "has_discriminating_assertion": true,
+                "has_boundary_pattern": true
+              }
+            },
+            {
+              "dimension": "non_regression",
+              "passed": true,
+              "evidence": "skeleton candidate with pytest.skip: cannot regress verification quality",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "note": "skeleton"
+              }
+            },
+            {
+              "dimension": "determinism",
+              "passed": true,
+              "evidence": "skeleton candidate with pytest.skip: deterministic by construction",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "note": "skeleton"
+              }
+            }
+          ],
+          "validated_at": "2026-09-01T11:16:07.126066+00:00",
+          "refusal_reason": ""
+        }
+      }
+    },
+    {
+      "record_id": "auth::4ef9634793c6",
+      "candidate_id": "6e24e773b1c6",
+      "generation_id": "gen::a47bfcbea27a",
+      "state": "VALIDATED",
+      "previous_state": "PROPOSED",
+      "decided_at": "2026-09-01T11:16:07.126211+00:00",
+      "actor": "system",
+      "reason": "candidate passed all 8 validation dimensions",
+      "conditions": [],
+      "evidence": {
+        "classification": {
+          "gap_id": "cand-001",
+          "gap_class": "A",
+          "description": "genuine behavioral verification gap; potentially eligible for test generation",
+          "source": "survivor",
+          "component": "cc",
+          "capability": "m.m",
+          "location": "backend/src/engines/credit_card_engine/core.py:42",
+          "eligible_for_generation": true,
+          "reason": "genuine behavioral verification gap; a real behavioral path lacks a distinguishing assertion/test. Potentially eligible for generation.",
+          "evidence": {
+            "gap_id": "cand-001",
+            "source": "survivor",
+            "component": "cc",
+            "capability": "m.m",
+            "location": "backend/src/engines/credit_card_engine/core.py:42",
+            "description": "d",
+            "evidence_kind": "comparison",
+            "evidence_detail": "if balance > 0:",
+            "status": "survived",
+            "notes": "",
+            "covering_tests": [],
+            "historical_count": 1,
+            "historical_evidence_refs": [],
+            "authorization_required": true
+          },
+          "classified_at": "2026-09-01T11:16:05.312413+00:00",
+          "c42_class": "A"
+        },
+        "eligibility": {
+          "gap_id": "cand-001",
+          "generation_allowed": true,
+          "generation_refused": false,
+          "refusal_reason": "",
+          "refusal_code": "NONE",
+          "gap_class": "A",
+          "source_evidence": "survivor",
+          "capability": "m.m",
+          "component": "cc",
+          "strategy": "example_based_unit",
+          "authorization_required": true,
+          "decided_at": "2026-09-01T11:16:05.312451+00:00",
+          "evidence": {
+            "gap_id": "cand-001",
+            "gap_class": "A",
+            "description": "genuine behavioral verification gap; potentially eligible for test generation",
+            "source": "survivor",
+            "component": "cc",
+            "capability": "m.m",
+            "location": "backend/src/engines/credit_card_engine/core.py:42",
+            "eligible_for_generation": true,
+            "reason": "genuine behavioral verification gap; a real behavioral path lacks a distinguishing assertion/test. Potentially eligible for generation.",
+            "evidence": {
+              "gap_id": "cand-001",
+              "source": "survivor",
+              "component": "cc",
+              "capability": "m.m",
+              "location": "backend/src/engines/credit_card_engine/core.py:42",
+              "description": "d",
+              "evidence_kind": "comparison",
+              "evidence_detail": "if balance > 0:",
+              "status": "survived",
+              "notes": "",
+              "covering_tests": [],
+              "historical_count": 1,
+              "historical_evidence_refs": [],
+              "authorization_required": true
+            },
+            "classified_at": "2026-09-01T11:16:05.312413+00:00",
+            "c42_class": "A"
+          }
+        },
+        "validation": {
+          "candidate_id": "6e24e773b1c6",
+          "generation_id": "gen::a47bfcbea27a",
+          "overall_passed": true,
+          "dimensions": [
+            {
+              "dimension": "syntax",
+              "passed": true,
+              "evidence": "ast.parse succeeded: candidate is valid Python",
+              "details": {
+                "candidate_id": "6e24e773b1c6"
+              }
+            },
+            {
+              "dimension": "static_quality",
+              "passed": true,
+              "evidence": "static quality checks passed",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "issues": []
+              }
+            },
+            {
+              "dimension": "focused_execution",
+              "passed": true,
+              "evidence": "candidate skeleton: collection error (exit=2) accepted for skeleton with pytest.skip",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "exit_code": 2,
+                "output": "\n==================================== ERRORS ====================================\n_ ERROR collecting runtime/generated/m9-c53/_tmp_validation/test_c53_candidate_6e24e773b1c6.py _\nImportError while importing test module '/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c53/_tmp_validation/test_c53_candidate_6e24e773b1c6.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/usr/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap",
+                "note": "skeleton candidate: import resolution expected to fail until authorized implementation replaces skip"
+              }
+            },
+            {
+              "dimension": "regression",
+              "passed": true,
+              "evidence": "no regression command specified; skeleton-only candidate cannot break existing tests",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "note": "skeleton-only"
+              }
+            },
+            {
+              "dimension": "behavioral_relevance",
+              "passed": true,
+              "evidence": "behavioral relevance confirmed: references location backend/src/engines/credit_card_engine/core.py; docstring present with target reference",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "capability": "m.m",
+                "location": "backend/src/engines/credit_card_engine/core.py:42",
+                "signals": [
+                  "references location backend/src/engines/credit_card_engine/core.py",
+                  "docstring present with target reference"
+                ]
+              }
+            },
+            {
+              "dimension": "distinguishing_power",
+              "passed": true,
+              "evidence": "candidate has discriminating assertion form",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "has_discriminating_assertion": true,
+                "has_boundary_pattern": true
+              }
+            },
+            {
+              "dimension": "non_regression",
+              "passed": true,
+              "evidence": "skeleton candidate with pytest.skip: cannot regress verification quality",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "note": "skeleton"
+              }
+            },
+            {
+              "dimension": "determinism",
+              "passed": true,
+              "evidence": "skeleton candidate with pytest.skip: deterministic by construction",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "note": "skeleton"
+              }
+            }
+          ],
+          "validated_at": "2026-09-01T11:16:07.126066+00:00",
+          "refusal_reason": ""
+        }
+      }
+    },
+    {
+      "record_id": "auth::f5909dae2b27",
+      "candidate_id": "6e24e773b1c6",
+      "generation_id": "gen::a47bfcbea27a",
+      "state": "AWAITING_HUMAN_AUTHORIZATION",
+      "previous_state": "VALIDATED",
+      "decided_at": "2026-09-01T11:16:07.126262+00:00",
+      "actor": "authorization-boundary",
+      "reason": "human authorization required: the system may propose and validate candidate tests but must NOT silently promote a generated test into the authoritative repository test suite",
+      "conditions": [
+        "human must review candidate test",
+        "human must verify behavioral justification",
+        "human must authorize acceptance or rejection"
+      ],
+      "evidence": {
+        "classification": {
+          "gap_id": "cand-001",
+          "gap_class": "A",
+          "description": "genuine behavioral verification gap; potentially eligible for test generation",
+          "source": "survivor",
+          "component": "cc",
+          "capability": "m.m",
+          "location": "backend/src/engines/credit_card_engine/core.py:42",
+          "eligible_for_generation": true,
+          "reason": "genuine behavioral verification gap; a real behavioral path lacks a distinguishing assertion/test. Potentially eligible for generation.",
+          "evidence": {
+            "gap_id": "cand-001",
+            "source": "survivor",
+            "component": "cc",
+            "capability": "m.m",
+            "location": "backend/src/engines/credit_card_engine/core.py:42",
+            "description": "d",
+            "evidence_kind": "comparison",
+            "evidence_detail": "if balance > 0:",
+            "status": "survived",
+            "notes": "",
+            "covering_tests": [],
+            "historical_count": 1,
+            "historical_evidence_refs": [],
+            "authorization_required": true
+          },
+          "classified_at": "2026-09-01T11:16:05.312413+00:00",
+          "c42_class": "A"
+        },
+        "eligibility": {
+          "gap_id": "cand-001",
+          "generation_allowed": true,
+          "generation_refused": false,
+          "refusal_reason": "",
+          "refusal_code": "NONE",
+          "gap_class": "A",
+          "source_evidence": "survivor",
+          "capability": "m.m",
+          "component": "cc",
+          "strategy": "example_based_unit",
+          "authorization_required": true,
+          "decided_at": "2026-09-01T11:16:05.312451+00:00",
+          "evidence": {
+            "gap_id": "cand-001",
+            "gap_class": "A",
+            "description": "genuine behavioral verification gap; potentially eligible for test generation",
+            "source": "survivor",
+            "component": "cc",
+            "capability": "m.m",
+            "location": "backend/src/engines/credit_card_engine/core.py:42",
+            "eligible_for_generation": true,
+            "reason": "genuine behavioral verification gap; a real behavioral path lacks a distinguishing assertion/test. Potentially eligible for generation.",
+            "evidence": {
+              "gap_id": "cand-001",
+              "source": "survivor",
+              "component": "cc",
+              "capability": "m.m",
+              "location": "backend/src/engines/credit_card_engine/core.py:42",
+              "description": "d",
+              "evidence_kind": "comparison",
+              "evidence_detail": "if balance > 0:",
+              "status": "survived",
+              "notes": "",
+              "covering_tests": [],
+              "historical_count": 1,
+              "historical_evidence_refs": [],
+              "authorization_required": true
+            },
+            "classified_at": "2026-09-01T11:16:05.312413+00:00",
+            "c42_class": "A"
+          }
+        },
+        "validation": {
+          "candidate_id": "6e24e773b1c6",
+          "generation_id": "gen::a47bfcbea27a",
+          "overall_passed": true,
+          "dimensions": [
+            {
+              "dimension": "syntax",
+              "passed": true,
+              "evidence": "ast.parse succeeded: candidate is valid Python",
+              "details": {
+                "candidate_id": "6e24e773b1c6"
+              }
+            },
+            {
+              "dimension": "static_quality",
+              "passed": true,
+              "evidence": "static quality checks passed",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "issues": []
+              }
+            },
+            {
+              "dimension": "focused_execution",
+              "passed": true,
+              "evidence": "candidate skeleton: collection error (exit=2) accepted for skeleton with pytest.skip",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "exit_code": 2,
+                "output": "\n==================================== ERRORS ====================================\n_ ERROR collecting runtime/generated/m9-c53/_tmp_validation/test_c53_candidate_6e24e773b1c6.py _\nImportError while importing test module '/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c53/_tmp_validation/test_c53_candidate_6e24e773b1c6.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/usr/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap",
+                "note": "skeleton candidate: import resolution expected to fail until authorized implementation replaces skip"
+              }
+            },
+            {
+              "dimension": "regression",
+              "passed": true,
+              "evidence": "no regression command specified; skeleton-only candidate cannot break existing tests",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "note": "skeleton-only"
+              }
+            },
+            {
+              "dimension": "behavioral_relevance",
+              "passed": true,
+              "evidence": "behavioral relevance confirmed: references location backend/src/engines/credit_card_engine/core.py; docstring present with target reference",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "capability": "m.m",
+                "location": "backend/src/engines/credit_card_engine/core.py:42",
+                "signals": [
+                  "references location backend/src/engines/credit_card_engine/core.py",
+                  "docstring present with target reference"
+                ]
+              }
+            },
+            {
+              "dimension": "distinguishing_power",
+              "passed": true,
+              "evidence": "candidate has discriminating assertion form",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "has_discriminating_assertion": true,
+                "has_boundary_pattern": true
+              }
+            },
+            {
+              "dimension": "non_regression",
+              "passed": true,
+              "evidence": "skeleton candidate with pytest.skip: cannot regress verification quality",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "note": "skeleton"
+              }
+            },
+            {
+              "dimension": "determinism",
+              "passed": true,
+              "evidence": "skeleton candidate with pytest.skip: deterministic by construction",
+              "details": {
+                "candidate_id": "6e24e773b1c6",
+                "note": "skeleton"
+              }
+            }
+          ],
+          "validated_at": "2026-09-01T11:16:07.126066+00:00",
+          "refusal_reason": ""
+        }
+      }
+    }
+  ]
+}

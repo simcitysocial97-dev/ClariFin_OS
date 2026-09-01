@@ -1,0 +1,104 @@
+{
+  "schema": "m9-c50-baseline/v1",
+  "generated_at": "2026-08-31T10:51:32Z",
+  "c49_architecture_summary": {
+    "core_modules": [
+      "runtime/foundation/verification/execution_orchestrator.py",
+      "runtime/foundation/verification/capability_resolver.py",
+      "runtime/foundation/verification/shared_impact.py",
+      "runtime/foundation/verification/capability_contract.py",
+      "runtime/foundation/verification/command_inventory.py",
+      "runtime/foundation/verification/measurement_truth_integration.py",
+      "runtime/foundation/verification/control_plane.py",
+      "runtime/foundation/verification/planner/planner.py",
+      "runtime/foundation/verification/graph_model.py",
+      "runtime/foundation/verification/evidence_reuse.py",
+      "runtime/foundation/verification/evidence_planner.py",
+      "runtime/foundation/verification/registry/registry.py",
+      "runtime/foundation/verification/measurement_truth.py",
+      "runtime/foundation/verification/operational_cli.py",
+      "runtime/verify.py"
+    ],
+    "key_contracts": [
+      "ExecutionPlan",
+      "ExecutionReport",
+      "ExecutionTaskSpec",
+      "TaskExecutionRecord",
+      "RepositoryFingerprint",
+      "CapabilityResolution",
+      "ClassifiedChange",
+      "OperationalCapability",
+      "CommandInventoryEntry",
+      "ControlPlanePlan",
+      "VerificationTask",
+      "EvidenceAwarePlan",
+      "PlannedTask",
+      "MeasurementTruthRecord",
+      "ImpactReport"
+    ],
+    "orchestration_flow": [
+      "Changed files -> CapabilityResolver.resolve() -> CapabilityResolution",
+      "CapabilityResolution -> ControlPlanePlanner.plan() -> ControlPlanePlan",
+      "ControlPlanePlan -> ExecutionOrchestrator.build_execution_plan() -> ExecutionPlan",
+      "ExecutionPlan -> ExecutionOrchestrator.execute() -> ExecutionReport"
+    ],
+    "existing_enforcement_points": [
+      "RepositoryFingerprint validation (plan vs live state)",
+      "Authorization boundary for mutation tasks",
+      "Stop-on-sufficiency rule (escalation tasks skipped when mandatory PASS/REUSED)",
+      "Evidence reuse via MeasurementTruthIntegrator / certification_gate",
+      "Fail-closed states: VALIDATION_BLOCKED, INFRASTRUCTURE_BLOCKED, TIMEOUT_BLOCKED, AWAITING_AUTHORIZATION",
+      "SharedDependencyIndex for shared module impact (AST-based)",
+      "PLANNER_CAPABILITY_ALIASES for vocabulary bridging",
+      "Deterministic plan fingerprint (content-derived, no timestamps)",
+      "Evidence invalidation rules (INVALIDATION_RULES in evidence_reuse.py)",
+      "Task deduplication by command + verification_kind + profile"
+    ],
+    "existing_gaps_for_c50": [
+      "No unified blast-radius contract that answers all 15 questions from C50 spec",
+      "Change surface discovery limited to git diff + path classification; no staged/committed range support",
+      "Capability resolution does not explicitly classify: directly_affected, transitively_affected, shared_infrastructure_affected, observable_only, test_only, config_tooling, unmapped",
+      "Verification surface expansion from capability is implicit via workflow mappings, not explicit enumeration",
+      "Evidence invalidation connected to C47 but not fully integrated with C49 execution plan revalidation injection",
+      "Minimum-safe execution scope exists but not exposed as a single 'what-should-i-run' answer",
+      "Fail-closed protection exists at plan validation level but not at capability mapping ambiguity level",
+      "Latent capability protection not implemented - no audit of imports/registries/mappings before changes",
+      "End-to-end scenarios not codified as executable acceptance tests",
+      "CLI commands for blast-radius inspection exist (what-should-i-run, control-plane-plan, resolve-capabilities, execution-plan) but not unified under 'blast-radius' subcommand",
+      "No explicit 'unmapped != unaffected' enforcement - unmapped capabilities are tracked but don't trigger escalation automatically",
+      "Shared infrastructure expansion is conservative via SharedDependencyIndex but not explicitly classified as 'shared_infrastructure_affected'",
+      "Test-only changes not explicitly prevented from claiming production capability impact",
+      "Configuration/tooling surface changes not explicitly classified and expanded",
+      "Frontend/backend boundary verification surfaces not explicitly enumerated",
+      "Runtime verification infrastructure changes not explicitly handled",
+      "Stale measurement evidence detection exists but reuse rejection not explicitly tied to blast-radius invalidation",
+      "Missing evidence vs non-certifiable evidence distinction not surfaced in execution plan",
+      "No explicit escalation condition for 'required verification surface has no executable command'",
+      "No explicit check for 'current repository state differs from plan derivation state' at execution time beyond fingerprint"
+    ],
+    "c48_c49_integration_points": [
+      "CapabilityResolver uses CrossLayerImpactPlanner for blast radius",
+      "CapabilityResolver uses SharedDependencyIndex for shared module impact",
+      "CapabilityResolver uses EvidenceReuse (decide_reuse) for invalidation/reuse decisions",
+      "ControlPlanePlanner consumes CapabilityResolution and EvidenceAwarePlan",
+      "ExecutionOrchestrator consumes ControlPlanePlan and builds ExecutionPlan",
+      "ExecutionOrchestrator injects revalidation tasks for stale/missing measurement truth",
+      "MeasurementTruthIntegrator evaluates measurement truth against capability contracts",
+      "CommandInventory provides canonical command metadata for ExecutionOrchestrator",
+      "OperationalQueryEngine provides what-should-i-run CLI from same architecture"
+    ],
+    "mutation_integration": {
+      "mutmut_pinned": "3.7.0",
+      "mutation_targets": {
+        "loan-engine": "loan_engine",
+        "reconciliation": "reconciliation_engine",
+        "ledger": "ledger_audit_engine",
+        "credit_card": "credit_card_engine",
+        "account_engine": "account_engine"
+      },
+      "authorization_required": true,
+      "full_campaign_runtime_minutes": 27,
+      "smoke_mode_available": true
+    }
+  }
+}

@@ -1,0 +1,507 @@
+{
+  "plan_id": "9d545bf7ec4b",
+  "generated_at": "2026-08-31T02:57:56.089119+00:00",
+  "changed_files": [
+    "backend/src/engines/credit_card_engine/calculator.py"
+  ],
+  "capability_resolution": {
+    "changed_files": [
+      "backend/src/engines/credit_card_engine/calculator.py"
+    ],
+    "classified_changes": [
+      {
+        "path": "backend/src/engines/credit_card_engine/calculator.py",
+        "classification": "source_change",
+        "directly_affected_capabilities": [
+          "api-contracts"
+        ],
+        "transitively_affected_capabilities": [],
+        "affected_components": [],
+        "affected_surfaces": [
+          "surf::backend/src"
+        ],
+        "reason": "Directly affects: api-contracts"
+      }
+    ],
+    "directly_affected_capabilities": [
+      "api-contracts"
+    ],
+    "transitively_affected_capabilities": [
+      "useCreditCardsCapability"
+    ],
+    "unaffected_capabilities": [
+      "e2e-tests",
+      "golden-regression",
+      "ledger",
+      "loan-engine",
+      "migrations",
+      "mutation-analysis",
+      "quick",
+      "reconciliation",
+      "runtime-verification"
+    ],
+    "all_affected_capabilities": [
+      "api-contracts",
+      "useCreditCardsCapability"
+    ],
+    "invalidated_evidence": [],
+    "reusable_evidence": [
+      "credit_card_engine",
+      "account_engine",
+      "loan_engine",
+      "reconciliation_engine",
+      "behaviour_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine",
+      "financial_events",
+      "core_domain_money",
+      "common_calculations",
+      "recommendation_engine",
+      "transaction_intelligence",
+      "financial_intelligence"
+    ],
+    "mandatory_verification": [
+      "api-contracts: bash .github/scripts/run_contract_tests.sh (contracts)"
+    ],
+    "optional_verification": [],
+    "unnecessary_verification": [
+      "loan-engine: bash .github/scripts/run_backend_verification.sh (backend)",
+      "reconciliation: bash .github/scripts/run_backend_verification.sh (backend)",
+      "ledger: bash .github/scripts/run_backend_verification.sh (backend)",
+      "migrations: bash .github/scripts/run_migration_verification.sh (migration)",
+      "quick: bash .github/scripts/run_fast_checks.sh (quick)",
+      "runtime-verification: bash .github/scripts/run_runtime_verification.sh (runtime)",
+      "golden-regression: bash .github/scripts/run_golden_tests.sh (golden)",
+      "mutation-analysis: bash .github/scripts/run_mutation_selective.sh (mutation)",
+      "e2e-tests: bash .github/scripts/run_playwright_tests.sh (playwright)"
+    ],
+    "blast_radius_report": {
+      "changed_files": [
+        "backend/src/engines/credit_card_engine/calculator.py"
+      ],
+      "affected_engines": [
+        "backend/src/engines/credit_card_engine"
+      ],
+      "affected_services": [
+        "backend/src/services/credit_card_service.py"
+      ],
+      "affected_routers": [
+        "backend/src/routers/credit_cards.py"
+      ],
+      "affected_endpoints": [
+        "DELETE /credit-cards/{card_id}",
+        "GET /credit-cards",
+        "GET /credit-cards/{card_id}",
+        "GET /credit-cards/{card_id}/metrics",
+        "GET /credit-cards/{card_id}/next-statement-date",
+        "GET /credit-cards/{card_id}/outstanding",
+        "GET /credit-cards/{card_id}/statements",
+        "GET /credit-cards/{card_id}/utilization",
+        "POST /credit-cards",
+        "POST /credit-cards/{card_id}/emi-conversion",
+        "POST /credit-cards/{card_id}/foreclosure",
+        "POST /credit-cards/{card_id}/payments",
+        "POST /credit-cards/{card_id}/statements",
+        "PUT /credit-cards/{card_id}"
+      ],
+      "affected_capabilities": [
+        "useCreditCardsCapability"
+      ],
+      "affected_mappers": [
+        "lib/mappers/credit-cards-mapper"
+      ],
+      "affected_dtos": [],
+      "affected_models": [],
+      "affected_view_models": [
+        "types/credit-cards-view-model"
+      ],
+      "affected_pages": [
+        "frontend/app/cards/workspace-page.tsx"
+      ],
+      "affected_workspaces": [
+        "cards"
+      ],
+      "affected_components": [
+        "components/cards/cards-evidence-drawer",
+        "components/cards/cards-insights-panel",
+        "components/cards/cards-toolbar",
+        "components/cards/credit-cards-summary",
+        "components/cards/cross-navigation",
+        "components/cards/empty-state",
+        "components/cards/error-state",
+        "components/cards/loading-skeleton",
+        "components/cards/spending-by-category",
+        "components/cards/utilization-chart"
+      ],
+      "affected_graph_renderers": [],
+      "affected_tests": [
+        "backend/tests/properties/credit_card_engine/__init__.py",
+        "backend/tests/properties/credit_card_engine/test_billing_properties.py",
+        "backend/tests/properties/credit_card_engine/test_emi_properties.py",
+        "backend/tests/properties/credit_card_engine/test_interest_properties.py",
+        "backend/tests/properties/credit_cards/test_engine_properties.py",
+        "backend/tests/properties/lending/test_engine_properties.py",
+        "backend/tests/unit/engines/credit_card/test_credit_card_engine.py"
+      ],
+      "affected_runtimes": [],
+      "affected_ui": [
+        "frontend/app/cards/workspace-page.tsx",
+        "cards",
+        "components/cards/cards-evidence-drawer",
+        "components/cards/cards-insights-panel",
+        "components/cards/cards-toolbar",
+        "components/cards/credit-cards-summary",
+        "components/cards/cross-navigation",
+        "components/cards/empty-state",
+        "components/cards/error-state",
+        "components/cards/loading-skeleton",
+        "components/cards/spending-by-category",
+        "components/cards/utilization-chart"
+      ],
+      "dependency_chains": [
+        {
+          "source": "backend/src/engines/credit_card_engine/calculator.py",
+          "engine": "backend/src/engines/credit_card_engine",
+          "services": [
+            "backend/src/services/credit_card_service.py"
+          ],
+          "routers": [
+            "backend/src/routers/credit_cards.py"
+          ],
+          "endpoints": [
+            "DELETE /credit-cards/{card_id}",
+            "GET /credit-cards",
+            "GET /credit-cards/{card_id}",
+            "GET /credit-cards/{card_id}/metrics",
+            "GET /credit-cards/{card_id}/next-statement-date",
+            "GET /credit-cards/{card_id}/outstanding",
+            "GET /credit-cards/{card_id}/statements",
+            "GET /credit-cards/{card_id}/utilization",
+            "POST /credit-cards",
+            "POST /credit-cards/{card_id}/emi-conversion",
+            "POST /credit-cards/{card_id}/foreclosure",
+            "POST /credit-cards/{card_id}/payments",
+            "POST /credit-cards/{card_id}/statements",
+            "PUT /credit-cards/{card_id}"
+          ],
+          "capabilities": [
+            "useCreditCardsCapability"
+          ],
+          "mappers": [
+            "lib/mappers/credit-cards-mapper"
+          ],
+          "view_models": [
+            "types/credit-cards-view-model"
+          ],
+          "workspaces": [
+            "cards"
+          ],
+          "components": [
+            "components/cards/cards-evidence-drawer",
+            "components/cards/cards-insights-panel",
+            "components/cards/cards-toolbar",
+            "components/cards/credit-cards-summary",
+            "components/cards/cross-navigation",
+            "components/cards/empty-state",
+            "components/cards/error-state",
+            "components/cards/loading-skeleton",
+            "components/cards/spending-by-category",
+            "components/cards/utilization-chart"
+          ],
+          "tests": [
+            "backend/tests/properties/credit_card_engine/__init__.py",
+            "backend/tests/properties/credit_card_engine/test_billing_properties.py",
+            "backend/tests/properties/credit_card_engine/test_emi_properties.py",
+            "backend/tests/properties/credit_card_engine/test_interest_properties.py",
+            "backend/tests/properties/credit_cards/test_engine_properties.py",
+            "backend/tests/properties/lending/test_engine_properties.py",
+            "backend/tests/unit/engines/credit_card/test_credit_card_engine.py"
+          ]
+        }
+      ],
+      "verification_plan": {
+        "run_unit": true,
+        "run_contract": true,
+        "run_property": false,
+        "run_frontend": true,
+        "run_integration": true,
+        "unit_paths": [
+          "backend/tests/properties/credit_card_engine/__init__.py",
+          "backend/tests/properties/credit_card_engine/test_billing_properties.py",
+          "backend/tests/properties/credit_card_engine/test_emi_properties.py",
+          "backend/tests/properties/credit_card_engine/test_interest_properties.py",
+          "backend/tests/properties/credit_cards/test_engine_properties.py",
+          "backend/tests/properties/lending/test_engine_properties.py",
+          "backend/tests/unit/engines/credit_card/test_credit_card_engine.py"
+        ],
+        "contract_paths": [],
+        "capabilities": [
+          "useCreditCardsCapability"
+        ],
+        "engines": [
+          "backend/src/engines/credit_card_engine"
+        ],
+        "services": [
+          "backend/src/services/credit_card_service.py"
+        ],
+        "dtos": [],
+        "impact_summary": "1 engines, 1 services, 1 capabilities, 0 dtos, 7 tests"
+      }
+    },
+    "evidence_reuse_decisions": [
+      {
+        "component": "credit_card_engine",
+        "disposition": "reusable_aggregate",
+        "measurement_id": "meas::credit_card_engine::c42.24-B",
+        "invalidations": [],
+        "reasons": [
+          "no rules triggered"
+        ]
+      },
+      {
+        "component": "account_engine",
+        "disposition": "reusable_aggregate",
+        "measurement_id": "meas::account_engine::c42.24-B",
+        "invalidations": [],
+        "reasons": [
+          "no rules triggered"
+        ]
+      },
+      {
+        "component": "loan_engine",
+        "disposition": "reusable_aggregate",
+        "measurement_id": "meas::loan_engine::c42.24-B",
+        "invalidations": [],
+        "reasons": [
+          "no rules triggered"
+        ]
+      },
+      {
+        "component": "reconciliation_engine",
+        "disposition": "reusable_aggregate",
+        "measurement_id": "meas::reconciliation_engine::c42.24-B",
+        "invalidations": [],
+        "reasons": [
+          "no rules triggered"
+        ]
+      },
+      {
+        "component": "behaviour_engine",
+        "disposition": "reusable_aggregate",
+        "measurement_id": "meas::behaviour_engine::c42.24-B",
+        "invalidations": [],
+        "reasons": [
+          "no rules triggered"
+        ]
+      },
+      {
+        "component": "balance_engine",
+        "disposition": "reusable_aggregate",
+        "measurement_id": "meas::balance_engine::c42.24-B",
+        "invalidations": [],
+        "reasons": [
+          "no rules triggered"
+        ]
+      },
+      {
+        "component": "ledger_audit_engine",
+        "disposition": "reusable_aggregate",
+        "measurement_id": "meas::ledger_audit_engine::c42.24-B",
+        "invalidations": [],
+        "reasons": [
+          "no rules triggered"
+        ]
+      },
+      {
+        "component": "cashflow_engine",
+        "disposition": "reusable_aggregate",
+        "measurement_id": "meas::cashflow_engine::c42.24-B",
+        "invalidations": [],
+        "reasons": [
+          "no rules triggered"
+        ]
+      },
+      {
+        "component": "financial_events",
+        "disposition": "reusable_aggregate",
+        "measurement_id": "meas::financial_events::c42.24-B",
+        "invalidations": [],
+        "reasons": [
+          "no rules triggered"
+        ]
+      },
+      {
+        "component": "core_domain_money",
+        "disposition": "reusable_aggregate",
+        "measurement_id": "meas::core_domain_money::c42.24-B",
+        "invalidations": [],
+        "reasons": [
+          "no rules triggered"
+        ]
+      },
+      {
+        "component": "common_calculations",
+        "disposition": "reusable_aggregate",
+        "measurement_id": "meas::common_calculations::c42.24-B",
+        "invalidations": [],
+        "reasons": [
+          "no rules triggered"
+        ]
+      },
+      {
+        "component": "recommendation_engine",
+        "disposition": "reusable_aggregate",
+        "measurement_id": "meas::recommendation_engine::c42.24-B",
+        "invalidations": [],
+        "reasons": [
+          "no rules triggered"
+        ]
+      },
+      {
+        "component": "transaction_intelligence",
+        "disposition": "reusable_aggregate",
+        "measurement_id": "meas::transaction_intelligence::c42.25",
+        "invalidations": [],
+        "reasons": [
+          "no rules triggered"
+        ]
+      },
+      {
+        "component": "financial_intelligence",
+        "disposition": "reusable_aggregate",
+        "measurement_id": "meas::financial_intelligence::c42.25",
+        "invalidations": [],
+        "reasons": [
+          "no rules triggered"
+        ]
+      }
+    ]
+  },
+  "tasks": [
+    {
+      "task_id": "task-0001",
+      "capability_id": "api-contracts",
+      "verification_kind": "contract",
+      "command": "bash .github/scripts/run_contract_tests.sh",
+      "profile": "contracts",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "reason": "Directly affected by change",
+      "evidence_reused": [],
+      "evidence_invalidated": [],
+      "measurement_required": [
+        "coverage"
+      ],
+      "estimated_duration_seconds": 180,
+      "escalation_trigger": ""
+    },
+    {
+      "task_id": "task-0002",
+      "capability_id": "api-contracts",
+      "verification_kind": "unit",
+      "command": "bash .github/scripts/run_frontend_verification.sh",
+      "profile": "frontend",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "reason": "Directly affected by change",
+      "evidence_reused": [],
+      "evidence_invalidated": [],
+      "measurement_required": [
+        "coverage"
+      ],
+      "estimated_duration_seconds": 180,
+      "escalation_trigger": ""
+    },
+    {
+      "task_id": "task-0003",
+      "capability_id": "api-contracts",
+      "verification_kind": "unit",
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "profile": "backend",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "reason": "Directly affected by change",
+      "evidence_reused": [],
+      "evidence_invalidated": [],
+      "measurement_required": [
+        "coverage"
+      ],
+      "estimated_duration_seconds": 300,
+      "escalation_trigger": ""
+    },
+    {
+      "task_id": "task-0004",
+      "capability_id": "api-contracts",
+      "verification_kind": "unit",
+      "command": "bash .github/scripts/run_contract_tests.sh",
+      "profile": "run_contract_tests",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "reason": "Directly affected by change",
+      "evidence_reused": [],
+      "evidence_invalidated": [],
+      "measurement_required": [
+        "coverage"
+      ],
+      "estimated_duration_seconds": 180,
+      "escalation_trigger": ""
+    },
+    {
+      "task_id": "task-0005",
+      "capability_id": "api-contracts",
+      "verification_kind": "unit",
+      "command": "bash .github/scripts/run_frontend_verification.sh",
+      "profile": "run_frontend_verification",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "reason": "Directly affected by change",
+      "evidence_reused": [],
+      "evidence_invalidated": [],
+      "measurement_required": [
+        "coverage"
+      ],
+      "estimated_duration_seconds": 180,
+      "escalation_trigger": ""
+    },
+    {
+      "task_id": "task-0006",
+      "capability_id": "api-contracts",
+      "verification_kind": "unit",
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "profile": "run_backend_verification",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "reason": "Directly affected by change",
+      "evidence_reused": [],
+      "evidence_invalidated": [],
+      "measurement_required": [
+        "coverage"
+      ],
+      "estimated_duration_seconds": 300,
+      "escalation_trigger": ""
+    }
+  ],
+  "total_estimated_duration_seconds": 1320,
+  "escalation_conditions": [
+    "Capability api-contracts lacks measurement truth \u2014 authoritative mutation score cannot be certified",
+    "Transitive impact on 1 capabilities \u2014 cross-capability escalation may be required if direct verification fails"
+  ],
+  "measurement_requirements": [
+    {
+      "measurement_kind": "coverage",
+      "required_for_capabilities": [
+        "api-contracts",
+        "api-contracts",
+        "api-contracts",
+        "api-contracts",
+        "api-contracts",
+        "api-contracts"
+      ],
+      "authoritative_evidence_available": true,
+      "required_for_certification": true
+    }
+  ],
+  "certification_requirements": [],
+  "rationale": "Plan generated for 1 changed file(s). Resolved to 1 directly affected and 1 transitively affected capabilities. Created 6 mandatory and 0 escalation tasks. Evidence: 14 reusable, 0 invalidated. Evidence-aware planner selected 1 mutation tasks (13 excluded as reusable). Total estimated duration: 1320s."
+}

@@ -1,0 +1,37 @@
+{
+  "evidence_invalidations": [
+    {
+      "evidence_id": "loan-engine::mutation",
+      "capability_id": "loan-engine",
+      "disposition": "missing_fresh_measurement_required",
+      "invalidation_rules": [],
+      "reason": "no mutation evidence found for loan-engine",
+      "repository_sha_match": false,
+      "record_path": "backend/tests/generated/mutation/measurement-truth-loan-engine.json"
+    }
+  ],
+  "reusable_evidence": [
+    "credit_card_engine",
+    "account_engine",
+    "loan_engine",
+    "reconciliation_engine",
+    "behaviour_engine",
+    "balance_engine",
+    "ledger_audit_engine",
+    "cashflow_engine",
+    "financial_events",
+    "core_domain_money",
+    "common_calculations",
+    "recommendation_engine",
+    "transaction_intelligence",
+    "financial_intelligence"
+  ],
+  "revalidation_required": [
+    "loan-engine"
+  ],
+  "summary": {
+    "total_invalidated": 1,
+    "total_reusable": 14,
+    "total_revalidation": 1
+  }
+}

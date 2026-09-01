@@ -1,0 +1,31 @@
+{
+  "schema": "m9-c51-capability-discovery-contract/v1",
+  "generated_at": "2026-08-31T17:36:12.694496+00:00",
+  "problem_types": [
+    "changed_file",
+    "failing_test",
+    "mutation_survivor",
+    "coverage_drop",
+    "workflow_failure",
+    "quality_failure",
+    "proposed_change",
+    "stale_evidence",
+    "unknown_failure"
+  ],
+  "stages": [
+    "discovery",
+    "planning",
+    "execution",
+    "measurement",
+    "diagnosis",
+    "strengthening",
+    "evidence_inspection",
+    "certification"
+  ],
+  "bypass_verdicts": [
+    "CANONICAL_PATH",
+    "SUBOPTIMAL_PATH",
+    "UNSAFE_BYPASS",
+    "NO_CANONICAL_CAPABILITY"
+  ]
+}

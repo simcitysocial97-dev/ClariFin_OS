@@ -1,0 +1,100 @@
+{
+  "certification": "M9-C47 Measurement Truth Certification",
+  "commit": "b8914c4333c48d36d9db2805c04d8775bedba86a",
+  "timestamp": "2026-08-31T06:35:00Z",
+  "phase": "C47",
+  "result": "CERTIFIED",
+  "acceptance_gates": [
+    {
+      "gate": "One canonical measurement/evidence contract exists",
+      "status": "PASS",
+      "evidence": "measurement_truth.py defines MeasurementTruthRecord, MeasurementCompletionStatus, EvidenceClassification, MeasurementKind; operator_report answers 6 questions"
+    },
+    {
+      "gate": "Coverage and mutation are explicitly separated",
+      "status": "PASS",
+      "evidence": "MeasurementKind enum (COVERAGE | MUTATION); separate commands (verify.py measurement coverage vs verify.py mutation); separate truth records"
+    },
+    {
+      "gate": "Authoritative vs derived evidence is machine-readable",
+      "status": "PASS",
+      "evidence": "EvidenceClassification enum (authoritative | derived) in every record; classification propagated to completion_status (AUTHORITATIVE_COMPLETE vs DERIVED_ONLY)"
+    },
+    {
+      "gate": "Partial/timeout/corrupt mutation results cannot certify",
+      "status": "PASS",
+      "evidence": "certification_gate() returns False for PARTIAL, TIMEOUT, INFRASTRUCTURE_FAILURE, EVIDENCE_FAILURE, INVALID_SCOPE, DERIVED_ONLY; only AUTHORITATIVE_COMPLETE + authoritative evidence + fingerprint = True"
+    },
+    {
+      "gate": "Mutation evidence survives mutmut workspace cleanup",
+      "status": "PASS",
+      "evidence": "Durable artifacts at backend/tests/generated/mutation/ (mutation-survivor-intel.json, mutation-survivors.json); measurement_truth.durable_survivor_evidence references them; not backend/mutants/"
+    },
+    {
+      "gate": "Individual survivor investigation does not depend on temporary folders",
+      "status": "PASS",
+      "evidence": "verify.py mutation-intel reads mutation-survivor-intel.json; covers identity, location, original/modified, status, covering tests, component, capability, fingerprint, investigation status"
+    },
+    {
+      "gate": "Native mutmut analysis is reused rather than unnecessarily recreated",
+      "status": "PASS",
+      "evidence": "parse_mutmut_results (text), collect_mutant_results (.meta files), _run_tests_for_mutant (tests-for-mutant), show_mutant (show), libcst diff reconstruction - all native mutmut 3.7.0 features"
+    },
+    {
+      "gate": "Local and CI evidence can be reconciled through the existing C42 evidence architecture",
+      "status": "PASS",
+      "evidence": "evidence_reuse.py INVALIDATION_RULES + ComponentMeasurement.fingerprint() used by both local (executor_pipeline) and CI (ci_evidence); ci_evidence imports INVALIDATION_RULES and applies same taxonomy"
+    },
+    {
+      "gate": "CI timeout/invalid-result states are explicitly represented",
+      "status": "PASS",
+      "evidence": "MeasurementCompletionStatus enum has 7 explicit states including TIMEOUT, INFRASTRUCTURE_FAILURE, EVIDENCE_FAILURE, INVALID_SCOPE, DERIVED_ONLY; CI workflow jq extraction maps to these"
+    },
+    {
+      "gate": "Existing C42.38 architecture remains intact",
+      "status": "PASS",
+      "evidence": "All C42.27-31 test suites pass (144 tests); mutation_runner, evidence_contract, mutation_contract, ci_evidence, reconciliation, cache, survivor_intel, forensic_cli unchanged in semantics"
+    },
+    {
+      "gate": "No parallel verification/evidence architecture was introduced",
+      "status": "PASS",
+      "evidence": "measurement_truth.py extends existing contracts; measurement_truth_cli.py and coverage_measurement.py add commands to verify.py; no new evidence store or verification planner"
+    },
+    {
+      "gate": "No production functionality was deleted",
+      "status": "PASS",
+      "evidence": "All existing commands, modules, and APIs preserved; only additions: measurement_truth.py, measurement_truth_cli.py, coverage_measurement.py, test_measurement_truth.py, verification command hooks"
+    },
+    {
+      "gate": "No repository-wide mutation campaign was required",
+      "status": "PASS",
+      "evidence": "Only mutation --smoke (6 mutants, 5s) and targeted coverage measurement executed for validation"
+    },
+    {
+      "gate": "Root canonical Ruff/Black/mypy configuration remains authoritative",
+      "status": "PASS",
+      "evidence": "All new files pass ruff --fix and black; mypy success on measurement_truth.py; root pyproject.toml is single authority"
+    },
+    {
+      "gate": "All phase tests and required regression suites pass",
+      "status": "PASS",
+      "evidence": "test_measurement_truth.py: 23 passed; test_mutation_infra.py: 21 passed; test_m9_c42_27/28: 62 passed; test_m9_c42_29/30/31: 82 passed; total 188 tests passed"
+    }
+  ],
+  "artifacts_produced": [
+    "runtime/generated/m9-c47/baseline.json",
+    "runtime/generated/m9-c47/measurement-truth-contract.json",
+    "runtime/generated/m9-c47/measurement-implementation-inventory.json",
+    "runtime/generated/m9-c47/mutation-observability-evidence.json",
+    "runtime/generated/m9-c47/ci-local-reconciliation-evidence.json",
+    "runtime/generated/m9-c47/focused-scenario-results.json",
+    "runtime/generated/m9-c47/certification-result.json",
+    "runtime/generated/m9-c47/EXECUTION_PROGRESS.md"
+  ],
+  "commands_verified": [
+    "verify.py mutation --smoke",
+    "verify.py measurement-truth <record> --json",
+    "verify.py measurement coverage <scope>"
+  ],
+  "completion_question_answered": "The verification system can reliably answer: Was this coverage/mutation result actually executed, over exactly what scope, against exactly what repository/configuration/toolchain, did it complete, where is the durable evidence, can it be reused, and is it authoritative enough for certification?"
+}

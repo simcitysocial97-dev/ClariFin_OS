@@ -1238,7 +1238,7 @@ def main() -> int:
             file=sys.stderr,
         )
         print(
-            "Commands: status, metrics, history, deps, verify-status, analytics, health, doctor, ci-doctor, diagnose, diagnose-failures, plan, reconcile, exec-evidence, deep-contract, local-gate, affected, repair, risk, integrity, knowledge, knowledge endpoint, knowledge capability, knowledge workspace, knowledge rule, knowledge component, dashboard, intelligence, intelligence-audit, certify-v4, certify-v5, audit, api-contracts, contract-governance, evidence-plan, evidence-execute, evidence-reconcile, evidence-certify",
+            "Commands: status, metrics, history, deps, verify-status, analytics, health, doctor, ci-doctor, diagnose, diagnose-failures, plan, reconcile, exec-evidence, deep-contract, local-gate, affected, repair, risk, integrity, knowledge, knowledge endpoint, knowledge capability, knowledge workspace, knowledge rule, knowledge component, dashboard, intelligence, intelligence-audit, certify-v4, certify-v5, audit, api-contracts, contract-governance, evidence-plan, evidence-execute, evidence-reconcile, evidence-certify, verification-contract, enforce, bypass-enforcement, pipeline-enforcement, scenarios, evidence-integrity, strengthening-integration, cross-capability-impact, config-authority-verify, efficiency, regression, certify, what-should-i-run, capability-inventory, control-plane-plan, resolve-capabilities, strengthen-capability, strengthen-survivor, strengthen-survivor-forensic, measurement-truth-report, execution-plan, execute, execution-status, execution-report, capabilities, capability-for, capability-graph, bypass-audit, latent-audit, config-authority",
             file=sys.stderr,
         )
         print(
@@ -1248,6 +1248,14 @@ def main() -> int:
             file=sys.stderr,
         )
         print("Env: env-check (verify canonical .venv environment)", file=sys.stderr)
+        print(
+            "Measurement: measurement-truth <record> | measurement coverage <scope>",
+            file=sys.stderr,
+        )
+        print(
+            "C53: generate-test | c53-scenarios | c53-certify",
+            file=sys.stderr,
+        )
         return 1
 
     command = sys.argv[1]
@@ -1327,6 +1335,27 @@ def main() -> int:
 
         return run_mutation_cli(sys.argv[2:])
 
+    if command == "measurement-truth":
+        from runtime.foundation.verification.measurement_truth_cli import (
+            run_measurement_truth_cli,
+        )
+
+        return run_measurement_truth_cli(sys.argv[2:])
+
+    if command == "measurement":
+        sub_command = sys.argv[2] if len(sys.argv) > 2 else None
+        if sub_command == "coverage":
+            from runtime.foundation.verification.coverage_measurement import (
+                measure_coverage_cli,
+            )
+
+            return measure_coverage_cli(sys.argv[3:])
+        print(
+            f"measurement subcommand required: {sub_command!r}. Use 'coverage'.",
+            file=sys.stderr,
+        )
+        return 1
+
     if command == "evidence-plan":
         import sys as _sys
 
@@ -1338,6 +1367,14 @@ def main() -> int:
             return _plan_main()
         finally:
             _sys.argv = saved
+
+    # M9-C52.4 — Unified Change→Capability→Plan Contract
+    if command == "verification-contract":
+        from runtime.foundation.verification.verification_contract import (
+            main as _vc_main,
+        )
+
+        return _vc_main()
 
     if command == "evidence-execute":
         import sys as _sys
@@ -1381,6 +1418,14 @@ def main() -> int:
             return _cert_main()
         finally:
             _sys.argv = saved
+
+    # M9-C52.5 — Execution Enforcement Boundary
+    if command == "enforce":
+        from runtime.foundation.verification.execution_enforcer import (
+            main as _enforce_main,
+        )
+
+        return _enforce_main()
 
     if command == "mutation-inventory":
         from runtime.foundation.verification.mutation_inventory import (
@@ -1436,7 +1481,13 @@ def main() -> int:
 
         return run_strengthen_validate(sys.argv[2:])
 
-    if command == "strengthen-survivor":
+    # M9-C52.2 route-authority resolution: the low-level forensic per-survivor
+    # analyzer (mutmut built-ins: show / tests-for-mutant) requires a LIVE
+    # mutation run. It is an explicit developer/diagnostic escape, NOT the
+    # canonical control-plane route. It is exposed under a distinct,
+    # unshadowed name so it can never silently alias the canonical
+    # `strengthen-survivor` route (owned by the capability-aware pipeline).
+    if command == "strengthen-survivor-forensic":
         from runtime.foundation.verification.forensic_cli import (
             run_strengthen_survivor,
         )
@@ -1454,6 +1505,486 @@ def main() -> int:
         from runtime.foundation.verification.env import main_env_check
 
         return main_env_check(sys.argv[2:])
+
+    # M9-C50 — Blast-Radius Enforcement & Change-Impact Control
+    if command == "what-should-i-run":
+        from runtime.foundation.verification.blast_radius_cli import (
+            cmd_what_should_i_run_c50,
+        )
+
+        return cmd_what_should_i_run_c50(sys.argv[2:])
+
+    if command == "capability-inventory":
+        from runtime.foundation.verification.operational_cli import (
+            cmd_capability_inventory,
+        )
+
+        return cmd_capability_inventory(sys.argv[2:])
+
+    if command == "control-plane-plan":
+        from runtime.foundation.verification.operational_cli import (
+            cmd_control_plane_plan,
+        )
+
+        return cmd_control_plane_plan(sys.argv[2:])
+
+    if command == "resolve-capabilities":
+        from runtime.foundation.verification.operational_cli import (
+            cmd_resolve_capabilities,
+        )
+
+        return cmd_resolve_capabilities(sys.argv[2:])
+
+    if command == "strengthen-capability":
+        from runtime.foundation.verification.strengthening_pipeline import (
+            cmd_strengthen_capability,
+        )
+
+        return cmd_strengthen_capability(sys.argv[2:])
+
+    # M9-C52.2 route-authority: `strengthen-survivor` is the CANONICAL
+    # per-survivor route — the capability-aware, durable-intel-driven analyzer
+    # (strengthening_pipeline, C48). This is the route the C51 capability
+    # discovery resolver promises for classified survivors (intel -> classify
+    # -> propose -> validate -> revalidate). It is deterministic: exactly one
+    # dispatcher branch binds the name. The low-level mutmut-built-in forensic
+    # variant is unshadowed under `strengthen-survivor-forensic`.
+    if command == "strengthen-survivor":
+        from runtime.foundation.verification.strengthening_pipeline import (
+            cmd_strengthen_survivor,
+        )
+
+        return cmd_strengthen_survivor(sys.argv[2:])
+
+    if command == "measurement-truth-report":
+        from runtime.foundation.verification.measurement_truth_integration import (
+            format_measurement_truth_report,
+            get_measurement_truth_integrator,
+        )
+
+        integrator = get_measurement_truth_integrator()
+        report = integrator.evaluate_all_capabilities()
+        print(format_measurement_truth_report(report))
+        return 0
+
+    # M9-C50 — Blast-Radius Enforcement & Change-Impact Control
+    if command == "blast-radius":
+        from runtime.foundation.verification.blast_radius_cli import cmd_blast_radius
+
+        return cmd_blast_radius(sys.argv[2:])
+
+    # M9-C49 — Verification Execution Orchestration
+    if command == "execution-plan":
+        import argparse
+
+        from runtime.foundation.verification.execution_orchestrator import (
+            ExecutionOrchestrator,
+            format_plan,
+        )
+
+        parser = argparse.ArgumentParser(prog="verify.py execution-plan")
+        parser.add_argument("files", nargs="+", help="changed files")
+        parser.add_argument("--json", action="store_true")
+        parser.add_argument("--out", help="output file path")
+        args = parser.parse_args(sys.argv[2:])
+
+        orch = ExecutionOrchestrator()
+        plan = orch.build_execution_plan(args.files)
+        output = plan.to_json() if args.json else format_plan(plan)
+        if args.out:
+            Path(args.out).write_text(output)
+            print(f"Written to {args.out}")
+        else:
+            print(output)
+        plan_dir = REPO_ROOT / "runtime" / "generated" / "m9-c49" / "plans"
+        plan_dir.mkdir(parents=True, exist_ok=True)
+        Path(plan_dir / f"{plan.plan_id}.json").write_text(plan.to_json())
+        return 0
+
+    if command == "execute":
+        import argparse
+
+        from runtime.foundation.verification.execution_orchestrator import (
+            ExecutionOrchestrator,
+            format_report,
+        )
+
+        parser = argparse.ArgumentParser(prog="verify.py execute")
+        parser.add_argument(
+            "files", nargs="*", help="changed files (default: git diff)"
+        )
+        parser.add_argument(
+            "--plan", help="path to an existing ExecutionPlan JSON to execute"
+        )
+        parser.add_argument(
+            "--authorize",
+            nargs="*",
+            default=[],
+            metavar="TASK_OR_PROFILE",
+            help="authorize production-affecting tasks; pass 'all' to authorize everything",
+        )
+        parser.add_argument(
+            "--dry-run", action="store_true", help="plan and validate without executing"
+        )
+        parser.add_argument("--json", action="store_true")
+        parser.add_argument("--out", help="output report path")
+        parser.add_argument(
+            "--override",
+            action="append",
+            default=[],
+            metavar="CMD=REPLACEMENT",
+            help="substitute a command (e.g. for fast test runs)",
+        )
+        parser.add_argument(
+            "--override-kind",
+            action="append",
+            default=[],
+            metavar="KIND=REPLACEMENT",
+            help="substitute a command by verification kind (e.g. coverage=...)",
+        )
+        args, _ = parser.parse_known_args(sys.argv[2:])
+
+        overrides: dict[str, str] = {}
+        for item in args.override:
+            if "=" in item:
+                k, v = item.split("=", 1)
+                overrides[k.strip()] = v.strip()
+        for item in args.override_kind:
+            if "=" in item:
+                k, v = item.split("=", 1)
+                overrides[f"kind:{k.strip()}"] = v.strip()
+
+        orch = ExecutionOrchestrator(command_overrides=overrides)
+
+        if args.plan:
+            from runtime.foundation.verification.execution_orchestrator import (
+                ExecutionPlan,
+                RepositoryFingerprint,
+            )
+
+            data = json.loads(Path(args.plan).read_text())
+            fp = RepositoryFingerprint.from_dict(data["repository_fingerprint"])
+            tasks = data["tasks"]
+            # Reconstruct ExecutionPlan from JSON
+            from runtime.foundation.verification.execution_orchestrator import (
+                ExecutionTaskSpec,
+            )
+
+            spec_list = []
+            for td in tasks:
+                spec_list.append(
+                    ExecutionTaskSpec(
+                        task_id=td["task_id"],
+                        source_task_id=td["source_task_id"],
+                        primary_capability=td["primary_capability"],
+                        capabilities=tuple(td["capabilities"]),
+                        verification_kind=td["verification_kind"],
+                        command=td["command"],
+                        profile=td["profile"],
+                        scope=td["scope"],
+                        is_mandatory=td["is_mandatory"],
+                        is_escalation=td["is_escalation"],
+                        reason=td["reason"],
+                        origin=td["origin"],
+                        prerequisites=tuple(td["prerequisites"]),
+                        depends_on=tuple(td["depends_on"]),
+                        expected_evidence=tuple(td["expected_evidence"]),
+                        measurement_required=tuple(td["measurement_required"]),
+                        escalation_conditions=tuple(td["escalation_conditions"]),
+                        authorization_required=td["authorization_required"],
+                        timeout_seconds=td["timeout_seconds"],
+                        failure_policy=td["failure_policy"],
+                        evidence_reused=tuple(td["evidence_reused"]),
+                        evidence_invalidated=tuple(td["evidence_invalidated"]),
+                        estimated_duration_seconds=td["estimated_duration_seconds"],
+                        mutation_target=td.get("mutation_target", ""),
+                    )
+                )
+            plan = ExecutionPlan(
+                plan_id=data["plan_id"],
+                source_plan_id=data["source_plan_id"],
+                repository_fingerprint=fp,
+                changed_files=list(data["changed_files"]),
+                affected_capabilities=list(data["affected_capabilities"]),
+                affected_components=list(data["affected_components"]),
+                invalidated_evidence=list(data["invalidated_evidence"]),
+                reusable_evidence=list(data["reusable_evidence"]),
+                tasks=spec_list,
+                escalation_conditions=list(data["escalation_conditions"]),
+                measurement_requirements=list(data["measurement_requirements"]),
+                certification_requirements=list(data["certification_requirements"]),
+                rationale=data["rationale"],
+                plan_fingerprint=data["plan_fingerprint"],
+                generated_at=data["generated_at"],
+                revalidation_sources=list(data.get("revalidation_sources", [])),
+                reusable_measurements=list(data.get("reusable_measurements", [])),
+            )
+        else:
+            files = args.files
+            if not files:
+                from runtime.foundation.verification.orchestrator import (
+                    _collect_changed_files,
+                    _is_git_available,
+                )
+
+                if _is_git_available():
+                    cf = _collect_changed_files()
+                    files = cf.files
+            if not files:
+                print(
+                    "No files provided and no git changes detected",
+                    file=sys.stderr,
+                )
+                return 1
+            plan = orch.build_execution_plan(files)
+
+        authorize = set(args.authorize or [])
+        if "all" in authorize:
+            authorize = {t.task_id for t in plan.tasks}
+        report = orch.execute(plan, authorize=authorize, dry_run=args.dry_run)
+        output = report.to_json() if args.json else format_report(report)
+        if args.out:
+            Path(args.out).write_text(output)
+            print(f"Written to {args.out}")
+        else:
+            print(output)
+
+        # Persist report
+        report_dir = REPO_ROOT / "runtime" / "generated" / "m9-c49" / "reports"
+        report_dir.mkdir(parents=True, exist_ok=True)
+        Path(report_dir / f"{report.report_id}.json").write_text(report.to_json())
+        latest = REPO_ROOT / "runtime" / "generated" / "m9-c49" / "latest-report.json"
+        latest.write_text(report.to_json())
+
+        return 0 if report.final_decision == "certified" else 1
+
+    if command == "execution-status":
+        import argparse
+
+        parser = argparse.ArgumentParser(prog="verify.py execution-status")
+        parser.add_argument("--plan", help="plan_id to look up")
+        parser.add_argument(
+            "--latest", action="store_true", help="show the most recent report"
+        )
+        parser.add_argument("--json", action="store_true")
+        args = parser.parse_args(sys.argv[2:])
+
+        report_dir = REPO_ROOT / "runtime" / "generated" / "m9-c49" / "reports"
+        if args.latest:
+            latest = (
+                REPO_ROOT / "runtime" / "generated" / "m9-c49" / "latest-report.json"
+            )
+            if not latest.exists():
+                print("No reports found", file=sys.stderr)
+                return 1
+            data = json.loads(latest.read_text())
+        elif args.plan:
+            path = report_dir / f"report-{args.plan}.json"
+            if not path.exists():
+                path = report_dir / f"report-{args.plan[:12]}.json"
+            if not path.exists():
+                # try matching by prefix
+                matches = sorted(report_dir.glob(f"report-{args.plan}*.json"))
+                if not matches:
+                    print(f"No report for plan_id={args.plan}", file=sys.stderr)
+                    return 1
+                path = matches[0]
+            data = json.loads(path.read_text())
+        else:
+            print("--plan or --latest required", file=sys.stderr)
+            return 1
+
+        if args.json:
+            print(json.dumps(data, indent=2, default=str))
+            return 0
+        print(f"Report ID:   {data['report_id']}")
+        print(f"Plan ID:     {data['plan_id']}")
+        print(f"Decision:    {data['final_decision']}")
+        print(f"Reason:      {data['decision_reason']}")
+        print(f"Duration:    {data['total_duration_seconds']:.1f}s")
+        eff = data.get("efficiency", {})
+        print(
+            f"Tasks:       selected={eff.get('tasks_selected', 0)} "
+            f"executed={eff.get('tasks_executed', 0)} "
+            f"reused={eff.get('tasks_reused', 0)} "
+            f"skipped={eff.get('tasks_skipped', 0)} "
+            f"auth_required={eff.get('tasks_awaiting_authorization', 0)}"
+        )
+        return 0
+
+    if command == "execution-report":
+        import argparse
+
+        parser = argparse.ArgumentParser(prog="verify.py execution-report")
+        parser.add_argument("--plan", help="plan_id to look up")
+        parser.add_argument(
+            "--latest", action="store_true", help="show the most recent report"
+        )
+        parser.add_argument("--json", action="store_true")
+        args = parser.parse_args(sys.argv[2:])
+
+        report_dir = REPO_ROOT / "runtime" / "generated" / "m9-c49" / "reports"
+        if args.latest:
+            latest = (
+                REPO_ROOT / "runtime" / "generated" / "m9-c49" / "latest-report.json"
+            )
+            if not latest.exists():
+                print("No reports found", file=sys.stderr)
+                return 1
+            data = json.loads(latest.read_text())
+        elif args.plan:
+            path = report_dir / f"report-{args.plan}.json"
+            if not path.exists():
+                path = report_dir / f"report-{args.plan[:12]}.json"
+            if not path.exists():
+                matches = sorted(report_dir.glob(f"report-{args.plan}*.json"))
+                if not matches:
+                    print(f"No report for plan_id={args.plan}", file=sys.stderr)
+                    return 1
+                path = matches[0]
+            data = json.loads(path.read_text())
+        else:
+            print("--plan or --latest required", file=sys.stderr)
+            return 1
+        print(json.dumps(data, indent=2, default=str))
+        return 0
+
+    # ── M9-C51 — Capability Discovery & Enforcement ────────────────────────────
+
+    if command == "capabilities":
+        from runtime.foundation.verification.capability_catalog import (
+            cmd_capabilities,
+        )
+
+        return cmd_capabilities(sys.argv[2:])
+
+    if command == "capability-for":
+        from runtime.foundation.verification.capability_discovery import (
+            cmd_capability_for,
+        )
+
+        return cmd_capability_for(sys.argv[2:])
+
+    if command == "capability-graph":
+        from runtime.foundation.verification.capability_graph import (
+            cmd_capability_graph,
+        )
+
+        return cmd_capability_graph(sys.argv[2:])
+
+    if command == "bypass-audit":
+        from runtime.foundation.verification.capability_discovery import (
+            cmd_bypass_audit,
+        )
+
+        return cmd_bypass_audit(sys.argv[2:])
+
+    # M9-C52.6 — Bypass Resistance
+    if command == "bypass-enforcement":
+        from runtime.foundation.verification.bypass_enforcement import main as _be_main
+
+        return _be_main()
+
+    # M9-C52.7 — Pipeline Spine Enforcement
+    if command == "pipeline-enforcement":
+        from runtime.foundation.verification.pipeline_enforcement import (
+            main as _pe_main,
+        )
+
+        return _pe_main()
+
+    # M9-C52.8 — Real Repository Change Scenarios
+    if command == "scenarios":
+        from runtime.foundation.verification.scenario_harness import main as _sc_main
+
+        return _sc_main()
+
+    # M9-C52.9 — Evidence / Certification Integrity
+    if command == "evidence-integrity":
+        from runtime.foundation.verification.evidence_integrity import main as _ei_main
+
+        return _ei_main()
+
+    # M9-C52.10 — Strengthening Handoff Verification
+    if command == "strengthening-integration":
+        from runtime.foundation.verification.strengthening_integration import (
+            main as _si_main,
+        )
+
+        return _si_main()
+
+    # M9-C52.11 — Cross-Capability Dependency Enforcement
+    if command == "cross-capability-impact":
+        from runtime.foundation.verification.cross_capability_impact import (
+            main as _cci_main,
+        )
+
+        return _cci_main()
+
+    # M9-C52.12 — Configuration Authority Enforcement
+    if command == "config-authority-verify":
+        from runtime.foundation.verification.configuration_authority_enforcement import (
+            main as _cav_main,
+        )
+
+        return _cav_main()
+
+    # M9-C52.13 — Control-Plane Efficiency
+    if command == "efficiency":
+        from runtime.foundation.verification.control_plane_efficiency import (
+            main as _eff_main,
+        )
+
+        return _eff_main()
+
+    # M9-C52.14 — Full Regression
+    if command == "regression":
+        from runtime.foundation.verification.regression import main as _reg_main
+
+        return _reg_main()
+
+    # M9-C52.15 — Final Certification
+    if command == "certify":
+        from runtime.foundation.verification.certification import main as _cert_main
+
+        return _cert_main()
+
+    if command == "latent-audit":
+        from runtime.foundation.verification.capability_latent_audit import (
+            cmd_latent_audit,
+        )
+
+        return cmd_latent_audit(sys.argv[2:])
+
+    if command == "config-authority":
+        from runtime.foundation.verification.configuration_authority import (
+            cmd_config_authority,
+        )
+
+        return cmd_config_authority(sys.argv[2:])
+
+    # ── M9-C53 — Automatic Test Generation & Evidence-Driven Strengthening ───
+
+    if command == "generate-test":
+        from runtime.foundation.verification.generation_engine import (
+            main as _gen_main,
+        )
+
+        return _gen_main()
+
+    if command == "c53-scenarios":
+        from runtime.foundation.verification.c53_scenarios import (
+            main as _c53sc_main,
+        )
+
+        return _c53sc_main()
+
+    if command == "c53-certify":
+        from runtime.foundation.verification.c53_certification import (
+            main as _c53cert_main,
+        )
+
+        return _c53cert_main()
 
     profile_name = command
 

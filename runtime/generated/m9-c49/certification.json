@@ -1,0 +1,128 @@
+{
+  "schema": "m9-c49-certification/v1",
+  "phase": "M9-C49",
+  "title": "Verification Execution Orchestration & End-to-End Pipeline Enforcement",
+  "generated_at": "2026-08-31T06:00:00+00:00",
+  "baseline_phase": "M9-C48 Capability Operationalization & Verification Control Plane",
+  "status": "CERTIFIED",
+  "certification_criteria": {
+    "execution_plan_contract": {
+      "status": "PASS",
+      "description": "Machine-readable execution plan with all required fields (plan_id, fingerprint, ordered tasks, dependencies, evidence, authorization, timeout, failure policy). Deterministic from C48 control plane.",
+      "evidence": "runtime/foundation/verification/execution_orchestrator.py:ExecutionPlan"
+    },
+    "execution_orchestrator": {
+      "status": "PASS",
+      "description": "Consumes C48 ControlPlanePlan, dedupes by command, injects revalidations for stale/missing measurement records, executes in dependency order, captures structured records, applies stop rules.",
+      "evidence": "runtime/foundation/verification/execution_orchestrator.py:ExecutionOrchestrator"
+    },
+    "stop_on_sufficiency": {
+      "status": "PASS",
+      "description": "All mandatory tasks PASS or REUSED → skip escalation tasks. Mandatory FAILED → diagnostic path. TIMEOUT/INFRASTRUCTURE/SCOPE never convert to PASS. AUTHORIZATION_REQUIRED stops at the boundary.",
+      "evidence": "runtime/foundation/verification/execution_orchestrator.py:execute + _finalize"
+    },
+    "mutation_subordinate": {
+      "status": "PASS",
+      "description": "Mutation revalidation is a single capability among many. Requires explicit --authorize. Never auto-executes a full campaign. Uses native mutmut runner + C47 measurement truth.",
+      "evidence": "runtime/foundation/verification/execution_orchestrator.py:_execute_measurement_task + authorize boundary"
+    },
+    "evidence_reuse": {
+      "status": "PASS",
+      "description": "Persistent measurement records checked before execution. Current + certifiable → REUSED. Stale → revalidation injected. Missing → revalidation injected.",
+      "evidence": "runtime/foundation/verification/execution_orchestrator.py:_check_reusable_measurement + _inject_revalidations"
+    },
+    "observability": {
+      "status": "PASS",
+      "description": "Every task produces a structured TaskExecutionRecord persisted to runtime/generated/m9-c49/. CLI exposes execution-plan, execute, execution-status, execution-report.",
+      "evidence": "runtime/foundation/verification/execution_orchestrator.py:TaskExecutionRecord + runtime/verify.py:execution-* commands"
+    },
+    "shared_impact_resolution": {
+      "status": "PASS",
+      "description": "C48 'endpoint/capability resolution incomplete' gap closed: deterministic AST-based dependency index for shared modules + planner vocabulary bridge (useLoansCapability → loan-engine).",
+      "evidence": "runtime/foundation/verification/shared_impact.py + capability_resolver.py:PLANNER_CAPABILITY_ALIASES"
+    },
+    "acceptance_scenarios": {
+      "status": "PASS",
+      "description": "16/16 acceptance scenarios A–M + determinism + stop-on-sufficiency + plan validation pass.",
+      "evidence": "runtime/tests/test_m9_c49.py"
+    },
+    "regression_suites": {
+      "status": "PASS",
+      "description": "219 pre-existing tests pass (C42.27–31, measurement_truth, survivor_intel, affected, cross_layer_planner, snapshots). No production code deleted. No parallel architecture introduced.",
+      "evidence": "runtime/tests/test_m9_c42_27..31, test_measurement_truth, test_survivor_intel, test_affected, test_cross_layer_planner, test_snapshots"
+    }
+  },
+  "modules_added": [
+    {
+      "path": "runtime/foundation/verification/execution_orchestrator.py",
+      "lines": 2100,
+      "purpose": "C49 core: ExecutionPlan, ExecutionOrchestrator, structured records, stop rules, final decision, diagnostic + authorization boundary"
+    },
+    {
+      "path": "runtime/foundation/verification/shared_impact.py",
+      "lines": 250,
+      "purpose": "Deterministic AST-based shared-module dependency index (closes C48 endpoint/capability gap for shared infrastructure changes)"
+    }
+  ],
+  "modules_extended": [
+    {
+      "path": "runtime/foundation/verification/capability_resolver.py",
+      "purpose": "Added PLANNER_CAPABILITY_ALIASES, shared-impact index integration, capability_sources + unmapped_blast_capabilities to CapabilityResolution"
+    },
+    {
+      "path": "runtime/verify.py",
+      "purpose": "Added 4 CLI commands: execution-plan, execute, execution-status, execution-report"
+    }
+  ],
+  "tests_added": [
+    {
+      "path": "runtime/tests/test_m9_c49.py",
+      "count": 16,
+      "scenarios": [
+        "A: isolated backend change",
+        "B: cross-capability change",
+        "C: unaffected capability reuse",
+        "D: stale evidence",
+        "E: targeted test failure",
+        "F: mutation survivor",
+        "G: coverage regression",
+        "H: infrastructure failure",
+        "I: timeout",
+        "J: authorization boundary",
+        "K: shared infrastructure change",
+        "L: workflow failure → capability",
+        "M: successful complete flow",
+        "determinism",
+        "stop-on-sufficiency",
+        "plan validation"
+      ]
+    }
+  ],
+  "efficiency_metrics_sample": {
+    "scenario": "loan-engine change",
+    "total_available_tasks": 75,
+    "tasks_selected": 8,
+    "tasks_executed": 7,
+    "tasks_reused": 0,
+    "tasks_skipped": 0,
+    "tasks_awaiting_authorization": 1,
+    "blind_total_commands": 11,
+    "unnecessary_execution_avoided": 4,
+    "execution_time_seconds": 17
+  },
+  "known_boundaries": [
+    "Full mutation campaigns remain explicit escalation (never auto-executed)",
+    "Coverage revalidation for non-required-for-certification mappings is non-mandatory",
+    "Frontend knowledge capability IDs with no verification-registry mapping are recorded in unmapped_blast_capabilities and excluded",
+    "verify.py env-check is the canonical pre-flight; orchestrator runs it implicitly via verify_prerequisites"
+  ],
+  "artifacts": {
+    "execution_progress": "runtime/generated/m9-c49/EXECUTION_PROGRESS.md",
+    "certification": "runtime/generated/m9-c49/certification.json",
+    "plans_dir": "runtime/generated/m9-c49/plans/",
+    "reports_dir": "runtime/generated/m9-c49/reports/",
+    "latest_report": "runtime/generated/m9-c49/latest-report.json",
+    "logs_dir": "runtime/generated/m9-c49/logs/",
+    "measurements_dir": "runtime/generated/m9-c49/measurements/"
+  }
+}

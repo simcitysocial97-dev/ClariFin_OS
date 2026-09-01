@@ -1,0 +1,42 @@
+{
+  "changed_files": [
+    "backend/src/engines/loan_engine/amortization.py"
+  ],
+  "surfaces": [
+    {
+      "path": "backend/src/engines/loan_engine/amortization.py",
+      "kind": "backend",
+      "scope": "explicit",
+      "is_production": true,
+      "is_shared_infrastructure": false,
+      "is_runtime_infrastructure": false,
+      "reason": "Backend source \u2014 backend-specific verification surfaces",
+      "source": "explicit"
+    }
+  ],
+  "production_surfaces": [
+    {
+      "path": "backend/src/engines/loan_engine/amortization.py",
+      "kind": "backend",
+      "scope": "explicit",
+      "is_production": true,
+      "is_shared_infrastructure": false,
+      "is_runtime_infrastructure": false,
+      "reason": "Backend source \u2014 backend-specific verification surfaces",
+      "source": "explicit"
+    }
+  ],
+  "test_surfaces": [],
+  "config_surfaces": [],
+  "workflow_surfaces": [],
+  "runtime_infrastructure_surfaces": [],
+  "shared_module_surfaces": [],
+  "generated_surfaces": [],
+  "unknown_surfaces": [],
+  "discovery_source": "explicit",
+  "repository_sha": "b8914c4333c48d36d9db2805c04d8775bedba86a",
+  "working_tree_dirty": true,
+  "reasons": [
+    "Using 1 explicit files provided by operator"
+  ]
+}

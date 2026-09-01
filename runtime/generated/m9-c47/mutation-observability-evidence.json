@@ -1,0 +1,83 @@
+{
+  "mutation_observability": "M9-C47 Durable Mutation Observability Evidence",
+  "commit": "b8914c4333c48d36d9db2805c04d8775bedba86a",
+  "timestamp": "2026-08-31T06:35:00Z",
+  "native_mutmut_reuse_verified": true,
+  "survivor_evidence_survives_workspace_cleanup": true,
+  "individual_mutant_investigation_without_temp_folders": true,
+  "details": {
+    "native_mutmut_analysis": {
+      "mutmut_results_text_parsing": "mutation_contract.py:parse_mutmut_results() - used by mutation_runner for primary evidence collection",
+      "mutmut_meta_file_collection": "mutation_contract.py:collect_mutant_results() - authoritative per-function breakdown from .meta files (exit_code mapping per mutmut 3.7.0 spec)",
+      "mutmut_tests_for_mutant": "survivor_intel.py:_run_tests_for_mutant() - native mutmut tests-for-mutant for covering test discovery",
+      "mutmut_show": "mutation_inventory.py:show_mutant() + survivor_catalog.py - native mutmut show for diff reconstruction"
+    },
+    "durable_survivor_evidence_paths": [
+      {
+        "path": "backend/tests/generated/mutation/mutation-survivor-intel.json",
+        "schema": "m9-c45-survivor-intel/v1",
+        "survives_workspace_cleanup": true,
+        "contains": [
+          "survivor_id",
+          "component",
+          "source_file",
+          "source_location",
+          "function",
+          "mutation_type",
+          "original_expression",
+          "mutated_expression",
+          "status",
+          "covering_tests",
+          "killing_tests",
+          "classification (A-E)",
+          "classification_evidence",
+          "subclassification",
+          "capability",
+          "evidence_fingerprint",
+          "investigation_status",
+          "recommended_action"
+        ],
+        "generated_by": "survivor_intel.build_survivor_intel() - called from mutation_runner when survivors>0",
+        "referenced_in_measurement_truth": "MeasurementTruthRecord.durable_survivor_evidence array"
+      },
+      {
+        "path": "backend/tests/generated/mutation/mutation-survivors.json",
+        "schema": "survivor_catalog output",
+        "survives_workspace_cleanup": true,
+        "contains": [
+          "total_survivors",
+          "by_function",
+          "by_category",
+          "by_file",
+          "by_function_category"
+        ],
+        "generated_by": "survivor_catalog.run_catalog_cli() - called from mutation_runner when survivors>0"
+      }
+    ],
+    "truth_record_references_durable_evidence": {
+      "smoke_record": "backend/tests/generated/mutation/local-smoke/measurement-truth.json",
+      "durable_survivor_evidence": [
+        "backend/tests/generated/mutation/mutation-survivor-intel.json",
+        "backend/tests/generated/mutation/mutation-survivors.json"
+      ],
+      "note": "smoke mode has survivors=2 but no intel/survivors written (intel only for full/target with survivors>0)"
+    },
+    "individual_mutant_investigation": {
+      "cli": "verify.py mutation-intel <survivor_id> --json",
+      "consumes": "mutation-survivor-intel.json (durable) + optional live mutmut for tests-for-mutant enrichment",
+      "does_not_depend_on": "backend/mutants/ transient workspace",
+      "fields_available_from_durable_record": [
+        "survivor identity (survivor_id)",
+        "mutation location (source_file, function)",
+        "original/modified form (original_expression, mutated_expression)",
+        "status (survived)",
+        "covering tests (covering_tests from tests-for-mutant)",
+        "timing (not stored - only in live run)",
+        "component/capability attribution",
+        "evidence fingerprint",
+        "investigation status"
+      ]
+    },
+    "workflow_verified": "mutation_runner emits measurement-truth record referencing durable survivor paths; survivor_intel emitted for full/target campaigns with survivors"
+  }
+}

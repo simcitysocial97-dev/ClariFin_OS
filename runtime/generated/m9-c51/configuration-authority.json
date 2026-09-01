@@ -1,0 +1,64 @@
+{
+  "authority": [
+    {
+      "tool": "ruff",
+      "name": "Ruff Lint",
+      "canonical_command": "python -m ruff check . --output-format=github",
+      "config_path": "pyproject.toml [tool.ruff]",
+      "config_scope": "repo",
+      "source_scope": ".",
+      "authoritative": true,
+      "notes": "The repository-root pyproject.toml is authoritative for ruff. run_fast_checks.sh runs from backend/ but inherits root config."
+    },
+    {
+      "tool": "black",
+      "name": "Black Format",
+      "canonical_command": "python -m black --check --diff .",
+      "config_path": "pyproject.toml [tool.black]",
+      "config_scope": "repo",
+      "source_scope": ".",
+      "authoritative": true,
+      "notes": "Repository-root pyproject.toml is authoritative for black."
+    },
+    {
+      "tool": "mypy",
+      "name": "Mypy Typecheck (two boundaries)",
+      "canonical_command": "python -m mypy .  # repo scope;  python -m mypy src/  # backend strict scope",
+      "config_path": "pyproject.toml [tool.mypy] AND backend/pyproject.toml [tool.mypy]",
+      "config_scope": "dual",
+      "source_scope": "., backend/src/",
+      "authoritative": true,
+      "notes": "Root mypy excludes backend/; backend has its own STRICT boundary. Do not conflate the two scopes."
+    },
+    {
+      "tool": "pytest",
+      "name": "Pytest",
+      "canonical_command": "python -m pytest tests/unit/ -x -q  # backend;  python -m pytest runtime/tests/  # runtime",
+      "config_path": "backend/pyproject.toml [tool.pytest.ini_options] AND pyproject.toml [tool.pytest.ini_options]",
+      "config_scope": "dual",
+      "source_scope": "backend/tests/, runtime/tests/",
+      "authoritative": true,
+      "notes": "Backend and runtime have separate pytest rootdirs."
+    },
+    {
+      "tool": "coverage",
+      "name": "Coverage (C47 canonical)",
+      "canonical_command": "python runtime/verify.py measurement coverage <scope>",
+      "config_path": "backend/pyproject.toml [tool.coverage]",
+      "config_scope": "backend",
+      "source_scope": "backend/src/",
+      "authoritative": true,
+      "notes": "Canonical coverage path goes through verify.py; raw coverage run is non-canonical."
+    },
+    {
+      "tool": "mutation",
+      "name": "Mutation Testing (C47)",
+      "canonical_command": "python runtime/verify.py mutation [--smoke|--target <engine>]",
+      "config_path": "backend/pyproject.toml [tool.mutmut]",
+      "config_scope": "backend",
+      "source_scope": "backend/src/",
+      "authoritative": true,
+      "notes": "Mutmut config is backend-scoped; full campaigns require human authorization."
+    }
+  ]
+}

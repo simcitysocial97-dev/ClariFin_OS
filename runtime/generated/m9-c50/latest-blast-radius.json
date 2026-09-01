@@ -1,0 +1,278 @@
+{
+  "schema": "m9-c50-blast-radius-contract/v1",
+  "contract_id": "brc-faebfbc1bd59",
+  "generated_at": "2026-08-31T11:58:59.161517+00:00",
+  "repository_sha": "b8914c4333c48d36d9db2805c04d8775bedba86a",
+  "working_tree_dirty": true,
+  "discovery_source": "explicit",
+  "change_surface": {
+    "changed_files": [
+      "backend/src/engines/credit_card_engine/calculator.py"
+    ],
+    "surfaces": [
+      {
+        "path": "backend/src/engines/credit_card_engine/calculator.py",
+        "kind": "backend",
+        "scope": "explicit",
+        "is_production": true,
+        "is_shared_infrastructure": false,
+        "is_runtime_infrastructure": false,
+        "reason": "Backend source \u2014 backend-specific verification surfaces",
+        "source": "explicit"
+      }
+    ],
+    "production_surfaces": [
+      {
+        "path": "backend/src/engines/credit_card_engine/calculator.py",
+        "kind": "backend",
+        "scope": "explicit",
+        "is_production": true,
+        "is_shared_infrastructure": false,
+        "is_runtime_infrastructure": false,
+        "reason": "Backend source \u2014 backend-specific verification surfaces",
+        "source": "explicit"
+      }
+    ],
+    "test_surfaces": [],
+    "config_surfaces": [],
+    "workflow_surfaces": [],
+    "runtime_infrastructure_surfaces": [],
+    "shared_module_surfaces": [],
+    "generated_surfaces": [],
+    "unknown_surfaces": [],
+    "discovery_source": "explicit",
+    "repository_sha": "b8914c4333c48d36d9db2805c04d8775bedba86a",
+    "working_tree_dirty": true,
+    "reasons": [
+      "Using 1 explicit files provided by operator"
+    ]
+  },
+  "surface_impacts": [
+    {
+      "path": "backend/src/engines/credit_card_engine/calculator.py",
+      "kind": "backend",
+      "directly_affects_capabilities": [
+        "api-contracts"
+      ],
+      "transitively_affects_capabilities": [],
+      "shared_dependency_expansion": [],
+      "reason": "Backend source \u2014 backend-specific verification surfaces",
+      "is_unmapped": false
+    }
+  ],
+  "capability_impacts": [
+    {
+      "capability_id": "api-contracts",
+      "impact_kind": "directly_affected",
+      "affected_components": [],
+      "required_verification_surfaces": [
+        "backend",
+        "contract",
+        "frontend",
+        "unit"
+      ],
+      "required_tests": [
+        "frontend/tests/src"
+      ],
+      "required_workflows": [
+        "backend",
+        "contracts",
+        "frontend",
+        "run_backend_verification",
+        "run_contract_tests",
+        "run_frontend_verification"
+      ],
+      "invalidated_evidence": [],
+      "reusable_evidence": [],
+      "revalidation_required": [],
+      "sources": [
+        "direct: capability contract path match"
+      ],
+      "is_mapped": true
+    },
+    {
+      "capability_id": "useCreditCardsCapability",
+      "impact_kind": "unmapped",
+      "affected_components": [],
+      "required_verification_surfaces": [],
+      "required_tests": [],
+      "required_workflows": [],
+      "invalidated_evidence": [],
+      "reusable_evidence": [],
+      "revalidation_required": [],
+      "sources": [
+        "unmapped: planner emitted capability with no registry mapping"
+      ],
+      "is_mapped": false
+    }
+  ],
+  "directly_affected_capabilities": [
+    "api-contracts"
+  ],
+  "transitively_affected_capabilities": [],
+  "shared_infrastructure_affected_capabilities": [],
+  "observable_only_capabilities": [],
+  "test_only_capabilities": [],
+  "configuration_tooling_capabilities": [],
+  "unmapped_capabilities": [
+    "useCreditCardsCapability"
+  ],
+  "affected_components": [],
+  "shared_dependency_expansions": [],
+  "verification_surface_requirements": [
+    {
+      "surface_kind": "contract",
+      "capability_id": "api-contracts",
+      "command": "bash .github/scripts/run_contract_tests.sh",
+      "profile": "contracts",
+      "estimated_duration_seconds": 180,
+      "is_mandatory": false,
+      "is_escalation": true,
+      "authorization_required": false,
+      "reason": "capability api-contracts requires contract via workflow contracts (impact: directly_affected)",
+      "has_executable_command": true
+    },
+    {
+      "surface_kind": "frontend",
+      "capability_id": "api-contracts",
+      "command": "bash .github/scripts/run_frontend_verification.sh",
+      "profile": "frontend",
+      "estimated_duration_seconds": 180,
+      "is_mandatory": false,
+      "is_escalation": true,
+      "authorization_required": false,
+      "reason": "capability api-contracts requires frontend via workflow frontend (impact: directly_affected)",
+      "has_executable_command": true
+    },
+    {
+      "surface_kind": "backend",
+      "capability_id": "api-contracts",
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "profile": "backend",
+      "estimated_duration_seconds": 300,
+      "is_mandatory": false,
+      "is_escalation": true,
+      "authorization_required": false,
+      "reason": "capability api-contracts requires backend via workflow backend (impact: directly_affected)",
+      "has_executable_command": true
+    },
+    {
+      "surface_kind": "unit",
+      "capability_id": "api-contracts",
+      "command": "bash .github/scripts/run_contract_tests.sh",
+      "profile": "run_contract_tests",
+      "estimated_duration_seconds": 180,
+      "is_mandatory": false,
+      "is_escalation": true,
+      "authorization_required": false,
+      "reason": "capability api-contracts requires unit via workflow run_contract_tests (impact: directly_affected)",
+      "has_executable_command": true
+    },
+    {
+      "surface_kind": "unit",
+      "capability_id": "api-contracts",
+      "command": "bash .github/scripts/run_frontend_verification.sh",
+      "profile": "run_frontend_verification",
+      "estimated_duration_seconds": 180,
+      "is_mandatory": false,
+      "is_escalation": true,
+      "authorization_required": false,
+      "reason": "capability api-contracts requires unit via workflow run_frontend_verification (impact: directly_affected)",
+      "has_executable_command": true
+    },
+    {
+      "surface_kind": "unit",
+      "capability_id": "api-contracts",
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "profile": "run_backend_verification",
+      "estimated_duration_seconds": 300,
+      "is_mandatory": false,
+      "is_escalation": true,
+      "authorization_required": false,
+      "reason": "capability api-contracts requires unit via workflow run_backend_verification (impact: directly_affected)",
+      "has_executable_command": true
+    },
+    {
+      "surface_kind": "backend",
+      "capability_id": "useCreditCardsCapability",
+      "command": "",
+      "profile": "",
+      "estimated_duration_seconds": 0,
+      "is_mandatory": true,
+      "is_escalation": false,
+      "authorization_required": false,
+      "reason": "unmapped capability useCreditCardsCapability \u2014 no executable command available",
+      "has_executable_command": false
+    }
+  ],
+  "required_tests": [
+    "frontend/tests/src"
+  ],
+  "affected_workflows": [
+    "backend",
+    "contracts",
+    "frontend",
+    "run_backend_verification",
+    "run_contract_tests",
+    "run_frontend_verification"
+  ],
+  "evidence_invalidations": [],
+  "reusable_evidence": [
+    "credit_card_engine",
+    "account_engine",
+    "loan_engine",
+    "reconciliation_engine",
+    "behaviour_engine",
+    "balance_engine",
+    "ledger_audit_engine",
+    "cashflow_engine",
+    "financial_events",
+    "core_domain_money",
+    "common_calculations",
+    "recommendation_engine",
+    "transaction_intelligence",
+    "financial_intelligence"
+  ],
+  "revalidation_required": [],
+  "unmapped_surfaces": [],
+  "minimum_safe_verification": [
+    {
+      "surface_kind": "backend",
+      "capability_id": "useCreditCardsCapability",
+      "command": "",
+      "profile": "",
+      "estimated_duration_seconds": 0,
+      "is_mandatory": true,
+      "is_escalation": false,
+      "authorization_required": false,
+      "reason": "unmapped capability useCreditCardsCapability \u2014 no executable command available",
+      "has_executable_command": false
+    }
+  ],
+  "escalation_conditions": [
+    {
+      "condition_id": "ESC-UNMAPPED-CAPABILITY",
+      "description": "Unmapped capability in blast radius \u2014 cannot determine verification requirements",
+      "triggered": true,
+      "reason": "1 unmapped capabilities: ['useCreditCardsCapability']"
+    },
+    {
+      "condition_id": "ESC-NO-EXECUTABLE-COMMAND",
+      "description": "Required verification surface has no executable command",
+      "triggered": true,
+      "reason": "1 verification surfaces without commands: ['useCreditCardsCapability']"
+    }
+  ],
+  "decision_provenance": {
+    "api-contracts": [
+      "direct: capability contract path match"
+    ],
+    "useCreditCardsCapability": [
+      "unmapped: planner emitted capability with no registry mapping"
+    ]
+  },
+  "is_fail_closed": true,
+  "fail_closed_reasons": [
+    "required verification surface has no executable command: useCreditCardsCapability (backend)"
+  ]
+}

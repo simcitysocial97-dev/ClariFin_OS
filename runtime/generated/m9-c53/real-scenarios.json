@@ -1,0 +1,213 @@
+{
+  "schema": "m9-c53-real-scenarios/v1",
+  "generated_at": "2026-09-01T11:14:42.085961+00:00",
+  "total_scenarios": 14,
+  "passed": 14,
+  "failed": 0,
+  "results": [
+    {
+      "scenario_id": "A",
+      "name": "genuine_uncovered_behavioral_branch",
+      "description": "Genuine uncovered behavioral branch \u2192 candidate test proposed",
+      "passed": true,
+      "details": {
+        "gap_class": "A",
+        "eligible": true,
+        "strategy": "example_based_unit",
+        "reason": "genuine behavioral verification gap; a real behavioral path lacks a distinguishing assertion/test. Potentially eligible for generation."
+      },
+      "evidence_artifacts": [],
+      "execution_time_seconds": 0.00015783309936523438
+    },
+    {
+      "scenario_id": "B",
+      "name": "distinguishing_mutation_survivor",
+      "description": "Mutation survivor with genuine distinguishing behavior \u2192 candidate generated & validated",
+      "passed": true,
+      "details": {
+        "gap_id": "c53-b-distinguish-001",
+        "generation_id": "gen::00eb9669a18b",
+        "final_state": "AWAITING_HUMAN_AUTHORIZATION",
+        "gap_class": "A",
+        "candidate_id": "cc59fd68b2dc",
+        "validation_passed": true,
+        "auth_state": "AWAITING_HUMAN_AUTHORIZATION"
+      },
+      "evidence_artifacts": [],
+      "execution_time_seconds": 1.7491414546966553
+    },
+    {
+      "scenario_id": "C",
+      "name": "equivalent_survivor_refused",
+      "description": "Equivalent survivor \u2192 generation refused",
+      "passed": true,
+      "details": {
+        "gap_class": "B",
+        "refused": true,
+        "refusal_code": "EQUIVALENT_SURVIVOR",
+        "reason": "equivalent/non-distinguishable mutation; generating a test would inflate the score without improving defect detection"
+      },
+      "evidence_artifacts": [],
+      "execution_time_seconds": 7.891654968261719e-05
+    },
+    {
+      "scenario_id": "D",
+      "name": "defensive_survivor_refused",
+      "description": "Defensive survivor \u2192 generation refused",
+      "passed": true,
+      "details": {
+        "gap_class": "C",
+        "refused": true,
+        "refusal_code": "DEFENSIVE_SURVIVOR",
+        "reason": "defensive/intentional behavior; manufacturing a test here optimizes the metric, not behavior"
+      },
+      "evidence_artifacts": [],
+      "execution_time_seconds": 4.673004150390625e-05
+    },
+    {
+      "scenario_id": "E",
+      "name": "coverage_gap_without_behavioral_gap",
+      "description": "Coverage gap without meaningful behavioral gap \u2192 generation decision explicitly justified",
+      "passed": true,
+      "details": {
+        "gap_class": "A",
+        "eligible": true,
+        "refused": false,
+        "reason": "genuine behavioral verification gap; a real behavioral path lacks a distinguishing assertion/test. Potentially eligible for generation.",
+        "refusal_reason": ""
+      },
+      "evidence_artifacts": [],
+      "execution_time_seconds": 8.988380432128906e-05
+    },
+    {
+      "scenario_id": "F",
+      "name": "historical_repeated_survivor",
+      "description": "Historical repeated survivor \u2192 historical evidence influences decision",
+      "passed": true,
+      "details": {
+        "gap_class": "E",
+        "historical_count": 5,
+        "refused": true,
+        "refusal_code": "HISTORICAL_INSUFFICIENT",
+        "reason": "historical/repeated survivor (count=5); generation depends on accumulated evidence and authorization rules, not survivor count alone."
+      },
+      "evidence_artifacts": [],
+      "execution_time_seconds": 7.271766662597656e-05
+    },
+    {
+      "scenario_id": "G",
+      "name": "property_test_failure",
+      "description": "Property-test failure \u2192 candidate property/regression test proposal",
+      "passed": true,
+      "details": {
+        "gap_class": "A",
+        "candidate_id": "fa22cab5abd0",
+        "assertion_form": "INVARIANT",
+        "final_state": "AWAITING_HUMAN_AUTHORIZATION"
+      },
+      "evidence_artifacts": [],
+      "execution_time_seconds": 1.5846688747406006
+    },
+    {
+      "scenario_id": "H",
+      "name": "contract_failure",
+      "description": "Contract failure \u2192 candidate contract test proposal",
+      "passed": true,
+      "details": {
+        "gap_class": "A",
+        "candidate_id": "697516418f89",
+        "final_state": "AWAITING_HUMAN_AUTHORIZATION"
+      },
+      "evidence_artifacts": [],
+      "execution_time_seconds": 1.594252347946167
+    },
+    {
+      "scenario_id": "I",
+      "name": "candidate_fails_validation",
+      "description": "Generated candidate fails validation \u2192 candidate rejected",
+      "passed": true,
+      "details": {
+        "validation_passed": false,
+        "syntax_passed": false,
+        "refusal_reason": "validation failed on dimensions: syntax, static_quality, focused_execution, behavioral_relevance, distinguishing_power"
+      },
+      "evidence_artifacts": [],
+      "execution_time_seconds": 1.8089241981506348
+    },
+    {
+      "scenario_id": "J",
+      "name": "candidate_requires_human_authorization",
+      "description": "Generated candidate passes but requires human authorization \u2192 remains pending",
+      "passed": true,
+      "details": {
+        "validation_passed": true,
+        "final_state": "AWAITING_HUMAN_AUTHORIZATION",
+        "auth_state": "AWAITING_HUMAN_AUTHORIZATION"
+      },
+      "evidence_artifacts": [],
+      "execution_time_seconds": 1.565758228302002
+    },
+    {
+      "scenario_id": "K",
+      "name": "authorized_candidate_revalidation",
+      "description": "Authorized candidate \u2192 targeted revalidation executed",
+      "passed": true,
+      "details": {
+        "final_state": "AUTHORIZED",
+        "certification_impact": {
+          "impact": "positive",
+          "dimension_improved": "behavioral_assurance",
+          "mutation_effectiveness": "potentially_improved",
+          "coverage": "potentially_improved",
+          "note": "candidate authorized: behavioral assurance improved through evidence-driven test generation"
+        },
+        "auth_state": "AUTHORIZED"
+      },
+      "evidence_artifacts": [],
+      "execution_time_seconds": 1.565403699874878
+    },
+    {
+      "scenario_id": "L",
+      "name": "stale_evidence_fail_closed",
+      "description": "Stale candidate/evidence \u2192 fail closed",
+      "passed": true,
+      "details": {
+        "gap_class": "F",
+        "refused": true,
+        "refusal_code": "MEASUREMENT_FAILURE",
+        "reason": "measurement/infrastructure failure; repair measurement before interpreting behavior. Do not generate a test."
+      },
+      "evidence_artifacts": [],
+      "execution_time_seconds": 4.887580871582031e-05
+    },
+    {
+      "scenario_id": "M",
+      "name": "scope_expansion_fail_closed",
+      "description": "Scope expansion attempt \u2192 fail closed",
+      "passed": true,
+      "details": {
+        "gap_capability": "measure.mutation",
+        "scope_capability": "api-contracts",
+        "refused": true,
+        "refusal_code": "SCOPE_DRIFT",
+        "reason": "scope drift: gap capability 'measure.mutation' is outside the authorized scope 'api-contracts'"
+      },
+      "evidence_artifacts": [],
+      "execution_time_seconds": 6.151199340820312e-05
+    },
+    {
+      "scenario_id": "N",
+      "name": "cross_capability_dependency",
+      "description": "Cross-capability dependency \u2192 correct targeted scope",
+      "passed": true,
+      "details": {
+        "gap_class": "A",
+        "candidate_id": "66205470d07f",
+        "final_state": "AWAITING_HUMAN_AUTHORIZATION",
+        "scope": "measure.mutation"
+      },
+      "evidence_artifacts": [],
+      "execution_time_seconds": 1.599224328994751
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "inventory": "M9-C47 Measurement Implementation Inventory",
+  "commit": "b8914c4333c48d36d9db2805c04d8775bedba86a",
+  "generated_at": "2026-08-31T06:35:00Z",
+  "capabilities": [
+    {
+      "capability": "mutation measurement",
+      "implementation": "runtime/foundation/verification/mutation_runner.py",
+      "command": "verify.py mutation [--smoke|--target <engine>|--max-runtime N]",
+      "input": "canonical ENGINE_SELECTION from mutation_contract.py; backend/pyproject.toml [tool.mutmut]",
+      "output": "MutationResult (mutation_contract.py) + MeasurementTruthRecord (measurement_truth.py)",
+      "evidence_artifact": "backend/tests/generated/mutation/mutation-summary.json + measurement-truth*.json",
+      "authoritative_status": "authoritative when mode=full and completion=AUTHORITATIVE_COMPLETE"
+    },
+    {
+      "capability": "coverage measurement",
+      "implementation": "runtime/foundation/verification/coverage_measurement.py",
+      "command": "verify.py measurement coverage <scope> [--max-runtime N]",
+      "input": "pytest scope; .venv coverage",
+      "output": "MeasurementTruthRecord with measurement_kind=coverage",
+      "evidence_artifact": "runtime/generated/m9-c47/coverage/measurement-truth-coverage.json",
+      "authoritative_status": "authoritative when completion=AUTHORITATIVE_COMPLETE"
+    },
+    {
+      "capability": "mutation result parsing",
+      "implementation": "runtime/foundation/verification/mutation_contract.py (parse_mutmut_results, collect_mutant_results)",
+      "command": "internal (used by mutation_runner, mutation_inventory, survivor_catalog)",
+      "input": "mutmut results --all true output OR .meta files",
+      "output": "MutationCounts / MutantResultReport",
+      "evidence_artifact": "none directly (library functions)",
+      "authoritative_status": "N/A - pure library"
+    },
+    {
+      "capability": "mutmut workspace/result handling",
+      "implementation": "runtime/foundation/verification/mutation_runner.py (execute_mutation, _write_cache_provenance)",
+      "command": "verify.py mutation",
+      "input": "mutmut run, mutmut results",
+      "output": "MutationResult + cache provenance + durable survivor artifacts",
+      "evidence_artifact": "backend/tests/generated/mutation/ (summary, survivors, intel)",
+      "authoritative_status": "authoritative when full campaign completes"
+    },
+    {
+      "capability": "survivor intelligence",
+      "implementation": "runtime/foundation/verification/survivor_intel.py (build_survivor_intel) + survivor_catalog.py",
+      "command": "verify.py mutation-intel [survivor_id] [--json]",
+      "input": "mutmut .meta cache + mutants/ tree (transient) + libcst diff",
+      "output": "durable mutation-survivor-intel.json + mutation-survivors.json",
+      "evidence_artifact": "backend/tests/generated/mutation/mutation-survivor-intel.json",
+      "authoritative_status": "derived from authoritative measurement"
+    },
+    {
+      "capability": "mutation reconciliation",
+      "implementation": "runtime/foundation/verification/mutation_contract.py (reconcile_counts, compute_score, classify_gates)",
+      "command": "internal",
+      "input": "MutationCounts",
+      "output": "arithmetic invariant + three-gate classification",
+      "evidence_artifact": "none directly",
+      "authoritative_status": "N/A - pure library"
+    },
+    {
+      "capability": "evidence fingerprints",
+      "implementation": "runtime/foundation/verification/measurement_truth.py (fingerprint_record, set_evidence_fingerprint)",
+      "command": "internal",
+      "input": "MeasurementTruthRecord",
+      "output": "SHA256 evidence fingerprint",
+      "evidence_artifact": "recorded in MeasurementTruthRecord",
+      "authoritative_status": "N/A - pure library"
+    },
+    {
+      "capability": "CI evidence",
+      "implementation": "runtime/foundation/verification/ci_evidence.py",
+      "command": "internal (invoked by CI workflows)",
+      "input": "GitHub Actions artifacts, workflow YAML, verification-cache",
+      "output": "CIEvidenceRecord + CIDriftReport + CIReuseDecision + ComponentMeasurement",
+      "evidence_artifact": "runtime/generated/vea5-*.pr.json + reconciliation reports",
+      "authoritative_status": "authoritative when execution_mode=authoritative"
+    },
+    {
+      "capability": "verification cache",
+      "implementation": "runtime/foundation/verification/cache.py (VerificationCache)",
+      "command": "internal (used by orchestrator)",
+      "input": "commit, changed_files, profile, CachedVerdict",
+      "output": "ReplayResult with exit_code derived from stored status",
+      "evidence_artifact": "runtime/generated/verification-cache.json",
+      "authoritative_status": "cached verdicts - NOT measurement truth"
+    },
+    {
+      "capability": "forensic records",
+      "implementation": "runtime/foundation/verification/forensic_cli.py + executor_pipeline.py (ForensicExecutionRecord)",
+      "command": "verify.py forensic-diagnose | forensic-report | strengthen-*",
+      "input": "ExecutionEvidence, CIEvidenceRecord, survivor intel",
+      "output": "DiagnosticForensicAgent report + strengthening proposals/validations",
+      "evidence_artifact": "runtime/generated/m9-c42.30/*.json, m9-c44/*.json",
+      "authoritative_status": "derived from authoritative evidence"
+    },
+    {
+      "capability": "certification calculations",
+      "implementation": "runtime/foundation/verification/mutation_contract.py (classify_gates) + executor_pipeline.py (LabelledAggregate)",
+      "command": "verify.py mutation (full) | verify.py reconcile",
+      "input": "MutationResult / ReconciledVerificationState",
+      "output": "Gate A/B/C + LabelledAggregate (AUTHORITATIVE_MEASURED | AUTHORITATIVE_TARGETED | MATHEMATICALLY_RECONCILED)",
+      "evidence_artifact": "forensic-execution-record.json, reconciliation reports",
+      "authoritative_status": "AUTHORITATIVE_MEASURED = certifiable"
+    },
+    {
+      "capability": "runtime/verify.py mutation command",
+      "implementation": "runtime/verify.py:1325-1328 (delegates to mutation_runner.run_mutation_cli)",
+      "command": "verify.py mutation [--smoke|--target|--max-runtime|--catalog|--intel-enrich]",
+      "input": "argv",
+      "output": "exit code 0/1/2 + measurement-truth record + summary + survivor artifacts",
+      "evidence_artifact": "backend/tests/generated/mutation/ + measurement-truth*.json",
+      "authoritative_status": "authoritative when mode=full and gates pass"
+    },
+    {
+      "capability": "runtime/verify.py measurement-truth command",
+      "implementation": "runtime/verify.py:1330-1340 (delegates to measurement_truth_cli.run_measurement_truth_cli)",
+      "command": "verify.py measurement-truth <record.json> [--json]",
+      "input": "MeasurementTruthRecord JSON path",
+      "output": "operator report (6 questions) + exit code 0/1",
+      "evidence_artifact": "stdout / JSON output",
+      "authoritative_status": "read-only inspection"
+    },
+    {
+      "capability": "runtime/verify.py measurement coverage command",
+      "implementation": "runtime/verify.py:1340-1350 (delegates to coverage_measurement.measure_coverage_cli)",
+      "command": "verify.py measurement coverage <scope> [--max-runtime N]",
+      "input": "argv",
+      "output": "MeasurementTruthRecord + exit code 0/1",
+      "evidence_artifact": "runtime/generated/m9-c47/coverage/measurement-truth-coverage.json",
+      "authoritative_status": "authoritative when completion=AUTHORITATIVE_COMPLETE"
+    }
+  ],
+  "status": "all canonical implementations identified and extended with measurement-truth emission"
+}

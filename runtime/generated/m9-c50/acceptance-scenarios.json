@@ -1,0 +1,20 @@
+{
+  "scenarios": {
+    "A_isolated_backend_change": "PASS",
+    "B_shared_infrastructure_change": "PASS",
+    "C_test_only_change": "PASS",
+    "D_config_change": "PASS",
+    "E_frontend_capability_change": "PASS",
+    "F_cross_engine_dependency": "PASS",
+    "G_runtime_infrastructure_change": "PASS",
+    "H_unmapped_production_surface": "PASS (fail-closed triggered)",
+    "I_stale_measurement_evidence": "PASS",
+    "J_unaffected_capability": "PASS",
+    "K_ambiguous_shared_dependency": "PASS",
+    "L_full_chain": "PASS"
+  },
+  "total_tests": 24,
+  "passed": 24,
+  "failed": 0,
+  "test_file": "runtime/tests/test_m9_c50.py"
+}

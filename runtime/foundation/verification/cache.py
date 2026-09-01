@@ -125,9 +125,11 @@ class VerificationCache:
         # caches still degrade gracefully instead of crashing.
         if self.root is not None:
             cached_digest = raw.get("tree_digest")
-            if cached_digest is not None:
-                if cached_digest != self._compute_tree_digest(changed_files):
-                    return False
+            if (
+                cached_digest is not None
+                and cached_digest != self._compute_tree_digest(changed_files)
+            ):
+                return False
         return True
 
     def get_verdict(self, profile: str) -> CachedVerdict | None:

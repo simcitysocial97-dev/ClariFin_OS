@@ -1,0 +1,60 @@
+{
+  "schema": "m9-c47-measurement-truth/v1",
+  "run_id": "cov-e84c8a03697a",
+  "measurement_kind": "coverage",
+  "repository_sha": "b8914c4333c48d36d9db2805c04d8775bedba86a",
+  "tree_sha": "7df7ea71b48ee94a61342d382ae42ccee461e47b",
+  "working_tree_fingerprint": "",
+  "configuration_fingerprint": "",
+  "toolchain_fingerprint": "",
+  "environment_fingerprint": "{'python_version': 'Python 3.12.3', 'python_source': 'venv', 'python_path': '/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python3', 'pytest_version': 'pytest 9.1.1', 'pytest_source': 'venv', 'mutmut_version': 'mutmut, version 3.7.0', 'mutmut_source': 'venv', 'pinned_mutmut': '3.7.0', 'forbidden_venvs': [], 'venv_bin': '/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin', 'ruff_version': 'ruff 0.15.20', 'ruff_source': 'venv', 'black_version': 'black, 26.5.1 (compiled: yes)', 'black_source': 'venv', 'mypy_version': 'mypy 2.1.0 (compiled: yes)', 'mypy_source': 'venv', 'coverage_version': 'Coverage.py, version 7.15.2 with C extension', 'coverage_source': 'venv', 'config_hashes': {'pyproject_toml': '3cf415792af92927', 'ruff_toml': 'missing', 'black': 'embedded_in_pyproject', 'mypy': '5690f25131e1e9cd'}, 'requirements_lock_hash': 'e1e470942ab77f85', 'repository_sha': 'b8914c4333c48d36d9db2805c04d8775bedba86a', 'verification_profile': None, 'capability_selection': [], 'fingerprint_version': '1.0'}",
+  "command": "verify.py measurement coverage backend/src",
+  "requested_scope": "backend/src",
+  "actual_scope": "backend/src",
+  "scope_invalid_reason": "",
+  "population": {
+    "requested_generated": 0,
+    "generated": 0,
+    "killed": 0,
+    "survived": 0,
+    "timeout": 0,
+    "no_tests": 0,
+    "suspicious": 0,
+    "not_checked": 0,
+    "actually_scored": 0,
+    "actually_processed": 0
+  },
+  "coverage": {
+    "lines_total": 0,
+    "lines_covered": 0,
+    "line_percent": null,
+    "branches_total": 0,
+    "branches_covered": 0,
+    "branch_percent": null
+  },
+  "mutation_score": null,
+  "coverage_result_percent": null,
+  "execution_status": "FAIL",
+  "completion_status": "INFRASTRUCTURE_FAILURE",
+  "failure_classification": "infrastructure",
+  "start_time": "2026-08-31T05:46:14.187199+00:00",
+  "end_time": null,
+  "duration_seconds": 5.42,
+  "toolchain_versions": {
+    "python": "Python 3.12.3",
+    "coverage": "unknown"
+  },
+  "artifact_paths": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/measurements/measurement-truth-api-contracts-coverage.json"
+  ],
+  "evidence_classification": "derived",
+  "evidence_fingerprint": "a75d8bc4e6812b83b9c8f7c84d232546d789e7ab0f6e578072a93e81446be167",
+  "consumable_by_certification": false,
+  "mode": "coverage",
+  "target": null,
+  "error": "ERROR: file or directory not found: backend/src\n\n",
+  "note": "coverage measurement failed to complete",
+  "derived_from": [],
+  "durable_survivor_evidence": [],
+  "generated_at": "2026-08-31T05:46:14.187278+00:00"
+}

@@ -43,6 +43,17 @@ from runtime.foundation.verification.env import (
     VENV_BIN,
     resolve_environment,
 )
+from runtime.foundation.verification.measurement_truth import (
+    EvidenceClassification,
+    FailureClassification,
+    MeasurementCompletionStatus,
+    MeasurementKind,
+    MeasurementTruthRecord,
+    PopulationAccounting,
+    assert_authoritative_classification,
+    classify_completion,
+    set_evidence_fingerprint,
+)
 from runtime.foundation.verification.mutation_contract import (
     ENGINE_SELECTION,
     SELECTION_METHOD,
@@ -351,7 +362,9 @@ def _get_git_status(cwd: Path, scope: str) -> dict[str, str]:
     return status
 
 
-def _restore_source_tree(cwd: Path, scope: str, pre_status: dict[str, str] | None = None) -> list[str]:
+def _restore_source_tree(
+    cwd: Path, scope: str, pre_status: dict[str, str] | None = None
+) -> list[str]:
     """Restore mutated tracked source via git.
 
     If `pre_status` is provided, only restore files that were clean (not modified)
@@ -795,6 +808,117 @@ def _write_summary(
     return out
 
 
+def _write_measurement_truth(
+    result: MutationResult,
+    summary_path: Path,
+    mode: str,
+    target: str | None = None,
+) -> Path:
+    """M9-C47: persist the canonical measurement-truth record for a mutation run.
+
+    Derives a single authoritative completion classification from the actual
+    run state (including partial/timeout/infra/evidence/scope/derived states),
+    fingerprints the durable record, and writes it alongside the summary JSON.
+    This is the ONE observable, durable truth path for mutation evidence.
+    """
+    try:
+        env = resolve_environment(config_dir=BACKEND_DIR)
+        fp = env.fingerprint if env else {}
+    except Exception:  # pragma: no cover - defensive
+        fp = {}
+
+    def _fp_value(*keys: str) -> str:
+        for k in keys:
+            v = fp.get(k)
+            if v:
+                return str(v)
+        return ""
+
+    if mode == "smoke":
+        out = GENERATED_DIR / "local-smoke" / "measurement-truth.json"
+    elif target:
+        out = GENERATED_DIR / f"measurement-truth-{target}.json"
+    else:
+        out = GENERATED_DIR / "measurement-truth.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+
+    requested_scope = result.source_scope or (
+        f"target={target}" if target else "full (all engines)"
+    )
+    actual_scope = requested_scope
+
+    population = PopulationAccounting(
+        requested_generated=result.mutants_generated,
+        generated=result.mutants_generated,
+        killed=result.killed,
+        survived=result.survived,
+        timeout=result.timeout,
+        no_tests=result.no_tests,
+        suspicious=result.suspicious,
+        not_checked=result.not_checked,
+    )
+
+    failure = FailureClassification.NONE.value
+    if result.execution_status != "PASS":
+        failure = FailureClassification.INFRASTRUCTURE.value
+        if result.error and "exceeded max_runtime" in result.error:
+            failure = FailureClassification.TIMEOUT.value
+
+    record = MeasurementTruthRecord(
+        run_id=result.run_id,
+        measurement_kind=MeasurementKind.MUTATION.value,
+        repository_sha=result.repository_sha,
+        tree_sha=result.tree_sha,
+        working_tree_fingerprint=_fp_value("tree_sha", "git_sha"),
+        configuration_fingerprint=result.config_hash or _fp_value("config_hash"),
+        toolchain_fingerprint=_fp_value("toolchain", "fingerprint"),
+        environment_fingerprint=str(fp) if fp else "",
+        command=f"verify.py mutation{(' --target '+target) if target else ''}",
+        requested_scope=requested_scope,
+        actual_scope=actual_scope,
+        population=population,
+        mutation_score=result.mutation_score,
+        execution_status=result.execution_status,
+        completion_status=MeasurementCompletionStatus.UNKNOWN.value,
+        failure_classification=failure,
+        duration_seconds=float(result.duration_seconds),
+        toolchain_versions={
+            "python": result.python_version,
+            "pytest": result.pytest_version,
+            "mutmut": result.mutmut_version,
+        },
+        artifact_paths=[str(summary_path)],
+        evidence_classification=EvidenceClassification.AUTHORITATIVE.value,
+        mode=mode,
+        target=target,
+        error=result.error,
+        note=result.note,
+        durable_survivor_evidence=(
+            [
+                str(DEFAULT_INTEL_PATH),
+                str(GENERATED_DIR / "mutation-survivors.json"),
+            ]
+            if result.survived > 0 and mode in ("full", "target")
+            else []
+        ),
+    )
+
+    completion = classify_completion(record=record)
+    record.completion_status = completion
+    # Authoritative only when the full scope completed cleanly (never for
+    # partial/timeout/infra/evidence/scope/derived). Reuse the C42 invalidation
+    # contract: only a freshly-measured complete run is authoritative.
+    record.evidence_classification = (
+        EvidenceClassification.AUTHORITATIVE.value
+        if completion == MeasurementCompletionStatus.AUTHORITATIVE_COMPLETE.value
+        else EvidenceClassification.DERIVED.value
+    )
+    set_evidence_fingerprint(record)
+    assert_authoritative_classification(record)
+    out.write_text(json.dumps(record.to_dict(), indent=2) + "\n")
+    return out
+
+
 def _print_report(result: MutationResult) -> None:
     gate_a, gate_b, gate_c, verdict = classify_gates(result)
     gate_c_display = verdict if result.mode == "full" else "N/A (infra validation only)"
@@ -884,6 +1008,15 @@ def run_mutation_cli(argv: list[str]) -> int:
     out_path = _write_summary(result, mode, target=args.target)
     if args.json:
         print(str(out_path))
+
+    # M9-C47: persist the canonical measurement-truth record for this run so
+    # local and CI can reconcile through one observable, durable truth path.
+    truth_path = _write_measurement_truth(result, out_path, mode, target=args.target)
+    if not args.json:
+        print(
+            f"  [truth] measurement-truth persisted: "
+            f"{truth_path.relative_to(REPO_ROOT)}"
+        )
 
     # Structured, categorized per-function survivor breakdown (C43.7).
     # Reconstructs surviving mutants from the generated mutant population via
