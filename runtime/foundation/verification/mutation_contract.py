@@ -103,6 +103,10 @@ class MutationResult:
     selected_test_scope: str = ""  # engine-specific test paths actually used
     source_scope: str = ""  # source paths actually mutated
     selection_method: str = ""
+    # ── Execution-path provenance (M45.12) ────────────────────────────────────
+    # Distinguishes canonical vs legacy execution. Default is canonical.
+    # Allowed values: "VERIFICATION_CONTROL_PLANE" (canonical), "LEGACY_DIRECT_BACKEND" (legacy shell wrappers).
+    execution_path: str = "VERIFICATION_CONTROL_PLANE"
 
     @property
     def mutants_generated(self) -> int:
@@ -145,6 +149,7 @@ class MutationResult:
             "selected_test_scope": self.selected_test_scope,
             "source_scope": self.source_scope,
             "selection_method": self.selection_method,
+            "execution_path": self.execution_path,
         }
 
 

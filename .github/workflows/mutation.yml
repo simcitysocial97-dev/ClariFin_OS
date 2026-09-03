@@ -124,6 +124,15 @@ jobs:
           path: backend/tests/generated/mutation/
           retention-days: 30
 
+      - name: Upload coverage evidence (C55)
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: coverage-evidence
+          path: runtime/generated/m9-c47/coverage/
+          retention-days: 90
+          if-condition: always()
+          if-no-files-found: warn
+
       - name: Classify mutation result
         id: mutation
         if: always()

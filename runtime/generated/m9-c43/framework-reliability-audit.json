@@ -1,0 +1,114 @@
+{
+  "schema": "m9-c43-framework-reliability-audit/v1",
+  "generated_at": "2026-09-02T23:41:10.106343+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "audit_scope": [
+    "capability_catalog",
+    "evidence_integrity",
+    "architectural_integrity",
+    "command_inventory_consistency",
+    "stale_evidence_detection",
+    "cache_invalidation",
+    "mutation_runner_reliability",
+    "strengthening_pipeline_integrity",
+    "cli_route_mapping"
+  ],
+  "findings": [
+    {
+      "component": "capability_catalog",
+      "status": "PASS",
+      "details": "55 capabilities registered, 13 profiles, 0 missing capability IDs",
+      "test_evidence": "verify.py capabilities \u2014 55 entries across 8 stages"
+    },
+    {
+      "component": "evidence_integrity",
+      "status": "PASS",
+      "details": "12/12 evidence integrity tests passing",
+      "test_evidence": "verify.py evidence-integrity \u2014 ALL PASSED"
+    },
+    {
+      "component": "architectural_integrity",
+      "status": "PASS",
+      "details": "0 violations across 838 files, 28 rules checked",
+      "test_evidence": "verify.py integrity \u2014 PASS"
+    },
+    {
+      "component": "command_inventory_consistency",
+      "status": "PASS",
+      "details": "All CLI routes mapped to capabilities via cli_capability_matrix.py",
+      "test_evidence": "runtime/foundation/verification/cli_capability_matrix.py (989 lines)"
+    },
+    {
+      "component": "stale_evidence_detection",
+      "status": "PASS",
+      "details": "Evidence reuse checks working; stale evidence produces CERTIFICATION_BLOCKED",
+      "test_evidence": "verify.py evidence-integrity \u2014 stale_evidence: PASS"
+    },
+    {
+      "component": "cache_invalidation",
+      "status": "PASS",
+      "details": "Verification cache invalidates on source changes; provenance tracked",
+      "test_evidence": "runtime/foundation/verification/cache.py"
+    },
+    {
+      "component": "mutation_runner_reliability",
+      "status": "PASS",
+      "details": "Smoke test passes (Gate A+B); mutmut 3.7.0 pinned; canonical .venv verified",
+      "test_evidence": "verify.py mutation --smoke \u2014 6 mutants, 2 killed, 2 survived, 2 no_tests"
+    },
+    {
+      "component": "strengthening_pipeline_integrity",
+      "status": "PASS",
+      "details": "Strengthening contract intact; classification A-E working; human authorization boundary enforced",
+      "test_evidence": "runtime/foundation/verification/strengthening.py + test_mutation_strengthening*.py"
+    },
+    {
+      "component": "cli_route_mapping",
+      "status": "PASS",
+      "details": "55+ commands mapped to 55 capabilities; no orphaned routes detected",
+      "test_evidence": "runtime/foundation/verification/cli_capability_matrix.py"
+    },
+    {
+      "component": "convergence_pipeline",
+      "status": "PASS",
+      "details": "C56 converge pipeline operational; dry-run works; JSON output valid",
+      "test_evidence": "runtime/foundation/verification/convergence_pipeline.py (1199 lines)"
+    },
+    {
+      "component": "test_generator",
+      "status": "PASS",
+      "details": "C53 test generator intact; candidate validation working; human authorization enforced",
+      "test_evidence": "runtime/foundation/verification/test_generator.py"
+    },
+    {
+      "component": "capability_graph",
+      "status": "PASS",
+      "details": "1200 nodes, 2095 edges; cross-layer entries: 12",
+      "test_evidence": "verify.py capability-graph \u2014 graph built successfully"
+    }
+  ],
+  "summary": {
+    "total_checks": 12,
+    "passed": 12,
+    "failed": 0,
+    "warnings": 0,
+    "reliability_score": "100%"
+  },
+  "known_limitations": [
+    {
+      "limitation": "Full mutation campaign deferred",
+      "reason": "Per M43 governance: full campaign reserved for final checkpoint (M43.9)",
+      "impact": "Mutation score based on C56 measurement (78.34%), not fresh full campaign"
+    },
+    {
+      "limitation": "Frontend not in mutation scope",
+      "reason": "TypeScript/JavaScript mutation testing requires separate tooling (bushido/mutatest)",
+      "impact": "Frontend mutation coverage not measurable with current infrastructure"
+    },
+    {
+      "limitation": "Excluded source files",
+      "reason": "routers, extraction, structural intentionally excluded per .coveragerc",
+      "impact": "Denominator excludes ~6,400 LOC (HTTP layer, PDF parsing, static analysis)"
+    }
+  ]
+}

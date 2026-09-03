@@ -1,0 +1,47 @@
+{
+  "schema": "m9-c54/workflow-convergence/v1",
+  "generated_at": "2026-09-01T13:31:33.299302+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "metrics": [
+    {
+      "metric": "total_workflows",
+      "value": 13,
+      "notes": "Number of workflow files"
+    },
+    {
+      "metric": "total_jobs",
+      "value": 14,
+      "notes": "Total jobs across all workflows"
+    },
+    {
+      "metric": "total_steps",
+      "value": 138,
+      "notes": "Total steps across all jobs"
+    },
+    {
+      "metric": "verification_steps",
+      "value": 22,
+      "notes": "Steps that execute verification commands"
+    },
+    {
+      "metric": "upload_steps",
+      "value": 50,
+      "notes": "Steps that upload artifacts"
+    },
+    {
+      "metric": "unique_verification_tasks",
+      "value": 11,
+      "notes": "Distinct verification task types"
+    },
+    {
+      "metric": "evidence_reuse_potential",
+      "value": "high",
+      "notes": "C42.29 evidence_reuse.py enables cross-run reuse"
+    },
+    {
+      "metric": "components_avoided",
+      "value": "via blast_radius",
+      "notes": "C50 blast-radius avoids unnecessary verification"
+    }
+  ]
+}

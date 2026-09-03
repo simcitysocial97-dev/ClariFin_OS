@@ -1,15 +1,15 @@
 {
     "tests_by_mangled_function_name": {
         "probe.x_mutation_probe": [
-            "test_probe.py::test_killed",
-            "test_probe.py::test_survive"
+            "test_probe.py::test_survive",
+            "test_probe.py::test_killed"
         ]
     },
     "duration_by_test": {
-        "test_probe.py::test_killed": 0.0015520329761784524,
-        "test_probe.py::test_survive": 0.0012495459814090282
+        "test_probe.py::test_killed": 0.5444792549969861,
+        "test_probe.py::test_survive": 0.001293519999308046
     },
-    "stats_time": 1.36430134,
+    "stats_time": 2.668664575,
     "function_hashes": {
         "probe.x_mutation_probe": "17e16df8189a",
         "probe.x_unused_probe": "0b9b0ca629ad"
@@ -25,7 +25,8 @@
         "pyproject.toml": "ad522e246fea",
         "mutants/probe.py.meta": "acc18f51c6ae",
         "mutants/probe.py.spans": "ac5c1fe7903d",
-        "mutants/pyproject.toml": "ad522e246fea"
+        "mutants/pyproject.toml": "ad522e246fea",
+        "python_312_probes/pyproject.toml": "a521bcee8aed"
     },
-    "git_commit": "0b65d3f237da7e98c5be0005d036c76968722fc3"
+    "git_commit": "358a30f76f1624cd3d917cb639d471d6a86012e8"
 }

@@ -1,0 +1,15 @@
+{
+  "schema": "m9-c55/dependency-drift-analysis/v1",
+  "generated_at": "2026-09-01T19:57:01+00:00",
+  "backend_python": {
+    "authority": "root pyproject.toml + requirements.lock",
+    "drift_detected": false,
+    "freeze_vs_lock_match": true,
+    "declared_vs_installed_match": true
+  },
+  "frontend_node": {
+    "authority": "frontend/package.json + frontend/package-lock.json",
+    "drift_detected": false,
+    "installable_via_npm_ci": true
+  }
+}

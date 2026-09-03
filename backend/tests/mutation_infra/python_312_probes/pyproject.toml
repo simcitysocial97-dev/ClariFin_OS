@@ -1,0 +1,14 @@
+# backend/tests/mutation_infra/python_312_probes/pyproject.toml
+#
+# M9-C45 L-ARCH-001 — Per-feature mutation probe configuration.
+#
+# mutmut is invoked directly per-feature using a single-feature pyproject.toml
+# swap (see runtime/generated/m9-c45/l-arch-001-probe/run_probe.py). This file
+# is the DEFAULT — control_probe — and individual probe runs swap source_paths
+# before invoking mutmut, then restore.
+
+[tool.mutmut]
+# Flat top-level module name so mutmut trampoline accepts it.
+source_paths = ["control_probe.py"]
+runner = "python3 -m pytest -x -q test_control_probe.py"
+no_progress = true

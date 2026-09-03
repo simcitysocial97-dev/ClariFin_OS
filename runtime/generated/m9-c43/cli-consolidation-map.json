@@ -1,0 +1,342 @@
+{
+  "schema": "m9-c43-cli-consolidation-map/v1",
+  "generated_at": "2026-09-02T23:42:01.886189+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "canonical_workflows": [
+    {
+      "intent": "verify",
+      "description": "Determine and execute appropriate verification for a change",
+      "primary_command": "verify.py verify <profile>",
+      "aliases": [
+        "quick",
+        "backend",
+        "frontend",
+        "full",
+        "contracts",
+        "integration",
+        "golden",
+        "playwright",
+        "runtime",
+        "graph"
+      ],
+      "capability": "exec.execution-plan"
+    },
+    {
+      "intent": "diagnose",
+      "description": "Explain failures, evidence gaps, and verification state",
+      "primary_command": "verify.py diagnose [--files FILE...]",
+      "aliases": [
+        "diagnose-failures",
+        "health",
+        "metrics",
+        "history",
+        "status"
+      ],
+      "capability": "diag.diagnostic-agent"
+    },
+    {
+      "intent": "converge",
+      "description": "Execute evidence-driven test strengthening and mutation improvement",
+      "primary_command": "verify.py converge --component <name>",
+      "aliases": [
+        "strengthen-capability",
+        "strengthen-survivor",
+        "generate-test",
+        "c53-scenarios"
+      ],
+      "capability": "strengthen.capability-pipeline"
+    },
+    {
+      "intent": "report",
+      "description": "Inspect repository verification state, coverage, mutation, gaps",
+      "primary_command": "verify.py report",
+      "aliases": [
+        "coverage-analysis",
+        "mutation-analysis",
+        "gap-analysis",
+        "convergence-status",
+        "threshold-assessment",
+        "convergence-plan",
+        "capabilities",
+        "integrity",
+        "analytics"
+      ],
+      "capability": "measure.coverage-maintenance"
+    },
+    {
+      "intent": "certify",
+      "description": "Perform certification and reconciliation",
+      "primary_command": "verify.py certify",
+      "aliases": [
+        "certify-v4",
+        "certify-v5",
+        "reconcile",
+        "exec-evidence",
+        "evidence-plan",
+        "local-gate",
+        "deep-contract"
+      ],
+      "capability": "cert.certification-v4"
+    }
+  ],
+  "command_classification": [
+    {
+      "command": "verify.py quick",
+      "workflow_intent": "verify",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py backend",
+      "workflow_intent": "verify",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py frontend",
+      "workflow_intent": "verify",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py full",
+      "workflow_intent": "verify",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py contracts",
+      "workflow_intent": "verify",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py integration",
+      "workflow_intent": "verify",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py golden",
+      "workflow_intent": "verify",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py playwright",
+      "workflow_intent": "verify",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py runtime",
+      "workflow_intent": "verify",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py mutation",
+      "workflow_intent": "verify",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py mutation --smoke",
+      "workflow_intent": "verify",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py mutation --target <engine>",
+      "workflow_intent": "verify",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py diagnose",
+      "workflow_intent": "diagnose",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py diagnose-failures",
+      "workflow_intent": "diagnose",
+      "status": "alias"
+    },
+    {
+      "command": "verify.py health",
+      "workflow_intent": "diagnose",
+      "status": "alias"
+    },
+    {
+      "command": "verify.py metrics",
+      "workflow_intent": "diagnose",
+      "status": "alias"
+    },
+    {
+      "command": "verify.py history",
+      "workflow_intent": "diagnose",
+      "status": "alias"
+    },
+    {
+      "command": "verify.py status",
+      "workflow_intent": "diagnose",
+      "status": "alias"
+    },
+    {
+      "command": "verify.py analytics",
+      "workflow_intent": "diagnose",
+      "status": "alias"
+    },
+    {
+      "command": "verify.py converge --component <name>",
+      "workflow_intent": "converge",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py strengthen-capability <name>",
+      "workflow_intent": "converge",
+      "status": "alias"
+    },
+    {
+      "command": "verify.py strengthen-survivor <id>",
+      "workflow_intent": "converge",
+      "status": "alias"
+    },
+    {
+      "command": "verify.py generate-test",
+      "workflow_intent": "converge",
+      "status": "alias"
+    },
+    {
+      "command": "verify.py c53-scenarios",
+      "workflow_intent": "converge",
+      "status": "alias"
+    },
+    {
+      "command": "verify.py coverage-analysis",
+      "workflow_intent": "report",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py mutation-analysis",
+      "workflow_intent": "report",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py gap-analysis",
+      "workflow_intent": "report",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py convergence-status",
+      "workflow_intent": "report",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py threshold-assessment",
+      "workflow_intent": "report",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py convergence-plan",
+      "workflow_intent": "report",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py capabilities",
+      "workflow_intent": "report",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py integrity",
+      "workflow_intent": "report",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py help-resolve '<problem>'",
+      "workflow_intent": "diagnose",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py what-should-i-run",
+      "workflow_intent": "diagnose",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py certify",
+      "workflow_intent": "certify",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py reconcile",
+      "workflow_intent": "certify",
+      "status": "alias"
+    },
+    {
+      "command": "verify.py exec-evidence",
+      "workflow_intent": "certify",
+      "status": "alias"
+    },
+    {
+      "command": "verify.py local-gate",
+      "workflow_intent": "certify",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py plan",
+      "workflow_intent": "verify",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py affected",
+      "workflow_intent": "diagnose",
+      "status": "alias"
+    },
+    {
+      "command": "verify.py repair",
+      "workflow_intent": "converge",
+      "status": "alias"
+    },
+    {
+      "command": "verify.py risk",
+      "workflow_intent": "report",
+      "status": "alias"
+    },
+    {
+      "command": "verify.py blast-radius",
+      "workflow_intent": "diagnose",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py capability-graph",
+      "workflow_intent": "report",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py capability-inventory",
+      "workflow_intent": "report",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py resolve-capabilities",
+      "workflow_intent": "diagnose",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py latent-audit",
+      "workflow_intent": "diagnose",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py evidence-integrity",
+      "workflow_intent": "report",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py env-check",
+      "workflow_intent": "report",
+      "status": "canonical"
+    },
+    {
+      "command": "verify.py measurement-truth",
+      "workflow_intent": "report",
+      "status": "canonical"
+    }
+  ],
+  "summary": {
+    "total_commands": 48,
+    "canonical_commands": 25,
+    "aliases": 23,
+    "workflows": 5,
+    "duplicate_capabilities_eliminated": 0,
+    "legacy_commands_marked_for_deprecation": 0
+  }
+}

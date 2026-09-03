@@ -133,6 +133,7 @@ def audit_cli_routes_without_metadata(
         "strengthen-survivor": "strengthen.capability-pipeline",
         "strengthen-report": "strengthen.forensic",
         "env-check": "evidence.env-check",
+        "env-contract": "evidence.env-contract",
         "what-should-i-run": "discover.what-should-i-run",
         "capability-inventory": "discover.capability-inventory",
         "control-plane-plan": "plan.control-plane",

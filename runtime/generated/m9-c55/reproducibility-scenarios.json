@@ -1,0 +1,96 @@
+{
+  "schema": "m9-c55/reproducibility-scenarios/v1",
+  "generated_at": "2026-09-01T19:57:01+00:00",
+  "scenarios": [
+    {
+      "id": "A",
+      "description": "Same env \u2192 same backend evidence",
+      "expected": "PASS",
+      "test": "test_scenario_a_same_env_same_backend_evidence"
+    },
+    {
+      "id": "B",
+      "description": "Same env \u2192 same frontend evidence",
+      "expected": "PASS",
+      "test": "test_scenario_b_same_env_same_frontend_evidence"
+    },
+    {
+      "id": "C",
+      "description": "Same env \u2192 reproducible coverage",
+      "expected": "PASS",
+      "test": "test_scenario_c_reproducible_coverage"
+    },
+    {
+      "id": "D",
+      "description": "Same env \u2192 reproducible targeted mutation",
+      "expected": "PASS",
+      "test": "test_scenario_d_targeted_mutation_reproducible"
+    },
+    {
+      "id": "E",
+      "description": "Toolchain drift \u2192 rejected",
+      "expected": "PASS",
+      "test": "test_scenario_e_toolchain_drift_rejected"
+    },
+    {
+      "id": "F",
+      "description": "Dependency drift \u2192 rejected",
+      "expected": "PASS",
+      "test": "test_scenario_f_dependency_drift_rejected"
+    },
+    {
+      "id": "G",
+      "description": "Configuration drift \u2192 rejected",
+      "expected": "PASS",
+      "test": "test_scenario_g_configuration_drift_rejected"
+    },
+    {
+      "id": "H",
+      "description": "Repository SHA drift \u2192 rejected",
+      "expected": "PASS",
+      "test": "test_scenario_h_repository_sha_drift_rejected"
+    },
+    {
+      "id": "I",
+      "description": "Stale coverage evidence \u2192 rejected",
+      "expected": "PASS",
+      "test": "test_scenario_i_stale_coverage_rejected"
+    },
+    {
+      "id": "J",
+      "description": "Stale mutation evidence \u2192 rejected",
+      "expected": "PASS",
+      "test": "test_scenario_j_stale_mutation_rejected"
+    },
+    {
+      "id": "K",
+      "description": "Missing env fingerprint \u2192 rejected",
+      "expected": "PASS",
+      "test": "test_scenario_k_missing_env_fingerprint_rejected"
+    },
+    {
+      "id": "L",
+      "description": "Valid local + equivalent CI \u2192 accepted",
+      "expected": "PASS",
+      "test": "test_scenario_l_valid_local_plus_equivalent_ci_accepted"
+    },
+    {
+      "id": "M",
+      "description": "C53 generated candidate accepted for auth",
+      "expected": "PASS",
+      "test": "test_scenario_m_c53_generated_candidate_accepted"
+    },
+    {
+      "id": "N",
+      "description": "Live CI unavailable, never fabricated",
+      "expected": "PASS",
+      "test": "test_scenario_n_live_ci_unavailable_not_fabricated"
+    },
+    {
+      "id": "O",
+      "description": "C42-C54 architecture authoritative",
+      "expected": "PASS",
+      "test": "test_scenario_o_c42_to_c54_architecture_authoritative"
+    }
+  ]
+}

@@ -18,7 +18,6 @@ from __future__ import annotations
 
 
 from mutmut.mutation.trampoline import wrap_in_trampoline as _mutmut_mutated, MutantDict
-
 mutants_x_mutation_probe__mutmut: MutantDict = {}  # type: ignore
 
 
@@ -64,12 +63,11 @@ def x_mutation_probe__mutmut_4(value: int) -> int:
         return value + 2
     return value
 
-
-mutants_x_mutation_probe__mutmut["_mutmut_orig"] = x_mutation_probe__mutmut_orig  # type: ignore # mutmut generated
-mutants_x_mutation_probe__mutmut["x_mutation_probe__mutmut_1"] = x_mutation_probe__mutmut_1  # type: ignore # mutmut generated
-mutants_x_mutation_probe__mutmut["x_mutation_probe__mutmut_2"] = x_mutation_probe__mutmut_2  # type: ignore # mutmut generated
-mutants_x_mutation_probe__mutmut["x_mutation_probe__mutmut_3"] = x_mutation_probe__mutmut_3  # type: ignore # mutmut generated
-mutants_x_mutation_probe__mutmut["x_mutation_probe__mutmut_4"] = x_mutation_probe__mutmut_4  # type: ignore # mutmut generated
+mutants_x_mutation_probe__mutmut['_mutmut_orig'] = x_mutation_probe__mutmut_orig # type: ignore # mutmut generated
+mutants_x_mutation_probe__mutmut['x_mutation_probe__mutmut_1'] = x_mutation_probe__mutmut_1 # type: ignore # mutmut generated
+mutants_x_mutation_probe__mutmut['x_mutation_probe__mutmut_2'] = x_mutation_probe__mutmut_2 # type: ignore # mutmut generated
+mutants_x_mutation_probe__mutmut['x_mutation_probe__mutmut_3'] = x_mutation_probe__mutmut_3 # type: ignore # mutmut generated
+mutants_x_mutation_probe__mutmut['x_mutation_probe__mutmut_4'] = x_mutation_probe__mutmut_4 # type: ignore # mutmut generated
 mutants_x_unused_probe__mutmut: MutantDict = {}  # type: ignore
 
 
@@ -93,7 +91,6 @@ def x_unused_probe__mutmut_2(value: int) -> int:
     """Intentionally has NO test — exercises the 'no tests' classification."""
     return value * 3
 
-
-mutants_x_unused_probe__mutmut["_mutmut_orig"] = x_unused_probe__mutmut_orig  # type: ignore # mutmut generated
-mutants_x_unused_probe__mutmut["x_unused_probe__mutmut_1"] = x_unused_probe__mutmut_1  # type: ignore # mutmut generated
-mutants_x_unused_probe__mutmut["x_unused_probe__mutmut_2"] = x_unused_probe__mutmut_2  # type: ignore # mutmut generated
+mutants_x_unused_probe__mutmut['_mutmut_orig'] = x_unused_probe__mutmut_orig # type: ignore # mutmut generated
+mutants_x_unused_probe__mutmut['x_unused_probe__mutmut_1'] = x_unused_probe__mutmut_1 # type: ignore # mutmut generated
+mutants_x_unused_probe__mutmut['x_unused_probe__mutmut_2'] = x_unused_probe__mutmut_2 # type: ignore # mutmut generated

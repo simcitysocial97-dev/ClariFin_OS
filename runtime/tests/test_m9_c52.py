@@ -149,10 +149,10 @@ class TestM523CliCapabilityMatrix(unittest.TestCase):
 
         matrix = build_cli_capability_matrix()
         # M52.4-M52.15 add C52 routes; M9-C53 adds generate-test, c53-scenarios, c53-certify
-        self.assertEqual(matrix["total_routes"], 80)
+        self.assertEqual(matrix["total_routes"], 81)
         self.assertEqual(matrix["statistics"].get("UNCLASSIFIED", 0), 0)
         # Sum of all stats should equal total routes
-        self.assertEqual(sum(matrix["statistics"].values()), 80)
+        self.assertEqual(sum(matrix["statistics"].values()), 81)
 
     def test_all_dispatcher_routes_have_explicit_classification(self):
         from runtime.foundation.verification.cli_capability_matrix import (

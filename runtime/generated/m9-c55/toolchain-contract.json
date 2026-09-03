@@ -1,0 +1,89 @@
+{
+  "schema": "m9-c55/toolchain-contract/v1",
+  "generated_at": "2026-09-01T19:56:26+00:00",
+  "tools": [
+    {
+      "name": "python",
+      "pinned_version": "3.12.3",
+      "resolved_version": "Python 3.12.3",
+      "resolved_path": ".venv/bin/python3",
+      "source": "venv",
+      "matches_pin": true
+    },
+    {
+      "name": "pytest",
+      "pinned_version": "9.1.1",
+      "resolved_version": "pytest 9.1.1",
+      "resolved_path": ".venv/bin/pytest",
+      "source": "venv",
+      "matches_pin": true
+    },
+    {
+      "name": "coverage",
+      "pinned_version": "7.15.2",
+      "resolved_version": "Coverage.py, version 7.15.2 with C extension",
+      "resolved_path": ".venv/bin/coverage",
+      "source": "venv",
+      "matches_pin": true
+    },
+    {
+      "name": "ruff",
+      "pinned_version": "0.15.20",
+      "resolved_version": "ruff 0.15.20",
+      "resolved_path": ".venv/bin/ruff",
+      "source": "venv",
+      "matches_pin": true
+    },
+    {
+      "name": "black",
+      "pinned_version": "26.5.1",
+      "resolved_version": "black, 26.5.1 (compiled: yes)",
+      "resolved_path": ".venv/bin/black",
+      "source": "venv",
+      "matches_pin": true
+    },
+    {
+      "name": "mypy",
+      "pinned_version": "2.1.0",
+      "resolved_version": "mypy 2.1.0 (compiled: yes)",
+      "resolved_path": ".venv/bin/mypy",
+      "source": "venv",
+      "matches_pin": true
+    },
+    {
+      "name": "hypothesis",
+      "pinned_version": "6.161.4",
+      "resolved_version": "hypothesis, version 6.161.4",
+      "resolved_path": ".venv/bin/hypothesis",
+      "source": "venv",
+      "matches_pin": true
+    },
+    {
+      "name": "npm",
+      "pinned_version": "11.19.0",
+      "resolved_version": "11.19.0",
+      "resolved_path": "/home/vasantha/.local/bin/npm",
+      "source": "path",
+      "matches_pin": true
+    },
+    {
+      "name": "node",
+      "pinned_version": "24.20.0",
+      "resolved_version": "v24.20.0",
+      "resolved_path": "/home/vasantha/.local/bin/node",
+      "source": "path",
+      "matches_pin": true
+    },
+    {
+      "name": "mutmut",
+      "pinned_version": "3.7.0",
+      "resolved_version": "mutmut, version 3.7.0 (requires backend config dir)",
+      "resolved_path": ".venv/bin/mutmut",
+      "source": "venv",
+      "matches_pin": true,
+      "note": "Version confirmed via env.resolve_environment() with config_dir=backend/"
+    }
+  ],
+  "overall_state": "CONSISTENT",
+  "warnings": []
+}

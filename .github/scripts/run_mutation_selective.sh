@@ -25,4 +25,4 @@ else
   PY="$(command -v python3 || command -v python)"
 fi
 
-exec "$PY" runtime/verify.py mutation --full "$@"
+exec "$PY" runtime/verify.py mutation "$@"

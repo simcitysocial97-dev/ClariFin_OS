@@ -1,0 +1,172 @@
+{
+  "schema": "m9-c43-repository-inventory/v1",
+  "generated_at": "2026-09-02T23:37:58.778156+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "backendlayers": {
+    "common": {
+      "files": 5,
+      "loc": 339,
+      "examples": [
+        "common/__init__.py",
+        "common/enrichment.py",
+        "common/formatting.py"
+      ]
+    },
+    "core": {
+      "files": 38,
+      "loc": 5892,
+      "examples": [
+        "core/__init__.py",
+        "core/dtos/reconciliation_dto.py",
+        "core/dtos/statement_dto.py"
+      ]
+    },
+    "data": {
+      "files": 1,
+      "loc": 0,
+      "examples": [
+        "data/__init__.py"
+      ]
+    },
+    "engines": {
+      "files": 64,
+      "loc": 13957,
+      "examples": [
+        "engines/balance_engine.py",
+        "engines/cashflow_engine.py",
+        "engines/__init__.py"
+      ]
+    },
+    "extraction": {
+      "files": 11,
+      "loc": 5586,
+      "examples": [
+        "extraction/__init__.py",
+        "extraction/csv_importer.py",
+        "extraction/camelot_extractor.py"
+      ]
+    },
+    "models": {
+      "files": 22,
+      "loc": 1713,
+      "examples": [
+        "models/loan.py",
+        "models/investment.py",
+        "models/base.py"
+      ]
+    },
+    "orchestration": {
+      "files": 2,
+      "loc": 191,
+      "examples": [
+        "orchestration/__init__.py",
+        "orchestration/statement_orchestrator.py"
+      ]
+    },
+    "repositories": {
+      "files": 27,
+      "loc": 4606,
+      "examples": [
+        "repositories/member_repository.py",
+        "repositories/networth_repository.py",
+        "repositories/liquidity_pattern_repository.py"
+      ]
+    },
+    "root": {
+      "files": 8,
+      "loc": 1313,
+      "examples": [
+        "api.py",
+        "health.py",
+        "__init__.py"
+      ]
+    },
+    "routers": {
+      "files": 29,
+      "loc": 4168,
+      "examples": [
+        "routers/financial_events.py",
+        "routers/export.py",
+        "routers/reconciliation_workspace.py"
+      ]
+    },
+    "services": {
+      "files": 32,
+      "loc": 7519,
+      "examples": [
+        "services/export_service.py",
+        "services/statement_service.py",
+        "services/reconciliation_service.py"
+      ]
+    },
+    "structural": {
+      "files": 2,
+      "loc": 843,
+      "examples": [
+        "structural/layout_analyzer.py",
+        "structural/__init__.py"
+      ]
+    },
+    "utils": {
+      "files": 1,
+      "loc": 0,
+      "examples": [
+        "utils/__init__.py"
+      ]
+    }
+  },
+  "frontendlayers": {
+    "lib": {
+      "files": 262,
+      "loc": 42830
+    },
+    "components": {
+      "files": 345,
+      "loc": 35092
+    },
+    "hooks": {
+      "files": 5,
+      "loc": 560
+    }
+  },
+  "testSurfaces": {
+    "unit": {
+      "test_files": 91
+    },
+    "properties": {
+      "test_files": 41
+    },
+    "contract": {
+      "test_files": 33
+    },
+    "golden": {
+      "test_files": 11
+    },
+    "integration": {
+      "test_files": 7
+    },
+    "architecture": {
+      "test_files": 3
+    },
+    "capability": {
+      "test_files": 27
+    },
+    "mutation_infra": {
+      "test_files": 4
+    },
+    "frontend_vitest": {
+      "test_files": 74
+    },
+    "frontend_e2e": {
+      "test_files": 12
+    }
+  },
+  "summary": {
+    "backend_source_files": 242,
+    "backend_loc": 46127,
+    "frontend_source_files": 612,
+    "frontend_loc": 78482,
+    "total_source_files": 854,
+    "total_loc": 124609
+  }
+}

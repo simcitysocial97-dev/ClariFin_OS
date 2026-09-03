@@ -1506,6 +1506,11 @@ def main() -> int:
 
         return main_env_check(sys.argv[2:])
 
+    if command == "env-contract":
+        from runtime.foundation.verification.env_contract import main_env_contract
+
+        return main_env_contract(sys.argv[2:])
+
     # M9-C50 — Blast-Radius Enforcement & Change-Impact Control
     if command == "what-should-i-run":
         from runtime.foundation.verification.blast_radius_cli import (
@@ -1722,11 +1727,6 @@ def main() -> int:
         else:
             files = args.files
             if not files:
-                from runtime.foundation.verification.orchestrator import (
-                    _collect_changed_files,
-                    _is_git_available,
-                )
-
                 if _is_git_available():
                     cf = _collect_changed_files()
                     files = cf.files
@@ -1985,6 +1985,62 @@ def main() -> int:
         )
 
         return _c53cert_main()
+
+    # ── M9-C56 — Coverage & Mutation Convergence ───
+
+    if command in (
+        "convergence-status",
+        "coverage-analysis",
+        "mutation-analysis",
+        "gap-analysis",
+        "convergence-plan",
+        "threshold-assessment",
+    ):
+        from runtime.foundation.verification.c56_convergence import main as _c56_main
+
+        return _c56_main(sys.argv[1:])
+
+    # ── M9-C56 — Autonomous Convergence Pipeline ───
+    # This is the CANONICAL entry point for end-to-end mutation improvement.
+    # Given a component (e.g. "financial_events"), it automatically:
+    #   1. Discovers mutation survivors
+    #   2. Classifies and prioritizes them
+    #   3. Generates concrete test code
+    #   4. Applies tests additively (never destructive)
+    #   5. Validates by running focused tests + targeted mutation
+    #   6. Emits a convergence ledger
+    if command == "converge":
+        from runtime.foundation.verification.convergence_pipeline import main as _conv_main
+
+        # Pass only the args after the command, not "verify.py" or "converge"
+        import sys as _sys
+        saved = _sys.argv
+        _sys.argv = ["convergence_pipeline", *saved[2:]]
+        try:
+            return _conv_main()
+        finally:
+            _sys.argv = saved
+
+    # ── M9-C56 — Capability Resolver for AI Agents ───
+    # Maps a problem description to the correct verification capability + command.
+    # This is the entry point for any AI agent that needs to USE the runtime
+    # infrastructure without knowing the specific command names.
+    if command == "help-resolve":
+        from runtime.foundation.verification.help_resolver import (
+            cmd_help_resolve,
+        )
+
+        return cmd_help_resolve(sys.argv[2:])
+
+    # ── M9-C56 — What Should I Run ───
+    # Given a problem (e.g. "mutation score is 79%"), automatically determines
+    # the sequence of capabilities to invoke to solve it.
+    if command == "what-should-i-run":
+        from runtime.foundation.verification.help_resolver import (
+            cmd_what_should_i_run,
+        )
+
+        return cmd_what_should_i_run(sys.argv[2:])
 
     profile_name = command
 

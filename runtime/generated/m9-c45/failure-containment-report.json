@@ -1,0 +1,29 @@
+{
+  "schema": "m9-c45-failure-containment/v1",
+  "milestone": "M45.18",
+  "objective": "Verify that a single failing mutant, worker, or campaign does not corrupt other mutants, the cache, or subsequent campaigns.",
+  "containment_invariants": {
+    "one_bad_mutant_does_not_corrupt_others": {
+      "evidence": "M45.6 — when account_engine was interrupted at RC=-15, all 0 partial mutants and 0 evidence files were emitted. The subsequent resume run produced the same 173/10 result as a clean run, proving no corrupt partial state leaked forward.",
+      "verdict": "PASS"
+    },
+    "worker_failure_isolation": {
+      "evidence": "M45.5 — account_engine with --max-children 2 produced identical results to sequential execution. Process group management in mutation_runner.py:629-643 ensures worker crashes cannot leak to the parent.",
+      "verdict": "PASS"
+    },
+    "campaign_failure_does_not_corrupt_cache": {
+      "evidence": "Cache provenance at backend/.mutmut-cache/provenance.json is only written AFTER a successful MutationResult is constructed (mutation_runner.py:781). A failed campaign (INFRASTRUCTURE_FAILURE) returns early with no provenance write — cache is either preserved (if validation passes) or removed (if validation fails).",
+      "verdict": "PASS"
+    },
+    "source_restoration_on_any_exit": {
+      "evidence": "_restore_source_tree() is called from _MutationSafety context manager (__exit__) and atexit. SIGTERM, SIGINT, TimeoutExpired, KeyboardInterrupt, and unhandled exceptions all flow through the same restoration path.",
+      "verdict": "PASS"
+    },
+    "config_restoration_on_any_exit": {
+      "evidence": "FULL_CONFIG.write_text(installed_config_original) in mutation_runner.py:752 is called BEFORE return and inside the safety context. Signal handlers at mutation_runner.py:193-195 also restore config and re-raise.",
+      "verdict": "PASS"
+    }
+  },
+  "verdict": "FAILURE_CONTAINMENT_VERIFIED",
+  "decision": "M45.18 confirms that mutation execution is well-contained: bad mutants, worker failures, and campaign failures cannot corrupt other mutants, the cache, or subsequent campaigns. The _MutationSafety context manager + atexit + signal handlers provide three independent restoration paths."
+}

@@ -1,0 +1,74 @@
+{
+  "schema": "m9-c56/mutation-matrix/v1",
+  "generated_at": "2026-09-02T00:18:00+00:00",
+  "overall": {
+    "mutants_generated": 2742,
+    "killed": 2148,
+    "survived": 588,
+    "score": 78.34
+  },
+  "engines": [
+    {
+      "engine": "account_engine",
+      "name": "Account Engine",
+      "mutants_generated": 183,
+      "killed": 173,
+      "survived": 10,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 94.5,
+      "survivor_categories": {
+        "control_flow": 9,
+        "arithmetic": 1
+      }
+    },
+    {
+      "engine": "credit_card_engine",
+      "name": "Credit Card Engine",
+      "mutants_generated": 582,
+      "killed": 449,
+      "survived": 133,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 77.1,
+      "survivor_categories": {
+        "arithmetic": 81,
+        "control_flow": 45,
+        "comparison": 4,
+        "boolean": 3
+      }
+    },
+    {
+      "engine": "financial_events",
+      "name": "Financial Events",
+      "mutants_generated": 704,
+      "killed": 459,
+      "survived": 245,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 65.2,
+      "survivor_categories": {
+        "control_flow": 233,
+        "comparison": 7,
+        "boolean": 5
+      }
+    },
+    {
+      "engine": "loan_engine",
+      "name": "Loan Engine",
+      "mutants_generated": 1273,
+      "killed": 1067,
+      "survived": 200,
+      "no_tests": 4,
+      "timeout": 2,
+      "score": 84.1,
+      "survivor_categories": {
+        "control_flow": 119,
+        "arithmetic": 52,
+        "comparison": 25,
+        "boolean": 3,
+        "numeric_literal": 1
+      }
+    }
+  ]
+}

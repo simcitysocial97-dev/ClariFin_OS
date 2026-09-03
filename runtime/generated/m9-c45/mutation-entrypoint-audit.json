@@ -1,0 +1,342 @@
+{
+  "schema": "m9-c45-mutation-entrypoint-audit/v1",
+  "generated_at": "2026-09-03T00:45:00Z",
+  "milestone": "M9-C45",
+  "phase": "M45.1 — Canonical Path Enforcement Audit",
+  "audit_scope": "Complete repository search for mutation testing entry points",
+  "dependency_map": {
+    "canonical_paths": [
+      {
+        "caller": "verify.py mutation",
+        "entry_point": "runtime/verify.py:1333-1336",
+        "adapter_orchestrator": "runtime/foundation/verification/mutation_runner.py:run_mutation_cli",
+        "backend": "runtime/foundation/verification/mutation_runner.py:execute_mutation",
+        "result_parser": "runtime/foundation/verification/mutation_contract.py:parse_mutmut_results",
+        "evidence": "backend/tests/generated/mutation/mutation-summary.json",
+        "classification": "canonical",
+        "status": "AUTHORITATIVE"
+      },
+      {
+        "caller": "verify.py mutation --smoke",
+        "entry_point": "runtime/verify.py:1333-1336",
+        "adapter_orchestrator": "runtime/foundation/verification/mutation_runner.py:run_mutation_cli",
+        "backend": "runtime/foundation/verification/mutation_runner.py:execute_mutation (mode=smoke)",
+        "result_parser": "runtime/foundation/verification/mutation_contract.py:parse_mutmut_results",
+        "evidence": "backend/tests/generated/mutation/local-smoke/mutation-summary.json",
+        "classification": "canonical",
+        "status": "AUTHORITATIVE"
+      },
+      {
+        "caller": "verify.py mutation --target <engine>",
+        "entry_point": "runtime/verify.py:1333-1336",
+        "adapter_orchestrator": "runtime/foundation/verification/mutation_runner.py:run_mutation_cli",
+        "backend": "runtime/foundation/verification/mutation_runner.py:execute_mutation (mode=target)",
+        "result_parser": "runtime/foundation/verification/mutation_contract.py:parse_mutmut_results",
+        "evidence": "backend/tests/generated/mutation/mutation-summary-{target}.json",
+        "classification": "canonical",
+        "status": "AUTHORITATIVE"
+      },
+      {
+        "caller": "MutationOrchestrator (M9-C44)",
+        "entry_point": "runtime/foundation/verification/mutation_execution/orchestrator.py:MutationOrchestrator.run",
+        "adapter_orchestrator": "runtime/foundation/verification/mutation_execution/orchestrator.py",
+        "backend": "runtime/foundation/verification/mutation_execution/mutmut_adapter.py:MutmutAdapter",
+        "result_parser": "runtime/foundation/verification/mutation_execution/domain_model.py",
+        "evidence": "Canonical MutationCampaign + MutationResult objects",
+        "classification": "canonical",
+        "status": "AUTHORITATIVE"
+      }
+    ],
+    "legacy_paths": [
+      {
+        "caller": ".github/scripts/run_mutation_selective.sh",
+        "entry_point": "Line 28: exec \"$PY\" runtime/verify.py mutation --full \"$@\"",
+        "adapter_orchestrator": "Delegates to verify.py mutation",
+        "backend": "runtime/foundation/verification/mutation_runner.py",
+        "result_parser": "runtime/foundation/verification/mutation_contract.py",
+        "evidence": "Same as canonical path",
+        "classification": "legacy",
+        "status": "THIN_WRAPPER",
+        "purpose": "Existing profile/registry/tier/evidence-contract references compatibility"
+      },
+      {
+        "caller": ".github/scripts/run_mutation_local_smoke.sh",
+        "entry_point": "Line 24: exec \"$PY\" runtime/verify.py mutation --smoke \"$@\"",
+        "adapter_orchestrator": "Delegates to verify.py mutation --smoke",
+        "backend": "runtime/foundation/verification/mutation_runner.py",
+        "result_parser": "runtime/foundation/verification/mutation_contract.py",
+        "evidence": "Same as canonical smoke path",
+        "classification": "legacy",
+        "status": "THIN_WRAPPER",
+        "purpose": "Bounded local mutation smoke compatibility"
+      },
+      {
+        "caller": "scripts/verify.sh mutation",
+        "entry_point": "Line 49: exec \"$ROOT_DIR/.venv/bin/python\" runtime/verify.py mutation \"$@\"",
+        "adapter_orchestrator": "Delegates to verify.py mutation",
+        "backend": "runtime/foundation/verification/mutation_runner.py",
+        "result_parser": "runtime/foundation/verification/mutation_contract.py",
+        "evidence": "Same as canonical path",
+        "classification": "legacy",
+        "status": "DISPATCHER",
+        "purpose": "Repository-owned verification dispatcher"
+      },
+      {
+        "caller": "scripts/verify.sh mutation-smoke",
+        "entry_point": "Line 48: exec \"$ROOT_DIR/.venv/bin/python\" runtime/verify.py mutation --smoke \"$@\"",
+        "adapter_orchestrator": "Delegates to verify.py mutation --smoke",
+        "backend": "runtime/foundation/verification/mutation_runner.py",
+        "result_parser": "runtime/foundation/verification/mutation_contract.py",
+        "evidence": "Same as canonical smoke path",
+        "classification": "legacy",
+        "status": "DISPATCHER",
+        "purpose": "Repository-owned verification dispatcher"
+      }
+    ],
+    "ci_only_paths": [
+      {
+        "caller": ".github/workflows/mutation.yml:mutation-smoke",
+        "entry_point": "Line 59: run: python runtime/verify.py mutation --smoke",
+        "adapter_orchestrator": "verify.py mutation --smoke",
+        "backend": "runtime/foundation/verification/mutation_runner.py",
+        "result_parser": "runtime/foundation/verification/mutation_contract.py",
+        "evidence": "backend/tests/generated/mutation/mutation-summary.json",
+        "classification": "CI-only",
+        "status": "CANONICAL",
+        "purpose": "Bounded infrastructure health check before full campaign"
+      },
+      {
+        "caller": ".github/workflows/mutation.yml:mutation",
+        "entry_point": "Line 81: run: python runtime/verify.py mutation",
+        "adapter_orchestrator": "verify.py mutation",
+        "backend": "runtime/foundation/verification/mutation_runner.py",
+        "result_parser": "runtime/foundation/verification/mutation_contract.py",
+        "evidence": "backend/tests/generated/mutation/mutation-summary.json",
+        "classification": "CI-only",
+        "status": "CANONICAL",
+        "purpose": "Authoritative full campaign (80% gate)",
+        "needs": "mutation-smoke"
+      }
+    ],
+    "test_only_paths": [
+      {
+        "caller": "runtime/tests/test_mutation_infra.py",
+        "entry_point": "Various test functions",
+        "adapter_orchestrator": "Tests mutation_runner.py functionality",
+        "backend": "runtime/foundation/verification/mutation_runner.py",
+        "result_parser": "runtime/foundation/verification/mutation_contract.py",
+        "evidence": "Test-specific assertions",
+        "classification": "test-only",
+        "status": "HERMETIC_TESTS",
+        "purpose": "Unit tests for mutation infrastructure"
+      },
+      {
+        "caller": "runtime/generated/m9-c42.14-mutation-test.py",
+        "entry_point": "Test script",
+        "adapter_orchestrator": "Direct subprocess calls",
+        "backend": "mutmut via subprocess",
+        "result_parser": "Custom parsing",
+        "evidence": "Test-specific",
+        "classification": "test-only",
+        "status": "GENERATED_TEST",
+        "purpose": "M9-C42.14 execution reliability test"
+      },
+      {
+        "caller": "runtime/generated/m9-c42.14-signal-test.py",
+        "entry_point": "Test script",
+        "adapter_orchestrator": "Process group management",
+        "backend": "mutmut via subprocess",
+        "result_parser": "Custom parsing",
+        "evidence": "Test-specific",
+        "classification": "test-only",
+        "status": "GENERATED_TEST",
+        "purpose": "M9-C42.14 signal handling test"
+      }
+    ],
+    "backend_internal_paths": [
+      {
+        "caller": "runtime/foundation/verification/mutation_runner.py:execute_mutation",
+        "entry_point": "Line 596: cmd = [mutmut, \"run\"]",
+        "adapter_orchestrator": "Internal to mutation_runner.py",
+        "backend": "mutmut 3.7.0 via subprocess",
+        "result_parser": "Line 691: subprocess.run([mutmut, \"results\", \"--all\", \"true\"])",
+        "evidence": "Internal result processing",
+        "classification": "backend-internal",
+        "status": "IMPLEMENTATION_DETAIL",
+        "purpose": "Actual mutmut execution behind canonical interface"
+      },
+      {
+        "caller": "runtime/foundation/verification/mutation_execution/mutmut_adapter.py",
+        "entry_point": "MutmutAdapter class",
+        "adapter_orchestrator": "MutationBackendBase implementation",
+        "backend": "mutmut 3.7.0 via subprocess",
+        "result_parser": "Internal result normalization",
+        "evidence": "MutationResult objects",
+        "classification": "backend-internal",
+        "status": "ADAPTER_IMPLEMENTATION",
+        "purpose": "M9-C44.4 hardened mutmut adapter"
+      },
+      {
+        "caller": "runtime/foundation/verification/survivor_catalog.py",
+        "entry_point": "Line 275: from mutmut.__main__ import get_diff_for_mutant",
+        "adapter_orchestrator": "Direct mutmut module import",
+        "backend": "mutmut libcst functionality",
+        "result_parser": "Custom diff processing",
+        "evidence": "Survivor catalog data",
+        "classification": "backend-internal",
+        "status": "MUTMUT_LIBRARY_USAGE",
+        "purpose": "Survivor diff reconstruction from .meta files"
+      }
+    ],
+    "unsupported_paths": [
+      {
+        "caller": "backend/tests/conftest.py:36",
+        "entry_point": "import mutmut.__main__ as _mm_main",
+        "adapter_orchestrator": "Direct mutmut module import",
+        "backend": "mutmut trampoline compatibility shim",
+        "result_parser": "N/A",
+        "evidence": "N/A",
+        "classification": "unsupported",
+        "status": "COMPATIBILITY_SHIM",
+        "purpose": "mutmut 3.x compatibility for src. namespace imports"
+      }
+    ]
+  },
+  "classification_summary": {
+    "canonical": 4,
+    "legacy": 4,
+    "CI-only": 2,
+    "test-only": 3,
+    "backend-internal": 3,
+    "unsupported": 1,
+    "duplicate": 0,
+    "dead_but_preserved": 0
+  },
+  "direct_mutmut_invocations": {
+    "subprocess_calls": [
+      {
+        "file": "runtime/foundation/verification/mutation_runner.py",
+        "lines": [596, 691],
+        "commands": ["mutmut run", "mutmut results --all true"],
+        "context": "Canonical runner implementation",
+        "classification": "backend-internal"
+      },
+      {
+        "file": "runtime/generated/m9-c42.14-mutation-test.py",
+        "lines": [16],
+        "commands": ["pgrep -f mutmut"],
+        "context": "Process detection for signal testing",
+        "classification": "test-only"
+      },
+      {
+        "file": "runtime/generated/m9-c42.14-signal-test.py",
+        "lines": [15],
+        "commands": ["pgrep -f mutmut"],
+        "context": "Process detection for signal testing",
+        "classification": "test-only"
+      }
+    ],
+    "module_imports": [
+      {
+        "file": "backend/tests/conftest.py",
+        "lines": [36],
+        "import": "import mutmut.__main__ as _mm_main",
+        "context": "Trampoline compatibility shim",
+        "classification": "unsupported"
+      },
+      {
+        "file": "runtime/foundation/verification/survivor_catalog.py",
+        "lines": [275],
+        "import": "from mutmut.__main__ import get_diff_for_mutant",
+        "context": "Survivor diff reconstruction",
+        "classification": "backend-internal"
+      },
+      {
+        "file": "runtime/generated/m9-c42.21-population-probe.py",
+        "lines": [62],
+        "import": "from mutmut.__main__ import (apply_mutant, get_diff_for_mutant, get_mutant)",
+        "context": "Population probe generation",
+        "classification": "test-only"
+      }
+    ]
+  },
+  "mutation_configuration_loading": {
+    "canonical_source": "runtime/foundation/verification/mutation_contract.py:ENGINE_SELECTION",
+    "backend_config": "backend/pyproject.toml:[tool.mutmut]",
+    "dynamic_installation": "runtime/foundation/verification/mutation_runner.py:write_backend_mutmut_config",
+    "cache_provenance": "runtime/foundation/verification/mutation_runner.py:_write_cache_provenance"
+  },
+  "result_parsing_locations": {
+    "canonical": "runtime/foundation/verification/mutation_contract.py:parse_mutmut_results",
+    "adapter": "runtime/foundation/verification/mutation_execution/mutmut_adapter.py:_TEXT_STATUS_TO_STATE",
+    "evidence_collector": "runtime/system/evidence/collectors/mutation.py:MutationCollector",
+    "test_utils": "runtime/tests/test_mutation_infra.py:Various parsing utilities"
+  },
+  "cache_access_patterns": {
+    "canonical": "runtime/foundation/verification/mutation_runner.py:_validate_cache + _write_cache_provenance",
+    "adapter": "runtime/foundation/verification/mutation_execution/cache.py:MutationCache",
+    "direct": "backend/.mutmut-cache/ (accessed via mutmut subprocess)"
+  },
+  "documentation_paths": {
+    "verify_help": "runtime/verify.py:1245-1247",
+    "mutation_commands": ["mutation", "mutation --smoke", "mutation --target <engine>", "mutation --restore"],
+    "script_docs": "scripts/verify.sh:19-21",
+    "ci_docs": ".github/workflows/mutation.yml:4-14"
+  },
+  "audit_findings": {
+    "strengths": [
+      "All shell scripts delegate to verify.py mutation (no direct mutmut bypass)",
+      "CI workflows use canonical verify.py mutation path",
+      "MutationOrchestrator provides backend-agnostic interface",
+      "MutmutAdapter isolates mutmut as implementation detail",
+      "Cache provenance validation prevents stale evidence",
+      "Signal handlers and atexit ensure workspace restoration"
+    ],
+    "concerns": [
+      "Direct mutmut module imports exist in conftest.py and survivor_catalog.py",
+      "Some generated test files use direct subprocess mutmut calls",
+      "Population probe generation imports mutmut.__main__ directly"
+    ],
+    "recommendations": [
+      "Mark direct mutmut imports as backend-internal or legacy where appropriate",
+      "Ensure all new code uses canonical verify.py mutation path",
+      "Document the explicit boundary between canonical and legacy paths"
+    ]
+  },
+  "canonical_path_verification": {
+    "verify.py mutation": {
+      "status": "CANONICAL",
+      "delegation_chain": [
+        "verify.py:cmd_mutation()",
+        "mutation_runner.py:run_mutation_cli()",
+        "mutation_runner.py:execute_mutation()",
+        "subprocess: mutmut run",
+        "subprocess: mutmut results --all true"
+      ],
+      "evidence_output": "backend/tests/generated/mutation/mutation-summary.json",
+      "measurement_truth": "backend/tests/generated/mutation/measurement-truth.json"
+    },
+    "orchestrator_path": {
+      "status": "CANONICAL",
+      "delegation_chain": [
+        "orchestrator.py:MutationOrchestrator.run()",
+        "mutmut_adapter.py:MutmutAdapter.execute()",
+        "subprocess: mutmut operations"
+      ],
+      "evidence_output": "MutationCampaign + MutationResult objects"
+    }
+  },
+  "legacy_boundary_assessment": {
+    "current_state": "Shell scripts and scripts/verify.sh delegate to canonical path",
+    "boundary_violation_risk": "LOW",
+    "recommendation": "Explicitly mark legacy paths and ensure they don't bypass canonical evidence"
+  },
+  "final_verdict": {
+    "status": "AUDIT_COMPLETE",
+    "canonical_paths_identified": 4,
+    "legacy_paths_identified": 4,
+    "all_paths_classified": true,
+    "no_direct_bypasses_found": true,
+    "next_step": "M45.2 — Canonical verify.py mutation Enforcement"
+  }
+}

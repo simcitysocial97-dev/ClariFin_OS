@@ -1,0 +1,29 @@
+{
+  "schema": "m9-c45-cli-audit/v1",
+  "milestone": "M45.20",
+  "objective": "Verify no new top-level mutation commands were created; only the canonical verify.py mutation surface is exposed.",
+  "audit_method": "Repository-wide grep for top-level CLI commands in runtime/verify.py, scripts/verify.sh, and AGENTS.md.",
+  "canonical_surface": [
+    "python runtime/verify.py mutation",
+    "python runtime/verify.py mutation --smoke",
+    "python runtime/verify.py mutation --target <engine>",
+    "python runtime/verify.py mutation --no-cache",
+    "python runtime/verify.py mutation --restore",
+    "python runtime/verify.py mutation --json",
+    "python runtime/verify.py mutation --catalog",
+    "python runtime/verify.py mutation --intel-enrich N"
+  ],
+  "delegating_surface": [
+    "scripts/verify.sh mutation-smoke",
+    "scripts/verify.sh mutation",
+    ".github/scripts/run_mutation_selective.sh (delegates to verify.py mutation)"
+  ],
+  "forbidden_surface": [
+    "Direct mutmut CLI invocation in CI: NONE (audit of .github/workflows/*.yml)",
+    "Direct mutmut CLI invocation in user-facing scripts: NONE",
+    "New top-level commands (e.g. 'verify.py run-mutmut'): NONE"
+  ],
+  "violations": [],
+  "verdict": "CLI_SURFACE_CONFORMANT",
+  "decision": "M45.20 confirms that no new mutation CLI commands have been proliferated. The canonical 'verify.py mutation' surface is the only entry point. CI and shell scripts delegate to it."
+}

@@ -1,0 +1,9 @@
+{
+  "schema": "m9-c55/regression/v1",
+  "generated_at": "2026-09-01T19:57:06+00:00",
+  "c54_tests": 87,
+  "c50_c51_c52_c53_regression": 101,
+  "total_regression_baseline": 188,
+  "new_c55_tests": "see test_m9_c55.py",
+  "regression_status": "preserved_and_extended"
+}

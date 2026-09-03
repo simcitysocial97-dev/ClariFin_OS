@@ -1,0 +1,64 @@
+{
+  "schema": "m9-c45-l-arch-001-probe/v1",
+  "objective": "Quantify mutmut 3.7.0 mutation population for Python 3.10+/3.11+/3.12+ syntax features.",
+  "mutmut_binary": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/mutmut",
+  "mutmut_version_expected": "3.7.0",
+  "probe_dir": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/mutation_infra/python_312_probes",
+  "probes": [
+    {
+      "mutmut_exit_code": 1,
+      "mutants_generated": 21,
+      "stdout_tail": "ng rather than extending the default ignores.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nERROR test_pep604_union.py\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n2 warnings, 1 error in 0.17s\nfailed to collect stats. runner returned 1\n\n",
+      "stderr_tail": "",
+      "id": "control",
+      "module": "control_probe",
+      "test": "test_control_probe.py",
+      "python_version": "3.9-style",
+      "syntax_feature": "if/elif/else + typing.Optional via str | None (PEP 604)"
+    },
+    {
+      "mutmut_exit_code": 1,
+      "mutants_generated": 5,
+      "stdout_tail": "g rather than extending the default ignores.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nERROR test_control_probe.py\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n2 warnings, 1 error in 0.23s\nfailed to collect stats. runner returned 1\n\n",
+      "stderr_tail": "",
+      "id": "pep604_union",
+      "module": "pep604_union",
+      "test": "test_pep604_union.py",
+      "python_version": "3.10+",
+      "syntax_feature": "PEP 604 X | Y union syntax"
+    },
+    {
+      "mutmut_exit_code": 1,
+      "mutants_generated": 30,
+      "stdout_tail": "g rather than extending the default ignores.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nERROR test_control_probe.py\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n2 warnings, 1 error in 0.15s\nfailed to collect stats. runner returned 1\n\n",
+      "stderr_tail": "",
+      "id": "pep634_match",
+      "module": "pep634_match",
+      "test": "test_pep634_match.py",
+      "python_version": "3.10+",
+      "syntax_feature": "PEP 634 structural pattern matching (match/case)"
+    },
+    {
+      "mutmut_exit_code": 1,
+      "mutants_generated": 9,
+      "stdout_tail": "g rather than extending the default ignores.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nERROR test_control_probe.py\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n2 warnings, 1 error in 0.21s\nfailed to collect stats. runner returned 1\n\n",
+      "stderr_tail": "",
+      "id": "pep654_exception_groups",
+      "module": "pep654_exception_groups",
+      "test": "test_pep654_exception_groups.py",
+      "python_version": "3.11+",
+      "syntax_feature": "PEP 654 ExceptionGroup / except*"
+    },
+    {
+      "mutmut_exit_code": 1,
+      "mutants_generated": 3,
+      "stdout_tail": "g rather than extending the default ignores.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nERROR test_control_probe.py\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n2 warnings, 1 error in 0.16s\nfailed to collect stats. runner returned 1\n\n",
+      "stderr_tail": "",
+      "id": "pep695_type_params",
+      "module": "pep695_type_params",
+      "test": "test_pep695_type_params.py",
+      "python_version": "3.12+",
+      "syntax_feature": "PEP 695 generic class/function (class Box[T]: / def first[T](...))"
+    }
+  ]
+}

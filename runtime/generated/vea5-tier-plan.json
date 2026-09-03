@@ -1,126 +1,240 @@
 {
   "schema": "vea5-tier-plan/v1",
-  "tier": "deep",
+  "tier": "local",
   "base_ref": null,
-  "head_ref": "8d8e92bab1c54389ee8f30360266939f14b90ea8",
-  "changed_files": [],
+  "head_ref": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "changed_files": [
+    ".github/workflows/mutation.yml",
+    "backend/pyproject.toml",
+    "backend/tests/unit/engines/financial_events/test_financial_events.py",
+    "frontend/package.json",
+    "requirements.lock",
+    "runtime/foundation/verification/capability_latent_audit.py",
+    "runtime/foundation/verification/cli_capability_matrix.py",
+    "runtime/foundation/verification/command_inventory.py",
+    "runtime/tests/test_m9_c52.py",
+    "runtime/verify.py",
+    "backend/tests/test_m9_c56_scenarios.py",
+    "backend/tests/unit/engines/credit_card_engine/test_m9_c56_additional_gaps.py",
+    "backend/tests/unit/engines/credit_card_engine/test_m9_c56_boolean_flips.py",
+    "backend/tests/unit/engines/credit_card_engine/test_m9_c56_mutation_gaps.py",
+    "backend/tests/unit/engines/financial_events/test_m9_c56_behavioral_gaps.py",
+    "backend/tests/unit/engines/financial_events/test_m9_c56_lineage_gaps.py",
+    "backend/tests/unit/engines/financial_events/test_m9_c56_missing_keys.py",
+    "runtime/foundation/verification/c56_convergence.py",
+    "runtime/foundation/verification/convergence_pipeline.py",
+    "runtime/foundation/verification/env_contract.py",
+    "runtime/foundation/verification/help_resolver.py",
+    "runtime/foundation/verification/workflow_convergence.py",
+    "runtime/tests/test_m9_c54.py",
+    "runtime/tests/test_m9_c55.py"
+  ],
   "selected": [
     {
       "unit_id": "unit-targeted",
       "category": "unit",
-      "command": "verify-unit:unit-targeted",
-      "reason": "deep tier: full-system verification (not change-scoped)",
-      "estimated_seconds": 30,
-      "capabilities": [],
-      "impact_kinds": [],
-      "source": "deep-full-system",
-      "evidence": []
+      "command": "python3 -m pytest backend/tests/capability/financial_events/__init__.py backend/tests/capability/financial_events/test_capability.py backend/tests/capability/financial_events/test_revocation.py backend/tests/contract/generated/test_financial_events.py backend/tests/invariants/financial_events.py backend/tests/properties/financial_events/__init__.py backend/tests/properties/financial_events/test_engine_properties.py backend/tests/properties/financial_events/test_lineage_properties.py backend/tests/unit/engines/financial_events/__init__.py backend/tests/unit/engines/financial_events/test_financial_events.py -q",
+      "reason": "10 test file(s) are recorded by the provider as verifying an impacted engine",
+      "estimated_seconds": 80,
+      "capabilities": [
+        "capability:useBehaviourCapability",
+        "capability:useLoansCapability"
+      ],
+      "impact_kinds": [
+        "engine"
+      ],
+      "source": "ownership",
+      "evidence": [
+        "ownership: test:backend/tests/capability/financial_events/__init__.py verifies impacted engine",
+        "ownership: test:backend/tests/capability/financial_events/test_capability.py verifies impacted engine",
+        "ownership: test:backend/tests/capability/financial_events/test_revocation.py verifies impacted engine",
+        "ownership: test:backend/tests/contract/generated/test_financial_events.py verifies impacted engine",
+        "ownership: test:backend/tests/invariants/financial_events.py verifies impacted engine",
+        "ownership: test:backend/tests/properties/financial_events/__init__.py verifies impacted engine",
+        "ownership: test:backend/tests/properties/financial_events/test_engine_properties.py verifies impacted engine",
+        "ownership: test:backend/tests/properties/financial_events/test_lineage_properties.py verifies impacted engine",
+        "ownership: test:backend/tests/unit/engines/financial_events/__init__.py verifies impacted engine",
+        "ownership: test:backend/tests/unit/engines/financial_events/test_financial_events.py verifies impacted engine"
+      ]
     },
     {
       "unit_id": "backend-unit",
       "category": "unit",
-      "command": "verify-unit:backend-unit",
-      "reason": "deep tier: full-system verification (not change-scoped)",
+      "command": "python3 -m pytest backend/tests/unit/ -q",
+      "reason": "9 backend entity/entities impacted (kinds: ['engine', 'mapper', 'router', 'service'])",
       "estimated_seconds": 120,
-      "capabilities": [],
-      "impact_kinds": [],
-      "source": "deep-full-system",
-      "evidence": []
+      "capabilities": [
+        "capability:useBehaviourCapability",
+        "capability:useLoansCapability"
+      ],
+      "impact_kinds": [
+        "engine",
+        "mapper",
+        "router",
+        "service"
+      ],
+      "source": "chain-map+blast-radius",
+      "evidence": [
+        "backend/src/engines/financial_events",
+        "backend/src/routers/audit.py",
+        "backend/src/routers/financial_events.py",
+        "backend/src/routers/financial_intelligence.py",
+        "backend/src/routers/loans.py",
+        "backend/src/services/__init__.py",
+        "backend/src/services/financial_events_service.py",
+        "backend/src/services/financial_intelligence_service.py",
+        "backend/tests/unit/engines/financial_events/test_financial_events.py"
+      ]
     },
     {
       "unit_id": "backend-integration",
       "category": "integration",
-      "command": "verify-unit:backend-integration",
-      "reason": "deep tier: full-system verification (not change-scoped)",
+      "command": "python3 -m pytest backend/tests/integration/ -q",
+      "reason": "7 router/service/repository entities impacted",
       "estimated_seconds": 180,
-      "capabilities": [],
-      "impact_kinds": [],
-      "source": "deep-full-system",
-      "evidence": []
+      "capabilities": [
+        "capability:useBehaviourCapability",
+        "capability:useLoansCapability"
+      ],
+      "impact_kinds": [
+        "router",
+        "service",
+        "repository"
+      ],
+      "source": "chain-map+blast-radius",
+      "evidence": [
+        "router:backend/src/routers/audit.py",
+        "router:backend/src/routers/financial_events.py",
+        "router:backend/src/routers/financial_intelligence.py",
+        "router:backend/src/routers/loans.py",
+        "service:backend/src/services/__init__.py",
+        "service:backend/src/services/financial_events_service.py",
+        "service:backend/src/services/financial_intelligence_service.py"
+      ]
     },
     {
       "unit_id": "contracts-schemathesis",
       "category": "contract",
-      "command": "verify-unit:contracts-schemathesis",
-      "reason": "deep tier: full-system verification (not change-scoped)",
+      "command": "python3 -m pytest backend/tests/contract/ -q",
+      "reason": "21 endpoint(s) are in the blast radius",
       "estimated_seconds": 180,
-      "capabilities": [],
-      "impact_kinds": [],
-      "source": "deep-full-system",
-      "evidence": []
+      "capabilities": [
+        "capability:useBehaviourCapability",
+        "capability:useLoansCapability"
+      ],
+      "impact_kinds": [
+        "endpoint",
+        "dto"
+      ],
+      "source": "chain-map+blast-radius",
+      "evidence": [
+        "endpoint:DELETE /loans/{loan_id}",
+        "endpoint:GET /cashflow-forecast",
+        "endpoint:GET /credit-forecast",
+        "endpoint:GET /liquidity-forecast",
+        "endpoint:GET /loans",
+        "endpoint:GET /loans/analysis/priority",
+        "endpoint:GET /loans/{loan_id}",
+        "endpoint:GET /loans/{loan_id}/schedule",
+        "endpoint:GET /outlook",
+        "endpoint:GET /priorities",
+        "endpoint:GET /recommendations",
+        "endpoint:GET /recommendations/{recommendation_id}",
+        "endpoint:GET /report",
+        "endpoint:POST /loans",
+        "endpoint:POST /loans/analysis/surplus-allocation",
+        "endpoint:POST /loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+        "endpoint:POST /loans/{loan_id}/foreclosure-simulation",
+        "endpoint:POST /loans/{loan_id}/payments",
+        "endpoint:POST /loans/{loan_id}/prepayment-simulation",
+        "endpoint:POST /loans/{loan_id}/rate-change-simulation"
+      ]
     },
     {
       "unit_id": "frontend-unit",
       "category": "frontend",
-      "command": "verify-unit:frontend-unit",
-      "reason": "deep tier: full-system verification (not change-scoped)",
+      "command": "npm --prefix frontend run test",
+      "reason": "4 frontend entities impacted",
       "estimated_seconds": 120,
-      "capabilities": [],
-      "impact_kinds": [],
-      "source": "deep-full-system",
-      "evidence": []
+      "capabilities": [
+        "capability:useBehaviourCapability",
+        "capability:useLoansCapability"
+      ],
+      "impact_kinds": [
+        "capability",
+        "workspace",
+        "component",
+        "view_model",
+        "mapper"
+      ],
+      "source": "chain-map+blast-radius",
+      "evidence": [
+        "capability:useBehaviourCapability",
+        "capability:useLoansCapability",
+        "mapper:frontend/lib/mappers/loans-mapper.ts",
+        "view_model:AmortizationEntryViewModel"
+      ]
     },
     {
       "unit_id": "frontend-typecheck-build",
       "category": "frontend",
-      "command": "verify-unit:frontend-typecheck-build",
-      "reason": "deep tier: full-system verification (not change-scoped)",
+      "command": "cd frontend && npx tsc --noEmit && npm run build",
+      "reason": "frontend entity/contract/capability impacted by backend or frontend change \u2014 type compatibility must be verified",
       "estimated_seconds": 90,
-      "capabilities": [],
-      "impact_kinds": [],
-      "source": "deep-full-system",
-      "evidence": []
-    },
+      "capabilities": [
+        "capability:useBehaviourCapability",
+        "capability:useLoansCapability"
+      ],
+      "impact_kinds": [
+        "capability",
+        "workspace",
+        "component",
+        "view_model",
+        "mapper"
+      ],
+      "source": "chain-map+blast-radius",
+      "evidence": [
+        "capability:useBehaviourCapability",
+        "capability:useLoansCapability",
+        "mapper:frontend/lib/mappers/loans-mapper.ts",
+        "view_model:AmortizationEntryViewModel"
+      ]
+    }
+  ],
+  "excluded": [
     {
       "unit_id": "playwright-e2e",
       "category": "e2e",
-      "command": "verify-unit:playwright-e2e",
-      "reason": "deep tier: full-system verification (not change-scoped)",
-      "estimated_seconds": 1800,
-      "capabilities": [],
-      "impact_kinds": [],
-      "source": "deep-full-system",
-      "evidence": []
+      "reason": "no workspace impacted",
+      "justification": "blast radius contains 0 entities of kind 'workspace'",
+      "estimated_seconds": 1800
     },
     {
       "unit_id": "runtime-self-test",
       "category": "runtime",
-      "command": "verify-unit:runtime-self-test",
-      "reason": "deep tier: full-system verification (not change-scoped)",
-      "estimated_seconds": 120,
-      "capabilities": [],
-      "impact_kinds": [],
-      "source": "deep-full-system",
-      "evidence": []
+      "reason": "runtime unchanged",
+      "justification": "no directly changed entity has a runtime/ path",
+      "estimated_seconds": 120
     },
     {
       "unit_id": "mutation-run",
       "category": "mutation",
-      "command": "verify-unit:mutation-run",
-      "reason": "deep tier: full-system verification (not change-scoped)",
-      "estimated_seconds": 600,
-      "capabilities": [],
-      "impact_kinds": [],
-      "source": "deep-full-system",
-      "evidence": []
+      "reason": "requires explicit request (cost >= 600s)",
+      "justification": "heavyweight suite; blast radius does not by itself justify it",
+      "estimated_seconds": 600
     },
     {
       "unit_id": "golden-regression",
       "category": "golden",
-      "command": "verify-unit:golden-regression",
-      "reason": "deep tier: full-system verification (not change-scoped)",
-      "estimated_seconds": 600,
-      "capabilities": [],
-      "impact_kinds": [],
-      "source": "deep-full-system",
-      "evidence": []
+      "reason": "requires explicit request (cost >= 600s)",
+      "justification": "heavyweight suite; blast radius does not by itself justify it",
+      "estimated_seconds": 600
     }
   ],
-  "excluded": [],
-  "estimated_seconds": 3840,
+  "estimated_seconds": 770,
   "planner_version": "vea5-m2-tier-planner/1.0",
   "framework_version": "clari-fin-os/verify-runtime",
-  "generated_at": "2026-08-11T20:40:38.310000+00:00",
+  "generated_at": "2026-09-02T23:41:11.496714+00:00",
   "invariant": "every catalog unit is selected or excluded",
   "unit_coverage": {
     "catalog_size": 10,

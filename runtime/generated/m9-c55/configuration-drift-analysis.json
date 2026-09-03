@@ -1,0 +1,12 @@
+{
+  "schema": "m9-c55/configuration-drift-analysis/v1",
+  "generated_at": "2026-09-01T19:57:01+00:00",
+  "authorities": {
+    "root_pyproject_toml": "canonical for ruff, black, mypy(repo-scope), pytest(repo-scope), mutmut(inherits backend rootdir)",
+    "backend_pyproject_toml": "canonical for pytest(backend rootdir), mypy(strict), mutmut(config), hypothesis",
+    "frontend_package_json": "canonical for node engine, packageManager",
+    "frontend_package_lock": "canonical for npm install determinism"
+  },
+  "drift_detection": "config_hashes in environment fingerprint; any change invalidates cached evidence",
+  "conflict_resolution": "single_authority_policy: root pyproject.toml is Python authority; backend/pyproject.toml is backend-scoped authority"
+}

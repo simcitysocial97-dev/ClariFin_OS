@@ -777,6 +777,7 @@ def execute_mutation(
             selected_test_scope=selected_test_scope,
             source_scope=source_scope,
             selection_method=selection_method,
+            execution_path="VERIFICATION_CONTROL_PLANE",
         )
         _write_cache_provenance(cwd, config_hash=config_hash)
 

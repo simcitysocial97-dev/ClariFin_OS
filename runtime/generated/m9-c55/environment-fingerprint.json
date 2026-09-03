@@ -1,0 +1,75 @@
+{
+  "schema": "m9-c55/environment-fingerprint/v1",
+  "generated_at": "2026-09-01T19:56:22+00:00",
+  "repository_fingerprint": {
+    "sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+    "tree_sha": "6202939acbf860a5ffa20ed7d2954723741f6307",
+    "working_tree_state": "DIRTY",
+    "untracked_count": 44
+  },
+  "environment_fingerprint": {
+    "python_version": "Python 3.12.3",
+    "python_source": "venv",
+    "python_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python3",
+    "pytest_version": "pytest 9.1.1",
+    "pytest_source": "venv",
+    "mutmut_version": "mutmut, version 3.7.0",
+    "mutmut_source": "venv",
+    "pinned_mutmut": "3.7.0",
+    "forbidden_venvs": [],
+    "venv_bin": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin",
+    "ruff_version": "ruff 0.15.20",
+    "ruff_source": "venv",
+    "black_version": "black, 26.5.1 (compiled: yes)",
+    "black_source": "venv",
+    "mypy_version": "mypy 2.1.0 (compiled: yes)",
+    "mypy_source": "venv",
+    "coverage_version": "Coverage.py, version 7.15.2 with C extension",
+    "coverage_source": "venv",
+    "config_hashes": {
+      "pyproject_toml": "3cf415792af92927",
+      "ruff_toml": "missing",
+      "black": "embedded_in_pyproject",
+      "mypy": "2048b633ca789982"
+    },
+    "requirements_lock_hash": "a4b005556ccc95f6",
+    "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+    "verification_profile": null,
+    "capability_selection": [],
+    "fingerprint_version": "1.0"
+  },
+  "tool_versions": {
+    "python": "3.12",
+    "pytest": "pytest 9.1.1",
+    "coverage": "Coverage.py, version 7.15.2 with C extension",
+    "mutmut": "mutmut, version 3.7.0",
+    "ruff": "ruff 0.15.20",
+    "black": "black, 26.5.1 (compiled: yes)",
+    "mypy": "mypy 2.1.0 (compiled: yes)",
+    "hypothesis": "hypothesis, version 6.161.4",
+    "node": "v24.20.0",
+    "npm": "11.19.0"
+  },
+  "configuration_fingerprint": {
+    "root_pyproject_toml": "3cf415792af92927",
+    "backend_pyproject_toml": "2048b633ca789982",
+    "frontend_package_json": "3596ee945190d0ee",
+    "frontend_package_lock": "245c326c3849e497",
+    "requirements_lock": "a4b005556ccc95f6",
+    "ruff_toml": "not_applicable",
+    "black_toml": "not_applicable",
+    "mypy_toml": "not_applicable"
+  },
+  "lockfile_fingerprint": {
+    "requirements_lock": "a4b005556ccc95f6",
+    "frontend_package_lock": "245c326c3849e497"
+  },
+  "platform": {
+    "os": "Linux",
+    "os_version": "#30~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Fri Aug  7 13:27:52 UTC 2",
+    "platform_machine": "x86_64",
+    "shell": "sh",
+    "locale": "unknown",
+    "timezone": "IST"
+  }
+}

@@ -126,12 +126,27 @@ ignore_missing_imports = true
 # Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
 # Scope: loan_engine
 # Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: financial_events
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: behaviour_engine
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: account_engine
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: account_engine
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: account_engine
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
 [tool.mutmut]
-source_paths = ["src/engines/loan_engine"]
+source_paths = ["src/engines/account_engine"]
 also_copy = ["src"]
 runner = "python3 -m pytest"
 pytest_add_cli_args_test_selection = [
-    "tests/unit/engines/loan",
-    "tests/properties/loan_engine"
+    "tests/unit/engines/account",
+    "tests/capability/account_management"
 ]
 no_progress = true

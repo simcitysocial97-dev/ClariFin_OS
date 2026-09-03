@@ -485,6 +485,14 @@ class CommandInventoryBuilder:
                 estimated_duration_seconds=10,
             ),
             CommandInventoryEntry(
+                command_id="cmd::env_contract",
+                command="verify.py env-contract",
+                purpose="Build authoritative environment contract for reproducible verification (C55)",
+                category=CommandCategory.DIAGNOSTIC,
+                prerequisites=[".venv"],
+                estimated_duration_seconds=5,
+            ),
+            CommandInventoryEntry(
                 command_id="cmd::audit",
                 command="verify.py audit",
                 purpose="Run engineering platform certification audit",

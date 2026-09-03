@@ -1,0 +1,63 @@
+{
+  "schema": "m9-c54/workflow-convergence/v1",
+  "generated_at": "2026-09-01T13:31:33.299302+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "metrics": [
+    {
+      "metric": "test_count",
+      "preserved_independently": true,
+      "workflow_support": true,
+      "evidence_path": "runtime/generated/verification-report.md",
+      "notes": "Test counts are reported by verify.py profiles"
+    },
+    {
+      "metric": "pass_fail",
+      "preserved_independently": true,
+      "workflow_support": true,
+      "evidence_path": "runtime/generated/verification-report.md",
+      "notes": "Pass/fail status is reported by verify.py profiles"
+    },
+    {
+      "metric": "skipped",
+      "preserved_independently": true,
+      "workflow_support": true,
+      "evidence_path": "runtime/generated/verification-report.md",
+      "notes": "Skipped tests are reported by verify.py profiles"
+    },
+    {
+      "metric": "line_coverage",
+      "preserved_independently": true,
+      "workflow_support": false,
+      "evidence_path": null,
+      "notes": "Coverage measurement exists in coverage_measurement.py but no dedicated CI workflow uploads it"
+    },
+    {
+      "metric": "branch_coverage",
+      "preserved_independently": true,
+      "workflow_support": false,
+      "evidence_path": null,
+      "notes": "Branch coverage not currently collected in CI"
+    },
+    {
+      "metric": "mutation_score",
+      "preserved_independently": true,
+      "workflow_support": true,
+      "evidence_path": "backend/tests/generated/mutation/mutation-summary.json",
+      "notes": "Mutation score is independently measured and uploaded"
+    },
+    {
+      "metric": "mutation_killed",
+      "preserved_independently": true,
+      "workflow_support": true,
+      "evidence_path": "backend/tests/generated/mutation/mutation-summary.json",
+      "notes": "Killed count is independently preserved"
+    },
+    {
+      "metric": "mutation_survived",
+      "preserved_independently": true,
+      "workflow_support": true,
+      "evidence_path": "backend/tests/generated/mutation/mutation-summary.json",
+      "notes": "Survived count is independently preserved"
+    }
+  ]
+}

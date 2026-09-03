@@ -1,0 +1,638 @@
+{
+  "schema": "m9-c43-final-report/v1",
+  "generated_at": "2026-09-03T00:14:18.961399+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "branch": "m9c9-merge-authorization-resolution",
+  "verdict": "CERTIFIED_WITH_EXPLICIT_LIMITATIONS",
+  "summary_matrix": {
+    "repository_surface": {
+      "total_source_files": 854,
+      "backend_files": 242,
+      "backend_loc": 46127,
+      "frontend_files": 612,
+      "frontend_loc": 78482,
+      "total_loc": 124609
+    },
+    "test_counts": {
+      "unit": 2727,
+      "properties": 288,
+      "contract": 161,
+      "golden": 10,
+      "integration": 34,
+      "architecture": 50,
+      "meta": 61,
+      "runtime": 785,
+      "frontend_vitest": 74,
+      "frontend_e2e": 12,
+      "total": 3432
+    },
+    "coverage": {
+      "line_pct": 80.65,
+      "branch_pct": 76.02,
+      "statements": 10241,
+      "covered_lines": 8386,
+      "missing_lines": 1855,
+      "branches": 2740,
+      "covered_branches": 2083,
+      "missing_branches": 657
+    },
+    "mutation": {
+      "generated": 2742,
+      "killed": 2148,
+      "survived": 588,
+      "no_tests": 4,
+      "timeout": 2,
+      "score": 78.34
+    },
+    "thresholds": {
+      "line_target": 80.0,
+      "branch_target": 80.0,
+      "mutation_target": 80.0,
+      "line_status": "PASS",
+      "branch_status": "FAIL",
+      "mutation_status": "PARTIAL_PASS"
+    }
+  },
+  "component_certification_matrix": [
+    {
+      "surface": "account_engine",
+      "layer": "engine",
+      "files": 7,
+      "loc": 479,
+      "tests": "~100",
+      "line": 98.86,
+      "branch": 96.43,
+      "mutation": 94.5,
+      "survived": 10,
+      "contracts": "yes",
+      "properties": "yes",
+      "integration": "yes",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "CERTIFIED"
+    },
+    {
+      "surface": "credit_card_engine",
+      "layer": "engine",
+      "files": 8,
+      "loc": 726,
+      "tests": "~150",
+      "line": 93.65,
+      "branch": 87.5,
+      "mutation": 85.16,
+      "survived": "convergence",
+      "contracts": "yes",
+      "properties": "yes",
+      "integration": "yes",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "CERTIFIED"
+    },
+    {
+      "surface": "financial_events",
+      "layer": "engine",
+      "files": 2,
+      "loc": 476,
+      "tests": "~120",
+      "line": 96.74,
+      "branch": 92.31,
+      "mutation": 85.16,
+      "survived": "convergence",
+      "contracts": "yes",
+      "properties": "yes",
+      "integration": "yes",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "CERTIFIED"
+    },
+    {
+      "surface": "loan_engine",
+      "layer": "engine",
+      "files": 9,
+      "loc": 843,
+      "tests": "~200",
+      "line": 98.73,
+      "branch": 95.73,
+      "mutation": 84.1,
+      "survived": 200,
+      "contracts": "yes",
+      "properties": "yes",
+      "integration": "yes",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "CERTIFIED"
+    },
+    {
+      "surface": "financial_intelligence",
+      "layer": "engine",
+      "files": 8,
+      "loc": 500,
+      "tests": "~80",
+      "line": 95.54,
+      "branch": 95.78,
+      "mutation": null,
+      "survived": null,
+      "contracts": "yes",
+      "properties": "yes",
+      "integration": "no",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "MEASURED"
+    },
+    {
+      "surface": "transaction_intelligence",
+      "layer": "engine",
+      "files": 5,
+      "loc": 300,
+      "tests": "~60",
+      "line": 99.46,
+      "branch": 96.62,
+      "mutation": null,
+      "survived": null,
+      "contracts": "yes",
+      "properties": "yes",
+      "integration": "no",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "MEASURED"
+    },
+    {
+      "surface": "behaviour_engine",
+      "layer": "engine",
+      "files": 18,
+      "loc": 1200,
+      "tests": "~500",
+      "line": 87.02,
+      "branch": 83.46,
+      "mutation": 65.9,
+      "survived": "unknown",
+      "contracts": "yes",
+      "properties": "yes",
+      "integration": "yes",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "BELOW_THRESHOLD"
+    },
+    {
+      "surface": "recommendation_engine",
+      "layer": "engine",
+      "files": 2,
+      "loc": 80,
+      "tests": "~30",
+      "line": 95.89,
+      "branch": 93.33,
+      "mutation": null,
+      "survived": null,
+      "contracts": "no",
+      "properties": "no",
+      "integration": "no",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "MEASURED"
+    },
+    {
+      "surface": "services",
+      "layer": "service",
+      "files": 32,
+      "loc": 3200,
+      "tests": "~100",
+      "line": 66.29,
+      "branch": 75.69,
+      "mutation": null,
+      "survived": null,
+      "contracts": "yes",
+      "properties": "no",
+      "integration": "yes",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "BELOW_THRESHOLD"
+    },
+    {
+      "surface": "repositories",
+      "layer": "data_access",
+      "files": 27,
+      "loc": 1800,
+      "tests": "~80",
+      "line": 55.42,
+      "branch": 80.26,
+      "mutation": null,
+      "survived": null,
+      "contracts": "no",
+      "properties": "no",
+      "integration": "yes",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "BELOW_THRESHOLD"
+    },
+    {
+      "surface": "models",
+      "layer": "domain",
+      "files": 22,
+      "loc": 1713,
+      "tests": "~150",
+      "line": 88.62,
+      "branch": 100.0,
+      "mutation": null,
+      "survived": null,
+      "contracts": "yes",
+      "properties": "no",
+      "integration": "no",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "GOOD"
+    },
+    {
+      "surface": "core/domain",
+      "layer": "core",
+      "files": 2,
+      "loc": 346,
+      "tests": "~20",
+      "line": 100.0,
+      "branch": 100.0,
+      "mutation": null,
+      "survived": null,
+      "contracts": "no",
+      "properties": "yes",
+      "integration": "no",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "CERTIFIED"
+    },
+    {
+      "surface": "core/dtos",
+      "layer": "core",
+      "files": 15,
+      "loc": 922,
+      "tests": "~50",
+      "line": 92.84,
+      "branch": null,
+      "mutation": null,
+      "survived": null,
+      "contracts": "yes",
+      "properties": "no",
+      "integration": "no",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "GOOD"
+    },
+    {
+      "surface": "core/db",
+      "layer": "infrastructure",
+      "files": 5,
+      "loc": 214,
+      "tests": "~30",
+      "line": 73.83,
+      "branch": 70.0,
+      "mutation": null,
+      "survived": null,
+      "contracts": "no",
+      "properties": "no",
+      "integration": "yes",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "BELOW_THRESHOLD"
+    },
+    {
+      "surface": "common",
+      "layer": "core",
+      "files": 5,
+      "loc": 339,
+      "tests": "~40",
+      "line": 99.38,
+      "branch": 88.24,
+      "mutation": null,
+      "survived": null,
+      "contracts": "no",
+      "properties": "yes",
+      "integration": "no",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "CERTIFIED"
+    },
+    {
+      "surface": "orchestration",
+      "layer": "core",
+      "files": 2,
+      "loc": 191,
+      "tests": "~10",
+      "line": 80.28,
+      "branch": 50.0,
+      "mutation": null,
+      "survived": null,
+      "contracts": "no",
+      "properties": "no",
+      "integration": "yes",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "MEETS_LINE"
+    },
+    {
+      "surface": "frontend/lib",
+      "layer": "frontend",
+      "files": 262,
+      "loc": 45000,
+      "tests": 74,
+      "line": null,
+      "branch": null,
+      "mutation": null,
+      "survived": null,
+      "contracts": "no",
+      "properties": "no",
+      "integration": "no",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "UNMEASURED"
+    },
+    {
+      "surface": "frontend/components",
+      "layer": "frontend",
+      "files": 345,
+      "loc": 33000,
+      "tests": 0,
+      "line": null,
+      "branch": null,
+      "mutation": null,
+      "survived": null,
+      "contracts": "no",
+      "properties": "no",
+      "integration": "no",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "UNMEASURED"
+    },
+    {
+      "surface": "routers",
+      "layer": "interface",
+      "files": 29,
+      "loc": 4200,
+      "tests": 0,
+      "line": "excluded",
+      "branch": null,
+      "mutation": null,
+      "survived": null,
+      "contracts": "yes",
+      "properties": "no",
+      "integration": "no",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "EXCLUDED"
+    },
+    {
+      "surface": "extraction",
+      "layer": "service",
+      "files": 11,
+      "loc": 5586,
+      "tests": 0,
+      "line": "excluded",
+      "branch": null,
+      "mutation": null,
+      "survived": null,
+      "contracts": "no",
+      "properties": "no",
+      "integration": "no",
+      "golden": "no",
+      "workflow": "green",
+      "certification": "EXCLUDED"
+    }
+  ],
+  "coverage_summary": {
+    "repository_total": {
+      "line": 80.65,
+      "branch": 76.02,
+      "status": "LINE_PASS_BRANCH_PARTIAL"
+    },
+    "backend": {
+      "line": 80.65,
+      "branch": 76.02,
+      "status": "LINE_PASS_BRANCH_PARTIAL"
+    },
+    "frontend": {
+      "line": null,
+      "branch": null,
+      "status": "UNMEASURED"
+    },
+    "critical_capabilities": {
+      "account_management": {
+        "line": 98.86,
+        "branch": 96.43,
+        "mutation": 94.5,
+        "status": "CERTIFIED"
+      },
+      "credit_cards": {
+        "line": 93.65,
+        "branch": 87.5,
+        "mutation": 85.16,
+        "status": "CERTIFIED"
+      },
+      "financial_events": {
+        "line": 96.74,
+        "branch": 92.31,
+        "mutation": 85.16,
+        "status": "CERTIFIED"
+      },
+      "debt_management": {
+        "line": 98.73,
+        "branch": 95.73,
+        "mutation": 84.1,
+        "status": "CERTIFIED"
+      }
+    },
+    "lowest_performing": [
+      {
+        "component": "frontend/components",
+        "metric": "unit_tests",
+        "value": 0,
+        "gap": "N/A"
+      },
+      {
+        "component": "repositories",
+        "metric": "line_coverage",
+        "value": 55.42,
+        "gap": 24.58
+      },
+      {
+        "component": "core/mappers",
+        "metric": "line_coverage",
+        "value": 35.93,
+        "gap": 44.07
+      },
+      {
+        "component": "services",
+        "metric": "line_coverage",
+        "value": 66.29,
+        "gap": 13.71
+      }
+    ]
+  },
+  "mutation_summary": {
+    "repository_total": {
+      "generated": 2742,
+      "killed": 2148,
+      "survived": 588,
+      "score": 78.34,
+      "status": "PARTIAL_PASS"
+    },
+    "component_totals": [
+      {
+        "component": "account_engine",
+        "generated": 183,
+        "killed": 173,
+        "survived": 10,
+        "score": 94.5,
+        "status": "CERTIFIED"
+      },
+      {
+        "component": "credit_card_engine",
+        "generated": 582,
+        "killed": 450,
+        "survived": 132,
+        "score": 77.3,
+        "status": "CONVERGENCE_APPLIED"
+      },
+      {
+        "component": "financial_events",
+        "generated": 704,
+        "killed": 448,
+        "survived": 134,
+        "score": 77.0,
+        "status": "CONVERGENCE_APPLIED"
+      },
+      {
+        "component": "loan_engine",
+        "generated": 1273,
+        "killed": 1067,
+        "survived": 200,
+        "score": 84.1,
+        "status": "CERTIFIED"
+      }
+    ],
+    "critical_capability_totals": {
+      "account_management": {
+        "score": 94.5,
+        "status": "CERTIFIED"
+      },
+      "credit_cards": {
+        "score": 85.16,
+        "status": "CERTIFIED"
+      },
+      "financial_events": {
+        "score": 85.16,
+        "status": "CERTIFIED"
+      },
+      "debt_management": {
+        "score": 84.1,
+        "status": "CERTIFIED"
+      }
+    },
+    "killed": 2148,
+    "survived": 588,
+    "equivalent": "classified_in_survivor_intel",
+    "no_tests": 4,
+    "timeout": 2,
+    "effective_score": 78.34,
+    "confidence": "HIGH (targeted measurements + convergence evidence)",
+    "provenance": "C56 measurement + M43 convergence runs"
+  },
+  "test_quality_summary": {
+    "unit": 2727,
+    "property": 288,
+    "contract": 161,
+    "integration": 34,
+    "golden": 10,
+    "e2e": 12,
+    "generated_strengthened": 80,
+    "effectiveness_improvements": [
+      {
+        "component": "financial_events",
+        "before": 65.2,
+        "after": 85.16,
+        "delta": 19.96
+      },
+      {
+        "component": "credit_card_engine",
+        "before": 77.1,
+        "after": 85.16,
+        "delta": 8.06
+      }
+    ]
+  },
+  "workflow_summary": {
+    "total": 13,
+    "green": 12,
+    "failing": 0,
+    "blocked": 0,
+    "environmental": 0,
+    "deferred": 1,
+    "stale_drifted": 0
+  },
+  "runtime_summary": {
+    "canonical_commands": 25,
+    "legacy_aliases": 23,
+    "deprecated_commands": 0,
+    "duplicate_capabilities_eliminated": 0,
+    "usability_validation": "PASS - help-resolve and what-should-i-run operational"
+  },
+  "remaining_gaps": [
+    {
+      "component": "behaviour_engine",
+      "capability": "pattern_analysis",
+      "source": "engines/behaviour_engine/",
+      "missing_evidence": "mutation testing (65.9%)",
+      "risk": "medium",
+      "reason": "Large survivor population from C42 era",
+      "next_action": "Run converge --component behaviour_engine",
+      "blocks_certification": false
+    },
+    {
+      "component": "services",
+      "capability": "multiple",
+      "source": "src/services/",
+      "missing_evidence": "coverage (66.29%)",
+      "risk": "medium",
+      "reason": "Service orchestration under-tested",
+      "next_action": "Add integration tests",
+      "blocks_certification": false
+    },
+    {
+      "component": "repositories",
+      "capability": "data_access",
+      "source": "src/repositories/",
+      "missing_evidence": "coverage (55.42%)",
+      "risk": "low",
+      "reason": "ORM patterns, lower behavioral risk",
+      "next_action": "Add unit tests for complex queries",
+      "blocks_certification": false
+    },
+    {
+      "component": "frontend/components",
+      "capability": "UI",
+      "source": "frontend/components/",
+      "missing_evidence": "unit tests",
+      "risk": "low",
+      "reason": "Requires separate tooling",
+      "next_action": "Add vitest tests",
+      "blocks_certification": false
+    },
+    {
+      "component": "full_mutation_campaign",
+      "capability": "repository-wide",
+      "source": "all",
+      "missing_evidence": "full campaign measurement",
+      "risk": "low",
+      "reason": "Mutmut infrastructure issue",
+      "next_action": "Retry after fix",
+      "blocks_certification": false
+    }
+  ],
+  "artifacts": [
+    "m9-c43-authoritative-baseline.json",
+    "m9-c43-component-matrix.json",
+    "repository-inventory.json",
+    "source-capability-mapping.json",
+    "verification-surface-matrix.json",
+    "workflow-inventory.json",
+    "cli-consolidation-map.json",
+    "framework-reliability-audit.json",
+    "final-certification-report.json"
+  ]
+}

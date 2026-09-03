@@ -1,0 +1,208 @@
+{
+  "schema": "m9-c45-canonical-path-enforcement/v1",
+  "generated_at": "2026-09-03T00:48:00Z",
+  "milestone": "M9-C45",
+  "phase": "M45.2 — Canonical verify.py mutation Enforcement",
+  "objective": "Make verify.py mutation the authoritative mutation entry point and enforce canonical path",
+  "current_architecture": {
+    "intended_architecture": {
+      "entry_point": "verify.py mutation",
+      "control_plane": "Verification Control Plane",
+      "orchestrator": "Mutation Campaign Orchestrator",
+      "backend_adapter": "MutationBackendBase",
+      "backend_implementation": "MutmutAdapter",
+      "tool": "mutmut"
+    },
+    "actual_implementation": {
+      "primary_path": "verify.py mutation → mutation_runner.py → mutmut subprocess",
+      "alternative_path": "MutationOrchestrator → MutmutAdapter → mutmut subprocess",
+      "legacy_wrappers": ["run_mutation_selective.sh", "run_mutation_local_smoke.sh", "scripts/verify.sh"]
+    }
+  },
+  "canonical_path_enforcement": {
+    "verify_py_mutation": {
+      "command": "python runtime/verify.py mutation",
+      "module": "runtime.foundation.verification.mutation_runner.run_mutation_cli",
+      "execution_flow": [
+        "parse arguments (--smoke, --target, --max-runtime, --max-children, --no-cache, --restore, --allow-dirty)",
+        "determine mode (smoke/target/full)",
+        "call execute_mutation() with appropriate parameters",
+        "safety context setup (signal handlers, atexit, dirty worktree check)",
+        "install canonical mutmut config via write_backend_mutmut_config()",
+        "validate cache via _validate_cache()",
+        "capture pre-mutation git status",
+        "run mutmut subprocess with configured parameters",
+        "collect results via mutmut results --all true",
+        "parse results via parse_mutmut_results()",
+        "reconcile counts via reconcile_counts()",
+        "compute score via compute_score()",
+        "restore source tree via _restore_source_tree()",
+        "restore original config",
+        "verify safety context (restoration verification)",
+        "write summary via _write_summary()",
+        "write measurement truth via _write_measurement_truth()",
+        "optionally run survivor catalog and intel persistence"
+      ],
+      "status": "CANONICAL",
+      "evidence_output": [
+        "backend/tests/generated/mutation/mutation-summary.json",
+        "backend/tests/generated/mutation/measurement-truth.json",
+        "backend/tests/generated/mutation/mutation-survivors.json (if survivors)",
+        "backend/tests/generated/mutation/mutation-survivor-intel.json (if survivors)"
+      ]
+    },
+    "mutation_orchestrator": {
+      "command": "MutationOrchestrator.run()",
+      "module": "runtime.foundation.verification.mutation_execution.orchestrator.MutationOrchestrator",
+      "execution_flow": [
+        "baseline gate check",
+        "create or resume workspace",
+        "discover candidates",
+        "generate mutations in workspace",
+        "execute campaign with retry + cache + parallelism",
+        "collect and aggregate results",
+        "update campaign status"
+      ],
+      "backend_interface": "MutationBackendBase (MutmutAdapter)",
+      "status": "CANONICAL",
+      "evidence_output": "MutationCampaign + MutationResult objects"
+    }
+  },
+  "legacy_path_assessment": {
+    "shell_script_wrappers": {
+      "run_mutation_selective.sh": {
+        "current_behavior": "exec \"$PY\" runtime/verify.py mutation --full \"$@\"",
+        "classification": "legacy",
+        "status": "DELEGATES_TO_CANONICAL",
+        "recommendation": "Mark as legacy, ensure it doesn't bypass canonical evidence",
+        "action_required": "Add legacy marker comment"
+      },
+      "run_mutation_local_smoke.sh": {
+        "current_behavior": "exec \"$PY\" runtime/verify.py mutation --smoke \"$@\"",
+        "classification": "legacy",
+        "status": "DELEGATES_TO_CANONICAL",
+        "recommendation": "Mark as legacy, ensure it doesn't bypass canonical evidence",
+        "action_required": "Add legacy marker comment"
+      }
+    },
+    "scripts_verify_sh": {
+      "mutation_command": "exec \"$ROOT_DIR/.venv/bin/python\" runtime/verify.py mutation \"$@\"",
+      "mutation_smoke_command": "exec \"$ROOT_DIR/.venv/bin/python\" runtime/verify.py mutation --smoke \"$@\"",
+      "classification": "legacy",
+      "status": "DELEGATES_TO_CANONICAL",
+      "recommendation": "Mark as legacy dispatcher",
+      "action_required": "Add legacy marker comment"
+    }
+  },
+  "direct_mutmut_boundary": {
+    "current_state": "Direct mutmut invocations exist but are isolated:",
+    "locations": [
+      {
+        "file": "runtime/foundation/verification/mutation_runner.py",
+        "lines": [596, 691],
+        "commands": ["mutmut run", "mutmut results --all true"],
+        "context": "Backend implementation detail",
+        "classification": "backend-internal",
+        "status": "ACCEPTABLE"
+      },
+      {
+        "file": "runtime/foundation/verification/mutation_execution/mutmut_adapter.py",
+        "lines": "various",
+        "commands": "mutmut subprocess calls",
+        "context": "Backend adapter implementation",
+        "classification": "backend-internal",
+        "status": "ACCEPTABLE"
+      }
+    ],
+    "boundary_rule": "Direct mutmut calls MUST be contained within backend adapters and MUST NOT be used by canonical workflows"
+  },
+  "enforcement_actions_taken": {
+    "legacy_marking": [
+      {
+        "file": ".github/scripts/run_mutation_selective.sh",
+        "action": "Add legacy marker comment",
+        "status": "PENDING"
+      },
+      {
+        "file": ".github/scripts/run_mutation_local_smoke.sh",
+        "action": "Add legacy marker comment",
+        "status": "PENDING"
+      },
+      {
+        "file": "scripts/verify.sh",
+        "action": "Add legacy marker comment for mutation commands",
+        "status": "PENDING"
+      }
+    ],
+    "boundary_documentation": [
+      {
+        "file": "runtime/foundation/verification/mutation_runner.py",
+        "action": "Document canonical vs legacy boundary",
+        "status": "PENDING"
+      }
+    ]
+  },
+  "canonical_path_verification": {
+    "test_execution": {
+      "smoke_test": {
+        "command": "python runtime/verify.py mutation --smoke",
+        "expected_behavior": "Bounded infra health check using mutation_infra fixtures",
+        "status": "PENDING_EXECUTION"
+      },
+      "target_test": {
+        "command": "python runtime/verify.py mutation --target <engine>",
+        "expected_behavior": "Incremental target campaign with engine-specific scope",
+        "status": "PENDING_EXECUTION"
+      },
+      "full_test": {
+        "command": "python runtime/verify.py mutation",
+        "expected_behavior": "Authoritative full campaign (CI-only due to runtime)",
+        "status": "PENDING_EXECUTION"
+      }
+    },
+    "ci_integration": {
+      "mutation_smoke_job": {
+        "workflow": ".github/workflows/mutation.yml",
+        "command": "python runtime/verify.py mutation --smoke",
+        "status": "USES_CANONICAL_PATH",
+        "verification": "PENDING"
+      },
+      "mutation_job": {
+        "workflow": ".github/workflows/mutation.yml",
+        "command": "python runtime/verify.py mutation",
+        "status": "USES_CANONICAL_PATH",
+        "verification": "PENDING"
+      }
+    }
+  },
+  "evidence_integrity": {
+    "canonical_evidence_paths": [
+      "backend/tests/generated/mutation/mutation-summary.json",
+      "backend/tests/generated/mutation/measurement-truth.json",
+      "backend/tests/generated/mutation/mutation-survivors.json",
+      "backend/tests/generated/mutation/mutation-survivor-intel.json"
+    ],
+    "legacy_evidence_paths": [],
+    "boundary_rule": "Legacy execution MUST state execution_path = LEGACY_DIRECT_BACKEND, canonical execution MUST state execution_path = VERIFICATION_CONTROL_PLANE"
+  },
+  "recommendations": [
+    "Add explicit legacy markers to shell script wrappers",
+    "Document the canonical vs legacy boundary in architecture documentation",
+    "Ensure all new mutation workflows use verify.py mutation path",
+    "Add execution_path field to mutation evidence to distinguish canonical vs legacy",
+    "Validate that CI workflows use canonical path exclusively"
+  ],
+  "next_steps": [
+    "M45.3 — Real Repository Qualification (execute campaigns through canonical path)",
+    "M45.4 — Known Failure Reproduction Matrix (test failure scenarios)",
+    "M45.12 — Legacy Direct-Mutmut Boundary (formalize boundary)"
+  ],
+  "final_verdict": {
+    "status": "ENFORCEMENT_ANALYSIS_COMPLETE",
+    "canonical_path_established": true,
+    "legacy_paths_identified_and_classified": true,
+    "boundary_rules_defined": true,
+    "enforcement_actions_identified": true,
+    "next_step": "M45.3 — Real Repository Qualification"
+  }
+}

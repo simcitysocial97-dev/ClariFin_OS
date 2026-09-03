@@ -1,33 +1,21 @@
 {
-  "record_id": "forensic::9aa8e4a53988",
-  "generated_at": "2026-08-26T04:35:56.285945+00:00",
-  "repository_sha": "523637b8de928565ee19fbcff2b5645fbd85a2ce",
+  "record_id": "forensic::f1a97be52517",
+  "generated_at": "2026-09-02T23:40:45.535468+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
   "change": {
-    "changed_files": [
-      "backend/src/engines/loan_engine/foo.py"
-    ],
-    "affected_components": [
-      "loan"
-    ],
-    "affected_capabilities": [
-      "loan-management"
-    ]
+    "changed_files": [],
+    "affected_components": [],
+    "affected_capabilities": []
   },
   "affected_graph_nodes": {
-    "sources": [
-      "backend/src/engines/loan_engine/foo.py"
-    ],
-    "capabilities": [
-      "loan-management"
-    ]
+    "sources": [],
+    "capabilities": []
   },
   "invalidations": {
     "by_component": {
       "credit_card_engine": [],
       "account_engine": [],
-      "loan_engine": [
-        "R-SRC-001"
-      ],
+      "loan_engine": [],
       "reconciliation_engine": [],
       "behaviour_engine": [],
       "balance_engine": [],
@@ -42,10 +30,11 @@
     }
   },
   "reused_evidence": {
-    "count": 13,
+    "count": 14,
     "components": [
       "credit_card_engine",
       "account_engine",
+      "loan_engine",
       "reconciliation_engine",
       "behaviour_engine",
       "balance_engine",
@@ -60,10 +49,8 @@
     ]
   },
   "selected_tasks": {
-    "count": 1,
-    "components": [
-      "loan_engine"
-    ]
+    "count": 0,
+    "components": []
   },
   "executed_tasks": {
     "count": 0,
@@ -79,12 +66,12 @@
   "derived_evidence": {
     "aggregate": {
       "label": "MATHEMATICALLY_RECONCILED",
-      "result": 58.1152,
-      "numerator": 7949,
-      "denominator": 13678,
+      "result": 60.297,
+      "numerator": 9015,
+      "denominator": 14951,
       "scope": "pop-14-c42.26",
-      "decided_at": "2026-08-26T04:35:56.283922+00:00",
-      "rationale": "derived from 13 reused component(s) over population pop-14-c42.26; no fresh measurement"
+      "decided_at": "2026-09-02T23:40:45.534149+00:00",
+      "rationale": "derived from 14 reused component(s) over population pop-14-c42.26; no fresh measurement"
     }
   },
   "failures": {
@@ -93,16 +80,14 @@
   },
   "uncertainties": {
     "no_evidence": [],
-    "invalidated": [
-      "loan_engine"
-    ],
+    "invalidated": [],
     "drift_blockers": [],
     "certification_gaps": []
   },
   "certification_decision": {
-    "certifiable": false,
-    "rationale": "NOT certifiable: 1 invalidated component(s)",
+    "certifiable": true,
+    "rationale": "certifiable: every component has either fresh measured evidence or a reused prior measurement",
     "aggregate_label": "MATHEMATICALLY_RECONCILED",
-    "aggregate_result": 58.1152
+    "aggregate_result": 60.297
   }
 }

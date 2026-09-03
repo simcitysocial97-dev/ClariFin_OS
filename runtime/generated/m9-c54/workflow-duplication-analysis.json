@@ -1,0 +1,126 @@
+{
+  "schema": "m9-c54/workflow-convergence/v1",
+  "generated_at": "2026-09-01T13:31:33.299302+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "findings_count": 7,
+  "findings": [
+    {
+      "category": "verification_command",
+      "description": "task::static::env-check executed in 2 places",
+      "workflows_involved": [
+        "mutation.yml"
+      ],
+      "commands": [
+        "task::static::env-check"
+      ],
+      "classification": "intentional",
+      "notes": "Multiple workflows legitimately run the same verification for different triggers/path-filters"
+    },
+    {
+      "category": "verification_command",
+      "description": "task::static::status-summary executed in 10 places",
+      "workflows_involved": [
+        "verification-runtime.yml",
+        "dependency-update.yml",
+        "frontend-verify.yml",
+        "backend-verify.yml",
+        "golden.yml",
+        "mutation.yml",
+        "playwright.yml",
+        "api-contracts.yml",
+        "quality.yml",
+        "verification-reconcile.yml"
+      ],
+      "commands": [
+        "task::static::status-summary"
+      ],
+      "classification": "intentional",
+      "notes": "Multiple workflows legitimately run the same verification for different triggers/path-filters"
+    },
+    {
+      "category": "verification_command",
+      "description": "task::unit::backend-suite executed in 2 places",
+      "workflows_involved": [
+        "m9-forensic-diagnostic-lab.yml",
+        "backend-verify.yml"
+      ],
+      "commands": [
+        "task::unit::backend-suite"
+      ],
+      "classification": "intentional",
+      "notes": "Multiple workflows legitimately run the same verification for different triggers/path-filters"
+    },
+    {
+      "category": "artifact_upload",
+      "description": "Upload 'Upload shared artifact \u2014 cross-layer-map' appears in 7 workflows",
+      "workflows_involved": [
+        "backend-verify.yml",
+        "frontend-verify.yml",
+        "golden.yml",
+        "mutation.yml",
+        "playwright.yml",
+        "quality.yml",
+        "verification-runtime.yml"
+      ],
+      "commands": [
+        "Upload shared artifact \u2014 cross-layer-map"
+      ],
+      "classification": "useful",
+      "notes": "Each workflow uploads its own artifacts with unique names; this is intentional for isolation"
+    },
+    {
+      "category": "artifact_upload",
+      "description": "Upload 'Upload shared artifact \u2014 engineering-history' appears in 7 workflows",
+      "workflows_involved": [
+        "backend-verify.yml",
+        "frontend-verify.yml",
+        "golden.yml",
+        "mutation.yml",
+        "playwright.yml",
+        "quality.yml",
+        "verification-runtime.yml"
+      ],
+      "commands": [
+        "Upload shared artifact \u2014 engineering-history"
+      ],
+      "classification": "useful",
+      "notes": "Each workflow uploads its own artifacts with unique names; this is intentional for isolation"
+    },
+    {
+      "category": "artifact_upload",
+      "description": "Upload 'Upload shared artifact \u2014 knowledge-index' appears in 7 workflows",
+      "workflows_involved": [
+        "backend-verify.yml",
+        "frontend-verify.yml",
+        "golden.yml",
+        "mutation.yml",
+        "playwright.yml",
+        "quality.yml",
+        "verification-runtime.yml"
+      ],
+      "commands": [
+        "Upload shared artifact \u2014 knowledge-index"
+      ],
+      "classification": "useful",
+      "notes": "Each workflow uploads its own artifacts with unique names; this is intentional for isolation"
+    },
+    {
+      "category": "artifact_upload",
+      "description": "Upload 'Upload shared artifact \u2014 verification-cache' appears in 7 workflows",
+      "workflows_involved": [
+        "backend-verify.yml",
+        "frontend-verify.yml",
+        "golden.yml",
+        "mutation.yml",
+        "playwright.yml",
+        "quality.yml",
+        "verification-runtime.yml"
+      ],
+      "commands": [
+        "Upload shared artifact \u2014 verification-cache"
+      ],
+      "classification": "useful",
+      "notes": "Each workflow uploads its own artifacts with unique names; this is intentional for isolation"
+    }
+  ]
+}

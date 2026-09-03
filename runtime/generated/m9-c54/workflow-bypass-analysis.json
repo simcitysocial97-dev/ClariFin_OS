@@ -1,0 +1,120 @@
+{
+  "schema": "m9-c54/workflow-convergence/v1",
+  "generated_at": "2026-09-01T13:31:33.299302+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "findings_count": 14,
+  "findings": [
+    {
+      "workflow": "dependency-update.yml",
+      "job": "dependency-health",
+      "step": "Run dependency checks",
+      "risk": "CONTROLLED",
+      "bypassed_stage": "change_detection",
+      "rationale": "shell script invocation outside verify.py control plane"
+    },
+    {
+      "workflow": "m9-forensic-diagnostic-lab.yml",
+      "job": "diagnostician",
+      "step": "Capture verify.py source and configuration",
+      "risk": "BYPASS_RISK",
+      "bypassed_stage": "control_plane",
+      "rationale": "verify.py invocation not in command matcher table: {\n  echo \"=== verify.py identity ===\"\n  sha256sum runtime/verify.py\n  git status"
+    },
+    {
+      "workflow": "m9-forensic-diagnostic-lab.yml",
+      "job": "diagnostician",
+      "step": "Bootstrap runtime",
+      "risk": "CONTROLLED",
+      "bypassed_stage": "change_detection",
+      "rationale": "shell script invocation outside verify.py control plane"
+    },
+    {
+      "workflow": "m9-forensic-diagnostic-lab.yml",
+      "job": "diagnostician",
+      "step": "Black run_fast_checks diagnostic",
+      "risk": "CONTROLLED",
+      "bypassed_stage": "change_detection",
+      "rationale": "shell script invocation outside verify.py control plane"
+    },
+    {
+      "workflow": "m9-forensic-diagnostic-lab.yml",
+      "job": "diagnostician",
+      "step": "Shell behaviour differential",
+      "risk": "CONTROLLED",
+      "bypassed_stage": "change_detection",
+      "rationale": "shell script invocation outside verify.py control plane"
+    },
+    {
+      "workflow": "m9-forensic-diagnostic-lab.yml",
+      "job": "diagnostician",
+      "step": "Run verify.py quick with complete capture",
+      "risk": "BYPASS_RISK",
+      "bypassed_stage": "control_plane",
+      "rationale": "verify.py invocation not in command matcher table: set +e\n\nSTART=$(date +%s)\n\npython runtime/verify.py quick \\\n  > runtime/generate"
+    },
+    {
+      "workflow": "playwright.yml",
+      "job": "test",
+      "step": "Run playwright verification",
+      "risk": "BYPASS_RISK",
+      "bypassed_stage": "control_plane",
+      "rationale": "verify.py invocation not in command matcher table: python runtime/verify.py playwright"
+    },
+    {
+      "workflow": "quality.yml",
+      "job": "quality",
+      "step": "Run quick verification",
+      "risk": "BYPASS_RISK",
+      "bypassed_stage": "control_plane",
+      "rationale": "verify.py invocation not in command matcher table: python runtime/verify.py quick"
+    },
+    {
+      "workflow": "release.yml",
+      "job": "build",
+      "step": "Generate release notes",
+      "risk": "CONTROLLED",
+      "bypassed_stage": "change_detection",
+      "rationale": "shell script invocation outside verify.py control plane"
+    },
+    {
+      "workflow": "verification-reconcile.yml",
+      "job": "reconcile-gate",
+      "step": "Emit PR TierPlan manifest (M5-B)",
+      "risk": "BYPASS_RISK",
+      "bypassed_stage": "control_plane",
+      "rationale": "verify.py invocation not in command matcher table: python runtime/verify.py plan \\\n  --tier pr \\\n  --base \"${GITHUB_BASE_REF:-main}"
+    },
+    {
+      "workflow": "verification-reconcile.yml",
+      "job": "reconcile-gate",
+      "step": "Run runtime verification (profile)",
+      "risk": "BYPASS_RISK",
+      "bypassed_stage": "control_plane",
+      "rationale": "verify.py invocation not in command matcher table: python runtime/verify.py runtime\n"
+    },
+    {
+      "workflow": "verification-reconcile.yml",
+      "job": "reconcile-gate",
+      "step": "Emit execution-evidence artifact (M5-C / M6-A)",
+      "risk": "BYPASS_RISK",
+      "bypassed_stage": "control_plane",
+      "rationale": "verify.py invocation not in command matcher table: python runtime/verify.py exec-evidence \\\n  --plan runtime/generated/vea5-tier-pl"
+    },
+    {
+      "workflow": "verification-reconcile.yml",
+      "job": "reconcile-gate",
+      "step": "Reconcile (M5-D / M5-E)",
+      "risk": "BYPASS_RISK",
+      "bypassed_stage": "control_plane",
+      "rationale": "verify.py invocation not in command matcher table: python runtime/verify.py reconcile \\\n  --plan runtime/generated/vea5-tier-plan.p"
+    },
+    {
+      "workflow": "verification-runtime.yml",
+      "job": "verify-runtime",
+      "step": "Run runtime verification",
+      "risk": "BYPASS_RISK",
+      "bypassed_stage": "control_plane",
+      "rationale": "verify.py invocation not in command matcher table: python runtime/verify.py runtime"
+    }
+  ]
+}

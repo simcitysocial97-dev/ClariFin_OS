@@ -13,17 +13,17 @@
     },
     "type_check_error_by_key": {},
     "durations_by_key": {
-        "probe.x_mutation_probe__mutmut_1": 0.110907,
-        "probe.x_mutation_probe__mutmut_3": 0.115822,
-        "probe.x_mutation_probe__mutmut_2": 0.144472,
-        "probe.x_mutation_probe__mutmut_4": 0.138737
+        "probe.x_mutation_probe__mutmut_1": 0.375289,
+        "probe.x_mutation_probe__mutmut_2": 0.393178,
+        "probe.x_mutation_probe__mutmut_4": 0.508547,
+        "probe.x_mutation_probe__mutmut_3": 0.663485
     },
     "estimated_durations_by_key": {
         "probe.x_unused_probe__mutmut_1": 0,
         "probe.x_unused_probe__mutmut_2": 0,
-        "probe.x_mutation_probe__mutmut_1": 0.0028015789575874805,
-        "probe.x_mutation_probe__mutmut_2": 0.0028015789575874805,
-        "probe.x_mutation_probe__mutmut_3": 0.0028015789575874805,
-        "probe.x_mutation_probe__mutmut_4": 0.0028015789575874805
+        "probe.x_mutation_probe__mutmut_1": 0.5457727749962942,
+        "probe.x_mutation_probe__mutmut_2": 0.5457727749962942,
+        "probe.x_mutation_probe__mutmut_3": 0.5457727749962942,
+        "probe.x_mutation_probe__mutmut_4": 0.5457727749962942
     }
 }

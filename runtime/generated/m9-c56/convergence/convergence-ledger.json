@@ -1,0 +1,520 @@
+{
+  "schema": "m9-c56-convergence/v1",
+  "result": {
+    "run_id": "conv::1788394026",
+    "started_at": "2026-09-03T00:07:06.895389+00:00",
+    "completed_at": "2026-09-03T00:07:37.406786+00:00",
+    "initial_score": 81.56,
+    "final_score": 85.16,
+    "targets_loaded": 134,
+    "tests_generated": 50,
+    "tests_applied": 50,
+    "tests_passed": 217,
+    "survivors_killed": 0,
+    "duration_seconds": 30.51,
+    "delta": 3.6,
+    "generated_tests": [
+      {
+        "test_id": "c56_07209",
+        "component": "financial_events",
+        "target_surface": "compute_financial_metrics",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_07209",
+        "test_code": "\nclass Testc56_07209:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_25.\"\"\"\n\n    def test_import_07209(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.metrics import compute_financial_metrics\n        assert compute_financial_metrics is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_25",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_89512",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_89512",
+        "test_code": "\nclass Testc56_89512:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_15.\"\"\"\n\n    def test_import_89512(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_15",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_40844",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_40844",
+        "test_code": "\nclass Testc56_40844:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_37.\"\"\"\n\n    def test_import_40844(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_37",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_19017",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_19017",
+        "test_code": "\nclass Testc56_19017:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_74.\"\"\"\n\n    def test_import_19017(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_74",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_91254",
+        "component": "financial_events",
+        "target_surface": "_next_billing_day_after",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_91254",
+        "test_code": "\nclass Testc56_91254:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x__next_billing_day_after__mutmut_18.\"\"\"\n\n    def test_import_91254(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import _next_billing_day_after\n        assert _next_billing_day_after is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x__next_billing_day_after__mutmut_18",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_84162",
+        "component": "financial_events",
+        "target_surface": "compute_monthly_interest",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_84162",
+        "test_code": "\nclass Testc56_84162:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.emi.x_compute_monthly_interest__mutmut_1.\"\"\"\n\n    def test_import_84162(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.emi import compute_monthly_interest\n        assert compute_monthly_interest is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.emi.x_compute_monthly_interest__mutmut_1",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_57353",
+        "component": "financial_events",
+        "target_surface": "compute_monthly_interest",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_57353",
+        "test_code": "\nclass Testc56_57353:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.emi.x_compute_monthly_interest__mutmut_2.\"\"\"\n\n    def test_import_57353(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.emi import compute_monthly_interest\n        assert compute_monthly_interest is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.emi.x_compute_monthly_interest__mutmut_2",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_44742",
+        "component": "financial_events",
+        "target_surface": "compute_monthly_interest",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_44742",
+        "test_code": "\nclass Testc56_44742:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.emi.x_compute_monthly_interest__mutmut_3.\"\"\"\n\n    def test_import_44742(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.emi import compute_monthly_interest\n        assert compute_monthly_interest is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.emi.x_compute_monthly_interest__mutmut_3",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_65117",
+        "component": "financial_events",
+        "target_surface": "compute_monthly_interest",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_65117",
+        "test_code": "\nclass Testc56_65117:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.emi.x_compute_monthly_interest__mutmut_4.\"\"\"\n\n    def test_import_65117(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.emi import compute_monthly_interest\n        assert compute_monthly_interest is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.emi.x_compute_monthly_interest__mutmut_4",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_96070",
+        "component": "financial_events",
+        "target_surface": "compute_monthly_interest",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_96070",
+        "test_code": "\nclass Testc56_96070:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.emi.x_compute_monthly_interest__mutmut_5.\"\"\"\n\n    def test_import_96070(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.emi import compute_monthly_interest\n        assert compute_monthly_interest is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.emi.x_compute_monthly_interest__mutmut_5",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_63157",
+        "component": "financial_events",
+        "target_surface": "compute_daily_interest",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_63157",
+        "test_code": "\nclass Testc56_63157:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.interest.x_compute_daily_interest__mutmut_11.\"\"\"\n\n    def test_import_63157(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.interest import compute_daily_interest\n        assert compute_daily_interest is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.interest.x_compute_daily_interest__mutmut_11",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_83217",
+        "component": "financial_events",
+        "target_surface": "compute_daily_interest",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_83217",
+        "test_code": "\nclass Testc56_83217:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.interest.x_compute_daily_interest__mutmut_13.\"\"\"\n\n    def test_import_83217(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.interest import compute_daily_interest\n        assert compute_daily_interest is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.interest.x_compute_daily_interest__mutmut_13",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_70494",
+        "component": "financial_events",
+        "target_surface": "compute_monthly_interest_simple",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_70494",
+        "test_code": "\nclass Testc56_70494:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.interest.x_compute_monthly_interest_simple__mutmut_16.\"\"\"\n\n    def test_import_70494(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.interest import compute_monthly_interest_simple\n        assert compute_monthly_interest_simple is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.interest.x_compute_monthly_interest_simple__mutmut_16",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_31000",
+        "component": "financial_events",
+        "target_surface": "compute_monthly_interest_simple",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_31000",
+        "test_code": "\nclass Testc56_31000:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.interest.x_compute_monthly_interest_simple__mutmut_18.\"\"\"\n\n    def test_import_31000(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.interest import compute_monthly_interest_simple\n        assert compute_monthly_interest_simple is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.interest.x_compute_monthly_interest_simple__mutmut_18",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_39963",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_39963",
+        "test_code": "\nclass Testc56_39963:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_43.\"\"\"\n\n    def test_import_39963(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_43",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_82666",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_82666",
+        "test_code": "\nclass Testc56_82666:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_44.\"\"\"\n\n    def test_import_82666(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_44",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_82067",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_82067",
+        "test_code": "\nclass Testc56_82067:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_45.\"\"\"\n\n    def test_import_82067(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_45",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_16326",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_16326",
+        "test_code": "\nclass Testc56_16326:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_46.\"\"\"\n\n    def test_import_16326(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_46",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_30293",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_30293",
+        "test_code": "\nclass Testc56_30293:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_47.\"\"\"\n\n    def test_import_30293(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_47",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_58337",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_58337",
+        "test_code": "\nclass Testc56_58337:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_48.\"\"\"\n\n    def test_import_58337(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_48",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_00366",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_00366",
+        "test_code": "\nclass Testc56_00366:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_16.\"\"\"\n\n    def test_import_00366(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_16",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_14556",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_14556",
+        "test_code": "\nclass Testc56_14556:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_17.\"\"\"\n\n    def test_import_14556(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_17",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_88282",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_88282",
+        "test_code": "\nclass Testc56_88282:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_18.\"\"\"\n\n    def test_import_88282(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_18",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_26688",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_26688",
+        "test_code": "\nclass Testc56_26688:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_19.\"\"\"\n\n    def test_import_26688(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_19",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_78144",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_78144",
+        "test_code": "\nclass Testc56_78144:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_20.\"\"\"\n\n    def test_import_78144(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_20",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_57857",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_57857",
+        "test_code": "\nclass Testc56_57857:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_21.\"\"\"\n\n    def test_import_57857(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_21",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_28825",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_28825",
+        "test_code": "\nclass Testc56_28825:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_38.\"\"\"\n\n    def test_import_28825(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_38",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_96534",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_96534",
+        "test_code": "\nclass Testc56_96534:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_39.\"\"\"\n\n    def test_import_96534(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_39",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_12327",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_12327",
+        "test_code": "\nclass Testc56_12327:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_40.\"\"\"\n\n    def test_import_12327(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_40",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_30398",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_30398",
+        "test_code": "\nclass Testc56_30398:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_41.\"\"\"\n\n    def test_import_30398(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_41",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_35813",
+        "component": "financial_events",
+        "target_surface": "compute_next_statement_date",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_35813",
+        "test_code": "\nclass Testc56_35813:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_42.\"\"\"\n\n    def test_import_35813(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_next_statement_date\n        assert compute_next_statement_date is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_42",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_51786",
+        "component": "financial_events",
+        "target_surface": "_next_billing_day_after",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_51786",
+        "test_code": "\nclass Testc56_51786:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x__next_billing_day_after__mutmut_30.\"\"\"\n\n    def test_import_51786(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import _next_billing_day_after\n        assert _next_billing_day_after is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x__next_billing_day_after__mutmut_30",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_26310",
+        "component": "financial_events",
+        "target_surface": "compute_statement_dates",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_26310",
+        "test_code": "\nclass Testc56_26310:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_statement_dates__mutmut_4.\"\"\"\n\n    def test_import_26310(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_statement_dates\n        assert compute_statement_dates is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_statement_dates__mutmut_4",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_48817",
+        "component": "financial_events",
+        "target_surface": "compute_card_foreclosure",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_48817",
+        "test_code": "\nclass Testc56_48817:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.foreclosure.x_compute_card_foreclosure__mutmut_1.\"\"\"\n\n    def test_import_48817(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.foreclosure import compute_card_foreclosure\n        assert compute_card_foreclosure is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.foreclosure.x_compute_card_foreclosure__mutmut_1",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_94574",
+        "component": "financial_events",
+        "target_surface": "compute_card_foreclosure",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_94574",
+        "test_code": "\nclass Testc56_94574:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.foreclosure.x_compute_card_foreclosure__mutmut_40.\"\"\"\n\n    def test_import_94574(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.foreclosure import compute_card_foreclosure\n        assert compute_card_foreclosure is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.foreclosure.x_compute_card_foreclosure__mutmut_40",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_38299",
+        "component": "financial_events",
+        "target_surface": "compute_card_foreclosure",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_38299",
+        "test_code": "\nclass Testc56_38299:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.foreclosure.x_compute_card_foreclosure__mutmut_45.\"\"\"\n\n    def test_import_38299(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.foreclosure import compute_card_foreclosure\n        assert compute_card_foreclosure is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.foreclosure.x_compute_card_foreclosure__mutmut_45",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_07252",
+        "component": "financial_events",
+        "target_surface": "compute_card_foreclosure",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_07252",
+        "test_code": "\nclass Testc56_07252:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.foreclosure.x_compute_card_foreclosure__mutmut_47.\"\"\"\n\n    def test_import_07252(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.foreclosure import compute_card_foreclosure\n        assert compute_card_foreclosure is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.foreclosure.x_compute_card_foreclosure__mutmut_47",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_29706",
+        "component": "financial_events",
+        "target_surface": "compute_financial_metrics",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_29706",
+        "test_code": "\nclass Testc56_29706:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_32.\"\"\"\n\n    def test_import_29706(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.metrics import compute_financial_metrics\n        assert compute_financial_metrics is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_32",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_15805",
+        "component": "financial_events",
+        "target_surface": "compute_financial_metrics",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_15805",
+        "test_code": "\nclass Testc56_15805:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_41.\"\"\"\n\n    def test_import_15805(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.metrics import compute_financial_metrics\n        assert compute_financial_metrics is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_41",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_65506",
+        "component": "financial_events",
+        "target_surface": "compute_minimum_due",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_65506",
+        "test_code": "\nclass Testc56_65506:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.billing.x_compute_minimum_due__mutmut_38.\"\"\"\n\n    def test_import_65506(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.billing import compute_minimum_due\n        assert compute_minimum_due is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.billing.x_compute_minimum_due__mutmut_38",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_26576",
+        "component": "financial_events",
+        "target_surface": "compute_utilization",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_26576",
+        "test_code": "\nclass Testc56_26576:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.utilization.x_compute_utilization__mutmut_31.\"\"\"\n\n    def test_import_26576(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.utilization import compute_utilization\n        assert compute_utilization is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.utilization.x_compute_utilization__mutmut_31",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_74070",
+        "component": "financial_events",
+        "target_surface": "compute_daily_interest",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_74070",
+        "test_code": "\nclass Testc56_74070:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.interest.x_compute_daily_interest__mutmut_30.\"\"\"\n\n    def test_import_74070(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.interest import compute_daily_interest\n        assert compute_daily_interest is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.interest.x_compute_daily_interest__mutmut_30",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_05758",
+        "component": "financial_events",
+        "target_surface": "compute_financial_metrics",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_05758",
+        "test_code": "\nclass Testc56_05758:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_4.\"\"\"\n\n    def test_import_05758(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.metrics import compute_financial_metrics\n        assert compute_financial_metrics is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_4",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_37095",
+        "component": "financial_events",
+        "target_surface": "compute_financial_metrics",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_37095",
+        "test_code": "\nclass Testc56_37095:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_5.\"\"\"\n\n    def test_import_37095(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.metrics import compute_financial_metrics\n        assert compute_financial_metrics is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_5",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_07235",
+        "component": "financial_events",
+        "target_surface": "compute_financial_metrics",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_07235",
+        "test_code": "\nclass Testc56_07235:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_6.\"\"\"\n\n    def test_import_07235(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.metrics import compute_financial_metrics\n        assert compute_financial_metrics is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_6",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_94178",
+        "component": "financial_events",
+        "target_surface": "compute_financial_metrics",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_94178",
+        "test_code": "\nclass Testc56_94178:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_9.\"\"\"\n\n    def test_import_94178(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.metrics import compute_financial_metrics\n        assert compute_financial_metrics is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_9",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_00503",
+        "component": "financial_events",
+        "target_surface": "compute_financial_metrics",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_00503",
+        "test_code": "\nclass Testc56_00503:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_10.\"\"\"\n\n    def test_import_00503(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.metrics import compute_financial_metrics\n        assert compute_financial_metrics is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_10",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_13997",
+        "component": "financial_events",
+        "target_surface": "compute_financial_metrics",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_13997",
+        "test_code": "\nclass Testc56_13997:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_11.\"\"\"\n\n    def test_import_13997(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.metrics import compute_financial_metrics\n        assert compute_financial_metrics is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_11",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_79301",
+        "component": "financial_events",
+        "target_surface": "compute_financial_metrics",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_79301",
+        "test_code": "\nclass Testc56_79301:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_14.\"\"\"\n\n    def test_import_79301(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.metrics import compute_financial_metrics\n        assert compute_financial_metrics is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_14",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      },
+      {
+        "test_id": "c56_06825",
+        "component": "financial_events",
+        "target_surface": "compute_financial_metrics",
+        "test_file_path": "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "test_function_name": "test_import_06825",
+        "test_code": "\nclass Testc56_06825:\n    \"\"\"M9-C56 convergence test (import-only fallback) for engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_15.\"\"\"\n\n    def test_import_06825(self):\n        \"\"\"Verify the module and function are importable.\"\"\"\n        from engines.credit_card_engine.metrics import compute_financial_metrics\n        assert compute_financial_metrics is not None\n",
+        "mutation_targeted": "engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_15",
+        "rationale": "Import-only fallback (function signature unavailable)"
+      }
+    ],
+    "errors": []
+  }
+}

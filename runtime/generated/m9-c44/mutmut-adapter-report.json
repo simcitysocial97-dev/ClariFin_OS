@@ -1,0 +1,99 @@
+{
+  "schema": "m9-c44-mutmut-adapter-report/v1",
+  "generated_at": "2026-09-03T00:33:04.805469+00:00",
+  "adapter_name": "mutmut",
+  "adapter_version": "3.7.0",
+  "pinned_version": "3.7.0",
+  "qualification_status": "QUALIFIED_WITH_LIMITATIONS",
+  "qualification_criteria": {
+    "deterministic_discovery": {
+      "required": true,
+      "status": "PASS",
+      "notes": "Discovery is deterministic for well-formed Python AST. Silently skips some Python 3.12+ syntax patterns (F007)."
+    },
+    "deterministic_identity": {
+      "required": true,
+      "status": "PASS",
+      "notes": "Canonical IDs derived from stable semantic fields, not mutmut keys. Same revision+mutation => same ID."
+    },
+    "process_isolation": {
+      "required": true,
+      "status": "PASS",
+      "notes": "Each execution runs in isolated workspace with explicit cwd/PYTHONPATH/env. Process group killed on timeout."
+    },
+    "resume": {
+      "required": true,
+      "status": "PARTIAL",
+      "notes": "No native resume. Workaround: shard-based recovery (M44.20). Completed shards are not re-executed."
+    },
+    "cache_correctness": {
+      "required": true,
+      "status": "PASS",
+      "notes": "ClariFin_OS owns canonical cache (M44.12). mutmut .mutmut-cache is ignored for results; only used as discovery hint."
+    },
+    "timeout_isolation": {
+      "required": true,
+      "status": "PASS",
+      "notes": "Per-execution timeout enforced via subprocess.communicate(timeout). Process group terminated cleanly on expiry."
+    },
+    "result_normalization": {
+      "required": true,
+      "status": "PASS",
+      "notes": "Exit codes mapped to 10 canonical MutationResultState values. Tool crashes NEVER map to SURVIVED or KILLED."
+    },
+    "ci_operation": {
+      "required": true,
+      "status": "PASS",
+      "notes": "Identical execution locally and in CI (same .venv, same PYTHONPATH resolution per env.py)."
+    },
+    "src_import_correctness": {
+      "required": true,
+      "status": "PASS",
+      "notes": "PYTHONPATH explicitly set to workspace/src before site-packages. Correctness gate (M44.15) verifies mutated source is actually imported."
+    },
+    "parallel_execution": {
+      "required": true,
+      "status": "PASS",
+      "notes": "Orchestrator controls parallelism via ThreadPoolExecutor with per-worker isolation. Workers never share mutable state."
+    },
+    "failure_diagnostics": {
+      "required": true,
+      "status": "PASS",
+      "notes": "Every infrastructure failure classified with InfrastructureFailureKind. Diagnostics endpoint available."
+    },
+    "evidence_provenance": {
+      "required": true,
+      "status": "PASS",
+      "notes": "Each execution record contains execution_id, campaign_id, mutant_id, worker_id, timing, and output refs."
+    },
+    "large_campaign_support": {
+      "required": true,
+      "status": "PASS",
+      "notes": "Sharding (M44.20) + persistence (M44.10) enable campaigns of arbitrary size. Each shard completes within timeout."
+    }
+  },
+  "known_limitations": [
+    {
+      "id": "L001",
+      "severity": "medium",
+      "description": "Silent mutation skipping for some Python 3.12+ syntax (F007)",
+      "impact": "Undercount of generated mutants for affected files",
+      "mitigation": "Cross-reference with static analysis estimate; flag discrepancies"
+    },
+    {
+      "id": "L002",
+      "severity": "low",
+      "description": "No native campaign resume (F013)",
+      "impact": "Full campaigns cannot resume from interruption point",
+      "mitigation": "Shard-based recovery: each shard is independent and resumable"
+    },
+    {
+      "id": "L003",
+      "severity": "low",
+      "description": "Parallel execution may contend on ports (F010)",
+      "impact": "Intermittent failures with --max-children > 1 for tests that bind ports",
+      "mitigation": "Isolated workspaces prevent most contention; port-binding tests should use serial execution"
+    }
+  ],
+  "architectural_decision": "Mutmut retained as production backend (Option A) with strict adapter boundary. The adapter enforces all required criteria. Limitations are documented and mitigated. If a superior backend becomes available, replacement requires only implementing MutationBackendBase \u2014 no downstream changes needed."
+}

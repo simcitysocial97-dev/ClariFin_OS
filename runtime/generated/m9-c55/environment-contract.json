@@ -1,0 +1,102 @@
+{
+  "schema": "m9-c55/environment-contract/v1",
+  "generated_at": "2026-09-01T19:56:21.384725+00:00",
+  "state": "CONSISTENT",
+  "errors": [],
+  "warnings": [],
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "repository_tree_sha": "6202939acbf860a5ffa20ed7d2954723741f6307",
+  "working_tree_state": "DIRTY",
+  "untracked_file_count": 44,
+  "python_version": "3.12",
+  "python_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python3",
+  "python_source": "venv",
+  "python_min_ok": true,
+  "pytest": {
+    "name": "pytest",
+    "resolved_version": "pytest 9.1.1",
+    "resolved_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/pytest",
+    "source": "venv",
+    "pinned_version": "9.1.1",
+    "matches_pin": true
+  },
+  "coverage": {
+    "name": "coverage",
+    "resolved_version": "Coverage.py, version 7.15.2 with C extension",
+    "resolved_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/coverage",
+    "source": "venv",
+    "pinned_version": "7.15.2",
+    "matches_pin": true
+  },
+  "mutmut": {
+    "name": "mutmut",
+    "resolved_version": "mutmut, version 3.7.0",
+    "resolved_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/mutmut",
+    "source": "venv",
+    "pinned_version": "3.7.0",
+    "matches_pin": true
+  },
+  "ruff": {
+    "name": "ruff",
+    "resolved_version": "ruff 0.15.20",
+    "resolved_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/ruff",
+    "source": "venv",
+    "pinned_version": "0.15.20",
+    "matches_pin": true
+  },
+  "black": {
+    "name": "black",
+    "resolved_version": "black, 26.5.1 (compiled: yes)",
+    "resolved_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/black",
+    "source": "venv",
+    "pinned_version": "26.5.1",
+    "matches_pin": true
+  },
+  "mypy": {
+    "name": "mypy",
+    "resolved_version": "mypy 2.1.0 (compiled: yes)",
+    "resolved_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/mypy",
+    "source": "venv",
+    "pinned_version": "2.1.0",
+    "matches_pin": true
+  },
+  "hypothesis": {
+    "name": "hypothesis",
+    "resolved_version": "hypothesis, version 6.161.4",
+    "resolved_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/hypothesis",
+    "source": "venv",
+    "pinned_version": "6.161.4",
+    "matches_pin": true
+  },
+  "node_version": "v24.20.0",
+  "node_path": "/home/vasantha/.local/bin/node",
+  "node_source": "path",
+  "npm_version": "11.19.0",
+  "npm_path": "/home/vasantha/.local/bin/npm",
+  "npm_source": "path",
+  "node_matches_engine": true,
+  "npm_matches_pin": true,
+  "os_name": "Linux",
+  "os_version": "#30~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Fri Aug  7 13:27:52 UTC 2",
+  "platform_machine": "x86_64",
+  "shell": "sh",
+  "locale": "unknown",
+  "timezone": "IST",
+  "requirements_lock_hash": "a4b005556ccc95f6",
+  "frontend_package_lock_hash": "245c326c3849e497",
+  "root_pyproject_hash": "3cf415792af92927",
+  "backend_pyproject_hash": "2048b633ca789982",
+  "frontend_package_json_hash": "3596ee945190d0ee",
+  "config_hashes": {
+    "root_pyproject_toml": "3cf415792af92927",
+    "backend_pyproject_toml": "2048b633ca789982",
+    "frontend_package_json": "3596ee945190d0ee",
+    "frontend_package_lock": "245c326c3849e497",
+    "requirements_lock": "a4b005556ccc95f6",
+    "ruff_toml": "not_applicable",
+    "black_toml": "not_applicable",
+    "mypy_toml": "not_applicable"
+  },
+  "baseline_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "reproducibility_note": "All local toolchain dimensions match declared pins."
+}

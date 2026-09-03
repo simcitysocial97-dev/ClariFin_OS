@@ -1,0 +1,179 @@
+{
+  "schema": "m9-c45-real-repository-qualification/v1",
+  "generated_at": "2026-09-03T00:55:00Z",
+  "milestone": "M9-C45",
+  "phase": "M45.3 — Real Repository Qualification",
+  "objective": "Execute M44.31 for real through verify.py mutation on representative surfaces",
+  "test_campaigns": [
+    {
+      "campaign_id": "smoke-test-001",
+      "command": "python runtime/verify.py mutation --smoke",
+      "mode": "smoke",
+      "target": null,
+      "start_time": "2026-09-03T00:48:00Z",
+      "end_time": "2026-09-03T00:48:03Z",
+      "duration_seconds": 3,
+      "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+      "tree_sha": "6202939acbf860a5ffa20ed7d2954723741f6307",
+      "baseline_passes": true,
+      "campaign_started": true,
+      "workspace_isolated": true,
+      "mutations_generated": 6,
+      "mutants_received_canonical_ids": true,
+      "tests_correctly_selected": true,
+      "mutated_source_executed": true,
+      "results_normalized": true,
+      "evidence_persisted": true,
+      "evidence_reproducible": true,
+      "campaign_completed": true,
+      "results_reconciled": true,
+      "killed": 2,
+      "survived": 2,
+      "no_tests": 2,
+      "timeout": 0,
+      "suspicious": 0,
+      "not_checked": 0,
+      "mutation_score": 50.0,
+      "execution_status": "PASS",
+      "classification_status": "PASS",
+      "evidence_complete": true,
+      "evidence_files": [
+        "backend/tests/generated/mutation/local-smoke/mutation-summary.json",
+        "backend/tests/generated/mutation/local-smoke/measurement-truth.json"
+      ],
+      "workspace_restoration_verified": true,
+      "config_restoration_verified": true,
+      "verdict": "PASS"
+    },
+    {
+      "campaign_id": "target-credit_card_engine-001",
+      "command": "python runtime/verify.py mutation --target credit_card_engine --no-cache",
+      "mode": "target",
+      "target": "credit_card_engine",
+      "start_time": "2026-09-03T00:50:00Z",
+      "end_time": "2026-09-03T00:51:30Z",
+      "duration_seconds": 90,
+      "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+      "tree_sha": "6202939acbf860a5ffa20ed7d2954723741f6307",
+      "baseline_passes": true,
+      "campaign_started": true,
+      "workspace_isolated": true,
+      "mutations_generated": 582,
+      "mutants_received_canonical_ids": true,
+      "tests_correctly_selected": true,
+      "mutated_source_executed": true,
+      "results_normalized": true,
+      "evidence_persisted": true,
+      "evidence_reproducible": true,
+      "campaign_completed": true,
+      "results_reconciled": true,
+      "killed": 449,
+      "survived": 133,
+      "no_tests": 0,
+      "timeout": 0,
+      "suspicious": 0,
+      "not_checked": 0,
+      "mutation_score": 77.1,
+      "execution_status": "PASS",
+      "classification_status": "PASS",
+      "evidence_complete": true,
+      "evidence_files": [
+        "backend/tests/generated/mutation/mutation-summary-credit_card_engine.json",
+        "backend/tests/generated/mutation/measurement-truth-credit_card_engine.json",
+        "backend/tests/generated/mutation/mutation-survivors-credit_card_engine.json",
+        "backend/tests/generated/mutation/mutation-survivor-intel-credit_card_engine.json"
+      ],
+      "workspace_restoration_verified": true,
+      "config_restoration_verified": true,
+      "survivor_catalog_generated": true,
+      "survivor_intel_generated": true,
+      "selected_test_scope": "tests/unit/engines/credit_card tests/properties/credit_card_engine tests/capability/credit_cards",
+      "source_scope": "src/engines/credit_card_engine",
+      "selection_method": "explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)",
+      "verdict": "PASS"
+    }
+  ],
+  "representative_surfaces_tested": [
+    {
+      "surface_type": "small_deterministic_component",
+      "description": "mutation_infra smoke fixtures (probe.py, test_probe.py)",
+      "campaign_id": "smoke-test-001",
+      "verdict": "PASS",
+      "notes": "Bounded infrastructure health check, 6 mutants generated"
+    },
+    {
+      "surface_type": "medium_component",
+      "description": "credit_card_engine (13 files, ~500 lines)",
+      "campaign_id": "target-credit_card_engine-001",
+      "verdict": "PASS",
+      "notes": "582 mutants generated, 77.1% mutation score, 133 survivors"
+    }
+  ],
+  "additional_surfaces_to_test": [
+    {
+      "surface_type": "previously_problematic_mutation_target",
+      "description": "behaviour_engine (known to have had issues in C42)",
+      "command": "python runtime/verify.py mutation --target behaviour_engine --no-cache",
+      "status": "PENDING"
+    },
+    {
+      "surface_type": "service",
+      "description": "Any service layer component",
+      "command": "TBD based on service architecture",
+      "status": "PENDING"
+    },
+    {
+      "surface_type": "repository_data_access",
+      "description": "Repository layer mutation testing",
+      "command": "TBD based on repository architecture",
+      "status": "PENDING"
+    },
+    {
+      "surface_type": "cross_capability_target",
+      "description": "Component that spans multiple capabilities",
+      "command": "TBD based on cross-capability analysis",
+      "status": "PENDING"
+    }
+  ],
+  "execution_quality_metrics": {
+    "baseline_pass_rate": 1.0,
+    "campaign_start_success_rate": 1.0,
+    "workspace_isolation_success_rate": 1.0,
+    "mutation_generation_success_rate": 1.0,
+    "canonical_id_assignment_rate": 1.0,
+    "test_selection_accuracy_rate": 1.0,
+    "source_execution_verification_rate": 1.0,
+    "result_normalization_rate": 1.0,
+    "evidence_persistence_rate": 1.0,
+    "evidence_reproducibility_rate": 1.0,
+    "campaign_completion_rate": 1.0,
+    "results_reconciliation_rate": 1.0,
+    "workspace_restoration_rate": 1.0,
+    "config_restoration_rate": 1.0
+  },
+  "qualification_verdict": {
+    "status": "PARTIAL_QUALIFICATION_COMPLETE",
+    "completed_campaigns": 2,
+    "passed_campaigns": 2,
+    "failed_campaigns": 0,
+    "representative_surfaces_covered": 2,
+    "total_representative_surfaces": 7,
+    "completion_percentage": 28.57,
+    "next_surfaces": [
+      "behaviour_engine (previously problematic)",
+      "service layer component",
+      "repository/data-access surface",
+      "cross-capability target",
+      "multi-worker campaign"
+    ],
+    "next_step": "Continue with remaining representative surfaces and M45.4 failure reproduction"
+  },
+  "recommendations": [
+    "Test behaviour_engine as previously problematic target",
+    "Test additional engine components (account_engine, loan_engine)",
+    "Test service layer components",
+    "Test repository layer components",
+    "Test cross-capability targets",
+    "Execute multi-worker campaign test"
+  ]
+}

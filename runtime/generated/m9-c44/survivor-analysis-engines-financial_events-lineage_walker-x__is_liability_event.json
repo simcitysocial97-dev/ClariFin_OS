@@ -1,0 +1,9 @@
+{
+  "schema": "m9-strengthening-survivor-analysis/v1",
+  "generated_at": "2026-09-02T11:19:52.145490+00:00",
+  "survivor_id": "engines.financial_events.lineage_walker.x__is_liability_event__mutmut_3",
+  "diff": "",
+  "covering_test_surface": [],
+  "capability_attribution": {},
+  "recommended_action": "Write a behavioral assertion on the covering test surface that discriminates the mutation; if a production defect is suspected, escalate for human review (Class-E)."
+}

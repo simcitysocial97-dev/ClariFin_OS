@@ -1,0 +1,48 @@
+{
+  "schema": "m9-c56/population-baseline/v1",
+  "generated_at": "2026-09-02T00:16:24.511473+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "source_files": {
+    "count": 242,
+    "total_loc": 46127
+  },
+  "measured_source_files": {
+    "count": 195
+  },
+  "test_population": {
+    "total_collected": 3199,
+    "passed": 3197,
+    "failed": 1,
+    "xpassed": 1,
+    "note": "1 failure is intentional M4 exit probe (infrastructure test, not a regression)"
+  },
+  "mutation_population": {
+    "total_mutants": 2742,
+    "killed": 2142,
+    "survived": 594,
+    "no_tests": 4,
+    "timeout": 2
+  },
+  "engine_population": {
+    "account_engine": {
+      "source_files": "src/engines/account_engine",
+      "mutants": 183,
+      "survivors": 10
+    },
+    "credit_card_engine": {
+      "source_files": "src/engines/credit_card_engine",
+      "mutants": 582,
+      "survivors": 133
+    },
+    "financial_events": {
+      "source_files": "src/engines/financial_events",
+      "mutants": 704,
+      "survivors": 251
+    },
+    "loan_engine": {
+      "source_files": "src/engines/loan_engine",
+      "mutants": 1273,
+      "survivors": 200
+    }
+  }
+}
