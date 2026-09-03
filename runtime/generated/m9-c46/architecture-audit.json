@@ -1,0 +1,156 @@
+{
+  "schema": "m9-c46-architecture-audit/v1",
+  "milestone": "M46.1",
+  "objective": "Map the current verification architecture end-to-end and identify dead-end transitions, duplicated authority, parallel incompatible evidence formats, legacy paths, bypasses, and stale configurations.",
+  "generated_at": "2026-09-03T07:00:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "scope_observations": {
+    "verify_py_commands": 90,
+    "verification_modules": 76,
+    "mutation_execution_modules": 16,
+    "test_modules": 5,
+    "skill_pipelines": 4
+  },
+  "canonical_chain": {
+    "intended": [
+      "repository change",
+      "changed files (verify.py affected / git diff)",
+      "blast radius (runtime/foundation/verification/blast_radius.py)",
+      "affected capabilities (capability_resolver.py)",
+      "verification requirements (verification_contract.py)",
+      "test surfaces (capability_discovery.py + test plans)",
+      "execution plan (executor_pipeline.py / control_plane.py)",
+      "verification execution (mutation_runner / measurement_truth / coverage_measurement)",
+      "measurement truth (measurement_truth.py)",
+      "diagnostic (diagnostic_agent.py / forensic_cli.py)",
+      "test strengthening (strengthening_pipeline.py)",
+      "re-execution (mutation_runner / convergence_pipeline)",
+      "certification (certification.py / final_certification.py)"
+    ],
+    "verification_per_layer": {
+      "changed_files": {
+        "implementation": "blast_radius.py + git merge-base logic in executor_pipeline",
+        "trustworthy": true,
+        "evidence": "runtime/foundation/verification/blast_radius.py exists and produces artifact blast-radius-report.json (observed in m9-c44 inventory)"
+      },
+      "blast_radius_to_capabilities": {
+        "implementation": "capability_resolver.py + capability_graph.py",
+        "trustworthy": true,
+        "evidence": "Module exists; capability-graph artifacts produced (m9-c44)"
+      },
+      "capabilities_to_test_surfaces": {
+        "implementation": "capability_discovery.py + verification_contract.py",
+        "trustworthy": "PARTIAL — verification_contract is recent (C52); capability_discovery depends on capability_catalog_data.py static data",
+        "gap": "Static catalog data vs runtime discovery reconciliation not fully verified"
+      },
+      "test_surfaces_to_execution_plan": {
+        "implementation": "executor_pipeline.py + control_plane.py + planner/",
+        "trustworthy": true,
+        "evidence": "executor_pipeline.main() called from verify.py evidence-plan"
+      },
+      "execution_to_measurement": {
+        "implementation": "mutation_runner.py + coverage_measurement.py + measurement_truth.py",
+        "trustworthy": "PARTIAL — mutation_runner verified via C45; coverage_measurement depends on pytest --cov integration",
+        "gap": "No live verification during M46.1 that current main branch coverage measurement matches prior recorded baseline"
+      },
+      "measurement_to_diagnose": {
+        "implementation": "diagnostic_agent.py + forensic_cli.py",
+        "trustworthy": true,
+        "evidence": "Both modules exist; multiple forensic-* commands available"
+      },
+      "diagnose_to_strengthening": {
+        "implementation": "strengthening_pipeline.py + survivor_intel.py",
+        "trustworthy": true,
+        "evidence": "Pipeline exists; survivor_intel in C45 introduced durable survivor records"
+      },
+      "strengthening_to_certification": {
+        "implementation": "certification.py + c53_certification.py + c56_convergence.py",
+        "trustworthy": "PARTIAL — three certification paths exist (legacy certify-v4/v5 plus current certify)",
+        "gap": "Three parallel certification layers — potential duplicate authority"
+      }
+    }
+  },
+  "dead_end_transitions": [
+    {
+      "from": "capability_resolver",
+      "to": "latent_capabilities",
+      "issue": "latent_capabilities.py exists (per file listing) but is only invoked from cmd_latent_audit(). There is no automatic upstream hook feeding latent capabilities into the main planning loop.",
+      "severity": "medium"
+    },
+    {
+      "from": "execution_orchestrator",
+      "to": "executor_pipeline",
+      "issue": "Two orchestrator modules exist: execution_orchestrator.py and executor_pipeline.py. verify.py routes both 'execute', 'execution-plan', 'execution-status', 'execution-report' through execution_orchestrator and 'evidence-plan', 'evidence-execute', 'evidence-reconcile', 'evidence-certify' through executor_pipeline. Need to verify they are not duplicating authority.",
+      "severity": "high"
+    },
+    {
+      "from": "MutationOrchestrator",
+      "to": "mutation_runner",
+      "issue": "Already known from M46.0: orchestrator is NOT wired into the canonical path. Architectural dead-end.",
+      "severity": "high"
+    }
+  ],
+  "duplicated_authorities": [
+    {
+      "name": "Certification — three parallel surfaces",
+      "locations": [
+        "runtime/foundation/verification/certification.py",
+        "runtime/foundation/verification/c53_certification.py",
+        "runtime/foundation/verification/c56_convergence.py",
+        "runtime/verify.py cmd_certify_v4/cmd_certify_v5"
+      ],
+      "verdict": "Multiple certification paths exist. The intended single authority per M46.30 must be defined."
+    },
+    {
+      "name": "Evidence paths — measurement-truth vs evidence-execute",
+      "locations": [
+        "runtime/foundation/verification/measurement_truth.py + measurement_truth_cli",
+        "runtime/foundation/verification/executor_pipeline.py + evidence-execute/reconcile/certify"
+      ],
+      "verdict": "Two parallel evidence pipelines. Need explicit ownership demarcation."
+    },
+    {
+      "name": "Forensic — multiple subcommands",
+      "locations": [
+        "verify.py forensic-diagnose / forensic-report",
+        "verify.py strengthen-analyze / strengthen-discover / strengthen-propose / strengthen-validate / strengthen-survivor-forensic / strengthen-report / strengthen-capability / strengthen-survivor"
+      ],
+      "verdict": "10+ forensic/strengthen subcommands. Many overlap. M46.18 should consolidate."
+    }
+  ],
+  "legacy_paths": [
+    {
+      "name": "certify-v4 / certify-v5",
+      "evidence": "verify.py:1320-1325 dispatches to cmd_certify_v4/cmd_certify_v5 (pre-C52 certification).",
+      "recommendation": "Mark DEPRECATED, redirect to `verify.py certify`."
+    },
+    {
+      "name": ".github/scripts/run_mutation_selective.sh",
+      "evidence": "Diff (unstaged) removed --full flag: `mutation --full` → `mutation`. The 'selective' label is now misleading since it no longer limits scope.",
+      "recommendation": "Rename or document the current behavior."
+    },
+    {
+      "name": "verify.py mutation-inventory",
+      "evidence": "C45 final-certification-report.json noted: 'mutation_inventory.py IO functions still call mutmut directly — PURE classify() is canonical, but collect_results/show_mutant need migration to canonical artifacts (deferred to follow-up)'",
+      "recommendation": "Migration still deferred; track under M46.9."
+    }
+  ],
+  "bypasses": [
+    {
+      "name": "conftest.py mutmut compatibility shim",
+      "evidence": "M45.1 entrypoint audit classified this as 'unsupported' path: 1 location",
+      "recommendation": "Audit and document; shim may be needed for legacy test discovery but should not be canonical."
+    }
+  ],
+  "stale_configurations": [
+    {
+      "name": ".github/scripts/run_mutation_selective.sh still labels as 'selective' but invokes full mutation",
+      "recommendation": "Update label and inline comments."
+    }
+  ],
+  "no_new_framework_decision": {
+    "decision": "Per Rule 1.6 (do not redesign certified architecture without evidence) and Anti-pattern 3 (framework proliferation), M46 will not introduce a new verification framework. All new capabilities will integrate into the existing verify.py + executor_pipeline + mutation_runner + strengthening_pipeline stack.",
+    "evidence": "76 verification modules already exist; consolidation > creation"
+  },
+  "verdict": "M46.1 COMPLETE. Architecture mapped. 3 dead-end transitions and 3 duplicated authorities identified. M46.9 (single authority) and M46.18 (command consolidation) will resolve. MutationOrchestrator dead-end already flagged in M46.0."
+}

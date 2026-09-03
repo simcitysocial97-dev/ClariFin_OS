@@ -1,0 +1,111 @@
+{
+  "schema": "m9-c46-c45-reconciliation/v1",
+  "milestone": "M46.0",
+  "objective": "Establish the actual truth of M9-C45 state and reconcile reported claims against evidence before M9-C46 builds upon them.",
+  "generated_at": "2026-09-03T06:50:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "branch": "m9c9-merge-authorization-resolution",
+  "working_tree_state": {
+    "staged_deletions": [
+      {
+        "path": ".github/scripts/generate_mutation_report.py",
+        "claim_in_c45": "orphaned, no workflow references",
+        "verified_status": "DOCUMENTED IN .github/scripts/README.md AND .github/PHASE_0_REPORT.md — NOT ORPHANED",
+        "resolution": "RESTORE required per Rule 1.4"
+      }
+    ],
+    "unstaged_modifications": [
+      ".github/scripts/run_mutation_selective.sh",
+      ".github/workflows/mutation.yml",
+      "backend/pyproject.toml",
+      "backend/tests/generated/mutation/mutation-summary.json",
+      "backend/tests/invariants/_m4_probe_live/test_m4_exit_probe.py (deleted)",
+      "backend/tests/mutation_infra/mutants/*",
+      "backend/tests/unit/engines/financial_events/test_financial_events.py",
+      "frontend/package.json",
+      "requirements.lock",
+      "runtime/foundation/verification/capability_latent_audit.py",
+      "runtime/foundation/verification/cli_capability_matrix.py",
+      "runtime/foundation/verification/command_inventory.py",
+      "runtime/foundation/verification/mutation_contract.py",
+      "runtime/foundation/verification/mutation_runner.py",
+      "runtime/generated/*",
+      "runtime/tests/test_m9_c52.py",
+      "runtime/verify.py"
+    ],
+    "untracked_files": [
+      ".kilo/plans/1788396201282-m9-c45-balance-work.md",
+      "backend/tests/mutation_infra/python_312_probes/",
+      "backend/tests/test_m9_c56_scenarios.py",
+      "backend/tests/unit/engines/credit_card_engine/",
+      "backend/tests/unit/engines/financial_events/test_m9_c56_*.py",
+      "runtime/ARCHITECTURE-mutation.md",
+      "runtime/foundation/verification/c56_convergence.py",
+      "runtime/foundation/verification/convergence_pipeline.py",
+      "runtime/foundation/verification/env_contract.py",
+      "runtime/foundation/verification/help_resolver.py",
+      "runtime/foundation/verification/mutation_execution/",
+      "runtime/foundation/verification/workflow_convergence.py",
+      "runtime/generated/m9-c43/* (new files in m9-c43 dir)",
+      "runtime/generated/m9-c44/* (new files)",
+      "runtime/generated/m9-c45/* (new files)",
+      "runtime/generated/m9-c49/...",
+      "runtime/generated/m9-c54/...",
+      "runtime/generated/m9-c55/...",
+      "runtime/generated/m9-c56/...",
+      "runtime/generated/m9-c45/EXECUTION_PROGRESS.md (rewritten)",
+      "runtime/tests/test_m9_c44_mutation_architecture.py",
+      "runtime/tests/test_m9_c54.py",
+      "runtime/tests/test_m9_c55.py"
+    ]
+  },
+  "reconciliation_findings": [
+    {
+      "id": "A_M45_2_status",
+      "claim": "M45.2 PENDING in progress record while final architecture describes verify.py mutation as the only authoritative entry point",
+      "evidence": "runtime/generated/m9-c45/EXECUTION_PROGRESS.md line 51 still says 'M45.2 — Canonical verify.py mutation Enforcement — PENDING'; canonical-path-enforcement.json generated 2026-09-03T00:48:00Z; verify.py:1333-1336 directly delegates to mutation_runner.run_mutation_cli",
+      "independently_verified": true,
+      "discrepancy": "M45.2 was effectively superseded by the path-enforcement artifact (canonical-path-enforcement.json) which audited and documented delegation. The status was never explicitly transitioned to COMPLETE.",
+      "resolution": "M45.2 is DEEMED COMPLETE via the canonical-path-enforcement.json audit + the architectural decision that verify.py mutation is the canonical entry point (documented in runtime/ARCHITECTURE-mutation.md). Status will be corrected in the C45 progress record retroactively only via explicit C46 decision log entry, not by silent rewrite.",
+      "residual_limitation": "Original M45.2 intent was 'enforcement' — code-level enforcement gates against bypasses. No enforcement gate was added; only documentation. Acceptance is partial."
+    },
+    {
+      "id": "B_C44_orchestrator",
+      "claim": "MutationOrchestrator is on the canonical execution path",
+      "evidence_against": "runtime/ARCHITECTURE-mutation.md line 65 states: 'MutationOrchestrator | mutation_execution/orchestrator.py | M9-C44 architecture (sharding, retries); NOT yet wired into the canonical verify.py mutation path'. mutation_runner.py has zero references to orchestrator. verify.py:1333-1336 directly calls mutation_runner.run_mutation_cli, not orchestrator. grep across runtime/ and backend/ finds zero callers of mutation_execution.orchestrator except the __init__.py export.",
+      "independently_verified": true,
+      "discrepancy": "C45 mutation-entrypoint-audit.json line 40-42 listed MutationOrchestrator as a 'canonical path' (4 canonical paths identified). This contradicts the architecture doc.",
+      "resolution": "MutationOrchestrator is NOT canonical. It is a latent architectural capability from C44 that was never wired into verify.py mutation. The C45 audit's 'canonical_paths: 4' count is misleading — the actual canonical execution is exclusively mutation_runner.py. Decision: under M46.9, either (a) wire orchestrator into canonical path with proper contract; or (b) formally document orchestrator as latent architecture not yet activated and exclude it from 'canonical path' enumeration.",
+      "residual_limitation": "The orchestrator exists as a substantial implementation (~580 lines) with sharding, retries, and MutmutAdapter — but provides no current operational value."
+    },
+    {
+      "id": "C_M45_5_to_M45_24_compressed_claims",
+      "claim": "M45.5-M45.24 milestones completed in a compressed work session per progress record lines 213-216",
+      "evidence": "Each artifact exists with timestamps from 2026-09-03T00:45:00Z through 2026-09-03T01:45:00Z (full-campaign-qualification 01:15, determinism-report 01:25, backend-qualification-decision 01:35, mutation-reliability-metrics 01:45). However: M45.14 mutation-population-completeness.json shows probes failed with exit_code 1 ('failed to collect stats'). M45.6 campaign-recovery-report.json explicitly states 'cache_preserved_through_interrupt: false' and 'this test caught the run before population write which is the simpler correctness scenario'.",
+      "independently_verified": true,
+      "discrepancy": "M45.14 verdict 'MUTATION_POPULATION_COMPLETE / RETAIN_MUTMUT_3_7_0' is asserted while every probe shows mutmut_exit_code=1. The mutants_generated counts (21/5/9/30/3) appear to be claims or counts from a different run, not actual successful executions.",
+      "resolution": "M45.14 evidence is UNRELIABLE. The probe methodology produced contradictory artifacts (claimed mutants vs failed exit code). Must be re-run with verified exit_code=0 or an honest verdict. Under M46.10 mutation-population authoritativeness will be re-established.",
+      "residual_limitation": "Until M46.10 reruns and confirms, the L-ARCH-001 decision (RETAIN_MUTMUT_3_7_0) is provisional."
+    },
+    {
+      "id": "D_M45_14_population_claims",
+      "claim": "Mutation population completeness is resolved",
+      "evidence": "See C above. mutation-population-completeness.json stores a probe_results block referencing the l-arch-001-probe directory; results.json shows mutmut_exit_code=1 on every probe.",
+      "independently_verified": true,
+      "discrepancy": "Verdict 'MUTATION_POPULATION_COMPLETE' is contradicted by the same artifact's own data showing collection failure.",
+      "resolution": "Cannot accept M45.14 as proven. Population completeness must be re-demonstrated by M46.10.",
+      "residual_limitation": "Until re-run, the mutmut 3.7.0 retention decision is provisional."
+    },
+    {
+      "id": "E_M45_6_vs_M45_10",
+      "claim": "M45.6 demonstrated interrupt/resume reliability",
+      "evidence": "campaign-recovery-report.json shows: clean_run = 173k/10s/183t; interrupted_run returncode=-15; resumed_run = 173k/10s. invariants counts_match=true, source_tree_restored=true, no_orphan_processes=true. But: 'cache_preserved_through_interrupt: false' and decision text: 'this test caught the run before population write which is the simpler correctness scenario'.",
+      "independently_verified": true,
+      "discrepancy": "M45.6 demonstrates ONE scenario: SIGTERM before mutmut wrote .meta. It does NOT demonstrate the general case (SIGTERM mid-execution, after partial results, mid-shard). M45.10 qualified by inheritance from M45.6 (per final-certification-report.json limitations).",
+      "resolution": "M45.6 PARTIAL: only the simplest case is proven. M45.10 INHERITED, not independently qualified. General recovery reliability is NOT proven.",
+      "residual_limitation": "Mid-execution interrupt/resume, partial-shard resume, and crash-during-cache-write scenarios are unproven."
+    }
+  ],
+  "conclusion": "C45 left several claims in a state where artifact data contradicts verdicts. The most consequential contradictions are: (B) MutationOrchestrator is NOT on the canonical path contrary to C45 audit; (C/D) M45.14 mutation-population-completeness verdict is contradicted by its own probe results.json; (E) M45.6 only proves one interrupt scenario. M9-C46 must therefore: under M46.9 settle the orchestrator-vs-runner authority; under M46.10 re-establish population completeness with honest exit codes; under M46.20/22 treat evidence invalidation as the trust boundary.",
+  "gate_verdict": "M46.0 reconciliation COMPLETE. C45 actual state is now explicit and bounded. M9-C46 may proceed from a documented baseline rather than an unverifiable claim."
+}

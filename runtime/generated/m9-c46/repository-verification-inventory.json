@@ -1,0 +1,205 @@
+{
+  "schema": "m9-c46-repository-verification-inventory/v1",
+  "milestone": "M46.2",
+  "objective": "Construct complete inventory of production verification scope across the entire repository (backend, frontend, services, repositories, domain/core, common, API, infrastructure, cross-layer).",
+  "generated_at": "2026-09-03T07:15:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "totals": {
+    "backend_source_files": 242,
+    "backend_source_loc": 46127,
+    "backend_test_files": 283,
+    "backend_test_loc": 66638,
+    "frontend_source_files": 733,
+    "frontend_test_files": 106,
+    "verification_modules": 76,
+    "verify_py_commands": 90
+  },
+  "backend_production_areas": [
+    {
+      "area": "common",
+      "path": "backend/src/common",
+      "files": 5,
+      "loc": 339,
+      "tests_unit": 0,
+      "criticality": "high",
+      "notes": "Shared calculation utilities. Currently ZERO unit tests under backend/tests/unit matching the common path. Coverage of common_calculations captured by engine-level tests; verify under M46.14."
+    },
+    {
+      "area": "core",
+      "path": "backend/src/core",
+      "files": 38,
+      "loc": 5892,
+      "subdirs": ["db", "domain", "dtos", "mappers"],
+      "tests_unit": 7,
+      "criticality": "high",
+      "notes": "Domain models, DTOs, mappers. Mappers need explicit verification."
+    },
+    {
+      "area": "data",
+      "path": "backend/src/data",
+      "files": 1,
+      "loc": 0,
+      "tests_unit": 0,
+      "criticality": "low",
+      "notes": "Empty data package (placeholder)."
+    },
+    {
+      "area": "engines",
+      "path": "backend/src/engines",
+      "files": 64,
+      "loc": 13957,
+      "subdirs": ["account_engine", "behaviour_engine", "credit_card_engine", "financial_events", "financial_intelligence", "loan_engine", "recommendation_engine", "transaction_intelligence"],
+      "tests_unit": 69,
+      "criticality": "critical",
+      "notes": "Primary financial engines. Most mature verification (C42-C46 prior focus). Authoritative mutation scope = engines/* per C45."
+    },
+    {
+      "area": "extraction",
+      "path": "backend/src/extraction",
+      "files": 11,
+      "loc": 5586,
+      "tests_unit": 0,
+      "criticality": "high",
+      "notes": "Data extraction logic (SMS, statements, transactions). No dedicated tests; verification relies on integration tests at API boundary. M46.14 candidate."
+    },
+    {
+      "area": "models",
+      "path": "backend/src/models",
+      "files": 22,
+      "loc": 1713,
+      "tests_unit": 0,
+      "criticality": "medium",
+      "notes": "DB / ORM models. Implicit coverage via API contract tests; explicit model tests absent."
+    },
+    {
+      "area": "orchestration",
+      "path": "backend/src/orchestration",
+      "files": 2,
+      "loc": 191,
+      "tests_unit": 0,
+      "criticality": "medium",
+      "notes": "Cross-engine orchestration glue. Lightweight; needs explicit coverage."
+    },
+    {
+      "area": "repositories",
+      "path": "backend/src/repositories",
+      "files": 27,
+      "loc": 4606,
+      "tests_unit": 9,
+      "criticality": "high",
+      "notes": "Data-access layer. Has some tests but coverage ratio is ~33%. M46.14 target."
+    },
+    {
+      "area": "routers",
+      "path": "backend/src/routers",
+      "files": 29,
+      "loc": 4168,
+      "tests_unit": 0,
+      "criticality": "high",
+      "notes": "API endpoint definitions. Verified indirectly via contract tests (33 files) and integration tests (7 files). M46.16 candidate."
+    },
+    {
+      "area": "services",
+      "path": "backend/src/services",
+      "files": 32,
+      "loc": 7519,
+      "tests_unit": 4,
+      "criticality": "high",
+      "notes": "Service layer. Coverage ratio ~12%. M46.14 high-priority target."
+    },
+    {
+      "area": "structural",
+      "path": "backend/src/structural",
+      "files": 2,
+      "loc": 843,
+      "tests_unit": 0,
+      "criticality": "medium",
+      "notes": "Structural/derivation code. Unknown test coverage."
+    },
+    {
+      "area": "utils",
+      "path": "backend/src/utils",
+      "files": 1,
+      "loc": 0,
+      "tests_unit": 1,
+      "criticality": "low",
+      "notes": "Empty utils (placeholder)."
+    }
+  ],
+  "test_categories": [
+    {"category": "unit", "files": 91, "loc": 46060},
+    {"category": "integration", "files": 7, "loc": 418},
+    {"category": "contract", "files": 33, "loc": 4317},
+    {"category": "golden", "files": 11, "loc": 228},
+    {"category": "properties", "files": 41, "loc": 8425},
+    {"category": "invariants", "files": 23, "loc": 2244},
+    {"category": "architecture", "files": 3, "loc": 511},
+    {"category": "audits", "files": 1, "loc": 314},
+    {"category": "capability", "files": 27, "loc": 655},
+    {"category": "domain", "files": 12, "loc": 510},
+    {"category": "meta", "files": 7, "loc": 1440}
+  ],
+  "frontend_production_areas": [
+    {
+      "area": "frontend/lib",
+      "files": 700,
+      "tests": 106,
+      "subareas": ["hooks", "formatters", "simulation", "timeline", "command", "sort", "interaction", "groups", "navigation", "utils", "mappers"],
+      "criticality": "medium",
+      "notes": "Large frontend surface; multiple __tests__ subdirectories present. M46.15 will inventory further."
+    }
+  ],
+  "verification_layer_inventory": {
+    "verifies_files": 76,
+    "verify_py_commands": 90,
+    "workflow_files": "see M46.5",
+    "ci_evidence_artifacts_in_m9_c44": true,
+    "diagnostic_modules": ["diagnostic_agent.py", "forensic_cli.py", "failure_report.py", "gap_classification.py"],
+    "strengthening_modules": ["strengthening.py", "strengthening_pipeline.py", "candidate_validation.py", "generation_engine.py", "test_generator.py", "survivor_intel.py", "survivor_catalog.py"]
+  },
+  "coverage_gaps_identified": [
+    {
+      "area": "common",
+      "current": "0 unit tests",
+      "needed": "Direct unit tests for common_calculations",
+      "priority": "high"
+    },
+    {
+      "area": "services",
+      "current": "4 unit tests",
+      "needed": "Service-level tests beyond engines (auth, persistence, reconciliation)",
+      "priority": "high"
+    },
+    {
+      "area": "repositories",
+      "current": "9 unit tests",
+      "needed": "Repository CRUD + persistence integrity tests",
+      "priority": "high"
+    },
+    {
+      "area": "extraction",
+      "current": "0 unit tests",
+      "needed": "Parser/extractor behavioral tests",
+      "priority": "medium"
+    },
+    {
+      "area": "orchestration",
+      "current": "0 unit tests",
+      "needed": "Cross-engine workflow tests",
+      "priority": "medium"
+    },
+    {
+      "area": "structural",
+      "current": "0 unit tests",
+      "needed": "Derivation correctness tests",
+      "priority": "medium"
+    },
+    {
+      "area": "frontend/lib",
+      "current": "106 test files for ~700 source files (15%)",
+      "needed": "Critical-financial-display + behavior tests; per M46.15",
+      "priority": "high"
+    }
+  ],
+  "gate_verdict": "M46.2 COMPLETE. Repository inventory produced. No major production directory left unexplained. 7 high/medium coverage gaps identified for M46.14 + M46.15 to address."
+}

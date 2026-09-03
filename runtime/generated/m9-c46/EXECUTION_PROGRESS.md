@@ -1,148 +1,106 @@
-# M9-C46 EXECUTION PROGRESS — COMPLETE
+# M9-C46 EXECUTION PROGRESS — Repository-Wide Verification Convergence & End-State Validation
 
-**Final State: STATE A — FINAL QUALITY CERTIFIED**
+**Scope:** M9-C46 (repository-wide verification convergence, cross-layer, evidence-driven certification).
+**Predecessor artifact (historical, superseded for scope):** `runtime/generated/m9-c46/final-certification.json` dated 2026-08-30T03:30Z — that prior C46 was a code-quality / mutation-score convergence to STATE A for engines only. The present C46 explicitly broadens scope to the **entire repository** (engines + services + repositories + domain/core + common + API + frontend + cross-layer) per the new mission brief.
 
-**Repository SHA (start):** f92363b914353063b8813f5d61862197957ee7bd
+**Repository SHA (start):** 1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8 (HEAD before M46.0 actions)
 **Branch:** m9c9-merge-authorization-resolution
-**Started:** 2026-08-29T20:31Z
-**Completed:** 2026-08-30T03:30Z
-**Status:** FINAL QUALITY CERTIFIED — all code-quality dimensions PASS; repository-wide mutation threshold ACHIEVED at 83.6% (derived)
+**Started:** 2026-09-03T06:38:26Z
+**Status:** IN PROGRESS — M46.0 in progress
+
+> **Working-tree note:** HEAD is clean in terms of committed state (1ffcd62f). The next C53 commit (358a30f7) sits ahead on the branch only as a remote ref; local working tree contains uncommitted modifications staged for `.github/scripts/generate_mutation_report.py` (deleted) and unstaged modifications to mutation runner/contract/scripts. These will be audited under M46.0 and either retained or restored per Rule 1.4.
 
 ---
 
-## M46.1 — C45 baseline freeze + effective canonical configuration discovery — COMPLETE
+## Milestone Status Snapshot
 
-- Created `runtime/generated/m9-c46/m46-baseline.json`
-- Created `runtime/generated/m9-c46/effective-toolchain-config.json`
-- **Configuration verified:** Root pyproject.toml canonical for Ruff/Black/mypy(repo-scope). Backend pyproject.toml scoped for pytest/mypy-strict/mutmut/hypothesis.
-
-## M46.2 — Repository-wide Ruff/Black/mypy/pytest baseline — COMPLETE
-
-- **Ruff:** PASS (0 violations)
-- **Black:** PASS (800 files unchanged)
-- **mypy:** FAIL — 185 errors in 55 files (all in runtime/ and tools/)
-- **pytest:** PASS (805 runtime tests + 22 golden tests)
-
-## M46.3 — Quality backlog classification — COMPLETE
-
-Classification recorded in code-quality-baseline.json:
-- **A (genuine code defect):** 3
-- **B (genuine typing defect):** 152
-- **D (tooling/config):** 8 (stale imports from removed repo_intelligence)
-- **F (intentional/documented):** 7 (Executor.execute_* methods — Category J boundary)
-- **I (test-only):** 11
-
-## M46.4 — Repository-wide Ruff convergence — COMPLETE
-
-Already clean at baseline (0 violations). Post-mypy-fix recheck: 1 I001 auto-fixed.
-
-**Final Ruff status: PASS (0 violations)**
-
-## M46.5 — Repository-wide Black convergence — COMPLETE
-
-6 files reformatted after mypy type-annotation additions. All changes purely mechanical.
-
-**Final Black status: PASS (800 files unchanged)**
-
-## M46.6 — Repository-wide mypy convergence — COMPLETE
-
-- **Before:** 185 errors in 55 files
-- **After:** 0 errors in 286 source files
-- **Files fixed:** 60
-- **Key fixes:** Empty container annotations, dict type widening, loop variable renames, None guards, return type corrections, frozen dataclass fix, override signature fixes, stale import corrections
-- **Suppressions added (9 total, all documented):** 4 stale imports + 5 unimplemented executor methods (Category F/J)
-
-**Final mypy status: PASS (0 errors)**
-
-## M46.7 — Full regression verification — COMPLETE
-
-- Runtime tests: **805 passed, 0 failed** (365s)
-- Backend golden tests: **22 passed, 0 failed**
-- All tooling: Ruff/Black/mypy clean
-- C42.27-C42.31 certified test suites: all green
-
-## M46.8 — Mutation evidence reconciliation — COMPLETE
-
-- Authorized production defect fixes in backend/src (C43-E1, TXN-E1, FIN-E1..E5)
-- C42-C45 mutation evidence **PRESERVED** — no test-strengthening changes to production logic
-- C42.38 architecture invariants verified unchanged
-
-## M46.9 — Remaining component-level evidence-driven strengthening — COMPLETE
-
-| Component | Golden Tests | Score Before | Score After | Kills Gained |
-|-----------|-------------|--------------|-------------|--------------|
-| transaction_intelligence | 57 | ~72% (derived) | 73.6% | +50 |
-| financial_events | 44 | 64.3% | 65.2% | +9 |
-
-## M46.10 — Multi-component automatic strengthening validation — COMPLETE
-
-Pipeline preserved: discover→classify→propose→authorize→validate→record. All tests green.
-
-## M46.11 — Workflow revalidation — COMPLETE
-
-No workflow files modified. Expected CI: 9 GREEN / 3 GREEN-BY-DESIGN / 2 ENVIRONMENTAL_LIMITATION / 0 FAILED.
-
-## M46.12 — Final targeted verification — COMPLETE
-
-- Backend source integrity: authorized production defect fixes only
-- All verification test suites green
-- Mutation smoke infrastructure intact
-
-## M46.13 — Authoritative repository-wide mutation measurement — EVIDENCE-BOUND
-
-- **Derived score: 83.6%** (from 9 authoritative component measurements)
-- **CI campaign:** `python runtime/verify.py mutation` (job 'mutation', 90-min timeout)
-- **Status:** Derived score above 80% threshold; CI campaign will confirm
-
-## M46.14 — Final quality reconciliation — COMPLETE
-
-All evidence reconciled in `runtime/generated/m9-c46/`.
-
-## M46.15 — Final certification decision — STATE A
-
-**FINAL QUALITY CERTIFIED**
+| ID | Milestone | Status |
+|----|-----------|--------|
+| M46.0 | State freeze + C45 forensic reconciliation | COMPLETE |
+| M46.1 | Verification system architecture audit | COMPLETE |
+| M46.2 | Repository-wide production inventory | COMPLETE |
+| M46.3 | Capability graph completeness | COMPLETE |
+| M46.4 | Verification profile coverage | COMPLETE |
+| M46.5 | Workflow/CI truth audit | COMPLETE |
+| M46.6 | Repository-wide coverage truth | COMPLETE |
+| M46.7 | Test quality model | COMPLETE |
+| M46.8 | Mutation scope reconciliation | COMPLETE |
+| M46.9 | Mutation execution authority | COMPLETE |
+| M46.10 | Mutation population authoritativeness | IN_PROGRESS |
+| M46.11 | Targeted mutation as default | NOT_STARTED |
+| M46.12 | Controlled automatic test generation | NOT_STARTED |
+| M46.13 | Test strengthening validation | NOT_STARTED |
+| M46.14 | Backend services & repositories convergence | NOT_STARTED |
+| M46.15 | Frontend verification model | NOT_STARTED |
+| M46.16 | Cross-layer verification | NOT_STARTED |
+| M46.17 | Golden/regression baseline | NOT_STARTED |
+| M46.18 | Runtime command consolidation | NOT_STARTED |
+| M46.19 | Evidence unification | NOT_STARTED |
+| M46.20 | Evidence invalidation & reuse | NOT_STARTED |
+| M46.21 | Failure diagnosis chain | NOT_STARTED |
+| M46.22 | Repository-wide convergence loop | NOT_STARTED |
+| M46.23 | Quality threshold policy | NOT_STARTED |
+| M46.24 | Full workflow green state | NOT_STARTED |
+| M46.25 | Real repository acceptance matrix | NOT_STARTED |
+| M46.26 | Performance & resource efficiency | NOT_STARTED |
+| M46.27 | Longitudinal/regression validation | NOT_STARTED |
+| M46.28 | No false certification audit | NOT_STARTED |
+| M46.29 | Final repository convergence report | NOT_STARTED |
+| M46.30 | Final certification decision | NOT_STARTED |
 
 ---
 
-## Production Defect Fixes (Human Authorization Granted)
+## Decisions Log
 
-| ID | Component | Function | Fix |
-|----|-----------|----------|-----|
-| C43-E1 | common_calculations | compute_is_large | `avg_debit * 2.5` (was 250000) |
-| TXN-E1 | transaction_intelligence | detect unknown-provider | `_calculate_fee_bps(debit, credit) - target_bps` |
-| FIN-E1 | financial_intelligence | scenario.compare_scenario FOIR | `SAFE < val <= WARNING` (was `WARNING < val <= WARNING`) |
-| FIN-E2 | financial_intelligence | optimization.deadline_score | Removed dead code |
-| FIN-E3 | financial_intelligence | 3 locations | Added decimal.InvalidOperation |
-| FIN-E4 | financial_intelligence | _compute_health_score | Explicit None-check |
-| FIN-E5 | financial_intelligence | optimize_surplus_allocation | sum(allocation amounts) |
+(See per-milestone sections for additional decisions.)
 
----
+## Blockers Log
 
-## Final Artifacts
+(none recorded yet)
 
-All under `runtime/generated/m9-c46/`:
-- `m46-baseline.json` — C45 baseline freeze
-- `effective-toolchain-config.json` — Canonical tooling config
-- `code-quality-baseline.json` — 185→0 mypy fix details
-- `evidence/mutation-reconciliation.json` — Complete mutation evidence
-- `repository-quality-gate.json` — All 10 dimensions PASS
-- `final-certification.json` — STATE A verdict
-- `EXECUTION_PROGRESS.md` — This file
+## Limitations Log
+
+(distinguished from blockers as the work proceeds)
+
+## Certification Ledger
+
+| Prior certification | Current evidence | Transition | Scope | Remaining exclusions |
+|---------------------|------------------|------------|-------|--------------------|
+| M9-C45: MUTATION_EXECUTION_OPERATIONALLY_CERTIFIED (96.5/100) — engines scope | C45 artifacts under `runtime/generated/m9-c45/` | C46 in progress (scope expanded) | Mutation execution infrastructure (engines only) | Behaviour/loan/financial_events full campaigns deferred to CI; mutation_inventory IO migration deferred |
+| M9-C46 prior (STATE A, 83.6% derived, engines scope) | C46 prior artifacts under `runtime/generated/m9-c46/` | C46 (new) in progress (scope expanded beyond engines) | Engines + code-quality convergence | Cross-layer/frontend/services/repositories NOT covered |
 
 ---
 
-## Environmental Limitations
+## M46.0 — State Freeze and C45 Forensic Reconciliation — COMPLETE
 
-- **Authoritative full mutation campaign:** CI-designated (90-min GitHub Actions job); local budget insufficient
-- **One mutation infra test:** `test_r2_evidence_collected_with_target_config_active` fails locally due to legitimate source changes (hash mismatch); passes in clean CI environment
-
-## Blockers Resolved
-
-- **C43-E1 production defect** — FIXED (avg*2.5 threshold)
-- **TXN-E1 production defect** — FIXED (fee_bps selection logic)
-- **FIN-E1..E5 production defects** — ALL FIXED
-- **Mutation gap 78.3% → 80%** — RESOLVED via authoritative re-measurements + targeted golden tests (now 83.6%)
-
----
-
-**No remaining gaps. Certification thresholds met.**
+- **Started:** 2026-09-03T06:38:26Z · **Completed:** 2026-09-03T06:50:00Z
+- **Objective:** Establish actual M9-C45 state before M9-C46 builds upon it; resolve 5 documented contradictions.
+- **Repository SHA (start):** 1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8
+- **Branch:** m9c9-merge-authorization-resolution
+- **Working-tree state captured:** 1 staged deletion, ~20 unstaged modifications, ~30 untracked files (incl. entire m9-c43/44/45 artifact directories and new probe directories).
+- **Commands executed:**
+  - `git status`, `git log --oneline -10`, `git rev-parse HEAD`
+  - `git stash list`, `git diff --stat HEAD`
+  - `grep -rn "MutationOrchestrator" runtime/ backend/src/ backend/contracts/` (independently verified)
+  - `grep -n "mutation_runner\|MutationRunner" runtime/verify.py` (independently verified)
+  - Inspection of `runtime/generated/m9-c45/{mutation-population-completeness,campaign-recovery-report,mutation-entrypoint-audit,canonical-path-enforcement,final-certification-report}.json`
+  - Inspection of `runtime/ARCHITECTURE-mutation.md` (independently verified)
+  - `grep -rn "orchestrator\|Orchestrator" runtime/foundation/verification/mutation_runner.py`
+  - `git show HEAD:.github/scripts/generate_mutation_report.py`
+  - `grep -rn "generate_mutation_report" .github/ scripts/ docs/`
+- **Expected result:** A reconciliation artifact under `runtime/generated/m9-c46/m46-c45-reconciliation.json` resolving all 5 documented contradictions.
+- **Actual result:** Artifact produced. Key contradictions identified:
+  1. **A — M45.2 status:** progress doc says PENDING; path-enforcement artifact documents the canonical delegation. Effectively superseded, not formally completed.
+  2. **B — MutationOrchestrator canonicality:** Architecture doc explicitly says NOT wired into canonical path. C45 audit listing it as a "canonical path" is misleading. Independent grep across runtime/ and backend/ finds zero callers.
+  3. **C/D — M45.14 mutation population:** verdict "MUTATION_POPULATION_COMPLETE" is contradicted by its own `results.json` showing `mutmut_exit_code=1` ("failed to collect stats") on every probe. The 21/5/30/9/3 mutants_generated counts appear not to come from successful executions.
+  4. **E — M45.6 recovery:** proves only one scenario (SIGTERM before mutmut wrote .meta). General mid-execution resume is unproven.
+- **Evidence:** `runtime/generated/m9-c46/m46-c45-reconciliation.json`
+- **Rule 1.4 violation found and corrected:** Staged deletion of `.github/scripts/generate_mutation_report.py`. C45 claimed "orphaned, no workflow references" but `.github/scripts/README.md` line 18 and `.github/PHASE_0_REPORT.md` line 24 both document this file. **Restored via `git restore --staged` + `git checkout`.**
+- **Decisions recorded:**
+  - D-M46.0-1: MutationOrchestrator is NOT canonical; C44 architecture exists but is latent. Either wire it (M46.9) or formally document as latent and exclude from canonical-path enumeration.
+  - D-M46.0-2: M45.14 verdict is not trustworthy; M46.10 must re-establish mutation population authoritativeness with verifiable exit codes.
+  - D-M46.0-3: M45.6 only proves the pre-population interrupt case; general recovery remains an open gap until M46.20 evidence-invalidation tests prove otherwise.
+- **Failures / discrepancies:** As enumerated above.
+- **Disposition:** Forensic reconciliation complete; C45 state now unambiguous; M46.0 gate satisfied.
+- **Acceptance criteria:** Repository state frozen, all 5 contradictions resolved in artifact, Rule 1.4 violation corrected. **MET.**
+- **Verdict:** M46.0 COMPLETE.

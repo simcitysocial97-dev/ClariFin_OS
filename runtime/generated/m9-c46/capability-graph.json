@@ -1,0 +1,460 @@
+{
+  "schema": "m9-c51-capability-graph/v1",
+  "generated_at": "2026-09-03T06:57:08.824503+00:00",
+  "nodes": [
+    {
+      "id": "discover.blast-radius",
+      "stage": "discovery",
+      "command": "python runtime/verify.py blast-radius [--files FILE...] [--base REF] [--head REF] [--json] [--out PATH]",
+      "authorization": "none"
+    },
+    {
+      "id": "discover.capability-for",
+      "stage": "discovery",
+      "command": "python runtime/verify.py capability-for --type <problem> [--changed FILE] [--test PATH] [--survivor ID] [--capability ID] [--engine NAME] [--scope SCOPE] [--workflow ID] [--record PATH] [--error TEXT] [--json] [--out PATH]",
+      "authorization": "none"
+    },
+    {
+      "id": "discover.capability-graph",
+      "stage": "discovery",
+      "command": "python runtime/verify.py capability-graph [--json] [--out PATH]",
+      "authorization": "none"
+    },
+    {
+      "id": "discover.capability-inventory",
+      "stage": "discovery",
+      "command": "python runtime/verify.py capability-inventory [--capability X] [--profile X] [--category X] [--json] | capabilities [--stage X] [--json]",
+      "authorization": "none"
+    },
+    {
+      "id": "discover.latent-capability-audit",
+      "stage": "discovery",
+      "command": "python runtime/verify.py latent-audit [--json] [--out PATH]",
+      "authorization": "none"
+    },
+    {
+      "id": "discover.resolve-capabilities",
+      "stage": "discovery",
+      "command": "python runtime/verify.py resolve-capabilities FILE... [--json] [--out PATH]",
+      "authorization": "none"
+    },
+    {
+      "id": "discover.what-should-i-run",
+      "stage": "discovery",
+      "command": "python runtime/verify.py what-should-i-run [--files FILE...] [--json]",
+      "authorization": "none"
+    },
+    {
+      "id": "plan.control-plane",
+      "stage": "planning",
+      "command": "python runtime/verify.py control-plane-plan FILE... [--json] [--out PATH]",
+      "authorization": "none"
+    },
+    {
+      "id": "plan.deep-contract",
+      "stage": "planning",
+      "command": "python runtime/verify.py deep-contract [--out PATH]",
+      "authorization": "none"
+    },
+    {
+      "id": "plan.execution-plan",
+      "stage": "planning",
+      "command": "python runtime/verify.py execution-plan FILE... [--json] [--out PATH]",
+      "authorization": "none"
+    },
+    {
+      "id": "plan.local-gate",
+      "stage": "planning",
+      "command": "python runtime/verify.py local-gate [--out PATH]",
+      "authorization": "none"
+    },
+    {
+      "id": "plan.tier-plan",
+      "stage": "planning",
+      "command": "python runtime/verify.py plan --tier <local|pr|deep> [--base REF] [--changed FILE...]",
+      "authorization": "none"
+    },
+    {
+      "id": "evidence.pipeline-plan",
+      "stage": "execution",
+      "command": "python runtime/verify.py evidence-plan",
+      "authorization": "operator"
+    },
+    {
+      "id": "exec.environment-check",
+      "stage": "execution",
+      "command": "python runtime/verify.py env-check",
+      "authorization": "none"
+    },
+    {
+      "id": "exec.evidence-execute",
+      "stage": "execution",
+      "command": "python runtime/verify.py evidence-execute [--run-mutation]",
+      "authorization": "operator"
+    },
+    {
+      "id": "exec.execution-evidence",
+      "stage": "execution",
+      "command": "python runtime/verify.py exec-evidence",
+      "authorization": "none"
+    },
+    {
+      "id": "exec.orchestrator",
+      "stage": "execution",
+      "command": "python runtime/verify.py execute FILE... [--json] [--out PATH]",
+      "authorization": "operator"
+    },
+    {
+      "id": "quality.black",
+      "stage": "execution",
+      "command": "python -m black --check --diff .",
+      "authorization": "none"
+    },
+    {
+      "id": "quality.mypy",
+      "stage": "execution",
+      "command": "python -m mypy .  # repo boundary;  python -m mypy src/  # backend strict boundary (rootdir=backend)",
+      "authorization": "none"
+    },
+    {
+      "id": "quality.pytest",
+      "stage": "execution",
+      "command": "python -m pytest tests/unit/ -x -q  # backend (rootdir=backend);  python -m pytest runtime/tests/  # runtime",
+      "authorization": "none"
+    },
+    {
+      "id": "quality.ruff",
+      "stage": "execution",
+      "command": "python -m ruff check . --output-format=github",
+      "authorization": "none"
+    },
+    {
+      "id": "measure.coverage",
+      "stage": "measurement",
+      "command": "python runtime/verify.py measurement coverage <SCOPE> [--json]",
+      "authorization": "none"
+    },
+    {
+      "id": "measure.mutation",
+      "stage": "measurement",
+      "command": "python runtime/verify.py mutation [--smoke | --target <engine>] [--restore] [--json]",
+      "authorization": "human"
+    },
+    {
+      "id": "measure.mutation-inventory",
+      "stage": "measurement",
+      "command": "python runtime/verify.py mutation-inventory [--json]",
+      "authorization": "none"
+    },
+    {
+      "id": "measure.truth-report",
+      "stage": "measurement",
+      "command": "python runtime/verify.py measurement-truth-report",
+      "authorization": "none"
+    },
+    {
+      "id": "diagnose.bypass-audit",
+      "stage": "diagnosis",
+      "command": "python runtime/verify.py bypass-audit [--json] [--out PATH]",
+      "authorization": "none"
+    },
+    {
+      "id": "diagnose.failure-attribution",
+      "stage": "diagnosis",
+      "command": "python runtime/verify.py diagnose-failures",
+      "authorization": "none"
+    },
+    {
+      "id": "diagnose.intelligence",
+      "stage": "diagnosis",
+      "command": "python runtime/verify.py intelligence [--logs] [--no-ci]",
+      "authorization": "none"
+    },
+    {
+      "id": "strengthen.capability-pipeline",
+      "stage": "strengthening",
+      "command": "python runtime/verify.py strengthen-capability <CAPABILITY_ID> [--max-survivors N] [--json] | strengthen-survivor <SURVIVOR_ID> [--json] [--out PATH]",
+      "authorization": "human"
+    },
+    {
+      "id": "strengthen.forensic",
+      "stage": "strengthening",
+      "command": "python runtime/verify.py forensic-diagnose <ENGINE> | forensic-report | strengthen-discover <ENGINE> | strengthen-propose <ENGINE> | strengthen-validate <ENGINE> | strengthen-survivor-forensic <SURVIVOR_ID> [--json] | strengthen-analyze <ENGINE> | strengthen-report",
+      "authorization": "human"
+    },
+    {
+      "id": "strengthen.survivor-intel",
+      "stage": "strengthening",
+      "command": "python runtime/verify.py mutation-intel [SURVIVOR_ID] [--json]",
+      "authorization": "none"
+    },
+    {
+      "id": "evidence.config-authority",
+      "stage": "evidence_inspection",
+      "command": "python runtime/verify.py config-authority [--validate] [--json] [--out PATH]",
+      "authorization": "none"
+    },
+    {
+      "id": "evidence.execution-status",
+      "stage": "evidence_inspection",
+      "command": "python runtime/verify.py execution-status [--plan PLAN] [--latest] [--json] | execution-report [--plan PLAN] [--latest] [--json]",
+      "authorization": "none"
+    },
+    {
+      "id": "evidence.inspect-truth",
+      "stage": "evidence_inspection",
+      "command": "python runtime/verify.py measurement-truth <RECORD_PATH> [--json]",
+      "authorization": "none"
+    },
+    {
+      "id": "evidence.knowledge-base",
+      "stage": "evidence_inspection",
+      "command": "python runtime/verify.py knowledge [endpoint|capability|workspace|rule|component] [--json] [--out PATH]",
+      "authorization": "none"
+    },
+    {
+      "id": "evidence.reconcile",
+      "stage": "evidence_inspection",
+      "command": "python runtime/verify.py reconcile --plan PATH [--evidence PATH] [--local] [--json]",
+      "authorization": "none"
+    },
+    {
+      "id": "evidence.reconcile-pipeline",
+      "stage": "evidence_inspection",
+      "command": "python runtime/verify.py evidence-reconcile",
+      "authorization": "none"
+    },
+    {
+      "id": "evidence.workspace-status",
+      "stage": "evidence_inspection",
+      "command": "python runtime/verify.py status | metrics | history | deps | verify-status",
+      "authorization": "none"
+    },
+    {
+      "id": "certify.api-contracts",
+      "stage": "certification",
+      "command": "python runtime/verify.py api-contracts",
+      "authorization": "none"
+    },
+    {
+      "id": "certify.audit",
+      "stage": "certification",
+      "command": "python runtime/verify.py audit",
+      "authorization": "none"
+    },
+    {
+      "id": "certify.contract-governance",
+      "stage": "certification",
+      "command": "python runtime/verify.py contract-governance",
+      "authorization": "none"
+    },
+    {
+      "id": "certify.evidence-pipeline",
+      "stage": "certification",
+      "command": "python runtime/verify.py evidence-certify",
+      "authorization": "none"
+    },
+    {
+      "id": "certify.integrity",
+      "stage": "certification",
+      "command": "python runtime/verify.py integrity",
+      "authorization": "none"
+    },
+    {
+      "id": "exec.profile.quick",
+      "stage": "execution",
+      "command": "python runtime/verify.py quick",
+      "authorization": "none"
+    },
+    {
+      "id": "exec.profile.backend",
+      "stage": "execution",
+      "command": "python runtime/verify.py backend",
+      "authorization": "none"
+    },
+    {
+      "id": "exec.profile.frontend",
+      "stage": "execution",
+      "command": "python runtime/verify.py frontend",
+      "authorization": "none"
+    },
+    {
+      "id": "exec.profile.contracts",
+      "stage": "execution",
+      "command": "python runtime/verify.py contracts",
+      "authorization": "none"
+    },
+    {
+      "id": "exec.profile.property",
+      "stage": "execution",
+      "command": "python runtime/verify.py property",
+      "authorization": "none"
+    },
+    {
+      "id": "exec.profile.integration",
+      "stage": "execution",
+      "command": "python runtime/verify.py integration",
+      "authorization": "none"
+    },
+    {
+      "id": "exec.profile.migration",
+      "stage": "execution",
+      "command": "python runtime/verify.py migration",
+      "authorization": "none"
+    },
+    {
+      "id": "exec.profile.repository",
+      "stage": "execution",
+      "command": "python runtime/verify.py repository",
+      "authorization": "none"
+    },
+    {
+      "id": "exec.profile.full",
+      "stage": "execution",
+      "command": "python runtime/verify.py full",
+      "authorization": "none"
+    },
+    {
+      "id": "exec.profile.runtime",
+      "stage": "execution",
+      "command": "python runtime/verify.py runtime",
+      "authorization": "none"
+    },
+    {
+      "id": "exec.profile.golden",
+      "stage": "execution",
+      "command": "python runtime/verify.py golden",
+      "authorization": "none"
+    },
+    {
+      "id": "exec.profile.playwright",
+      "stage": "execution",
+      "command": "python runtime/verify.py playwright",
+      "authorization": "none"
+    }
+  ],
+  "edges": [
+    {
+      "source": "plan.control-plane",
+      "target": "discover.resolve-capabilities",
+      "edge_type": "prerequisite",
+      "reason": "plan.control-plane requires discover.resolve-capabilities"
+    },
+    {
+      "source": "plan.execution-plan",
+      "target": "discover.blast-radius",
+      "edge_type": "prerequisite",
+      "reason": "plan.execution-plan requires discover.blast-radius"
+    },
+    {
+      "source": "plan.execution-plan",
+      "target": "plan.control-plane",
+      "edge_type": "prerequisite",
+      "reason": "plan.execution-plan requires plan.control-plane"
+    },
+    {
+      "source": "exec.orchestrator",
+      "target": "plan.execution-plan",
+      "edge_type": "prerequisite",
+      "reason": "exec.orchestrator requires plan.execution-plan"
+    },
+    {
+      "source": "measure.mutation",
+      "target": "measure.mutation",
+      "edge_type": "authorization_boundary",
+      "reason": "measure.mutation requires human authorization"
+    },
+    {
+      "source": "strengthen.capability-pipeline",
+      "target": "strengthen.survivor-intel",
+      "edge_type": "prerequisite",
+      "reason": "strengthen.capability-pipeline requires strengthen.survivor-intel"
+    },
+    {
+      "source": "strengthen.capability-pipeline",
+      "target": "strengthen.capability-pipeline",
+      "edge_type": "authorization_boundary",
+      "reason": "strengthen.capability-pipeline requires human authorization"
+    },
+    {
+      "source": "strengthen.forensic",
+      "target": "strengthen.survivor-intel",
+      "edge_type": "prerequisite",
+      "reason": "strengthen.forensic requires strengthen.survivor-intel"
+    },
+    {
+      "source": "strengthen.forensic",
+      "target": "strengthen.forensic",
+      "edge_type": "authorization_boundary",
+      "reason": "strengthen.forensic requires human authorization"
+    },
+    {
+      "source": "measure.coverage",
+      "target": "measure.truth-report",
+      "edge_type": "evidence_dependency",
+      "reason": "Evidence kind: coverage_measurement"
+    },
+    {
+      "source": "measure.coverage",
+      "target": "evidence.inspect-truth",
+      "edge_type": "evidence_dependency",
+      "reason": "Evidence kind: coverage_measurement"
+    },
+    {
+      "source": "measure.coverage",
+      "target": "certify.contract-governance",
+      "edge_type": "evidence_dependency",
+      "reason": "Evidence kind: coverage_measurement"
+    },
+    {
+      "source": "discover.blast-radius",
+      "target": "plan.execution-plan",
+      "edge_type": "successor",
+      "reason": "Canonical pipeline spine"
+    },
+    {
+      "source": "plan.execution-plan",
+      "target": "exec.orchestrator",
+      "edge_type": "successor",
+      "reason": "Canonical pipeline spine"
+    },
+    {
+      "source": "exec.orchestrator",
+      "target": "measure.truth-report",
+      "edge_type": "successor",
+      "reason": "Canonical pipeline spine"
+    },
+    {
+      "source": "measure.truth-report",
+      "target": "diagnose.failure-attribution",
+      "edge_type": "successor",
+      "reason": "Canonical pipeline spine"
+    },
+    {
+      "source": "diagnose.failure-attribution",
+      "target": "strengthen.survivor-intel",
+      "edge_type": "successor",
+      "reason": "Canonical pipeline spine"
+    },
+    {
+      "source": "strengthen.survivor-intel",
+      "target": "strengthen.capability-pipeline",
+      "edge_type": "successor",
+      "reason": "Canonical pipeline spine"
+    },
+    {
+      "source": "strengthen.capability-pipeline",
+      "target": "measure.mutation",
+      "edge_type": "escalation",
+      "reason": "Canonical pipeline spine"
+    },
+    {
+      "source": "measure.mutation",
+      "target": "certify.contract-governance",
+      "edge_type": "successor",
+      "reason": "Canonical pipeline spine"
+    }
+  ],
+  "node_count": 55,
+  "edge_count": 20
+}

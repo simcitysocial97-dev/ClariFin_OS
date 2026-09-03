@@ -1,0 +1,57 @@
+{
+  "schema": "m9-c46-mutation-authority-report/v1",
+  "milestone": "M46.9",
+  "objective": "Resolve C44/C45 mutation execution authority — one canonical execution contract, no parallel authorities.",
+  "generated_at": "2026-09-03T09:15:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "issue_summary": {
+    "C44_intent": "Introduce MutationOrchestrator with sharding, retries, and backend abstraction",
+    "C45_reality": "Orchestrator module exists at mutation_execution/orchestrator.py (~580 lines) but is NOT wired into the canonical verify.py mutation path",
+    "current_canonical_path": "verify.py mutation -> mutation_runner.py -> mutmut 3.7.0 subprocess",
+    "evidence_for_orchestrator_unused": [
+      "runtime/ARCHITECTURE-mutation.md line 65: 'MutationOrchestrator NOT yet wired into the canonical verify.py mutation path'",
+      "grep across runtime/ and backend/ finds zero callers of mutation_execution.orchestrator except __init__.py export",
+      "verify.py:1333-1336 dispatches to mutation_runner.run_mutation_cli directly"
+    ]
+  },
+  "canonical_chain_resolved": {
+    "user_CI": "verify.py mutation [--smoke|--target|--restore]",
+    "cli_dispatch": "runtime/verify.py:1333-1336",
+    "runner": "runtime/foundation/verification/mutation_runner.py:run_mutation_cli",
+    "execute_function": "runtime/foundation/verification/mutation_runner.py:execute_mutation",
+    "backend_adapter": "runtime/foundation/verification/mutation_contract.py:parse_mutmut_results",
+    "backend": "mutmut 3.7.0 (pinned in pyproject.toml)",
+    "evidence_format": "MutationResult (frozen, with execution_path field) -> mutation-summary.json + measurement-truth.json"
+  },
+  "decisions": [
+    {
+      "decision": "D-M46.9-1: mutation_runner.py is THE single canonical mutation execution authority.",
+      "evidence": "verify.py delegates only to mutation_runner; no other module invokes mutmut directly except via mutation_runner."
+    },
+    {
+      "decision": "D-M46.9-2: MutationOrchestrator is LATENT architecture. Preserved but not on the canonical path.",
+      "justification": "Per Rule 1.4 (preserve capabilities) and Anti-pattern 8 (do not delete unused). The orchestrator represents substantial C44 architectural work that could be activated in future.",
+      "documentation": "Already documented in runtime/ARCHITECTURE-mutation.md line 65 ('NOT yet wired into canonical path').",
+      "action": "No code change required. Update latent capability audit entry if needed."
+    },
+    {
+      "decision": "D-M46.9-3: No parallel mutation authority.",
+      "justification": "Per Anti-pattern 9. The C45 audit's '4 canonical paths' count was misleading; actual canonical is 1 path (mutation_runner)."
+    },
+    {
+      "decision": "D-M46.9-4: mutation_inventory.py IO functions are NON-CANONICAL.",
+      "justification": "C45 noted: 'mutation_inventory.py IO functions still call mutmut directly — PURE classify() is canonical, but collect_results/show_mutant need migration to canonical artifacts (deferred to follow-up)'.",
+      "recommendation": "Migrate collect_results/show_mutant to read mutation-summary.json instead of invoking mutmut. Defer to follow-up work; do not block M46."
+    }
+  ],
+  "anti_pattern_9_9_audit": {
+    "two_canonical_paths_check": "PASS — only mutation_runner.py is on the canonical path.",
+    "duplicate_authority": "NONE",
+    "orchestrator_status": "LATENT (not canonical)"
+  },
+  "open_followup": [
+    "Migrate mutation_inventory.py IO to read mutation-summary.json (deferred from C45)",
+    "Optionally wire MutationOrchestrator into mutation_runner for sharding/retries (future work, requires C46+ decision)"
+  ],
+  "verdict": "M46.9 COMPLETE. MutationRunner.py is the single canonical mutation execution authority. MutationOrchestrator is latent C44 architecture preserved for future use. No parallel authorities exist. mutation_inventory.py IO migration remains deferred."
+}

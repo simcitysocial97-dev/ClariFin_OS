@@ -1,0 +1,49 @@
+{
+  "schema": "m9-c46-test-quality-report/v1",
+  "milestone": "M46.7",
+  "objective": "Establish a repository-wide test-quality model measuring more than test count.",
+  "generated_at": "2026-09-03T08:45:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "measurements": {
+    "total_test_files": 169,
+    "total_test_loc": 61922,
+    "total_assertions_in_unit": 5066,
+    "parametrized_test_cases": 7,
+    "hypothesis_property_tests_in_unit": 0,
+    "hypothesis_property_tests_in_properties_dir": "observed in properties/ (separate directory)",
+    "tests_run_in_m46_6": 2907,
+    "pass_rate": "100% (2907/2907)"
+  },
+  "quality_dimensions": [
+    {"dimension": "Test count", "value": "169 test files / 61.9K LOC", "interpretation": "Sufficient volume."},
+    {"dimension": "Pass rate", "value": "100% (2907/2907)", "interpretation": "Clean run, no flakes observed in this measurement."},
+    {"dimension": "Assertion density", "value": "5066 assertions across unit tests", "interpretation": "Avg ~30 assertions/test_file; depends on per-file size. Cannot conclude quality from density alone."},
+    {"dimension": "Parametrization", "value": "7 occurrences of @pytest.mark.parametrize in backend/tests/unit", "interpretation": "LOW. Most tests are not parametrized over edge cases. This suggests each test may test only one input scenario."},
+    {"dimension": "Property-based testing", "value": "0 @given in backend/tests/unit; some in tests/properties/", "interpretation": "Property tests live in separate directory; unit tests rely on example-based assertions."},
+    {"dimension": "Branch discrimination", "value": "Aggregate branch coverage 6.72% (inadequate coverage test run); some files 0% branches covered", "interpretation": "Tests run code paths but do not assert on every branch. Many tests may execute without meaningful assertions."},
+    {"dimension": "Mutation effectiveness", "value": "Authoritative scope engines/* = 83.6% per STATE A derived; partial re-measurement recommended", "interpretation": "Engines score high. Services/repositories coverage suggests mutation effectiveness would be poor there."},
+    {"dimension": "Contract fidelity", "value": "33 contract test files (4.3K LOC)", "interpretation": "Solid API contract layer."},
+    {"dimension": "Golden regression", "value": "11 golden test files (228 LOC)", "interpretation": "Small but targeted golden layer."},
+    {"dimension": "Integration", "value": "7 integration test files (418 LOC)", "interpretation": "Light integration layer; mostly unit-test focused."},
+    {"dimension": "Orphan tests", "value": "Not systematically audited", "interpretation": "Some tests may be orphaned by recent module refactors; needs targeted audit."},
+    {"dimension": "Duplication", "value": "Not systematically audited", "interpretation": "Some duplication suspected in the m9-c56_* test files (recent additions)."}
+  ],
+  "anti_pattern_flags": [
+    {
+      "pattern": "balance_engine at 8.85% coverage with passing tests",
+      "concern": "If tests pass but 91% of balance_engine statements are uncovered, the tests may be exercising a small surface (initialization, error paths) and not asserting on the real computation.",
+      "needs_followup": "M46.14"
+    },
+    {
+      "pattern": "cashflow_engine at 0% coverage",
+      "concern": "Module name suggests financial cashflow logic. 0% coverage means ZERO assertions test it. May be dead code, may be tested indirectly, or may be untested.",
+      "needs_followup": "M46.14"
+    },
+    {
+      "pattern": "many services at 0-10% coverage",
+      "concern": "networth_workspace_service 0%, recommendation_service 0%, transaction_intelligence_service 8.96%, transaction_service 5.22%, balance/cashflow 0%.",
+      "needs_followup": "M46.14"
+    }
+  ],
+  "verdict": "M46.7 COMPLETE. Test suite has volume (2907 tests passing) but low parametrization (7) and weak branch discrimination (6.72%). Many services/repositories are essentially untested. The test suite proves 'code executed' for many modules, not 'behavior is correct'. This motivates M46.14 (services + repositories convergence) and M46.13 (strengthening validation)."
+}
