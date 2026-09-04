@@ -226,7 +226,9 @@ class ObligationSet:
         return sum(1 for o in self.obligations if o.disposition == Disposition.REUSED)
 
     def invalidate_count(self) -> int:
-        return sum(1 for o in self.obligations if o.disposition == Disposition.INVALIDATED)
+        return sum(
+            1 for o in self.obligations if o.disposition == Disposition.INVALIDATED
+        )
 
     def fingerprint(self) -> str:
         h = hashlib.sha256()

@@ -46,76 +46,50 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 # Canonical imports — these are the ONLY internal modules the facade consumes.
+from runtime.foundation.intelligence import (
+    analyze,
+    format_diagnostic,
+)
 from runtime.foundation.verification.canonical_control_plane import (
     CanonicalOperation,
-    canonical_tree,
-    migration_map,
-    classification_for,
     canonical_help,
-)
-from runtime.foundation.verification.obligation import (
-    VerificationObligation,
-    ObligationSet,
-    Disposition,
-    ObligationKind,
-    Change,
-    Capability,
-    Requirement,
-    EvidenceRef,
-)
-from runtime.foundation.verification.control_plane import (
-    ControlPlanePlanner,
-    ControlPlanePlan,
-)
-from runtime.foundation.verification.executor_pipeline import (
-    ExecutionEvidence,
-)
-from runtime.foundation.verification.execution_orchestrator import (
-    ExecutionOrchestrator,
+    classification_for,
+    migration_map,
 )
 from runtime.foundation.verification.certification import (
     main as certification_main,
 )
-from runtime.foundation.verification.mutation_runner import (
-    execute_mutation,
-)
-from runtime.foundation.intelligence import (
-    blast_radius,
-    format_affected,
-    verification_plan,
-    analyze,
-    format_diagnostic,
-)
-from runtime.foundation.verification.strengthening_pipeline import (
-    cmd_strengthen_capability,
-    cmd_strengthen_survivor,
-)
-from runtime.foundation.verification.measurement_truth_integration import (
-    format_measurement_truth_report,
-    get_measurement_truth_integrator,
-)
-from runtime.foundation.verification.help_resolver import (
-    cmd_help_resolve,
-    cmd_what_should_i_run,
-)
-from runtime.foundation.verification.configuration_authority import (
-    cmd_config_authority,
-)
-from runtime.foundation.verification.configuration_authority_enforcement import (
-    main as config_authority_verify_main,
-)
-from runtime.foundation.verification.control_plane_efficiency import (
-    main as efficiency_main,
+from runtime.foundation.verification.control_plane import (
+    ControlPlanePlan,
+    ControlPlanePlanner,
 )
 from runtime.foundation.verification.evidence_planner import (
-    EvidenceAwarePlanner,
     default_planner,
+)
+from runtime.foundation.verification.execution_orchestrator import (
+    ExecutionOrchestrator,
+)
+from runtime.foundation.verification.measurement_truth_integration import (
+    get_measurement_truth_integrator,
+)
+from runtime.foundation.verification.obligation import (
+    Capability,
+    Change,
+    Disposition,
+    ObligationKind,
+    ObligationSet,
+    Requirement,
+    VerificationObligation,
 )
 
 
 def _collect_changed_files() -> list[str]:
     """Collect changed files via the canonical intelligence layer."""
-    from runtime.foundation.verification.orchestrator import _collect_changed_files, _is_git_available
+    from runtime.foundation.verification.orchestrator import (
+        _collect_changed_files,
+        _is_git_available,
+    )
+
     if _is_git_available():
         cf_result = _collect_changed_files()
         return cf_result.files
@@ -124,11 +98,13 @@ def _collect_changed_files() -> list[str]:
 
 def _get_current_commit() -> str:
     from runtime.foundation.verification.orchestrator import _get_current_commit
+
     return _get_current_commit()
 
 
 def _is_git_available() -> bool:
     from runtime.foundation.verification.orchestrator import _is_git_available
+
     return _is_git_available()
 
 
@@ -169,7 +145,9 @@ class ControlPlane:
         control_plan: ControlPlanePlan = self.planner.plan(changed_files)
 
         # 3. Obligations (control plane's explicit obligation model)
-        obligations: ObligationSet = self._plan_to_obligations(control_plan, changed_files)
+        _obligations: ObligationSet = self._plan_to_obligations(
+            control_plan, changed_files
+        )
 
         # 4. Build executable execution plan using the canonical ExecutionOrchestrator
         execution_plan = self.orchestrator.build_execution_plan(changed_files)
@@ -192,7 +170,9 @@ class ControlPlane:
             print(f"  Reason: {reason}", file=sys.stderr)
             return 1
 
-    def plan(self, changed_files: list[str] | None = None, *, json_out: bool = False) -> int:
+    def plan(
+        self, changed_files: list[str] | None = None, *, json_out: bool = False
+    ) -> int:
         """
         Plan-only mode.
 
@@ -235,7 +215,8 @@ class ControlPlane:
             from runtime.foundation.verification.control_plane import (
                 ControlPlanePlan as CPPlan,
             )
-            plan = CPPlan.from_dict(plan_data) if hasattr(CPPlan, 'from_dict') else None
+
+            plan = CPPlan.from_dict(plan_data) if hasattr(CPPlan, "from_dict") else None
             if plan is None:
                 # Fallback: generate fresh plan
                 changed_files = _collect_changed_files()
@@ -247,7 +228,9 @@ class ControlPlane:
                 return 1
             plan = self.planner.plan(changed_files)
 
-        obligations: ObligationSet = self._plan_to_obligations(plan, _collect_changed_files())
+        _obligations: ObligationSet = self._plan_to_obligations(
+            plan, _collect_changed_files()
+        )
         execution_plan = self.orchestrator.build_execution_plan(changed_files)
         report = self.orchestrator.execute(
             execution_plan,
@@ -283,7 +266,13 @@ class ControlPlane:
         )
         return 0
 
-    def strengthen(self, *, plan_path: str | None = None, json_out: bool = False, args: list[str] | None = None) -> int:
+    def strengthen(
+        self,
+        *,
+        plan_path: str | None = None,
+        json_out: bool = False,
+        args: list[str] | None = None,
+    ) -> int:
         """
         Test-strengthening control-plane entrypoint.
 
@@ -303,22 +292,30 @@ class ControlPlane:
         for i, arg in enumerate(args):
             if arg == "--capability" and i + 1 < len(args):
                 capability_id = args[i + 1]
-                remaining_args = list(args[:i]) + list(args[i + 2:])
+                remaining_args = list(args[:i]) + list(args[i + 2 :])
                 break
 
         if capability_id:
             # Run strengthening pipeline for specific capability
             from runtime.foundation.verification.strengthening_pipeline import (
-                run_capability_aware_strengthening_pipeline,
                 format_strengthening_report,
+                run_capability_aware_strengthening_pipeline,
             )
-            report = run_capability_aware_strengthening_pipeline(capability_id=capability_id)
-            output = json.dumps(report.to_dict(), indent=2, default=str) if json_out else format_strengthening_report(report)
+
+            report = run_capability_aware_strengthening_pipeline(
+                capability_id=capability_id
+            )
+            output = (
+                json.dumps(report.to_dict(), indent=2, default=str)
+                if json_out
+                else format_strengthening_report(report)
+            )
             print(output)
             return 0
         else:
             # No capability specified: run mutation smoke test as default behavior
             from runtime.foundation.verification.mutation_runner import run_mutation_cli
+
             old_argv = sys.argv
             sys.argv = ["verify.py", "mutation"] + remaining_args
             try:
@@ -339,12 +336,18 @@ class ControlPlane:
           verify inspect health
         """
         if query is None:
-            print("Missing inspect subquery. Use: capabilities, evidence, plan, mutation, workflows, health", file=sys.stderr)
+            print(
+                "Missing inspect subquery. Use: capabilities, evidence, plan, mutation, workflows, health",
+                file=sys.stderr,
+            )
             return 1
 
         q = query.lower()
         if q == "capabilities":
-            from runtime.foundation.verification.capability_catalog import cmd_capabilities
+            from runtime.foundation.verification.capability_catalog import (
+                cmd_capabilities,
+            )
+
             old_argv = sys.argv
             sys.argv = ["verify.py", "capabilities"]
             try:
@@ -360,11 +363,17 @@ class ControlPlane:
                 print(json.dumps(obligations.to_dict(), indent=2, default=str))
             else:
                 print(f"Total obligations: {len(obligations.obligations)}")
-                print(f"Open: {len([o for o in obligations.obligations if o.disposition == 'open'])}")
-                print(f"Closed: {len([o for o in obligations.obligations if o.disposition == 'closed'])}")
+                print(
+                    f"Open: {len([o for o in obligations.obligations if o.disposition == 'open'])}"
+                )
+                print(
+                    f"Closed: {len([o for o in obligations.obligations if o.disposition == 'closed'])}"
+                )
                 for o in obligations.obligations:
                     if o.disposition == "open":
-                        print(f"  - {o.obligation_id}: {o.capability.capability_id} ({o.requirement.obligation_kind.value})")
+                        print(
+                            f"  - {o.obligation_id}: {o.capability.capability_id} ({o.requirement.obligation_kind.value})"
+                        )
         elif q == "plan":
             changed_files = _collect_changed_files()
             plan = self.planner.plan(changed_files)
@@ -372,19 +381,22 @@ class ControlPlane:
                 print(json.dumps(plan.to_dict(), indent=2, default=str))
             else:
                 print(f"Plan ID: {plan.plan_id}")
-                print(f"Capabilities: {[c.capability_id for c in plan.affected_capabilities]}")
-                print(f"Tasks: {len(plan.evidence_aware_plan.selected_tasks)}")
+                caps = list(plan.capability_resolution.directly_affected_capabilities)
+                print(f"Capabilities: {caps}")
+                print(f"Tasks: {len(plan.tasks)}")
         elif q == "mutation":
             from runtime.foundation.verification.measurement_truth_integration import (
                 format_measurement_truth_report,
                 get_measurement_truth_integrator,
             )
+
             integrator = get_measurement_truth_integrator()
             report = integrator.evaluate_all_capabilities()
             print(format_measurement_truth_report(report))
             return 0
         elif q == "workflows":
             from runtime.foundation.verification.help_resolver import cmd_help_resolve
+
             old_argv = sys.argv
             sys.argv = ["verify.py", "help-resolve", "workflows"] + sys.argv[1:]
             try:
@@ -392,9 +404,12 @@ class ControlPlane:
             finally:
                 sys.argv = old_argv
         elif q == "health":
-            from runtime.system.observability.health_report import EngineeringHealthReport
-            report = EngineeringHealthReport()
-            print(report.generate())
+            from runtime.system.observability.health_report import (
+                EngineeringHealthReport,
+            )
+
+            health_report = EngineeringHealthReport()
+            print(health_report.generate())
             return 0
         else:
             print(f"Unknown inspect subquery: {query}", file=sys.stderr)
@@ -416,24 +431,21 @@ class ControlPlane:
         # Standard CI reconciliation gate (mirrors verification-reconcile.yml)
         import os
 
-        plan_path = os.environ.get(
+        os.environ.get(
             "CI_PLAN_PATH", "runtime/generated/vea5-tier-plan.pr.json"
         )
-        evidence_path = os.environ.get(
+        os.environ.get(
             "CI_EVIDENCE_PATH", "runtime/generated/vea5-execution.pr.json"
         )
-        report_path = os.environ.get(
+        os.environ.get(
             "CI_REPORT_PATH", "runtime/generated/vea5-reconciliation.pr.json"
         )
-        commit_sha = os.environ.get("GITHUB_SHA", _get_current_commit())
+        os.environ.get("GITHUB_SHA", _get_current_commit())
 
         # For now delegate to existing CLI reconcile
         old_argv = sys.argv
         sys.argv = ["verify.py", "reconcile"]
         try:
-            from runtime.foundation.verification.reconciliation import (
-                validate_ci_artifacts,
-            )
             # The existing reconcile command does the right thing
             return self._run_reconcile_cli()
         finally:
@@ -441,19 +453,13 @@ class ControlPlane:
 
     def _run_reconcile_cli(self) -> int:
         """Run the existing reconcile CLI."""
-        import sys as _sys
+        import os
+
         from runtime.foundation.verification.reconciliation import (
             ReconciliationStatus,
-            reconcile_from_artifacts,
             save_reconciliation_report,
             validate_ci_artifacts,
         )
-        from runtime.foundation.verification.tier import (
-            TierPlan,
-            plan_for_tier,
-        )
-
-        import os
 
         plan_path = os.environ.get(
             "CI_PLAN_PATH", "runtime/generated/vea5-tier-plan.pr.json"
@@ -497,6 +503,7 @@ class ControlPlane:
         """
         # Delegates to health module which already exists
         from runtime.system.observability.health_report import EngineeringHealthReport
+
         report = EngineeringHealthReport()
         output = report.generate()
         print(output)
@@ -511,7 +518,6 @@ class ControlPlane:
         Convert a ControlPlanePlan into a set of VerificationObligation instances.
         This is where the planner's output becomes explicit obligations.
         """
-        import hashlib
 
         obligations: list[VerificationObligation] = []
         for i, task in enumerate(plan.tasks):
@@ -591,6 +597,7 @@ class ControlPlane:
 
 # ── SINGLE PUBLIC ENTRYPOINT ────────────────────────────────────────────────
 
+
 def main() -> int:
     """
     The single public command dispatcher for M9-C49.
@@ -612,7 +619,7 @@ def main() -> int:
     if classification in ("DEPRECATED", "LEGACY", "COMPATIBILITY"):
         migration = migration_map().get(command)
         if migration:
-            canonical_op, internal_route = migration["canonical_operation"], migration["internal_route"]
+            canonical_op = migration["canonical_operation"]
             print(
                 f"[M9-C49] Legacy command '{command}' -> canonical '{canonical_op}'",
                 file=sys.stderr,

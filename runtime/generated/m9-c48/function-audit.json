@@ -1,6 +1,6 @@
 {
   "schema": "m9-c48/function-audit@1",
-  "generated_at": "2026-09-04T08:48:15+00:00",
+  "generated_at": "2026-09-04T09:10:24+00:00",
   "total": 1521,
   "by_disposition": {
     "UNREACHABLE": 473,
@@ -243,21 +243,21 @@
     },
     {
       "file": "runtime/foundation/verification/canonical_control_plane.py",
-      "line": 251,
+      "line": 247,
       "name": "classification_for",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/canonical_control_plane.py",
-      "line": 359,
+      "line": 355,
       "name": "migration_map",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/canonical_control_plane.py",
-      "line": 371,
+      "line": 367,
       "name": "canonical_help",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -3085,14 +3085,14 @@
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 257,
+      "line": 259,
       "name": "serialize_obligation_set",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 262,
+      "line": 264,
       "name": "obligations_from_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -3190,14 +3190,14 @@
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 231,
+      "line": 233,
       "name": "fingerprint",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 237,
+      "line": 239,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -7621,126 +7621,126 @@
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 116,
+      "line": 86,
       "name": "_collect_changed_files",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 125,
+      "line": 99,
       "name": "_get_current_commit",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 130,
+      "line": 105,
       "name": "_is_git_available",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 594,
+      "line": 604,
       "name": "main",
       "disposition": "CANONICAL",
       "rationale": "CLI dispatch / entry point"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 635,
+      "line": 645,
       "name": "_dispatch_canonical",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 152,
+      "line": 128,
       "name": "check",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 195,
+      "line": 173,
       "name": "plan",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 225,
+      "line": 205,
       "name": "run",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 265,
+      "line": 248,
       "name": "diagnose",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 286,
+      "line": 269,
       "name": "strengthen",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 329,
+      "line": 326,
       "name": "inspect",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 404,
+      "line": 422,
       "name": "certify",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 412,
+      "line": 430,
       "name": "ci",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 442,
+      "line": 457,
       "name": "_run_reconcile_cli",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 492,
+      "line": 501,
       "name": "doctor",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 507,
+      "line": 517,
       "name": "_plan_to_obligations",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 558,
+      "line": 567,
       "name": "_print_plan_obligations",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 574,
+      "line": 583,
       "name": "_print_execution_report",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"

@@ -135,7 +135,7 @@ def canonical_tree() -> dict[str, Any]:
 #   UNREACHABLE — never reachable; preserved only as evidence
 #   TEST-ONLY — used only in tests; never exposed
 _CLASSIFICATION: dict[str, str] = {
-    # Canonical operations - the public surface
+    # Canonical operations - the public surface (9 commands)
     "check": "CANONICAL",
     "plan": "CANONICAL",
     "run": "CANONICAL",
@@ -152,12 +152,9 @@ _CLASSIFICATION: dict[str, str] = {
     "deps": "COMPATIBILITY",
     "verify-status": "COMPATIBILITY",
     "analytics": "COMPATIBILITY",
-    "health": "DUPLICATE",  # canonical: doctor
-    "doctor": "CANONICAL",
+    "health": "COMPATIBILITY",  # canonical: doctor
     "ci-doctor": "COMPATIBILITY",
-    "diagnose": "DEPRECATED",  # canonical: diagnose (new)
     "diagnose-failures": "DEPRECATED",
-    "plan": "CANONICAL",
     "reconcile": "DEPRECATED",  # canonical: ci
     "exec-evidence": "DEPRECATED",  # canonical: ci
     "deep-contract": "DEPRECATED",  # canonical: inspect plan
@@ -221,7 +218,6 @@ _CLASSIFICATION: dict[str, str] = {
     "config-authority-verify": "DEPRECATED",
     "efficiency": "DEPRECATED",
     "regression": "DEPRECATED",  # canonical: check
-    "certify": "CANONICAL",
     "latent-audit": "DEPRECATED",
     "config-authority": "DEPRECATED",
     "generate-test": "DEPRECATED",  # canonical: strengthen
@@ -236,7 +232,7 @@ _CLASSIFICATION: dict[str, str] = {
     "converge": "DEPRECATED",
     "help-resolve": "DEPRECATED",
     # profiles — top-level alias for check (legacy: profile invocation)
-    "quick": "CANONICAL_ALIAS",  # canonical: check
+    "quick": "CANONICAL_ALIAS",
     "backend": "CANONICAL_ALIAS",
     "frontend": "CANONICAL_ALIAS",
     "contracts": "CANONICAL_ALIAS",
@@ -391,7 +387,9 @@ def canonical_help() -> str:
     lines.append("  health")
     lines.append("")
     lines.append("Examples:")
-    lines.append("  verify check                # plan + execute verification for current change")
+    lines.append(
+        "  verify check                # plan + execute verification for current change"
+    )
     lines.append("  verify plan                 # plan only, no execution")
     lines.append("  verify plan --json          # machine-readable plan")
     lines.append("  verify run --plan plan.json # execute a plan")
