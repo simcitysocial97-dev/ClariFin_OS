@@ -1,0 +1,117 @@
+{
+  "metadata": {
+    "schema": "m9-c47-mutation-architecture-audit/v1",
+    "generated_at": "2026-09-03T17:10:00Z",
+    "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+    "scope": "Entire mutation architecture: control plane, orchestrator, backend adapter, mutmut, cache, workspace, evidence, result classification"
+  },
+  "authorities": {
+    "verify_py_mutation_path": {
+      "entry": "runtime/verify.py (command='mutation')",
+      "calls": "runtime/foundation/verification/mutation_runner.py:run_mutation_cli()",
+      "core_function": "execute_mutation() in mutation_runner.py",
+      "subprocess": "mutmut run (invoked via subprocess.Popen)",
+      "evidence_output": "backend/tests/generated/mutation/mutation-summary.json + measurement-truth.json",
+      "status": "VERIFIED - this is the path that actually executes in CI"
+    },
+    "mutation_execution_orchestrator_path": {
+      "entry": "MutationOrchestrator class in mutation_execution/orchestrator.py",
+      "calls": "MutmutAdapter via MutationBackendBase interface",
+      "core_function": "MutationOrchestrator.run()",
+      "subprocess": "MutmutAdapter handles mutmut invocation",
+      "evidence_output": "Workspace + execution records",
+      "status": "PARTIALLY_VERIFIED - exists but NOT called by verify.py"
+    }
+  },
+  "duplicate_authorities": [
+    {
+      "name": "Mutation Orchestration",
+      "authority_a": "execute_mutation() in mutation_runner.py (M9-C42.5)",
+      "authority_b": "MutationOrchestrator in mutation_execution/orchestrator.py (M9-C44)",
+      "actual_used": "execute_mutation() in mutation_runner.py",
+      "risk": "HIGH - Two parallel mutation execution paths exist. The verify.py path uses the simpler mutation_runner.py directly. The more sophisticated MutationOrchestrator (M9-C44) with parallel execution, sharding, and campaign management is NOT wired into the verify.py path. This means the M9-C44 features (parallel execution, sharding, workspace management) are not actually being used in production."
+    },
+    {
+      "name": "Mutation Result Classification",
+      "authority_a": "MutationResult in mutation_contract.py (M9-C42.5) - buckets: killed, survived, no_tests, timeout, suspicious, not_checked",
+      "authority_b": "MutationResult in mutation_execution/domain_model.py (M9-C44.1) - states: KILLED, SURVIVED, EQUIVALENT, NO_TESTS, TIMEOUT, EXECUTION_ERROR, INVALID_MUTANT, NOT_EXECUTED, CANCELLED, UNKNOWN",
+      "actual_used": "Both - mutation_runner.py uses mutation_contract.py MutationResult; MutationOrchestrator uses domain_model.py MutationResult",
+      "risk": "MEDIUM - Two MutationResult dataclasses with different vocabularies. The mutation_runner.py path uses the contract one (6 buckets). The MutationOrchestrator uses the domain model one (10 states). The two are not directly compatible."
+    },
+    {
+      "name": "Cache System",
+      "authority_a": "VerificationCache in cache.py - content-aware cache for verification runs",
+      "authority_b": "MutationCache in mutation_execution/cache.py - per-mutant result cache",
+      "actual_used": "Both, for different purposes",
+      "risk": "LOW - Two separate cache systems for different concerns. The verification cache is for overall run results; the mutation cache is for per-mutant results. No overlap in scope."
+    }
+  ],
+  "mutation_population": {
+    "source_of_truth": "ENGINE_SELECTION in mutation_contract.py",
+    "engine_count": 14,
+    "engines": [
+      "credit_card_engine (P0)",
+      "account_engine (P0)",
+      "balance_engine (P0)",
+      "ledger_audit_engine (P0)",
+      "reconciliation_engine (P0)",
+      "loan_engine (P1)",
+      "behaviour_engine (P1)",
+      "cashflow_engine (P0)",
+      "financial_events (P1)",
+      "core_domain_money (P0)",
+      "common_calculations (P0)",
+      "recommendation_engine (P1)",
+      "transaction_intelligence (P1)",
+      "financial_intelligence (P1)"
+    ],
+    "scope": "backend/src/engines/* and backend/src/core/domain/* and backend/src/common/calculations.py",
+    "scope_seam": "transaction_intelligence and financial_intelligence were admitted in M9-C42.26 but the executable selection contract was only extended in M9-C43.0. The scope is NOT truly repository-wide - it covers 14 specific engines, not all backend/src/.",
+    "status": "PARTIALLY_VERIFIED"
+  },
+  "three_gate_classification": {
+    "gate_a_execution_integrity": "VERIFIED - execution_status PASS/INFRASTRUCTURE_FAILURE",
+    "gate_b_evidence_integrity": "VERIFIED - classification_status PASS/FAIL + evidence_complete",
+    "gate_c_quality_threshold": "VERIFIED - score >= 80% (threshold_percent)",
+    "implementation": "classify_gates() in mutation_contract.py",
+    "notes": "Three-gate classification is properly implemented. On Gate A FAIL, Gate C is NOT evaluated and the returned verdict is 'NOT EVALUABLE'."
+  },
+  "cache_invalidation": {
+    "verification_cache": {
+      "invalidation_keys": ["commit", "changed_files", "profile", "fingerprint", "tree_digest"],
+      "content_aware": true,
+      "notes": "R-CACHE-1 fix - any content change forces fresh run via tree_digest"
+    },
+    "mutation_cache": {
+      "invalidation_keys": ["configuration_fingerprint", "canonical_mutant_id"],
+      "content_aware": true,
+      "notes": "Per-mutant cache keyed by configuration fingerprint"
+    }
+  },
+  "interruption_resume": {
+    "mutation_runner_path": "VERIFIED - signal handlers (SIGTERM, SIGINT) + atexit restore config. _MutationSafety context manager ensures restoration.",
+    "mutation_orchestrator_path": "VERIFIED - workspace persistence via create_workspace()/resume_workspace(). Campaign identity preserved.",
+    "previous_claim": "C45 claimed interruption/resume during active mutation execution. The actual evidence shows the interruption was BEFORE execution (baseline gate failure), not during active execution.",
+    "actual_behavior": "interrupted before execution (baseline gate)",
+    "status": "PARTIALLY_VERIFIED"
+  },
+  "result_classification": {
+    "real_test_gap": "VERIFIED - supported via gap_classification.py",
+    "equivalent_mutant": "VERIFIED - EQUIVALENT state in domain_model.py",
+    "no_test_discovery": "VERIFIED - NO_TESTS state",
+    "timeout": "VERIFIED - TIMEOUT state",
+    "tool_failure": "VERIFIED - EXECUTION_ERROR state + InfrastructureFailureKind",
+    "unsupported_transformation": "VERIFIED - INVALID_MUTANT state",
+    "ambiguous": "VERIFIED - SUSPICIOUS bucket in mutation_contract.py, UNKNOWN state in domain_model.py",
+    "automation": "AUTOMATED via three-gate classification + InfrastructureFailureKind enum"
+  },
+  "conclusion": {
+    "canonical_path": "verify.py mutation -> mutation_runner.py:execute_mutation() -> mutmut subprocess",
+    "parallel_path": "MutationOrchestrator in mutation_execution/ exists but is NOT wired into verify.py",
+    "scope": "14 specific engines, NOT truly repository-wide",
+    "three_gates": "PROPERLY IMPLEMENTED",
+    "cache": "PROPERLY IMPLEMENTED with content-aware invalidation",
+    "evidence": "VERIFIED - mutation-summary.json + measurement-truth.json with full provenance",
+    "risk": "MEDIUM - The M9-C44 MutationOrchestrator with parallel/sharding capabilities exists but is not wired in. The verify.py path uses the simpler M9-C42.5 runner."
+  }
+}

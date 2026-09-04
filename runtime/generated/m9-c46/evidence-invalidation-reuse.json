@@ -1,0 +1,103 @@
+{
+  "schema": "m9-c46-evidence-invalidation-reuse/v1",
+  "milestone": "M46.20",
+  "objective": "Define and test evidence invalidation and reuse contracts for the verification cache",
+  "generated_at": "2026-09-03T13:08:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "overview": "Evidence invalidation and reuse ensures that cached verification results are only reused when safe to do so. The cache contract guarantees that failures are never silently converted to passes.",
+  "cache_contract": {
+    "description": "VEA-5 M3 — Verification Cache Integrity",
+    "location": "runtime/foundation/verification/cache.py",
+    "classes": ["ReplayResult", "CachedVerdict", "VerificationCache"]
+  },
+  "invalidation_triggers": {
+    "commit_mismatch": {
+      "description": "Cache invalid when commit SHA changes",
+      "test": "test_cache_invalid_when_commit_mismatch"
+    },
+    "changed_files_mismatch": {
+      "description": "Cache invalid when changed files differ",
+      "test": "test_cache_invalid_when_changed_files_mismatch"
+    },
+    "fingerprint_mismatch": {
+      "description": "Cache invalid when fingerprint (tool version) changes",
+      "test": "test_cache_invalid_when_fingerprint_mismatch"
+    },
+    "tree_digest_mismatch": {
+      "description": "Cache invalid when working-tree content of changed files differs",
+      "test": "Content-aware invalidation in is_valid()"
+    }
+  },
+  "reuse_contract": {
+    "cached_pass": {
+      "description": "Cached PASS -> reusable=True, exit_code=0",
+      "test": "test_replay_returns_pass_for_cached_pass"
+    },
+    "cached_fail": {
+      "description": "Cached FAIL -> reusable=True, exit_code=1 (never assume PASS)",
+      "test": "test_replay_returns_fail_for_cached_fail"
+    },
+    "invalid_cache": {
+      "description": "Invalid cache -> reusable=False, caller decides what to do",
+      "test": "test_replay_returns_not_reusable_when_invalid"
+    }
+  },
+  "contract_invariants": [
+    {
+      "rule": "R-CACHE-1",
+      "description": "exit_code must never be 0 when stored status is fail",
+      "test": "test_exit_code_never_zero_for_fail"
+    },
+    {
+      "rule": "R-CACHE-2",
+      "description": "reusable=True only when cache is valid",
+      "test": "test_reusable_only_when_valid"
+    },
+    {
+      "rule": "R-CACHE-3",
+      "description": "Caller must decide what to do when cache is invalid",
+      "test": "test_caller_decides_on_invalid_cache"
+    },
+    {
+      "rule": "R-CACHE-4",
+      "description": "Never transform a previously recorded failure into success",
+      "test": "test_replay_never_returns_pass_for_fail"
+    }
+  ],
+  "test_summary": {
+    "TestCacheInvalidation": {
+      "tests": 4,
+      "coverage": "commit mismatch, files mismatch, fingerprint mismatch, all match"
+    },
+    "TestCacheReuse": {
+      "tests": 4,
+      "coverage": "pass replay, fail replay, fail contract, invalid cache"
+    },
+    "TestCachedVerdict": {
+      "tests": 3,
+      "coverage": "pass verdict, fail verdict, unit statuses"
+    },
+    "TestReplayResult": {
+      "tests": 3,
+      "coverage": "pass result, fail result, invalid result"
+    },
+    "TestCachePersistence": {
+      "tests": 2,
+      "coverage": "round trip, multiple profiles"
+    },
+    "TestCacheContract": {
+      "tests": 3,
+      "coverage": "exit_code never 0 for fail, reusable only when valid, caller decides"
+    }
+  },
+  "total_tests": 19,
+  "all_passing": true,
+  "success_criteria": [
+    "Cache invalidates on commit mismatch",
+    "Cache invalidates on changed files mismatch",
+    "Cache invalidates on fingerprint mismatch",
+    "Cache reuses correctly for valid state",
+    "Contract invariant: exit_code never 0 for FAIL",
+    "Contract invariant: caller decides on invalid cache"
+  ]
+}

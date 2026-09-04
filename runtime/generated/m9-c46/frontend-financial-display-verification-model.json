@@ -1,0 +1,147 @@
+{
+  "schema": "m9-c46-frontend-financial-display-verification-model/v1",
+  "milestone": "M46.15",
+  "objective": "Define verification model for frontend financial display hooks to ensure correct data fetching, validation, and state management",
+  "generated_at": "2026-09-03T08:40:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "overview": "This document defines the verification model for the frontend financial display layer (M46.15). The model ensures that all financial display hooks correctly fetch data from backend APIs with proper error handling, render financial entities with validated data shapes, maintain consistent state transitions, and provide accessible and responsive UIs.",
+  "scope": {
+    "hooks": [
+      "use-accounts.ts",
+      "use-cards.ts", 
+      "use-loans.ts",
+      "use-investments.ts",
+      "use-cashflow.ts",
+      "use-reconciliation.ts",
+      "use-overview.ts",
+      "use-dashboard-metrics.ts"
+    ],
+    "directory": "frontend/lib/hooks/"
+  },
+  "verification_criteria": [
+    {
+      "hook": "use-accounts",
+      "required_behaviors": [
+        "Fetch accounts with staleTime=300s",
+        "Parse AccountSchema correctly",
+        "Handle create/update/delete mutations",
+        "Show loading/error states"
+      ]
+    },
+    {
+      "hook": "use-cards",
+      "required_behaviors": [
+        "Fetch cards with CardsDataSchema",
+        "Parse card summaries",
+        "Handle card CRUD operations",
+        "Display financial totals"
+      ]
+    },
+    {
+      "hook": "use-loans",
+      "required_behaviors": [
+        "Fetch loans with LoanSchema/LoanSummarySchema",
+        "Parse loan schedules",
+        "Simulate prepayments",
+        "Manage active/inactive loans"
+      ]
+    },
+    {
+      "hook": "use-investments",
+      "required_behaviors": [
+        "Fetch investments with InvestmentSchema",
+        "Calculate portfolio value",
+        "Handle investment CRUD",
+        "Show asset allocation"
+      ]
+    },
+    {
+      "hook": "use-cashflow",
+      "required_behaviors": [
+        "Fetch cashflow transactions",
+        "Aggregate income/expenses",
+        "Display time series trends"
+      ]
+    },
+    {
+      "hook": "use-reconciliation",
+      "required_behaviors": [
+        "Compare ledger entries",
+        "Detect discrepancies",
+        "Generate reconciliation reports"
+      ]
+    },
+    {
+      "hook": "use-overview",
+      "required_behaviors": [
+        "Summarize workspace financial health",
+        "Display key metrics (net worth, liabilities, assets)"
+      ]
+    },
+    {
+      "hook": "use-dashboard-metrics",
+      "required_behaviors": [
+        "Compute dashboard KPIs",
+        "Render metric cards and charts"
+      ]
+    }
+  ],
+  "test_coverage_matrix": [
+    {
+      "hook": "use-accounts",
+      "test_scenarios": "Initial load, create account, update account, delete account, error handling",
+      "priority": "High"
+    },
+    {
+      "hook": "use-cards",
+      "test_scenarios": "Initial load, card CRUD, error handling",
+      "priority": "High"
+    },
+    {
+      "hook": "use-loans",
+      "test_scenarios": "Initial load, create loan, update loan, schedule preview, error handling",
+      "priority": "High"
+    },
+    {
+      "hook": "use-investments",
+      "test_scenarios": "Initial load, investment CRUD, portfolio calculation",
+      "priority": "Medium-High"
+    },
+    {
+      "hook": "use-cashflow",
+      "test_scenarios": "Transaction feed, aggregation, trend visualization",
+      "priority": "Medium"
+    },
+    {
+      "hook": "use-reconciliation",
+      "test_scenarios": "Ledger comparison, discrepancy detection",
+      "priority": "High"
+    },
+    {
+      "hook": "use-overview",
+      "test_scenarios": "Summary rendering, key metric display",
+      "priority": "Medium"
+    },
+    {
+      "hook": "use-dashboard-metrics",
+      "test_scenarios": "KPI computation, metric rendering",
+      "priority": "Medium"
+    }
+  ],
+  "success_criteria": [
+    "All hooks return consistent HookState<T> with correct data, loading, error, isFetching, hasLoaded",
+    "Data parsing matches Zod schemas (no type mismatches)",
+    "Loading states appear during API calls",
+    "Error states display meaningful messages",
+    "State transitions (load -> success/error -> recovered) work correctly",
+    "Mutations trigger proper cache invalidation",
+    "Edge cases (empty data, null values, malformed responses) are handled gracefully"
+  ],
+  "implementation_notes": [
+    "Use @tanstack/react-query for data fetching and caching",
+    "Leverage zod for runtime schema validation",
+    "Follow existing hook patterns (useQuery, useMutation, useAsyncQuery)",
+    "Ensure all hooks are exported for consumption",
+    "Add unit tests for each hook covering happy path and error scenarios"
+  ]
+}

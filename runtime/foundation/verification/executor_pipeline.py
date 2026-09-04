@@ -445,22 +445,55 @@ ADAPTERS: dict[
 }
 
 
+def _not_executable_adapter(
+    planned: PlannedTask, fps: TaskFingerprints, kind: str
+) -> ExecutableVerificationTask:
+    """Produce an explicit not_executable_yet task for kinds without adapters."""
+    return ExecutableVerificationTask(
+        task_id=f"exec::{planned.task_id}",
+        component=planned.target,
+        capability=planned.target.replace("_", "-"),
+        verification_kind=kind,
+        source_task_id=planned.task_id,
+        execution_command="",
+        working_directory=str(REPO_ROOT),
+        required_environment=(),
+        evidence_kind="not_executable_yet",
+        expected_artifact="",
+        timeout_policy=0,
+        source_fingerprint=fps.source,
+        test_fingerprint=fps.test,
+        config_fingerprint=fps.config,
+        toolchain_fingerprint=fps.toolchain,
+        reason=planned.cause,
+        executable="not_executable_yet",
+        executable_meta={"blocker": f"no adapter registered for kind={kind!r}"},
+    )
+
+
+# Register explicit not_executable adapters for all known kinds that lack
+# a real executor. The planner may emit these in the future; the executor
+# must fail-closed rather than silently succeed.
+for _kind in ("property", "invariant", "contract", "coverage", "golden", "capability"):
+    ADAPTERS[_kind] = lambda p, fps, k=_kind: _not_executable_adapter(p, fps, k)  # type: ignore[assignment]
+
+
 def _resolve_kind(planned: PlannedTask) -> VerificationKind:
     """Map a planner task_kind + target to a VerificationKind.
 
-    Falls back to 'capability' for unknown shapes (which the executor
-    then marks not_executable_yet).
+    The C42.27 default planner currently emits only "mutation" for all
+    selected task kinds. When a future planner emits other kinds
+    (property/invariant/contract/coverage/golden/capability), they will
+    route through their own adapter once registered. Until then, unknown
+    kinds are returned as-is and the executor marks them not_executable_yet
+    with an explicit blocking message — never silently routed to mutation.
     """
     kind = (planned.task_kind or "").lower()
-    if "mutation" in kind:
-        return "mutation"
-    if "unit" in kind:
-        return "unit"
-    # Planner currently emits "mutation" for all selected task kinds in
-    # the C42.27 default planner. The contract is open: future planner
-    # kinds (property/invariant/contract/coverage/golden) will route
-    # through their own adapter once registered.
-    return "mutation"
+    if kind in ADAPTERS:
+        return kind  # type: ignore[return-value]
+    # Return the literal kind; the executor will mark it not_executable_yet
+    # with a clear blocker if no adapter is registered.
+    return kind  # type: ignore[return-value]
 
 
 def build_executable_plan(plan: EvidenceAwarePlan) -> ExecutableVerificationPlan:

@@ -1,0 +1,135 @@
+{
+  "schema": "m9-c46-golden-regression-baseline/v1",
+  "milestone": "M46.17",
+  "objective": "Establish comprehensive golden regression baseline covering all critical financial calculations and journey scenarios",
+  "generated_at": "2026-09-03T11:52:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "overview": "Golden regression tests validate that financial calculations and business logic produce consistent, deterministic outputs for known inputs. This baseline ensures that code changes do not silently break financial correctness.",
+  "existing_infrastructure": {
+    "test_location": "backend/tests/golden/",
+    "datasets_location": "backend/tests/golden/datasets/",
+    "builders_location": "backend/tests/golden/builders/",
+    "profile_command": "python runtime/verify.py golden"
+  },
+  "current_baseline": {
+    "total_datasets": 13,
+    "total_tests": 10,
+    "all_passing": true,
+    "dataset_names": [
+      "cash_advance",
+      "cc_statement_scenario",
+      "credit_card_revolver",
+      "family_household",
+      "financial_forecast",
+      "high_debt_household",
+      "investment_portfolio",
+      "irregular_income",
+      "multiple_loans",
+      "normal_household",
+      "reconciliation_match",
+      "salary_only",
+      "salary_plus_loan"
+    ]
+  },
+  "coverage_matrix": {
+    "account_metrics": {
+      "datasets": ["normal_household", "high_debt_household"],
+      "coverage": "balance, cashflow, dormancy, lifecycle",
+      "status": "covered"
+    },
+    "reconciliation": {
+      "datasets": ["normal_household", "reconciliation_match"],
+      "coverage": "exact_match, window_match, duplicate_detection, recurring",
+      "status": "covered"
+    },
+    "financial_forecast": {
+      "datasets": ["financial_forecast", "salary_only", "salary_plus_loan"],
+      "coverage": "6_month_projection, income/expense ratio, savings_rate",
+      "status": "covered"
+    },
+    "behaviour_analysis": {
+      "datasets": ["credit_card_revolver", "cash_advance", "irregular_income"],
+      "coverage": "risk_flags, financial_stress_score, income_volatility",
+      "status": "covered"
+    },
+    "loan_analysis": {
+      "datasets": ["multiple_loans", "salary_plus_loan", "high_debt_household"],
+      "coverage": "emi_calculation, debt_burden, loan_scheduling",
+      "status": "covered"
+    },
+    "investment_portfolio": {
+      "datasets": ["investment_portfolio"],
+      "coverage": "asset_allocation, gain_loss_calculation, total_value",
+      "status": "covered"
+    },
+    "household_financial": {
+      "datasets": ["family_household", "normal_household"],
+      "coverage": "multi_member_household, shared_accounts, consolidated_view",
+      "status": "covered"
+    }
+  },
+  "paise_precision_validation": {
+    "description": "All monetary values must be integers (paise), not floats (rupees)",
+    "validation_rules": [
+      "balance_paise must be int",
+      "amount_paise must be int",
+      "principal_paise must be int",
+      "outstanding_paise must be int",
+      "total_*_paise sums must be int",
+      "No decimal places in paise fields"
+    ],
+    "test_coverage": "Validated in cross-layer tests"
+  },
+  "regression_invariants": {
+    "account_metrics": [
+      "total_balance_paise = sum of all account balances",
+      "surplus_accounts have positive net cashflow",
+      "dormant accounts have no transactions in 365+ days",
+      "closed accounts have closed_date set"
+    ],
+    "reconciliation": [
+      "exact matches have 9500+ bps confidence",
+      "no transaction appears in multiple matches",
+      "no cycles in match graph",
+      "unmatched transactions are isolated"
+    ],
+    "loan_metrics": [
+      "outstanding_paise <= principal_paise",
+      "total_emi_paise = sum of individual loan EMIs",
+      "emi_paise is consistent with interest_rate and tenure"
+    ],
+    "dashboard": [
+      "net_cash_flow_paise = total_income_paise - total_expenses_paise",
+      "savings_rate = net_cash_flow_paise / total_income_paise",
+      "emi_ratio = emi_paise / total_income_paise",
+      "buffer_days = (account_balance / daily_expenses)"
+    ]
+  },
+  "test_additions_required": [
+    {
+      "file": "backend/tests/golden/test_regression.py",
+      "test": "test_financial_forecast_regression",
+      "scenario": "financial_forecast",
+      "assertions": "6_month_projection validation, monthly_surplus consistency"
+    },
+    {
+      "file": "backend/tests/golden/test_regression.py",
+      "test": "test_investment_portfolio_regression",
+      "scenario": "investment_portfolio",
+      "assertions": "asset_allocation, gain_loss, total_value"
+    },
+    {
+      "file": "backend/tests/golden/test_regression.py",
+      "test": "test_reconciliation_match_regression",
+      "scenario": "reconciliation_match",
+      "assertions": "match_confidence, match_type validation"
+    }
+  ],
+  "success_criteria": [
+    "All 13 golden datasets loadable and validated",
+    "All regression invariants hold for each dataset",
+    "No regression in financial calculations after code changes",
+    "Paise precision maintained across all layers",
+    "Confidence scores within expected ranges"
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "dispositions": [
+    {
+      "action": "mark OBSOLETE; do not call from new code; phase-3 migration tracked",
+      "lifecycle": "OBSOLETE-RETAINED-FOR-COMPAT",
+      "location": "runtime/system/evidence/aggregator.py:986",
+      "name": "_find_chain_for_failure",
+      "production_call_sites": [
+        "runtime/system/evidence/aggregator.py",
+        "runtime/foundation/audit/evidence.py",
+        "runtime/foundation/verification/registry/registry.py"
+      ],
+      "rationale": "Known E-4 keyword-attribution defect; replacing with graph traversal is owned by Phase 3. Retained for backward compatibility with existing test suite; do not call from new code.",
+      "test_call_sites": [
+        "runtime/tests/test_verification_unit_mapping.py",
+        "runtime/tests/test_evidence_frontend_units.py",
+        "runtime/tests/test_evidence_aggregator.py"
+      ]
+    },
+    {
+      "action": "mark OBSOLETE; do not call from new code",
+      "lifecycle": "OBSOLETE-RETAINED-FOR-COMPAT",
+      "location": "runtime/system/evidence/aggregator.py:53",
+      "name": "_find_dependency_chain",
+      "production_call_sites": [
+        "runtime/system/evidence/aggregator.py"
+      ],
+      "rationale": "Known E-4 keyword-attribution defect; retained for test compatibility. Production call sites must be migrated to graph traversal in Phase 3.",
+      "test_call_sites": [
+        "runtime/tests/test_evidence_frontend_units.py",
+        "runtime/tests/test_evidence_aggregator.py"
+      ]
+    }
+  ],
+  "generated_at": "2026-09-04T08:47:57+00:00",
+  "schema": "m9-c48/aggregator-obsolete-disposition@1",
+  "summary": {
+    "deleted": 0,
+    "obsolete_retained": 2
+  }
+}

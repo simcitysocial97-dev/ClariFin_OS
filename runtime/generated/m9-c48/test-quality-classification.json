@@ -1,0 +1,590 @@
+{
+  "schema": "m9-c48/test-quality@1",
+  "generated_at": "2026-09-04T08:48:15+00:00",
+  "summary": {
+    "EXECUTION_ONLY": 19,
+    "BEHAVIORAL": 4,
+    "INVARIANT": 1,
+    "GOLDEN": 12,
+    "CONTRACT": 14
+  },
+  "total_files": 50,
+  "classifications": [
+    {
+      "file": "backend/tests/__init__.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/architecture/__init__.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/architecture/test_boundary.py",
+      "primary_category": "BEHAVIORAL",
+      "secondary_categories": [],
+      "assert_count": 55,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=55 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/architecture/test_layer_boundaries.py",
+      "primary_category": "INVARIANT",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD"
+      ],
+      "assert_count": 8,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=8 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/audits/test_audit_minimal.py",
+      "primary_category": "BEHAVIORAL",
+      "secondary_categories": [],
+      "assert_count": 24,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=24 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/capability/__init__.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/capability/account_management/__init__.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/capability/account_management/test_capability.py",
+      "primary_category": "GOLDEN",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD",
+        "GOLDEN"
+      ],
+      "assert_count": 2,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": true,
+      "rationale": "asserts=2 param=0 e2e=False golden=True"
+    },
+    {
+      "file": "backend/tests/capability/conftest.py",
+      "primary_category": "BEHAVIORAL",
+      "secondary_categories": [],
+      "assert_count": 1,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=1 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/capability/credit_cards/__init__.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/capability/credit_cards/test_capability.py",
+      "primary_category": "GOLDEN",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD",
+        "GOLDEN"
+      ],
+      "assert_count": 2,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": true,
+      "rationale": "asserts=2 param=0 e2e=False golden=True"
+    },
+    {
+      "file": "backend/tests/capability/debt_management/__init__.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/capability/debt_management/test_capability.py",
+      "primary_category": "GOLDEN",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD",
+        "GOLDEN"
+      ],
+      "assert_count": 2,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": true,
+      "rationale": "asserts=2 param=0 e2e=False golden=True"
+    },
+    {
+      "file": "backend/tests/capability/financial_events/__init__.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/capability/financial_events/test_capability.py",
+      "primary_category": "GOLDEN",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD",
+        "GOLDEN"
+      ],
+      "assert_count": 5,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": true,
+      "rationale": "asserts=5 param=0 e2e=False golden=True"
+    },
+    {
+      "file": "backend/tests/capability/financial_events/test_revocation.py",
+      "primary_category": "BEHAVIORAL",
+      "secondary_categories": [],
+      "assert_count": 12,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=12 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/capability/financial_health/__init__.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/capability/financial_health/test_capability.py",
+      "primary_category": "GOLDEN",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD",
+        "GOLDEN"
+      ],
+      "assert_count": 2,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": true,
+      "rationale": "asserts=2 param=0 e2e=False golden=True"
+    },
+    {
+      "file": "backend/tests/capability/financial_intelligence/__init__.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/capability/financial_intelligence/test_capability.py",
+      "primary_category": "GOLDEN",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD",
+        "GOLDEN"
+      ],
+      "assert_count": 16,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": true,
+      "rationale": "asserts=16 param=0 e2e=False golden=True"
+    },
+    {
+      "file": "backend/tests/capability/forecasting/__init__.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/capability/forecasting/test_capability.py",
+      "primary_category": "GOLDEN",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD",
+        "GOLDEN"
+      ],
+      "assert_count": 2,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": true,
+      "rationale": "asserts=2 param=0 e2e=False golden=True"
+    },
+    {
+      "file": "backend/tests/capability/household_cashflow/__init__.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/capability/household_cashflow/test_capability.py",
+      "primary_category": "GOLDEN",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD",
+        "GOLDEN"
+      ],
+      "assert_count": 4,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": true,
+      "rationale": "asserts=4 param=0 e2e=False golden=True"
+    },
+    {
+      "file": "backend/tests/capability/pattern_analysis/__init__.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/capability/pattern_analysis/test_capability.py",
+      "primary_category": "GOLDEN",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD",
+        "GOLDEN"
+      ],
+      "assert_count": 2,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": true,
+      "rationale": "asserts=2 param=0 e2e=False golden=True"
+    },
+    {
+      "file": "backend/tests/capability/recommendations/__init__.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/capability/recommendations/test_capability.py",
+      "primary_category": "GOLDEN",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD",
+        "GOLDEN"
+      ],
+      "assert_count": 2,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": true,
+      "rationale": "asserts=2 param=0 e2e=False golden=True"
+    },
+    {
+      "file": "backend/tests/capability/reconciliation/__init__.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/capability/reconciliation/test_capability.py",
+      "primary_category": "GOLDEN",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD",
+        "GOLDEN"
+      ],
+      "assert_count": 2,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": true,
+      "rationale": "asserts=2 param=0 e2e=False golden=True"
+    },
+    {
+      "file": "backend/tests/capability/transaction_intelligence/__init__.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/capability/transaction_intelligence/test_capability.py",
+      "primary_category": "GOLDEN",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD",
+        "GOLDEN"
+      ],
+      "assert_count": 17,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": true,
+      "rationale": "asserts=17 param=0 e2e=False golden=True"
+    },
+    {
+      "file": "backend/tests/conftest.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD",
+        "MUTATION_SENSITIVE"
+      ],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/contract/__init__.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [
+        "CONTRACT"
+      ],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/contract/conftest.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [
+        "CONTRACT",
+        "GOLDEN"
+      ],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": true,
+      "rationale": "asserts=0 param=0 e2e=False golden=True"
+    },
+    {
+      "file": "backend/tests/contract/contract_registry.py",
+      "primary_category": "EXECUTION_ONLY",
+      "secondary_categories": [
+        "CONTRACT"
+      ],
+      "assert_count": 0,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=0 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/contract/generated/test_accounts.py",
+      "primary_category": "CONTRACT",
+      "secondary_categories": [
+        "CONTRACT"
+      ],
+      "assert_count": 21,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=21 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/contract/generated/test_analytics.py",
+      "primary_category": "CONTRACT",
+      "secondary_categories": [
+        "CONTRACT"
+      ],
+      "assert_count": 2,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=2 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/contract/generated/test_audit.py",
+      "primary_category": "CONTRACT",
+      "secondary_categories": [
+        "CONTRACT"
+      ],
+      "assert_count": 1,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=1 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/contract/generated/test_banks.py",
+      "primary_category": "CONTRACT",
+      "secondary_categories": [
+        "CONTRACT"
+      ],
+      "assert_count": 1,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=1 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/contract/generated/test_behaviour.py",
+      "primary_category": "CONTRACT",
+      "secondary_categories": [
+        "CONTRACT"
+      ],
+      "assert_count": 8,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=8 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/contract/generated/test_cards.py",
+      "primary_category": "CONTRACT",
+      "secondary_categories": [
+        "CONTRACT"
+      ],
+      "assert_count": 1,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=1 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/contract/generated/test_cashflow.py",
+      "primary_category": "CONTRACT",
+      "secondary_categories": [
+        "CONTRACT"
+      ],
+      "assert_count": 6,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=6 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/contract/generated/test_categories.py",
+      "primary_category": "CONTRACT",
+      "secondary_categories": [
+        "CONTRACT"
+      ],
+      "assert_count": 2,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=2 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/contract/generated/test_credit_cards.py",
+      "primary_category": "CONTRACT",
+      "secondary_categories": [
+        "CONTRACT"
+      ],
+      "assert_count": 14,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=14 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/contract/generated/test_dashboard.py",
+      "primary_category": "CONTRACT",
+      "secondary_categories": [
+        "CONTRACT"
+      ],
+      "assert_count": 1,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=1 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/contract/generated/test_export.py",
+      "primary_category": "CONTRACT",
+      "secondary_categories": [
+        "CONTRACT"
+      ],
+      "assert_count": 1,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=1 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/contract/generated/test_financial_events.py",
+      "primary_category": "CONTRACT",
+      "secondary_categories": [
+        "CONTRACT"
+      ],
+      "assert_count": 3,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=3 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/contract/generated/test_forecast.py",
+      "primary_category": "CONTRACT",
+      "secondary_categories": [
+        "CONTRACT"
+      ],
+      "assert_count": 1,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=1 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/contract/generated/test_import.py",
+      "primary_category": "CONTRACT",
+      "secondary_categories": [
+        "CONTRACT"
+      ],
+      "assert_count": 2,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=2 param=0 e2e=False golden=False"
+    }
+  ]
+}

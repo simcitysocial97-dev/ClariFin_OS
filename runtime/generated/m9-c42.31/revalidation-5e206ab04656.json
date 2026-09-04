@@ -1,0 +1,18 @@
+{
+  "proposal_id": "prop::5e206ab04656",
+  "component": "account_engine.cashflow",
+  "before": {
+    "killed": 0,
+    "generated": 0
+  },
+  "after": {
+    "killed": 1,
+    "generated": 0
+  },
+  "target_mutant_killed": true,
+  "kill_regressions": 0,
+  "hypothesis_validated": true,
+  "accepted": true,
+  "rationale": "accepted: target mutant engines.account_engine.cashflow.x_compute_cash_flow_rate__mutmut_4 now killed with zero kill regressions; behavioral hypothesis validated",
+  "used_full_campaign": false
+}

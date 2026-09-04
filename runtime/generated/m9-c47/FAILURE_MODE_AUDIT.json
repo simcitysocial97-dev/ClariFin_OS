@@ -1,0 +1,142 @@
+{
+  "metadata": {
+    "schema": "m9-c47-failure-mode-audit/v1",
+    "generated_at": "2026-09-03T17:45:00Z",
+    "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+    "scope": "Failure mode audit for 20 scenarios from C47 spec"
+  },
+  "scenarios": [
+    {
+      "scenario": "missing_capability",
+      "expected": "FAIL_CLOSED",
+      "actual": "VERIFIED - UNMAPPED sentinel, fail-closed in BlastRadiusEngine",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "unknown_file",
+      "expected": "FAIL_CLOSED",
+      "actual": "VERIFIED - CrossLayerImpactPlanner handles unknown files via chain_map lookup",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "invalid_profile",
+      "expected": "FAIL_CLOSED",
+      "actual": "VERIFIED - profiles.py:get_profile() returns None for unknown profiles",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "test_failure",
+      "expected": "FAIL_CLOSED",
+      "actual": "VERIFIED - failed tests produce failed ExecutionResultModel, overall status FAILED",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "mutation_tool_failure",
+      "expected": "FAIL_CLOSED",
+      "actual": "VERIFIED - Gate A catches execution failure, build_infrastructure_failure()",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "timeout",
+      "expected": "FAIL_CLOSED",
+      "actual": "VERIFIED - orchestrator has overall_timeout, per_step_timeout, TIMEOUT classification",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "malformed_evidence",
+      "expected": "FAIL_CLOSED",
+      "actual": "VERIFIED - EvidenceAggregator handles malformed evidence with try/except, returns empty dict",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "stale_cache",
+      "expected": "FAIL_CLOSED",
+      "actual": "VERIFIED - content-aware cache invalidation via tree_digest",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "missing_artifact",
+      "expected": "FAIL_CLOSED",
+      "actual": "VERIFIED - collectors return empty results when artifacts are missing, not_run status",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "partial_artifact",
+      "expected": "FAIL_CLOSED",
+      "actual": "VERIFIED - evidence_complete flag in MutationResult prevents partial from being authoritative",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "interrupted_execution",
+      "expected": "FAIL_CLOSED",
+      "actual": "VERIFIED - signal handlers + atexit in mutation_runner.py, workspace persistence in MutationOrchestrator",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "environment_mismatch",
+      "expected": "FAIL_CLOSED",
+      "actual": "VERIFIED - environment fingerprint in MutationResult, env.py:resolve_environment()",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "dependency_mismatch",
+      "expected": "FAIL_CLOSED",
+      "actual": "VERIFIED - R-DEP-002 invalidation rule, PINNED_MUTMUT check",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "frontend_only_change",
+      "expected": "FRONTEND_VERIFICATION",
+      "actual": "VERIFIED - CrossLayerImpactPlanner resolves frontend changes, BlastRadiusEngine._derive_scopes_from_impact() escalates to FRONTEND",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "backend_only_change",
+      "expected": "BACKEND_VERIFICATION",
+      "actual": "VERIFIED - CrossLayerImpactPlanner resolves backend changes",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "cross_layer_change",
+      "expected": "CROSS_LAYER_VERIFICATION",
+      "actual": "VERIFIED - shared_impact.py handles shared module changes",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "configuration_change",
+      "expected": "FULL_VERIFICATION",
+      "actual": "VERIFIED - _resolve_scopes_from_files() adds REPOSITORY scope for config files",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "new_file",
+      "expected": "CAPABILITY_RESOLUTION",
+      "actual": "VERIFIED - new files are included in changed_files, resolved by CrossLayerImpactPlanner",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "rename",
+      "expected": "GRAPH_INVALIDATION",
+      "actual": "PARTIALLY_VERIFIED - git diff detects renames but graph invalidation is not explicitly implemented",
+      "status": "PARTIALLY_VERIFIED"
+    },
+    {
+      "scenario": "deletion",
+      "expected": "CAPABILITY_REMOVAL",
+      "actual": "PARTIALLY_VERIFIED - deleted files are included in changed_files but capability removal is not explicitly handled",
+      "status": "PARTIALLY_VERIFIED"
+    },
+    {
+      "scenario": "ci_failure",
+      "expected": "FAIL_CLOSED",
+      "actual": "VERIFIED - CI workflows use verify.py which returns non-zero on failure",
+      "status": "VERIFIED"
+    }
+  ],
+  "summary": {
+    "total_scenarios": 21,
+    "fail_closed_yes": 19,
+    "fail_closed_partially": 2,
+    "highest_risk": "Rename and deletion scenarios - graph invalidation and capability removal are not explicitly implemented"
+  }
+}

@@ -1,0 +1,540 @@
+{
+  "schema": "m9-c48/cli-governance@1",
+  "generated_at": "2026-09-04T08:47:57+00:00",
+  "total": 88,
+  "by_class": {
+    "INTERNAL": 24,
+    "CANONICAL": 62,
+    "COMPATIBILITY": 2
+  },
+  "classifications": [
+    {
+      "command": "affected",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "affected diagnostic"
+    },
+    {
+      "command": "analytics",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "analytics diagnostic"
+    },
+    {
+      "command": "api-contracts",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "api contract gate"
+    },
+    {
+      "command": "audit",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "audit diagnostic"
+    },
+    {
+      "command": "blast-radius",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "blast radius"
+    },
+    {
+      "command": "bypass-audit",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "bypass audit"
+    },
+    {
+      "command": "bypass-enforcement",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "bypass enforcement"
+    },
+    {
+      "command": "c53-certify",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "C53 certification"
+    },
+    {
+      "command": "c53-scenarios",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "C53 scenarios"
+    },
+    {
+      "command": "capabilities",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "list capabilities"
+    },
+    {
+      "command": "capability-for",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "resolve capability"
+    },
+    {
+      "command": "capability-graph",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "capability graph"
+    },
+    {
+      "command": "capability-inventory",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "capability inventory"
+    },
+    {
+      "command": "certify",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "certification"
+    },
+    {
+      "command": "certify-v4",
+      "classification": "COMPATIBILITY",
+      "canonical_target": "",
+      "rationale": "v4 retained for compat"
+    },
+    {
+      "command": "certify-v5",
+      "classification": "COMPATIBILITY",
+      "canonical_target": "",
+      "rationale": "v5 retained for compat"
+    },
+    {
+      "command": "ci-doctor",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "CI doctor"
+    },
+    {
+      "command": "config-authority",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "configuration authority"
+    },
+    {
+      "command": "config-authority-verify",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "configuration authority verify"
+    },
+    {
+      "command": "contract-governance",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "contract governance"
+    },
+    {
+      "command": "control-plane-plan",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "control-plane plan"
+    },
+    {
+      "command": "converge",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "autonomous convergence"
+    },
+    {
+      "command": "convergence-plan",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "C56 plan"
+    },
+    {
+      "command": "convergence-status",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "C56 status"
+    },
+    {
+      "command": "coverage-analysis",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "C56 coverage"
+    },
+    {
+      "command": "cross-capability-impact",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "cross-capability impact"
+    },
+    {
+      "command": "dashboard",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "dashboard diagnostic"
+    },
+    {
+      "command": "deep-contract",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "deep contract"
+    },
+    {
+      "command": "deps",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "platform deps"
+    },
+    {
+      "command": "diagnose",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "diagnostic"
+    },
+    {
+      "command": "diagnose-failures",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "diagnose failures"
+    },
+    {
+      "command": "efficiency",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "control-plane efficiency"
+    },
+    {
+      "command": "enforce",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "execution enforcement boundary"
+    },
+    {
+      "command": "env-check",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "env check"
+    },
+    {
+      "command": "env-contract",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "env contract"
+    },
+    {
+      "command": "evidence-certify",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "evidence certify"
+    },
+    {
+      "command": "evidence-execute",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "evidence execute"
+    },
+    {
+      "command": "evidence-integrity",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "evidence integrity"
+    },
+    {
+      "command": "evidence-plan",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "evidence plan"
+    },
+    {
+      "command": "evidence-reconcile",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "evidence reconcile"
+    },
+    {
+      "command": "exec-evidence",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "exec evidence diagnostic"
+    },
+    {
+      "command": "execute",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "executor pipeline"
+    },
+    {
+      "command": "execution-plan",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "build execution plan"
+    },
+    {
+      "command": "execution-report",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "emit JSON report"
+    },
+    {
+      "command": "execution-status",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "show most recent report"
+    },
+    {
+      "command": "forensic-diagnose",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "forensic diagnose (diagnostic)"
+    },
+    {
+      "command": "forensic-report",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "forensic report (diagnostic)"
+    },
+    {
+      "command": "gap-analysis",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "C56 gap"
+    },
+    {
+      "command": "generate-test",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "generation engine"
+    },
+    {
+      "command": "health",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "health diagnostic"
+    },
+    {
+      "command": "help-resolve",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "capability resolver for AI agents"
+    },
+    {
+      "command": "history",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "platform history"
+    },
+    {
+      "command": "integrity",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "integrity diagnostic"
+    },
+    {
+      "command": "intelligence",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "intelligence diagnostic"
+    },
+    {
+      "command": "intelligence-audit",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "intelligence audit"
+    },
+    {
+      "command": "knowledge",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "knowledge subcommands"
+    },
+    {
+      "command": "latent-audit",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "latent capability audit"
+    },
+    {
+      "command": "local-gate",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "local gate diagnostic"
+    },
+    {
+      "command": "measurement",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "measurement subcommands (coverage)"
+    },
+    {
+      "command": "measurement-truth",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "measurement truth CLI"
+    },
+    {
+      "command": "measurement-truth-report",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "measurement truth report"
+    },
+    {
+      "command": "metrics",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "platform metrics"
+    },
+    {
+      "command": "mutation",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "canonical mutation entrypoint"
+    },
+    {
+      "command": "mutation-analysis",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "C56 mutation"
+    },
+    {
+      "command": "mutation-intel",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "survivor intel"
+    },
+    {
+      "command": "mutation-inventory",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "mutation inventory"
+    },
+    {
+      "command": "pipeline-enforcement",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "pipeline enforcement"
+    },
+    {
+      "command": "plan",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "diagnostic plan"
+    },
+    {
+      "command": "reconcile",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "diagnostic reconcile"
+    },
+    {
+      "command": "regression",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "regression"
+    },
+    {
+      "command": "repair",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "repair diagnostic"
+    },
+    {
+      "command": "resolve-capabilities",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "resolve capabilities"
+    },
+    {
+      "command": "risk",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "risk diagnostic"
+    },
+    {
+      "command": "scenarios",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "real-repo scenarios"
+    },
+    {
+      "command": "status",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "platform status"
+    },
+    {
+      "command": "strengthen-analyze",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "strengthen analyze"
+    },
+    {
+      "command": "strengthen-capability",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "strengthen capability"
+    },
+    {
+      "command": "strengthen-discover",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "strengthen discover"
+    },
+    {
+      "command": "strengthen-propose",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "strengthen propose"
+    },
+    {
+      "command": "strengthen-report",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "strengthen report"
+    },
+    {
+      "command": "strengthen-survivor",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "strengthen survivor (canonical)"
+    },
+    {
+      "command": "strengthen-survivor-forensic",
+      "classification": "INTERNAL",
+      "canonical_target": "",
+      "rationale": "low-level forensic variant"
+    },
+    {
+      "command": "strengthen-validate",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "strengthen validate"
+    },
+    {
+      "command": "strengthening-integration",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "strengthening integration"
+    },
+    {
+      "command": "threshold-assessment",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "C56 threshold"
+    },
+    {
+      "command": "verification-contract",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "verification contract"
+    },
+    {
+      "command": "verify-status",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "platform verify-status"
+    },
+    {
+      "command": "what-should-i-run",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "what-should-i-run"
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "schema": "m9-c50-blast-radius-contract/v1",
+  "contract_id": "brc-dcfa76288a7c",
+  "generated_at": "2026-09-03T07:38:29.632828+00:00",
+  "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+  "working_tree_dirty": true,
+  "discovery_source": "working_tree_unstaged",
+  "change_surface": {
+    "changed_files": [
+      "runtime/generated/m9-c46/EXECUTION_PROGRESS.md",
+      "runtime/generated/m9-c46/mutation-population-reconciliation.json"
+    ],
+    "surfaces": [
+      {
+        "path": "runtime/generated/m9-c46/EXECUTION_PROGRESS.md",
+        "kind": "generated",
+        "scope": "working_tree_unstaged",
+        "is_production": false,
+        "is_shared_infrastructure": false,
+        "is_runtime_infrastructure": false,
+        "reason": "Generated artifact \u2014 not a production surface",
+        "source": "git:working_tree_unstaged"
+      },
+      {
+        "path": "runtime/generated/m9-c46/mutation-population-reconciliation.json",
+        "kind": "generated",
+        "scope": "working_tree_unstaged",
+        "is_production": false,
+        "is_shared_infrastructure": false,
+        "is_runtime_infrastructure": false,
+        "reason": "Generated artifact \u2014 not a production surface",
+        "source": "git:working_tree_unstaged"
+      }
+    ],
+    "production_surfaces": [],
+    "test_surfaces": [],
+    "config_surfaces": [],
+    "workflow_surfaces": [],
+    "runtime_infrastructure_surfaces": [],
+    "shared_module_surfaces": [],
+    "generated_surfaces": [
+      {
+        "path": "runtime/generated/m9-c46/EXECUTION_PROGRESS.md",
+        "kind": "generated",
+        "scope": "working_tree_unstaged",
+        "is_production": false,
+        "is_shared_infrastructure": false,
+        "is_runtime_infrastructure": false,
+        "reason": "Generated artifact \u2014 not a production surface",
+        "source": "git:working_tree_unstaged"
+      },
+      {
+        "path": "runtime/generated/m9-c46/mutation-population-reconciliation.json",
+        "kind": "generated",
+        "scope": "working_tree_unstaged",
+        "is_production": false,
+        "is_shared_infrastructure": false,
+        "is_runtime_infrastructure": false,
+        "reason": "Generated artifact \u2014 not a production surface",
+        "source": "git:working_tree_unstaged"
+      }
+    ],
+    "unknown_surfaces": [],
+    "discovery_source": "working_tree_unstaged",
+    "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+    "working_tree_dirty": true,
+    "reasons": [
+      "Using working-tree changes (unstaged + staged + untracked): 2 files"
+    ]
+  },
+  "surface_impacts": [
+    {
+      "path": "runtime/generated/m9-c46/EXECUTION_PROGRESS.md",
+      "kind": "generated",
+      "directly_affects_capabilities": [],
+      "transitively_affects_capabilities": [],
+      "shared_dependency_expansion": [],
+      "reason": "Generated artifact \u2014 not a production surface",
+      "is_unmapped": false
+    },
+    {
+      "path": "runtime/generated/m9-c46/mutation-population-reconciliation.json",
+      "kind": "generated",
+      "directly_affects_capabilities": [],
+      "transitively_affects_capabilities": [],
+      "shared_dependency_expansion": [],
+      "reason": "Generated artifact \u2014 not a production surface",
+      "is_unmapped": false
+    }
+  ],
+  "capability_impacts": [],
+  "directly_affected_capabilities": [],
+  "transitively_affected_capabilities": [],
+  "shared_infrastructure_affected_capabilities": [],
+  "observable_only_capabilities": [],
+  "test_only_capabilities": [],
+  "configuration_tooling_capabilities": [],
+  "unmapped_capabilities": [],
+  "affected_components": [],
+  "shared_dependency_expansions": [],
+  "verification_surface_requirements": [],
+  "required_tests": [],
+  "affected_workflows": [],
+  "evidence_invalidations": [],
+  "reusable_evidence": [
+    "credit_card_engine",
+    "account_engine",
+    "loan_engine",
+    "reconciliation_engine",
+    "behaviour_engine",
+    "balance_engine",
+    "ledger_audit_engine",
+    "cashflow_engine",
+    "financial_events",
+    "core_domain_money",
+    "common_calculations",
+    "recommendation_engine",
+    "transaction_intelligence",
+    "financial_intelligence"
+  ],
+  "revalidation_required": [],
+  "unmapped_surfaces": [],
+  "minimum_safe_verification": [],
+  "escalation_conditions": [],
+  "decision_provenance": {},
+  "is_fail_closed": false,
+  "fail_closed_reasons": []
+}

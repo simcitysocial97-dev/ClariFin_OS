@@ -1,0 +1,109 @@
+{
+  "schema": "m9-c46-no-false-certification-audit/v1",
+  "milestone": "M46.28",
+  "objective": "Audit the verification infrastructure to ensure it cannot produce false certifications",
+  "generated_at": "2026-09-03T16:04:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "audit_categories": {
+    "cache_invariants": {
+      "description": "Cache must never return PASS for FAIL",
+      "rules": [
+        "exit_code must never be 0 when stored status is fail",
+        "Cache invalid on commit mismatch",
+        "Cache invalid on changed files mismatch",
+        "Cache invalid on fingerprint mismatch",
+        "Cache invalid for nonexistent profiles"
+      ],
+      "tests": 5,
+      "status": "PASS"
+    },
+    "schema_drift_detection": {
+      "description": "Schema changes are detected and validated",
+      "rules": [
+        "Paise fields must be integers",
+        "VerificationEvidence serializes all required fields"
+      ],
+      "tests": 2,
+      "status": "PASS"
+    },
+    "coverage_gap_detection": {
+      "description": "Zero coverage cannot pass certification",
+      "rules": [
+        "Components with 0% coverage have 0.0 percentage",
+        "Coverage calculation is mathematically correct"
+      ],
+      "tests": 2,
+      "status": "PASS"
+    },
+    "mutation_survivor_tracking": {
+      "description": "Mutation survivors are properly tracked",
+      "rules": [
+        "MutationEvidence tracks all survived mutants",
+        "Mutation score is calculated correctly"
+      ],
+      "tests": 2,
+      "status": "PASS"
+    },
+    "certification_audit_trail": {
+      "description": "Audit trail for certification decisions",
+      "rules": [
+        "VerificationEvidence has timestamp",
+        "VerificationEvidence has commit_sha",
+        "CachedVerdict stores all required fields"
+      ],
+      "tests": 3,
+      "status": "PASS"
+    }
+  },
+  "total_tests": 14,
+  "all_passing": true,
+  "false_positive_prevention": [
+    {
+      "scenario": "Cached failure becomes pass",
+      "prevention": "Cache replay must return exit_code=1 for stored FAIL",
+      "test": "test_cache_never_passes_on_fail"
+    },
+    {
+      "scenario": "Stale results from different commit",
+      "prevention": "Cache invalidates on commit mismatch",
+      "test": "test_cache_validates_commit"
+    },
+    {
+      "scenario": "Stale results from different changed files",
+      "prevention": "Cache invalidates on changed files mismatch",
+      "test": "test_cache_validates_changed_files"
+    },
+    {
+      "scenario": "Stale results from tool version change",
+      "prevention": "Cache invalidates on fingerprint mismatch",
+      "test": "test_cache_validates_fingerprint"
+    },
+    {
+      "scenario": "Results from nonexistent profile",
+      "prevention": "Cache returns reusable=False for unknown profiles",
+      "test": "test_evidence_not_assumed_without_run"
+    },
+    {
+      "scenario": "Schema drift in paise fields",
+      "prevention": "Paise fields must be integers (not floats/strings)",
+      "test": "test_paise_fields_stored_as_integers"
+    },
+    {
+      "scenario": "Zero coverage passing",
+      "prevention": "Coverage percentage is enforced",
+      "test": "test_zero_coverage_must_fail"
+    },
+    {
+      "scenario": "Mutation score miscalculation",
+      "prevention": "Score is mathematically validated",
+      "test": "test_mutation_score_calculation"
+    }
+  ],
+  "success_criteria": [
+    "Cache cannot produce false positives",
+    "Schema drift is detected",
+    "Coverage gaps cannot pass silently",
+    "Mutation survivors are tracked",
+    "Audit trail is complete"
+  ]
+}

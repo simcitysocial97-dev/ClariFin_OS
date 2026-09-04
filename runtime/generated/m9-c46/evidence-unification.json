@@ -1,0 +1,219 @@
+{
+  "schema": "m9-c46-evidence-unification/v1",
+  "milestone": "M46.19",
+  "objective": "Unify all evidence types and collectors into a coherent evidence system with documented schema and relationships",
+  "generated_at": "2026-09-03T12:32:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "overview": "Evidence unification ensures all verification artifacts are captured, processed, and aggregated consistently across the repository. This document defines the canonical evidence schema and relationships.",
+  "evidence_types": {
+    "coverage": {
+      "description": "Code coverage evidence from pytest-cov",
+      "collector": "CoverageCollector",
+      "artifact_type": "coverage",
+      "evidence_model": "CoverageEvidence",
+      "fields": [
+        "overall_pct (float)",
+        "per_engine (dict[str, float])",
+        "uncovered_lines (dict[str, list[int]])",
+        "branch_coverage (float)"
+      ]
+    },
+    "mutation": {
+      "description": "Mutation testing evidence from mutmut",
+      "collector": "MutationCollector",
+      "artifact_type": "mutation",
+      "evidence_model": "MutationEvidence",
+      "fields": [
+        "score (float)",
+        "killed (int)",
+        "survived (int)",
+        "timeout (int)",
+        "error (int)",
+        "skipped (int)",
+        "survivor_details (list[dict])"
+      ]
+    },
+    "test_results": {
+      "description": "Test result evidence from JUnit XML",
+      "collector": "ResultsCollector",
+      "artifact_type": "test_result",
+      "evidence_model": "TestResultEvidence",
+      "fields": [
+        "passed (int)",
+        "failed (int)",
+        "errors (int)",
+        "skipped (int)",
+        "failed_test_names (list[str])",
+        "duration_seconds (float)"
+      ]
+    },
+    "contract": {
+      "description": "Contract test evidence from Schemathesis",
+      "collector": "ContractCollector",
+      "artifact_type": "contract",
+      "evidence_model": "ContractEvidence",
+      "fields": [
+        "endpoints_tested (int)",
+        "failures (list[dict])",
+        "schema_violations (int)",
+        "status (str)"
+      ]
+    },
+    "contract_test": {
+      "description": "API contract test evidence",
+      "collector": "ContractTestCollector",
+      "artifact_type": "contract_test",
+      "evidence_model": null,
+      "fields": []
+    },
+    "property_tests": {
+      "description": "Property-based test evidence",
+      "collector": "PropertyTestCollector",
+      "artifact_type": "property_test",
+      "evidence_model": null,
+      "fields": []
+    }
+  },
+  "evidence_models": {
+    "CoverageEvidence": {
+      "location": "runtime/system/evidence/models/evidence.py",
+      "fields": ["percentage", "covered_lines", "total_lines", "gaps", "source", "artifact_path"],
+      "methods": ["to_dict()", "to_json()"]
+    },
+    "MutationEvidence": {
+      "location": "runtime/system/evidence/models/evidence.py",
+      "fields": ["score", "killed", "survived", "timeout", "error", "skipped", "survivor_details", "source", "artifact_path"],
+      "methods": ["to_dict()", "to_json()"]
+    },
+    "TestResultEvidence": {
+      "location": "runtime/system/evidence/models/evidence.py",
+      "fields": ["passed", "failed", "errors", "skipped", "failed_test_names", "duration_seconds", "source"],
+      "methods": ["to_dict()", "to_json()"]
+    },
+    "ContractEvidence": {
+      "location": "runtime/system/evidence/models/evidence.py",
+      "fields": ["endpoints_tested", "failures", "schema_violations", "status", "source"],
+      "methods": ["to_dict()", "to_json()"]
+    },
+    "VerificationEvidence": {
+      "location": "runtime/system/evidence/models/evidence.py",
+      "fields": ["commit_sha", "branch", "timestamp", "status", "coverage", "mutation", "property_tests", "contract_tests", "artifacts"],
+      "methods": ["to_dict()", "to_json()", "from_dict()", "from_json()", "write()"]
+    },
+    "EvidenceCollectionResult": {
+      "location": "runtime/system/evidence/models/evidence.py",
+      "fields": ["workspace_root", "collected_at", "artifacts", "collectors"],
+      "methods": ["to_dict()", "to_json()", "write()"]
+    }
+  },
+  "collectors": {
+    "EvidenceCollector": {
+      "location": "runtime/system/evidence/collectors/base.py",
+      "description": "Abstract base class for all collectors",
+      "methods": ["collect_artifacts()", "collect()"]
+    },
+    "CoverageCollector": {
+      "location": "runtime/system/evidence/collectors/coverage.py",
+      "artifact_type": "coverage",
+      "collects": "CoverageEvidence"
+    },
+    "MutationCollector": {
+      "location": "runtime/system/evidence/collectors/mutation.py",
+      "artifact_type": "mutation",
+      "collects": "MutationEvidence"
+    },
+    "ResultsCollector": {
+      "location": "runtime/system/evidence/collectors/test_results.py",
+      "artifact_type": "test_result",
+      "collects": "TestResultEvidence"
+    },
+    "ContractCollector": {
+      "location": "runtime/system/evidence/collectors/contract.py",
+      "artifact_type": "contract",
+      "collects": "ContractEvidence"
+    },
+    "ContractTestCollector": {
+      "location": "runtime/system/evidence/collectors/contract_tests.py",
+      "artifact_type": "contract_test",
+      "collects": null
+    },
+    "PropertyTestCollector": {
+      "location": "runtime/system/evidence/collectors/property_tests.py",
+      "artifact_type": "property_test",
+      "collects": null
+    }
+  },
+  "aggregator": {
+    "location": "runtime/system/evidence/aggregator.py",
+    "class": "EvidenceAggregator",
+    "description": "Combines all evidence artifacts into a unified summary",
+    "methods": [
+      "aggregate()",
+      "collect_all()",
+      "build_report()"
+    ]
+  },
+  "artifact_paths": {
+    "coverage": [
+      "backend/tests/generated/coverage/coverage.json",
+      "backend/.coverage"
+    ],
+    "mutation": [
+      "backend/tests/generated/mutation/mutation-summary.json",
+      "backend/tests/generated/mutation/results.json"
+    ],
+    "test_results": [
+      "backend/tests/generated/results.xml"
+    ],
+    "contract": [
+      "backend/tests/generated/contract/schematest-report.json"
+    ]
+  },
+  "evidence_relationships": {
+    "verification_evidence": {
+      "aggregates": ["coverage", "mutation", "property_tests", "contract_tests"],
+      "contained_by": "VerificationEvidence"
+    },
+    "evidence_collection_result": {
+      "aggregates": "all artifact types",
+      "contained_by": "EvidenceCollectionResult"
+    }
+  },
+  "existing_tests": {
+    "test_evidence_aggregator": {
+      "location": "runtime/tests/test_evidence_aggregator.py",
+      "tests": 8,
+      "status": "all passing"
+    },
+    "test_backend_evidence": {
+      "location": "runtime/tests/test_backend_evidence.py",
+      "tests": "unknown",
+      "status": "unknown"
+    },
+    "test_vea5_m6_evidence_contract": {
+      "location": "runtime/tests/test_vea5_m6_evidence_contract.py",
+      "tests": "unknown",
+      "status": "unknown"
+    },
+    "test_evidence_frontend_units": {
+      "location": "runtime/tests/test_evidence_frontend_units.py",
+      "tests": "unknown",
+      "status": "unknown"
+    }
+  },
+  "unification_requirements": {
+    "all_artifacts_have_collectors": true,
+    "all_collectors_implement_base": true,
+    "all_evidence_has_model": true,
+    "aggregator_can_combine_all": true,
+    "evidence_is_serializable": true,
+    "evidence_can_be_written_to_disk": true
+  },
+  "success_criteria": [
+    "All evidence types have documented collectors",
+    "All evidence types have serializable models",
+    "Evidence aggregator can combine all types",
+    "Evidence can be written to JSON files",
+    "Evidence relationships are documented"
+  ]
+}

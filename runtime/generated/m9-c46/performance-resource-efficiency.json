@@ -1,0 +1,76 @@
+{
+  "schema": "m9-c46-performance-resource-efficiency/v1",
+  "milestone": "M46.26",
+  "objective": "Establish performance baselines and resource efficiency budgets for the repository",
+  "generated_at": "2026-09-03T14:04:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "performance_budgets": {
+    "api_endpoints": {
+      "accounts_list": {"max_duration_seconds": 1.0, "actual_under": 0.05},
+      "loans_list": {"max_duration_seconds": 1.0, "actual_under": 0.05},
+      "dashboard_summary": {"max_duration_seconds": 1.0, "actual_under": 0.1},
+      "cashflow_monthly": {"max_duration_seconds": 1.0, "actual_under": 0.1}
+    },
+    "query_performance": {
+      "account_list_query": {"max_duration_seconds": 0.5, "actual_under": 0.05}
+    },
+    "test_suites": {
+      "golden_regression": {"max_duration_seconds": 60, "actual_under": 5.0},
+      "acceptance_matrix": {"max_duration_seconds": 60, "actual_under": 12.0}
+    }
+  },
+  "test_categories": {
+    "TestAPIPerformance": {
+      "tests": 4,
+      "description": "API endpoint response time validation",
+      "status": "PASS"
+    },
+    "TestConcurrentRequests": {
+      "tests": 1,
+      "description": "Concurrent request handling",
+      "status": "PASS"
+    },
+    "TestResourceUsage": {
+      "tests": 1,
+      "description": "Test suite runtime budgets",
+      "status": "PASS"
+    },
+    "TestCacheEfficiency": {
+      "tests": 1,
+      "description": "Cache lookup performance",
+      "status": "PASS"
+    },
+    "TestMemoryEfficiency": {
+      "tests": 2,
+      "description": "Memory usage validation",
+      "status": "PASS"
+    },
+    "TestQueryPerformance": {
+      "tests": 1,
+      "description": "Database query performance",
+      "status": "PASS"
+    },
+    "TestFrontendPerformance": {
+      "tests": 1,
+      "description": "Frontend file structure",
+      "status": "PASS"
+    }
+  },
+  "total_tests": 11,
+  "all_passing": true,
+  "key_findings": {
+    "api_response_times": "All endpoints respond under 1 second (well within budget)",
+    "concurrent_handling": "Health endpoint handles 10 concurrent requests successfully",
+    "cache_efficiency": "1000 cache lookups complete in < 1 second",
+    "memory_efficiency": "1000 evidence serialization cycles complete without memory issues",
+    "golden_dataset_loading": "All 13 golden datasets load in < 2 seconds",
+    "test_suite_runtime": "Golden regression suite runs in < 60 seconds"
+  },
+  "success_criteria": [
+    "All API endpoints respond under 1 second",
+    "Concurrent requests handled gracefully",
+    "Cache operations are efficient",
+    "Memory usage is bounded",
+    "Test suite runtime within budget"
+  ]
+}

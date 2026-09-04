@@ -314,7 +314,12 @@ def run_strengthen_analyze(argv: list[str]) -> int:
     args, _ = parser.parse_known_args(argv)
 
     raw = json.loads(Path(args.survivors).read_text())
-    survivors = list(raw if isinstance(raw, list) else [raw])
+    if isinstance(raw, list):
+        survivors = raw
+    elif "entries" in raw and isinstance(raw["entries"], list):
+        survivors = raw["entries"]
+    else:
+        survivors = [raw]
 
     proposals = []
     refusals = []
@@ -350,8 +355,44 @@ def run_strengthen_analyze(argv: list[str]) -> int:
     return 0
 
 
+def _coerce_survivor_entry(s: dict) -> dict:
+    """Translate a new-format survivor catalog entry into the flat dict
+    expected by SurvivorEvidence. Handles both legacy dict shape and the
+    m9-c45 mutation-survivors-*.json 'entries[*]' shape (key/function/source_file/old/new)."""
+    if "survivor_id" in s and "component" in s:
+        return s
+    key = s.get("key") or s.get("id") or ""
+    function = s.get("function") or ""
+    source_file = s.get("source_file") or s.get("location") or ""
+    old = s.get("old") or s.get("original_snippet") or ""
+    new = s.get("new") or s.get("mutated_snippet") or ""
+    category = s.get("category") or s.get("mutation_operator") or "unknown"
+    parts = key.split(".")
+    # Strip redundant leading 'engines' token to align with the test directory convention
+    # backend/tests/unit/engines/<engine_dir>
+    if parts and parts[0] == "engines":
+        parts = parts[1:]
+    component = ".".join(parts[:2]) if len(parts) >= 2 else (parts[0] if parts else "unknown")
+    capability = function or component
+    return {
+        "survivor_id": key,
+        "component": component,
+        "capability": capability,
+        "location": source_file,
+        "mutation_operator": category,
+        "original_snippet": old,
+        "mutated_snippet": new,
+        "status": s.get("status", "survived"),
+        "covering_tests": tuple(s.get("covering_tests", ())),
+        "notes": s.get("notes", ""),
+    }
+
+
 def generate_proposal_from_dict(s: dict):
-    """Build a SurvivorEvidence from a dict and classify/propose."""
+    """Build a SurvivorEvidence from a dict and classify/propose.
+
+    Auto-coerces new-format survivor catalog entries into the legacy dict
+    shape required by SurvivorEvidence."""
     from runtime.foundation.verification.strengthening import (
         SurvivorEvidence,
     )
@@ -359,17 +400,18 @@ def generate_proposal_from_dict(s: dict):
         generate_proposal as _gp,
     )
 
+    coerced = _coerce_survivor_entry(s)
     ev = SurvivorEvidence(
-        survivor_id=s["survivor_id"],
-        component=s["component"],
-        capability=s.get("capability", s["component"].replace("_", "-")),
-        location=s.get("location", ""),
-        mutation_operator=s.get("mutation_operator", "unknown"),
-        original_snippet=s.get("original_snippet", ""),
-        mutated_snippet=s.get("mutated_snippet", ""),
-        status=s.get("status", "survived"),
-        notes=s.get("notes", ""),
-        covering_tests=tuple(s.get("covering_tests", ())),
+        survivor_id=coerced["survivor_id"],
+        component=coerced["component"],
+        capability=coerced.get("capability", coerced["component"].replace("_", "-")),
+        location=coerced.get("location", ""),
+        mutation_operator=coerced.get("mutation_operator", "unknown"),
+        original_snippet=coerced.get("original_snippet", ""),
+        mutated_snippet=coerced.get("mutated_snippet", ""),
+        status=coerced.get("status", "survived"),
+        notes=coerced.get("notes", ""),
+        covering_tests=tuple(coerced.get("covering_tests", ())),
     )
     out = _gp(ev)
     if hasattr(out, "to_dict") and hasattr(out, "schema"):
