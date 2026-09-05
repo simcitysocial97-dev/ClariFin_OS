@@ -1,0 +1,60 @@
+{
+  "schema": "m9-c50/phase-5-stop-gate-evidence@1",
+  "phase": "PHASE 5 \u2014 EVIDENCE / CACHE / RECONCILIATION CONVERGENCE",
+  "generated_at": "2026-09-04T13:01:59.177149+00:00",
+  "stop_gate": "STOP GATE 5 \u2014 EVIDENCE TRUST GATE",
+  "gate_criteria": {
+    "stale_evidence_rejected": {
+      "proven_by": "test_stale_commit_evidence_rejected (live commit-drift injection)",
+      "status": "PASS"
+    },
+    "wrong_sha_evidence_rejected": {
+      "proven_by": "test_wrong_content_evidence_rejected (tree_digest SHA-256 content invalidation, live file edit)",
+      "status": "PASS"
+    },
+    "wrong_configuration_evidence_rejected": {
+      "proven_by": "test_wrong_config_fingerprint_rejected + test_wrong_toolchain_fingerprint_rejected (live fingerprint mutation)",
+      "status": "PASS"
+    },
+    "corrupted_evidence_rejected": {
+      "proven_by": "test_corrupted_cache_file_rejected + test_truncated_cache_file_rejected + test_status_field_corruption_cannot_flip_fail_to_pass (live file corruption)",
+      "status": "PASS"
+    },
+    "incomplete_evidence_cannot_close_obligations": {
+      "proven_by": "gate5 obligation tests + runtime/tests/test_m9_c50_stop_gate2_obligation_reconciliation.py (Phase-2 reconciliation rule)",
+      "status": "PASS"
+    },
+    "reused_evidence_explicitly_classified": {
+      "proven_by": "test_reused_evidence_is_explicitly_classified + test_non_reused_evidence_is_explicitly_classified (reason codes replay-pass / cache-invalid-or-missing)",
+      "status": "PASS"
+    },
+    "evidence_lineage_complete": {
+      "proven_by": "test_cache_entry_records_lineage (commit + changed_files + fingerprint + tree_digest + overall_status)",
+      "status": "PASS"
+    },
+    "final_decisions_from_authoritative_evidence_only": {
+      "proven_by": "ExecutionEnforcer live run (evidence_integrity): dirty tree -> CERTIFICATION_BLOCKED; Phase-2 verdict path consults reconciled obligation set",
+      "status": "PASS"
+    }
+  },
+  "test_results": {
+    "gate5_evidence_trust": "12 passed, 1 warning in 0.21s",
+    "cache_invalidation_existing": "28 passed, 1 warning in 0.25s",
+    "gate2_obligations": "6 passed, 1 warning in 0.19s",
+    "evidence_integrity_live": "Evidence Integrity Tests: ALL PASSED"
+  },
+  "artifacts": {
+    "cache_authority": "runtime/foundation/verification/cache.py",
+    "reconciliation_authority": "runtime/foundation/verification/obligation_reconciliation.py",
+    "gate5_suite": "runtime/tests/test_m9_c50_stop_gate5_evidence_trust.py"
+  },
+  "artifact_sha256": {
+    "cache.py": "d8524dd3f3de1ee7cea11ed27f54779f547b9d52c5af1d768afaabecf795c533",
+    "obligation_reconciliation.py": "48129a6b1e520cb756a19e15806a61e70770f8c8a96262cdac90a160d7992437",
+    "test_m9_c50_stop_gate5_evidence_trust.py": "40f6c9befaa8858905470160cfe3949837b349ac72a11ada65e0fb060c72d7c6"
+  },
+  "discrepancies": [
+    "runtime/foundation/verification/evidence_integrity.py failure-injection cases (stale/invalid/contradictory/scope etc.) are STATIC assertions with hardcoded passed=True, not live injections. Only complete_valid_chain executes the real pipeline. The evidence-trust dimension they claim is instead proven live by the Phase-5 gate suite. Recorded as a known gap; remediation of evidence_integrity.py to perform real injections is deferred to a follow-up (not required by STOP GATE 5, which is now proven by executable evidence)."
+  ],
+  "gate_decision": "PASS"
+}

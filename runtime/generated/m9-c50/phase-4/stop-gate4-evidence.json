@@ -1,0 +1,59 @@
+{
+  "schema": "m9-c50/phase-4/stop-gate4-evidence@1",
+  "generated_at": "2026-09-04T12:46:37.104029+00:00",
+  "adapter_registry": {
+    "module": "runtime/foundation/verification/executor_pipeline.py::ADAPTERS",
+    "kinds": [
+      "capability",
+      "contract",
+      "coverage",
+      "e2e",
+      "golden",
+      "integration",
+      "invariant",
+      "mutation",
+      "property",
+      "unit"
+    ],
+    "count": 10
+  },
+  "planner_observed_kinds": [
+    "capability",
+    "contract",
+    "property",
+    "unit"
+  ],
+  "adapters_without_planner_emission": [
+    "coverage",
+    "e2e",
+    "golden",
+    "integration",
+    "invariant",
+    "mutation"
+  ],
+  "not_executable_tasks_in_probe": [],
+  "execution_targets": {
+    "capability": ".venv/bin/python -m pytest backend/tests/capability/loan_engine -q",
+    "contract": ".venv/bin/python -m pytest backend/tests/contract/loan_engine -q",
+    "coverage": ".venv/bin/python -m pytest backend/tests/ --cov=backend/src --cov-report=json:runtime/generated/m9-c42.28/coverage-loan_engine.json -q",
+    "e2e": "bash .github/scripts/run_playwright_tests.sh",
+    "golden": ".venv/bin/python -m pytest backend/tests/golden/loan_engine -q",
+    "integration": ".venv/bin/python -m pytest backend/tests/integration/ --junitxml=runtime/generated/m9-c42.28/junit-integration-loan_engine.xml -q",
+    "invariant": ".venv/bin/python -m pytest backend/tests/invariants/loan_engine -q",
+    "mutation": ".venv/bin/python runtime/verify.py mutation --target loan_engine --json",
+    "property": ".venv/bin/python -m pytest backend/tests/properties/loan_engine -q --hypothesis-seed=0",
+    "unit": ".venv/bin/python -m pytest backend/tests/unit/engines/loan_engine -q"
+  },
+  "gate_conditions": {
+    "every_promised_task_kind_executable": true,
+    "unsupported_kinds_explicitly_classified": true,
+    "planner_executor_identity_match": true,
+    "every_kind_has_evidence_kind": true
+  },
+  "artifact_hashes": {
+    "executor_pipeline.py": "c4c04ceaaaa1d106f6a05938d74d8dccc2b7c2ef4b1d862fe997efd1cebd9d5a",
+    "control_plane.py": "f5b2122874560418b790e00b5f35b1c3d184a4f32ae15e42ade25ece19c4fe70",
+    "test_m9_c50_stop_gate4_execution_completeness.py": "51dda7d24b7ecbe4f279cf991fe31493ca8e312153f41b830b1777860081146d"
+  },
+  "adapters_without_planner_emission_note": "mutation/invariant are escalation-conditioned kinds (survivor intel, drift, config changes) and coverage/golden/e2e/integration are capability-contract workflow-conditioned; representative baseline scenarios do not trigger them. All are nonetheless executable via registered adapters (verified in probe)."
+}

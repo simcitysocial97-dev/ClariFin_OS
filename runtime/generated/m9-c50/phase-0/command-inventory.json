@@ -1,0 +1,34 @@
+{
+  "schema": "m9-c50/phase-0/command-inventory@1",
+  "generated_at": "2026-09-04T11:06:00+00:00",
+  "canonical_operator_surface": {
+    "count": 9,
+    "intents": ["check", "plan", "run", "diagnose", "strengthen", "inspect", "certify", "ci", "doctor"],
+    "semantic_intent_coverage": {
+      "verify": ["check", "plan", "run"],
+      "diagnose": ["diagnose"],
+      "strengthen": ["strengthen"],
+      "inspect": ["inspect"],
+      "govern/certify/operate": ["certify", "ci", "doctor"]
+    }
+  },
+  "inspect_sub_queries": ["capabilities", "evidence", "plan", "mutation", "workflows", "health"],
+  "classification_authority": "runtime/foundation/verification/canonical_control_plane.py::_CLASSIFICATION",
+  "classification_vocabulary": ["CANONICAL", "CANONICAL_ALIAS", "COMPATIBILITY", "DEPRECATED", "UNREACHABLE", "INTERNAL"],
+  "canonical_operations_classification": {
+    "check": "CANONICAL", "plan": "CANONICAL", "run": "CANONICAL", "diagnose": "CANONICAL",
+    "strengthen": "CANONICAL", "inspect": "CANONICAL", "certify": "CANONICAL", "ci": "CANONICAL",
+    "doctor": "CANONICAL"
+  },
+  "profile_aliases": ["quick", "backend", "frontend", "contracts", "graph", "full", "runtime", "golden", "playwright"],
+  "dispatch_authority": "runtime/foundation/verification/control_plane_facade.py::main",
+  "no_duplicate_authority_claim": "All operator/AI commands route through the single canonical control plane facade; legacy surface (~97 tokens) exposed as compatibility/deprecated aliases that delegate to one canonical op.",
+  "observed_evidence": {
+    "verify_help": "verify.py invoked with no args prints the 9 canonical operations",
+    "legacy_routing": "Legacy commands print '[M9-C49] Legacy command X -> canonical Y' then route through canonical op"
+  },
+  "known_issues_for_phase1": [
+    "verify.py --help returns 'Command not available in canonical surface' (no help route) — minor UX gap",
+    "capability-catalog lists legacy-named commands (e.g. blast-radius, capability-for, latent-audit) as canonical capabilities though they are DEPRECATED tokens"
+  ]
+}

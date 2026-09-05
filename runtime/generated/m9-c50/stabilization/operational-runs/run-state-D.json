@@ -1,0 +1,21 @@
+{
+  "run_id": "run::state::D",
+  "timestamp": "2026-09-04T23:07:16.731316+00:00",
+  "state": "D_contract",
+  "expected": "real contract verification",
+  "payload": {
+    "state": "D_contract",
+    "expected": "real contract verification",
+    "task": "exec::state::contract::",
+    "execution_id": "runtime.verification::exec::f37af9a9d7c55208",
+    "exit_code": 0,
+    "artifact_paths": [
+      "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-contract-all.xml"
+    ]
+  },
+  "execution_identity": "runtime.verification::exec::f37af9a9d7c55208",
+  "task_identity": "exec::state::contract::",
+  "evidence_artifact_paths": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-contract-all.xml"
+  ]
+}

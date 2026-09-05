@@ -1,0 +1,28 @@
+{
+  "schema": "m9-c50/phase-2/canonical-verification-model@2",
+  "generated_at": "2026-09-04T11:30:00+00:00",
+  "obligation_model_authority": "runtime/foundation/verification/obligation.py",
+  "disposition_vocabulary": {"count": 8, "values": ["closed", "executed", "open", "blocked", "invalidated", "reused", "not_applicable", "failed"]},
+  "obligation_kind_vocabulary": {"count": 8, "values": ["unit", "property", "invariant", "contract", "coverage", "mutation", "golden", "capability"]},
+  "phase2_gap_found_and_remediated": {
+    "defect": "Obligation set computed in check()/run() was NOT consulted by the verdict path; all obligations stayed OPEN while run could be CERTIFIED. Orchestrator re-discovers the plan independently, decoupling obligation completeness from success.",
+    "remediation": "New module runtime/foundation/verification/obligation_reconciliation.py reconciles each obligation's disposition against execution records (matched by capability_id + verification_kind), then gates check()/run() success on reconciliation.complete.",
+    "files_changed": [
+      "runtime/foundation/verification/obligation_reconciliation.py (NEW)",
+      "runtime/foundation/verification/control_plane_facade.py (check()/run() gated)",
+      "runtime/tests/test_m9_c50_stop_gate2_obligation_reconciliation.py (NEW, 6 tests)"
+    ],
+    "tests": "6 new reconciliation tests PASS; combined C49+C50 suite 105 passed, 4 skipped"
+  },
+  "lifecycle_invariants_validated": {
+    "only_closed_is_closed": "PASS",
+    "failed_cannot_close": "PASS",
+    "invalidated_cannot_close": "PASS (model) - hard evidence-rejection tested in Phase 5",
+    "executed_reused_cannot_close": "PASS",
+    "deterministic_identity": "PASS",
+    "incomplete_set_cannot_succeed": "PASS - now enforced in verdict path via reconcile_obligations().complete",
+    "plan_obligation_1to1": "PASS",
+    "evidence_associated": "PASS",
+    "no_implicit_completion": "PASS"
+  }
+}

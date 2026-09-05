@@ -1,0 +1,42 @@
+{
+  "schema": "m9-c50/stabilization/execution-contract@1",
+  "generated_at": "2026-09-04T22:55:24.534123+00:00",
+  "states": [
+    "BLOCKED",
+    "DECIDED",
+    "DISPATCHED",
+    "EVIDENCE_CAPTURED",
+    "EXECUTED",
+    "EXECUTING",
+    "FAILED",
+    "INVALIDATED",
+    "PLANNED",
+    "RECONCILED",
+    "REUSED"
+  ],
+  "transitions_enforced": true,
+  "lineage_chain": [
+    "obligation",
+    "task",
+    "execution",
+    "evidence",
+    "reconciliation",
+    "decision"
+  ],
+  "identity_kinds": [
+    "obligation",
+    "task",
+    "execution",
+    "evidence",
+    "reconciliation",
+    "decision",
+    "run",
+    "env"
+  ],
+  "forbidden_transitions_examples": [
+    "PLANNED -> DECIDED",
+    "EXECUTING -> CERTIFIED",
+    "FAILED -> CERTIFIED (without subsequent valid execution)",
+    "EVIDENCE_CAPTURED without valid execution identity"
+  ]
+}

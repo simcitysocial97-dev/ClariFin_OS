@@ -1,0 +1,21 @@
+{
+  "run_id": "run::state::C",
+  "timestamp": "2026-09-04T23:07:16.731153+00:00",
+  "state": "C_property",
+  "expected": "real property verification",
+  "payload": {
+    "state": "C_property",
+    "expected": "real property verification",
+    "task": "exec::state::property::money",
+    "execution_id": "runtime.verification::exec::f9022778d06666ed",
+    "exit_code": 0,
+    "artifact_paths": [
+      "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-property-money.xml"
+    ]
+  },
+  "execution_identity": "runtime.verification::exec::f9022778d06666ed",
+  "task_identity": "exec::state::property::money",
+  "evidence_artifact_paths": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-property-money.xml"
+  ]
+}

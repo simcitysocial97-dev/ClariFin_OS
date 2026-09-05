@@ -1,0 +1,150 @@
+{
+  "schema": "m9-c50/post-closure/working-tree-governance@1",
+  "generated_at": "2026-09-04T20:05:00+00:00",
+  "purpose": "Inventory and classify all 87 uncommitted files in the working tree against the C50 governing document.",
+  "git_status_count": 87,
+  "git_head": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde",
+  "git_branch": "m9c9-merge-authorization-resolution",
+  "phase_0_claim_count": 44,
+  "reconciliation": "Phase 0 recorded 44 at session start; current 87 reflects pre-existing items + accumulated C50 work + Phase 11/12 artifacts. The '44' figure is reproduced as the current state in FINAL_CONVERGENCE_REPORT.md line 161, which is stale.",
+  "classification": {
+    "required_c50_implementation": {
+      "description": "Production code that is part of the canonical architecture required by C50",
+      "files": [
+        {"path": "runtime/foundation/verification/obligation_reconciliation.py", "status": "untracked", "phase": "2", "required_by": "Phase 2 obligation integrity gate", "disposition": "MUST COMMIT — implements the obligation reconciliation that gates check()/run() verdicts"},
+        {"path": "runtime/foundation/verification/capability_graph_resolver.py", "status": "modified", "phase": "3", "required_by": "Phase 3 capability graph + knowledge enrichment", "disposition": "MUST COMMIT"},
+        {"path": "runtime/foundation/verification/control_plane.py", "status": "modified", "phase": "3", "required_by": "Phase 3 cast literal fix", "disposition": "MUST COMMIT"},
+        {"path": "runtime/foundation/verification/control_plane_facade.py", "status": "modified", "phase": "2", "required_by": "Phase 2 verdict gating", "disposition": "MUST COMMIT"},
+        {"path": "runtime/foundation/verification/executor_pipeline.py", "status": "modified", "phase": "3+4", "required_by": "Phase 3+4 adapter additions (integration, e2e), VerificationKind expansion", "disposition": "MUST COMMIT"},
+        {"path": "runtime/verify.py", "status": "modified", "phase": "various", "required_by": "control-plane / canonical command wiring", "disposition": "MUST COMMIT (verify diff before committing)"}
+      ]
+    },
+    "c50_test_suites": {
+      "description": "C50 test files (gate suites, operational, self-verification, governance)",
+      "files": [
+        {"path": "runtime/tests/test_m9_c49_canonical_cli.py", "status": "modified", "phase": "1+4", "disposition": "MUST COMMIT (test updates for new kind set)"},
+        {"path": "runtime/tests/test_m9_c50_executor_adapters.py", "status": "untracked", "phase": "0/4", "disposition": "MUST COMMIT"},
+        {"path": "runtime/tests/test_m9_c50_ci_convergence.py", "status": "untracked", "phase": "8", "disposition": "MUST COMMIT"},
+        {"path": "runtime/tests/test_m9_c50_stop_gate2_obligation_reconciliation.py", "status": "untracked", "phase": "2", "disposition": "MUST COMMIT"},
+        {"path": "runtime/tests/test_m9_c50_stop_gate3_capability_resolution.py", "status": "untracked", "phase": "3", "disposition": "MUST COMMIT"},
+        {"path": "runtime/tests/test_m9_c50_stop_gate4_execution_completeness.py", "status": "untracked", "phase": "4", "disposition": "MUST COMMIT"},
+        {"path": "runtime/tests/test_m9_c50_stop_gate5_evidence_trust.py", "status": "untracked", "phase": "5", "disposition": "MUST COMMIT"},
+        {"path": "runtime/tests/test_m9_c50_stop_gate6_strengthening_authority.py", "status": "untracked", "phase": "6", "disposition": "MUST COMMIT"},
+        {"path": "runtime/tests/test_m9_c50_stop_gate9_failure_modes.py", "status": "untracked", "phase": "9", "disposition": "MUST COMMIT"},
+        {"path": "runtime/tests/test_m9_c50_self_verification.py", "status": "untracked", "phase": "10", "disposition": "MUST COMMIT"},
+        {"path": "runtime/tests/test_m9_c50_operational_validation.py", "status": "untracked", "phase": "11", "disposition": "MUST COMMIT"},
+        {"path": "runtime/tests/test_m9_c50_final_governance.py", "status": "untracked", "phase": "12", "disposition": "MUST COMMIT"}
+      ]
+    },
+    "c50_evidence_artifacts": {
+      "description": "Evidence files that are referenced by the report and execution-state",
+      "files": [
+        {"path": "runtime/generated/m9-c50/FINAL_CONVERGENCE_REPORT.md", "status": "untracked", "disposition": "MUST COMMIT (primary C50 deliverable)"},
+        {"path": "runtime/generated/m9-c50/GUIDING_DOCUMENT.md", "status": "untracked", "disposition": "MUST COMMIT (governing document)"},
+        {"path": "runtime/generated/m9-c50/execution-state.json", "status": "untracked", "disposition": "MUST COMMIT"},
+        {"path": "runtime/generated/m9-c50/final-convergence-summary.json", "status": "untracked", "disposition": "MUST COMMIT"},
+        {"path": "runtime/generated/m9-c50/cli/", "status": "untracked dir", "disposition": "MUST COMMIT (Phase 1 evidence)"},
+        {"path": "runtime/generated/m9-c50/phase-0/", "status": "untracked dir", "disposition": "MUST COMMIT"},
+        {"path": "runtime/generated/m9-c50/phase-1/", "status": "untracked dir", "disposition": "MUST COMMIT"},
+        {"path": "runtime/generated/m9-c50/phase-2/", "status": "untracked dir", "disposition": "MUST COMMIT"},
+        {"path": "runtime/generated/m9-c50/phase-4/", "status": "untracked dir", "disposition": "MUST COMMIT"},
+        {"path": "runtime/generated/m9-c50/phase-5/", "status": "untracked dir", "disposition": "MUST COMMIT"},
+        {"path": "runtime/generated/m9-c50/phase-6/", "status": "untracked dir", "disposition": "MUST COMMIT"},
+        {"path": "runtime/generated/m9-c50/phase-7/", "status": "untracked dir", "disposition": "MUST COMMIT"},
+        {"path": "runtime/generated/m9-c50/phase-8/", "status": "untracked dir", "disposition": "MUST COMMIT"},
+        {"path": "runtime/generated/m9-c50/phase-11/", "status": "untracked dir", "disposition": "MUST COMMIT"}
+      ]
+    },
+    "ci_workflow_fixes": {
+      "description": "GitHub Actions workflow comment corrections (verify.py backend → verify.py check)",
+      "files": [
+        ".github/workflows/api-contracts.yml",
+        ".github/workflows/backend-verify.yml",
+        ".github/workflows/dependency-update.yml",
+        ".github/workflows/frontend-verify.yml",
+        ".github/workflows/golden.yml",
+        ".github/workflows/m9-forensic-diagnostic-lab.yml",
+        ".github/workflows/mutation.yml",
+        ".github/workflows/playwright.yml",
+        ".github/workflows/quality.yml",
+        ".github/workflows/verification-reconcile.yml",
+        ".github/workflows/verification-runtime.yml"
+      ],
+      "disposition": "MUST COMMIT (Phase 8 CI canonicalization; comment-only fixes per Phase 8 report)"
+    },
+    "frontend_phase_7_jsdoc": {
+      "description": "JSDoc annotations added to frontend files for cross-layer governance Phase 7",
+      "files": [
+        "frontend/lib/graph/metrics.ts",
+        "frontend/lib/intelligence/debt-engine.ts",
+        "frontend/lib/intelligence/health-engine.ts",
+        "frontend/lib/intelligence/insight-builder.ts",
+        "frontend/lib/intelligence/investment-engine.ts",
+        "frontend/lib/intelligence/opportunity-engine.ts",
+        "frontend/lib/intelligence/risk-engine.ts",
+        "frontend/lib/intelligence/spending-engine.ts",
+        "frontend/lib/mappers/credit-cards-mapper.ts",
+        "frontend/lib/simulation/insight-builder.ts",
+        "frontend/lib/simulation/simulators/budget-simulator.ts",
+        "frontend/lib/simulation/simulators/cashflow-simulator.ts",
+        "frontend/lib/simulation/simulators/emergency-fund-simulator.ts",
+        "frontend/lib/simulation/simulators/loan-simulator.ts"
+      ],
+      "disposition": "MUST COMMIT (Phase 7 frontend arithmetic disposition JSDoc annotations)"
+    },
+    "generated_artifacts_non_evidence": {
+      "description": "Machine-generated outputs that are not authoritative C50 evidence",
+      "files": [
+        {"path": "runtime/generated/git-fetch-events.jsonl", "status": "modified", "disposition": "MUST .gitignore or commit-then-move — operational event log, regenerated on each run"},
+        {"path": "runtime/generated/m9-c48/aggregator-obsolete-disposition.json", "status": "modified", "disposition": "AUTO-REGENERATED C48 output — should be regenerated by C48 machinery; verify deterministic"},
+        {"path": "runtime/generated/m9-c48/api-schema-governance.json", "status": "modified", "disposition": "auto-regenerated"},
+        {"path": "runtime/generated/m9-c48/cli-classification.json", "status": "modified", "disposition": "auto-regenerated"},
+        {"path": "runtime/generated/m9-c48/frontend-arithmetic-lint.json", "status": "modified", "disposition": "auto-regenerated"},
+        {"path": "runtime/generated/m9-c48/function-audit.json", "status": "modified", "disposition": "auto-regenerated"},
+        {"path": "runtime/generated/m9-c48/test-quality-classification.json", "status": "modified", "disposition": "auto-regenerated"},
+        {"path": "backend/tests/invariants/_m4_probe_live/", "status": "untracked dir", "disposition": "PROBE ARTIFACT — verify whether intentionally retained; otherwise delete"},
+        {"path": "runtime/generated/m9-c49/logs/execplan-45cc357941d8/", "status": "untracked dir", "disposition": "C49 log artifact — non-authoritative"},
+        {"path": "runtime/generated/m9-c49/logs/execplan-507fbeafa25b/", "status": "untracked dir", "disposition": "C49 log artifact — non-authoritative"},
+        {"path": "runtime/system/observability/event_store.py", "status": "modified", "disposition": "verify intentional modification; if pre-existing drift, reconcile"},
+        {"path": "memory-bank/activeContext.md", "status": "modified", "disposition": "documentation drift; commit or revert"}
+      ]
+    },
+    "deletions_pending": {
+      "description": "Files deleted in working tree that are referenced by execution-state.json",
+      "files": [
+        {"path": "runtime/generated/m9-c50/CERTIFICATION.md", "status": "deleted", "disposition": "Deletion of the prior aborted C50 attempt's CERTIFICATION.md — confirm intent"},
+        {"path": "runtime/generated/m9-c50/acceptance-scenarios.json", "status": "deleted", "disposition": "aborted C50 artifact — confirm intent"},
+        {"path": "runtime/generated/m9-c50/baseline.json", "status": "deleted", "disposition": "aborted C50 artifact"},
+        {"path": "runtime/generated/m9-c50/blast-radius-contract.json", "status": "deleted", "disposition": "aborted C50 artifact"},
+        {"path": "runtime/generated/m9-c50/brc-1bd5ffdb213f.json", "status": "deleted", "disposition": "aborted C50 artifact"},
+        {"path": "runtime/generated/m9-c50/brc-6ef351b5148f.json", "status": "deleted", "disposition": "aborted C50 artifact"},
+        {"path": "runtime/generated/m9-c50/brc-dcfa76288a7c.json", "status": "deleted", "disposition": "aborted C50 artifact"},
+        {"path": "runtime/generated/m9-c50/brc-faebfbc1bd59.json", "status": "deleted", "disposition": "aborted C50 artifact"},
+        {"path": "runtime/generated/m9-c50/capability-impact-analysis.json", "status": "deleted", "disposition": "aborted C50 artifact"},
+        {"path": "runtime/generated/m9-c50/certification.json", "status": "deleted", "disposition": "aborted C50 artifact"},
+        {"path": "runtime/generated/m9-c50/change-surface-analysis.json", "status": "deleted", "disposition": "aborted C50 artifact"},
+        {"path": "runtime/generated/m9-c50/evidence-invalidation-analysis.json", "status": "deleted", "disposition": "aborted C50 artifact"},
+        {"path": "runtime/generated/m9-c50/execution-integration.json", "status": "deleted", "disposition": "aborted C50 artifact"},
+        {"path": "runtime/generated/m9-c50/fail-closed-analysis.json", "status": "deleted", "disposition": "aborted C50 artifact"},
+        {"path": "runtime/generated/m9-c50/latent-capability-protection.json", "status": "deleted", "disposition": "aborted C50 artifact"},
+        {"path": "runtime/generated/m9-c50/latest-blast-radius.json", "status": "deleted", "disposition": "aborted C50 artifact"},
+        {"path": "runtime/generated/m9-c50/verification-surface-analysis.json", "status": "deleted", "disposition": "aborted C50 artifact"}
+      ],
+      "note": "These are remnants of the prior aborted C50 attempt described in Phase 0 finding 2. Deletion is intentional and should be recorded as part of the C50 cleanup."
+    }
+  },
+  "recommended_commit_strategy": {
+    "commit_1": "C50 implementation: control-plane and obligation reconciliation (foundation/verification/*.py, verify.py)",
+    "commit_2": "C50 test suites: all 12 test_m9_c50_*.py plus the modified test_m9_c49_canonical_cli.py",
+    "commit_3": "Phase 7 frontend JSDoc annotations",
+    "commit_4": "Phase 8 workflow comment corrections",
+    "commit_5": "C50 evidence: GUIDING_DOCUMENT, EXECUTION_PROGRESS (updated), FINAL_CONVERGENCE_REPORT, execution-state.json, phase-* artifacts",
+    "commit_6": "C50 deletion of aborted attempt artifacts (brc-*, certification.json, etc.)",
+    "deferred": "C48 regeneration outputs and runtime/generated/git-fetch-events.jsonl — determine whether .gitignore should exclude or whether they belong in C48 commit"
+  },
+  "audit_constraint_check": {
+    "constraint_canonical_architectural_fixes_required": "Phase 5 reconciliation authority lives at runtime/foundation/verification/obligation_reconciliation.py and is canonical. PASS.",
+    "constraint_pre_existing_error_backlog_policy": "Phase 3 fixed pre-existing ruff/mypy errors in capability_graph_resolver.py and control_plane.py. PASS.",
+    "constraint_no_silent_scope_expansion": "AD-1.1 (9-command surface) is documented; phase expansion only via governing document. PASS for documented scope."
+  }
+}

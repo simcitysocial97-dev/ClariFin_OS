@@ -1,0 +1,130 @@
+{
+  "generated_at": "2026-09-05T02:58:38.332884+00:00",
+  "kinds": {
+    "capability": {
+      "adapter": "adapter",
+      "classification": "A_genuine_semantic_executor",
+      "evidence_kind": "pytest-junit",
+      "executable_status": "executable",
+      "execution_command_nonempty": true,
+      "expected_artifact": "runtime/generated/m9-c50.13/junit-capability-money.xml",
+      "real_execution_proof": {
+        "artifact_exists": true,
+        "command": ".venv/bin/python -m pytest backend/tests/invariants/test_determinism.py::test_replay_stability -q --junit-xml=runtime/generated/m9-c50.13/junit-audit-money.xml",
+        "duration_seconds": 6.705799,
+        "exit_code": 0
+      },
+      "timeout_policy": 600
+    },
+    "contract": {
+      "adapter": "adapter",
+      "classification": "A_genuine_semantic_executor",
+      "evidence_kind": "contract-validation",
+      "executable_status": "executable",
+      "execution_command_nonempty": true,
+      "expected_artifact": "runtime/generated/m9-c50.13/junit-contract-money.xml",
+      "real_execution_proof": {
+        "artifact_exists": true,
+        "command": ".venv/bin/python -m pytest backend/tests/invariants/test_determinism.py::test_replay_stability -q --junit-xml=runtime/generated/m9-c50.13/junit-audit-money.xml",
+        "duration_seconds": 6.384729,
+        "exit_code": 0
+      },
+      "timeout_policy": 600
+    },
+    "coverage": {
+      "adapter": "adapter",
+      "classification": "A_genuine_semantic_executor",
+      "evidence_kind": "coverage-summary",
+      "executable_status": "executable",
+      "execution_command_nonempty": true,
+      "expected_artifact": "runtime/generated/m9-c50.13/junit-coverage-money.xml",
+      "real_execution_proof": {
+        "artifact_exists": true,
+        "command": ".venv/bin/python -m pytest backend/tests/invariants/test_determinism.py::test_replay_stability -q --junit-xml=runtime/generated/m9-c50.13/junit-audit-money.xml",
+        "duration_seconds": 6.389864,
+        "exit_code": 0
+      },
+      "timeout_policy": 1800
+    },
+    "golden": {
+      "adapter": "adapter",
+      "classification": "A_genuine_semantic_executor",
+      "evidence_kind": "golden-snapshot",
+      "executable_status": "executable",
+      "execution_command_nonempty": true,
+      "expected_artifact": "runtime/generated/m9-c50.13/junit-golden-money.xml",
+      "real_execution_proof": {
+        "artifact_exists": true,
+        "command": ".venv/bin/python -m pytest backend/tests/invariants/test_determinism.py::test_replay_stability -q --junit-xml=runtime/generated/m9-c50.13/junit-audit-money.xml",
+        "duration_seconds": 6.393472,
+        "exit_code": 0
+      },
+      "timeout_policy": 600
+    },
+    "invariant": {
+      "adapter": "adapter",
+      "classification": "A_genuine_semantic_executor",
+      "evidence_kind": "pytest-junit",
+      "executable_status": "executable",
+      "execution_command_nonempty": true,
+      "expected_artifact": "runtime/generated/m9-c50.13/junit-invariant-money.xml",
+      "real_execution_proof": {
+        "artifact_exists": true,
+        "command": ".venv/bin/python -m pytest backend/tests/invariants/test_determinism.py::test_replay_stability -q --junit-xml=runtime/generated/m9-c50.13/junit-audit-money.xml",
+        "duration_seconds": 7.165881,
+        "exit_code": 0
+      },
+      "timeout_policy": 900
+    },
+    "mutation": {
+      "adapter": "adapt_mutation_task",
+      "classification": "A_genuine_semantic_executor",
+      "evidence_kind": "mutation-summary",
+      "executable_status": "executable",
+      "execution_command_nonempty": true,
+      "expected_artifact": "backend/tests/generated/mutation/target-credit_card_engine-summary.json",
+      "real_execution_proof": null,
+      "timeout_policy": 600
+    },
+    "property": {
+      "adapter": "adapter",
+      "classification": "A_genuine_semantic_executor",
+      "evidence_kind": "hypothesis-report",
+      "executable_status": "executable",
+      "execution_command_nonempty": true,
+      "expected_artifact": "runtime/generated/m9-c50.13/junit-property-money.xml",
+      "real_execution_proof": {
+        "artifact_exists": true,
+        "command": ".venv/bin/python -m pytest backend/tests/invariants/test_determinism.py::test_replay_stability -q --junit-xml=runtime/generated/m9-c50.13/junit-audit-money.xml",
+        "duration_seconds": 6.625433,
+        "exit_code": 0
+      },
+      "timeout_policy": 600
+    },
+    "unit": {
+      "adapter": "adapt_unit_task",
+      "classification": "A_genuine_semantic_executor",
+      "evidence_kind": "pytest-junit",
+      "executable_status": "executable",
+      "execution_command_nonempty": true,
+      "expected_artifact": "runtime/generated/m9-c42.28/junit-unit-money.xml",
+      "real_execution_proof": null,
+      "timeout_policy": 600
+    }
+  },
+  "repository": {
+    "branch": "m9c9-merge-authorization-resolution",
+    "sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde"
+  },
+  "schema": "m9-c50/final-freeze/adapter-semantic-audit@1",
+  "summary": {
+    "capability": "A_genuine_semantic_executor",
+    "contract": "A_genuine_semantic_executor",
+    "coverage": "A_genuine_semantic_executor",
+    "golden": "A_genuine_semantic_executor",
+    "invariant": "A_genuine_semantic_executor",
+    "mutation": "A_genuine_semantic_executor",
+    "property": "A_genuine_semantic_executor",
+    "unit": "A_genuine_semantic_executor"
+  }
+}

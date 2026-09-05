@@ -1,0 +1,22 @@
+{
+  "cached_decision_observable": "REUSE",
+  "decision_record": {
+    "decided_at": "2026-09-05T02:59:47.434371+00:00",
+    "decision_id": "runtime.verification::dec::ce3095f6b00a7718",
+    "evidence_id": "execution_id=runtime.verification::exec::0c6d83b2d65dd376; evidence_id=runtime.verification::ev::c4d8b7dbf537edc9; artifact_sha256=bf7025eccd68b580; environment_identity=runtime.verification::env::bf2aa18ab1b1a6ab",
+    "execution_id": "runtime.verification::exec::0c6d83b2d65dd376",
+    "obligation_id": "obl::auth",
+    "rationale": "task executed, evidence captured, lineage complete",
+    "reconciliation_id": "rec::auth",
+    "status": "CERTIFIED",
+    "task_id": "task::auth"
+  },
+  "generated_at": "2026-09-05T02:58:38.332884+00:00",
+  "repository": {
+    "branch": "m9c9-merge-authorization-resolution",
+    "sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde"
+  },
+  "schema": "m9-c50/final-freeze/decision-authority@1",
+  "single_decision_authority": "runtime.foundation.verification.executor_pipeline.derive_decision",
+  "verdict": "decision_authority_is_canonical"
+}

@@ -1,0 +1,21 @@
+{
+  "run_id": "1235b07b82b26585",
+  "timestamp": "2026-09-04T22:57:33.498138+00:00",
+  "repository_sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde",
+  "scenario": "unmapped_change",
+  "changed_files": [
+    "/tmp/tmpvj76vmiz.py"
+  ],
+  "resolved_capabilities": [],
+  "obligations": [
+    "unmapped-review"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "blocked_unmapped",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

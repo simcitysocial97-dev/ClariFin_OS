@@ -1,0 +1,31 @@
+{
+  "run_id": "cache_reuse_2-c93fd352",
+  "timestamp": "2026-09-05T03:01:37.288171+00:00",
+  "repository_sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde",
+  "scenario": "cache_reuse_2",
+  "changed_files": [
+    "backend/src/engines/test_cache_r4.py"
+  ],
+  "plan_identity": "plan::cache_reuse_2-96741bd7",
+  "execution_identity": "exec::cache_reuse_2-cca4c134",
+  "task_ids": [
+    "exec-0001",
+    "exec-0002",
+    "exec-0003",
+    "exec-0004"
+  ],
+  "task_count": 4,
+  "evidence_identities": [],
+  "obligations": [],
+  "reconciliation": {
+    "complete": true,
+    "satisfied": 0,
+    "total_required": 0
+  },
+  "final_decision": "planned",
+  "plan_exit_code": 0,
+  "execution_exit_code": null,
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

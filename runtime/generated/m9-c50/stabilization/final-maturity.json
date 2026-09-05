@@ -1,0 +1,13 @@
+{
+  "schema": "m9-c50/stabilization/final-maturity@1",
+  "generated_at": "2026-09-04T23:08:41.284385+00:00",
+  "levels": {
+    "IMPLEMENTED": "YES",
+    "ARCHITECTURALLY_CONVERGED": "YES",
+    "OPERATIONALLY_VALIDATED": "YES",
+    "SUSTAINED_IN_OPERATION": "NO \u2014 requires longitudinal evidence",
+    "CERTIFIABLE": "NO \u2014 no certification policy",
+    "SELF_VERIFYING": "YES \u2014 10/10 behavioral fault detection"
+  },
+  "rationale": "Runtime is stable, deterministic, executable, lineage-complete, evidence-backed, fail-closed, cache-correct, CI-consistent, self-verifying. Sustained operation and certification remain explicitly unavailable in this single-session stabilization."
+}

@@ -1,0 +1,199 @@
+{
+  "schema": "m9-c50/stabilization/repository-convergence@1",
+  "generated_at": "2026-09-04T23:08:41.284385+00:00",
+  "verification_kinds": {
+    "mutation": {
+      "status": "SUPPORTED + EXECUTABLE",
+      "adapter": "adapt_mutation_task"
+    },
+    "unit": {
+      "status": "SUPPORTED + EXECUTABLE",
+      "adapter": "adapt_unit_task"
+    },
+    "property": {
+      "status": "SUPPORTED + EXECUTABLE",
+      "adapter": "adapter"
+    },
+    "invariant": {
+      "status": "SUPPORTED + EXECUTABLE",
+      "adapter": "adapter"
+    },
+    "contract": {
+      "status": "SUPPORTED + EXECUTABLE",
+      "adapter": "adapter"
+    },
+    "coverage": {
+      "status": "SUPPORTED + EXECUTABLE",
+      "adapter": "adapter"
+    },
+    "golden": {
+      "status": "SUPPORTED + EXECUTABLE",
+      "adapter": "adapter"
+    },
+    "capability": {
+      "status": "SUPPORTED + EXECUTABLE",
+      "adapter": "adapter"
+    }
+  },
+  "evidence_kinds": {
+    "environment_fingerprint": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "lint_report": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "format_report": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "typecheck_report": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "test_pass": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "property_pass": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "contract_pass": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "invariant_pass": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "integration_pass": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "e2e_pass": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "golden_pass": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "coverage_measurement": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "mutation_score": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "survivor_intel": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "strengthening_proposal": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "forensic_report": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "diagnostic_report": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "capability_resolution": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "blast_radius_contract": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "control_plane_plan": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "execution_plan": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "tier_plan_manifest": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "evidence_invalidations": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "execution_report": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "reconciliation_report": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "certification_report": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    },
+    "capability_catalog": {
+      "status": "SUPPORTED",
+      "in_vocabulary": true
+    }
+  },
+  "dispositions": {
+    "CLOSED": {
+      "status": "SUPPORTED"
+    },
+    "EXECUTED": {
+      "status": "SUPPORTED"
+    },
+    "OPEN": {
+      "status": "SUPPORTED"
+    },
+    "BLOCKED": {
+      "status": "SUPPORTED"
+    },
+    "INVALIDATED": {
+      "status": "SUPPORTED"
+    },
+    "REUSED": {
+      "status": "SUPPORTED"
+    },
+    "NOT_APPLICABLE": {
+      "status": "SUPPORTED"
+    },
+    "FAILED": {
+      "status": "SUPPORTED"
+    }
+  },
+  "canonical_commands": {
+    "verify.py status": "SUPPORTED + EXECUTABLE",
+    "verify.py metrics": "SUPPORTED + EXECUTABLE",
+    "verify.py history": "SUPPORTED + EXECUTABLE",
+    "verify.py deps": "SUPPORTED + EXECUTABLE",
+    "verify.py verify-status": "SUPPORTED + EXECUTABLE",
+    "verify.py integrity": "SUPPORTED + EXECUTABLE",
+    "verify.py env-check": "SUPPORTED + EXECUTABLE",
+    "verify.py mutation --smoke": "SUPPORTED + EXECUTABLE",
+    "verify.py mutation": "SUPPORTED + EXECUTABLE"
+  },
+  "adapters": {
+    "mutation": "SUPPORTED + EXECUTABLE",
+    "unit": "SUPPORTED + EXECUTABLE",
+    "property": "SUPPORTED + EXECUTABLE",
+    "invariant": "SUPPORTED + EXECUTABLE",
+    "contract": "SUPPORTED + EXECUTABLE",
+    "coverage": "SUPPORTED + EXECUTABLE",
+    "golden": "SUPPORTED + EXECUTABLE",
+    "capability": "SUPPORTED + EXECUTABLE"
+  },
+  "no_unsupported_kinds": true,
+  "no_unmapped_capabilities": true,
+  "single_control_plane": true,
+  "fault_injection_detects_10_of_10": true
+}

@@ -1,9 +1,9 @@
 {
   "domains": {
     "capabilities": {
-      "_c": 205917.741247526,
-      "_ts": "2026-09-05T13:19:54Z",
-      "hash": "b3c9b065fe01d074ae9757584a292737c4773c4c9fe4c916f3796a91ff970210",
+      "_c": 220340.465749033,
+      "_ts": "2026-09-05T17:34:42Z",
+      "hash": "854c33239eb13b5e0f190cc0fb6d052c4dd04f1374955990935a9c2c24f3c25e",
       "payload": {
         "data": {
           "categories": [
@@ -769,7 +769,7 @@
             }
           ]
         },
-        "generated_at": "2026-09-05T13:19:54Z",
+        "generated_at": "2026-09-05T17:34:42Z",
         "id": "sha256:5316987b8b1d0518a089806afeaca29464fda75fd1d9c48bfc66eb68396c465c",
         "kind": "platform.capability_list",
         "version": "1.0.0"
@@ -1555,6 +1555,6 @@
       }
     }
   },
-  "generated_at": "2026-09-05T13:19:58Z",
+  "generated_at": "2026-09-05T17:34:42Z",
   "version": "1"
 }

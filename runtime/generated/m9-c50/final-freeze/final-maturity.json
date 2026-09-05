@@ -1,0 +1,16 @@
+{
+  "generated_at": "2026-09-05T02:50:00+00:00",
+  "levels": {
+    "ARCHITECTURALLY_CONVERGED": "YES \u2014 8/8 verification kinds semantically executable; single control plane; closed evidence vocabulary; lineage state machine",
+    "CERTIFIABLE": "NO \u2014 no formal certification policy is defined",
+    "IMPLEMENTED": "YES \u2014 all 14 architecture invariants implemented and behaviorally enforced",
+    "OPERATIONALLY_VALIDATED": "YES \u2014 independent trace from task -> execution -> evidence -> decision returned CERTIFIED with real subprocess invocation, real artifact, real exit code",
+    "SELF_VERIFYING": "YES \u2014 10/10 fault injection classes detected behaviorally; legacy_bypass, evidence_without_execution, missing_obligation_task, failed_executor traverse canonical path",
+    "SUSTAINED_IN_OPERATION": "NO \u2014 single-session stabilization; longitudinal evidence across multiple sessions is required"
+  },
+  "repository": {
+    "branch": "m9c9-merge-authorization-resolution",
+    "sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde"
+  },
+  "schema": "m9-c50/final-freeze/final-maturity@1"
+}

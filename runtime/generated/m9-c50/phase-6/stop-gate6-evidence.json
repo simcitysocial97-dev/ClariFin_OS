@@ -1,0 +1,28 @@
+{
+  "phase": "PHASE_6",
+  "gate": "STOP GATE 6 \u2014 ONE STRENGTHENING AUTHORITY",
+  "generated_at": "2026-09-04T13:14:09.918367+00:00",
+  "test_suite": "runtime/tests/test_m9_c50_stop_gate6_strengthening_authority.py",
+  "tests_passed": 15,
+  "gate_conditions": {
+    "1_mutation_execution_one_authority": "mutation_authority.NON_CANONICAL_BACKENDS declares MutationOrchestrator/mutation_execution non-canonical; canonical runner = mutation_runner via canonical_control_plane._MIGRATION['mutation'] = ('strengthen','mutation_runner')",
+    "2_mutation_result_contract_canonical": "mutation_contract.MutationResult/MutationCounts is the shared result contract consumed by mutation_result_unified",
+    "3_survivor_intel_reachable_via_control_plane": "canonical_control_plane exposes forensic-diagnose/forensic-report routes and mutation survivor evidence via canonical modules",
+    "4_strengthening_capability_aware": "strengthening.SurvivorEvidence and StrengtheningProposal both carry capability fields",
+    "5_forensic_services_internally_consumed": "canonical_control_plane imports mutation_runner; forensic_cli renders canonical records (view, not engine)",
+    "6_legacy_forensic_commands_cannot_bypass": "classification_for() returns DEPRECATED for strengthen-* / mutation / mutation-intel; facade emits deprecation warnings",
+    "7_mutation_evidence_in_common_evidence_model": "capability_catalog.EVIDENCE_KINDS closed vocabulary includes mutation_score, survivor_intel, strengthening_proposal, forensic_report",
+    "8_dormant_duplicate_bounded_disposition": "MutationOrchestrator declared NON_CANONICAL, not imported by canonical_control_plane or execution_orchestrator, no CLI route exposes it"
+  },
+  "artifact_hashes": {
+    "mutation_authority": "7465557703fccf000dc96ec77097ff233b691783b3e75a97f431aacb33c2fcb6",
+    "mutation_contract": "b2c18279304a1fe73465c8efd63779b0c18b241f0e1c46f5d7c6b5e3f149c124",
+    "mutation_result_unified": "50a1e09bdaac3d4552fccc45479a0119c1f8176fbb48e6e62d49ff61be266776",
+    "mutation_runner": "e80e48de9c189b3d46a5c1821c12e04e65330d407fddd89a6551844796df9497",
+    "strengthening": "a548047b64ffc62419b82d6b5dc988ccd73aac9136c832a4b2a34086f9e39bbe",
+    "canonical_control_plane": "4c2177b95c4107b786709b1c5a4b7a0efa443d6f30dc8b27fbbc965e2a99048f",
+    "capability_catalog": "176d306130ccdd2e40bcc56aeb95d389138271786f5250d710a9d811aa4f8726"
+  },
+  "test_suite_sha256": "1bb5c10027b503ae0a1781d4fd75aa527518588c7a9f01f019545ab63faf8237",
+  "stop_gate": "PASSED"
+}

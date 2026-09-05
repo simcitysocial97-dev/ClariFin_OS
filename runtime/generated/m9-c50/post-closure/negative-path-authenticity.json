@@ -1,0 +1,62 @@
+{
+  "schema": "m9-c50/post-closure/negative-path-authenticity@1",
+  "generated_at": "2026-09-04T21:30:00+00:00",
+  "purpose": "Assess whether self-verification tests demonstrate genuine negative-path detection or only structural assertions.",
+  "phase_10_self_verification_audit": {
+    "total_tests": 34,
+    "passed": 33,
+    "skipped": 1,
+    "structural_assertions": [
+      {
+        "test": "test_single_control_plane_class",
+        "what_it_proves": "ControlPlane class exists and is importable",
+        "what_it_does_not_prove": "That duplicate authority injection would be detected"
+      },
+      {
+        "test": "test_canonical_command_surface_is_9_commands",
+        "what_it_proves": "migration_map returns 9 canonical operations",
+        "what_it_does_not_prove": "That a 10th command cannot bypass the control plane"
+      },
+      {
+        "test": "test_framework_detects_legacy_bypass",
+        "what_it_proves": "Known legacy commands exist in migration_map",
+        "what_it_does_not_prove": "That an unknown bypass attempt would be rejected at runtime"
+      }
+    ],
+    "behavioral_tests": [
+      {
+        "test": "test_obligation_closure_requires_evidence",
+        "what_it_proves": "reconcile_obligations correctly computes incomplete when no records",
+        "verdict": "GENUINE — exercises real reconciliation logic"
+      },
+      {
+        "test": "test_cache_rejects_corrupted_entries",
+        "what_it_proves": "VerificationCache rejects invalid JSON",
+        "verdict": "GENUINE — live file corruption test"
+      },
+      {
+        "test": "test_stale_commit_evidence_rejected",
+        "what_it_proves": "Cache replay returns reusable=False for different commit",
+        "verdict": "GENUINE — live cache invalidation test"
+      }
+    ],
+    "verdict": "PARTIAL — structural self-tests prove architecture shape but do not inject real violations and verify detection fires. The Phase 10 suite demonstrates that the architecture HAS detection mechanisms (migration_map, cache validation, obligation reconciliation) but does not prove those mechanisms actually catch injected violations."
+  },
+  "remediation_path_for_genuine_negative_detection": [
+    {
+      "step": 1,
+      "action": "Inject a duplicate ControlPlane subclass and assert classification_for() flags it",
+      "feasibility": "HIGH — requires monkey-patching in test isolation"
+    },
+    {
+      "step": 2,
+      "action": "Corrupt a cache entry and assert replay returns reusable=False with explicit reason",
+      "feasibility": "HIGH — already proven by Phase 5 gate tests"
+    },
+    {
+      "step": 3,
+      "action": "Inject an unknown verification kind and assert adapter produces not_executable_yet",
+      "feasibility": "MEDIUM — requires test to create a PlannedTask with unknown kind"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "failed_decision_status": "FAILED",
+  "failed_executor_detected": true,
+  "generated_at": "2026-09-05T02:58:38.332884+00:00",
+  "no_false_certification": true,
+  "repository": {
+    "branch": "m9c9-merge-authorization-resolution",
+    "sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde"
+  },
+  "schema": "m9-c50/final-freeze/failure-injection-acceptance@1",
+  "verdict": "fail_closed"
+}

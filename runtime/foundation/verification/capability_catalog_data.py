@@ -189,9 +189,9 @@ _REGISTRATIONS_DISCOVERY = [
         trigger_conditions=(PROBLEM_CHANGED_FILE,),
         input_types=("none",),
         input_sources=("generated_evidence",),
-        produces=("capability_graph",),
+        produces=("blast_radius_contract",),
         consumes=("capability_catalog",),
-        evidence_type="capability_graph",
+        evidence_type="blast_radius_contract",
         related_capabilities=(
             "discover.blast-radius",
             "discover.resolve-capabilities",
@@ -219,9 +219,9 @@ _REGISTRATIONS_DISCOVERY = [
         trigger_conditions=(PROBLEM_PROPOSED_CHANGE,),
         input_types=("none",),
         input_sources=("generated_evidence",),
-        produces=("latent_capability_audit",),
+        produces=("diagnostic_report",),
         consumes=("capability_catalog",),
-        evidence_type="latent_capability_audit",
+        evidence_type="diagnostic_report",
         notes=(
             "C52.3: closed the in-code-absent-from-catalog gap. Latent "
             "capabilities are classified, not removed."
@@ -399,9 +399,9 @@ _REGISTRATIONS_EXECUTION = [
         trigger_conditions=(PROBLEM_CHANGED_FILE,),
         input_types=("changed_files",),
         input_sources=("git_working_tree",),
-        produces=("execution_report", "execution_evidence"),
+        produces=("execution_report",),
         consumes=("capability_resolution",),
-        evidence_type="execution_evidence",
+        evidence_type="execution_report",
         authorization=AuthorizationLevel.OPERATOR,
         related_capabilities=(
             "evidence.pipeline-plan",
@@ -425,9 +425,9 @@ _REGISTRATIONS_EXECUTION = [
         trigger_conditions=(PROBLEM_CHANGED_FILE,),
         input_types=("plan_manifest", "recorded_outcome"),
         input_sources=("generated_evidence",),
-        produces=("execution_evidence",),
+        produces=("execution_report",),
         consumes=("execution_plan",),
-        evidence_type="execution_evidence",
+        evidence_type="execution_report",
         notes="C52.3: closed the in-code-absent-from-catalog gap.",
     ),
     _reg(
@@ -629,9 +629,9 @@ _REGISTRATIONS_DIAGNOSIS = [
         trigger_conditions=(PROBLEM_UNKNOWN_FAILURE,),
         input_types=("none",),
         input_sources=("generated_evidence",),
-        produces=("bypass_risk_analysis",),
+        produces=("forensic_report",),
         consumes=("capability_catalog",),
-        evidence_type="bypass_risk_analysis",
+        evidence_type="forensic_report",
         related_capabilities=("discover.capability-for",),
         notes=(
             "C52.3: closed the in-code-absent-from-catalog gap. Feeds "
@@ -951,7 +951,7 @@ _REGISTRATIONS_CERTIFICATION = [
         input_types=("changed_files",),
         input_sources=("git_working_tree",),
         produces=("certification_report",),
-        consumes=("execution_evidence",),
+        consumes=("execution_report",),
         evidence_type="certification_report",
         related_capabilities=(
             "exec.evidence-execute",
@@ -1047,9 +1047,9 @@ _REGISTRATIONS_EVIDENCE = [
         trigger_conditions=(PROBLEM_QUALITY_FAILURE,),
         input_types=("none",),
         input_sources=("filesystem",),
-        produces=("configuration_authority_report",),
+        produces=("environment_fingerprint",),
         consumes=(),
-        evidence_type="configuration_authority_report",
+        evidence_type="environment_fingerprint",
         notes="C52.3: closed the in-code-absent-from-catalog gap.",
     ),
     _reg(
@@ -1068,7 +1068,7 @@ _REGISTRATIONS_EVIDENCE = [
         input_types=("changed_files",),
         input_sources=("git_working_tree",),
         produces=("reconciliation_report",),
-        consumes=("execution_plan", "execution_evidence"),
+        consumes=("execution_plan", "execution_report"),
         evidence_type="reconciliation_report",
         related_capabilities=(
             "evidence.pipeline-plan",
@@ -1094,7 +1094,7 @@ _REGISTRATIONS_EVIDENCE = [
         input_types=("plan_manifest",),
         input_sources=("generated_evidence", "explicit_argument"),
         produces=("reconciliation_report",),
-        consumes=("execution_plan", "execution_evidence"),
+        consumes=("execution_plan", "execution_report"),
         evidence_type="reconciliation_report",
         related_capabilities=("evidence.pipeline-plan", "evidence.reconcile-pipeline"),
         notes="C52.3: closed the in-code-absent-from-catalog gap.",
@@ -1116,9 +1116,9 @@ _REGISTRATIONS_EVIDENCE = [
         trigger_conditions=(PROBLEM_UNKNOWN_FAILURE,),
         input_types=("query_type",),
         input_sources=("explicit_argument",),
-        produces=("knowledge_report",),
+        produces=("diagnostic_report",),
         consumes=(),
-        evidence_type="knowledge_report",
+        evidence_type="diagnostic_report",
         related_capabilities=("certify.contract-governance", "certify.audit"),
         notes=(
             "C52.3: closed the in-code-absent-from-catalog gap. Sub-routes: "

@@ -1,0 +1,128 @@
+{
+  "adapters_registered": [
+    "capability",
+    "contract",
+    "coverage",
+    "golden",
+    "invariant",
+    "mutation",
+    "property",
+    "unit"
+  ],
+  "canonical_pytest_targets": {
+    "capability": [
+      "backend/tests/capability",
+      "pytest-junit",
+      600
+    ],
+    "contract": [
+      "backend/tests/contract",
+      "contract-validation",
+      600
+    ],
+    "coverage": [
+      "backend/tests",
+      "coverage-summary",
+      1800
+    ],
+    "golden": [
+      "backend/tests/golden",
+      "golden-snapshot",
+      600
+    ],
+    "invariant": [
+      "backend/tests/invariants",
+      "pytest-junit",
+      900
+    ],
+    "property": [
+      "backend/tests/properties",
+      "hypothesis-report",
+      600
+    ]
+  },
+  "components": {
+    "control_plane": "runtime/foundation/verification/control_plane_facade.py",
+    "decision": "runtime.foundation.verification.executor_pipeline.derive_decision",
+    "evidence": "runtime.foundation.verification.executor_pipeline.ExecutionEvidence",
+    "executor_dispatcher": "runtime.foundation.verification.executor_pipeline.execute_task",
+    "executor_subprocess": "runtime.foundation.verification.executor.Executor",
+    "lineage_enforcer": "LineageViolationError + assert_valid_transition",
+    "planner": "runtime.foundation.verification.evidence_planner.default_planner"
+  },
+  "execution_chain": [
+    "Planner.plan() -> EvidenceAwarePlan",
+    "build_executable_plan() -> ExecutableVerificationPlan (adapters expand tasks)",
+    "execute_task(task) -> ExecutionEvidence (real subprocess via Executor)",
+    "evidence_identity() -> deterministic evidence_id",
+    "evaluate_cache() -> CacheDecision",
+    "derive_decision() -> VerificationDecision"
+  ],
+  "forbidden_transitions_rejected": [
+    {
+      "from": "PLANNED",
+      "rejected": true,
+      "to": "DECIDED"
+    },
+    {
+      "from": "EXECUTING",
+      "rejected": true,
+      "to": "CERTIFIED"
+    },
+    {
+      "from": "FAILED",
+      "rejected": true,
+      "to": "CERTIFIED"
+    },
+    {
+      "from": "DECIDED",
+      "rejected": true,
+      "to": "EXECUTING"
+    }
+  ],
+  "full_trace": {
+    "artifact_paths": [
+      "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-invariant-money-trace.xml"
+    ],
+    "decision_id": "runtime.verification::dec::30f9904ea76f8dc1",
+    "decision_rationale": "task executed, evidence captured, lineage complete",
+    "decision_status": "CERTIFIED",
+    "duration_seconds": 6.538095,
+    "evidence_id": "execution_id=runtime.verification::exec::41e2b45c4bf4ef4e; evidence_id=runtime.verification::ev::4c218d0e891c7277; artifact_sha256=c2001f9b07d12323; environment_identity=runtime.verification::env::bf2aa18ab1b1a6ab",
+    "execution_id": "runtime.verification::exec::41e2b45c4bf4ef4e",
+    "exit_code": 0,
+    "obligation_id": "obl::trace::money",
+    "reconciliation_id": "rec::trace::money",
+    "task_id": "exec::probe::lineage::money"
+  },
+  "generated_at": "2026-09-05T02:58:38.332884+00:00",
+  "identity_kinds": [
+    "runtime.foundation.verification.executor_pipeline",
+    "obl",
+    "task",
+    "exec",
+    "ev",
+    "rec",
+    "dec",
+    "run"
+  ],
+  "lineage_chain_required_for_decision": true,
+  "repository": {
+    "branch": "m9c9-merge-authorization-resolution",
+    "sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde"
+  },
+  "schema": "m9-c50/final-freeze/architecture-acceptance@1",
+  "valid_states": [
+    "BLOCKED",
+    "DECIDED",
+    "DISPATCHED",
+    "EVIDENCE_CAPTURED",
+    "EXECUTED",
+    "EXECUTING",
+    "FAILED",
+    "INVALIDATED",
+    "PLANNED",
+    "RECONCILED",
+    "REUSED"
+  ]
+}

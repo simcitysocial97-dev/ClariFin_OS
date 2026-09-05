@@ -1,0 +1,30 @@
+{
+  "runs": [
+    {
+      "run_id": "aecc2b4070d99634",
+      "timestamp": "2026-09-05T03:03:26.007761+00:00",
+      "repository_sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde",
+      "scenario": "self_verification",
+      "changed_files": [
+        "runtime/foundation/verification/control_plane_facade.py"
+      ],
+      "resolved_capabilities": [
+        "verification-runtime",
+        "control-plane"
+      ],
+      "obligations": [
+        "unit",
+        "property",
+        "invariant"
+      ],
+      "plan_identity": null,
+      "execution_identity": null,
+      "evidence_identities": [],
+      "reconciliation": {},
+      "final_decision": "self_verified",
+      "failures": [],
+      "reused_evidence": [],
+      "invalidated_evidence": []
+    }
+  ]
+}

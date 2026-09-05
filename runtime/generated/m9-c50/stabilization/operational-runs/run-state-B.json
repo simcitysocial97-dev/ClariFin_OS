@@ -1,0 +1,43 @@
+{
+  "run_id": "run::state::B",
+  "timestamp": "2026-09-04T23:07:16.730943+00:00",
+  "state": "B_backend_unit",
+  "expected": "real unit execution -> evidence -> reconciliation",
+  "payload": {
+    "state": "B_backend_unit",
+    "expected": "real unit execution -> evidence -> reconciliation",
+    "task": "exec::state::invariant::money",
+    "execution_id": "runtime.verification::exec::182823246521e847",
+    "exit_code": 0,
+    "artifact_paths": [
+      "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-invariant-money.xml"
+    ],
+    "decision": {
+      "decision_id": "runtime.verification::dec::063a8d40b2583496",
+      "decided_at": "2026-09-04T23:05:13.704289+00:00",
+      "obligation_id": "obl::B::invariant",
+      "task_id": "exec::state::invariant::money",
+      "execution_id": "runtime.verification::exec::182823246521e847",
+      "evidence_id": "execution_id=runtime.verification::exec::182823246521e847; evidence_id=runtime.verification::ev::e01c6a77b510f620; artifact_sha256=82b3646549ad0e7c; environment_identity=runtime.verification::env::bf2aa18ab1b1a6ab",
+      "reconciliation_id": "rec::exec::state::invariant::money",
+      "status": "CERTIFIED",
+      "rationale": "task executed, evidence captured, lineage complete"
+    }
+  },
+  "execution_identity": "runtime.verification::exec::182823246521e847",
+  "task_identity": "exec::state::invariant::money",
+  "decision": {
+    "decision_id": "runtime.verification::dec::063a8d40b2583496",
+    "decided_at": "2026-09-04T23:05:13.704289+00:00",
+    "obligation_id": "obl::B::invariant",
+    "task_id": "exec::state::invariant::money",
+    "execution_id": "runtime.verification::exec::182823246521e847",
+    "evidence_id": "execution_id=runtime.verification::exec::182823246521e847; evidence_id=runtime.verification::ev::e01c6a77b510f620; artifact_sha256=82b3646549ad0e7c; environment_identity=runtime.verification::env::bf2aa18ab1b1a6ab",
+    "reconciliation_id": "rec::exec::state::invariant::money",
+    "status": "CERTIFIED",
+    "rationale": "task executed, evidence captured, lineage complete"
+  },
+  "evidence_artifact_paths": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-invariant-money.xml"
+  ]
+}

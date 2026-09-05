@@ -1,0 +1,24 @@
+{
+  "run_id": "run::state::J",
+  "timestamp": "2026-09-04T23:07:16.732190+00:00",
+  "state": "J_stale_evidence",
+  "expected": "INVALIDATE -> REEXECUTE",
+  "payload": {
+    "state": "J_stale_evidence",
+    "expected": "INVALIDATE -> REEXECUTE",
+    "decision": {
+      "decision": "INVALIDATE",
+      "reason": "prior evidence artifact missing: /home/vasantha/AI-Projects/ClariFin_OS/stabilization/missing_artifact.bin",
+      "task_identity": "task::j",
+      "environment_identity": "env::j",
+      "prior_evidence_id": "ev::stale"
+    }
+  },
+  "decision": {
+    "decision": "INVALIDATE",
+    "reason": "prior evidence artifact missing: /home/vasantha/AI-Projects/ClariFin_OS/stabilization/missing_artifact.bin",
+    "task_identity": "task::j",
+    "environment_identity": "env::j",
+    "prior_evidence_id": "ev::stale"
+  }
+}

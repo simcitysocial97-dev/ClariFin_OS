@@ -1,0 +1,16 @@
+{
+  "canonical_operations_with_delegating_legacy": {
+    "doctor": 11,
+    "diagnose": 8,
+    "ci": 3,
+    "plan": 20,
+    "inspect": 11,
+    "certify": 7,
+    "strengthen": 21,
+    "run": 4
+  },
+  "total_classified_tokens": 103,
+  "legacy_delegated": 85,
+  "tokens_without_route": [],
+  "note": "Every non-canonical token in _CLASSIFICATION either routes via migration_map to exactly one canonical operation or is exp none; no legacy token registers its own independent execution path in the facade dispatch."
+}

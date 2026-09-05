@@ -1,0 +1,26 @@
+{
+  "run_id": "capability_change-6039fe12",
+  "timestamp": "2026-09-05T03:01:37.288171+00:00",
+  "repository_sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde",
+  "scenario": "capability_change",
+  "changed_files": [
+    "runtime/foundation/verification/test_r4_probe.py"
+  ],
+  "plan_identity": "plan::capability_change-2d6e4697",
+  "execution_identity": "exec::capability_change-639eebf4",
+  "task_ids": [],
+  "task_count": 0,
+  "evidence_identities": [],
+  "obligations": [],
+  "reconciliation": {
+    "complete": true,
+    "satisfied": 0,
+    "total_required": 0
+  },
+  "final_decision": "planned",
+  "plan_exit_code": 0,
+  "execution_exit_code": null,
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

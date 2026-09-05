@@ -1,0 +1,24 @@
+{
+  "run_id": "run::state::K",
+  "timestamp": "2026-09-04T23:07:16.732358+00:00",
+  "state": "K_reusable",
+  "expected": "REUSED",
+  "payload": {
+    "state": "K_reusable",
+    "expected": "REUSED",
+    "decision": {
+      "decision": "REUSE",
+      "reason": "task identity, environment identity, and evidence validity all match",
+      "task_identity": "task::k",
+      "environment_identity": "runtime.verification::env::175cb3812e5d5cd2",
+      "prior_evidence_id": "ev::reusable"
+    }
+  },
+  "decision": {
+    "decision": "REUSE",
+    "reason": "task identity, environment identity, and evidence validity all match",
+    "task_identity": "task::k",
+    "environment_identity": "runtime.verification::env::175cb3812e5d5cd2",
+    "prior_evidence_id": "ev::reusable"
+  }
+}

@@ -1,0 +1,190 @@
+{
+  "schema": "m9-c50/post-closure/evidence-integrity@1",
+  "generated_at": "2026-09-04T20:05:00+00:00",
+  "purpose": "Verify every artifact referenced by the final report actually exists; compute missing SHA-256 hashes; detect stale, deleted, regenerated or mismatched evidence.",
+  "verification_method": "SHA-256 recomputation against on-disk files for every claimed hash. Existence check for every referenced path. Phase evidence inventory reconciled against execution-state.json.",
+  "claimed_hashes": {
+    "phase_0_baseline_inventory": {
+      "claimed": "47674ae773156740de272f687194e19d4949b01358ba7f561c2b38a58036f8a0",
+      "recomputed": "47674ae773156740de272f687194e19d4949b01358ba7f561c2b38a58036f8a0",
+      "match": true,
+      "path": "runtime/generated/m9-c50/phase-0/baseline-inventory.json"
+    },
+    "phase_0_command_inventory": {
+      "claimed": "58a086de629520e83437d132301157012ef10d17904f68bb1a7ecd389e079918",
+      "recomputed": "58a086de629520e83437d132301157012ef10d17904f68bb1a7ecd389e079918",
+      "match": true
+    },
+    "phase_0_authority_inventory": {
+      "claimed": "25aeef3cb106214497e93df9ecf52a4b266fc3044e0eb75eec38477f04ea8780",
+      "recomputed": "25aeef3cb106214497e93df9ecf52a4b266fc3044e0eb75eec38477f04ea8780",
+      "match": true
+    },
+    "phase_0_capability_inventory": {
+      "claimed": "bf2fdb0f9adee1e53a79890c1c347585f11ff45468a783797467b9f64af3d1da",
+      "recomputed": "bf2fdb0f9adee1e53a79890c1c347585f11ff45468a783797467b9f64af3d1da",
+      "match": true
+    },
+    "phase_0_task_kind_inventory": {
+      "claimed": "0aed84b37c053faed4ffa873f54508851a00518c1cdcc0a1638ceb12fc55cbb1",
+      "recomputed": "0aed84b37c053faed4ffa873f54508851a00518c1cdcc0a1638ceb12fc55cbb1",
+      "match": true
+    },
+    "phase_0_c49_claim_reconciliation": {
+      "claimed": "fba1d966e1d08252a25a96f0ed8d95c02012883726476d3963bab67bdaea987e",
+      "recomputed": "fba1d966e1d08252a25a96f0ed8d95c02012883726476d3963bab67bdaea987e",
+      "match": true
+    },
+    "phase_0_initial_architecture_graph": {
+      "claimed": "3bf10766b275c4123625fe103e091774f5e9992d5da61d21c8f2fa8cc3cd263b",
+      "recomputed": "3bf10766b275c4123625fe103e091774f5e9992d5da61d21c8f2fa8cc3cd263b",
+      "match": true
+    },
+    "phase_0_initial_maturity_assessment": {
+      "claimed": "515614fa65a733a4069b3b5e52f9e912f801241e1c618d88314cba677163b0cf",
+      "recomputed": "515614fa65a733a4069b3b5e52f9e912f801241e1c618d88314cba677163b0cf",
+      "match": true
+    },
+    "phase_1_cli_command_inventory": {
+      "claimed": "3f9db69874ce6e90b469ca5d96e90a4c931c0ca466001092f837df8adeac1d93",
+      "recomputed": "3f9db69874ce6e90b469ca5d96e90a4c931c0ca466001092f837df8adeac1d93",
+      "match": true
+    },
+    "phase_1_cli_canonical_mapping": {
+      "claimed": "3ba4b69f0eeda2f8307fba806cce16b9709cc70628ecd49bea19cb0f2019379b",
+      "recomputed": "3ba4b69f0eeda2f8307fba806cce16b9709cc70628ecd49bea19cb0f2019379b",
+      "match": true
+    },
+    "phase_1_cli_deprecation_mapping": {
+      "claimed": "9b5dc80ae8c18a12915def58bc23943930266365ec6f6efdf960e0d322d9c56f",
+      "recomputed": "9b5dc80ae8c18a12915def58bc23943930266365ec6f6efdf960e0d322d9c56f",
+      "match": true
+    },
+    "phase_1_cli_no_duplicate_authority": {
+      "claimed": "8d7a55ee71f5aabee143f11438d9dbc9e1b5112b0a7fb7e3c77b0c05f3d3f6f8",
+      "recomputed": "8d7a55ee71f5aabee143f11438d9dbc9e1b5112b0a7fb7e3c77b0c05f3d3f6f8",
+      "match": true
+    },
+    "phase_1_operator_ux_rationale": {
+      "claimed": "281be1c7a94941f69fff48cbf530aee3b667dd4a0dee0202145ee2228f47160a",
+      "recomputed": "281be1c7a94941f69fff48cbf530aee3b667dd4a0dee0202145ee2228f47160a",
+      "match": true
+    },
+    "phase_2_canonical_verification_model": {
+      "claimed": "e95dce3bee22e0ce6861510beb49e30eb5467ea32c1dee625baef3096b75ac66",
+      "recomputed": "e95dce3bee22e0ce6861510beb49e30eb5467ea32c1dee625baef3096b75ac66",
+      "match": true
+    },
+    "phase_4_stop_gate4_evidence": {
+      "claimed_placeholder": "a1b2c3d4...",
+      "actual_recomputed": "5af228211055e30c1c8556e75b86943f2e47d72e887c23fa16ad5055f9e7d26b",
+      "status": "PLACEHOLDER HASH — the Final Convergence Report claims `a1b2c3d4...` for phase-4 stop-gate4-evidence.json. The actual SHA-256 is `5af22821...`. This is a fabricated/truncated hash placeholder in the report."
+    },
+    "phase_5_stop_gate5_evidence": {
+      "claimed": "NOT LISTED in Final Convergence Report evidence-hashes table",
+      "actual_recomputed": "ec05181f269d5fd21749980457af81d9bfc59525ba44fe57112a1a93eff5e393",
+      "status": "ABSENT FROM REPORT — Phase 5 evidence hash omitted entirely from the report's evidence table even though the file exists and is canonical"
+    },
+    "phase_6_stop_gate6_evidence": {
+      "claimed": "NOT LISTED in Final Convergence Report evidence-hashes table",
+      "actual_recomputed": "1d1d6653160201f9f9cf3bd380192f75497a936a28ad0780d3a16c169a237ae7",
+      "status": "ABSENT FROM REPORT — Phase 6 evidence hash omitted"
+    },
+    "phase_7_disposition": {
+      "claimed": "95b48eccfada10d28e063f7ef812db677d90d4af917d681358a30c4472289d4e",
+      "recomputed": "95b48eccfada10d28e063f7ef812db677d90d4af917d681358a30c4472289d4e",
+      "match": true
+    },
+    "phase_7_readme": {
+      "claimed": "d1de8dc95eb566d88d1cd4d0a7cb6b239ac18907fdcf4582087108bcd711165a",
+      "recomputed": "d1de8dc95eb566d88d1cd4d0a7cb6b239ac18907fdcf4582087108bcd711165a",
+      "match": true
+    },
+    "phase_8_inventory": {
+      "claimed": "14bc46b446f6f3d9170e910c2c924bcdda1d466d1515a014412394956c8e6346",
+      "recomputed": "14bc46b446f6f3d9170e910c2c924bcdda1d466d1515a014412394956c8e6346",
+      "match": true
+    },
+    "phase_9_test_suite": {
+      "claimed": "fbb87414d4367851402a8c32e4361361f6428f5852d910ddc2658370f9ac70bf",
+      "recomputed": "fbb87414d4367851402a8c32e4361361f6428f5852d910ddc2658370f9ac70bf",
+      "match": true
+    },
+    "phase_10_test_suite": {
+      "claimed": "3fca3d9aa6938b5aa448cfcb0910df62953f807fb3c70f01ced607533891f128",
+      "recomputed": "3fca3d9aa6938b5aa448cfcb0910df62953f807fb3c70f01ced607533891f128",
+      "match": true
+    },
+    "phase_11_test_suite": {
+      "claimed": "ae85c635cd8663483314a495d6df72b9735cc69add3a70f46c46afc6c2d69ec0",
+      "recomputed": "ae85c635cd8663483314a495d6df72b9735cc69add3a70f46c46afc6c2d69ec0",
+      "match": true
+    },
+    "phase_12_test_suite": {
+      "claimed": "541db1b1d0211659e13888e01defec8114d3b157212f7313638e73dc5eb99704",
+      "recomputed": "541db1b1d0211659e13888e01defec8114d3b157212f7313638e73dc5eb99704",
+      "match": true
+    },
+    "phase_12_final_report": {
+      "claimed": "838fb06a5e72f1e1c5353a2dc4802f5ee8ee0c8b308157191835997273d81f05",
+      "recomputed": "838fb06a5e72f1e1c5353a2dc4802f5ee8ee0c8b308157191835997273d81f05",
+      "match": true
+    },
+    "phase_12_final_summary": {
+      "claimed": "56ba123b18a457958bd93b0821abc09c62fd84370ca5a71af9f9fb6e4db10ddf",
+      "recomputed": "56ba123b18a457958bd93b0821abc09c62fd84370ca5a71af9f9fb6e4db10ddf",
+      "match": true
+    },
+    "phase_5_cache_authority": {
+      "claimed_in_phase5_evidence": "d8524dd3f3de1ee7cea11ed27f54779f547b9d52c5af1d768afaabecf795c533",
+      "recomputed": "d8524dd3f3de1ee7cea11ed27f54779f547b9d52c5af1d768afaabecf795c533",
+      "match": true,
+      "path": "runtime/foundation/verification/cache.py"
+    },
+    "phase_5_reconciliation_authority": {
+      "claimed_in_phase5_evidence": "48129a6b1e520cb756a19e15806a61e70770f8c8a96262cdac90a160d7992437",
+      "recomputed": "48129a6b1e520cb756a19e15806a61e70770f8c8a96262cdac90a160d7992437",
+      "match": true,
+      "path": "runtime/foundation/verification/obligation_reconciliation.py"
+    }
+  },
+  "missing_or_placeholder_hashes": [
+    {
+      "artifact": "phase-4 stop-gate4-evidence.json",
+      "issue": "Final report claims hash 'a1b2c3d4...' — this is a placeholder/truncation, not a real SHA-256",
+      "actual_hash": "5af228211055e30c1c8556e75b86943f2e47d72e887c23fa16ad5055f9e7d26b"
+    },
+    {
+      "artifact": "phase-5 stop-gate5-evidence.json",
+      "issue": "Phase 5 evidence hash not listed in the Final Convergence Report evidence table",
+      "actual_hash": "ec05181f269d5fd21749980457af81d9bfc59525ba44fe57112a1a93eff5e393"
+    },
+    {
+      "artifact": "phase-6 stop-gate6-evidence.json",
+      "issue": "Phase 6 evidence hash not listed in the Final Convergence Report evidence table",
+      "actual_hash": "1d1d6653160201f9f9cf3bd380192f75497a936a28ad0780d3a16c169a237ae7"
+    }
+  ],
+  "claim_authenticity_findings": [
+    {
+      "claim": "Phase 4 evidence SHA `a1b2c3d4...`",
+      "source": "FINAL_CONVERGENCE_REPORT.md line 139, execution-state.json implicit",
+      "verdict": "PLACEHOLDER — not a real hash; obfuscates the real evidence and undermines hash-trust claim"
+    },
+    {
+      "claim": "Phase 0 working-tree count: 44 changed/deleted/untracked files",
+      "source": "EXECUTION_PROGRESS.md Phase 0",
+      "verdict": "STALE — current count is 87. Reproduced as 'current' in FINAL_CONVERGENCE_REPORT.md line 161 (still says 44)"
+    },
+    {
+      "claim": "24 operational runs recorded across 16 representative scenarios",
+      "source": "FINAL_CONVERGENCE_REPORT.md multiple places; execution-state.json phase_11.run_count=24",
+      "verdict": "COUNT INCONSISTENT — phase-11/operations/ directory contains 54 run-*.json files, not 24. Summary file operations-summary.json contains 1 entry. The '24' figure is ungrounded."
+    },
+    {
+      "claim": "All C50 tests pass: 216 passed, 4 skipped",
+      "source": "EXECUTION_PROGRESS.md final verdict",
+      "verdict": "PARTIALLY VERIFIED — multiple phase runs collected 99/105/116/166/181/216 tests. The cumulative 216 figure appears consistent across phases but re-running the cumulative set today has not been independently confirmed against the same HEAD."
+    }
+  ]
+}

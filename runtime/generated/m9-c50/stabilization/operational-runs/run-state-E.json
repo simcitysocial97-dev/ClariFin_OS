@@ -1,0 +1,21 @@
+{
+  "run_id": "run::state::E",
+  "timestamp": "2026-09-04T23:07:16.731481+00:00",
+  "state": "E_integration",
+  "expected": "real integration verification",
+  "payload": {
+    "state": "E_integration",
+    "expected": "real integration verification",
+    "task": "exec::state::invariant::money",
+    "execution_id": "runtime.verification::exec::182823246521e847",
+    "exit_code": 0,
+    "artifact_paths": [
+      "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-invariant-money.xml"
+    ]
+  },
+  "execution_identity": "runtime.verification::exec::182823246521e847",
+  "task_identity": "exec::state::invariant::money",
+  "evidence_artifact_paths": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-invariant-money.xml"
+  ]
+}

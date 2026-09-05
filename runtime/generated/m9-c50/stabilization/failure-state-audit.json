@@ -1,0 +1,21 @@
+{
+  "schema": "m9-c50/stabilization/failure-state-audit@1",
+  "generated_at": "2026-09-04T22:55:24.534123+00:00",
+  "failure_taxonomy": [
+    "verification_failure",
+    "infrastructure_failure",
+    "evidence_failure",
+    "scope_failure",
+    "configuration_failure",
+    "certification_failure"
+  ],
+  "fail_closed_invariants": [
+    "task without obligation -> LineageViolationError",
+    "evidence without execution_id -> LineageViolationError",
+    "PLANNED -> DECIDED -> ValueError",
+    "EXECUTING -> CERTIFIED -> ValueError",
+    "FAILED -> CERTIFIED -> ValueError",
+    "stale evidence -> cache INVALIDATE",
+    "corrupt cache -> cache EXECUTE"
+  ]
+}
