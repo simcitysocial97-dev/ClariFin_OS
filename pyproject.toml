@@ -40,19 +40,19 @@ dependencies = [
     # ── Runtime / verification CLI ────────────────────────────────────────────
     "click==8.4.2",
     # ── Backend runtime ──────────────────────────────────────────────────────
-    "fastapi==0.139.2",
-    "pydantic==2.13.4",
-    "python-multipart==0.0.22",
-    "pdfplumber==0.11.9",
-    "camelot-py[cv]==0.11.0",
+    "fastapi==0.141.1",
+    "pydantic==2.13.5",
+    "python-multipart==0.0.32",
+    "pdfplumber==0.11.10",
+    "camelot-py[cv]==2.0.0",
     "ghostscript==0.8.1",
-    "pandas==3.0.1",
+    "pandas==3.0.5",
     "python-dateutil==2.9.0",
-    "cachetools==7.1.4",
+    "cachetools==7.1.8",
     "httpx==0.28.1",
     "jsonschema==4.26.0",
     "pyyaml==6.0.3",
-    "uvicorn==0.51.0",
+    "uvicorn==0.52.4",
 ]
 
 [project.optional-dependencies]
@@ -63,16 +63,16 @@ verification = [
     "pytest-cov==7.1.0",
     "pytest-xdist==3.8.0",
     "pytest-timeout==2.4.0",
-    "hypothesis==6.161.4",
-    "coverage==7.15.2",
-    "ruff==0.15.20",
+    "hypothesis==6.167.1",
+    "coverage==7.16.0",
+    "ruff==0.16.6",
     "black==26.5.1",
-    "mypy==2.1.0",
+    "mypy==2.3.1",
     "mutmut==3.7.0",
 ]
 # Contract testing (schemathesis) - optional, install via `pip install -e ".[contract]"`
 contract = [
-    "schemathesis==4.17.0",
+    "schemathesis==4.25.2",
 ]
 all = ["clarinfin-verification[verification]", "clarinfin-verification[contract]"]
 
@@ -127,6 +127,7 @@ exclude = [
     "backend/tests/generated",
     "backend/mutants",
     "backend/tests/mutation_infra/mutants/**",
+    "backend/src/stubs",
     "*.pyc",
     # M9-C46 (Category E — generated surface): milestone evidence/scenario
     # scripts produced by verification runs. Mirrors the existing Black
@@ -153,6 +154,7 @@ extend-exclude = '''
   | backend/mutants
   | backend/tests/mutation_infra/mutants
   | backend/tests/generated
+  | backend/src/stubs
   | runtime/generated
   | build
   | dist
@@ -196,7 +198,19 @@ module = ["yaml", "jinja2"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-norecursedirs = ["backend/mutants", "backend/tests/mutation_infra/mutants", "backend/tests/invariants/_m4_exit_probe/**", "backend/tests/probes", ".git", "__pycache__", ".venv", "venv", "node_modules", "frontend/node_modules"]
+norecursedirs = [
+    ".*",
+    "backend/mutants",
+    "backend/tests/mutation_infra/mutants",
+    "backend/tests/invariants/_m4_exit_probe/**",
+    "backend/tests/probes",
+    ".git",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "node_modules",
+    "frontend/node_modules"
+]
 pythonpath = ["backend/src", "backend/tests"]
 markers = [
     "capability: mark test as capability smoke test",
@@ -211,4 +225,3 @@ markers = [
     "unit: marks unit tests",
     "performance: marks performance tests",
 ]
-

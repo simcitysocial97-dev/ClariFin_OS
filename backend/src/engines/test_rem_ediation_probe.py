@@ -1,2 +1,3 @@
 # C50 remediation probe
-def probe_fn(): return 42
+def probe_fn() -> int:
+    return 42

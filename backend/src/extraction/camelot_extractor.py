@@ -1,6 +1,6 @@
 """
 CAMELOT-BASED TABLE EXTRACTOR
-Extracts transaction tables from bank statement PDFs using Camelot.
+Extracts transaction tables from bank statement PDFs using Camelot 2.0.
 
 Constraints:
 - Uses camelot-py only for table extraction
@@ -17,10 +17,31 @@ from typing import Any
 
 import camelot
 import pdfplumber
+from camelot.core import Table
+
+
+def _table_to_rows(table: Table) -> list[list[str]]:
+    """
+    Convert a Camelot 2.0 Table to a list-of-lists using the new ``data`` property
+    (preferred over ``df.values.tolist()`` because ``data`` is the canonical,
+    type-stable representation: 2-D ``list[str]``).
+    """
+    return [list(row) for row in table.data]
+
+
+def _table_shape(table: Table) -> tuple[int, int]:
+    """Return (rows, cols) using Table.shape when populated, else derive from data."""
+    shape = getattr(table, "shape", None)
+    if shape and shape != (0, 0):
+        return (int(shape[0]), int(shape[1]))
+    data = _table_to_rows(table)
+    rows = len(data)
+    cols = max((len(r) for r in data), default=0)
+    return rows, cols
 
 
 class CamelotExtractor:
-    """Extract transaction tables from bank PDFs using Camelot."""
+    """Extract transaction tables from bank PDFs using Camelot 2.0."""
 
     # Bank detection keywords (lowercase)
     BANK_KEYWORDS = {
@@ -68,7 +89,7 @@ class CamelotExtractor:
 
     # ========== Table Extraction ==========
 
-    def extract_tables_from_page(self, page_number: int) -> tuple[list[Any], str]:
+    def extract_tables_from_page(self, page_number: int) -> tuple[list[Table], str]:
         """
         Extract tables from a single page.
         Tries lattice first; falls back to stream if no valid tables found.
@@ -86,7 +107,7 @@ class CamelotExtractor:
                 flavor="lattice",
                 suppress_stdout=True,
             )
-            valid = [t for t in tables if t.df.shape[0] >= self.MIN_ROWS]
+            valid = [t for t in tables if _table_shape(t)[0] >= self.MIN_ROWS]
             if valid:
                 self._log(
                     f"Page {page_number}: lattice found {len(tables)} tables, {len(valid)} valid"
@@ -115,39 +136,33 @@ class CamelotExtractor:
 
     # ========== Table Scoring ==========
 
-    def score_table(self, table: Any) -> float:
+    def score_table(self, table: Table) -> float:
         """
         Score a camelot table based on:
         - row_count: more rows = better
         - numeric_cell_ratio: fraction of cells containing numeric content
         - date_col_ratio: fraction of rows where first cell starts with a digit
+        - confidence: a bonus for high parser confidence (Camelot 2.0)
 
         Returns a numeric score (higher = better transaction table).
         Returns -1 if table fails minimum thresholds.
         """
-        # Convert to list of lists (raw strings, no pandas transformation)
-        rows = table.df.values.tolist()
+        rows = _table_to_rows(table)
         row_count = len(rows)
 
-        # Reject tables with too few rows
         if row_count < self.MIN_ROWS:
             return -1.0
 
-        # Count total cells and numeric cells
         total_cells = 0
         numeric_cells = 0
         date_start_rows = 0
 
-        for _i, row in enumerate(rows):
+        for row in rows:
             for j, cell in enumerate(row):
                 cell_str = str(cell).strip()
                 total_cells += 1
-
-                # Numeric cell: contains at least one digit
                 if any(c.isdigit() for c in cell_str):
                     numeric_cells += 1
-
-                # Date column check: first column starts with digit
                 if j == 0 and cell_str and cell_str[0].isdigit():
                     date_start_rows += 1
 
@@ -157,12 +172,32 @@ class CamelotExtractor:
         numeric_ratio = numeric_cells / total_cells
         date_col_ratio = date_start_rows / row_count
 
-        # Reject tables with too low numeric density
         if numeric_ratio < self.MIN_NUMERIC_RATIO:
             return -1.0
 
-        # Weighted score
-        score = row_count * 0.4 + numeric_ratio * 30.0 + date_col_ratio * 20.0
+        # Camelot 2.0 exposes a unified confidence score in [0.0, 1.0].
+        # Boost scoring for high-confidence parses; missing value defaults to 0.
+        confidence: float = 0.0
+        parsing_report = getattr(table, "parsing_report", None)
+        if isinstance(parsing_report, dict):
+            raw_acc = parsing_report.get("accuracy", 0)
+            try:
+                confidence = float(raw_acc) / 100.0
+            except (TypeError, ValueError):
+                confidence = 0.0
+        if not confidence:
+            accuracy = getattr(table, "accuracy", 0.0)
+            try:
+                confidence = float(accuracy) / 100.0
+            except (TypeError, ValueError):
+                confidence = 0.0
+
+        score = (
+            row_count * 0.4
+            + numeric_ratio * 30.0
+            + date_col_ratio * 20.0
+            + confidence * 5.0
+        )
 
         return round(score, 3)
 
@@ -186,9 +221,8 @@ class CamelotExtractor:
         self._log(f"Detected bank: {bank}")
 
         best_score = -1.0
-        best_result = None
+        best_result: dict[str, Any] | None = None
 
-        # Get total pages
         try:
             with pdfplumber.open(self.pdf_path) as pdf:
                 total_pages = len(pdf.pages)
@@ -205,20 +239,18 @@ class CamelotExtractor:
 
             for i, table in enumerate(tables):
                 score = self.score_table(table)
-                rows, cols = table.df.shape
+                rows, cols = _table_shape(table)
                 self._log(f"  Table {i}: shape=({rows},{cols}), score={score}")
 
                 if score > best_score:
                     best_score = score
-                    # Convert to raw list of lists (no pandas transformation)
-                    raw_data = table.df.values.tolist()
                     best_result = {
                         "bank": bank,
                         "page": page_num,
                         "strategy": strategy,
                         "table_shape": [rows, cols],
                         "score": score,
-                        "data": raw_data,
+                        "data": _table_to_rows(table),
                     }
 
         if best_result is None:
@@ -259,7 +291,6 @@ def main() -> None:
     extractor = CamelotExtractor(pdf_path, debug=debug)
     result = extractor.extract_best_table()
 
-    # Print JSON output (truncate data for readability if large)
     output = {
         "bank": result["bank"],
         "page": result["page"],

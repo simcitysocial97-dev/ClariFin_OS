@@ -45,7 +45,6 @@ from runtime.platform.api.services import (
     architecture,
     capabilities,
     change,
-    errors as errors_service,
     events,
     evidence,
     executions,
@@ -53,6 +52,9 @@ from runtime.platform.api.services import (
     history,
     tasks,
     verification,
+)
+from runtime.platform.api.services import (
+    errors as errors_service,
 )
 from runtime.platform.cache import snapshot
 
@@ -69,11 +71,9 @@ router = APIRouter(prefix="/platform/v1", tags=["platform"])
 class PlatformCorrelationMiddleware(BaseHTTPMiddleware):
     """Attach ``X-Correlation-Id`` to every Platform API request."""
 
-    async def dispatch(self, request: Request, call_next) -> Response:
-        correlation_id = request.headers.get("X-Correlation-Id") or str(
-            uuid.uuid4()
-        )
-        response = await call_next(request)
+    async def dispatch(self, request: Request, call_next: Any) -> Response:
+        correlation_id = request.headers.get("X-Correlation-Id") or str(uuid.uuid4())
+        response: Response = await call_next(request)
         response.headers["X-Correlation-Id"] = correlation_id
         return response
 
@@ -93,9 +93,7 @@ def install_correlation_middleware(app: FastAPI) -> None:
 # ---------------------------------------------------------------------------
 
 
-def _to_platform_error(
-    exc: Exception, layer: str
-) -> tuple[int, dict[str, Any]]:
+def _to_platform_error(exc: Exception, layer: str) -> tuple[int, dict[str, Any]]:
     """Convert an unexpected exception into a platform error envelope.
 
     The status code is deliberately 500 (INTERNAL) — callers should not
@@ -242,7 +240,9 @@ async def get_verification_recommendation() -> JSONResponse:
     return _ok(env)
 
 
-from runtime.platform.api.services import verification_write as verification_write_svc  # noqa: E402
+from runtime.platform.api.services import (
+    verification_write as verification_write_svc,  # noqa: E402
+)
 
 
 @router.post("/verification/run")
@@ -334,8 +334,8 @@ async def get_execution_stream(execution_id: str, request: Request) -> Response:
     """
     import asyncio
 
-    from runtime.system.observability.event_store import EngineeringEventStore
     from runtime.platform.api.services.executions import build_execution_stream_event
+    from runtime.system.observability.event_store import EngineeringEventStore
 
     store = EngineeringEventStore()
 
@@ -378,7 +378,7 @@ async def get_execution_stream(execution_id: str, request: Request) -> Response:
                     env = build_execution_stream_event(execution_id, event)
                     payload = f"data: {json.dumps(env, default=str)}\n\n"
                     yield payload.encode("utf-8")
-                    yield b"event: complete\ndata: {\"reason\":\"terminal-state-reached\"}\n\n"
+                    yield b'event: complete\ndata: {"reason":"terminal-state-reached"}\n\n'
                     return
                 last_event_id = event.event_id
 
@@ -391,7 +391,7 @@ async def get_execution_stream(execution_id: str, request: Request) -> Response:
             else:
                 idle_rounds += 1
                 if idle_rounds >= 30:
-                    yield b"event: complete\ndata: {\"reason\":\"no-new-events-30s\"}\n\n"
+                    yield b'event: complete\ndata: {"reason":"no-new-events-30s"}\n\n'
                     return
 
     return StreamingResponse(
@@ -412,8 +412,8 @@ async def get_events_stream(request: Request) -> Response:
     """
     import asyncio
 
-    from runtime.system.observability.event_store import EngineeringEventStore
     from runtime.platform.api.services.events import build_events_stream_event
+    from runtime.system.observability.event_store import EngineeringEventStore
 
     store = EngineeringEventStore()
 
@@ -436,7 +436,6 @@ async def get_events_stream(request: Request) -> Response:
             # Send keepalive comment every 15 s worth of loops.
             yield b": ping\n\n"
 
-            new_count = store.count()
             # We rely on file modification; simple approach: scan for
             # any events with timestamp newer than our replay window.
             # Since we don't track cursor externally, replay last 100

@@ -17,6 +17,22 @@ strict = true
 
 namespace_packages = false
 
+# Stubs directory for third-party libraries and cross-boundary modules.
+# The stubs/ tree contains minimal py.typed-compatible stub packages:
+#   * camelot/__init__.pyi     — third-party PDF table extraction library
+#   * runtime/platform/...     — repository runtime package, treated as
+#     cross-boundary dependency by the strict backend boundary
+# The runtime source itself is NOT on the mypy path here — the
+# `verify-fast.sh` script runs mypy from the backend/ rootdir, where
+# backend.src.stubs mirrors the runtime import surface used by the
+# platform router. The actual runtime is loaded at HTTP boundary time
+# (FastAPI startup) and via the `from src.* import` import path on
+# `pythonpath = ["backend/src"]` (see root pyproject.toml [tool.pytest]).
+# This isolation is the canonical fix for the historical stdlib
+# `platform` module shadowing caused by `runtime/platform/` package
+# being on the same path as Python's stdlib.
+mypy_path = ["src/stubs"]
+
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
@@ -75,11 +91,8 @@ nightly = { max_examples = 1000, deadline = 30000 }
 
 # External third-party libraries only
 [[tool.mypy.overrides]]
-module = ["camelot.*", "pdfplumber.*", "cachetools.*", "fastapi.*", "pydantic.*", "pandas.*", "uvicorn.*", "sqlite3"]
+module = ["pandas", "pdfplumber.*", "cachetools.*", "fastapi.*", "pydantic.*", "uvicorn.*", "sqlite3"]
 ignore_missing_imports = true
-# Note: camelot is a PDF table extraction library without type stubs.
-# The import-untyped error is expected and suppressed via ignore_missing_imports.
-# This is a third-party dependency limitation, not a code issue.
 
 # Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
 # Scope: full (all engines)

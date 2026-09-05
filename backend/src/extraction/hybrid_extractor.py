@@ -336,7 +336,7 @@ class HybridExtractor:
 
                 all_rows: list[list[Any]] = []
                 for table in tables:
-                    all_rows.extend(table.df.values.tolist())
+                    all_rows.extend([list(row) for row in table.data])
 
                 if all_rows:
                     self._log(
