@@ -124,6 +124,20 @@ app.include_router(reconciliation_workspace.router)
 app.include_router(transactions.router)
 
 # ============================================================
+# Phase 3 — Platform API mount
+# ============================================================
+# Mounts the thin FastAPI router for /platform/v1/* that delegates
+# exclusively to runtime.platform.api.services (C50 authorities).
+# See backend/src/routers/platform.py and
+# IMPLEMENTATION_ROADMAP.md §Phase 3.
+# ============================================================
+from src.routers import platform as _platform_router
+from src.routers.platform import register_platform_routes as _register_platform
+
+_register_platform(app)
+del _platform_router, _register_platform
+
+# ============================================================
 # Run Server
 # ============================================================
 

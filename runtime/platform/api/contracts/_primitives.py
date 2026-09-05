@@ -31,7 +31,7 @@ from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import CoreSchema, core_schema
 
 ISO8601_UTC_PATTERN: re.Pattern[str] = re.compile(
-    r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$"
+    r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?Z$"
 )
 SHA256_ID_PATTERN: re.Pattern[str] = re.compile(r"^sha256:[0-9a-f]{64}$")
 
