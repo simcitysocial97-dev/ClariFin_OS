@@ -1,0 +1,81 @@
+{
+  "manifest": [
+    {
+      "file": "runtime/platform/api/contracts/ai.py",
+      "lines": 222,
+      "sha256": "b5bb64bf192c039304d16bdef37aa95d284e7c84c57f9e9e36d7b826b06e970b"
+    },
+    {
+      "file": "runtime/platform/ai/__init__.py",
+      "lines": 88,
+      "sha256": "ed74767de6cdd4d999ddde969de94694f06041b28c2fc9e0302f291211afea87"
+    },
+    {
+      "file": "runtime/platform/ai/orchestrator.py",
+      "lines": 220,
+      "sha256": "611f760f276a08c79e901967992a821612c05a7d197f7a2cc9bd3c1df728084c"
+    },
+    {
+      "file": "runtime/platform/ai/intent.py",
+      "lines": 134,
+      "sha256": "23a015ec74188274f003fed61a99e290f5903fffa1f8aca2a87919e9f5143e6e"
+    },
+    {
+      "file": "runtime/platform/ai/planner.py",
+      "lines": 149,
+      "sha256": "b262e3948c679ada7fe817d078075332968ad114539483821c6db5b4bc080a7d"
+    },
+    {
+      "file": "runtime/platform/ai/policy.py",
+      "lines": 127,
+      "sha256": "108129e35a5a48f664ef252b88c0a549bc66b43d095bbe94e928361a3bf4724c"
+    },
+    {
+      "file": "runtime/platform/ai/tools/__init__.py",
+      "lines": 299,
+      "sha256": "a0e9fa4123638cf8720c410c62a83048e2c5370230010623f438c301bd53c3f2"
+    },
+    {
+      "file": "runtime/platform/ai/runs.py",
+      "lines": 82,
+      "sha256": "ff3d0a756d2cfb147a130d66b0af2ae040edff1b9755dd77b36c3bc1900f048c"
+    },
+    {
+      "file": "runtime/platform/ai/memory.py",
+      "lines": 91,
+      "sha256": "ee449ce47162704e29021d8e9d393870c29e53d612373b875c355ac0bebb7fd9"
+    },
+    {
+      "file": "runtime/platform/ai/agents.py",
+      "lines": 81,
+      "sha256": "3d78817b378a24e00ab49d638de8df01849d18619b7cc7738ddc6c7468587f8f"
+    },
+    {
+      "file": "backend/src/routers/platform.py",
+      "lines": 1134,
+      "sha256": "bdf0ef5492a7a9fd933c6f10efbb4c9665648be66de75c3cbd6e0f66c55f467f"
+    },
+    {
+      "file": "runtime/platform/api/contracts/__init__.py",
+      "lines": 38,
+      "sha256": "6d20213eaf0430a4089e13bdd52e7b26cab95a3977ba3df3f4ba8f13c8ff4513"
+    },
+    {
+      "file": "runtime/platform/api/errors.py",
+      "lines": 89,
+      "sha256": "dac8c37a17f7b60cb5cbd5bf11694eff937ec6d7e2a1cc9d93b6b218357dbc53"
+    },
+    {
+      "file": "runtime/tests/test_platform_api_phase13.py",
+      "lines": 499,
+      "sha256": "539f9bdc43cd6a8306d4453cc237b3f8de7eb1303d5d2ff7099315092d6cbe00"
+    },
+    {
+      "file": "runtime/generated/m9-c57/phase-13/progress.md",
+      "lines": 363,
+      "sha256": "be4114a321435c968af906c34597a08fa75c0286f72a94582c6b8d648b63e79b"
+    }
+  ],
+  "total_lines": 3616,
+  "generated_at": "2026-09-06T00:00:00Z"
+}

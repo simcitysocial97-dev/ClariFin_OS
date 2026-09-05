@@ -45,6 +45,7 @@ from runtime.platform.api.services import (
     architecture,
     capabilities,
     change,
+    errors as errors_service,
     events,
     evidence,
     executions,
@@ -53,17 +54,26 @@ from runtime.platform.api.services import (
     tasks,
     verification,
 )
-from runtime.platform.api.services import (
-    errors as errors_service,
+from runtime.platform.ai import (
+    AIOrchestrator,
+    AI_ORCHESTRATOR_INSTANCE,
+    POLICY_ENGINE_INSTANCE,
+    TOOL_REGISTRY_INSTANCE,
+    register_builtin_tools,
+    evaluate_policy,
 )
 from runtime.platform.cache import snapshot
-from runtime.platform.diagnostics import engine as diagnostics_service
+from runtime.platform.diagnostics import engine as diagnostics_engine
 from runtime.platform.api.services._helpers import now_iso, envelope
 from runtime.platform.api.contracts import health as health_contract
+from runtime.platform.api.contracts import ai as ai_contract
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/platform/v1", tags=["platform"])
+
+# Register built-in tools at module load
+register_builtin_tools(TOOL_REGISTRY_INSTANCE)
 
 
 # ---------------------------------------------------------------------------
@@ -781,7 +791,7 @@ async def post_diagnose(request: Request) -> JSONResponse:
         )
         return JSONResponse(content=error_envelope(error=err), status_code=400)
 
-    env = diagnostics_service.diagnose(
+    env = diagnostics_engine.diagnose(
         symptom=symptom,
         error_code=error_code,
         capability_id=capability_id,
@@ -816,7 +826,7 @@ async def post_diagnose_register(request: Request) -> JSONResponse:
         )
         return JSONResponse(content=error_envelope(error=err), status_code=400)
 
-    rec = diagnostics_service.build_diagnostic_recommendation(
+    rec = diagnostics_engine.build_diagnostic_recommendation(
         error_code=error_code,
         capability_id=capability_id,
         description=description,
@@ -919,6 +929,183 @@ async def get_health_deep() -> JSONResponse:
         },
     }
     return envelope(kind=health_contract.HEALTH_KIND, data=data)
+
+
+# ---------------------------------------------------------------------------
+# AI Control Layer (Phase 13)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/ai/mode")
+async def get_ai_mode() -> JSONResponse:
+    """Get current AI operating mode and authority configuration."""
+    from runtime.platform.api.contracts.ai import AIMode, AUTHORITY_LEVELS
+
+    data = {
+        "current_mode": "MANUAL",  # Default mode - can be made configurable later
+        "available_modes": [m.value for m in AIMode],
+        "authority_levels": [
+            {
+                "level": l.level,
+                "name": l.name,
+                "description": l.description,
+                "enabled_by_default": l.enabled_by_default,
+            }
+            for l in AUTHORITY_LEVELS
+        ],
+    }
+    return envelope(kind=ai_contract.AI_MODE_KIND, data=data)
+
+
+@router.post("/ai/runs")
+async def post_ai_run(request: Request) -> JSONResponse:
+    """Start a new AI run."""
+    body: dict[str, Any] = {}
+    try:
+        if request.headers.get("content-length", "0") != "0":
+            body = await request.json()
+    except Exception:
+        body = {}
+
+    symptom = body.get("symptom", "") if isinstance(body, dict) else ""
+    mode = body.get("mode", "MANUAL") if isinstance(body, dict) else "MANUAL"
+    capability_id = body.get("capability_id") if isinstance(body, dict) else None
+
+    if not symptom:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+        err = PlatformError(
+            code=PlatformErrorCode.MALFORMED_REQUEST,
+            layer="platform.ai",
+            message="POST /ai/runs requires {symptom}",
+        )
+        return JSONResponse(content=error_envelope(error=err), status_code=400)
+
+    run = AI_ORCHESTRATOR_INSTANCE.start_run(
+        symptom=symptom,
+        mode=mode,
+        capability_id=capability_id,
+    )
+    return envelope(kind=ai_contract.AI_RUN_KIND, data=run)
+
+
+@router.get("/ai/runs")
+async def get_ai_runs(
+    limit: int = Query(default=50, ge=1, le=200),
+    status: str | None = Query(default=None),
+) -> JSONResponse:
+    """List AI runs with optional status filter."""
+    runs = AI_ORCHESTRATOR_INSTANCE.list_runs(limit=limit, status=status)
+    data = {"count": len(runs), "items": runs}
+    return envelope(kind=ai_contract.AI_RUN_LIST_KIND, data=data)
+
+
+@router.get("/ai/runs/{run_id}")
+async def get_ai_run(run_id: str) -> JSONResponse:
+    """Get AI run detail by ID."""
+    run = AI_ORCHESTRATOR_INSTANCE.get_run(run_id)
+    if run is None:
+        return _not_found(f"AI run {run_id!r} not found", "platform.ai")
+    return envelope(kind=ai_contract.AI_RUN_KIND, data=run)
+
+
+@router.post("/ai/runs/{run_id}/cancel")
+async def post_ai_run_cancel(run_id: str) -> JSONResponse:
+    """Cancel a pending or running AI run."""
+    success = AI_ORCHESTRATOR_INSTANCE.cancel_run(run_id)
+    if not success:
+        return _not_found(f"AI run {run_id!r} not found or not cancellable", "platform.ai")
+    run = AI_ORCHESTRATOR_INSTANCE.get_run(run_id)
+    return envelope(kind=ai_contract.AI_RUN_KIND, data=run)
+
+
+@router.get("/ai/tools")
+async def get_ai_tools(
+    authority_level: int | None = Query(default=None, ge=0, le=4),
+) -> JSONResponse:
+    """List registered AI tools, optionally filtered by authority level."""
+    tools = TOOL_REGISTRY_INSTANCE.list_tools(authority_level=authority_level)
+    data = {"count": len(tools), "items": [t.model_dump() for t in tools]}
+    return envelope(kind=ai_contract.AI_TOOL_LIST_KIND, data=data)
+
+
+@router.get("/ai/tools/{tool_name}")
+async def get_ai_tool(tool_name: str) -> JSONResponse:
+    """Get tool schema by name."""
+    schema = TOOL_REGISTRY_INSTANCE.get(tool_name)
+    if schema is None:
+        return _not_found(f"Tool {tool_name!r} not found", "platform.ai")
+    return _ok(schema.model_dump())
+
+
+@router.post("/ai/runs/{run_id}/steps")
+async def post_ai_step(run_id: str, request: Request) -> JSONResponse:
+    """Execute a tool step within an AI run."""
+    body: dict[str, Any] = {}
+    try:
+        if request.headers.get("content-length", "0") != "0":
+            body = await request.json()
+    except Exception:
+        body = {}
+
+    tool_name = body.get("tool_name") if isinstance(body, dict) else None
+    arguments = body.get("arguments", {}) if isinstance(body, dict) else {}
+    idempotency_key = body.get("idempotency_key") if isinstance(body, dict) else None
+
+    if not tool_name:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+        err = PlatformError(
+            code=PlatformErrorCode.MALFORMED_REQUEST,
+            layer="platform.ai",
+            message="POST /ai/runs/{run_id}/steps requires {tool_name}",
+        )
+        return JSONResponse(content=error_envelope(error=err), status_code=400)
+
+    # Get run to check mode and authorization
+    run = AI_ORCHESTRATOR_INSTANCE.get_run(run_id)
+    if run is None:
+        return _not_found(f"AI run {run_id!r} not found", "platform.ai")
+
+    # Policy check
+    mode = run.get("mode", "MANUAL")
+    # Map mode to max authorization level
+    mode_levels = {"MANUAL": 0, "ASSISTED": 1, "AUTONOMOUS": 4}
+    run_authorization_level = mode_levels.get(mode, 0)
+    
+    policy = evaluate_policy(
+        tool_name=tool_name,
+        run_mode=run.get("mode", "MANUAL"),
+        run_authorization_level=run_authorization_level,
+        run_id=run_id,
+    )
+    if not policy.allowed:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+        err = PlatformError(
+            code=PlatformErrorCode.POLICY_DENIED,
+            layer="platform.ai",
+            message=policy.reason,
+        )
+        return JSONResponse(content=error_envelope(error=err), status_code=403)
+
+    # Execute step via orchestrator
+    step = AI_ORCHESTRATOR_INSTANCE.execute_step(
+        run_id=run_id,
+        tool_name=tool_name,
+        arguments=arguments,
+    )
+    if step is None:
+        return _not_found(f"Failed to execute step for run {run_id!r}", "platform.ai")
+
+    # For Phase 13, we just record the step initiation
+    # Actual tool execution will be implemented in Phase 16+
+    data = {
+        "run_id": run_id,
+        "step": step,
+        "status": "PENDING",
+    }
+    return envelope(kind=ai_contract.AI_RUN_KIND, data=data)
 
 
 # ---------------------------------------------------------------------------

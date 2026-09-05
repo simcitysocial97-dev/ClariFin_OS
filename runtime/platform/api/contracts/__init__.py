@@ -14,6 +14,7 @@ Phase 1 establishes typed Pydantic models for every Platform API domain:
 * :mod:`runtime.platform.api.contracts.events`
 * :mod:`runtime.platform.api.contracts.application`
 * :mod:`runtime.platform.api.contracts.change`
+* :mod:`runtime.platform.api.contracts.ai`
 
 These contracts are the **single source of truth** for the JSON shape of
 every Platform API response. They are deliberately thin:
