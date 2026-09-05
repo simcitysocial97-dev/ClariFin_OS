@@ -1,17 +1,19 @@
-"""Verification write service — Phase 6.
+"""Verification write service — Phase 6/7.
 
 Delegates to the canonical control plane (``ControlPlane.run()``) and
 the obligation set for real verification runs. Every run enters the
 C50 task/execution path.
 
-No new executor. No mock state. The service is a thin wrapper around
-``runtime.foundation.verification.control_plane_facade.ControlPlane``.
+Phase 7: emits ``VerificationStarted`` and ``VerificationCompleted``
+events into the ``EngineeringEventStore`` so that the execution SSE
+stream and the events SSE stream have data to replay and poll.
 """
 
 from __future__ import annotations
 
 import logging
 import uuid
+from datetime import UTC, datetime
 from typing import Any
 
 from runtime.foundation.verification.control_plane_facade import (
@@ -21,6 +23,10 @@ from runtime.foundation.verification.control_plane_facade import (
 from runtime.platform.api.contracts import verification as verification_contract
 from runtime.platform.api.contracts._primitives import Status, Timestamp
 from runtime.platform.api.services._helpers import envelope, now_iso
+from runtime.system.observability.event_store import (
+    EngineeringEvent,
+    EngineeringEventStore,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +34,72 @@ __all__ = [
     "build_run_result",
     "build_recent_runs",
 ]
+
+_VERIFICATION_STARTED_KIND = "platform.verification_started"
+_VERIFICATION_COMPLETED_KIND = "platform.verification_completed"
+
+
+def _emit_verification_events(
+    execution_id: str,
+    capability_id: str | None,
+    task_ids: list[str],
+    started_at: str,
+    completed_at: str,
+    final_decision: str,
+    duration_seconds: float,
+    record_count: int,
+) -> None:
+    """Append VerificationStarted and VerificationCompleted events.
+
+    Phase 7: these events carry ``execution_id`` in metadata so that
+    the execution SSE stream can replay them and poll for new ones.
+    """
+
+    store = EngineeringEventStore()
+    caps = [capability_id] if capability_id else []
+
+    store.append(
+        EngineeringEvent(
+            event_id=f"vs-{execution_id}",
+            event_type="VerificationStarted",
+            timestamp=datetime.now(UTC),
+            payload={
+                "execution_id": execution_id,
+                "capability_id": capability_id or "all",
+                "task_ids": task_ids,
+                "mode": "platform-api",
+            },
+            execution_context={"environment": "local", "source": "platform.verification.run"},
+            metadata={
+                "execution_id": execution_id,
+                "capability_id": capability_id or "unknown",
+                "task_id": task_ids[0] if task_ids else execution_id,
+            },
+        )
+    )
+
+    store.append(
+        EngineeringEvent(
+            event_id=f"vc-{execution_id}",
+            event_type="VerificationCompleted",
+            timestamp=datetime.now(UTC),
+            payload={
+                "execution_id": execution_id,
+                "capability_id": capability_id or "all",
+                "task_ids": task_ids,
+                "final_decision": final_decision,
+                "duration_seconds": duration_seconds,
+                "record_count": record_count,
+                "status": "completed",
+            },
+            execution_context={"environment": "local", "source": "platform.verification.run"},
+            metadata={
+                "execution_id": execution_id,
+                "capability_id": capability_id or "unknown",
+                "task_id": task_ids[0] if task_ids else execution_id,
+            },
+        )
+    )
 
 
 def _safe_run(capability_id: str | None = None) -> dict[str, Any]:
@@ -39,6 +111,9 @@ def _safe_run(capability_id: str | None = None) -> dict[str, Any]:
     ``verify.py run`` remains the authoritative way to exercise the full
     orchestrator; this endpoint reflects the same evidence surface the user
     will observe in the GUI and in the event stream. No mock state.
+
+    Phase 7: appends VerificationStarted / VerificationCompleted events
+    to the EngineeringEventStore so the SSE stream has data to replay.
     """
     from runtime.foundation.verification.blast_radius import compute_blast_radius
 
@@ -62,7 +137,7 @@ def _safe_run(capability_id: str | None = None) -> dict[str, Any]:
         else:
             task_ids = [t.task_id for t in plan.tasks]
         caps = sorted({getattr(t, "capability_id", "") for t in plan.tasks if getattr(t, "capability_id", "")})
-        return {
+        result = {
             "ok": True,
             "report_id": report_id,
             "plan_id": getattr(plan, "plan_id", report_id),
@@ -77,22 +152,34 @@ def _safe_run(capability_id: str | None = None) -> dict[str, Any]:
             "escalations": list(getattr(contract, "escalation_conditions", []) or []),
             "evidence_reused": [],
         }
+        # Phase 7: emit events so the execution SSE stream has data.
+        _emit_verification_events(
+            execution_id=report_id,
+            capability_id=capability_id,
+            task_ids=task_ids,
+            started_at=str(started_at),
+            completed_at=str(started_at),
+            final_decision=result["final_decision"],
+            duration_seconds=result["duration_seconds"],
+            record_count=result["record_count"],
+        )
+        return result
     except Exception as exc:  # noqa: BLE001
         logger.warning("Verification write path failed: %s", exc, exc_info=True)
         return {
-            "ok": False,
-            "report_id": f"failed-{uuid.uuid4().hex[:8]}",
-            "started_at": now_iso(),
-            "completed_at": now_iso(),
-            "duration_seconds": 0.0,
-            "final_decision": "error",
-            "decision_reason": str(exc),
-            "record_count": 0,
-            "task_ids": [],
-            "capabilities": [],
-            "escalations": [],
-            "evidence_reused": [],
-        }
+                "ok": False,
+                "report_id": f"failed-{uuid.uuid4().hex[:8]}",
+                "started_at": now_iso(),
+                "completed_at": now_iso(),
+                "duration_seconds": 0.0,
+                "final_decision": "error",
+                "decision_reason": str(exc),
+                "record_count": 0,
+                "task_ids": [],
+                "capabilities": [],
+                "escalations": [],
+                "evidence_reused": [],
+            }
 
 
 def build_run_result(

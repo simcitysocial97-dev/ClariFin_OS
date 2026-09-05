@@ -320,36 +320,132 @@ async def get_execution(execution_id: str) -> JSONResponse:
 async def get_execution_stream(execution_id: str, request: Request) -> Response:
     """SSE stream of execution events for one execution.
 
-    Phase 6 implementation: replays past events from EngineeringEventStore
-    filtered by execution_id, then keeps the connection open. The stream
-    is a generator that yields ``data: <envelope-json>\\n\\n`` lines.
+    Phase 7 enhancement over Phase 6:
+    1. Replays existing events matching the execution_id.
+    2. Enters a poll loop (1 s interval) watching for new events in
+       the EngineeringEventStore.
+    3. Sends ``event: complete`` with reason when the execution has
+       reached a terminal state (VerificationCompleted observed) or
+       after 30 s of no new events.
+    4. Honours client disconnect via ``request.is_disconnected()``.
 
-    A proper streaming consumer is Phase 7 — this endpoint is read-only
-    against the existing event store and does not block the orchestrator.
+    Does not block the orchestrator — the store is read-only from this
+    endpoint's perspective.
     """
+    import asyncio
+
     from runtime.system.observability.event_store import EngineeringEventStore
+    from runtime.platform.api.services.executions import build_execution_stream_event
 
     store = EngineeringEventStore()
 
     async def event_generator() -> AsyncIterator[bytes]:
-        # Replay existing events for this execution
+        # Collect last-seen event ID to avoid re-sending replays.
+        last_event_id: str | None = None
         for event in store.iter_events():
             meta = event.metadata or {}
             if meta.get("execution_id") != execution_id:
                 continue
-            from runtime.platform.api.services.executions import (
-                build_execution_stream_event,
-            )
-
             env = build_execution_stream_event(execution_id, event)
             payload = f"data: {json.dumps(env, default=str)}\n\n"
             yield payload.encode("utf-8")
+            last_event_id = event.event_id
 
             if await request.is_disconnected():
-                break
+                return
 
-        # Send a keep-alive to signal end of replay
-        yield b"event: end\ndata: {\"reason\":\"replay-complete\"}\n\n"
+        # If no events were found for this execution, still keep the
+        # stream open so the client can observe events that arrive later.
+        idle_rounds = 0
+        while True:
+            if await request.is_disconnected():
+                return
+
+            await asyncio.sleep(1.0)
+
+            # Scan for new events since last seen.
+            new_events = []
+            for event in store.iter_events():
+                meta = event.metadata or {}
+                if meta.get("execution_id") != execution_id:
+                    continue
+                if event.event_id == last_event_id:
+                    # We've already sent this one during replay.
+                    continue
+                new_events.append(event)
+                if event.event_type == "VerificationCompleted":
+                    # Terminal state reached.
+                    env = build_execution_stream_event(execution_id, event)
+                    payload = f"data: {json.dumps(env, default=str)}\n\n"
+                    yield payload.encode("utf-8")
+                    yield b"event: complete\ndata: {\"reason\":\"terminal-state-reached\"}\n\n"
+                    return
+                last_event_id = event.event_id
+
+            if new_events:
+                idle_rounds = 0
+                for event in new_events:
+                    env = build_execution_stream_event(execution_id, event)
+                    payload = f"data: {json.dumps(env, default=str)}\n\n"
+                    yield payload.encode("utf-8")
+            else:
+                idle_rounds += 1
+                if idle_rounds >= 30:
+                    yield b"event: complete\ndata: {\"reason\":\"no-new-events-30s\"}\n\n"
+                    return
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
+@router.get("/events/stream")
+async def get_events_stream(request: Request) -> Response:
+    """SSE live stream of all EngineeringEventStore events.
+
+    Phase 7 — previously deferred from Phase 3.
+    Replays the last 100 events, then polls for new ones every 1 s.
+    Sends periodic keepalive comments (``: ping\\n\\n``) so intermediate
+    proxies do not drop the connection.
+    """
+    import asyncio
+
+    from runtime.system.observability.event_store import EngineeringEventStore
+    from runtime.platform.api.services.events import build_events_stream_event
+
+    store = EngineeringEventStore()
+
+    async def event_generator() -> AsyncIterator[bytes]:
+        # Replay last 100 events.
+        all_events = list(store.iter_events())
+        for event in all_events[-100:]:
+            env = build_events_stream_event(event)
+            payload = f"data: {json.dumps(env, default=str)}\n\n"
+            yield payload.encode("utf-8")
+            if await request.is_disconnected():
+                return
+
+        # Poll for new events.
+        while True:
+            if await request.is_disconnected():
+                return
+
+            await asyncio.sleep(1.0)
+            # Send keepalive comment every 15 s worth of loops.
+            yield b": ping\n\n"
+
+            new_count = store.count()
+            # We rely on file modification; simple approach: scan for
+            # any events with timestamp newer than our replay window.
+            # Since we don't track cursor externally, replay last 100
+            # again and let the client deduplicate by event_id.
+            recent = list(store.iter_events())[-100:]
+            for event in recent:
+                env = build_events_stream_event(event)
+                payload = f"data: {json.dumps(env, default=str)}\n\n"
+                yield payload.encode("utf-8")
 
     return StreamingResponse(
         event_generator(),

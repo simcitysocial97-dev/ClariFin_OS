@@ -68,8 +68,16 @@ def build_execution_detail(execution_id: str) -> dict[str, Any] | None:
         else None
     )
 
-    started = matching[0].timestamp
-    finished = matching[-1].timestamp if matching[-1].event_type.endswith("Completed") else None
+    started = (
+        matching[0].timestamp.isoformat().replace("+00:00", "Z")
+        if matching[0].timestamp
+        else None
+    )
+    finished = (
+        matching[-1].timestamp.isoformat().replace("+00:00", "Z")
+        if matching[-1].timestamp and matching[-1].event_type.endswith("Completed")
+        else None
+    )
 
     data = {
         "id": execution_id,
