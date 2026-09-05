@@ -1,0 +1,36 @@
+{
+  "manifest": [
+    {
+      "file": "runtime/platform/api/services/_comparison.py",
+      "lines": 128,
+      "sha256": "bafee34cba735b4862e55d50317cf560ea4bfb1ffae7fcba800983a19f207e2d"
+    },
+    {
+      "file": "runtime/platform/api/services/history.py",
+      "lines": 315,
+      "sha256": "1d5777eeaf2b599eabf8bf2357e4aa893ee760782612cd799c802fb82e2b5bf7"
+    },
+    {
+      "file": "runtime/platform/api/services/evidence.py",
+      "lines": 211,
+      "sha256": "c35f0ff2d810bbbe0af1637d6a9a7461f49f00ae8f06625a55ce4548dc0e9b45"
+    },
+    {
+      "file": "backend/src/routers/platform.py",
+      "lines": 775,
+      "sha256": "d6fd7a49d21c9fb05ad7d1c5cd4c1411011ff29227f93815dbb8118f77252cc3"
+    },
+    {
+      "file": "runtime/tests/test_platform_api_phase8.py",
+      "lines": 397,
+      "sha256": "477beb6a77fd04f9a079e79ed830967223de184846707091ce1011acfbce8fa3"
+    },
+    {
+      "file": "runtime/generated/m9-c57/phase-08/progress.md",
+      "lines": 165,
+      "sha256": "cb3da6108f243da969dfe1d184602e16b43a3b6bda816e93e8980891bafbb93f"
+    }
+  ],
+  "total_lines": 1991,
+  "generated_at": "2026-09-05T19:50:00Z"
+}

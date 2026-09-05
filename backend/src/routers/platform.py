@@ -475,8 +475,46 @@ async def get_evidence(evidence_id: str) -> JSONResponse:
     return _ok(env)
 
 
-# Note: /evidence/by-execution/{id} and /evidence/compare are deferred
-# to Phase 8 (history + evidence comparison engine).
+@router.get("/evidence/by-execution/{execution_id}")
+async def get_evidence_by_execution(execution_id: str) -> JSONResponse:
+    env = evidence.build_evidence_by_execution(execution_id)
+    if env is None:
+        return _not_found(
+            f"Evidence for execution {execution_id!r} not found",
+            "platform.evidence",
+        )
+    return _ok(env)
+
+
+@router.post("/evidence/compare")
+async def post_evidence_compare(request: Request) -> JSONResponse:
+    """Compare two evidence ids with semantic delta."""
+    body: dict[str, Any] = {}
+    try:
+        if request.headers.get("content-length", "0") != "0":
+            body = await request.json()
+    except Exception:
+        body = {}
+
+    left_id = body.get("left_id") if isinstance(body, dict) else None
+    right_id = body.get("right_id") if isinstance(body, dict) else None
+    if not left_id or not right_id:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+        err = PlatformError(
+            code=PlatformErrorCode.MALFORMED_REQUEST,
+            layer="platform.evidence",
+            message="POST /evidence/compare requires {left_id, right_id}",
+        )
+        return JSONResponse(content=error_envelope(error=err), status_code=400)
+
+    env = evidence.build_evidence_compare(left_id, right_id)
+    if env is None:
+        return _not_found(
+            f"Evidence compare: one or both ids not found (left={left_id!r}, right={right_id!r})",
+            "platform.evidence",
+        )
+    return _ok(env)
 
 
 # ---------------------------------------------------------------------------
@@ -510,7 +548,41 @@ async def list_history_baselines() -> JSONResponse:
     return _ok(env)
 
 
-# Note: /history/compare is deferred to Phase 8.
+@router.post("/history/compare")
+async def post_history_compare(request: Request) -> JSONResponse:
+    """Compare two history runs (CURRENT vs LAST/LAST_PASS/KNOWN_GOOD/BASELINE)."""
+    body: dict[str, Any] = {}
+    try:
+        if request.headers.get("content-length", "0") != "0":
+            body = await request.json()
+    except Exception:
+        body = {}
+
+    current_run_id = body.get("current_run_id") if isinstance(body, dict) else None
+    baseline = body.get("baseline") if isinstance(body, dict) else None
+    include_evidence = bool(body.get("include_evidence", False)) if isinstance(body, dict) else False
+
+    if not current_run_id or not baseline:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+        err = PlatformError(
+            code=PlatformErrorCode.MALFORMED_REQUEST,
+            layer="platform.history",
+            message="POST /history/compare requires {current_run_id, baseline}",
+        )
+        return JSONResponse(content=error_envelope(error=err), status_code=400)
+
+    env = history.build_history_compare(
+        current_run_id=current_run_id,
+        baseline=baseline,
+        include_evidence=include_evidence,
+    )
+    if env is None:
+        return _not_found(
+            f"History compare: could not resolve runs (current={current_run_id!r}, baseline={baseline!r})",
+            "platform.history",
+        )
+    return _ok(env)
 
 
 # ---------------------------------------------------------------------------

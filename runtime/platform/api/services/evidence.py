@@ -8,10 +8,10 @@ No new evidence model is introduced. Evidence identity remains the
 canonical ``EvidenceContract`` from C50; this adapter projects it into
 the typed list/detail payloads Phase 3 will expose.
 
-Compare is a deliberate structural projection: ``delta`` returns the
-fingerprint difference between the two evidence payloads so that the GUI
-can render a meaningful diff without the API pretending to know what
-matters semantically (semantic comparison belongs to Phase 8).
+Phase 8 adds:
+* ``build_evidence_by_execution`` — evidence scoped to one execution.
+* Enhanced ``build_evidence_compare`` — semantic delta across all
+  required dimensions.
 """
 
 from __future__ import annotations
@@ -24,12 +24,15 @@ from runtime.foundation.verification.control_plane_facade import (
 )
 from runtime.platform.api.contracts import evidence as evidence_contract
 from runtime.platform.api.contracts._primitives import Status
+from runtime.platform.api.services._comparison import compute_evidence_delta
 from runtime.platform.api.services._helpers import envelope, now_iso
+from runtime.system.observability.event_store import EngineeringEventStore
 
 __all__ = [
     "build_evidence_list",
     "build_evidence_detail",
     "build_evidence_compare",
+    "build_evidence_by_execution",
 ]
 
 
@@ -146,6 +149,8 @@ def build_evidence_compare(left_id: str, right_id: str) -> dict[str, Any] | None
     """Build the ``platform.evidence_compare`` envelope for two evidence ids.
 
     Returns ``None`` when either id is not present in the live set.
+
+    Phase 8: semantic delta computed via :func:`compute_evidence_delta`.
     """
 
     items, _ = _list_items()
@@ -153,17 +158,54 @@ def build_evidence_compare(left_id: str, right_id: str) -> dict[str, Any] | None
     if left_id not in known or right_id not in known:
         return None
 
-    # Phase 2 comparison is structural: clients receive a delta dict
-    # with the *raw* differences between the two list rows. Semantic
-    # comparison (test failures, durations, recovered failures, …) lives
-    # in Phase 8 — see ``IMPLEMENTATION_ROADMAP.md``.
     left = next(row for row in items if row["id"] == left_id)
     right = next(row for row in items if row["id"] == right_id)
 
-    delta: dict[str, Any] = {}
-    for key in ("status", "capability_id", "kind"):
-        if left.get(key) != right.get(key):
-            delta[key] = {"left": left.get(key), "right": right.get(key)}
+    delta = compute_evidence_delta(left, right)
 
     data = {"left_id": left_id, "right_id": right_id, "delta": delta}
     return envelope(kind=evidence_contract.EVIDENCE_COMPARE_KIND, data=data)
+
+
+def build_evidence_by_execution(execution_id: str) -> dict[str, Any] | None:
+    """Build the ``platform.evidence_list`` envelope scoped to one execution.
+
+    Queries the ``EngineeringEventStore`` for all events whose metadata
+    carries the given ``execution_id``.  Projects those events into
+    evidence-like list rows so the GUI can display every event that
+    belongs to a single run.
+
+    Returns ``None`` when no events reference the execution id.
+    """
+
+    store = EngineeringEventStore()
+    matching = [
+        e
+        for e in store.iter_events()
+        if (e.metadata or {}).get("execution_id") == execution_id
+    ]
+    if not matching:
+        return None
+
+    items: list[dict[str, Any]] = []
+    for event in matching:
+        payload = event.payload or {}
+        items.append(
+            {
+                "id": event.event_id,
+                "kind": event.event_type,
+                "capability_id": (event.metadata or {}).get("capability_id", "unknown"),
+                "execution_id": execution_id,
+                "collected_at": now_iso(),
+                "status": (
+                    Status.CLOSED.value
+                    if event.event_type == "VerificationCompleted"
+                    else Status.OPEN.value
+                ),
+                "summary": payload.get("final_decision")
+                or event.event_type,
+            }
+        )
+
+    data = {"count": len(items), "items": items}
+    return envelope(kind=evidence_contract.EVIDENCE_LIST_KIND, data=data)
