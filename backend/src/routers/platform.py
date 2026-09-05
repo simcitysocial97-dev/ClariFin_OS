@@ -56,6 +56,7 @@ from runtime.platform.api.services import (
     tasks,
     verification,
 )
+from runtime.platform.cache import snapshot
 
 logger = logging.getLogger(__name__)
 
@@ -127,14 +128,29 @@ def _not_found(msg: str, layer: str) -> JSONResponse:
     return JSONResponse(content=env, status_code=404)
 
 
+def _query_nocache(request: Request) -> bool:
+    """Return True when the client sent ``?nocache=1``."""
+
+    val = request.query_params.get("nocache", "0")
+    try:
+        return int(val) != 0
+    except (ValueError, TypeError):
+        return False
+
+
 # ---------------------------------------------------------------------------
 # Health
 # ---------------------------------------------------------------------------
 
 
 @router.get("/health")
-async def get_health() -> JSONResponse:
+async def get_health(request: Request) -> JSONResponse:
+    nocache = _query_nocache(request)
+    cached = snapshot.get("health", nocache=nocache)
+    if cached is not None:
+        return _ok(cached)
     env = health.build_health_snapshot()
+    snapshot.put("health", env)
     return _ok(env)
 
 
@@ -144,8 +160,13 @@ async def get_health() -> JSONResponse:
 
 
 @router.get("/capabilities")
-async def list_capabilities() -> JSONResponse:
+async def list_capabilities(request: Request) -> JSONResponse:
+    nocache = _query_nocache(request)
+    cached = snapshot.get("capabilities", nocache=nocache)
+    if cached is not None:
+        return _ok(cached)
     env = capabilities.build_capability_list()
+    snapshot.put("capabilities", env)
     return _ok(env)
 
 
@@ -177,8 +198,13 @@ async def get_capability_graph(capability_id: str) -> JSONResponse:
 
 
 @router.get("/tasks")
-async def list_tasks() -> JSONResponse:
+async def list_tasks(request: Request) -> JSONResponse:
+    nocache = _query_nocache(request)
+    cached = snapshot.get("tasks", nocache=nocache)
+    if cached is not None:
+        return _ok(cached)
     env = tasks.build_task_list()
+    snapshot.put("tasks", env)
     return _ok(env)
 
 
@@ -389,8 +415,15 @@ async def get_architecture_unmapped() -> JSONResponse:
 
 
 @router.get("/events")
-async def get_events(limit: int = Query(default=100, ge=1, le=1000)) -> JSONResponse:
+async def get_events(
+    request: Request, limit: int = Query(default=100, ge=1, le=1000)
+) -> JSONResponse:
+    nocache = _query_nocache(request)
+    cached = snapshot.get("events", nocache=nocache)
+    if cached is not None:
+        return _ok(cached)
     env = events.build_events_list(limit=limit)
+    snapshot.put("events", env)
     return _ok(env)
 
 
@@ -438,8 +471,13 @@ async def get_app_workflows() -> JSONResponse:
 
 
 @router.get("/change/intelligence")
-async def get_change_intelligence() -> JSONResponse:
+async def get_change_intelligence(request: Request) -> JSONResponse:
+    nocache = _query_nocache(request)
+    cached = snapshot.get("change", nocache=nocache)
+    if cached is not None:
+        return _ok(cached)
     env = change.build_change_intelligence()
+    snapshot.put("change", env)
     return _ok(env)
 
 
