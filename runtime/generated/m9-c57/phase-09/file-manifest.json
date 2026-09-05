@@ -1,0 +1,86 @@
+{
+  "manifest": [
+    {
+      "file": "runtime/platform/api/services/errors.py",
+      "lines": 180,
+      "sha256": "c74ede85c1af7dc097ea211873c183b3e3d060ba2f309323bb4b1794b4257b8c"
+    },
+    {
+      "file": "runtime/platform/api/services/architecture.py",
+      "lines": 215,
+      "sha256": "1fa73d0240b4080b9dfbb578b7f2f190c036228453b31e1e64361e339abe70b4"
+    },
+    {
+      "file": "runtime/platform/api/services/capabilities.py",
+      "lines": 149,
+      "sha256": "18d538a1e4b9ab74a8c9a461a7dae6e76fd98af479c3e810c753299281206c7e"
+    },
+    {
+      "file": "frontend/lib/hooks/use-platform-capabilities.ts",
+      "lines": 119,
+      "sha256": "e6726ef66a4f0ea4ad61ecdc10a4b91c498e81db9aa19db08220bbe0c2b6e322"
+    },
+    {
+      "file": "frontend/lib/hooks/use-platform-architecture.ts",
+      "lines": 124,
+      "sha256": "095e1c95a172dd3ce03f22726dc8f87cc153843b1083c141c2ad0c31a186df38"
+    },
+    {
+      "file": "frontend/app/platform/errors/page.tsx",
+      "lines": 264,
+      "sha256": "5377caaa2ab13aec198959125f9cc30aee29aed342d17f63eae477fce81f1878"
+    },
+    {
+      "file": "frontend/app/platform/architecture/page.tsx",
+      "lines": 286,
+      "sha256": "5e5f86d2b6feceea7cef9d57690264f34b784e10a4f15bd66e2918447c3d2dcd"
+    },
+    {
+      "file": "frontend/app/platform/capabilities/page.tsx",
+      "lines": 175,
+      "sha256": "9557395bf2c890562b14ba6ebe7718d17bee591195e0619a048218ee2835c0b5"
+    },
+    {
+      "file": "frontend/app/platform/capabilities/[capabilityId]/page.tsx",
+      "lines": 221,
+      "sha256": "1529da227abf4ba9e374ac7b09f47ee16017e111c4e9629281de229f66c4aef5"
+    },
+    {
+      "file": "frontend/app/platform/history/page.tsx",
+      "lines": 253,
+      "sha256": "267c3faac86b5cf23a976c819e4744a03891f1fff294e7449e08c3953f757e3a"
+    },
+    {
+      "file": "frontend/app/platform/history/compare/page.tsx",
+      "lines": 396,
+      "sha256": "c3f1f66ac58744f077c539038267346b6fbf9f9074f6fc50f033357be3cb64be"
+    },
+    {
+      "file": "frontend/app/platform/diagnostics/page.tsx",
+      "lines": 171,
+      "sha256": "448c4ec3399b5207e3ca77def34552194f9e17b16e80c0fe0e4aed34b3441a0c"
+    },
+    {
+      "file": "frontend/components/platform/sidebar.tsx",
+      "lines": 75,
+      "sha256": "2e76a9ad4c848f37830ae441303c6acfd372a6747b859c158866581439d88129"
+    },
+    {
+      "file": "frontend/app/platform/layout.tsx",
+      "lines": 40,
+      "sha256": "d1a120af6fd621e5f7bfefa3f407b713517b9948ac46e5c888ded19ec4d0484b"
+    },
+    {
+      "file": "runtime/tests/test_platform_api_phase9.py",
+      "lines": 375,
+      "sha256": "c4f9f93ef4bc99b823d88bfdb6d0784c65097b2d73bd203b8baa0189058401d5"
+    },
+    {
+      "file": "runtime/generated/m9-c57/phase-09/progress.md",
+      "lines": 0,
+      "sha256": "MISSING"
+    }
+  ],
+  "total_lines": 3043,
+  "generated_at": "2026-09-05T21:00:00Z"
+}

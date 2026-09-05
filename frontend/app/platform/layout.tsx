@@ -1,5 +1,5 @@
 /**
- * Platform Console Layout — M9-C57 Phase 5
+ * Platform Console Layout — M9-C57 Phase 5 + Phase 9
  *
  * Standalone layout for the /platform route group.
  *
@@ -12,7 +12,7 @@
  * Invariants:
  *   - No AppShell (no left-rail, no top-command-bar, no workspace host)
  *   - Dark theme by default (operational UI convention)
- *   - Minimal chrome: title bar + outlet only
+ *   - Platform sidebar navigation (added in Phase 9)
  *   - No financial data or controls
  *   - Self-contained providers: QueryProvider, ThemeProvider, TooltipProvider,
  *     ErrorBoundary, Toaster
@@ -20,6 +20,7 @@
 
 import type { ReactNode } from 'react';
 import { PlatformConsoleProviders } from './platform-providers';
+import { PlatformSidebar } from '@/components/platform/sidebar';
 
 export const metadata = {
   title: 'Platform Console — ClariFin OS',
@@ -27,5 +28,14 @@ export const metadata = {
 };
 
 export default function PlatformLayout({ children }: { children: ReactNode }) {
-  return <PlatformConsoleProviders>{children}</PlatformConsoleProviders>;
+  return (
+    <PlatformConsoleProviders>
+      <div className="flex h-screen bg-[var(--surface-base)] text-[var(--text-primary)] overflow-hidden">
+        <PlatformSidebar />
+        <main className="flex-1 overflow-auto p-5">
+          {children}
+        </main>
+      </div>
+    </PlatformConsoleProviders>
+  );
 }
