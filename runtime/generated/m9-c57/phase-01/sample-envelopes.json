@@ -1,0 +1,55 @@
+{
+  "api_version": "1.0.0",
+  "envelope_shape": [
+    "kind",
+    "version",
+    "generated_at",
+    "id",
+    "data"
+  ],
+  "identity_format": "sha256:<64-hex>",
+  "samples": {
+    "capability_list": {
+      "data": {
+        "categories": [
+          "DISCOVERY"
+        ],
+        "count": 1,
+        "items": []
+      },
+      "generated_at": "2026-09-05T08:58:06Z",
+      "id": "sha256:9e3cf63fdcb6b5ffee4174709ce213797592e801527f4915103ae330bce79140",
+      "kind": "platform.capability_list",
+      "version": "1.0.0"
+    },
+    "error": {
+      "error": {
+        "capability_id": null,
+        "code": "NOT_FOUND",
+        "evidence_id": null,
+        "layer": "platform.tasks",
+        "message": "sample error"
+      },
+      "generated_at": "2026-09-05T08:58:06Z",
+      "id": "sha256:d264afc96191eca7c4c3ed638fac2b0b4809550702623505d39eb23feeb09a12",
+      "kind": "platform.error",
+      "version": "1.0.0"
+    },
+    "health_snapshot": {
+      "data": {
+        "ai": "READY",
+        "architecture": "SAFE",
+        "backend": "HEALTHY",
+        "database": "HEALTHY",
+        "evidence": "VALID",
+        "frontend": "HEALTHY",
+        "platform": "HEALTHY",
+        "verification": "CURRENT"
+      },
+      "generated_at": "2026-09-05T08:58:06Z",
+      "id": "sha256:8f528ba08497e3112185f1e6f2fa536f3049c690b5799e610757bc4083d0c663",
+      "kind": "platform.health_snapshot",
+      "version": "1.0.0"
+    }
+  }
+}

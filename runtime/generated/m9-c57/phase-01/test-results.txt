@@ -1,0 +1,97 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- /home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/vasantha/AI-Projects/ClariFin_OS
+configfile: pyproject.toml
+plugins: hypothesis-6.161.4, asyncio-1.4.0, schemathesis-4.17.0, cov-7.1.0, anyio-4.14.2, xdist-3.8.0, timeout-2.4.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 79 items
+
+runtime/tests/test_platform_api_phase1.py::TestCanonicalJson::test_dict_order_is_irrelevant PASSED [  1%]
+runtime/tests/test_platform_api_phase1.py::TestCanonicalJson::test_nested_dict_order_is_irrelevant PASSED [  2%]
+runtime/tests/test_platform_api_phase1.py::TestCanonicalJson::test_tuples_serialize_as_arrays PASSED [  3%]
+runtime/tests/test_platform_api_phase1.py::TestCanonicalJson::test_none_values_are_stripped PASSED [  5%]
+runtime/tests/test_platform_api_phase1.py::TestEnvelopeIdentity::test_envelope_identity_is_stable PASSED [  6%]
+runtime/tests/test_platform_api_phase1.py::TestEnvelopeIdentity::test_error_identity_is_stable PASSED [  7%]
+runtime/tests/test_platform_api_phase1.py::TestEnvelopeIdentity::test_kind_or_version_change_changes_id PASSED [  8%]
+runtime/tests/test_platform_api_phase1.py::TestEnvelopeIdentity::test_data_change_changes_id PASSED [ 10%]
+runtime/tests/test_platform_api_phase1.py::TestSuccessEnvelope::test_required_keys_present PASSED [ 11%]
+runtime/tests/test_platform_api_phase1.py::TestSuccessEnvelope::test_id_is_deterministic_across_invocations PASSED [ 12%]
+runtime/tests/test_platform_api_phase1.py::TestSuccessEnvelope::test_generated_at_is_excluded_from_id PASSED [ 13%]
+runtime/tests/test_platform_api_phase1.py::TestSuccessEnvelope::test_none_data_rejected PASSED [ 15%]
+runtime/tests/test_platform_api_phase1.py::TestSuccessEnvelope::test_data_field_propagates_complex_payload PASSED [ 16%]
+runtime/tests/test_platform_api_phase1.py::TestErrorEnvelope::test_required_keys_present PASSED [ 17%]
+runtime/tests/test_platform_api_phase1.py::TestErrorEnvelope::test_error_block_has_required_subfields PASSED [ 18%]
+runtime/tests/test_platform_api_phase1.py::TestErrorEnvelope::test_error_id_is_deterministic PASSED [ 20%]
+runtime/tests/test_platform_api_phase1.py::TestErrorEnvelope::test_optional_error_fields_default_to_none PASSED [ 21%]
+runtime/tests/test_platform_api_phase1.py::TestPlatformError::test_enum_values PASSED [ 22%]
+runtime/tests/test_platform_api_phase1.py::TestPlatformError::test_dataclass_is_frozen PASSED [ 24%]
+runtime/tests/test_platform_api_phase1.py::TestPlatformError::test_empty_layer_rejected PASSED [ 25%]
+runtime/tests/test_platform_api_phase1.py::TestPlatformError::test_empty_message_rejected PASSED [ 26%]
+runtime/tests/test_platform_api_phase1.py::TestPlatformError::test_non_enum_code_rejected PASSED [ 27%]
+runtime/tests/test_platform_api_phase1.py::TestPrimitives::test_status_values PASSED [ 29%]
+runtime/tests/test_platform_api_phase1.py::TestPrimitives::test_timestamp_validation_accepts_z_suffix PASSED [ 30%]
+runtime/tests/test_platform_api_phase1.py::TestPrimitives::test_timestamp_validation_rejects_wrong_format PASSED [ 31%]
+runtime/tests/test_platform_api_phase1.py::TestPrimitives::test_identity_validation_accepts_sha256 PASSED [ 32%]
+runtime/tests/test_platform_api_phase1.py::TestPrimitives::test_identity_validation_rejects_non_sha256 PASSED [ 34%]
+runtime/tests/test_platform_api_phase1.py::TestPrimitives::test_json_schema_emitted_for_timestamp_and_identity PASSED [ 35%]
+runtime/tests/test_platform_api_phase1.py::TestHealthContract::test_serialization_round_trip PASSED [ 36%]
+runtime/tests/test_platform_api_phase1.py::TestHealthContract::test_kind_field_is_frozen PASSED [ 37%]
+runtime/tests/test_platform_api_phase1.py::TestHealthContract::test_default_kind_is_used_when_omitted PASSED [ 39%]
+runtime/tests/test_platform_api_phase1.py::TestHealthContract::test_domains_defaults_to_empty_list PASSED [ 40%]
+runtime/tests/test_platform_api_phase1.py::TestCapabilitiesContract::test_list_envelope_round_trip PASSED [ 41%]
+runtime/tests/test_platform_api_phase1.py::TestCapabilitiesContract::test_detail_envelope_round_trip PASSED [ 43%]
+runtime/tests/test_platform_api_phase1.py::TestCapabilitiesContract::test_graph_envelope_round_trip PASSED [ 44%]
+runtime/tests/test_platform_api_phase1.py::TestCapabilitiesContract::test_minimal_item_round_trip PASSED [ 45%]
+runtime/tests/test_platform_api_phase1.py::TestTasksContract::test_list_envelope_round_trip PASSED [ 46%]
+runtime/tests/test_platform_api_phase1.py::TestTasksContract::test_detail_envelope_round_trip PASSED [ 48%]
+runtime/tests/test_platform_api_phase1.py::TestTasksContract::test_cancel_envelope_round_trip PASSED [ 49%]
+runtime/tests/test_platform_api_phase1.py::TestVerificationContract::test_run_request_envelope PASSED [ 50%]
+runtime/tests/test_platform_api_phase1.py::TestVerificationContract::test_run_result_envelope PASSED [ 51%]
+runtime/tests/test_platform_api_phase1.py::TestVerificationContract::test_recommendation_envelope PASSED [ 53%]
+runtime/tests/test_platform_api_phase1.py::TestExecutionsContract::test_detail_envelope PASSED [ 54%]
+runtime/tests/test_platform_api_phase1.py::TestExecutionsContract::test_stream_event_envelope PASSED [ 55%]
+runtime/tests/test_platform_api_phase1.py::TestEvidenceContract::test_list_envelope PASSED [ 56%]
+runtime/tests/test_platform_api_phase1.py::TestEvidenceContract::test_detail_envelope PASSED [ 58%]
+runtime/tests/test_platform_api_phase1.py::TestEvidenceContract::test_compare_envelope PASSED [ 59%]
+runtime/tests/test_platform_api_phase1.py::TestHistoryContract::test_runs_envelope PASSED [ 60%]
+runtime/tests/test_platform_api_phase1.py::TestHistoryContract::test_run_detail_envelope PASSED [ 62%]
+runtime/tests/test_platform_api_phase1.py::TestHistoryContract::test_compare_envelope PASSED [ 63%]
+runtime/tests/test_platform_api_phase1.py::TestHistoryContract::test_baselines_envelope PASSED [ 64%]
+runtime/tests/test_platform_api_phase1.py::TestErrorsContract::test_current_envelope PASSED [ 65%]
+runtime/tests/test_platform_api_phase1.py::TestErrorsContract::test_recent_envelope PASSED [ 67%]
+runtime/tests/test_platform_api_phase1.py::TestErrorsContract::test_recurring_envelope PASSED [ 68%]
+runtime/tests/test_platform_api_phase1.py::TestErrorsContract::test_frequency_envelope PASSED [ 69%]
+runtime/tests/test_platform_api_phase1.py::TestArchitectureContract::test_authorities_envelope PASSED [ 70%]
+runtime/tests/test_platform_api_phase1.py::TestArchitectureContract::test_authority_detail_envelope PASSED [ 72%]
+runtime/tests/test_platform_api_phase1.py::TestArchitectureContract::test_findings_envelope_kind_mutable_for_listing_endpoints[platform.architecture_boundaries] PASSED [ 73%]
+runtime/tests/test_platform_api_phase1.py::TestArchitectureContract::test_findings_envelope_kind_mutable_for_listing_endpoints[platform.architecture_duplicates] PASSED [ 74%]
+runtime/tests/test_platform_api_phase1.py::TestArchitectureContract::test_findings_envelope_kind_mutable_for_listing_endpoints[platform.architecture_bypasses] PASSED [ 75%]
+runtime/tests/test_platform_api_phase1.py::TestArchitectureContract::test_findings_envelope_kind_mutable_for_listing_endpoints[platform.architecture_deprecations] PASSED [ 77%]
+runtime/tests/test_platform_api_phase1.py::TestArchitectureContract::test_findings_envelope_kind_mutable_for_listing_endpoints[platform.architecture_unmapped] PASSED [ 78%]
+runtime/tests/test_platform_api_phase1.py::TestEventsContract::test_list_envelope PASSED [ 79%]
+runtime/tests/test_platform_api_phase1.py::TestEventsContract::test_stream_event_envelope PASSED [ 81%]
+runtime/tests/test_platform_api_phase1.py::TestEventsContract::test_payload_defaults_to_empty_dict PASSED [ 82%]
+runtime/tests/test_platform_api_phase1.py::TestApplicationContract::test_application_readiness_envelope[platform.app_backend] PASSED [ 83%]
+runtime/tests/test_platform_api_phase1.py::TestApplicationContract::test_application_readiness_envelope[platform.app_domain] PASSED [ 84%]
+runtime/tests/test_platform_api_phase1.py::TestApplicationContract::test_application_readiness_envelope[platform.app_financial] PASSED [ 86%]
+runtime/tests/test_platform_api_phase1.py::TestApplicationContract::test_application_readiness_envelope[platform.app_frontend] PASSED [ 87%]
+runtime/tests/test_platform_api_phase1.py::TestApplicationContract::test_application_readiness_envelope[platform.app_workflows] PASSED [ 88%]
+runtime/tests/test_platform_api_phase1.py::TestApplicationContract::test_subject_required PASSED [ 89%]
+runtime/tests/test_platform_api_phase1.py::TestChangeIntelligenceContract::test_round_trip PASSED [ 91%]
+runtime/tests/test_platform_api_phase1.py::TestChangeIntelligenceContract::test_risk_field_required PASSED [ 92%]
+runtime/tests/test_platform_api_phase1.py::TestEndToEndEnvelopeStability::test_same_input_same_id_across_invocations PASSED [ 93%]
+runtime/tests/test_platform_api_phase1.py::TestEndToEndEnvelopeStability::test_wall_clock_does_not_affect_id PASSED [ 94%]
+runtime/tests/test_platform_api_phase1.py::TestEndToEndEnvelopeStability::test_required_top_level_keys PASSED [ 96%]
+runtime/tests/test_platform_api_phase1.py::TestEndToEndEnvelopeStability::test_error_envelope_required_subfields PASSED [ 97%]
+runtime/tests/test_platform_api_phase1.py::TestNoNetworkDependency::test_imports_dont_open_sockets PASSED [ 98%]
+runtime/tests/test_platform_api_phase1.py::TestNoNetworkDependency::test_contracts_module_has_no_io_imports PASSED [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 79 passed, 1 warning in 30.28s ========================

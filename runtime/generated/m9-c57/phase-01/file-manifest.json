@@ -1,0 +1,133 @@
+{
+  "phase": "M9-C57 Phase 1",
+  "package_root": "runtime/platform/",
+  "file_count": 20,
+  "files": [
+    {
+      "path": "runtime/platform/__init__.py",
+      "bytes": 1320,
+      "lines": 33,
+      "sha256": "4755cd9abc682112e9d47bebde409dd417f1d77754667f1fad6904198d77847c"
+    },
+    {
+      "path": "runtime/platform/api/__init__.py",
+      "bytes": 172,
+      "lines": 9,
+      "sha256": "253e02405d7436663afdd73edcf01f92b5e2ccbee46bc260e3db2a6ade609614"
+    },
+    {
+      "path": "runtime/platform/api/contracts/__init__.py",
+      "bytes": 1276,
+      "lines": 38,
+      "sha256": "dac753e98f3be809cb81f770c4310998960adfa93cdf515f5ea16a1758406d1f"
+    },
+    {
+      "path": "runtime/platform/api/contracts/_primitives.py",
+      "bytes": 5290,
+      "lines": 163,
+      "sha256": "ac620842bee07e7e124a836c09526e0a42c9a0a2a5dfac3340b23ddff259126d"
+    },
+    {
+      "path": "runtime/platform/api/contracts/application.py",
+      "bytes": 1426,
+      "lines": 55,
+      "sha256": "1b579720c94327fe1deed61188415ae967ddefa11b8f5d9b7808510b9538acf8"
+    },
+    {
+      "path": "runtime/platform/api/contracts/architecture.py",
+      "bytes": 3748,
+      "lines": 116,
+      "sha256": "64756d4e5a6e85bdb8b64067252d6b24656af76d1ae0342e91443b3e7e6841d4"
+    },
+    {
+      "path": "runtime/platform/api/contracts/capabilities.py",
+      "bytes": 3351,
+      "lines": 106,
+      "sha256": "449ec5c76b2ac54d992f81da27f0a870ff32d09e1687dec59557236c576c5b4d"
+    },
+    {
+      "path": "runtime/platform/api/contracts/change.py",
+      "bytes": 1700,
+      "lines": 54,
+      "sha256": "d330170bf5f9043c848bd6d285f7338495ddf3c9706658a407c092b8e892f7cc"
+    },
+    {
+      "path": "runtime/platform/api/contracts/errors.py",
+      "bytes": 3446,
+      "lines": 109,
+      "sha256": "df6face5fa0084c6a90c7d31aa9243d56e186e08bb479df1ac603644bf77e856"
+    },
+    {
+      "path": "runtime/platform/api/contracts/events.py",
+      "bytes": 2003,
+      "lines": 73,
+      "sha256": "dca7b5bf420024f63ee016d16974ad0b5152fddf550a44f6052b5cf6f3b86ce7"
+    },
+    {
+      "path": "runtime/platform/api/contracts/evidence.py",
+      "bytes": 2955,
+      "lines": 98,
+      "sha256": "3dab3a2d27b331436d685725f32708523e6db5598fd213ecaed529df68e3d0ac"
+    },
+    {
+      "path": "runtime/platform/api/contracts/executions.py",
+      "bytes": 2213,
+      "lines": 72,
+      "sha256": "3b646c1a61536c3ce680d8c34be33bd6b11d523cc230e94e6156851774bbf11f"
+    },
+    {
+      "path": "runtime/platform/api/contracts/health.py",
+      "bytes": 1610,
+      "lines": 65,
+      "sha256": "0c0941e7d48c0dfe8c69a2e9b24b8e618cfe3a2497e11c92291e85d5f1890f65"
+    },
+    {
+      "path": "runtime/platform/api/contracts/history.py",
+      "bytes": 4007,
+      "lines": 137,
+      "sha256": "f8eea6588e2780d25065be4c80d71515e968937b92f51b3b06c70a9c48661794"
+    },
+    {
+      "path": "runtime/platform/api/contracts/tasks.py",
+      "bytes": 2567,
+      "lines": 94,
+      "sha256": "d111c21688e08605f7a3e3b400afb415f79ff7308c77c25b0756087509743c22"
+    },
+    {
+      "path": "runtime/platform/api/contracts/verification.py",
+      "bytes": 2614,
+      "lines": 86,
+      "sha256": "d30b13c36cb5d88b420fb11984a998e2f29fc5c0ebc99fc84610d6f256e9b354"
+    },
+    {
+      "path": "runtime/platform/api/envelope.py",
+      "bytes": 3832,
+      "lines": 131,
+      "sha256": "b9576c3cb146ab675bd41e826b06c305148740eed6bdf61a1ac8d5f834d041e0"
+    },
+    {
+      "path": "runtime/platform/api/errors.py",
+      "bytes": 3210,
+      "lines": 89,
+      "sha256": "e941d8f76bdc1c8ecca04ca6fc5fba6524c37d8391053cbc2331a7a165afd386"
+    },
+    {
+      "path": "runtime/platform/api/identity.py",
+      "bytes": 4731,
+      "lines": 145,
+      "sha256": "834be65a470587ca2c046540cc74a2b286ce56ffe0268e1e63e72502ec63d0e6"
+    },
+    {
+      "path": "runtime/platform/api/services/__init__.py",
+      "bytes": 651,
+      "lines": 18,
+      "sha256": "29e48220954aa2b7978e2db55f612441b5a86fbbdd225b37db63af5c5594bdaa"
+    },
+    {
+      "path": "runtime/tests/test_platform_api_phase1.py",
+      "bytes": 36537,
+      "lines": 1024,
+      "sha256": "a33b14eb00fc9f36c2d5f7bde251ab05bd4d67aba75ee06a44dd7c07b166c197"
+    }
+  ]
+}
