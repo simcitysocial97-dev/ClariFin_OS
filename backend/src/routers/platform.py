@@ -57,6 +57,9 @@ from runtime.platform.api.services import (
     errors as errors_service,
 )
 from runtime.platform.cache import snapshot
+from runtime.platform.diagnostics import engine as diagnostics_service
+from runtime.platform.api.services._helpers import now_iso, envelope
+from runtime.platform.api.contracts import health as health_contract
 
 logger = logging.getLogger(__name__)
 
@@ -747,6 +750,175 @@ async def get_change_intelligence(request: Request) -> JSONResponse:
     env = change.build_change_intelligence()
     snapshot.put("change", env)
     return _ok(env)
+
+
+# ---------------------------------------------------------------------------
+# Diagnostics (Phase 11)
+# ---------------------------------------------------------------------------
+
+
+@router.post("/diagnose")
+async def post_diagnose(request: Request) -> JSONResponse:
+    """Deterministic diagnostic engine — Phase 11."""
+    body: dict[str, Any] = {}
+    try:
+        if request.headers.get("content-length", "0") != "0":
+            body = await request.json()
+    except Exception:
+        body = {}
+
+    symptom = body.get("symptom", "") if isinstance(body, dict) else ""
+    error_code = body.get("error_code") if isinstance(body, dict) else None
+    capability_id = body.get("capability_id") if isinstance(body, dict) else None
+
+    if not symptom:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+        err = PlatformError(
+            code=PlatformErrorCode.MALFORMED_REQUEST,
+            layer="platform.diagnose",
+            message="POST /diagnose requires {symptom}",
+        )
+        return JSONResponse(content=error_envelope(error=err), status_code=400)
+
+    env = diagnostics_service.diagnose(
+        symptom=symptom,
+        error_code=error_code,
+        capability_id=capability_id,
+    )
+    if env is None:
+        return _not_found("No diagnostic result could be produced", "platform.diagnose")
+    return _ok(env)
+
+
+@router.post("/diagnose/register")
+async def post_diagnose_register(request: Request) -> JSONResponse:
+    """Register a failure signature and get a recommendation — Phase 11."""
+    body: dict[str, Any] = {}
+    try:
+        if request.headers.get("content-length", "0") != "0":
+            body = await request.json()
+    except Exception:
+        body = {}
+
+    error_code = body.get("error_code") if isinstance(body, dict) else None
+    capability_id = body.get("capability_id") if isinstance(body, dict) else None
+    description = body.get("description", "") if isinstance(body, dict) else ""
+    severity = body.get("severity", "medium") if isinstance(body, dict) else "medium"
+
+    if not error_code or not capability_id or not description:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+        err = PlatformError(
+            code=PlatformErrorCode.MALFORMED_REQUEST,
+            layer="platform.diagnose",
+            message="POST /diagnose/register requires {error_code, capability_id, description}",
+        )
+        return JSONResponse(content=error_envelope(error=err), status_code=400)
+
+    rec = diagnostics_service.build_diagnostic_recommendation(
+        error_code=error_code,
+        capability_id=capability_id,
+        description=description,
+        severity=severity,
+    )
+    return _ok(rec)
+
+
+# ---------------------------------------------------------------------------
+# Health deep (Phase 12)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/health/deep")
+async def get_health_deep() -> JSONResponse:
+    """Deep health: per-domain readiness with source and last-check.
+
+    Phase 12 — aggregates all subsystems into a single envelope.
+    """
+    from runtime.platform.api.services import (
+        application,
+        architecture,
+        capabilities,
+        errors as errors_service,
+        health,
+    )
+
+    base = health.build_health_snapshot()
+    app_backend = application.build_app_backend()
+    app_frontend = application.build_app_frontend()
+    app_domain = application.build_app_domain()
+    app_financial = application.build_app_financial()
+    app_workflows = application.build_app_workflows()
+    arch = architecture.build_architecture_authorities()
+    err_current = errors_service.build_errors_current()
+
+    domains = list(base["data"].get("domains", []))
+    extra_domains = [
+        {
+            "name": "Backend",
+            "status": app_backend["data"]["status"],
+            "last_check": app_backend["data"]["last_check"],
+            "source": "/platform/v1/app/backend",
+            "detail": app_backend["data"]["summary"],
+        },
+        {
+            "name": "Frontend",
+            "status": app_frontend["data"]["status"],
+            "last_check": app_frontend["data"]["last_check"],
+            "source": "/platform/v1/app/frontend",
+            "detail": app_frontend["data"]["summary"],
+        },
+        {
+            "name": "Domain Model",
+            "status": app_domain["data"]["status"],
+            "last_check": app_domain["data"]["last_check"],
+            "source": "/platform/v1/app/domain",
+            "detail": app_domain["data"]["summary"],
+        },
+        {
+            "name": "Financial Arithmetic",
+            "status": app_financial["data"]["status"],
+            "last_check": app_financial["data"]["last_check"],
+            "source": "/platform/v1/app/financial",
+            "detail": app_financial["data"]["summary"],
+        },
+        {
+            "name": "Workflows",
+            "status": app_workflows["data"]["status"],
+            "last_check": app_workflows["data"]["last_check"],
+            "source": "/platform/v1/app/workflows",
+            "detail": app_workflows["data"]["summary"],
+        },
+        {
+            "name": "Architecture",
+            "status": arch["data"]["items"][0]["status"] if arch["data"]["items"] else "UNKNOWN",
+            "last_check": now_iso(),
+            "source": "/platform/v1/architecture/authorities",
+            "detail": f"authority_count={arch['data']['count']}",
+        },
+        {
+            "name": "Errors",
+            "status": "UNHEALTHY" if err_current["data"]["count"] > 0 else "HEALTHY",
+            "last_check": now_iso(),
+            "source": "/platform/v1/errors/current",
+            "detail": f"active_errors={err_current['data']['count']}",
+        },
+    ]
+    domains.extend(extra_domains)
+
+    data = {
+        **base["data"],
+        "domains": domains,
+        "application": {
+            "backend": app_backend["data"],
+            "frontend": app_frontend["data"],
+            "domain": app_domain["data"],
+            "financial": app_financial["data"],
+            "workflows": app_workflows["data"],
+        },
+    }
+    return envelope(kind=health_contract.HEALTH_KIND, data=data)
 
 
 # ---------------------------------------------------------------------------

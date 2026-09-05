@@ -1,0 +1,41 @@
+{
+  "manifest": [
+    {
+      "file": "runtime/platform/diagnostics/__init__.py",
+      "lines": 23,
+      "sha256": "0706034e99fb4eed93227b36f650eaea3dbd091d7926ec3969040193a524f2f8"
+    },
+    {
+      "file": "runtime/platform/diagnostics/engine.py",
+      "lines": 229,
+      "sha256": "33db6f5618327da9f0d51f96bcd585e36766b367291a2ea075dc9f48f3c1f9e8"
+    },
+    {
+      "file": "runtime/platform/diagnostics/rules.py",
+      "lines": 79,
+      "sha256": "805799115853658def86a3778b232b4a9b68a9b0e358b633b0bfb604797b4b45"
+    },
+    {
+      "file": "runtime/platform/api/contracts/diagnostics.py",
+      "lines": 88,
+      "sha256": "ed654b57db7c90407dacbe1db5c22e27ce9674c16a053544a42de4fb9c61ac09"
+    },
+    {
+      "file": "backend/src/routers/platform.py",
+      "lines": 947,
+      "sha256": "d1b0b6826f34d36fb4a50d852a9fbd39b341126cbb03790e67bc780e173fbeac"
+    },
+    {
+      "file": "frontend/app/platform/diagnostics/change/page.tsx",
+      "lines": 234,
+      "sha256": "dc0ea92dedb0dedb606089a97cf0d7123aaf9af5ec83a38d0b928b3a935ee681"
+    },
+    {
+      "file": "runtime/tests/test_platform_api_phase10_12.py",
+      "lines": 360,
+      "sha256": "5a9b64538fbc46c68ca5ae73c205966b572931a95b51d0fe1b6189217c443110"
+    }
+  ],
+  "total_lines": 1960,
+  "generated_at": "2026-09-05T22:00:00Z"
+}

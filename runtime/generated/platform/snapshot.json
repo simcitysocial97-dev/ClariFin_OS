@@ -775,6 +775,88 @@
         "version": "1.0.0"
       }
     },
+    "change": {
+      "_c": 236464.62854939,
+      "_ts": "2026-09-05T22:03:26Z",
+      "hash": "ba1a44c8feb2c078976150fdc1d5b0118f146362a23d9dbcb4bc42d0e21119d3",
+      "payload": {
+        "data": {
+          "affected_capabilities": [
+            "api-contracts",
+            "loan-engine"
+          ],
+          "affected_tests": [
+            "frontend/tests/src"
+          ],
+          "affected_workflows": [
+            "backend",
+            "contracts",
+            "frontend",
+            "run_backend_verification",
+            "run_contract_tests",
+            "run_frontend_verification"
+          ],
+          "changed_files": [
+            {
+              "change_type": "modified",
+              "path": "backend/src/routers/platform.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/engineering-events.jsonl"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/git-fetch-events.jsonl"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/platform/snapshot.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/app/platform/diagnostics/change/page.tsx"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c57/phase-10/file-manifest.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c57/phase-10/test-results.txt"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/contracts/diagnostics.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/diagnostics/__init__.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/diagnostics/engine.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/diagnostics/rules.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_platform_api_phase10_12.py"
+            }
+          ],
+          "generated_from": "2026-09-05T22:03:24.691840+00:00",
+          "recommended_verification": [],
+          "risk": "HIGH",
+          "stale_evidence": []
+        },
+        "generated_at": "2026-09-05T22:03:26Z",
+        "id": "sha256:ed10cda249d1439ee1f7ee1af48627b9b9f337823493f2bf9cfc80db2a4e454d",
+        "kind": "platform.change_intelligence",
+        "version": "1.0.0"
+      }
+    },
     "events": {
       "_c": 205921.23523641,
       "_ts": "2026-09-05T13:19:58Z",
@@ -1555,6 +1637,6 @@
       }
     }
   },
-  "generated_at": "2026-09-05T17:34:42Z",
+  "generated_at": "2026-09-05T22:03:26Z",
   "version": "1"
 }
