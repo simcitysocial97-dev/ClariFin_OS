@@ -1,0 +1,97 @@
+{
+  "phase": "M9-C57 Phase 2",
+  "package_root": "runtime/platform/api/services/",
+  "file_count": 14,
+  "files": [
+    {
+      "path": "runtime/platform/api/services/__init__.py",
+      "bytes": 758,
+      "lines": 23,
+      "sha256": "9a0a4f7e0336dafc803207ca3f56aaef42704ba9c36752fa9a8e6a92733c6896"
+    },
+    {
+      "path": "runtime/platform/api/services/_helpers.py",
+      "bytes": 1618,
+      "lines": 51,
+      "sha256": "5c741a7727da21f92c205f331da8305a0f2fc4fec989607e9eccf726955e0a0a"
+    },
+    {
+      "path": "runtime/platform/api/services/application.py",
+      "bytes": 3733,
+      "lines": 116,
+      "sha256": "7b48c41a6b57b4da9a04fba0c30f6592d1d2bd25d4927dfe56b08efba946f16c"
+    },
+    {
+      "path": "runtime/platform/api/services/architecture.py",
+      "bytes": 7362,
+      "lines": 216,
+      "sha256": "1fa73d0240b4080b9dfbb578b7f2f190c036228453b31e1e64361e339abe70b4"
+    },
+    {
+      "path": "runtime/platform/api/services/capabilities.py",
+      "bytes": 5649,
+      "lines": 150,
+      "sha256": "18d538a1e4b9ab74a8c9a461a7dae6e76fd98af479c3e810c753299281206c7e"
+    },
+    {
+      "path": "runtime/platform/api/services/change.py",
+      "bytes": 3749,
+      "lines": 103,
+      "sha256": "aa5aae21cfbaf3f3fb599e69711ba41b2bdb0a9a20b2420c2bf831f849748622"
+    },
+    {
+      "path": "runtime/platform/api/services/errors.py",
+      "bytes": 5946,
+      "lines": 181,
+      "sha256": "c74ede85c1af7dc097ea211873c183b3e3d060ba2f309323bb4b1794b4257b8c"
+    },
+    {
+      "path": "runtime/platform/api/services/events.py",
+      "bytes": 2526,
+      "lines": 71,
+      "sha256": "ca39a355677191c181543ac0d7907d421ce9677526f41c13199758b882dc601c"
+    },
+    {
+      "path": "runtime/platform/api/services/evidence.py",
+      "bytes": 6125,
+      "lines": 170,
+      "sha256": "0b3318935dfff21958b1b99ba7d4d25f6f4f60d7430d4842421fa8afae8da468"
+    },
+    {
+      "path": "runtime/platform/api/services/executions.py",
+      "bytes": 3490,
+      "lines": 105,
+      "sha256": "9f683f9c754c3b182f6ab6d1bad3f22bb62d2e3cde18ce46ca9c0ed83ccfb5ed"
+    },
+    {
+      "path": "runtime/platform/api/services/health.py",
+      "bytes": 3475,
+      "lines": 100,
+      "sha256": "c70693f2268c6fb74ef3f6143b309cfe2fc439c1bb8174e375741edd534bb86f"
+    },
+    {
+      "path": "runtime/platform/api/services/history.py",
+      "bytes": 6786,
+      "lines": 193,
+      "sha256": "1121d9d5657a6c00a9e197f45cb79fefa061d95a6bf4f68e4133694a9137a12b"
+    },
+    {
+      "path": "runtime/platform/api/services/tasks.py",
+      "bytes": 4534,
+      "lines": 139,
+      "sha256": "014a4379ce75d75cc8ccad0fcda8209d5f13027ec80f83a71cfdb14bab8291eb"
+    },
+    {
+      "path": "runtime/platform/api/services/verification.py",
+      "bytes": 3683,
+      "lines": 111,
+      "sha256": "2233692f490b2e1ed9fe8598a007bf3a176ace4894b05221a508f51b76210eb4"
+    },
+    {
+      "path": "runtime/tests/test_platform_api_phase2.py",
+      "bytes": 19541,
+      "lines": 496,
+      "sha256": "376a17c778633df9dd99a87252a86ec653621bbcbbb7b340f4b57599361b32c5"
+    }
+  ]
+}
