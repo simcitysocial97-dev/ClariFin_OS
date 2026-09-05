@@ -21,25 +21,23 @@ here. The router only:
 3. Catches exceptions and returns the Phase 1 platform error envelope.
 4. Propagates ``X-Correlation-Id`` when present; otherwise generates one.
 
-Phase 3 is intentionally read-only. Write endpoints (task creation,
-verification run, etc.) are deferred until authorization boundaries
-are enforced in later phases.
+Phase 6 adds write endpoints (run, cancel) that still obey the same
+boundary — every write enters the C50 task/execution path through
+ControlPlane.run() / EngineeringEventStore.
 """
 
 from __future__ import annotations
 
+import json
 import logging
 import uuid
 from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
 from typing import Any
-from uuid import UUID
 
 from fastapi import APIRouter, FastAPI, Query, Request, Response
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from runtime.platform.api.contracts._primitives import Status
 from runtime.platform.api.envelope import error_envelope
 from runtime.platform.api.errors import PlatformError, PlatformErrorCode
 from runtime.platform.api.services import (
@@ -219,6 +217,20 @@ async def get_task(task_id: str) -> JSONResponse:
     return _ok(env)
 
 
+@router.post("/tasks/{task_id}/cancel")
+async def post_task_cancel(task_id: str) -> JSONResponse:
+    """Cancel a task by appending a cancellation event to the event store."""
+    from runtime.platform.api.services import tasks_write as tasks_write_svc
+
+    env = tasks_write_svc.build_cancel_result(task_id=task_id)
+    if env is None:
+        return _not_found(
+            f"Task/obligation {task_id!r} not found",
+            "platform.tasks",
+        )
+    return _ok(env)
+
+
 # ---------------------------------------------------------------------------
 # Verification (read-mostly)
 # ---------------------------------------------------------------------------
@@ -230,11 +242,62 @@ async def get_verification_recommendation() -> JSONResponse:
     return _ok(env)
 
 
-# Note: /verification/run, /verification/run/group, /verification/run/full
-# are intentionally NOT mounted in Phase 3. They require authorization
-# infrastructure (levels 2–4 of AI authority) that will be built in
-# Phase 13+. The endpoint contract exists (Phase 1), but the route is
-# omitted to enforce the read-only boundary.
+from runtime.platform.api.services import verification_write as verification_write_svc  # noqa: E402
+
+
+@router.post("/verification/run")
+async def post_verification_run(request: Request) -> JSONResponse:
+    """Kick off a verification run via ControlPlane.run().
+
+    Accepts optional JSON body: {"capability_id": "..."}.
+    If capability_id is omitted, the run uses the live changed-files set.
+    """
+    body: dict[str, Any] = {}
+    try:
+        if request.headers.get("content-length", "0") != "0":
+            body = await request.json()
+    except Exception:
+        body = {}
+
+    capability_id = body.get("capability_id") if isinstance(body, dict) else None
+    env = verification_write_svc.build_run_result(capability_id=capability_id)
+    return _ok(env)
+
+
+@router.post("/verification/run/group")
+async def post_verification_run_group(request: Request) -> JSONResponse:
+    """Run a verification group (e.g. backend, frontend)."""
+    body: dict[str, Any] = {}
+    try:
+        if request.headers.get("content-length", "0") != "0":
+            body = await request.json()
+    except Exception:
+        body = {}
+
+    group = body.get("group") if isinstance(body, dict) else None
+    env = verification_write_svc.build_run_result(group=group)
+    return _ok(env)
+
+
+@router.post("/verification/run/affected")
+async def post_verification_run_affected() -> JSONResponse:
+    """Run verification for capabilities affected by current working-tree changes."""
+    env = verification_write_svc.build_run_result(affected=True)
+    return _ok(env)
+
+
+@router.post("/verification/run/full")
+async def post_verification_run_full() -> JSONResponse:
+    """Run full verification suite."""
+    env = verification_write_svc.build_run_result(full=True)
+    return _ok(env)
+
+
+@router.get("/verification/runs/recent")
+async def get_verification_runs_recent() -> JSONResponse:
+    """Return recent execution reports from the event store."""
+    env = verification_write_svc.build_recent_runs()
+    return _ok(env)
 
 
 # ---------------------------------------------------------------------------
@@ -253,8 +316,46 @@ async def get_execution(execution_id: str) -> JSONResponse:
     return _ok(env)
 
 
-# Note: /executions/{id}/stream (SSE) is deferred to Phase 7 where the
-# event bus is wired to an actual streaming consumer.
+@router.get("/executions/{execution_id}/stream")
+async def get_execution_stream(execution_id: str, request: Request) -> Response:
+    """SSE stream of execution events for one execution.
+
+    Phase 6 implementation: replays past events from EngineeringEventStore
+    filtered by execution_id, then keeps the connection open. The stream
+    is a generator that yields ``data: <envelope-json>\\n\\n`` lines.
+
+    A proper streaming consumer is Phase 7 — this endpoint is read-only
+    against the existing event store and does not block the orchestrator.
+    """
+    from runtime.system.observability.event_store import EngineeringEventStore
+
+    store = EngineeringEventStore()
+
+    async def event_generator() -> AsyncIterator[bytes]:
+        # Replay existing events for this execution
+        for event in store.iter_events():
+            meta = event.metadata or {}
+            if meta.get("execution_id") != execution_id:
+                continue
+            from runtime.platform.api.services.executions import (
+                build_execution_stream_event,
+            )
+
+            env = build_execution_stream_event(execution_id, event)
+            payload = f"data: {json.dumps(env, default=str)}\n\n"
+            yield payload.encode("utf-8")
+
+            if await request.is_disconnected():
+                break
+
+        # Send a keep-alive to signal end of replay
+        yield b"event: end\ndata: {\"reason\":\"replay-complete\"}\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
 
 
 # ---------------------------------------------------------------------------

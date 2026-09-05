@@ -1,0 +1,66 @@
+{
+  "generated_at": "2026-09-05T17:25:21.695878+00:00",
+  "phase": "M9-C57 Phase 6 \u2014 Verification Center",
+  "files": [
+    {
+      "path": "backend/src/routers/platform.py",
+      "sha256": "6dbcf0e1be6ffbfc2baf7c4f32c3efacd6f226a69c03cc122b5a5aa05df47916",
+      "bytes": 18680
+    },
+    {
+      "path": "backend/tests/integration/test_platform_api_phase6.py",
+      "sha256": "85591b167e3dfdaedee49134d457333da7be40962d487e04096ec1efcf6941b6",
+      "bytes": 3891
+    },
+    {
+      "path": "frontend/app/platform/layout.tsx",
+      "sha256": "e650eabc04a094c9f11adefb119d44f968f5937857fb2e586771b4077c90ce42",
+      "bytes": 1183
+    },
+    {
+      "path": "frontend/app/platform/verification/[capability]/page.tsx",
+      "sha256": "5cd8ef53bd619f15a2c177570abc153d43a47a5dd3376d07d080ae65b72be7e8",
+      "bytes": 3652
+    },
+    {
+      "path": "frontend/app/platform/verification/history/[runId]/page.tsx",
+      "sha256": "c4310e122ceddeeac7cefda9ec1d5c9063689c85b9c07f5801447e934fe43337",
+      "bytes": 1123
+    },
+    {
+      "path": "frontend/app/platform/verification/page.tsx",
+      "sha256": "913ac8a7dad12469a458a6fe055893a83d48fc435b0700e7f87577e7a41bcae6",
+      "bytes": 6430
+    },
+    {
+      "path": "frontend/app/platform/verification/run/[capability]/page.tsx",
+      "sha256": "ff185f44c6f5285b96fa1a7ad671cd5d6f896097ea3b5ca4f320eabe1c0c46f7",
+      "bytes": 2156
+    },
+    {
+      "path": "frontend/lib/hooks/use-verification-center.ts",
+      "sha256": "25d60a3ad9d280b2c6e4fd20a1ead2cdf572c5121e4621636b547d84067d64a9",
+      "bytes": 6296
+    },
+    {
+      "path": "frontend/tests/e2e/specs/verification-center.spec.ts",
+      "sha256": "59a645142acc40239ae587d2a1acafdb3230f58a7a8bcb847c420a1719911f06",
+      "bytes": 1747
+    },
+    {
+      "path": "runtime/generated/m9-c57/phase-06/progress.md",
+      "sha256": "fbe6383baa03467b702097c46762c0f39ebd07d87f7fa98dad620623008fe203",
+      "bytes": 4021
+    },
+    {
+      "path": "runtime/platform/api/services/tasks_write.py",
+      "sha256": "8d529d8bb8581043b533c8174a9140292c46c2f51cc4f3a1204a624df2e86600",
+      "bytes": 2547
+    },
+    {
+      "path": "runtime/platform/api/services/verification_write.py",
+      "sha256": "82a537ee1f1165c03655301b408b935eee1694d248be3c74eb4122533f1471cf",
+      "bytes": 7151
+    }
+  ]
+}
