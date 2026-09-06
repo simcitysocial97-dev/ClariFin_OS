@@ -56,7 +56,10 @@ class MutationCorrectnessGate:
 
         # Check 2: test exit code indicates actual failure.
         if execution.exit_status not in (1, 3, -24):
-            return False, f"KILLED but exit_status={execution.exit_status} (expected 1/3/-24)"
+            return (
+                False,
+                f"KILLED but exit_status={execution.exit_status} (expected 1/3/-24)",
+            )
 
         # Check 3: mutation is still active in workspace.
         still_mutated, msg = self._verify_mutation_active(candidate, workspace)
@@ -180,7 +183,10 @@ class MutationCorrectnessGate:
             if mf.exists():
                 mutant_hash = hashlib.sha256(mf.read_bytes()).hexdigest()[:16]
                 if mutant_hash == baseline_hash:
-                    return False, "Mutant file identical to baseline (mutation not applied)"
+                    return (
+                        False,
+                        "Mutant file identical to baseline (mutation not applied)",
+                    )
                 return True, "Source differs from baseline"
 
         return False, "Mutant file not found in workspace"
@@ -251,12 +257,14 @@ def verify_campaign_results(
             execution = MutationExecution.from_dict(data)
             candidate = cand_map.get(execution.mutant_id)
             if candidate is None:
-                details.append({
-                    "execution_id": execution.execution_id,
-                    "mutant_id": execution.mutant_id,
-                    "verified": False,
-                    "reason": "candidate not found",
-                })
+                details.append(
+                    {
+                        "execution_id": execution.execution_id,
+                        "mutant_id": execution.mutant_id,
+                        "verified": False,
+                        "reason": "candidate not found",
+                    }
+                )
                 failed += 1
                 continue
 
@@ -265,21 +273,25 @@ def verify_campaign_results(
                 passed += 1
             else:
                 failed += 1
-            details.append({
-                "execution_id": execution.execution_id,
-                "mutant_id": execution.mutant_id,
-                "state": execution.mutation_result.value,
-                "verified": ok,
-                "messages": messages,
-            })
+            details.append(
+                {
+                    "execution_id": execution.execution_id,
+                    "mutant_id": execution.mutant_id,
+                    "state": execution.mutation_result.value,
+                    "verified": ok,
+                    "messages": messages,
+                }
+            )
         except Exception as exc:
             failed += 1
-            details.append({
-                "execution_id": "unknown",
-                "mutant_id": "unknown",
-                "verified": False,
-                "reason": str(exc),
-            })
+            details.append(
+                {
+                    "execution_id": "unknown",
+                    "mutant_id": "unknown",
+                    "verified": False,
+                    "reason": str(exc),
+                }
+            )
 
     return {
         "verified": len(details),
@@ -312,13 +324,15 @@ def classify_invalid_executions(
                 continue
             ok, messages = gate.verify_survived(candidate, execution, workspace)
             if not ok:
-                invalid.append({
-                    "mutant_id": execution.mutant_id,
-                    "original_state": "SURVIVED",
-                    "reclassified_to": "INVALID_EXECUTION",
-                    "reason": messages[0] if messages else "unknown",
-                    "source_file": candidate.source_file,
-                })
+                invalid.append(
+                    {
+                        "mutant_id": execution.mutant_id,
+                        "original_state": "SURVIVED",
+                        "reclassified_to": "INVALID_EXECUTION",
+                        "reason": messages[0] if messages else "unknown",
+                        "source_file": candidate.source_file,
+                    }
+                )
         except Exception:
             continue
 

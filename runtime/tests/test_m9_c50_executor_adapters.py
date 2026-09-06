@@ -22,6 +22,7 @@ from runtime.foundation.verification.executor_pipeline import (
 @pytest.fixture
 def sample_planned_task():
     from runtime.foundation.verification.evidence_planner import PlannedTask
+
     return PlannedTask(
         task_id="test-task-001",
         task_kind="mutation",
@@ -34,6 +35,7 @@ def sample_planned_task():
 @pytest.fixture
 def sample_fingerprints():
     from runtime.foundation.verification.executor_pipeline import TaskFingerprints
+
     return TaskFingerprints(
         source="abc123",
         test="def456",
@@ -56,9 +58,17 @@ class TestAllAdaptersRegistered:
 
     def test_all_kinds_have_entries(self):
         """All kinds in VerificationKind Literal have ADAPTERS entries."""
-        from runtime.foundation.verification.executor_pipeline import VerificationKind
         # VerificationKind is a Literal; check known kinds
-        known_kinds = {"unit", "property", "invariant", "contract", "coverage", "mutation", "golden", "capability"}
+        known_kinds = {
+            "unit",
+            "property",
+            "invariant",
+            "contract",
+            "coverage",
+            "mutation",
+            "golden",
+            "capability",
+        }
         for kind in known_kinds:
             assert kind in ADAPTERS, f"Missing adapter for kind={kind!r}"
 
@@ -88,12 +98,16 @@ class TestSpecificAdapters:
 class TestAdapterOutput:
     """Verify adapters produce structured tasks."""
 
-    def test_unit_produces_executable_task(self, sample_planned_task, sample_fingerprints):
+    def test_unit_produces_executable_task(
+        self, sample_planned_task, sample_fingerprints
+    ):
         result = adapt_unit_task(sample_planned_task, sample_fingerprints)
         assert result.executable == "executable"
         assert result.evidence_kind == "pytest-junit"
 
-    def test_mutation_produces_classified_task(self, sample_planned_task, sample_fingerprints):
+    def test_mutation_produces_classified_task(
+        self, sample_planned_task, sample_fingerprints
+    ):
         result = adapt_mutation_task(sample_planned_task, sample_fingerprints)
         # Mutation adapter may produce executable or not_executable_yet
         # depending on whether mutation targets are configured

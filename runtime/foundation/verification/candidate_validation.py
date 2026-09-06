@@ -20,9 +20,7 @@ from __future__ import annotations
 
 import ast
 import hashlib
-import json
 import subprocess
-import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -80,7 +78,9 @@ def _id(*parts: str) -> str:
     return hashlib.sha256("|".join(parts).encode()).hexdigest()[:12]
 
 
-def validate_syntax(candidate_code: str, candidate_id: str) -> ValidationDimensionResult:
+def validate_syntax(
+    candidate_code: str, candidate_id: str
+) -> ValidationDimensionResult:
     """A — Syntax: candidate is valid Python/test code."""
     try:
         ast.parse(candidate_code)
@@ -196,7 +196,7 @@ def validate_focused_execution(
             return ValidationDimensionResult(
                 dimension="focused_execution",
                 passed=True,
-                evidence=f"candidate skeleton: collection error (exit=2) accepted for skeleton with pytest.skip",
+                evidence="candidate skeleton: collection error (exit=2) accepted for skeleton with pytest.skip",
                 details={
                     "candidate_id": candidate_id,
                     "exit_code": result.returncode,
@@ -266,7 +266,7 @@ def validate_regression(
             dimension="regression",
             passed=passed,
             evidence=(
-                f"regression command passed (exit=0)"
+                "regression command passed (exit=0)"
                 if passed
                 else f"regression command failed (exit={result.returncode})"
             ),
@@ -500,9 +500,7 @@ def validate_candidate(
     dimensions.append(validate_static_quality(candidate_code, candidate_id))
 
     # C. Focused execution
-    dimensions.append(
-        validate_focused_execution(candidate_code, candidate_id)
-    )
+    dimensions.append(validate_focused_execution(candidate_code, candidate_id))
 
     # D. Regression
     dimensions.append(
@@ -519,7 +517,10 @@ def validate_candidate(
     # F. Distinguishing power
     dimensions.append(
         validate_distinguishing_power(
-            candidate_code, candidate_id, gap_class=gap_class, evidence_detail=evidence_detail
+            candidate_code,
+            candidate_id,
+            gap_class=gap_class,
+            evidence_detail=evidence_detail,
         )
     )
 

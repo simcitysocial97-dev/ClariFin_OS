@@ -16,7 +16,11 @@ def build_cache_report() -> dict:
     return {
         "schema": "m9-c44-cache-report/v1",
         "generated_at": datetime.now(UTC).isoformat(),
-        "cache_location": str((REPO_ROOT / "runtime" / "generated" / "m9-c44" / "cache").relative_to(REPO_ROOT)),
+        "cache_location": str(
+            (REPO_ROOT / "runtime" / "generated" / "m9-c44" / "cache").relative_to(
+                REPO_ROOT
+            )
+        ),
         "cache_key_schema": "canonical_mutant_id (sha256 of revision|file|hash|function|line|operator|orig|mut[:20]))",
         "cache_entry_fields": [
             "canonical_mutant_id",

@@ -23,21 +23,18 @@ live-poll generator would hang the synchronous TestClient indefinitely.
 
 from __future__ import annotations
 
-import json
 import re
 from datetime import UTC, datetime
 from typing import Any
 
-import pytest
 from fastapi.testclient import TestClient
 
-from runtime.platform.api.contracts import executions as executions_contract
 from runtime.platform.api.contracts import events as events_contract
+from runtime.platform.api.contracts import executions as executions_contract
 from runtime.platform.api.envelope import API_VERSION
 from runtime.platform.api.services import executions, verification_write
 from runtime.platform.api.services.events import build_events_stream_event
 from runtime.system.observability.event_store import EngineeringEventStore, create_event
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -61,7 +58,9 @@ def _clean_event_store() -> EngineeringEventStore:
     return store
 
 
-def _wait_for_events(store: EngineeringEventStore, min_count: int, timeout: float = 5.0) -> list[Any]:
+def _wait_for_events(
+    store: EngineeringEventStore, min_count: int, timeout: float = 5.0
+) -> list[Any]:
     """Poll until at least ``min_count`` events exist."""
     import time
 
@@ -106,14 +105,14 @@ class TestVerificationEventEmission:
         events = _wait_for_events(store, 2)
         for event in events:
             meta = event.metadata or {}
-            assert meta.get("execution_id") == execution_id, (
-                f"Event {event.event_type} missing execution_id; got {meta}"
-            )
+            assert (
+                meta.get("execution_id") == execution_id
+            ), f"Event {event.event_type} missing execution_id; got {meta}"
 
     def test_emitted_events_have_capability_id_in_metadata(self) -> None:
         store = _clean_event_store()
         cap_id = "discover.blast-radius"
-        env = verification_write.build_run_result(capability_id=cap_id)
+        verification_write.build_run_result(capability_id=cap_id)
 
         events = _wait_for_events(store, 2)
         for event in events:
@@ -126,7 +125,9 @@ class TestVerificationEventEmission:
         execution_id = env["data"]["execution_id"]
 
         events = _wait_for_events(store, 2)
-        exec_events = [e for e in events if (e.metadata or {}).get("execution_id") == execution_id]
+        exec_events = [
+            e for e in events if (e.metadata or {}).get("execution_id") == execution_id
+        ]
         assert len(exec_events) >= 2
 
 
@@ -140,7 +141,7 @@ class TestExecutionDetailReconciliation:
     not mock data."""
 
     def test_detail_finds_emitted_events(self) -> None:
-        store = _clean_event_store()
+        _clean_event_store()
         env = verification_write.build_run_result(capability_id="discover.blast-radius")
         execution_id = env["data"]["execution_id"]
 
@@ -213,9 +214,14 @@ class TestExecutionStreamService:
         stream_env = executions.build_execution_stream_event(execution_id, event)
         assert _envelope_shape_ok(stream_env)
         assert stream_env["kind"] == executions_contract.EXECUTION_STREAM_EVENT_KIND
-        parsed = executions_contract.ExecutionStreamEventEnvelope.model_validate(stream_env)
+        parsed = executions_contract.ExecutionStreamEventEnvelope.model_validate(
+            stream_env
+        )
         assert parsed.data.execution_id == execution_id
-        assert parsed.data.event_type in ("VerificationStarted", "VerificationCompleted")
+        assert parsed.data.event_type in (
+            "VerificationStarted",
+            "VerificationCompleted",
+        )
 
     def test_stream_event_contains_full_payload(self) -> None:
         store = _clean_event_store()
@@ -230,7 +236,9 @@ class TestExecutionStreamService:
             and (e.metadata or {}).get("execution_id") == execution_id
         )
         stream_env = executions.build_execution_stream_event(execution_id, event)
-        parsed = executions_contract.ExecutionStreamEventEnvelope.model_validate(stream_env)
+        parsed = executions_contract.ExecutionStreamEventEnvelope.model_validate(
+            stream_env
+        )
         assert parsed.data.payload.get("execution_id") == execution_id
 
 
@@ -282,6 +290,7 @@ class TestHttpEndpointStructure:
 
     def test_execution_detail_returns_404_for_unknown(self) -> None:
         from src.api import app
+
         with TestClient(app, raise_server_exceptions=True) as client:
             resp = client.get("/platform/v1/executions/nonexistent-id")
             assert resp.status_code == 404
@@ -350,14 +359,21 @@ class TestGate7Integration:
 
         # Stream events reconcile with detail event list.
         detail_event_ids = set(detail["data"]["events"])
-        stored_event_ids = {e.event_id for e in store.iter_events() if (e.metadata or {}).get("execution_id") == execution_id}
+        stored_event_ids = {
+            e.event_id
+            for e in store.iter_events()
+            if (e.metadata or {}).get("execution_id") == execution_id
+        }
         # Every stored execution event should appear in the detail.
-        assert stored_event_ids <= detail_event_ids or stored_event_ids == detail_event_ids
+        assert (
+            stored_event_ids <= detail_event_ids or stored_event_ids == detail_event_ids
+        )
 
         # Events stream includes our events.
         all_events = list(store.iter_events())
         platform_events = [
-            e for e in all_events
+            e
+            for e in all_events
             if e.metadata.get("execution_id") == execution_id
             or e.event_type in ("VerificationStarted", "VerificationCompleted")
         ]

@@ -60,7 +60,7 @@ import json
 import logging
 import time
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -121,7 +121,7 @@ def _save_snapshot(snap: dict[str, Any]) -> None:
     tmp.replace(SNAPSHOT_PATH)
 
 
-def _effective_ttl(domain: str) -> Optional[int]:
+def _effective_ttl(domain: str) -> int | None:
     """Return the TTL in seconds for a domain, or None for 'never'."""
 
     return DEFAULT_TTL_SECONDS.get(domain)

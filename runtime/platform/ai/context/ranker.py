@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 # Priority weights by source type
 PRIORITY_WEIGHTS: dict[str, int] = {
     "failing_evidence": 100,

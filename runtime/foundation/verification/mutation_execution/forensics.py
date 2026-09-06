@@ -564,10 +564,7 @@ def build_forensics() -> dict[str, Any]:
         "records": records,
         "by_execution_stage": {k: len(v) for k, v in sorted(by_stage.items())},
         "by_owning_layer": {k: len(v) for k, v in sorted(by_layer.items())},
-        "architectural_gaps": [
-            r["architectural_solution"]
-            for r in unresolved
-        ],
+        "architectural_gaps": [r["architectural_solution"] for r in unresolved],
     }
 
 
@@ -585,4 +582,6 @@ if __name__ == "__main__":
     p = write_forensics()
     print(f"Wrote forensics: {p}")
     data = json.loads(p.read_text())
-    print(f"Total: {data['total_failures']}, Resolved: {data['resolved']}, Unresolved: {data['unresolved']}")
+    print(
+        f"Total: {data['total_failures']}, Resolved: {data['resolved']}, Unresolved: {data['unresolved']}"
+    )

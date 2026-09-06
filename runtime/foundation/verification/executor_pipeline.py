@@ -512,12 +512,10 @@ def _build_pytest_adapter(
             if cand.is_dir():
                 refined = str(cand.relative_to(REPO_ROOT))
         junit_artifact = (
-            f"runtime/generated/m9-c50.13/junit-{kind}-"
-            f"{component or 'all'}.xml"
+            f"runtime/generated/m9-c50.13/junit-{kind}-" f"{component or 'all'}.xml"
         )
         cmd = (
-            f".venv/bin/python -m pytest {refined} -q "
-            f"--junit-xml={junit_artifact}"
+            f".venv/bin/python -m pytest {refined} -q " f"--junit-xml={junit_artifact}"
         )
         return ExecutableVerificationTask(
             task_id=f"exec::{planned.task_id}",
@@ -1521,9 +1519,7 @@ def assert_valid_transition(from_state: str, to_state: str) -> None:
         FAILED -> CERTIFIED
     """
     if not is_valid_transition(from_state, to_state):
-        raise ValueError(
-            f"forbidden lifecycle transition: {from_state} -> {to_state}"
-        )
+        raise ValueError(f"forbidden lifecycle transition: {from_state} -> {to_state}")
 
 
 # ===========================================================================
@@ -1678,9 +1674,7 @@ def execute_task(
             f"(status={task.executable}, blocker={task.executable_meta.get('blocker')!r})"
         )
     if not task.execution_command:
-        raise LineageViolationError(
-            f"task {task.task_id!r} has no execution_command"
-        )
+        raise LineageViolationError(f"task {task.task_id!r} has no execution_command")
 
     # Deterministic execution_id — never reused.
     execution_id = compute_identity(
@@ -1699,7 +1693,9 @@ def execute_task(
     # Use the provided executor or instantiate one with task timeout.
     ex = executor or _SubprocessExecutor(
         repo_root=REPO_ROOT,
-        per_step_timeout=per_step_timeout or task.timeout_policy or DEFAULT_TASK_TIMEOUT,
+        per_step_timeout=per_step_timeout
+        or task.timeout_policy
+        or DEFAULT_TASK_TIMEOUT,
     )
 
     # Run the real command. No fake execution. No skip.
@@ -1719,16 +1715,18 @@ def execute_task(
             "fingerprint_config": task.config_fingerprint,
         }
     )
-    ev_id = evidence_identity(
-        execution_id, artifact_sha, env_id, task.evidence_kind
-    )
+    ev_id = evidence_identity(execution_id, artifact_sha, env_id, task.evidence_kind)
 
     # Classify the outcome. Failure is preserved; success is verified.
     if result.status.value == "passed":
         fk: FailureKind | None = None
         msg = ""
     else:
-        fk = FailureKind.INFRASTRUCTURE if result.exit_code == -1 else FailureKind.VERIFICATION
+        fk = (
+            FailureKind.INFRASTRUCTURE
+            if result.exit_code == -1
+            else FailureKind.VERIFICATION
+        )
         msg = (result.error or "execution reported non-zero exit").strip()
 
     return ExecutionEvidence(
@@ -1987,9 +1985,8 @@ def fault_injection_smoke() -> dict:
     health to prove the negative-path detectors actually fire.
     """
     import importlib
-    ep = importlib.import_module(
-        "runtime.foundation.verification.executor_pipeline"
-    )
+
+    ep = importlib.import_module("runtime.foundation.verification.executor_pipeline")
     results: list[dict] = []
 
     # 1. Invalid capability mapping: synthesize a planned task whose
@@ -2122,7 +2119,15 @@ def fault_injection_smoke() -> dict:
         config_fingerprint=t.config_fingerprint,
         toolchain_fingerprint=t.toolchain_fingerprint,
         repository_sha=_git_sha(),
-        artifact_paths=(str(REPO_ROOT / "runtime" / "generated" / "m9-c50.13" / "definitely-missing.bin"),),
+        artifact_paths=(
+            str(
+                REPO_ROOT
+                / "runtime"
+                / "generated"
+                / "m9-c50.13"
+                / "definitely-missing.bin"
+            ),
+        ),
         notes="ev::stale",
     )
     cache_decision = evaluate_cache(
@@ -2185,7 +2190,9 @@ def fault_injection_smoke() -> dict:
         {
             "fault": "failed_executor",
             "expected": "FailureKind.VERIFICATION",
-            "observed": failed_ev.failure_kind.value if failed_ev.failure_kind else "none",
+            "observed": (
+                failed_ev.failure_kind.value if failed_ev.failure_kind else "none"
+            ),
             "detected": detected,
         }
     )

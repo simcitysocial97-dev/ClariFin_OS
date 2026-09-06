@@ -10,7 +10,6 @@ from pydantic import BaseModel, Field
 
 from runtime.platform.api.contracts._primitives import Identity, Timestamp
 
-
 DIAGNOSTIC_RESULT_KIND: str = "platform.diagnostic_result"
 DIAGNOSTIC_RECOMMENDATION_KIND: str = "platform.diagnostic_recommendation"
 DIAGNOSTIC_SIGNATURE_KIND: str = "platform.diagnostic_signature"

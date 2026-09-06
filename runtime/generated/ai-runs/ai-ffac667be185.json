@@ -1,0 +1,13 @@
+{
+  "id": "ai-ffac667be185",
+  "symptom": "test",
+  "mode": "MANUAL",
+  "capability_id": null,
+  "status": "PENDING",
+  "steps": [],
+  "created_at": "2026-09-05T23:40:28.355305Z",
+  "updated_at": "2026-09-05T23:40:28.355305Z",
+  "completed_at": null,
+  "error": null,
+  "audit_trail": []
+}

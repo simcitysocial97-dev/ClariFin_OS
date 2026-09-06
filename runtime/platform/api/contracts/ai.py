@@ -14,12 +14,11 @@ All contracts are content-addressed via SHA-256.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
 from runtime.platform.api.contracts._primitives import Identity, Timestamp
-
 
 # ---------------------------------------------------------------------------
 # Authority Levels (Section 27)
@@ -126,12 +125,12 @@ class AIStep(BaseModel):
     step_number: int = Field(ge=1)
     tool_name: str = Field(min_length=1, max_length=128)
     arguments: dict[str, Any] = Field(default_factory=dict)
-    result: Optional[dict[str, Any]] = None
-    error: Optional[str] = None
+    result: dict[str, Any] | None = None
+    error: str | None = None
     started_at: Timestamp
-    completed_at: Optional[Timestamp] = None
-    evidence_id: Optional[str] = None
-    duration_ms: Optional[int] = None
+    completed_at: Timestamp | None = None
+    evidence_id: str | None = None
+    duration_ms: int | None = None
 
 
 class AIEnvelope(BaseModel):
@@ -152,7 +151,7 @@ class AIEnvelope(BaseModel):
 class ToolInvocationRequest(BaseModel):
     tool_name: str = Field(min_length=1, max_length=128)
     arguments: dict[str, Any] = Field(default_factory=dict)
-    idempotency_key: Optional[str] = None
+    idempotency_key: str | None = None
 
 
 class ToolInvocationResponse(BaseModel):
@@ -169,7 +168,7 @@ class ToolInvocationResponse(BaseModel):
 class PolicyDecision(BaseModel):
     allowed: bool
     reason: str = Field(min_length=1, max_length=1024)
-    required_authorization: Optional[str] = None
+    required_authorization: str | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -180,12 +179,12 @@ class PolicyDecision(BaseModel):
 class AuditEvent(BaseModel):
     event_id: str = Field(min_length=1, max_length=64)
     event_type: str = Field(min_length=1, max_length=128)
-    run_id: Optional[str] = None
-    tool_name: Optional[str] = None
+    run_id: str | None = None
+    tool_name: str | None = None
     actor: str = Field(min_length=1, max_length=256)  # "human" or "ai"
     timestamp: Timestamp
     payload: dict[str, Any] = Field(default_factory=dict)
-    policy_decision: Optional[PolicyDecision] = None
+    policy_decision: PolicyDecision | None = None
 
 
 # ---------------------------------------------------------------------------

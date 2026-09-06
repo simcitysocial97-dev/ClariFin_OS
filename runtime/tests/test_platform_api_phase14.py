@@ -19,31 +19,24 @@ Test scope:
 
 from __future__ import annotations
 
-import json
 import re
 from typing import Any
 
-import pytest
-
 from runtime.platform.ai.context import (
-    build_context_pack,
-    serialize_context_pack,
-    compute_pack_id,
-    estimate_tokens,
-    compute_pack_checksum,
-    _canonical_value,
-    ContextBuilder,
-    Ranker,
-    RankedComponent,
-    Trimmer,
-    TrimmerResult,
-    ProvenanceTracker,
+    ContextPackCache,
     ProvenanceEntry,
     ProvenanceKind,
-    ContextPackCache,
+    ProvenanceTracker,
+    RankedComponent,
+    Ranker,
+    Trimmer,
+    _canonical_value,
+    build_context_pack,
+    compute_pack_checksum,
+    compute_pack_id,
+    serialize_context_pack,
 )
 from runtime.platform.api.contracts.context import CONTEXT_PACK_KIND
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -101,7 +94,10 @@ class TestContextBuilder:
         """With tiny budget, some components should be omitted."""
         # Use a budget that forces omission of higher-priority items
         pack = build_context_pack(symptom="test", token_budget=50)
-        assert pack["status"] in ("complete", "incomplete")  # May be complete if no components generated
+        assert pack["status"] in (
+            "complete",
+            "incomplete",
+        )  # May be complete if no components generated
         # Key requirement: even with small budget, pack is produced
         assert "pack_id" in pack
         assert "components" in pack
@@ -286,8 +282,12 @@ class TestProvenance:
         assert entry.source_ref.startswith("evidence:evt-123:")
 
     def test_fingerprint_bytes_deterministic(self) -> None:
-        e1 = ProvenanceEntry(kind=ProvenanceKind.REPOSITORY, id="file.py", path="/a/b.py")
-        e2 = ProvenanceEntry(kind=ProvenanceKind.REPOSITORY, id="file.py", path="/a/b.py")
+        e1 = ProvenanceEntry(
+            kind=ProvenanceKind.REPOSITORY, id="file.py", path="/a/b.py"
+        )
+        e2 = ProvenanceEntry(
+            kind=ProvenanceKind.REPOSITORY, id="file.py", path="/a/b.py"
+        )
         assert e1.fingerprint_bytes() == e2.fingerprint_bytes()
 
     def test_count_and_clear(self) -> None:
@@ -344,18 +344,22 @@ class TestHttpEndpointStructure:
 
     def test_context_pack_route_registered(self) -> None:
         from backend.src.routers.platform import router
+
         paths = {r.path for r in router.routes}
         assert "/platform/v1/context/pack" in paths
 
     def test_context_pack_endpoint_returns_200(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
-            resp = c.get("/platform/v1/context/pack", params={
-                "symptom": "test failure",
-                "intent_type": "diagnose",
-            })
+            resp = c.get(
+                "/platform/v1/context/pack",
+                params={
+                    "symptom": "test failure",
+                    "intent_type": "diagnose",
+                },
+            )
             assert resp.status_code == 200
             d = resp.json()
             assert d["kind"] == CONTEXT_PACK_KIND
@@ -363,8 +367,8 @@ class TestHttpEndpointStructure:
             assert isinstance(d["data"]["components"], list)
 
     def test_context_pack_endpoint_requires_symptom(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             resp = c.get("/platform/v1/context/pack")
@@ -372,15 +376,18 @@ class TestHttpEndpointStructure:
             assert resp.status_code == 422
 
     def test_context_pack_endpoint_validates_budget(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             # Budget must be >= 1000
-            resp = c.get("/platform/v1/context/pack", params={
-                "symptom": "test",
-                "token_budget": 100,
-            })
+            resp = c.get(
+                "/platform/v1/context/pack",
+                params={
+                    "symptom": "test",
+                    "token_budget": 100,
+                },
+            )
             assert resp.status_code == 422
 
 
@@ -413,7 +420,8 @@ class TestGate14Integration:
 
     def test_budget_violation_not_silent(self) -> None:
         """Budget exceeded → status=incomplete, NOT silent truncation."""
-        from runtime.platform.ai.context import Trimmer, RankedComponent
+        from runtime.platform.ai.context import RankedComponent, Trimmer
+
         trimmer = Trimmer()
         comps = [
             RankedComponent("large", "evidence", {"data": "x" * 1000}, "p:1", 5000, 90),
@@ -425,11 +433,8 @@ class TestGate14Integration:
     def test_provenance_traces_all_components(self) -> None:
         """Every component must have a provenance reference."""
         pack = build_context_pack(symptom="test")
-        provenance_refs = {
-            c["provenance_ref"]
-            for c in pack.get("components", [])
-        }
-        sources = pack.get("sources", [])
+        provenance_refs = {c["provenance_ref"] for c in pack.get("components", [])}
+        pack.get("sources", [])
         # If there are components, they should have provenance
         if pack["components"]:
             assert len(provenance_refs) == len(pack["components"])

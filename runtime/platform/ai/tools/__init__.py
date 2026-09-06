@@ -10,8 +10,12 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from runtime.platform.api.contracts.ai import ToolSchema, ToolParameter, AUTHORITY_LEVELS
 from runtime.platform.ai.policy import POLICY_ENGINE_INSTANCE
+from runtime.platform.api.contracts.ai import (  # noqa: F401 — re-exported for tool level validation reference
+    AUTHORITY_LEVELS,
+    ToolParameter,
+    ToolSchema,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -29,12 +33,16 @@ class ToolRegistry:
         """Register a tool with its schema and execution handler."""
         # Validate schema
         if schema.authority_level < 0 or schema.authority_level > 4:
-            raise ValueError(f"Invalid authority level for {schema.name}: {schema.authority_level}")
+            raise ValueError(
+                f"Invalid authority level for {schema.name}: {schema.authority_level}"
+            )
 
         # Validate parameter types
         for param in schema.parameters:
             if param.type not in ("string", "integer", "boolean", "object", "array"):
-                raise ValueError(f"Invalid parameter type for {schema.name}.{param.name}: {param.type}")
+                raise ValueError(
+                    f"Invalid parameter type for {schema.name}.{param.name}: {param.type}"
+                )
 
         if schema.name in self._tools:
             logger.warning("Overriding existing tool registration: %s", schema.name)
@@ -45,7 +53,9 @@ class ToolRegistry:
         # Also register with policy engine
         POLICY_ENGINE_INSTANCE.register_tool(schema.name, schema.authority_level)
 
-        logger.info("Registered tool: %s (level %d)", schema.name, schema.authority_level)
+        logger.info(
+            "Registered tool: %s (level %d)", schema.name, schema.authority_level
+        )
 
     def get(self, tool_name: str) -> ToolSchema | None:
         return self._tools.get(tool_name)
@@ -65,7 +75,9 @@ class ToolRegistry:
         # Validate required arguments
         for param in schema.parameters:
             if param.required and param.name not in arguments:
-                raise ValueError(f"Missing required argument for {tool_name}: {param.name}")
+                raise ValueError(
+                    f"Missing required argument for {tool_name}: {param.name}"
+                )
 
         # Type validation (basic)
         for param in schema.parameters:
@@ -124,7 +136,14 @@ LEVEL_0_TOOLS: list[dict[str, Any]] = [
         "name": "inspect_capability",
         "description": "Get capability detail from /platform/v1/capabilities/{id}",
         "level": 0,
-        "params": [{"name": "capability_id", "type": "string", "required": True, "description": "Capability identifier"}],
+        "params": [
+            {
+                "name": "capability_id",
+                "type": "string",
+                "required": True,
+                "description": "Capability identifier",
+            }
+        ],
         "returns": "platform.capability_detail",
     },
     {
@@ -138,28 +157,56 @@ LEVEL_0_TOOLS: list[dict[str, Any]] = [
         "name": "inspect_errors",
         "description": "Get current errors from /platform/v1/errors/current",
         "level": 0,
-        "params": [{"name": "window", "type": "string", "required": False, "description": "Time window (1h, 24h, 7d)"}],
+        "params": [
+            {
+                "name": "window",
+                "type": "string",
+                "required": False,
+                "description": "Time window (1h, 24h, 7d)",
+            }
+        ],
         "returns": "platform.errors_current",
     },
     {
         "name": "inspect_history",
         "description": "Get verification history from /platform/v1/history/runs",
         "level": 0,
-        "params": [{"name": "limit", "type": "integer", "required": False, "description": "Max runs to return"}],
+        "params": [
+            {
+                "name": "limit",
+                "type": "integer",
+                "required": False,
+                "description": "Max runs to return",
+            }
+        ],
         "returns": "platform.history_runs",
     },
     {
         "name": "inspect_evidence",
         "description": "Get evidence detail from /platform/v1/evidence/{id}",
         "level": 0,
-        "params": [{"name": "evidence_id", "type": "string", "required": True, "description": "Evidence identifier"}],
+        "params": [
+            {
+                "name": "evidence_id",
+                "type": "string",
+                "required": True,
+                "description": "Evidence identifier",
+            }
+        ],
         "returns": "platform.evidence_detail",
     },
     {
         "name": "inspect_file",
         "description": "Read a file from the repository (read-only)",
         "level": 0,
-        "params": [{"name": "path", "type": "string", "required": True, "description": "Repository-relative path"}],
+        "params": [
+            {
+                "name": "path",
+                "type": "string",
+                "required": True,
+                "description": "Repository-relative path",
+            }
+        ],
         "returns": "string",
     },
     {
@@ -167,8 +214,18 @@ LEVEL_0_TOOLS: list[dict[str, Any]] = [
         "description": "Search repository code using the platform index",
         "level": 0,
         "params": [
-            {"name": "query", "type": "string", "required": True, "description": "Search query"},
-            {"name": "limit", "type": "integer", "required": False, "description": "Max results"},
+            {
+                "name": "query",
+                "type": "string",
+                "required": True,
+                "description": "Search query",
+            },
+            {
+                "name": "limit",
+                "type": "integer",
+                "required": False,
+                "description": "Max results",
+            },
         ],
         "returns": "list[dict]",
     },
@@ -176,14 +233,28 @@ LEVEL_0_TOOLS: list[dict[str, Any]] = [
         "name": "inspect_run",
         "description": "Get execution detail from /platform/v1/executions/{id}",
         "level": 0,
-        "params": [{"name": "execution_id", "type": "string", "required": True, "description": "Execution identifier"}],
+        "params": [
+            {
+                "name": "execution_id",
+                "type": "string",
+                "required": True,
+                "description": "Execution identifier",
+            }
+        ],
         "returns": "platform.execution_detail",
     },
     {
         "name": "inspect_ai_run",
         "description": "Get AI run detail from /platform/v1/ai/runs/{id}",
         "level": 0,
-        "params": [{"name": "run_id", "type": "string", "required": True, "description": "AI run identifier"}],
+        "params": [
+            {
+                "name": "run_id",
+                "type": "string",
+                "required": True,
+                "description": "AI run identifier",
+            }
+        ],
         "returns": "platform.ai_run",
     },
     {
@@ -202,9 +273,24 @@ LEVEL_1_TOOLS: list[dict[str, Any]] = [
         "description": "Run deterministic diagnostic engine on a symptom",
         "level": 1,
         "params": [
-            {"name": "symptom", "type": "string", "required": True, "description": "Failure symptom description"},
-            {"name": "error_code", "type": "string", "required": False, "description": "Error code if known"},
-            {"name": "capability_id", "type": "string", "required": False, "description": "Affected capability if known"},
+            {
+                "name": "symptom",
+                "type": "string",
+                "required": True,
+                "description": "Failure symptom description",
+            },
+            {
+                "name": "error_code",
+                "type": "string",
+                "required": False,
+                "description": "Error code if known",
+            },
+            {
+                "name": "capability_id",
+                "type": "string",
+                "required": False,
+                "description": "Affected capability if known",
+            },
         ],
         "returns": "platform.diagnostic_result",
     },
@@ -213,8 +299,18 @@ LEVEL_1_TOOLS: list[dict[str, Any]] = [
         "description": "Compare two runs via /platform/v1/history/compare",
         "level": 1,
         "params": [
-            {"name": "current_run_id", "type": "string", "required": True, "description": "Current run ID or sentinel"},
-            {"name": "baseline", "type": "string", "required": True, "description": "Baseline type (LAST, LAST_PASS, KNOWN_GOOD, BASELINE)"},
+            {
+                "name": "current_run_id",
+                "type": "string",
+                "required": True,
+                "description": "Current run ID or sentinel",
+            },
+            {
+                "name": "baseline",
+                "type": "string",
+                "required": True,
+                "description": "Baseline type (LAST, LAST_PASS, KNOWN_GOOD, BASELINE)",
+            },
         ],
         "returns": "platform.history_compare",
     },
@@ -229,7 +325,14 @@ LEVEL_1_TOOLS: list[dict[str, Any]] = [
         "name": "run_verification_capability",
         "description": "Run a single capability verification via /platform/v1/verification/run",
         "level": 1,
-        "params": [{"name": "capability_id", "type": "string", "required": True, "description": "Capability to verify"}],
+        "params": [
+            {
+                "name": "capability_id",
+                "type": "string",
+                "required": True,
+                "description": "Capability to verify",
+            }
+        ],
         "returns": "platform.verification_run_result",
     },
     {
@@ -237,9 +340,24 @@ LEVEL_1_TOOLS: list[dict[str, Any]] = [
         "description": "Run deterministic diagnostic via /platform/v1/diagnose",
         "level": 1,
         "params": [
-            {"name": "symptom", "type": "string", "required": True, "description": "Failure symptom"},
-            {"name": "error_code", "type": "string", "required": False, "description": "Error code if known"},
-            {"name": "capability_id", "type": "string", "required": False, "description": "Affected capability"},
+            {
+                "name": "symptom",
+                "type": "string",
+                "required": True,
+                "description": "Failure symptom",
+            },
+            {
+                "name": "error_code",
+                "type": "string",
+                "required": False,
+                "description": "Error code if known",
+            },
+            {
+                "name": "capability_id",
+                "type": "string",
+                "required": False,
+                "description": "Affected capability",
+            },
         ],
         "returns": "platform.diagnostic_result",
     },
@@ -247,42 +365,88 @@ LEVEL_1_TOOLS: list[dict[str, Any]] = [
         "name": "run_what_should_i_run",
         "description": "Get verification recommendations from /platform/v1/verification/what-should-i-run",
         "level": 1,
-        "params": [{"name": "changed_files", "type": "array", "required": False, "description": "Optional file list"}],
+        "params": [
+            {
+                "name": "changed_files",
+                "type": "array",
+                "required": False,
+                "description": "Optional file list",
+            }
+        ],
         "returns": "platform.verification_recommendation",
     },
     {
         "name": "run_capability_group",
         "description": "Run a group of capabilities via /platform/v1/verification/run/group",
         "level": 1,
-        "params": [{"name": "capability_ids", "type": "array", "required": True, "description": "List of capability IDs"}],
+        "params": [
+            {
+                "name": "capability_ids",
+                "type": "array",
+                "required": True,
+                "description": "List of capability IDs",
+            }
+        ],
         "returns": "platform.verification_run_result",
     },
     {
         "name": "cancel_task",
         "description": "Cancel a running task/execution via /platform/v1/tasks/{id}/cancel",
         "level": 1,
-        "params": [{"name": "task_id", "type": "string", "required": True, "description": "Task to cancel"}],
+        "params": [
+            {
+                "name": "task_id",
+                "type": "string",
+                "required": True,
+                "description": "Task to cancel",
+            }
+        ],
         "returns": "platform.task_cancel_result",
     },
 ]
 
 
-def register_builtin_tools(registry: "ToolRegistry") -> None:
+def register_builtin_tools(registry: ToolRegistry) -> None:
     """Register all built-in Level 0 and 1 tools.
 
     Phase 16: wire to real platform service handlers instead of mocks.
     Falls back to mock only if handlers module is unavailable.
     """
+
+    def _mock_handler_level0(schema: ToolSchema) -> Any:  # type: ignore[no-untyped-def]
+        def _handler(args: dict[str, Any]) -> dict[str, Any]:
+            return {"status": "mock", "tool": schema.name, "args": args}
+
+        return _handler
+
+    def _mock_handler_level1(schema: ToolSchema) -> Any:  # type: ignore[no-untyped-def]
+        def _handler(args: dict[str, Any]) -> dict[str, Any]:
+            return {"status": "mock", "tool": schema.name, "args": args}
+
+        return _handler
+
     try:
-        from runtime.platform.ai.tools.handlers import LEVEL_0_HANDLERS, LEVEL_1_HANDLERS
+        from runtime.platform.ai.tools.handlers import (
+            LEVEL_0_HANDLERS,
+            LEVEL_1_HANDLERS,
+        )
 
         # Level 0 — real handlers backed by platform services
         for tpl in LEVEL_0_TOOLS:
             name = tpl["name"]
             handler = LEVEL_0_HANDLERS.get(name)
-            if handler is None:
-                logger.warning("No real handler for %s — using mock", name)
-                handler = lambda args, _n=name: {"status": "mock", "tool": _n, "args": args}
+
+            def _fallback(handler: Any, tool_name: str) -> Any:  # type: ignore[no-untyped-def]
+                if handler is not None:
+                    return handler
+                logger.warning("No real handler for %s — using mock", tool_name)
+
+                def _mock(args: dict[str, Any]) -> dict[str, Any]:
+                    return {"status": "mock", "tool": tool_name, "args": args}
+
+                return _mock
+
+            handler = _fallback(handler, name)
             schema = ToolSchema(
                 name=name,
                 description=tpl["description"],
@@ -298,9 +462,18 @@ def register_builtin_tools(registry: "ToolRegistry") -> None:
         for tpl in LEVEL_1_TOOLS:
             name = tpl["name"]
             handler = LEVEL_1_HANDLERS.get(name)
-            if handler is None:
-                logger.warning("No real handler for %s — using mock", name)
-                handler = lambda args, _n=name: {"status": "mock", "tool": _n, "args": args}
+
+            def _fallback_l1(handler: Any, tool_name: str) -> Any:  # type: ignore[no-untyped-def]
+                if handler is not None:
+                    return handler
+                logger.warning("No real handler for %s — using mock", tool_name)
+
+                def _mock(args: dict[str, Any]) -> dict[str, Any]:
+                    return {"status": "mock", "tool": tool_name, "args": args}
+
+                return _mock
+
+            handler = _fallback_l1(handler, name)
             schema = ToolSchema(
                 name=name,
                 description=tpl["description"],
@@ -326,7 +499,14 @@ def register_builtin_tools(registry: "ToolRegistry") -> None:
             idempotent=True,
             side_effects="read",
         )
-        registry.register(schema, lambda args: {"status": "mock", "tool": schema.name, "args": args})
+
+        def _make_mock_0(s: ToolSchema) -> Any:  # type: ignore[no-untyped-def]
+            def _h(args: dict[str, Any]) -> dict[str, Any]:
+                return {"status": "mock", "tool": s.name, "args": args}
+
+            return _h
+
+        registry.register(schema, _make_mock_0(schema))
 
     for tpl in LEVEL_1_TOOLS:
         schema = ToolSchema(
@@ -338,7 +518,14 @@ def register_builtin_tools(registry: "ToolRegistry") -> None:
             idempotent=False,
             side_effects="read",
         )
-        registry.register(schema, lambda args: {"status": "mock", "tool": schema.name, "args": args})
+
+        def _make_mock_1(s: ToolSchema) -> Any:  # type: ignore[no-untyped-def]
+            def _h(args: dict[str, Any]) -> dict[str, Any]:
+                return {"status": "mock", "tool": s.name, "args": args}
+
+            return _h
+
+        registry.register(schema, _make_mock_1(schema))
 
 
 # Singleton instance

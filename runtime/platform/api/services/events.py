@@ -12,10 +12,13 @@ from __future__ import annotations
 
 from typing import Any
 
-from runtime.system.observability.event_store import EngineeringEvent, EngineeringEventStore
 from runtime.platform.api.contracts import events as events_contract
 from runtime.platform.api.contracts._primitives import Timestamp
 from runtime.platform.api.services._helpers import envelope, now_iso
+from runtime.system.observability.event_store import (
+    EngineeringEvent,
+    EngineeringEventStore,
+)
 
 __all__ = [
     "build_events_list",

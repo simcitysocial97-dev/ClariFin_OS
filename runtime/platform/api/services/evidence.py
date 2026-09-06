@@ -51,7 +51,9 @@ def _evidence_for_obligation(obl: Any) -> list[str]:
                     refs.append(str(value))
                     break
         else:
-            obj_id = getattr(ev, "evidence_id", None) or getattr(ev, "fingerprint", None)
+            obj_id = getattr(ev, "evidence_id", None) or getattr(
+                ev, "fingerprint", None
+            )
             if obj_id:
                 refs.append(str(obj_id))
     return refs
@@ -119,7 +121,7 @@ def build_evidence_detail(evidence_id: str) -> dict[str, Any] | None:
             }
             # Remove the execution_id field that is not in EvidenceDetailData
             data.pop("execution_id", None)
-            cap_id = data.get("capability_id")
+            data.get("capability_id")
             return envelope(
                 kind=evidence_contract.EVIDENCE_DETAIL_KIND,
                 data=data,
@@ -202,8 +204,7 @@ def build_evidence_by_execution(execution_id: str) -> dict[str, Any] | None:
                     if event.event_type == "VerificationCompleted"
                     else Status.OPEN.value
                 ),
-                "summary": payload.get("final_decision")
-                or event.event_type,
+                "summary": payload.get("final_decision") or event.event_type,
             }
         )
 

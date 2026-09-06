@@ -7,7 +7,6 @@ pure functions (no DB dependency) and have been previously untested.
 from __future__ import annotations
 
 import pytest
-
 from src.engines.balance_engine import _format_paise, _parse_date_to_ymd
 
 

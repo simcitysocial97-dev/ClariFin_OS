@@ -29,8 +29,10 @@ from runtime.platform.api.contracts import evidence as evidence_contract
 from runtime.platform.api.contracts import history as history_contract
 from runtime.platform.api.envelope import API_VERSION
 from runtime.platform.api.services import evidence, history
-from runtime.platform.api.services._comparison import compute_evidence_delta, compute_history_delta
-
+from runtime.platform.api.services._comparison import (
+    compute_evidence_delta,
+    compute_history_delta,
+)
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -252,9 +254,12 @@ class TestEvidenceCompareSemantic:
 
     def test_compare_envelope_shape(self) -> None:
         """When both ids exist, envelope must have correct shape."""
+        from runtime.foundation.verification.control_plane_facade import (
+            ControlPlane,
+            _collect_changed_files,
+        )
         from runtime.platform.api.services import verification_write
         from runtime.system.observability.event_store import EngineeringEventStore
-        from runtime.foundation.verification.control_plane_facade import ControlPlane, _collect_changed_files
 
         store = EngineeringEventStore()
         store.clear()
@@ -287,8 +292,18 @@ class TestEvidenceCompareSemantic:
         assert "delta" in result["data"]
 
     def test_compute_evidence_delta_structural_fields(self) -> None:
-        left = {"id": "e1", "status": "OPEN", "capability_id": "cap-a", "kind": "verification"}
-        right = {"id": "e2", "status": "CLOSED", "capability_id": "cap-a", "kind": "verification"}
+        left = {
+            "id": "e1",
+            "status": "OPEN",
+            "capability_id": "cap-a",
+            "kind": "verification",
+        }
+        right = {
+            "id": "e2",
+            "status": "CLOSED",
+            "capability_id": "cap-a",
+            "kind": "verification",
+        }
         delta = compute_evidence_delta(left, right)
         assert "status" in delta
         assert delta["status"] == {"left": "OPEN", "right": "CLOSED"}
@@ -312,7 +327,9 @@ class TestHttpEndpointStructure:
         from backend.src.routers.platform import router
 
         paths = [r.path for r in router.routes]
-        assert any(p == "/platform/v1/evidence/by-execution/{execution_id}" for p in paths)
+        assert any(
+            p == "/platform/v1/evidence/by-execution/{execution_id}" for p in paths
+        )
 
     def test_evidence_compare_route_registered(self) -> None:
         from backend.src.routers.platform import router
@@ -321,24 +338,24 @@ class TestHttpEndpointStructure:
         assert any(p == "/platform/v1/evidence/compare" for p in paths)
 
     def test_history_compare_malformed_request_returns_400(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as client:
             resp = client.post("/platform/v1/history/compare", json={})
             assert resp.status_code == 400
 
     def test_evidence_compare_malformed_request_returns_400(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as client:
             resp = client.post("/platform/v1/evidence/compare", json={})
             assert resp.status_code == 400
 
     def test_evidence_by_execution_unknown_returns_404(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as client:
             resp = client.get("/platform/v1/evidence/by-execution/nonexistent-id")
@@ -362,10 +379,14 @@ class TestGate8Integration:
         store.clear()
 
         # Step 1: Emit two verification runs.
-        env1 = verification_write.build_run_result(capability_id="discover.blast-radius")
+        env1 = verification_write.build_run_result(
+            capability_id="discover.blast-radius"
+        )
         exec_id_1 = env1["data"]["execution_id"]
 
-        env2 = verification_write.build_run_result(capability_id="discover.blast-radius")
+        env2 = verification_write.build_run_result(
+            capability_id="discover.blast-radius"
+        )
         exec_id_2 = env2["data"]["execution_id"]
 
         # Step 2: Evidence by execution finds events for each.
@@ -377,7 +398,9 @@ class TestGate8Integration:
         assert ev2["data"]["count"] >= 2
 
         # Step 3: History compare resolves LAST and computes delta.
-        compare_env = history.build_history_compare(current_run_id="LAST", baseline="LAST")
+        compare_env = history.build_history_compare(
+            current_run_id="LAST", baseline="LAST"
+        )
         if compare_env is None:
             pytest.skip("insufficient events for comparison")
         assert _envelope_shape_ok(compare_env)

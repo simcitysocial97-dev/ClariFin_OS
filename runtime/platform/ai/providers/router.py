@@ -12,11 +12,8 @@ from typing import Any
 from runtime.platform.ai.providers.base import (
     CompletionResult,
     Message,
-    ModelDescriptor,
-    ProviderHealth,
     ProviderKind,
     RoutingProfile,
-    ToolChoice,
     ToolSpec,
 )
 from runtime.platform.ai.providers.local import (
@@ -25,7 +22,10 @@ from runtime.platform.ai.providers.local import (
 )
 
 try:
-    from runtime.platform.ai.providers.local import LOCAL_LARGE_PROVIDER, OPENROUTER_PROVIDER
+    from runtime.platform.ai.providers.local import (
+        LOCAL_LARGE_PROVIDER,
+        OPENROUTER_PROVIDER,
+    )
 except Exception:  # pragma: no cover
     LOCAL_LARGE_PROVIDER = None  # type: ignore[assignment]
     OPENROUTER_PROVIDER = None  # type: ignore[assignment]
@@ -42,7 +42,11 @@ TASK_PROFILE_DEFAULTS: dict[str, list[str]] = {
     "diagnose": ["local-small", "local-large", "deterministic-fallback"],
     "plan": ["local-small", "local-large", "deterministic-fallback"],
     "explain": ["local-small", "local-large", "deterministic-fallback"],
-    "patch": ["local-large", "openrouter", "deterministic-fallback"],  # disabled: human required
+    "patch": [
+        "local-large",
+        "openrouter",
+        "deterministic-fallback",
+    ],  # disabled: human required
     "route": ["local-small", "deterministic-fallback"],
     "tool_select": ["local-small", "deterministic-fallback"],
 }
@@ -60,10 +64,10 @@ class ModelRouter:
         if LOCAL_LARGE_PROVIDER is not None:
             self.register(LOCAL_LARGE_PROVIDER)
         if OPENROUTER_PROVIDER is not None:
-            try:
+            import contextlib
+
+            with contextlib.suppress(Exception):
                 self.register(OPENROUTER_PROVIDER)
-            except Exception:
-                pass
         self.register(DETERMINISTIC_FALLBACK)
 
     def register(self, provider: Any) -> None:
@@ -79,20 +83,30 @@ class ModelRouter:
         result = []
         for name, provider in self._providers.items():
             health = provider.health
-            result.append({
-                "name": name,
-                "kind": provider.kind.value,
-                "models": [m.name for m in provider.models],
-                "health": {
-                    "reachable": health.reachable,
-                    "last_check": health.last_check.isoformat(),
-                    "last_success": health.last_success.isoformat() if health.last_success else None,
-                    "last_failure": health.last_failure.isoformat() if health.last_failure else None,
-                    "failure_streak": health.failure_streak,
-                    "p50_latency_ms": health.p50_latency_ms,
-                    "notes": health.notes,
-                },
-            })
+            result.append(
+                {
+                    "name": name,
+                    "kind": provider.kind.value,
+                    "models": [m.name for m in provider.models],
+                    "health": {
+                        "reachable": health.reachable,
+                        "last_check": health.last_check.isoformat(),
+                        "last_success": (
+                            health.last_success.isoformat()
+                            if health.last_success
+                            else None
+                        ),
+                        "last_failure": (
+                            health.last_failure.isoformat()
+                            if health.last_failure
+                            else None
+                        ),
+                        "failure_streak": health.failure_streak,
+                        "p50_latency_ms": health.p50_latency_ms,
+                        "notes": health.notes,
+                    },
+                }
+            )
         return result
 
     def route(
@@ -111,14 +125,24 @@ class ModelRouter:
             provider = self._providers.get(explicit_provider)
             if provider and provider.is_available():
                 # Privacy boundary — explicit external request rejected for local-only
-                if profile.privacy == "local" and provider.kind == ProviderKind.EXTERNAL:
-                    logger.warning("Explicit provider %s rejected: privacy=local", explicit_provider)
+                if (
+                    profile.privacy == "local"
+                    and provider.kind == ProviderKind.EXTERNAL
+                ):
+                    logger.warning(
+                        "Explicit provider %s rejected: privacy=local",
+                        explicit_provider,
+                    )
                 else:
                     return provider
-            logger.warning("Explicit provider %s unavailable, falling back", explicit_provider)
+            logger.warning(
+                "Explicit provider %s unavailable, falling back", explicit_provider
+            )
 
         # Get preferred providers for this task type
-        preferred = TASK_PROFILE_DEFAULTS.get(profile.task_kind, ["local-small", "deterministic-fallback"])
+        preferred = TASK_PROFILE_DEFAULTS.get(
+            profile.task_kind, ["local-small", "deterministic-fallback"]
+        )
 
         # Filter by constraints
         candidates = []
@@ -129,22 +153,40 @@ class ModelRouter:
             if profile.privacy == "local" and provider.kind == ProviderKind.EXTERNAL:
                 continue
             # Context window filter
-            if profile.context_size > 0 and provider.models:
-                # Require at least one model that fits context
-                if not any(m.context_window >= profile.context_size for m in provider.models):
-                    continue
+            if (
+                profile.context_size > 0
+                and provider.models
+                and not any(
+                    m.context_window >= profile.context_size for m in provider.models
+                )
+            ):
+                continue
             # Required capability filter
-            if profile.required_capability:
-                if not any(profile.required_capability in m.capabilities for m in provider.models):
-                    continue
+            if profile.required_capability and not any(
+                profile.required_capability in m.capabilities for m in provider.models
+            ):
+                continue
             # Latency budget filter
-            if profile.latency_budget_ms and provider.models:
-                if all(m.latency_p50_ms > profile.latency_budget_ms for m in provider.models):
-                    continue
+            if (
+                profile.latency_budget_ms
+                and provider.models
+                and all(
+                    m.latency_p50_ms > profile.latency_budget_ms
+                    for m in provider.models
+                )
+            ):
+                continue
             # Cost budget: only external models have cost; local is 0
             if profile.cost_budget_usd >= 0 and provider.kind == ProviderKind.EXTERNAL:
                 # cost is per 1k tokens → estimate tokens = context_size
-                est_cost = max((m.cost_per_1k_tokens * profile.context_size / 1000) for m in provider.models) if provider.models else 0
+                est_cost = (
+                    max(
+                        (m.cost_per_1k_tokens * profile.context_size / 1000)
+                        for m in provider.models
+                    )
+                    if provider.models
+                    else 0
+                )
                 if est_cost > profile.cost_budget_usd and profile.cost_budget_usd == 0:
                     # zero budget means no external spend allowed
                     continue
@@ -157,11 +199,20 @@ class ModelRouter:
             for provider in self._providers.values():
                 if not provider.is_available():
                     continue
-                if profile.privacy == "local" and provider.kind == ProviderKind.EXTERNAL:
+                if (
+                    profile.privacy == "local"
+                    and provider.kind == ProviderKind.EXTERNAL
+                ):
                     continue
-                if profile.context_size > 0 and provider.models:
-                    if not any(m.context_window >= profile.context_size for m in provider.models):
-                        continue
+                if (
+                    profile.context_size > 0
+                    and provider.models
+                    and not any(
+                        m.context_window >= profile.context_size
+                        for m in provider.models
+                    )
+                ):
+                    continue
                 candidates.append(provider)
                 break
 
@@ -176,7 +227,11 @@ class ModelRouter:
             latency = min((m.latency_p50_ms for m in p.models), default=1000)
             cost = min((m.cost_per_1k_tokens for m in p.models), default=0)
             # Lower is better → invert
-            return (1000 - latency) * 0.5 + (1 - cost) * 100 + (100 if p.kind == ProviderKind.LOCAL else 0)
+            return (
+                (1000 - latency) * 0.5
+                + (1 - cost) * 100
+                + (100 if p.kind == ProviderKind.LOCAL else 0)
+            )
 
         candidates.sort(key=_score, reverse=True)
         return candidates[0]
@@ -193,7 +248,9 @@ class ModelRouter:
         profile = profile or RoutingProfile(task_kind="diagnose", context_size=1000)
 
         provider = self.route(profile)
-        logger.debug("Routing to provider: %s for task: %s", provider.name, profile.task_kind)
+        logger.debug(
+            "Routing to provider: %s for task: %s", provider.name, profile.task_kind
+        )
 
         return provider.complete(
             messages=messages,

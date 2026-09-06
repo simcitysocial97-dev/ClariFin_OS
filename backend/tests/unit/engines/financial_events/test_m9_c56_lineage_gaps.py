@@ -11,9 +11,7 @@ tests fail to distinguish behavioral changes at boundaries.
 
 from __future__ import annotations
 
-import pytest
 from src.engines.financial_events.lineage_walker import (
-    DEFAULT_REVOCATION_LOOKBACK_DAYS,
     _is_liability_event,
     _is_repayment_event,
     _is_revocable_event,
@@ -24,7 +22,6 @@ from src.engines.financial_events.lineage_walker import (
     detect_rollover_scenarios,
     walk_lineage,
 )
-
 
 # ============================================================================
 # walk_lineage: date_iso boundary handling
@@ -459,7 +456,11 @@ class TestMergeLifecycleBoundary:
 
     def test_merge_with_none_existing_returns_candidate(self):
         """When existing is None, candidate is returned unchanged."""
-        candidate = {"event_id": 1, "lifecycle_state": "settled", "outstanding_paise": 0}
+        candidate = {
+            "event_id": 1,
+            "lifecycle_state": "settled",
+            "outstanding_paise": 0,
+        }
         result = _merge_lifecycle_update(None, candidate)
         assert result == candidate
 
@@ -470,28 +471,52 @@ class TestMergeLifecycleBoundary:
         When lifecycle_state is missing, it defaults to 'open' (rank 0).
         """
         existing = {"event_id": 1, "outstanding_paise": 50}
-        candidate = {"event_id": 1, "lifecycle_state": "settled", "outstanding_paise": 0}
+        candidate = {
+            "event_id": 1,
+            "lifecycle_state": "settled",
+            "outstanding_paise": 0,
+        }
         result = _merge_lifecycle_update(existing, candidate)
         assert result["lifecycle_state"] == "settled"
 
     def test_merge_both_same_state_smaller_outstanding_wins(self):
         """When both updates have same state, smaller outstanding wins."""
-        existing = {"event_id": 1, "lifecycle_state": "partially_settled", "outstanding_paise": 100}
-        candidate = {"event_id": 1, "lifecycle_state": "partially_settled", "outstanding_paise": 50}
+        existing = {
+            "event_id": 1,
+            "lifecycle_state": "partially_settled",
+            "outstanding_paise": 100,
+        }
+        candidate = {
+            "event_id": 1,
+            "lifecycle_state": "partially_settled",
+            "outstanding_paise": 50,
+        }
         result = _merge_lifecycle_update(existing, candidate)
         assert result["outstanding_paise"] == 50
 
     def test_merge_settled_beats_partially_settled(self):
         """Settled state (rank 3) beats partially_settled (rank 2)."""
-        existing = {"event_id": 1, "lifecycle_state": "partially_settled", "outstanding_paise": 50}
-        candidate = {"event_id": 1, "lifecycle_state": "settled", "outstanding_paise": 0}
+        existing = {
+            "event_id": 1,
+            "lifecycle_state": "partially_settled",
+            "outstanding_paise": 50,
+        }
+        candidate = {
+            "event_id": 1,
+            "lifecycle_state": "settled",
+            "outstanding_paise": 0,
+        }
         result = _merge_lifecycle_update(existing, candidate)
         assert result["lifecycle_state"] == "settled"
 
     def test_merge_open_loses_to_revoked(self):
         """Revoked state (rank 1) beats open state (rank 0)."""
         existing = {"event_id": 1, "lifecycle_state": "open", "outstanding_paise": 100}
-        candidate = {"event_id": 1, "lifecycle_state": "revoked", "outstanding_paise": 0}
+        candidate = {
+            "event_id": 1,
+            "lifecycle_state": "revoked",
+            "outstanding_paise": 0,
+        }
         result = _merge_lifecycle_update(existing, candidate)
         assert result["lifecycle_state"] == "revoked"
 
@@ -555,6 +580,7 @@ class TestParseDateIsoBoundary:
     def test_parse_valid_date(self):
         """Parsing valid ISO date returns datetime."""
         from datetime import datetime
+
         result = _parse_date_iso("2025-01-15")
         assert result == datetime(2025, 1, 15)
 

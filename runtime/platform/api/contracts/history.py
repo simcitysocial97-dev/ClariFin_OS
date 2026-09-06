@@ -8,12 +8,9 @@ compare endpoint. Phase 2 services populate these from
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 from runtime.platform.api.contracts._primitives import Identity, Status, Timestamp
-
 
 HISTORY_RUNS_KIND: str = "platform.history_runs"
 HISTORY_RUN_KIND: str = "platform.history_run"
@@ -24,8 +21,8 @@ HISTORY_BASELINES_KIND: str = "platform.history_baselines"
 class HistoryRunSummary(BaseModel):
     id: str = Field(min_length=1, max_length=256)
     started_at: Timestamp
-    finished_at: Optional[Timestamp] = None
-    duration_ms: Optional[int] = Field(default=None, ge=0)
+    finished_at: Timestamp | None = None
+    duration_ms: int | None = Field(default=None, ge=0)
     status: Status
     capabilities_run: int = Field(ge=0)
     capabilities_passed: int = Field(ge=0)
@@ -52,8 +49,8 @@ class HistoryRunDetailData(BaseModel):
 
     id: str = Field(min_length=1, max_length=256)
     started_at: Timestamp
-    finished_at: Optional[Timestamp] = None
-    duration_ms: Optional[int] = Field(default=None, ge=0)
+    finished_at: Timestamp | None = None
+    duration_ms: int | None = Field(default=None, ge=0)
     status: Status
     capabilities_run: int = Field(ge=0)
     capabilities_passed: int = Field(ge=0)

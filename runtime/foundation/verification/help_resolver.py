@@ -26,8 +26,6 @@ from __future__ import annotations
 import json
 import re
 import sys
-from dataclasses import dataclass, field
-from datetime import UTC, datetime
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
@@ -42,8 +40,13 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 PROBLEM_RESOLUTIONS: list[dict] = [
     {
         "keywords": [
-            "mutation score", "mutation coverage", "kill mutant", "survivor",
-            "improve mutation", "reach 80", "mutation threshold",
+            "mutation score",
+            "mutation coverage",
+            "kill mutant",
+            "survivor",
+            "improve mutation",
+            "reach 80",
+            "mutation threshold",
         ],
         "problem_type": "mutation_survivor",
         "primary_capability": "strengthen.capability-pipeline",
@@ -66,8 +69,13 @@ PROBLEM_RESOLUTIONS: list[dict] = [
     },
     {
         "keywords": [
-            "coverage gap", "improve coverage", "low coverage", "branch coverage",
-            "line coverage", "uncovered", "missing tests",
+            "coverage gap",
+            "improve coverage",
+            "low coverage",
+            "branch coverage",
+            "line coverage",
+            "uncovered",
+            "missing tests",
         ],
         "problem_type": "coverage_gap",
         "primary_capability": "measure.coverage",
@@ -87,7 +95,11 @@ PROBLEM_RESOLUTIONS: list[dict] = [
     },
     {
         "keywords": [
-            "test failure", "failing test", "diagnose", "failure", "broken test",
+            "test failure",
+            "failing test",
+            "diagnose",
+            "failure",
+            "broken test",
         ],
         "problem_type": "test_failure",
         "primary_capability": "diagnose.failure-attribution",
@@ -100,8 +112,14 @@ PROBLEM_RESOLUTIONS: list[dict] = [
     },
     {
         "keywords": [
-            "capability", "what can", "what should", "how to", "help",
-            "available commands", "runtime", "infrastructure",
+            "capability",
+            "what can",
+            "what should",
+            "how to",
+            "help",
+            "available commands",
+            "runtime",
+            "infrastructure",
         ],
         "problem_type": "capability_discovery",
         "primary_capability": "discover.capability-inventory",
@@ -115,7 +133,10 @@ PROBLEM_RESOLUTIONS: list[dict] = [
     },
     {
         "keywords": [
-            "blast radius", "affected", "what changes", "impact",
+            "blast radius",
+            "affected",
+            "what changes",
+            "impact",
         ],
         "problem_type": "blast_radius",
         "primary_capability": "discover.blast-radius",
@@ -127,7 +148,11 @@ PROBLEM_RESOLUTIONS: list[dict] = [
     },
     {
         "keywords": [
-            "certif", "certify", "threshold", "gate", "80%",
+            "certif",
+            "certify",
+            "threshold",
+            "gate",
+            "80%",
         ],
         "problem_type": "certification",
         "primary_capability": "certify.evidence-pipeline",
@@ -140,7 +165,10 @@ PROBLEM_RESOLUTIONS: list[dict] = [
     },
     {
         "keywords": [
-            "regression", "broken", "something broke", "was working",
+            "regression",
+            "broken",
+            "something broke",
+            "was working",
         ],
         "problem_type": "regression",
         "primary_capability": "diagnose.failure-attribution",
@@ -152,7 +180,11 @@ PROBLEM_RESOLUTIONS: list[dict] = [
     },
     {
         "keywords": [
-            "environment", "setup", "install", "venv", "dependencies",
+            "environment",
+            "setup",
+            "install",
+            "venv",
+            "dependencies",
         ],
         "problem_type": "environment",
         "primary_capability": "exec.environment-check",
@@ -165,7 +197,10 @@ PROBLEM_RESOLUTIONS: list[dict] = [
     },
     {
         "keywords": [
-            "evidence", "ci", "workflow", "convergence",
+            "evidence",
+            "ci",
+            "workflow",
+            "convergence",
         ],
         "problem_type": "workflow_evidence",
         "primary_capability": "certify.evidence-pipeline",
@@ -179,7 +214,10 @@ PROBLEM_RESOLUTIONS: list[dict] = [
     },
     {
         "keywords": [
-            "forensic", "investigate", "deep dive", "root cause",
+            "forensic",
+            "investigate",
+            "deep dive",
+            "root cause",
         ],
         "problem_type": "forensic",
         "primary_capability": "strengthen.forensic",
@@ -219,7 +257,11 @@ def extract_components_from_problem(problem: str) -> list[str]:
     problem_lower = problem.lower()
 
     component_map = {
-        "financial_events": ["financial_events", "financial events", "financial-events"],
+        "financial_events": [
+            "financial_events",
+            "financial events",
+            "financial-events",
+        ],
         "credit_card_engine": ["credit_card", "credit card", "creditcard"],
         "loan_engine": ["loan_engine", "loan engine", "loan"],
         "account_engine": ["account_engine", "account engine", "account"],
@@ -263,13 +305,21 @@ def cmd_help_resolve(argv: list[str]) -> int:
     if not problem:
         print("Usage: verify.py help-resolve <problem description>", file=sys.stderr)
         print("\nExamples:", file=sys.stderr)
-        print("  verify.py help-resolve 'How do I improve mutation score?'", file=sys.stderr)
-        print("  verify.py help-resolve 'mutation score is 79% need 80%'", file=sys.stderr)
-        print("  verify.py help-resolve 'coverage is low on credit_card_engine'", file=sys.stderr)
+        print(
+            "  verify.py help-resolve 'How do I improve mutation score?'",
+            file=sys.stderr,
+        )
+        print(
+            "  verify.py help-resolve 'mutation score is 79% need 80%'", file=sys.stderr
+        )
+        print(
+            "  verify.py help-resolve 'coverage is low on credit_card_engine'",
+            file=sys.stderr,
+        )
         return 1
 
     print(f"\n{'='*70}")
-    print(f"  M9-C56 CAPABILITY RESOLVER")
+    print("  M9-C56 CAPABILITY RESOLVER")
     print(f"  Problem: {problem}")
     print(f"{'='*70}\n")
 
@@ -295,27 +345,33 @@ def cmd_help_resolve(argv: list[str]) -> int:
         component = components[0] if components else "<engine_name>"
 
         primary_cmd = match["primary_command"].format(
-            component=component, survivor_id=survivor_id or "<survivor_id>",
-            scope=component, gap_id="<gap_id>", problem=problem,
+            component=component,
+            survivor_id=survivor_id or "<survivor_id>",
+            scope=component,
+            gap_id="<gap_id>",
+            problem=problem,
         )
-        print(f"\n  ┌─ SINGLE COMMAND (recommended):")
+        print("\n  ┌─ SINGLE COMMAND (recommended):")
         print(f"  │  {primary_cmd}")
-        print(f"  └─")
+        print("  └─")
 
-        print(f"\n  Supporting commands:")
+        print("\n  Supporting commands:")
         for cmd in match.get("supporting_commands", []):
             fmt_cmd = cmd.format(
-                component=component, survivor_id=survivor_id or "<survivor_id>",
-                scope=component, gap_id="<gap_id>", problem=problem,
+                component=component,
+                survivor_id=survivor_id or "<survivor_id>",
+                scope=component,
+                gap_id="<gap_id>",
+                problem=problem,
             )
             print(f"    • {fmt_cmd}")
 
         if "single_command" in match:
-            print(f"\n  EASIEST PATH:")
+            print("\n  EASIEST PATH:")
             print(f"    {match['single_command'].format(component=component)}")
 
         if "expected_workflow" in match:
-            print(f"\n  Expected workflow:")
+            print("\n  Expected workflow:")
             for step in match["expected_workflow"]:
                 print(f"    {step}")
 
@@ -323,8 +379,8 @@ def cmd_help_resolve(argv: list[str]) -> int:
 
     # Always show the meta hint
     print(f"  {'─'*60}")
-    print(f"  TIP: Run the SINGLE COMMAND above to automatically solve this problem.")
-    print(f"  The converge pipeline handles everything end-to-end.")
+    print("  TIP: Run the SINGLE COMMAND above to automatically solve this problem.")
+    print("  The converge pipeline handles everything end-to-end.")
     print(f"{'='*70}\n")
 
     return 0
@@ -352,7 +408,7 @@ def cmd_what_should_i_run(argv: list[str]) -> int:
     best = matches[0]
 
     print(f"\n{'='*70}")
-    print(f"  M9-C56 WHAT SHOULD I RUN")
+    print("  M9-C56 WHAT SHOULD I RUN")
     print(f"  Problem: {problem}")
     print(f"{'='*70}\n")
 
@@ -365,10 +421,17 @@ def cmd_what_should_i_run(argv: list[str]) -> int:
             component=component
         ),
         "command_sequence": [
-            best.get("single_command", best["primary_command"]).format(component=component)
+            best.get("single_command", best["primary_command"]).format(
+                component=component
+            )
         ],
         "supporting_commands": [
-            c.format(component=component, survivor_id="<survivor_id>", scope=component, gap_id="<gap_id>")
+            c.format(
+                component=component,
+                survivor_id="<survivor_id>",
+                scope=component,
+                gap_id="<gap_id>",
+            )
             for c in best.get("supporting_commands", [])
         ],
         "description": best["description"],

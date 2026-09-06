@@ -21,27 +21,50 @@ Self-verification must inspect:
 Per GUIDING_DOCUMENT.md §13 and §68.
 """
 
-import pytest
-import sys
-import json
-import tempfile
 import os
+import sys
+import tempfile
 from pathlib import Path
+
+import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "runtime"))
 
-from runtime.foundation.verification.control_plane_facade import ControlPlane, migration_map
-from runtime.foundation.verification.canonical_control_plane import _MIGRATION, classification_for
-from runtime.foundation.verification.executor_pipeline import ADAPTERS, VerificationKind, PlannedTask, TaskFingerprints
-from runtime.foundation.verification.capability_catalog import EVIDENCE_KINDS, get_capability_catalog
-from runtime.foundation.verification.obligation import Disposition, ObligationKind
-from runtime.foundation.verification.obligation_reconciliation import reconcile_obligations, ObAnalyzeResult
-from runtime.foundation.verification.cache import VerificationCache, CachedVerdict
-from runtime.foundation.verification.bypass_enforcement import build_bypass_enforcement_report
-from runtime.foundation.verification.obligation import (
-    VerificationObligation, Capability, Requirement, Change, ObligationSet
+from runtime.foundation.verification.bypass_enforcement import (
+    build_bypass_enforcement_report,
 )
-from runtime.foundation.verification.capability_graph_resolver import CapabilityGraphResolver
+from runtime.foundation.verification.cache import CachedVerdict, VerificationCache
+from runtime.foundation.verification.canonical_control_plane import (
+    _MIGRATION,
+)
+from runtime.foundation.verification.capability_catalog import (
+    EVIDENCE_KINDS,
+    get_capability_catalog,
+)
+from runtime.foundation.verification.capability_graph_resolver import (
+    CapabilityGraphResolver,
+)
+from runtime.foundation.verification.control_plane_facade import (
+    ControlPlane,
+    migration_map,
+)
+from runtime.foundation.verification.executor_pipeline import (
+    ADAPTERS,
+    PlannedTask,
+    TaskFingerprints,
+)
+from runtime.foundation.verification.obligation import (
+    Capability,
+    Change,
+    Disposition,
+    ObligationKind,
+    ObligationSet,
+    Requirement,
+    VerificationObligation,
+)
+from runtime.foundation.verification.obligation_reconciliation import (
+    reconcile_obligations,
+)
 
 
 class TestSelfVerificationControlPlane:
@@ -51,24 +74,35 @@ class TestSelfVerificationControlPlane:
         """Verify ControlPlane class exists and is callable."""
         cp = ControlPlane()
         assert cp is not None
-        assert hasattr(cp, 'check')
-        assert hasattr(cp, 'plan')
-        assert hasattr(cp, 'run')
-        assert hasattr(cp, 'diagnose')
-        assert hasattr(cp, 'strengthen')
-        assert hasattr(cp, 'inspect')
-        assert hasattr(cp, 'certify')
-        assert hasattr(cp, 'ci')
-        assert hasattr(cp, 'doctor')
+        assert hasattr(cp, "check")
+        assert hasattr(cp, "plan")
+        assert hasattr(cp, "run")
+        assert hasattr(cp, "diagnose")
+        assert hasattr(cp, "strengthen")
+        assert hasattr(cp, "inspect")
+        assert hasattr(cp, "certify")
+        assert hasattr(cp, "ci")
+        assert hasattr(cp, "doctor")
 
     def test_canonical_cli_entry_point_exists(self):
         """Verify the canonical CLI entry point exists."""
         from runtime.foundation.verification.control_plane_facade import main
+
         assert callable(main)
 
     def test_canonical_command_surface_is_9_commands(self):
         """Verify the canonical command surface has 9 commands."""
-        canonical_ops = {"check", "plan", "run", "diagnose", "strengthen", "inspect", "certify", "ci", "doctor"}
+        canonical_ops = {
+            "check",
+            "plan",
+            "run",
+            "diagnose",
+            "strengthen",
+            "inspect",
+            "certify",
+            "ci",
+            "doctor",
+        }
         mm = migration_map()
         targets = {v["canonical_operation"] for v in mm.values()}
         # migration_map maps legacy commands to canonical ops
@@ -89,7 +123,7 @@ class TestSelfVerificationAuthorityGovernance:
     def test_single_planning_authority(self):
         """Verify single planning authority (ControlPlane.plan)."""
         cp = ControlPlane()
-        assert hasattr(cp, 'plan')
+        assert hasattr(cp, "plan")
 
     def test_single_capability_authority(self):
         """Verify single capability authority (CapabilityCatalog)."""
@@ -100,7 +134,7 @@ class TestSelfVerificationAuthorityGovernance:
     def test_single_execution_authority(self):
         """Verify single execution authority (ExecutorPipeline/ADAPTERS)."""
         assert len(ADAPTERS) == 8
-        for kind, adapter in ADAPTERS.items():
+        for _kind, adapter in ADAPTERS.items():
             assert callable(adapter)
 
     def test_single_evidence_contract(self):
@@ -114,13 +148,22 @@ class TestSelfVerificationPlannerExecutorConsistency:
 
     def test_all_adapters_registered_for_verified_kinds(self):
         """All verification kinds in ADAPTERS should be valid."""
-        expected_kinds = {"unit", "property", "invariant", "contract", "coverage", "mutation", "golden", "capability"}
+        expected_kinds = {
+            "unit",
+            "property",
+            "invariant",
+            "contract",
+            "coverage",
+            "mutation",
+            "golden",
+            "capability",
+        }
         actual_kinds = set(ADAPTERS.keys())
         assert expected_kinds.issubset(actual_kinds)
 
     def test_no_task_kind_falls_through_to_not_executable(self):
         """No registered task kind should fall through to not_executable."""
-        for kind in ADAPTERS.keys():
+        for kind in ADAPTERS:
             adapter = ADAPTERS[kind]
             planned = PlannedTask(
                 task_id=f"test-{kind}",
@@ -131,7 +174,7 @@ class TestSelfVerificationPlannerExecutorConsistency:
                 evidence_id=None,
                 invalidations=(),
                 reuse_disposition=None,
-                notes=""
+                notes="",
             )
             fps = TaskFingerprints(source="", test="", config="", toolchain="")
             result = adapter(planned, fps)
@@ -146,13 +189,25 @@ class TestSelfVerificationTaskAdapterCompleteness:
 
     def test_all_10_adapters_present(self):
         """Verify all 10 promised adapters are present."""
-        expected_kinds = {"unit", "property", "invariant", "contract", "coverage", "mutation", "golden", "capability"}
+        expected_kinds = {
+            "unit",
+            "property",
+            "invariant",
+            "contract",
+            "coverage",
+            "mutation",
+            "golden",
+            "capability",
+        }
         actual_kinds = set(ADAPTERS.keys())
-        assert expected_kinds.issubset(actual_kinds), f"Missing adapters: {expected_kinds - actual_kinds}"
+        assert expected_kinds.issubset(
+            actual_kinds
+        ), f"Missing adapters: {expected_kinds - actual_kinds}"
 
     def test_mutation_adapter_uses_canonical_runner(self):
         """Verify mutation adapter uses canonical mutation_runner."""
         import inspect
+
         source = inspect.getsource(ADAPTERS["mutation"])
         # Should use mutation_runner or mutmut
         assert "mutation_runner" in source or "mutmut" in source or "mutation" in source
@@ -161,6 +216,7 @@ class TestSelfVerificationTaskAdapterCompleteness:
     def test_e2e_adapter_uses_playwright_runner(self):
         """Verify e2e adapter uses canonical Playwright runner."""
         import inspect
+
         source = inspect.getsource(ADAPTERS["e2e"])
         assert "playwright" in source.lower() or "run_playwright" in source
 
@@ -180,7 +236,9 @@ class TestSelfVerificationEvidenceIntegrity:
             cache_path = Path(tmpdir) / "cache.json"
             cache = VerificationCache(cache_path)
 
-            verdict = CachedVerdict(overall_status="pass", passed=10, failed=0, skipped=0)
+            verdict = CachedVerdict(
+                overall_status="pass", passed=10, failed=0, skipped=0
+            )
             fp1 = {"pytest": "7.0"}
             fp2 = {"pytest": "8.0"}
             cache.save("profile", "commit_X", ["test.py"], verdict, fingerprint=fp1)
@@ -195,11 +253,18 @@ class TestSelfVerificationEvidenceIntegrity:
             obligation_id="test.obl",
             change=change,
             capability=Capability(capability_id="cap1", authority="test"),
-            requirement=Requirement(requirement_id="req1", capability_id="cap1", obligation_kind=ObligationKind.UNIT, rationale="test"),
-            disposition=Disposition.OPEN
+            requirement=Requirement(
+                requirement_id="req1",
+                capability_id="cap1",
+                obligation_kind=ObligationKind.UNIT,
+                rationale="test",
+            ),
+            disposition=Disposition.OPEN,
         )
 
-        reconciliation = reconcile_obligations(ObligationSet(set_id="test", obligations=[obl]), [])
+        reconciliation = reconcile_obligations(
+            ObligationSet(set_id="test", obligations=[obl]), []
+        )
         assert not reconciliation.complete
         assert reconciliation.total_required == 1
         assert reconciliation.satisfied == 0
@@ -214,7 +279,9 @@ class TestSelfVerificationCacheIntegrity:
             cache_path = Path(tmpdir) / "cache.json"
             cache = VerificationCache(cache_path)
 
-            verdict = CachedVerdict(overall_status="pass", passed=10, failed=0, skipped=0)
+            verdict = CachedVerdict(
+                overall_status="pass", passed=10, failed=0, skipped=0
+            )
             cache.save("profile", "commit_A", ["file1.py"], verdict)
 
             result = cache.replay("commit_B", ["file1.py"], "profile")
@@ -246,7 +313,10 @@ class TestSelfVerificationCapabilityMappings:
 
     def test_derive_capability_from_api_path_works(self):
         """derive_capability_from_path should work for API paths."""
-        from runtime.foundation.verification.capability_graph_resolver import derive_capability_from_path
+        from runtime.foundation.verification.capability_graph_resolver import (
+            derive_capability_from_path,
+        )
+
         cap = derive_capability_from_path("/credit-cards/123")
         assert cap == "credit-card-engine"
         cap = derive_capability_from_path("/loans/456")
@@ -259,20 +329,47 @@ class TestSelfVerificationDeprecatedPaths:
     def test_all_legacy_commands_mapped(self):
         """All known legacy commands should be in migration_map."""
         deprecated = [
-            "capability-inventory", "forensic-diagnose", "strengthen-analyze",
-            "strengthen-discover", "strengthen-propose", "strengthen-validate",
-            "strengthen-report", "mutation-intel"
+            "capability-inventory",
+            "forensic-diagnose",
+            "strengthen-analyze",
+            "strengthen-discover",
+            "strengthen-propose",
+            "strengthen-validate",
+            "strengthen-report",
+            "mutation-intel",
         ]
         mm = migration_map()
         for cmd in deprecated:
             assert cmd in mm, f"Legacy command {cmd} not mapped"
-            assert mm[cmd]["canonical_operation"] in ["check", "plan", "run", "diagnose", "strengthen", "inspect", "certify", "ci", "doctor"]
+            assert mm[cmd]["canonical_operation"] in [
+                "check",
+                "plan",
+                "run",
+                "diagnose",
+                "strengthen",
+                "inspect",
+                "certify",
+                "ci",
+                "doctor",
+            ]
 
     def test_no_legacy_command_self_executes(self):
         """No legacy command should implement independent verification."""
         mm = migration_map()
         canonical_ops = {v["canonical_operation"] for v in mm.values()}
-        assert canonical_ops.issubset({"check", "plan", "run", "diagnose", "strengthen", "inspect", "certify", "ci", "doctor"})
+        assert canonical_ops.issubset(
+            {
+                "check",
+                "plan",
+                "run",
+                "diagnose",
+                "strengthen",
+                "inspect",
+                "certify",
+                "ci",
+                "doctor",
+            }
+        )
 
 
 class TestSelfVerificationUnreachableFunctionality:
@@ -292,12 +389,13 @@ class TestSelfVerificationDuplicateAuthorities:
     def test_single_control_plane_class(self):
         """Only one ControlPlane class should exist."""
         from runtime.foundation.verification.control_plane_facade import ControlPlane
+
         assert ControlPlane is not None
 
     def test_single_planning_function(self):
         """ControlPlane.plan should be the single planning function."""
         cp = ControlPlane()
-        assert hasattr(cp, 'plan')
+        assert hasattr(cp, "plan")
 
 
 class TestSelfVerificationMutationArchitecture:
@@ -312,7 +410,11 @@ class TestSelfVerificationMutationArchitecture:
 
     def test_mutation_result_contract_canonical(self):
         """Verify mutation result contract is canonical."""
-        from runtime.foundation.verification.mutation_contract import MutationResult, MutationCounts
+        from runtime.foundation.verification.mutation_contract import (
+            MutationCounts,
+            MutationResult,
+        )
+
         assert MutationResult is not None
         assert MutationCounts is not None
 
@@ -323,10 +425,16 @@ class TestSelfVerificationCIIntegration:
     def test_ci_workflows_delegate_to_verify_py(self):
         """All CI verification workflows reference verify.py."""
         verification_workflows = [
-            "backend-verify.yml", "frontend-verify.yml", "golden.yml",
-            "playwright.yml", "mutation.yml", "quality.yml",
-            "verification-runtime.yml", "api-contracts.yml",
-            "verification-reconcile.yml", "m9-forensic-diagnostic-lab.yml"
+            "backend-verify.yml",
+            "frontend-verify.yml",
+            "golden.yml",
+            "playwright.yml",
+            "mutation.yml",
+            "quality.yml",
+            "verification-runtime.yml",
+            "api-contracts.yml",
+            "verification-reconcile.yml",
+            "m9-forensic-diagnostic-lab.yml",
         ]
 
         for wf in verification_workflows:
@@ -349,7 +457,16 @@ class TestSelfVerificationObligationLifecycle:
     def test_obligation_lifecycle_states(self):
         """All obligation dispositions should be defined."""
         dispositions = {d.value for d in Disposition}
-        expected = {"closed", "executed", "open", "blocked", "invalidated", "reused", "not_applicable", "failed"}
+        expected = {
+            "closed",
+            "executed",
+            "open",
+            "blocked",
+            "invalidated",
+            "reused",
+            "not_applicable",
+            "failed",
+        }
         assert expected.issubset(dispositions)
 
     def test_obligation_closure_requires_evidence(self):
@@ -359,11 +476,18 @@ class TestSelfVerificationObligationLifecycle:
             obligation_id="test.obl",
             change=change,
             capability=Capability(capability_id="cap1", authority="test"),
-            requirement=Requirement(requirement_id="req1", capability_id="cap1", obligation_kind=ObligationKind.UNIT, rationale="test"),
-            disposition=Disposition.OPEN
+            requirement=Requirement(
+                requirement_id="req1",
+                capability_id="cap1",
+                obligation_kind=ObligationKind.UNIT,
+                rationale="test",
+            ),
+            disposition=Disposition.OPEN,
         )
 
-        reconciliation = reconcile_obligations(ObligationSet(set_id="test", obligations=[obl]), [])
+        reconciliation = reconcile_obligations(
+            ObligationSet(set_id="test", obligations=[obl]), []
+        )
         assert not reconciliation.complete
 
 
@@ -373,9 +497,10 @@ class TestSelfVerificationNegativeDetection:
     def test_framework_detects_duplicate_authority_violation(self):
         """Framework should detect if duplicate authority introduced."""
         from runtime.foundation.verification.control_plane_facade import ControlPlane
+
         cp1 = ControlPlane()
         cp2 = ControlPlane()
-        assert type(cp1) == type(cp2)
+        assert type(cp1) is type(cp2)  # noqa: E721 — strict identity
 
     def test_framework_detects_legacy_bypass(self):
         """Framework should detect legacy bypass attempts."""
@@ -383,12 +508,22 @@ class TestSelfVerificationNegativeDetection:
         legacy_cmds = ["forensic-diagnose", "mutation-intel", "capability-inventory"]
         for cmd in legacy_cmds:
             assert cmd in mm
-            assert mm[cmd]["canonical_operation"] in ["check", "plan", "run", "diagnose", "strengthen", "inspect", "certify", "ci", "doctor"]
+            assert mm[cmd]["canonical_operation"] in [
+                "check",
+                "plan",
+                "run",
+                "diagnose",
+                "strengthen",
+                "inspect",
+                "certify",
+                "ci",
+                "doctor",
+            ]
 
     def test_framework_detects_stale_evidence_reuse(self):
         """Framework should detect stale evidence reuse as BYPASS_RISK."""
         report = build_bypass_enforcement_report()
-        bypass_names = [b.name for b in getattr(report, 'paths', [])]
+        bypass_names = [b.name for b in getattr(report, "paths", [])]
         assert "stale_evidence_reuse" in bypass_names
 
 

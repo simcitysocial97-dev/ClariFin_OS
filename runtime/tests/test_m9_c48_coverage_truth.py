@@ -66,10 +66,11 @@ def test_measure_coverage_persists_with_identity(tmp_path):
     body_minus_sha["artifact_sha256"] = ""
     canonical = json.dumps(body_minus_sha, indent=2, sort_keys=True).encode("utf-8")
     import hashlib
+
     actual = hashlib.sha256(canonical).hexdigest()
-    assert data["artifact_sha256"] == actual, (
-        f"recorded={data['artifact_sha256']} actual={actual}"
-    )
+    assert (
+        data["artifact_sha256"] == actual
+    ), f"recorded={data['artifact_sha256']} actual={actual}"
     assert truth.measurement_id.startswith("cov-")
     assert data["repository_sha"] == truth.repository_sha
 

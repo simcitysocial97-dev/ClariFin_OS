@@ -39,11 +39,11 @@ from __future__ import annotations
 
 import ast
 import re
-from dataclasses import asdict, dataclass, field
+from collections.abc import Iterable, Mapping
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from enum import Enum
-from pathlib import Path
-from typing import Any, Iterable, Mapping
+from typing import Any
 
 
 # ── Severity taxonomy ──────────────────────────────────────────────────────
@@ -84,7 +84,7 @@ def severity_to_tier(severity: str | None) -> SeverityTier:
 class ChangedSymbol:
     file: str
     qualified_name: str  # e.g. "LoanService.calculate_payment"
-    kind: str            # "function" | "method" | "class" | "import"
+    kind: str  # "function" | "method" | "class" | "import"
     line: int
     column: int = 0
 
@@ -114,7 +114,9 @@ class SymbolResolver:
     _FUNC_RE = re.compile(r"^def\s+([A-Za-z_][A-Za-z0-9_]*)")
     _METHOD_RE = re.compile(r"^def\s+([A-Za-z_][A-Za-z0-9_]*)")
 
-    def resolve(self, file_path: str, source: str) -> tuple[list[ChangedSymbol], list[UnresolvedSymbol]]:
+    def resolve(
+        self, file_path: str, source: str
+    ) -> tuple[list[ChangedSymbol], list[UnresolvedSymbol]]:
         symbols: list[ChangedSymbol] = []
         unresolved: list[UnresolvedSymbol] = []
         try:
@@ -157,7 +159,7 @@ class SymbolResolver:
                         column=node.col_offset,
                     )
                 )
-            elif isinstance(node, ast.Import) or isinstance(node, ast.ImportFrom):
+            elif isinstance(node, (ast.Import, ast.ImportFrom)):
                 # Record a coarse import marker per import statement.
                 line = node.lineno
                 col = node.col_offset
@@ -189,7 +191,9 @@ class SymbolResolver:
 
         return symbols, unresolved
 
-    def resolve_many(self, files: Mapping[str, str]) -> tuple[list[ChangedSymbol], list[UnresolvedSymbol]]:
+    def resolve_many(
+        self, files: Mapping[str, str]
+    ) -> tuple[list[ChangedSymbol], list[UnresolvedSymbol]]:
         all_syms: list[ChangedSymbol] = []
         all_unr: list[UnresolvedSymbol] = []
         for path, src in files.items():
@@ -202,8 +206,8 @@ class SymbolResolver:
 # ── Endpoint → capability map (C2) ─────────────────────────────────────────
 @dataclass(frozen=True, slots=True)
 class EndpointEdge:
-    method: str        # "GET" | "POST" | ...
-    path: str          # "/loans/{loan_id}/payment"
+    method: str  # "GET" | "POST" | ...
+    path: str  # "/loans/{loan_id}/payment"
     capability_id: str  # canonical capability
 
 
@@ -230,7 +234,9 @@ class EndpointCapabilityMap:
         ]
 
     @classmethod
-    def from_path_rules(cls, rules: Iterable[tuple[str, str, str]]) -> "EndpointCapabilityMap":
+    def from_path_rules(
+        cls, rules: Iterable[tuple[str, str, str]]
+    ) -> EndpointCapabilityMap:
         m = cls()
         for method, path, cap in rules:
             m.add(method, path, cap)
@@ -287,9 +293,7 @@ class FileChange:
         }
 
 
-def parse_git_status_output(
-    name_status: str, raw_status: str = ""
-) -> list[FileChange]:
+def parse_git_status_output(name_status: str, raw_status: str = "") -> list[FileChange]:
     """Parse ``git diff --name-status`` (and ``-M`` rename detection) output.
 
     Status codes:
@@ -339,9 +343,7 @@ def parse_git_status_output(
             )
         else:
             changes.append(
-                FileChange(
-                    kind=ChangeKind.UNKNOWN, old_path=None, new_path=parts[-1]
-                )
+                FileChange(kind=ChangeKind.UNKNOWN, old_path=None, new_path=parts[-1])
             )
     return changes
 
@@ -352,7 +354,7 @@ class CapabilityEdge:
     """An edge from a source (file/symbol/endpoint) to a capability."""
 
     source_kind: str  # "file" | "symbol" | "endpoint"
-    source: str       # file path, "LoanService.calculate_payment", or "POST /loans"
+    source: str  # file path, "LoanService.calculate_payment", or "POST /loans"
     capability_id: str
     severity: SeverityTier = SeverityTier.REQUIRED
     rationale: str = ""
@@ -590,7 +592,9 @@ class CapabilityGraphResolver:
 
         # C2: endpoint → capability edges.
         for method, ep in endpoints:
-            cap = self._endpoint_map.resolve(method, ep) or derive_capability_from_path(ep)
+            cap = self._endpoint_map.resolve(method, ep) or derive_capability_from_path(
+                ep
+            )
             if cap is None:
                 edges.append(
                     CapabilityEdge(

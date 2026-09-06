@@ -9,12 +9,9 @@ re-serialization.
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 from runtime.platform.api.contracts._primitives import Identity, Status, Timestamp
-
 
 EXECUTION_DETAIL_KIND: str = "platform.execution_detail"
 EXECUTION_STREAM_EVENT_KIND: str = "platform.execution_stream_event"
@@ -26,14 +23,14 @@ class ExecutionDetailData(BaseModel):
     capability_id: str = Field(min_length=1, max_length=256)
     status: Status
     started_at: Timestamp
-    finished_at: Optional[Timestamp] = None
+    finished_at: Timestamp | None = None
     phase: str = Field(min_length=1, max_length=64)
     current_state: str = Field(min_length=1, max_length=256)
     events: list[str] = Field(default_factory=list)
-    stdout_ref: Optional[str] = None
-    stderr_ref: Optional[str] = None
+    stdout_ref: str | None = None
+    stderr_ref: str | None = None
     evidence_ids: list[str] = Field(default_factory=list)
-    decision_id: Optional[str] = None
+    decision_id: str | None = None
 
 
 class ExecutionDetailEnvelope(BaseModel):

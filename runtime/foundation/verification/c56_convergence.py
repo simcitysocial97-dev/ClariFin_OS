@@ -12,7 +12,6 @@ Exposes convergence intelligence through verify.py:
 from __future__ import annotations
 
 import json
-import os
 import sys
 from pathlib import Path
 
@@ -30,7 +29,7 @@ def _load_json(path: Path) -> dict | None:
 def cmd_convergence_status() -> int:
     """Display current convergence status."""
     baseline = _load_json(C56_DIR / "baseline" / "baseline.json")
-    recon = _load_json(C56_DIR / "measurement" / "measurement-reconciliation.json")
+    _load_json(C56_DIR / "measurement" / "measurement-reconciliation.json")
     gap_reg = _load_json(C56_DIR / "gap-analysis" / "gap-registry.json")
 
     if not baseline:
@@ -47,24 +46,26 @@ def cmd_convergence_status() -> int:
     print(f"\n  Repository SHA: {baseline.get('repository', {}).get('sha', 'unknown')}")
     print(f"  Baseline: {baseline.get('generated_at', 'unknown')}")
 
-    print(f"\n  --- Coverage ---")
+    print("\n  --- Coverage ---")
     print(f"  Line coverage:   {cov.get('percent_covered', 0):.2f}%")
     print(f"  Branch coverage: {cov.get('percent_branches_covered', 0):.2f}%")
 
-    print(f"\n  --- Mutation ---")
+    print("\n  --- Mutation ---")
     print(f"  Overall score:   {mut.get('mutation_score', 'N/A')}%")
     if "engines" in mut:
         for engine, data in mut["engines"].items():
-            print(f"    {engine:<25} {data['mutation_score']:>6.1f}% ({data['killed']}/{data['mutants_generated']})")
+            print(
+                f"    {engine:<25} {data['mutation_score']:>6.1f}% ({data['killed']}/{data['mutants_generated']})"
+            )
 
-    print(f"\n  --- Gaps ---")
+    print("\n  --- Gaps ---")
     if gap_reg:
         print(f"  Total gaps: {gap_reg.get('total_gaps', 0)}")
         print(f"  Actionable: {gap_reg.get('actionable_gaps', 0)}")
         print(f"  Preserved:  {gap_reg.get('preserved_gaps', 0)}")
 
     gaps = baseline.get("gaps", {})
-    print(f"\n  --- Gap to 80% Threshold ---")
+    print("\n  --- Gap to 80% Threshold ---")
     print(f"  Coverage line:   {gaps.get('coverage_line_pct', 0):.2f} pp")
     print(f"  Coverage branch: {gaps.get('coverage_branch_pct', 0):.2f} pp")
     print(f"  Mutation:        {gaps.get('mutation_pct', 0):.2f} pp")
@@ -84,17 +85,25 @@ def cmd_coverage_analysis() -> int:
     print("=" * 70)
 
     components = matrix.get("components", [])
-    print(f"\n  {'Component':<28} {'Files':>5} {'Line%':>6} {'Branch%':>7} {'Stmts':>6} {'Missing':>7}")
+    print(
+        f"\n  {'Component':<28} {'Files':>5} {'Line%':>6} {'Branch%':>7} {'Stmts':>6} {'Missing':>7}"
+    )
     print("  " + "-" * 65)
 
     for c in sorted(components, key=lambda x: x.get("line_pct") or 0):
         line_s = f"{c['line_pct']:.1f}" if c.get("line_pct") is not None else "N/A"
-        branch_s = f"{c['branch_pct']:.1f}" if c.get("branch_pct") is not None else "N/A"
-        print(f"  {c['component']:<28} {c['source_files']:>5} {line_s:>6} {branch_s:>7} {c['statements']:>6} {c['missing_lines']:>7}")
+        branch_s = (
+            f"{c['branch_pct']:.1f}" if c.get("branch_pct") is not None else "N/A"
+        )
+        print(
+            f"  {c['component']:<28} {c['source_files']:>5} {line_s:>6} {branch_s:>7} {c['statements']:>6} {c['missing_lines']:>7}"
+        )
 
     totals = matrix.get("totals", {})
     print("  " + "-" * 65)
-    line_pct = totals.get("covered_lines", 0) / max(totals.get("statements", 1), 1) * 100
+    line_pct = (
+        totals.get("covered_lines", 0) / max(totals.get("statements", 1), 1) * 100
+    )
     print(f"  {'TOTAL':<28} {totals.get('source_files', 0):>5} {line_pct:>6.1f}")
 
     return 0
@@ -112,14 +121,20 @@ def cmd_mutation_analysis() -> int:
     print("=" * 70)
 
     overall = matrix.get("overall", {})
-    print(f"\n  Overall: {overall.get('killed', 0)}/{overall.get('mutants_generated', 0)} killed = {overall.get('score', 0)}%")
+    print(
+        f"\n  Overall: {overall.get('killed', 0)}/{overall.get('mutants_generated', 0)} killed = {overall.get('score', 0)}%"
+    )
 
     engines = matrix.get("engines", [])
-    print(f"\n  {'Engine':<28} {'Killed':>6} {'Survived':>8} {'Total':>6} {'Score%':>7}")
+    print(
+        f"\n  {'Engine':<28} {'Killed':>6} {'Survived':>8} {'Total':>6} {'Score%':>7}"
+    )
     print("  " + "-" * 60)
 
     for e in sorted(engines, key=lambda x: x.get("score", 0)):
-        print(f"  {e['engine']:<28} {e['killed']:>6} {e['survived']:>8} {e['mutants_generated']:>6} {e['score']:>7.1f}")
+        print(
+            f"  {e['engine']:<28} {e['killed']:>6} {e['survived']:>8} {e['mutants_generated']:>6} {e['score']:>7.1f}"
+        )
 
     return 0
 
@@ -140,15 +155,19 @@ def cmd_gap_analysis() -> int:
     print(f"  Preserved:  {reg.get('preserved_gaps', 0)}")
 
     by_type = reg.get("by_type", {})
-    print(f"\n  --- By Type ---")
+    print("\n  --- By Type ---")
     for gap_type, count in sorted(by_type.items(), key=lambda x: -x[1]):
         print(f"    {gap_type:<30} {count:>3}")
 
     gaps = reg.get("gaps", [])
-    actionable = [g for g in gaps if g.get("gap_type") not in ("EQUIVALENT", "DEFENSIVE")]
-    print(f"\n  --- Top Actionable Gaps ---")
+    actionable = [
+        g for g in gaps if g.get("gap_type") not in ("EQUIVALENT", "DEFENSIVE")
+    ]
+    print("\n  --- Top Actionable Gaps ---")
     for g in sorted(actionable, key=lambda x: -x.get("survivor_count", 0))[:15]:
-        print(f"    {g['gap_id']} {g['component']:<25} {g['production_surface']:<30} surv={g['survivor_count']:>3} [{g['gap_type']}]")
+        print(
+            f"    {g['gap_id']} {g['component']:<25} {g['production_surface']:<30} surv={g['survivor_count']:>3} [{g['gap_type']}]"
+        )
 
     return 0
 
@@ -171,9 +190,11 @@ def cmd_convergence_plan() -> int:
 
     items = queue.get("queue", [])
     active = [q for q in items if q.get("priority") not in ("PRESERVE",)]
-    print(f"\n  --- Top Priority Items ---")
+    print("\n  --- Top Priority Items ---")
     for q in active[:20]:
-        print(f"    [{q['priority']:>8}] {q['gap_id']} {q['component']:<25} {q['production_surface']:<30} score={q['priority_score']:>6.1f}")
+        print(
+            f"    [{q['priority']:>8}] {q['gap_id']} {q['component']:<25} {q['production_surface']:<30} score={q['priority_score']:>6.1f}"
+        )
 
     return 0
 
@@ -181,7 +202,7 @@ def cmd_convergence_plan() -> int:
 def cmd_threshold_assessment() -> int:
     """Assess 80% threshold achievement status."""
     baseline = _load_json(C56_DIR / "baseline" / "baseline.json")
-    recon = _load_json(C56_DIR / "measurement" / "measurement-reconciliation.json")
+    _load_json(C56_DIR / "measurement" / "measurement-reconciliation.json")
 
     if not baseline:
         print("C56 baseline not found.", file=sys.stderr)
@@ -197,11 +218,15 @@ def cmd_threshold_assessment() -> int:
     line_pct = cov.get("percent_covered", 0)
     branch_pct = cov.get("percent_branches_covered", 0)
 
-    print(f"\n  --- Coverage Threshold (≥80%) ---")
-    print(f"  Line coverage:   {line_pct:.2f}% {'PASS' if line_pct >= 80 else 'FAIL'} (gap: {80 - line_pct:.2f} pp)")
-    print(f"  Branch coverage: {branch_pct:.2f}% {'PASS' if branch_pct >= 80 else 'FAIL'} (gap: {80 - branch_pct:.2f} pp)")
+    print("\n  --- Coverage Threshold (≥80%) ---")
+    print(
+        f"  Line coverage:   {line_pct:.2f}% {'PASS' if line_pct >= 80 else 'FAIL'} (gap: {80 - line_pct:.2f} pp)"
+    )
+    print(
+        f"  Branch coverage: {branch_pct:.2f}% {'PASS' if branch_pct >= 80 else 'FAIL'} (gap: {80 - branch_pct:.2f} pp)"
+    )
 
-    print(f"\n  --- Mutation Threshold (≥80%) ---")
+    print("\n  --- Mutation Threshold (≥80%) ---")
     if "engines" in mut:
         for engine, data in mut["engines"].items():
             score = data["mutation_score"]
@@ -209,9 +234,11 @@ def cmd_threshold_assessment() -> int:
             print(f"    {engine:<25} {score:>6.1f}% {status}")
 
     overall_mut = mut.get("mutation_score", 0)
-    print(f"\n  Overall mutation: {overall_mut:.1f}% {'PASS' if overall_mut >= 80 else 'FAIL'}")
+    print(
+        f"\n  Overall mutation: {overall_mut:.1f}% {'PASS' if overall_mut >= 80 else 'FAIL'}"
+    )
 
-    print(f"\n  --- Threshold Decision ---")
+    print("\n  --- Threshold Decision ---")
     all_pass = line_pct >= 80 and branch_pct >= 80 and overall_mut >= 80
     if all_pass:
         print("  STATE A — THRESHOLD ACHIEVED")
@@ -226,9 +253,11 @@ def cmd_threshold_assessment() -> int:
 def main(argv: list[str]) -> int:
     """Dispatch C56 convergence commands."""
     if not argv:
-        print("C56 command required: convergence-status, coverage-analysis, "
-              "mutation-analysis, gap-analysis, convergence-plan, threshold-assessment",
-              file=sys.stderr)
+        print(
+            "C56 command required: convergence-status, coverage-analysis, "
+            "mutation-analysis, gap-analysis, convergence-plan, threshold-assessment",
+            file=sys.stderr,
+        )
         return 1
 
     command = argv[0]

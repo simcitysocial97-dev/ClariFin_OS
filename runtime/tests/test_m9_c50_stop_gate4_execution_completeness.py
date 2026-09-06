@@ -8,7 +8,6 @@ sees the execution.
 
 from __future__ import annotations
 
-import inspect
 from types import SimpleNamespace
 
 from runtime.foundation.verification.evidence_planner import PlannedTask
@@ -77,9 +76,9 @@ def _plan_with(*tasks: PlannedTask):
 
 
 def test_all_promised_kinds_have_adapters():
-    assert set(ADAPTERS) >= EXPECTED_KINDS, (
-        f"missing adapters: {sorted(EXPECTED_KINDS - set(ADAPTERS))}"
-    )
+    assert (
+        set(ADAPTERS) >= EXPECTED_KINDS
+    ), f"missing adapters: {sorted(EXPECTED_KINDS - set(ADAPTERS))}"
 
 
 def test_every_kind_produces_executable_task_with_evidence():
@@ -91,9 +90,9 @@ def test_every_kind_produces_executable_task_with_evidence():
     # classified as not_executable_yet — never silently dropped).
     for t in all_tasks:
         assert t.evidence_kind, f"kind={t.verification_kind} emits no evidence"
-        assert t.expected_artifact or t.executable == "not_executable_yet", (
-            f"kind={t.verification_kind} declares no expected artifact"
-        )
+        assert (
+            t.expected_artifact or t.executable == "not_executable_yet"
+        ), f"kind={t.verification_kind} declares no expected artifact"
 
 
 def test_planner_executor_identity_match():
@@ -135,7 +134,9 @@ def test_execution_failure_propagates_to_failed_obligation():
         verification_kind="unit",
         completion_state="failed",
     )
-    res = reconcile_obligations(ObligationSet(set_id="sg4", obligations=(ob,)), [failing])
+    res = reconcile_obligations(
+        ObligationSet(set_id="sg4", obligations=(ob,)), [failing]
+    )
     assert not res.complete
     assert res.obligations[0].disposition == Disposition.FAILED
     assert res.obligations[0].is_closed() is False
@@ -144,5 +145,6 @@ def test_execution_failure_propagates_to_failed_obligation():
 def test_reconciliation_module_exists_and_callable():
     """The obligation_reconciliation module exists and provides reconciliation."""
     from runtime.foundation.verification import obligation_reconciliation
+
     assert hasattr(obligation_reconciliation, "reconcile_obligations")
     assert callable(obligation_reconciliation.reconcile_obligations)

@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -104,7 +104,9 @@ def build_disposition(
     return chain, dep
 
 
-def write_report(path: str | Path = "runtime/generated/m9-c48/aggregator-obsolete-disposition.json") -> Path:
+def write_report(
+    path: str | Path = "runtime/generated/m9-c48/aggregator-obsolete-disposition.json",
+) -> Path:
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
     chain, dep = build_disposition()

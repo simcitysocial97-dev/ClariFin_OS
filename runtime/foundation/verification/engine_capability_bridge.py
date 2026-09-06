@@ -21,9 +21,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
-
 
 # Capability IDs are derived deterministically: "<engine>-engine" except for
 # the four that are NOT engines (core_domain_money, common_calculations,
@@ -70,6 +69,7 @@ class EngineCapabilityRecord:
 
 def _load_engine_selection() -> dict[str, Any]:
     from runtime.foundation.verification.mutation_contract import ENGINE_SELECTION
+
     return ENGINE_SELECTION
 
 
@@ -86,7 +86,9 @@ def engine_capability_records() -> list[EngineCapabilityRecord]:
     for engine_name, sel in engines.items():
         records.append(
             EngineCapabilityRecord(
-                id=_ENGINE_CAPABILITY_SLUG.get(engine_name, engine_name.replace("_", "-")),
+                id=_ENGINE_CAPABILITY_SLUG.get(
+                    engine_name, engine_name.replace("_", "-")
+                ),
                 engine=engine_name,
                 source_paths=tuple(sel.source_paths),
                 test_selection=tuple(sel.test_selection),

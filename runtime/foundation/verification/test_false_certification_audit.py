@@ -6,8 +6,6 @@ Tests that ensure the verification infrastructure cannot produce false positives
 
 from __future__ import annotations
 
-import pytest
-
 
 class TestNoFalsePositives:
     """Audit tests to prevent false certifications."""
@@ -172,12 +170,12 @@ class TestSchemaDriftDetection:
             total_lines=1170,
         )
 
-        assert isinstance(evidence.covered_lines, int), (
-            f"covered_lines should be int, got {type(evidence.covered_lines)}"
-        )
-        assert isinstance(evidence.total_lines, int), (
-            f"total_lines should be int, got {type(evidence.total_lines)}"
-        )
+        assert isinstance(
+            evidence.covered_lines, int
+        ), f"covered_lines should be int, got {type(evidence.covered_lines)}"
+        assert isinstance(
+            evidence.total_lines, int
+        ), f"total_lines should be int, got {type(evidence.total_lines)}"
 
     def test_verification_evidence_serializes_correctly(self) -> None:
         """VerificationEvidence serializes commit_sha correctly."""
@@ -210,9 +208,9 @@ class TestCoverageGaps:
             total_lines=100,
         )
 
-        assert evidence.percentage == 0.0, (
-            "Components with 0% coverage should have 0.0 percentage"
-        )
+        assert (
+            evidence.percentage == 0.0
+        ), "Components with 0% coverage should have 0.0 percentage"
 
     def test_coverage_calculation_correct(self) -> None:
         """Coverage percentage is calculated correctly."""
@@ -225,9 +223,9 @@ class TestCoverageGaps:
         )
 
         calculated = (evidence.covered_lines / evidence.total_lines) * 100
-        assert abs(calculated - evidence.percentage) < 0.01, (
-            f"Coverage calculation incorrect: expected ~{calculated}, got {evidence.percentage}"
-        )
+        assert (
+            abs(calculated - evidence.percentage) < 0.01
+        ), f"Coverage calculation incorrect: expected ~{calculated}, got {evidence.percentage}"
 
 
 class TestMutationSurvivors:
@@ -259,10 +257,12 @@ class TestMutationSurvivors:
             survived=20,
         )
 
-        calculated_score = (evidence.killed / (evidence.killed + evidence.survived)) * 100
-        assert abs(calculated_score - evidence.score) < 0.01, (
-            f"Mutation score incorrect: expected ~{calculated_score}, got {evidence.score}"
-        )
+        calculated_score = (
+            evidence.killed / (evidence.killed + evidence.survived)
+        ) * 100
+        assert (
+            abs(calculated_score - evidence.score) < 0.01
+        ), f"Mutation score incorrect: expected ~{calculated_score}, got {evidence.score}"
 
 
 class TestCertificationAudit:

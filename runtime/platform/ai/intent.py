@@ -13,8 +13,6 @@ from typing import Any
 from runtime.foundation.verification.capability_catalog import (
     get_capability_catalog,
 )
-from runtime.platform.api.contracts.ai import AIMode, AIStatus
-
 
 # ---------------------------------------------------------------------------
 # Intent classification
@@ -56,20 +54,70 @@ class ResolvedIntent:
 INTENT_PATTERNS: list[tuple[str, str, int, list[str]]] = [
     # (pattern, intent_type, required_level, suggested_capabilities)
     # Order matters - more specific patterns first
-    (r"\b(verify|run.verification|execute.verification)\b", "verify", 1, ["execute.verification-run"]),
+    (
+        r"\b(verify|run.verification|execute.verification)\b",
+        "verify",
+        1,
+        ["execute.verification-run"],
+    ),
     (r"\b(run|check|test|exec|execute)\b", "verify", 1, ["execute.verification-run"]),
-    (r"\b(diagnos|root.cause|why|what.caused|investigat)\b", "diagnose", 1, ["execute.diagnostic-engine"]),
-    (r"\b(change|diff|delta|compare|affected)\b", "analyze", 1, ["discover.blast-radius", "discover.what-should-i-run"]),
-    (r"\b(history|past|previous|last|baseline|compare)\b", "analyze", 1, ["discover.blast-radius"]),
-    (r"\b(evidence|proof|artifact|integrity)\b", "analyze", 1, ["execute.evidence-collection"]),
-    (r"\b(patch|fix|create|write|modify|refactor|implement|add|delete)\b", "develop", 2, []),
-    (r"\b(test|coverage|mutation|property)\b", "develop", 2, ["execute.test-generation"]),
+    (
+        r"\b(diagnos|root.cause|why|what.caused|investigat)\b",
+        "diagnose",
+        1,
+        ["execute.diagnostic-engine"],
+    ),
+    (
+        r"\b(change|diff|delta|compare|affected)\b",
+        "analyze",
+        1,
+        ["discover.blast-radius", "discover.what-should-i-run"],
+    ),
+    (
+        r"\b(history|past|previous|last|baseline|compare)\b",
+        "analyze",
+        1,
+        ["discover.blast-radius"],
+    ),
+    (
+        r"\b(evidence|proof|artifact|integrity)\b",
+        "analyze",
+        1,
+        ["execute.evidence-collection"],
+    ),
+    (
+        r"\b(patch|fix|create|write|modify|refactor|implement|add|delete)\b",
+        "develop",
+        2,
+        [],
+    ),
+    (
+        r"\b(test|coverage|mutation|property)\b",
+        "develop",
+        2,
+        ["execute.test-generation"],
+    ),
     (r"\b(deploy|migrate|rollback|backup|restore|provision)\b", "operate", 3, []),
     (r"\b(admin|authoriz|policy|security|secret|credential)\b", "administer", 4, []),
-    (r"\b(health|status|overview|summary|dashboard)\b", "observe", 0, ["discover.blast-radius"]),
+    (
+        r"\b(health|status|overview|summary|dashboard)\b",
+        "observe",
+        0,
+        ["discover.blast-radius"],
+    ),
     (r"\b(capabilit(y|ies)|list|show|enumerate)\b", "observe", 0, []),
-    (r"\b(architecture|boundar(y|ies)|duplicate|bypass|deprecat|unmapped)\b", "observe", 0, ["discover.blast-radius"]),
-    (r"\b(error|fail|issue|bug|problem|recurring)\b", "diagnose", 1, ["execute.diagnostic-engine"]),
+    (
+        r"\b(architecture|boundar(y|ies)|duplicate|bypass|deprecat|unmapped)\b",
+        "observe",
+        0,
+        ["discover.blast-radius"],
+    ),
+    (
+        r"\b(error|fail|issue|bug|problem|recurring)\b",
+        "diagnose",
+        1,
+        ["execute.diagnostic-engine"],
+    ),
 ]
 
 
@@ -78,7 +126,9 @@ INTENT_PATTERNS: list[tuple[str, str, int, list[str]]] = [
 # ---------------------------------------------------------------------------
 
 
-def resolve_intent(user_input: str, *, context: dict[str, Any] | None = None) -> dict[str, Any]:
+def resolve_intent(
+    user_input: str, *, context: dict[str, Any] | None = None
+) -> dict[str, Any]:
     """Resolve a natural language request to a structured intent.
 
     Returns a dict with: intent_type, confidence, required_level, capabilities, rationale.
@@ -91,7 +141,15 @@ def resolve_intent(user_input: str, *, context: dict[str, Any] | None = None) ->
         if match_count > 0:
             # Simple scoring: more matches = higher confidence
             confidence = min(0.5 + (match_count * 0.15), 1.0)
-            matches.append((intent_type, confidence, level, caps, f"matched '{pattern}' {match_count}x"))
+            matches.append(
+                (
+                    intent_type,
+                    confidence,
+                    level,
+                    caps,
+                    f"matched '{pattern}' {match_count}x",
+                )
+            )
 
     if not matches:
         return {

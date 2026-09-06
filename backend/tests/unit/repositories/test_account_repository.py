@@ -13,7 +13,6 @@ from __future__ import annotations
 import sqlite3
 
 import pytest
-
 from src.repositories.account_repository import AccountRepository
 
 
@@ -22,8 +21,7 @@ def populated_accounts_db(temp_db: str) -> str:
     """Populate a temp DB with a small set of accounts across types/banks."""
     conn = sqlite3.connect(temp_db)
     conn.execute("PRAGMA foreign_keys=ON")
-    conn.execute(
-        """
+    conn.execute("""
         CREATE TABLE IF NOT EXISTS accounts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -38,8 +36,7 @@ def populated_accounts_db(temp_db: str) -> str:
             created_at TEXT DEFAULT (datetime('now')),
             updated_at TEXT DEFAULT (datetime('now'))
         )
-        """
-    )
+        """)
     rows = [
         ("Savings A", "Bank1", "savings", "1234", 100000, 1),
         ("Current B", "Bank2", "current", "5678", 200000, 1),
@@ -128,9 +125,7 @@ class TestAccountRepository:
         result = repo.deactivate_account(99999)
         assert result is False
 
-    def test_list_accounts_returns_all(
-        self, populated_accounts_db: str
-    ) -> None:
+    def test_list_accounts_returns_all(self, populated_accounts_db: str) -> None:
         """list_accounts returns active accounts (excludes inactive by default)."""
         repo = AccountRepository(db_path=populated_accounts_db)
         result = repo.list_accounts()

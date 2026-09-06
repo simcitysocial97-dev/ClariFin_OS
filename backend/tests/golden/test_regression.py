@@ -104,16 +104,21 @@ class TestGoldenDatasets:
         data = _load_golden_dataset("financial_forecast")
         forecast = data["expected_forecast"]["6_month_projection"]
 
-        assert forecast["monthly_surplus_paise"] > 0, "Should have positive monthly surplus"
-        assert forecast["total_income_paise"] == 6 * data["household"]["monthly_income_paise"], (
-            "6-month income should be 6x monthly income"
-        )
-        assert forecast["total_expenses_paise"] == 6 * data["household"]["monthly_expenses_paise"], (
-            "6-month expenses should be 6x monthly expenses"
-        )
-        assert forecast["total_savings_paise"] == forecast["total_income_paise"] - forecast["total_expenses_paise"], (
-            "Total savings should be income minus expenses"
-        )
+        assert (
+            forecast["monthly_surplus_paise"] > 0
+        ), "Should have positive monthly surplus"
+        assert (
+            forecast["total_income_paise"]
+            == 6 * data["household"]["monthly_income_paise"]
+        ), "6-month income should be 6x monthly income"
+        assert (
+            forecast["total_expenses_paise"]
+            == 6 * data["household"]["monthly_expenses_paise"]
+        ), "6-month expenses should be 6x monthly expenses"
+        assert (
+            forecast["total_savings_paise"]
+            == forecast["total_income_paise"] - forecast["total_expenses_paise"]
+        ), "Total savings should be income minus expenses"
 
     def test_investment_portfolio_regression(self):
         """Investment portfolio total value regression."""
@@ -131,9 +136,9 @@ class TestGoldenDatasets:
             f"expected ({portfolio['total_value_paise']})"
         )
 
-        assert 0 <= portfolio["diversification_score"] <= 1, (
-            f"Diversification score should be 0-1, got {portfolio['diversification_score']}"
-        )
+        assert (
+            0 <= portfolio["diversification_score"] <= 1
+        ), f"Diversification score should be 0-1, got {portfolio['diversification_score']}"
 
     def test_reconciliation_match_regression(self):
         """Reconciliation match confidence regression."""
@@ -142,13 +147,13 @@ class TestGoldenDatasets:
 
         assert len(matches) > 0, "Should have reconciliation matches"
         for match in matches:
-            assert match["confidence_bps"] >= 8000, (
-                f"Match confidence should be >= 8000 bps, got {match['confidence_bps']}"
-            )
+            assert (
+                match["confidence_bps"] >= 8000
+            ), f"Match confidence should be >= 8000 bps, got {match['confidence_bps']}"
             assert match["amount_paise"] > 0, "Match amount should be positive"
-            assert match["debit_txn_id"] != match["credit_txn_id"], (
-                "Debit and credit transactions should be different"
-            )
+            assert (
+                match["debit_txn_id"] != match["credit_txn_id"]
+            ), "Debit and credit transactions should be different"
 
 
 class TestGoldenDatasetPaisePrecision:
@@ -205,10 +210,14 @@ def _validate_paise_in_data(obj, path: str) -> None:
     if isinstance(obj, dict):
         for key, value in obj.items():
             current_path = f"{path}.{key}"
-            if key.endswith("_paise") and isinstance(value, (int, float)) and not isinstance(value, bool):
-                assert isinstance(value, int), (
-                    f"{current_path} should be int (paise), got {type(value).__name__}"
-                )
+            if (
+                key.endswith("_paise")
+                and isinstance(value, (int, float))
+                and not isinstance(value, bool)
+            ):
+                assert isinstance(
+                    value, int
+                ), f"{current_path} should be int (paise), got {type(value).__name__}"
             else:
                 _validate_paise_in_data(value, current_path)
     elif isinstance(obj, list):
@@ -222,7 +231,10 @@ class TestGoldenDatasetInvariants:
     def test_total_balance_invariant(self):
         """Sum of account balances should match or approximate total_balance_paise."""
         data = _load_golden_dataset("normal_household")
-        if "expected_account_metrics" in data and "balance_metrics" in data["expected_account_metrics"]:
+        if (
+            "expected_account_metrics" in data
+            and "balance_metrics" in data["expected_account_metrics"]
+        ):
             balance_metrics = data["expected_account_metrics"]["balance_metrics"]
             if "total_balance_paise" in balance_metrics and "accounts" in data:
                 calculated = sum(acc["balance_paise"] for acc in data["accounts"])
@@ -235,9 +247,19 @@ class TestGoldenDatasetInvariants:
     def test_income_expense_invariant(self):
         """total_income - total_expenses = net_cashflow."""
         data = _load_golden_dataset("normal_household")
-        if "expected_account_metrics" in data and "cashflow_metrics" in data["expected_account_metrics"]:
+        if (
+            "expected_account_metrics" in data
+            and "cashflow_metrics" in data["expected_account_metrics"]
+        ):
             cf = data["expected_account_metrics"]["cashflow_metrics"]
-            if all(k in cf for k in ["total_income_paise", "total_expenses_paise", "net_cashflow_paise"]):
+            if all(
+                k in cf
+                for k in [
+                    "total_income_paise",
+                    "total_expenses_paise",
+                    "net_cashflow_paise",
+                ]
+            ):
                 calculated = cf["total_income_paise"] - cf["total_expenses_paise"]
                 assert calculated == cf["net_cashflow_paise"], (
                     f"Income ({cf['total_income_paise']}) - Expenses ({cf['total_expenses_paise']}) "
@@ -262,7 +284,12 @@ class TestGoldenDatasetInvariants:
             reconcil = data["expected_reconciliation"]
             all_debit_ids = []
             all_credit_ids = []
-            for match_type in ["exact_matches", "window_matches", "duplicate_matches", "recurring_matches"]:
+            for match_type in [
+                "exact_matches",
+                "window_matches",
+                "duplicate_matches",
+                "recurring_matches",
+            ]:
                 if match_type in reconcil:
                     for m in reconcil[match_type]:
                         all_debit_ids.append(m.get("debit_txn_id"))

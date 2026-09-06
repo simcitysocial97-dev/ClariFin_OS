@@ -71,9 +71,10 @@ def _extract_verify_commands(workflow_path: Path) -> list[str]:
 class TestCIWorkflowsUseCanonicalCommands:
     """Every CI workflow must use only canonical commands."""
 
-    @pytest.fixture(params=[
-        f for f in WORKFLOWS_DIR.glob("*.yml") if f.is_file()
-    ], ids=lambda p: p.name)
+    @pytest.fixture(
+        params=[f for f in WORKFLOWS_DIR.glob("*.yml") if f.is_file()],
+        ids=lambda p: p.name,
+    )
     def workflow(self, request):
         return request.param
 
@@ -92,11 +93,15 @@ class TestCIWorkflowsUseCanonicalCommands:
 
     def test_workflow_commands_are_recognized(self, workflow):
         pass  # skipped: workflows use legacy verify.py commands
+
+
 class TestNoLegacyCommandsInAnyWorkflow:
     """Global check: no legacy command appears in any workflow."""
 
     def test_no_legacy_commands_globally(self):
         pass  # skipped: workflows use legacy verify.py commands
+
+
 class TestCanonicalCommandsDispatch:
     """Verify that canonical commands actually dispatch correctly."""
 
@@ -106,7 +111,9 @@ class TestCanonicalCommandsDispatch:
         from runtime.foundation.verification.canonical_control_plane import (
             classification_for,
         )
+
         classification = classification_for(cmd)
-        assert classification in ("CANONICAL", "CANONICAL_ALIAS"), (
-            f"Canonical command '{cmd}' has classification '{classification}'"
-        )
+        assert classification in (
+            "CANONICAL",
+            "CANONICAL_ALIAS",
+        ), f"Canonical command '{cmd}' has classification '{classification}'"

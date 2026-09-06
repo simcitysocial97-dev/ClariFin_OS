@@ -7,7 +7,6 @@ and emits machine-readable artifacts under runtime/generated/m9-c50/final-freeze
 from __future__ import annotations
 
 import json
-import os
 import subprocess
 import sys
 import traceback
@@ -18,38 +17,37 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 from runtime.foundation.verification.executor_pipeline import (  # noqa: E402
+    _TRANSITIONS,
     ADAPTERS,
     CANONICAL_PYTEST_TARGETS,
-    ExecutionEvidence,
+    VALID_STATES,
     ExecutableVerificationTask,
+    ExecutionEvidence,
     FailureKind,
     IdentityKind,
     LineageViolationError,
-    VALID_STATES,
-    _TRANSITIONS,
     assert_valid_transition,
     collect_repo_fingerprints,
-    compute_identity,
     derive_decision,
     environment_identity,
     evaluate_cache,
+    evidence_identity,
     execute_task,
     fault_injection_smoke,
-    is_valid_transition,
     task_identity,
-    evidence_identity,
 )
 
 OUT_DIR = REPO_ROOT / "runtime" / "generated" / "m9-c50" / "final-freeze"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 REPO_SHA = subprocess.run(
-    ["git", "rev-parse", "HEAD"],
-    cwd=str(REPO_ROOT), capture_output=True, text=True
+    ["git", "rev-parse", "HEAD"], cwd=str(REPO_ROOT), capture_output=True, text=True
 ).stdout.strip()
 BRANCH = subprocess.run(
     ["git", "rev-parse", "--abbrev-ref", "HEAD"],
-    cwd=str(REPO_ROOT), capture_output=True, text=True
+    cwd=str(REPO_ROOT),
+    capture_output=True,
+    text=True,
 ).stdout.strip()
 NOW = datetime.now(UTC).isoformat()
 
@@ -90,7 +88,9 @@ def a1_execution_architecture() -> dict:
             "evaluate_cache() -> CacheDecision",
             "derive_decision() -> VerificationDecision",
         ],
-        "identity_kinds": [v for v in vars(IdentityKind).values() if isinstance(v, str)],
+        "identity_kinds": [
+            v for v in vars(IdentityKind).values() if isinstance(v, str)
+        ],
         "valid_states": sorted(VALID_STATES),
         "adapters_registered": sorted(ADAPTERS.keys()),
         "canonical_pytest_targets": {
@@ -182,6 +182,7 @@ def a2_adapter_semantic_audit() -> dict:
         target = "credit_card_engine" if kind == "mutation" else "money"
         fps = collect_repo_fingerprints(target)
         from runtime.foundation.verification.evidence_planner import PlannedTask
+
         p = PlannedTask(
             task_id=f"audit::{kind}::{target}",
             target=target,
@@ -224,9 +225,7 @@ def a2_adapter_semantic_audit() -> dict:
                     "command": ev.command,
                     "exit_code": ev.exit_code,
                     "duration_seconds": ev.duration_seconds,
-                    "artifact_exists": any(
-                        Path(a).exists() for a in ev.artifact_paths
-                    ),
+                    "artifact_exists": any(Path(a).exists() for a in ev.artifact_paths),
                 }
             except Exception as exc:
                 real_execution = {"error": str(exc)}
@@ -245,8 +244,7 @@ def a2_adapter_semantic_audit() -> dict:
             ),
         }
     audit["summary"] = {
-        kind: audit["kinds"][kind]["classification"]
-        for kind in audit["kinds"]
+        kind: audit["kinds"][kind]["classification"] for kind in audit["kinds"]
     }
     return audit
 
@@ -299,7 +297,7 @@ def a3_execution_authenticity() -> dict:
         test_fingerprint=fps.test,
         config_fingerprint=fps.config,
         toolchain_fingerprint=fps.toolchain,
-    reason="audit",
+        reason="audit",
     )
     decision = derive_decision(
         obligation_id="obl::forged",
@@ -316,6 +314,7 @@ def a3_execution_authenticity() -> dict:
     artifact = REPO_ROOT / "runtime" / "generated" / "m9-c50.13" / "junit-forged.xml"
     if artifact.exists():
         from runtime.foundation.verification.env import hash_file
+
         real_artifact_sha = hash_file(artifact)
     env_id = environment_identity(
         {
@@ -371,7 +370,7 @@ def a4_lineage_invariants() -> dict:
         test_fingerprint=fps.test,
         config_fingerprint=fps.config,
         toolchain_fingerprint=fps.toolchain,
-    reason="audit",
+        reason="audit",
     )
     valid_evidence = ExecutionEvidence(
         execution_id="runtime.verification::exec::aaaaaaaaaaaaaa",
@@ -391,7 +390,11 @@ def a4_lineage_invariants() -> dict:
         config_fingerprint=fps.config,
         toolchain_fingerprint=fps.toolchain,
         repository_sha=REPO_SHA,
-        artifact_paths=(str(REPO_ROOT / "runtime" / "generated" / "m9-c50.13" / "junit-lineage.xml"),),
+        artifact_paths=(
+            str(
+                REPO_ROOT / "runtime" / "generated" / "m9-c50.13" / "junit-lineage.xml"
+            ),
+        ),
         notes="runtime.verification::ev::aaaaaaaaaaaaaa",
     )
     invariants = {}
@@ -402,50 +405,93 @@ def a4_lineage_invariants() -> dict:
         component="money",
         capability="money",
         verification_kind="invariant",
-        started_at=NOW, completed_at=NOW, duration_seconds=0.0,
-        command=valid_task.execution_command, exit_code=0,
-        failure_kind=None, failure_message="",
-        artifact_paths=(), notes="",
+        started_at=NOW,
+        completed_at=NOW,
+        duration_seconds=0.0,
+        command=valid_task.execution_command,
+        exit_code=0,
+        failure_kind=None,
+        failure_message="",
+        artifact_paths=(),
+        notes="",
     )
     try:
-        derive_decision(obligation_id="obl::x", task=valid_task, evidence=bad, reconciliation_id="rec::x")
+        derive_decision(
+            obligation_id="obl::x",
+            task=valid_task,
+            evidence=bad,
+            reconciliation_id="rec::x",
+        )
         invariants["evidence_without_execution_id_rejected"] = False
     except LineageViolationError:
         invariants["evidence_without_execution_id_rejected"] = True
     # 2. evidence without notes
     bad2 = ExecutionEvidence(
         execution_id="runtime.verification::exec::bb",
-        task_id=valid_task.task_id, component="money", capability="money",
-        verification_kind="invariant", started_at=NOW, completed_at=NOW,
-        duration_seconds=0.0, command="x", exit_code=0, failure_kind=None,
-        failure_message="", artifact_paths=(), notes="",
+        task_id=valid_task.task_id,
+        component="money",
+        capability="money",
+        verification_kind="invariant",
+        started_at=NOW,
+        completed_at=NOW,
+        duration_seconds=0.0,
+        command="x",
+        exit_code=0,
+        failure_kind=None,
+        failure_message="",
+        artifact_paths=(),
+        notes="",
     )
     try:
-        derive_decision(obligation_id="obl::x", task=valid_task, evidence=bad2, reconciliation_id="rec::x")
+        derive_decision(
+            obligation_id="obl::x",
+            task=valid_task,
+            evidence=bad2,
+            reconciliation_id="rec::x",
+        )
         invariants["evidence_without_evidence_id_rejected"] = False
     except LineageViolationError:
         invariants["evidence_without_evidence_id_rejected"] = True
     # 3. decision without task
     try:
-        derive_decision(obligation_id="obl::x", task=None, evidence=valid_evidence, reconciliation_id="rec::x")
+        derive_decision(
+            obligation_id="obl::x",
+            task=None,
+            evidence=valid_evidence,
+            reconciliation_id="rec::x",
+        )
         invariants["decision_without_task_rejected"] = False
     except LineageViolationError:
         invariants["decision_without_task_rejected"] = True
     # 4. decision without evidence
     try:
-        derive_decision(obligation_id="obl::x", task=valid_task, evidence=None, reconciliation_id="rec::x")
+        derive_decision(
+            obligation_id="obl::x",
+            task=valid_task,
+            evidence=None,
+            reconciliation_id="rec::x",
+        )
         invariants["decision_without_evidence_rejected"] = False
     except LineageViolationError:
         invariants["decision_without_evidence_rejected"] = True
     # 5. execute_task on not_executable
     ne = ExecutableVerificationTask(
-        task_id="task::ne", component="x", capability="x",
-        verification_kind="invariant", source_task_id="s",
-        execution_command="", working_directory=str(REPO_ROOT),
-        required_environment=(), evidence_kind="not_executable_yet",
-        expected_artifact="", timeout_policy=0,
-        source_fingerprint="", test_fingerprint="", config_fingerprint="",
-        toolchain_fingerprint="", executable="not_executable_yet",
+        task_id="task::ne",
+        component="x",
+        capability="x",
+        verification_kind="invariant",
+        source_task_id="s",
+        execution_command="",
+        working_directory=str(REPO_ROOT),
+        required_environment=(),
+        evidence_kind="not_executable_yet",
+        expected_artifact="",
+        timeout_policy=0,
+        source_fingerprint="",
+        test_fingerprint="",
+        config_fingerprint="",
+        toolchain_fingerprint="",
+        executable="not_executable_yet",
         reason="audit",
     )
     try:
@@ -485,7 +531,7 @@ def a5_decision_authority() -> dict:
         test_fingerprint=fps.test,
         config_fingerprint=fps.config,
         toolchain_fingerprint=fps.toolchain,
-    reason="audit",
+        reason="audit",
     )
     ev = execute_task(real_task, per_step_timeout=60)
     dec = derive_decision(
@@ -498,15 +544,21 @@ def a5_decision_authority() -> dict:
     cache_decision = evaluate_cache(
         task_identity_str="task::auth",
         environment_identity_str=environment_identity(
-            {"python": sys.executable, "cwd": str(REPO_ROOT),
-             "fingerprint_toolchain": fps.toolchain,
-             "fingerprint_config": fps.config}
+            {
+                "python": sys.executable,
+                "cwd": str(REPO_ROOT),
+                "fingerprint_toolchain": fps.toolchain,
+                "fingerprint_config": fps.config,
+            }
         ),
         prior_evidence=ev,
         current_environment_identity=environment_identity(
-            {"python": sys.executable, "cwd": str(REPO_ROOT),
-             "fingerprint_toolchain": fps.toolchain,
-             "fingerprint_config": fps.config}
+            {
+                "python": sys.executable,
+                "cwd": str(REPO_ROOT),
+                "fingerprint_toolchain": fps.toolchain,
+                "fingerprint_config": fps.config,
+            }
         ),
         change_fingerprint="cf::same",
     )
@@ -528,9 +580,12 @@ def a6_cache_semantics() -> dict:
     header("A6 — cache semantics")
     fps = collect_repo_fingerprints("money")
     env_id = environment_identity(
-        {"python": sys.executable, "cwd": str(REPO_ROOT),
-         "fingerprint_toolchain": fps.toolchain,
-         "fingerprint_config": fps.config}
+        {
+            "python": sys.executable,
+            "cwd": str(REPO_ROOT),
+            "fingerprint_toolchain": fps.toolchain,
+            "fingerprint_config": fps.config,
+        }
     )
     # First, execute a real task to produce a real evidence with a real
     # artifact on disk so the REUSE case can succeed.
@@ -557,7 +612,7 @@ def a6_cache_semantics() -> dict:
         reason="audit: cache reuse",
     )
     real_evidence = execute_task(reuse_task, per_step_timeout=60)
-    artifact_path = str(REPO_ROOT / "runtime" / "generated" / "m9-c50.13" / "junit-cache-reuse.xml")
+    str(REPO_ROOT / "runtime" / "generated" / "m9-c50.13" / "junit-cache-reuse.xml")
     # REUSE: same task, same env, valid evidence, valid artifact on disk
     reuse = evaluate_cache(
         task_identity_str="task::reuse::money",
@@ -579,11 +634,26 @@ def a6_cache_semantics() -> dict:
         environment_identity_str=env_id,
         prior_evidence=ExecutionEvidence(
             execution_id="runtime.verification::exec::cache1",
-            task_id="t", component="money", capability="money",
-            verification_kind="invariant", started_at=NOW, completed_at=NOW,
-            duration_seconds=0.0, command="x", exit_code=0, failure_kind=None,
+            task_id="t",
+            component="money",
+            capability="money",
+            verification_kind="invariant",
+            started_at=NOW,
+            completed_at=NOW,
+            duration_seconds=0.0,
+            command="x",
+            exit_code=0,
+            failure_kind=None,
             failure_message="",
-            artifact_paths=(str(REPO_ROOT / "runtime" / "generated" / "m9-c50.13" / "junit-lineage.xml"),),
+            artifact_paths=(
+                str(
+                    REPO_ROOT
+                    / "runtime"
+                    / "generated"
+                    / "m9-c50.13"
+                    / "junit-lineage.xml"
+                ),
+            ),
             notes="runtime.verification::ev::cache1",
         ),
         current_environment_identity="env::different",
@@ -595,11 +665,26 @@ def a6_cache_semantics() -> dict:
         environment_identity_str=env_id,
         prior_evidence=ExecutionEvidence(
             execution_id="runtime.verification::exec::cache1",
-            task_id="t", component="money", capability="money",
-            verification_kind="invariant", started_at=NOW, completed_at=NOW,
-            duration_seconds=0.0, command="x", exit_code=0, failure_kind=None,
+            task_id="t",
+            component="money",
+            capability="money",
+            verification_kind="invariant",
+            started_at=NOW,
+            completed_at=NOW,
+            duration_seconds=0.0,
+            command="x",
+            exit_code=0,
+            failure_kind=None,
             failure_message="",
-            artifact_paths=(str(REPO_ROOT / "runtime" / "generated" / "m9-c50.13" / "missing-artifact.xml"),),
+            artifact_paths=(
+                str(
+                    REPO_ROOT
+                    / "runtime"
+                    / "generated"
+                    / "m9-c50.13"
+                    / "missing-artifact.xml"
+                ),
+            ),
             notes="runtime.verification::ev::cache1",
         ),
         current_environment_identity=env_id,
@@ -611,10 +696,17 @@ def a6_cache_semantics() -> dict:
         environment_identity_str=env_id,
         prior_evidence=ExecutionEvidence(
             execution_id="runtime.verification::exec::cache1",
-            task_id="t", component="money", capability="money",
-            verification_kind="invariant", started_at=NOW, completed_at=NOW,
-            duration_seconds=0.0, command="x", exit_code=1,
-            failure_kind=FailureKind.VERIFICATION, failure_message="x",
+            task_id="t",
+            component="money",
+            capability="money",
+            verification_kind="invariant",
+            started_at=NOW,
+            completed_at=NOW,
+            duration_seconds=0.0,
+            command="x",
+            exit_code=1,
+            failure_kind=FailureKind.VERIFICATION,
+            failure_message="x",
             artifact_paths=(),
             notes="runtime.verification::ev::cache1",
         ),
@@ -672,7 +764,7 @@ def a7_ci_parity() -> dict:
         test_fingerprint=fps.test,
         config_fingerprint=fps.config,
         toolchain_fingerprint=fps.toolchain,
-    reason="audit",
+        reason="audit",
     )
     ev = execute_task(t, per_step_timeout=60)
     artifact_exists = Path(t.expected_artifact).exists()
@@ -700,7 +792,9 @@ def a8_self_verification() -> dict:
     # Categorize which faults cross the canonical execute_task boundary
     cross_boundary_faults = {"failed_executor"}
     cross_boundary_detected = [
-        r for r in fi["results"] if r["fault"] in cross_boundary_faults and r["detected"]
+        r
+        for r in fi["results"]
+        if r["fault"] in cross_boundary_faults and r["detected"]
     ]
     detector_only = [
         r for r in fi["results"] if r["fault"] not in cross_boundary_faults
@@ -727,43 +821,74 @@ def a9_runtime_health() -> dict:
     header("A9 — runtime health")
     sections = []
     # 1. control_plane
-    sections.append({
-        "domain": "control_plane",
-        "status": "HEALTHY" if True else "DEGRADED",
-        "test": "single canonical execute_task dispatcher exists",
-    })
+    sections.append(
+        {
+            "domain": "control_plane",
+            "status": "HEALTHY" if True else "DEGRADED",
+            "test": "single canonical execute_task dispatcher exists",
+        }
+    )
     # 2. capability_authority: try import
     try:
-        from runtime.foundation.verification.capability_authority import CapabilityAuthorityAudit
         cap_auth_ok = True
     except Exception:
         cap_auth_ok = False
-    sections.append({"domain": "capability_authority", "status": "HEALTHY" if cap_auth_ok else "DEGRADED"})
+    sections.append(
+        {
+            "domain": "capability_authority",
+            "status": "HEALTHY" if cap_auth_ok else "DEGRADED",
+        }
+    )
     # 3. planner
     try:
-        from runtime.foundation.verification.evidence_planner import default_planner
         planner_ok = True
     except Exception:
         planner_ok = False
-    sections.append({"domain": "planner", "status": "HEALTHY" if planner_ok else "DEGRADED"})
+    sections.append(
+        {"domain": "planner", "status": "HEALTHY" if planner_ok else "DEGRADED"}
+    )
     # 4. obligation_model
     try:
-        from runtime.foundation.verification.obligation import ObligationSet
         obl_ok = True
     except Exception:
         obl_ok = False
-    sections.append({"domain": "obligation_model", "status": "HEALTHY" if obl_ok else "DEGRADED"})
+    sections.append(
+        {"domain": "obligation_model", "status": "HEALTHY" if obl_ok else "DEGRADED"}
+    )
     # 5. task_model
     sections.append({"domain": "task_model", "status": "HEALTHY"})
     # 6. executor
     sections.append({"domain": "executor", "status": "HEALTHY"})
     # 7. adapter_registry
-    sections.append({"domain": "adapter_registry", "status": "HEALTHY" if len(ADAPTERS) == 8 else "DEGRADED", "details": {"count": len(ADAPTERS)}})
+    sections.append(
+        {
+            "domain": "adapter_registry",
+            "status": "HEALTHY" if len(ADAPTERS) == 8 else "DEGRADED",
+            "details": {"count": len(ADAPTERS)},
+        }
+    )
     # 8. execution_lifecycle
-    sections.append({"domain": "execution_lifecycle", "status": "HEALTHY" if "RECONCILED" in _TRANSITIONS and "DECIDED" in _TRANSITIONS.get("RECONCILED", set()) else "DEGRADED"})
+    sections.append(
+        {
+            "domain": "execution_lifecycle",
+            "status": (
+                "HEALTHY"
+                if "RECONCILED" in _TRANSITIONS
+                and "DECIDED" in _TRANSITIONS.get("RECONCILED", set())
+                else "DEGRADED"
+            ),
+        }
+    )
     # 9. evidence_contract
     from runtime.foundation.verification.capability_catalog import EVIDENCE_KINDS
-    sections.append({"domain": "evidence_contract", "status": "HEALTHY", "details": {"kind_count": len(EVIDENCE_KINDS)}})
+
+    sections.append(
+        {
+            "domain": "evidence_contract",
+            "status": "HEALTHY",
+            "details": {"kind_count": len(EVIDENCE_KINDS)},
+        }
+    )
     # 10. reconciliation
     sections.append({"domain": "reconciliation", "status": "HEALTHY"})
     # 11. cache
@@ -772,32 +897,43 @@ def a9_runtime_health() -> dict:
     fps = collect_repo_fingerprints("money")
     t = ExecutableVerificationTask(
         task_id="health::ci",
-        component="money", capability="money", verification_kind="invariant",
+        component="money",
+        capability="money",
+        verification_kind="invariant",
         source_task_id="src::health",
         execution_command=".venv/bin/python -m pytest backend/tests/invariants/test_determinism.py::test_replay_stability -q --junit-xml=runtime/generated/m9-c50.13/junit-health-ci.xml",
         working_directory=str(REPO_ROOT),
-        required_environment=(".venv",), evidence_kind="pytest-junit",
+        required_environment=(".venv",),
+        evidence_kind="pytest-junit",
         expected_artifact="runtime/generated/m9-c50.13/junit-health-ci.xml",
-        timeout_policy=60, source_fingerprint=fps.source,
-        test_fingerprint=fps.test, config_fingerprint=fps.config,
+        timeout_policy=60,
+        source_fingerprint=fps.source,
+        test_fingerprint=fps.test,
+        config_fingerprint=fps.config,
         toolchain_fingerprint=fps.toolchain,
-    reason="audit",
+        reason="audit",
     )
     try:
         ev = execute_task(t, per_step_timeout=60)
         ci_ok = ev.exit_code == 0
     except Exception:
         ci_ok = False
-    sections.append({"domain": "ci_parity", "status": "HEALTHY" if ci_ok else "DEGRADED"})
+    sections.append(
+        {"domain": "ci_parity", "status": "HEALTHY" if ci_ok else "DEGRADED"}
+    )
     # 13. legacy_bypass
     sections.append({"domain": "legacy_bypass", "status": "HEALTHY"})
     # 14. lineage_integrity (behavioral)
     fi = fault_injection_smoke()
-    sections.append({
-        "domain": "lineage_integrity",
-        "status": "HEALTHY" if fi["detected_faults"] == fi["total_faults"] else "DEGRADED",
-        "details": {"detected": fi["detected_faults"], "total": fi["total_faults"]},
-    })
+    sections.append(
+        {
+            "domain": "lineage_integrity",
+            "status": (
+                "HEALTHY" if fi["detected_faults"] == fi["total_faults"] else "DEGRADED"
+            ),
+            "details": {"detected": fi["detected_faults"], "total": fi["total_faults"]},
+        }
+    )
     healthy = sum(1 for s in sections if s["status"] == "HEALTHY")
     return {
         "schema": "m9-c50/final-freeze/runtime-health-acceptance@1",
@@ -841,11 +977,19 @@ def a10_governance_invariants() -> dict:
         "lifecycle_transitions_enforced": True,
     }
     # Verify the dispatch chain rejects a forged unsupported kind
-    from runtime.foundation.verification.executor_pipeline import _not_executable_adapter
+    from runtime.foundation.verification.executor_pipeline import (
+        _not_executable_adapter,
+    )
+
     fps = collect_repo_fingerprints("money")
     from runtime.foundation.verification.evidence_planner import PlannedTask
+
     p = PlannedTask(
-        task_id="t::x", target="x", task_kind="x", disposition="selected_fresh", cause="x",
+        task_id="t::x",
+        target="x",
+        task_kind="x",
+        disposition="selected_fresh",
+        cause="x",
     )
     ne = _not_executable_adapter(p, fps, "nonsense_kind")
     rejected_unsupported = ne.executable == "not_executable_yet"
@@ -864,7 +1008,9 @@ def a10_governance_invariants() -> dict:
             "unsupported_kind_rejected_by_dispatch": rejected_unsupported,
             "forbidden_transition_rejected": forbidden_rejected,
         },
-        "all_invariants_enforced": all(enforcement.values()) and rejected_unsupported and forbidden_rejected,
+        "all_invariants_enforced": all(enforcement.values())
+        and rejected_unsupported
+        and forbidden_rejected,
     }
 
 
@@ -875,16 +1021,22 @@ def a11_repository_boundary() -> dict:
     header("A11 — repository boundary")
     status = subprocess.run(
         ["git", "status", "--porcelain"],
-        cwd=str(REPO_ROOT), capture_output=True, text=True,
+        cwd=str(REPO_ROOT),
+        capture_output=True,
+        text=True,
     ).stdout
-    files = [l for l in status.splitlines() if l.strip()]
+    files = [line for line in status.splitlines() if line.strip()]
     in_scope = []
     out_of_scope = []
     for line in files:
         path = line[3:]
-        if path.startswith("runtime/foundation/verification/") or path.startswith("runtime/verify.py") or path.startswith("runtime/tests/test_m9_c50") or path.startswith("runtime/generated/m9-c50"):
-            in_scope.append(path)
-        elif path == "runtime/foundation/verification/capability_catalog_data.py":
+        if (
+            path.startswith("runtime/foundation/verification/")
+            or path.startswith("runtime/verify.py")
+            or path.startswith("runtime/tests/test_m9_c50")
+            or path.startswith("runtime/generated/m9-c50")
+            or path == "runtime/foundation/verification/capability_catalog_data.py"
+        ):
             in_scope.append(path)
         else:
             out_of_scope.append(path)
@@ -908,29 +1060,39 @@ def a12_reproducibility() -> dict:
     fps = collect_repo_fingerprints("money")
     t1 = ExecutableVerificationTask(
         task_id="task::repro::a",
-        component="money", capability="money", verification_kind="invariant",
+        component="money",
+        capability="money",
+        verification_kind="invariant",
         source_task_id="src::repro",
         execution_command=".venv/bin/python -m pytest backend/tests/invariants/test_determinism.py::test_replay_stability -q --junit-xml=runtime/generated/m9-c50.13/junit-repro-a.xml",
         working_directory=str(REPO_ROOT),
-        required_environment=(".venv",), evidence_kind="pytest-junit",
+        required_environment=(".venv",),
+        evidence_kind="pytest-junit",
         expected_artifact="runtime/generated/m9-c50.13/junit-repro-a.xml",
-        timeout_policy=60, source_fingerprint=fps.source,
-        test_fingerprint=fps.test, config_fingerprint=fps.config,
+        timeout_policy=60,
+        source_fingerprint=fps.source,
+        test_fingerprint=fps.test,
+        config_fingerprint=fps.config,
         toolchain_fingerprint=fps.toolchain,
-    reason="audit",
+        reason="audit",
     )
     t2 = ExecutableVerificationTask(
         task_id="task::repro::a",
-        component="money", capability="money", verification_kind="invariant",
+        component="money",
+        capability="money",
+        verification_kind="invariant",
         source_task_id="src::repro",
         execution_command=".venv/bin/python -m pytest backend/tests/invariants/test_determinism.py::test_replay_stability -q --junit-xml=runtime/generated/m9-c50.13/junit-repro-b.xml",
         working_directory=str(REPO_ROOT),
-        required_environment=(".venv",), evidence_kind="pytest-junit",
+        required_environment=(".venv",),
+        evidence_kind="pytest-junit",
         expected_artifact="runtime/generated/m9-c50.13/junit-repro-b.xml",
-        timeout_policy=60, source_fingerprint=fps.source,
-        test_fingerprint=fps.test, config_fingerprint=fps.config,
+        timeout_policy=60,
+        source_fingerprint=fps.source,
+        test_fingerprint=fps.test,
+        config_fingerprint=fps.config,
         toolchain_fingerprint=fps.toolchain,
-    reason="audit",
+        reason="audit",
     )
     # task_identity is fully deterministic from the inputs
     tid1 = task_identity("chg::1", "cap::money", "invariant", "money", "pol::1")
@@ -963,14 +1125,19 @@ def a13_failure_injection() -> dict:
     fps = collect_repo_fingerprints("money")
     fail_task = ExecutableVerificationTask(
         task_id="task::fail",
-        component="x", capability="x", verification_kind="invariant",
+        component="x",
+        capability="x",
+        verification_kind="invariant",
         source_task_id="src::fail",
         execution_command="bash -c 'exit 42'",
         working_directory=str(REPO_ROOT),
-        required_environment=(), evidence_kind="pytest-junit",
+        required_environment=(),
+        evidence_kind="pytest-junit",
         expected_artifact="runtime/generated/m9-c50.13/never.xml",
-        timeout_policy=30, source_fingerprint=fps.source,
-        test_fingerprint=fps.test, config_fingerprint=fps.config,
+        timeout_policy=30,
+        source_fingerprint=fps.source,
+        test_fingerprint=fps.test,
+        config_fingerprint=fps.config,
         toolchain_fingerprint=fps.toolchain,
         reason="audit: failing command",
         executable="executable",
@@ -979,7 +1146,9 @@ def a13_failure_injection() -> dict:
     failed_correctly = ev.failure_kind == FailureKind.VERIFICATION
     decision = derive_decision(
         obligation_id="obl::fail",
-        task=fail_task, evidence=ev, reconciliation_id="rec::fail",
+        task=fail_task,
+        evidence=ev,
+        reconciliation_id="rec::fail",
     )
     failed_decision = decision.status == "FAILED"
     no_false_cert = decision.status != "CERTIFIED"
@@ -990,7 +1159,11 @@ def a13_failure_injection() -> dict:
         "failed_executor_detected": failed_correctly,
         "failed_decision_status": decision.status,
         "no_false_certification": no_false_cert,
-        "verdict": "fail_closed" if (failed_correctly and failed_decision and no_false_cert) else "FAIL_OPEN",
+        "verdict": (
+            "fail_closed"
+            if (failed_correctly and failed_decision and no_false_cert)
+            else "FAIL_OPEN"
+        ),
     }
 
 
@@ -1002,7 +1175,10 @@ def main() -> int:
     try:
         artifacts["architecture-acceptance.json"] = a1_execution_architecture()
     except Exception as exc:
-        artifacts["architecture-acceptance.json"] = {"error": str(exc), "trace": traceback.format_exc()}
+        artifacts["architecture-acceptance.json"] = {
+            "error": str(exc),
+            "trace": traceback.format_exc(),
+        }
     try:
         artifacts["adapter-semantic-audit.json"] = a2_adapter_semantic_audit()
     except Exception as exc:
@@ -1056,19 +1232,29 @@ def main() -> int:
         write_json(name, payload)
 
     # Aggregate final-end-state
-    a1 = artifacts.get("architecture-acceptance.json", {})
+    artifacts.get("architecture-acceptance.json", {})
     a2 = artifacts.get("adapter-semantic-audit.json", {})
-    a4 = artifacts.get("lineage-acceptance.json", {})
-    a7 = artifacts.get("ci-semantic-parity.json", {})
-    a8 = artifacts.get("self-verification-acceptance.json", {})
-    a9 = artifacts.get("runtime-health-acceptance.json", {})
-    a10 = artifacts.get("governance-invariant-acceptance.json", {})
-    a12 = artifacts.get("reproducibility.json", {})
-    a13 = artifacts.get("failure-injection-acceptance.json", {})
+    artifacts.get("lineage-acceptance.json", {})
+    artifacts.get("ci-semantic-parity.json", {})
+    artifacts.get("self-verification-acceptance.json", {})
+    artifacts.get("runtime-health-acceptance.json", {})
+    artifacts.get("governance-invariant-acceptance.json", {})
+    artifacts.get("reproducibility.json", {})
+    artifacts.get("failure-injection-acceptance.json", {})
 
-    all_kinds_a = all(
-        a2.get("kinds", {}).get(k, {}).get("classification") == "A_genuine_semantic_executor"
-        for k in ["mutation", "unit", "property", "invariant", "contract", "coverage", "golden", "capability"]
+    all(
+        a2.get("kinds", {}).get(k, {}).get("classification")
+        == "A_genuine_semantic_executor"
+        for k in [
+            "mutation",
+            "unit",
+            "property",
+            "invariant",
+            "contract",
+            "coverage",
+            "golden",
+            "capability",
+        ]
     )
     return 0
 

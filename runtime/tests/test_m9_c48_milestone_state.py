@@ -4,8 +4,6 @@
 
 from __future__ import annotations
 
-import os
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -19,7 +17,6 @@ from runtime.foundation.verification.milestone_state import (
     compute_sha256,
 )
 
-
 SAMPLE_ARTIFACT = Path(__file__).resolve()  # self
 
 
@@ -30,57 +27,57 @@ def _make_artifact(tmp_path: Path) -> Path:
 
 
 def test_defaults_have_expected_ids():
-    l = MilestoneLedger.from_default_catalogue()
-    ids = l.ids()
+    ledger = MilestoneLedger.from_default_catalogue()
+    ids = ledger.ids()
     assert "M48-A1" in ids
     assert "M48-A3" in ids
     assert "M48-B2" in ids
     assert "M48-I1" in ids
-    assert all(isinstance(m, Milestone) for m in l.all().values())
+    assert all(isinstance(m, Milestone) for m in ledger.all().values())
 
 
 def test_negative_complete_from_not_started():
-    l = MilestoneLedger.from_default_catalogue()
+    ledger = MilestoneLedger.from_default_catalogue()
     with pytest.raises(CompletionGuardError):
-        l.mark_complete("M48-A1", acceptance=["any"])
+        ledger.mark_complete("M48-A1", acceptance=["any"])
 
 
 def test_negative_complete_without_evidence():
-    l = MilestoneLedger.from_default_catalogue()
-    l.transition("M48-A1", MilestoneStatus.IN_PROGRESS)
-    l.transition("M48-A1", MilestoneStatus.IMPLEMENTED)
-    l.set_acceptance_criteria("M48-A1", ["a"])
+    ledger = MilestoneLedger.from_default_catalogue()
+    ledger.transition("M48-A1", MilestoneStatus.IN_PROGRESS)
+    ledger.transition("M48-A1", MilestoneStatus.IMPLEMENTED)
+    ledger.set_acceptance_criteria("M48-A1", ["a"])
     with pytest.raises(CompletionGuardError, match="without objective evidence"):
-        l.mark_complete("M48-A1", acceptance=["a"])
+        ledger.mark_complete("M48-A1", acceptance=["a"])
 
 
 def test_negative_complete_with_nonzero_exit():
-    l = MilestoneLedger.from_default_catalogue()
-    l.transition("M48-A1", MilestoneStatus.IN_PROGRESS)
-    l.record_command(
+    ledger = MilestoneLedger.from_default_catalogue()
+    ledger.transition("M48-A1", MilestoneStatus.IN_PROGRESS)
+    ledger.record_command(
         "M48-A1",
         command="false",
         exit_code=1,
         expected_result="0",
         observed_result="1",
     )
-    l.add_evidence("M48-A1", artifact_path=str(SAMPLE_ARTIFACT), evidence_id="ev1")
-    l.transition("M48-A1", MilestoneStatus.IMPLEMENTED)
+    ledger.add_evidence("M48-A1", artifact_path=str(SAMPLE_ARTIFACT), evidence_id="ev1")
+    ledger.transition("M48-A1", MilestoneStatus.IMPLEMENTED)
     with pytest.raises(CompletionGuardError, match="non-zero exit"):
-        l.mark_complete("M48-A1", acceptance=["a"])
+        ledger.mark_complete("M48-A1", acceptance=["a"])
 
 
 def test_negative_complete_with_tampered_sha(tmp_path: Path):
     art = _make_artifact(tmp_path)
-    l = MilestoneLedger.from_default_catalogue()
-    l.transition("M48-A1", MilestoneStatus.IN_PROGRESS)
-    l.record_command(
+    ledger = MilestoneLedger.from_default_catalogue()
+    ledger.transition("M48-A1", MilestoneStatus.IN_PROGRESS)
+    ledger.record_command(
         "M48-A1", command="true", exit_code=0, expected_result="0", observed_result="0"
     )
-    l.add_evidence("M48-A1", artifact_path=str(art), evidence_id="ev1")
+    ledger.add_evidence("M48-A1", artifact_path=str(art), evidence_id="ev1")
     # Tamper the recorded sha after the fact
-    m = l.get("M48-A1")
-    l._set(
+    m = ledger.get("M48-A1")
+    ledger._set(
         Milestone._rebuild(
             m,
             evidence=(
@@ -94,25 +91,27 @@ def test_negative_complete_with_tampered_sha(tmp_path: Path):
             ),
         )
     )
-    l.transition("M48-A1", MilestoneStatus.IMPLEMENTED)
+    ledger.transition("M48-A1", MilestoneStatus.IMPLEMENTED)
     with pytest.raises(CompletionGuardError, match="sha mismatch"):
-        l.mark_complete("M48-A1", acceptance=["a"])
+        ledger.mark_complete("M48-A1", acceptance=["a"])
 
 
 def test_positive_full_lifecycle(tmp_path: Path):
     art = _make_artifact(tmp_path)
-    l = MilestoneLedger.from_default_catalogue()
-    l.transition("M48-A1", MilestoneStatus.IN_PROGRESS, scope="foundation trust")
-    l.add_files_changed("M48-A1", ["runtime/foundation/verification/milestone_state.py"])
-    l.record_command(
+    ledger = MilestoneLedger.from_default_catalogue()
+    ledger.transition("M48-A1", MilestoneStatus.IN_PROGRESS, scope="foundation trust")
+    ledger.add_files_changed(
+        "M48-A1", ["runtime/foundation/verification/milestone_state.py"]
+    )
+    ledger.record_command(
         "M48-A1", command="true", exit_code=0, expected_result="0", observed_result="0"
     )
-    l.add_evidence(
+    ledger.add_evidence(
         "M48-A1", artifact_path=str(art), evidence_id="m48-a1-artifact", description="x"
     )
-    l.transition("M48-A1", MilestoneStatus.IMPLEMENTED)
-    l.set_acceptance_criteria("M48-A1", ["guarded", "sha-verified"])
-    m = l.mark_complete("M48-A1", acceptance=["guarded", "sha-verified"])
+    ledger.transition("M48-A1", MilestoneStatus.IMPLEMENTED)
+    ledger.set_acceptance_criteria("M48-A1", ["guarded", "sha-verified"])
+    m = ledger.mark_complete("M48-A1", acceptance=["guarded", "sha-verified"])
     assert m.status == MilestoneStatus.COMPLETE
     assert m.final_disposition == "COMPLETE"
     assert m.evidence[0].artifact_sha256 == compute_sha256(art)
@@ -122,16 +121,16 @@ def test_positive_full_lifecycle(tmp_path: Path):
 
 def test_snapshot_roundtrip(tmp_path: Path):
     art = _make_artifact(tmp_path)
-    l = MilestoneLedger.from_default_catalogue()
-    l.transition("M48-A1", MilestoneStatus.IN_PROGRESS)
-    l.record_command(
+    ledger = MilestoneLedger.from_default_catalogue()
+    ledger.transition("M48-A1", MilestoneStatus.IN_PROGRESS)
+    ledger.record_command(
         "M48-A1", command="true", exit_code=0, expected_result="0", observed_result="0"
     )
-    l.add_evidence("M48-A1", artifact_path=str(art), evidence_id="ev1")
-    l.transition("M48-A1", MilestoneStatus.IMPLEMENTED)
-    l.mark_complete("M48-A1", acceptance=["ok"])
+    ledger.add_evidence("M48-A1", artifact_path=str(art), evidence_id="ev1")
+    ledger.transition("M48-A1", MilestoneStatus.IMPLEMENTED)
+    ledger.mark_complete("M48-A1", acceptance=["ok"])
     snap = tmp_path / "snap.json"
-    l.save(snap)
+    ledger.save(snap)
     assert snap.exists()
     l2 = MilestoneLedger.from_snapshot(snap)
     assert l2.get("M48-A1").status == MilestoneStatus.COMPLETE
@@ -141,21 +140,22 @@ def test_snapshot_roundtrip(tmp_path: Path):
 def test_reconciliation_reports_missing_in_progress(tmp_path):
     progress = tmp_path / "progress.md"
     progress.write_text("# M9-C48\n\n## M48-A1\n\n")
-    l = MilestoneLedger.from_default_catalogue()
-    l.transition("M48-A1", MilestoneStatus.IN_PROGRESS)
-    l.add_evidence("M48-A1", artifact_path=str(SAMPLE_ARTIFACT), evidence_id="ev")
-    l.record_command(
+    ledger = MilestoneLedger.from_default_catalogue()
+    ledger.transition("M48-A1", MilestoneStatus.IN_PROGRESS)
+    ledger.add_evidence("M48-A1", artifact_path=str(SAMPLE_ARTIFACT), evidence_id="ev")
+    ledger.record_command(
         "M48-A1", command="true", exit_code=0, expected_result="0", observed_result="0"
     )
-    l.transition("M48-A1", MilestoneStatus.IMPLEMENTED)
-    l.mark_complete("M48-A1", acceptance=["ok"])
-    rep = l.reconciliation_report(progress)
+    ledger.transition("M48-A1", MilestoneStatus.IMPLEMENTED)
+    ledger.mark_complete("M48-A1", acceptance=["ok"])
+    rep = ledger.reconciliation_report(progress)
     assert "M48-A1" not in rep["missing_in_progress"]
     assert rep["milestones"]["M48-A1"]["status"] == "COMPLETE"
 
 
 def test_terminal_status_set():
     from runtime.foundation.verification.milestone_state import TERMINAL_STATUSES
+
     assert MilestoneStatus.COMPLETE in TERMINAL_STATUSES
     assert MilestoneStatus.FAILED in TERMINAL_STATUSES
     assert MilestoneStatus.SUPERSEDED in TERMINAL_STATUSES

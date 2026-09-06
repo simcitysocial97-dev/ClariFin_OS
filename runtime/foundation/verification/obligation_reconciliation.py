@@ -70,16 +70,16 @@ def reconcile_obligations(
 
         candidate_states: list[str] = []
         for rec in records:
-            caps = getattr(rec, "capabilities", None) or [getattr(rec, "primary_capability", "")]
+            caps = getattr(rec, "capabilities", None) or [
+                getattr(rec, "primary_capability", "")
+            ]
             rkind = getattr(rec, "verification_kind", "")
             if cap in caps and rkind == kind:
                 candidate_states.append(str(getattr(rec, "completion_state", "")))
 
         if not candidate_states:
             # No execution record served this requirement — task disappeared.
-            out.append(
-                replace(ob, disposition=Disposition.FAILED)
-            )
+            out.append(replace(ob, disposition=Disposition.FAILED))
             failed_obligations.append(ob.obligation_id)
             continue
 

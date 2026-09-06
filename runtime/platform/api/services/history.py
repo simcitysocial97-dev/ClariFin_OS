@@ -20,11 +20,11 @@ import json
 from pathlib import Path
 from typing import Any
 
-from runtime.system.observability.analytics import AnalyticsEngine
-from runtime.system.observability.event_store import EngineeringEventStore
 from runtime.platform.api.contracts import history as history_contract
 from runtime.platform.api.contracts._primitives import Status, Timestamp
 from runtime.platform.api.services._helpers import envelope, now_iso
+from runtime.system.observability.analytics import AnalyticsEngine
+from runtime.system.observability.event_store import EngineeringEventStore
 
 __all__ = [
     "build_history_runs",
@@ -69,7 +69,9 @@ def _runs_from_event_store(
         rows.append(
             {
                 "id": event.event_id,
-                "started_at": Timestamp(event.timestamp) if event.timestamp else now_iso(),
+                "started_at": (
+                    Timestamp(event.timestamp) if event.timestamp else now_iso()
+                ),
                 "finished_at": Timestamp(event.timestamp) if event.timestamp else None,
                 "duration_ms": payload.get("duration_ms"),
                 "status": (
@@ -286,7 +288,9 @@ def build_history_compare(
     return envelope(kind=history_contract.HISTORY_COMPARE_KIND, data=data)
 
 
-def _full_run_summary(run_id: str, store: EngineeringEventStore) -> dict[str, Any] | None:
+def _full_run_summary(
+    run_id: str, store: EngineeringEventStore
+) -> dict[str, Any] | None:
     """Return a rich run summary dict for delta computation.
 
     Mirrors the shape produced by ``_runs_from_event_store`` but adds

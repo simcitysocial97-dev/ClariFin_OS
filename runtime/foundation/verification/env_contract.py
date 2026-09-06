@@ -23,7 +23,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import shutil
 import subprocess
@@ -35,11 +34,11 @@ from pathlib import Path
 from typing import Any
 
 from runtime.foundation.verification.env import (
+    FORBIDDEN_VENV_DIRS,
+    MIN_PYTHON,
+    PINNED_MUTMUT,
     REPO_ROOT,
     VENV_BIN,
-    PINNED_MUTMUT,
-    MIN_PYTHON,
-    FORBIDDEN_VENV_DIRS,
     hash_file,
     resolve_environment,
 )
@@ -52,7 +51,9 @@ PINNED_BLACK = "26.5.1"
 PINNED_MYPY = "2.1.0"
 PINNED_HYPOTHESIS = "6.161.4"
 PINNED_NODE_MAJOR = 24  # frontend/package.json engines.node >=24 <25
-PINNED_NPM_VERSION = "11.19.0"  # frontend/package.json packageManager (synced with Node 24 LTS)
+PINNED_NPM_VERSION = (
+    "11.19.0"  # frontend/package.json packageManager (synced with Node 24 LTS)
+)
 
 
 class ContractState(str, Enum):
@@ -136,9 +137,13 @@ class EnvironmentContract:
     reproducibility_note: str
 
 
-def _run(cmd: list[str], timeout: int = 10, cwd: str | None = None) -> tuple[str, str, int]:
+def _run(
+    cmd: list[str], timeout: int = 10, cwd: str | None = None
+) -> tuple[str, str, int]:
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, cwd=cwd)
+        r = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=timeout, cwd=cwd
+        )
         return r.stdout.strip(), r.stderr.strip(), r.returncode
     except Exception as exc:
         return "", str(exc), 1
@@ -154,7 +159,9 @@ def _which(tool: str) -> tuple[str | None, str]:
     return None, "missing"
 
 
-def _version_of(path: str | None, *extra_args: str, config_dir: Path | None = None) -> str | None:
+def _version_of(
+    path: str | None, *extra_args: str, config_dir: Path | None = None
+) -> str | None:
     if not path:
         return None
     try:
@@ -174,7 +181,10 @@ def _python_version_info(python_path: str | None) -> tuple[str | None, bool]:
     ok = False
     ver = None
     try:
-        out, _, rc = _run([python_path, "-c", "import sys;print('%d.%d'%(sys.version_info[:2]))"], timeout=10)
+        out, _, rc = _run(
+            [python_path, "-c", "import sys;print('%d.%d'%(sys.version_info[:2]))"],
+            timeout=10,
+        )
         if rc == 0 and out:
             parts = out.strip().split(".")
             major, minor = int(parts[0]), int(parts[1]) if len(parts) > 1 else 0
@@ -196,19 +206,26 @@ def _git_tree_sha() -> str:
 
 
 def _git_status_summary() -> tuple[str, int]:
-    dirty = subprocess.run(
-        ["git", "diff", "--quiet"], capture_output=True, cwd=str(REPO_ROOT)
-    ).returncode != 0
+    dirty = (
+        subprocess.run(
+            ["git", "diff", "--quiet"], capture_output=True, cwd=str(REPO_ROOT)
+        ).returncode
+        != 0
+    )
     untracked_out, _, _ = _run(
         ["git", "ls-files", "--others", "--exclude-standard"], cwd=str(REPO_ROOT)
     )
-    count = len([l for l in untracked_out.splitlines() if l.strip()]) if untracked_out else 0
+    count = (
+        len([line for line in untracked_out.splitlines() if line.strip()])
+        if untracked_out
+        else 0
+    )
     return ("DIRTY" if dirty else "CLEAN"), count
 
 
 def _platform_info() -> dict[str, str]:
-    import platform
     import locale as loc_mod
+    import platform
     import time as time_mod
 
     tz = time_mod.strftime("%Z") or "UTC"
@@ -231,6 +248,7 @@ def _parse_semver(version_str: str | None) -> tuple[int, ...] | None:
     if not version_str:
         return None
     import re
+
     m = re.search(r"(\d+(?:\.\d+)*)", version_str)
     if not m:
         return None
@@ -255,7 +273,7 @@ def _tool_version_record(
             installed = _parse_semver(ver)
             expected = _parse_semver(pinned)
             if installed and expected:
-                matches = installed[:len(expected)] == expected
+                matches = installed[: len(expected)] == expected
         except Exception:
             matches = None
     return ToolVersion(
@@ -287,7 +305,9 @@ def build_environment_contract(
     ruff_rec = _tool_version_record("ruff", PINNED_RUFF)
     black_rec = _tool_version_record("black", PINNED_BLACK)
     mypy_rec = _tool_version_record("mypy", PINNED_MYPY)
-    hyp_rec = _tool_version_record("hypothesis", None)  # hypothesis has no strict pin in [verification]; use pyproject
+    hyp_rec = _tool_version_record(
+        "hypothesis", None
+    )  # hypothesis has no strict pin in [verification]; use pyproject
     # hypothesis IS in the verification extras at pinned version
     hyp_rec = _tool_version_record("hypothesis", PINNED_HYPOTHESIS)
 
@@ -310,7 +330,10 @@ def build_environment_contract(
         npv = _parse_semver(npm_ver)
         epv = _parse_semver(PINNED_NPM_VERSION)
         if npv and epv:
-            npm_matches = npv[0] >= epv[0] and npv[: min(len(npv), len(epv))] == epv[: min(len(npv), len(epv))]
+            npm_matches = (
+                npv[0] >= epv[0]
+                and npv[: min(len(npv), len(epv))] == epv[: min(len(npv), len(epv))]
+            )
         else:
             warnings.append(f"npm version string unparseable: {npm_ver}")
     else:
@@ -381,7 +404,9 @@ def build_environment_contract(
             f"local npm={npm_ver} does not match declared packageManager npm@{PINNED_NPM_VERSION}"
         )
     if not reproducibility_notes:
-        reproducibility_notes.append("All local toolchain dimensions match declared pins.")
+        reproducibility_notes.append(
+            "All local toolchain dimensions match declared pins."
+        )
     reproducibility_note = "; ".join(reproducibility_notes)
 
     # Determine overall state
@@ -391,7 +416,11 @@ def build_environment_contract(
     elif warnings:
         state = ContractState.WARNINGS.value
     if node_source == "missing":
-        state = ContractState.INCOMPLETE.value if state == ContractState.CONSISTENT.value else state
+        state = (
+            ContractState.INCOMPLETE.value
+            if state == ContractState.CONSISTENT.value
+            else state
+        )
 
     baseline = baseline_sha or repo_sha
 
@@ -454,7 +483,9 @@ def main_env_contract(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="verify.py env-contract")
     parser.add_argument("--json", action="store_true", help="output JSON")
     parser.add_argument("--out", help="write to file instead of stdout")
-    parser.add_argument("--validate", action="store_true", help="exit non-zero on INCOMPATIBLE")
+    parser.add_argument(
+        "--validate", action="store_true", help="exit non-zero on INCOMPATIBLE"
+    )
     args = parser.parse_args(argv)
 
     contract = build_environment_contract()

@@ -5,24 +5,31 @@ Deterministic, reproducible, provenance-aware context assembly.
 
 from __future__ import annotations
 
-from runtime.platform.ai.context.builder import ContextBuilder, build_context_pack, CONTEXT_PACK_KIND
-from runtime.platform.ai.context.ranker import Ranker, RankedComponent, RANKER_INSTANCE
-from runtime.platform.ai.context.trimmer import Trimmer, TrimmerResult, TRIMMER_INSTANCE
+from runtime.platform.ai.context.builder import (
+    CONTEXT_PACK_KIND,
+    ContextBuilder,
+    build_context_pack,
+)
+from runtime.platform.ai.context.cache import (
+    CONTEXT_PACK_CACHE_INSTANCE,
+    ContextPackCache,
+)
 from runtime.platform.ai.context.provenance import (
+    PROVENANCE_TRACKER_INSTANCE,
     ProvenanceEntry,
     ProvenanceKind,
     ProvenanceTracker,
-    PROVENANCE_TRACKER_INSTANCE,
     build_provenance,
 )
+from runtime.platform.ai.context.ranker import RANKER_INSTANCE, RankedComponent, Ranker
 from runtime.platform.ai.context.serializer import (
-    serialize_context_pack,
+    _canonical_value,
+    compute_pack_checksum,
     compute_pack_id,
     estimate_tokens,
-    compute_pack_checksum,
-    _canonical_value,
+    serialize_context_pack,
 )
-from runtime.platform.ai.context.cache import ContextPackCache, CONTEXT_PACK_CACHE_INSTANCE
+from runtime.platform.ai.context.trimmer import TRIMMER_INSTANCE, Trimmer, TrimmerResult
 
 __all__ = [
     # Builder

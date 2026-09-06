@@ -6,10 +6,6 @@ in a unified evidence system.
 
 from __future__ import annotations
 
-import inspect
-
-import pytest
-
 
 class TestEvidenceModelUnification:
     """Validate evidence models are consistent."""
@@ -17,12 +13,12 @@ class TestEvidenceModelUnification:
     def test_all_evidence_models_have_to_dict(self) -> None:
         """All evidence models have to_dict() method."""
         from runtime.system.evidence.models.evidence import (
+            ContractEvidence,
             CoverageEvidence,
+            EvidenceCollectionResult,
             MutationEvidence,
             TestResultEvidence,
-            ContractEvidence,
             VerificationEvidence,
-            EvidenceCollectionResult,
         )
 
         for model_cls in [
@@ -33,18 +29,22 @@ class TestEvidenceModelUnification:
             VerificationEvidence,
             EvidenceCollectionResult,
         ]:
-            assert hasattr(model_cls, "to_dict"), f"{model_cls.__name__} missing to_dict()"
-            assert callable(model_cls.to_dict), f"{model_cls.__name__}.to_dict not callable"
+            assert hasattr(
+                model_cls, "to_dict"
+            ), f"{model_cls.__name__} missing to_dict()"
+            assert callable(
+                model_cls.to_dict
+            ), f"{model_cls.__name__}.to_dict not callable"
 
     def test_all_evidence_models_have_to_json(self) -> None:
         """All evidence models have to_json() method."""
         from runtime.system.evidence.models.evidence import (
+            ContractEvidence,
             CoverageEvidence,
+            EvidenceCollectionResult,
             MutationEvidence,
             TestResultEvidence,
-            ContractEvidence,
             VerificationEvidence,
-            EvidenceCollectionResult,
         )
 
         for model_cls in [
@@ -55,7 +55,9 @@ class TestEvidenceModelUnification:
             VerificationEvidence,
             EvidenceCollectionResult,
         ]:
-            assert hasattr(model_cls, "to_json"), f"{model_cls.__name__} missing to_json()"
+            assert hasattr(
+                model_cls, "to_json"
+            ), f"{model_cls.__name__} missing to_json()"
 
     def test_verification_evidence_has_from_methods(self) -> None:
         """VerificationEvidence has from_dict() and from_json() for round-trip."""
@@ -72,12 +74,16 @@ class TestCollectorUnification:
     def test_all_collectors_extend_base(self) -> None:
         """All collectors extend EvidenceCollector base class."""
         from runtime.system.evidence.collectors.base import EvidenceCollector
+        from runtime.system.evidence.collectors.contract import ContractCollector
+        from runtime.system.evidence.collectors.contract_tests import (
+            ContractTestCollector,
+        )
         from runtime.system.evidence.collectors.coverage import CoverageCollector
         from runtime.system.evidence.collectors.mutation import MutationCollector
+        from runtime.system.evidence.collectors.property_tests import (
+            PropertyTestCollector,
+        )
         from runtime.system.evidence.collectors.test_results import ResultsCollector
-        from runtime.system.evidence.collectors.contract import ContractCollector
-        from runtime.system.evidence.collectors.contract_tests import ContractTestCollector
-        from runtime.system.evidence.collectors.property_tests import PropertyTestCollector
 
         collectors = [
             CoverageCollector,
@@ -89,18 +95,22 @@ class TestCollectorUnification:
         ]
 
         for collector_cls in collectors:
-            assert issubclass(collector_cls, EvidenceCollector), (
-                f"{collector_cls.__name__} does not extend EvidenceCollector"
-            )
+            assert issubclass(
+                collector_cls, EvidenceCollector
+            ), f"{collector_cls.__name__} does not extend EvidenceCollector"
 
     def test_all_collectors_have_artifact_type(self) -> None:
         """All collectors have artifact_type property."""
+        from runtime.system.evidence.collectors.contract import ContractCollector
+        from runtime.system.evidence.collectors.contract_tests import (
+            ContractTestCollector,
+        )
         from runtime.system.evidence.collectors.coverage import CoverageCollector
         from runtime.system.evidence.collectors.mutation import MutationCollector
+        from runtime.system.evidence.collectors.property_tests import (
+            PropertyTestCollector,
+        )
         from runtime.system.evidence.collectors.test_results import ResultsCollector
-        from runtime.system.evidence.collectors.contract import ContractCollector
-        from runtime.system.evidence.collectors.contract_tests import ContractTestCollector
-        from runtime.system.evidence.collectors.property_tests import PropertyTestCollector
 
         collectors = [
             CoverageCollector,
@@ -112,18 +122,22 @@ class TestCollectorUnification:
         ]
 
         for collector_cls in collectors:
-            assert hasattr(collector_cls, "artifact_type"), (
-                f"{collector_cls.__name__} missing artifact_type"
-            )
+            assert hasattr(
+                collector_cls, "artifact_type"
+            ), f"{collector_cls.__name__} missing artifact_type"
 
     def test_artifact_types_are_unique(self) -> None:
         """Each collector has a unique artifact_type."""
+        from runtime.system.evidence.collectors.contract import ContractCollector
+        from runtime.system.evidence.collectors.contract_tests import (
+            ContractTestCollector,
+        )
         from runtime.system.evidence.collectors.coverage import CoverageCollector
         from runtime.system.evidence.collectors.mutation import MutationCollector
+        from runtime.system.evidence.collectors.property_tests import (
+            PropertyTestCollector,
+        )
         from runtime.system.evidence.collectors.test_results import ResultsCollector
-        from runtime.system.evidence.collectors.contract import ContractCollector
-        from runtime.system.evidence.collectors.contract_tests import ContractTestCollector
-        from runtime.system.evidence.collectors.property_tests import PropertyTestCollector
 
         collectors = [
             CoverageCollector,
@@ -195,11 +209,13 @@ class TestEvidenceSerialization:
     def test_verification_evidence_round_trip(self) -> None:
         """VerificationEvidence can be serialized and deserialized."""
         from runtime.system.evidence.models.evidence import (
-            VerificationEvidence,
             CoverageEvidence,
+            VerificationEvidence,
         )
 
-        coverage = CoverageEvidence(percentage=90.0, covered_lines=900, total_lines=1000)
+        coverage = CoverageEvidence(
+            percentage=90.0, covered_lines=900, total_lines=1000
+        )
         evidence = VerificationEvidence(
             commit_sha="abc123",
             branch="main",
@@ -227,8 +243,7 @@ class TestEvidenceAggregation:
 
         methods = dir(EvidenceAggregator)
         has_method = any(
-            name in methods
-            for name in ["collect", "aggregate", "build_report"]
+            name in methods for name in ["collect", "aggregate", "build_report"]
         )
         assert has_method, "EvidenceAggregator should have collect/aggregate method"
 

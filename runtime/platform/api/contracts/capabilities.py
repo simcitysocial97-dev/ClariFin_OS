@@ -7,12 +7,9 @@ endpoints. Phase 2 services will populate these contracts from
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 from runtime.platform.api.contracts._primitives import Identity, Timestamp
-
 
 CAPABILITY_LIST_KIND: str = "platform.capability_list"
 CAPABILITY_DETAIL_KIND: str = "platform.capability_detail"
@@ -56,13 +53,13 @@ class CapabilityDetailData(BaseModel):
     cost: str = Field(min_length=1, max_length=16)
     authorization: str = Field(min_length=1, max_length=32)
     owner: str = Field(min_length=1, max_length=256)
-    command: Optional[str] = None
+    command: str | None = None
     dependencies: list[str] = Field(default_factory=list)
     produces: list[str] = Field(default_factory=list)
     triggers: list[str] = Field(default_factory=list)
     recent_executions: list[str] = Field(default_factory=list)
     evidence: list[str] = Field(default_factory=list)
-    cache_status: Optional[str] = None
+    cache_status: str | None = None
     failure_history: list[str] = Field(default_factory=list)
     health: str = Field(min_length=1, max_length=32)
 

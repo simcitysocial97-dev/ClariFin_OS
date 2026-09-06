@@ -49,10 +49,18 @@ class TestLoanJourney:
             missing = required_loan_fields - set(loan.keys())
             assert not missing, f"Missing required loan fields: {missing}"
 
-            assert isinstance(loan["principal_paise"], int), "principal_paise should be int"
-            assert isinstance(loan["outstanding_paise"], int), "outstanding_paise should be int"
-            assert loan["principal_paise"] >= 0, "principal_paise should be non-negative"
-            assert loan["outstanding_paise"] >= 0, "outstanding_paise should be non-negative"
+            assert isinstance(
+                loan["principal_paise"], int
+            ), "principal_paise should be int"
+            assert isinstance(
+                loan["outstanding_paise"], int
+            ), "outstanding_paise should be int"
+            assert (
+                loan["principal_paise"] >= 0
+            ), "principal_paise should be non-negative"
+            assert (
+                loan["outstanding_paise"] >= 0
+            ), "outstanding_paise should be non-negative"
 
     def test_loan_paise_precision(self, client: TestClient) -> None:
         """All monetary values are in paise (integers)."""
@@ -61,12 +69,12 @@ class TestLoanJourney:
 
         data = response.json()
         for loan in data:
-            assert isinstance(loan["principal_paise"], int), (
-                f"principal_paise should be int, got {type(loan['principal_paise'])}"
-            )
-            assert isinstance(loan["outstanding_paise"], int), (
-                f"outstanding_paise should be int, got {type(loan['outstanding_paise'])}"
-            )
+            assert isinstance(
+                loan["principal_paise"], int
+            ), f"principal_paise should be int, got {type(loan['principal_paise'])}"
+            assert isinstance(
+                loan["outstanding_paise"], int
+            ), f"outstanding_paise should be int, got {type(loan['outstanding_paise'])}"
 
     def test_create_loan_via_api(self, client: TestClient) -> None:
         """POST /api/loans creates a new loan."""

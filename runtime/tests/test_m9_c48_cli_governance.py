@@ -7,7 +7,6 @@ import json
 from runtime.foundation.verification.cli_governance import (
     CLASSES,
     POLICY,
-    ClassificationReport,
     classify_commands,
     extract_commands,
 )
@@ -55,7 +54,7 @@ def test_unclassified_command_is_unreachable():
 def test_policy_table_keys_are_subset_of_commands():
     rep = classify_commands()
     commands = {c.command for c in rep.classifications}
-    extra = set(POLICY.keys()) - commands
+    set(POLICY.keys()) - commands
     # The policy can have more entries than commands (forward planning);
     # but every command SHOULD be in the policy table.
     missing = commands - set(POLICY.keys())
@@ -66,6 +65,7 @@ def test_classify_real_repo_persists_evidence():
     rep = classify_commands()
     d = rep.to_dict()
     import os
+
     os.makedirs("runtime/generated/m9-c48", exist_ok=True)
     with open("runtime/generated/m9-c48/cli-classification.json", "w") as f:
         json.dump(d, f, indent=2)

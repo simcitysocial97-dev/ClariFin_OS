@@ -23,25 +23,34 @@ Scenarios per §15:
 16. self-verification
 """
 
-import pytest
-import sys
+import hashlib
 import json
-import tempfile
 import os
 import subprocess
-import hashlib
+import sys
+import tempfile
+from datetime import UTC, datetime
 from pathlib import Path
-from datetime import datetime, UTC
-from typing import Dict, Any, List
+from typing import Any
+
+import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "runtime"))
 
+from runtime.foundation.verification.cache import CachedVerdict, VerificationCache
 from runtime.foundation.verification.control_plane_facade import ControlPlane
 from runtime.foundation.verification.obligation import (
-    VerificationObligation, Capability, Requirement, Change, ObligationSet, Disposition, ObligationKind
+    Capability,
+    Change,
+    Disposition,
+    ObligationKind,
+    ObligationSet,
+    Requirement,
+    VerificationObligation,
 )
-from runtime.foundation.verification.obligation_reconciliation import reconcile_obligations, ObAnalyzeResult
-from runtime.foundation.verification.cache import VerificationCache, CachedVerdict
+from runtime.foundation.verification.obligation_reconciliation import (
+    reconcile_obligations,
+)
 
 
 class OperationalRunRecorder:
@@ -50,9 +59,9 @@ class OperationalRunRecorder:
     def __init__(self, output_dir: Path):
         self.output_dir = output_dir
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.runs: List[Dict[str, Any]] = []
+        self.runs: list[dict[str, Any]] = []
 
-    def record_run(self, run_data: Dict[str, Any]) -> str:
+    def record_run(self, run_data: dict[str, Any]) -> str:
         """Record a single operational run."""
         run_id = hashlib.sha256(
             f"{run_data['scenario']}{datetime.now(UTC).isoformat()}".encode()
@@ -91,8 +100,7 @@ class OperationalRunRecorder:
     def _get_git_sha(self) -> str:
         try:
             result = subprocess.run(
-                ["git", "rev-parse", "HEAD"],
-                capture_output=True, text=True, timeout=10
+                ["git", "rev-parse", "HEAD"], capture_output=True, text=True, timeout=10
             )
             return result.stdout.strip() or "unknown"
         except Exception:
@@ -114,20 +122,24 @@ class TestOperationalValidation:
         # Plan on unchanged repo
         result = cp.plan(json_out=False)
 
-        recorder.record_run({
-            "scenario": "unchanged_repository",
-            "changed_files": [],
-            "resolved_capabilities": [],
-            "obligations": [],
-            "final_decision": "no_work_required" if result == 0 else "error",
-        })
+        recorder.record_run(
+            {
+                "scenario": "unchanged_repository",
+                "changed_files": [],
+                "resolved_capabilities": [],
+                "obligations": [],
+                "final_decision": "no_work_required" if result == 0 else "error",
+            }
+        )
 
         assert True  # Scenario recorded
 
     def test_scenario_2_backend_change(self, recorder):
         """Scenario 2: Backend unit change - should resolve capabilities and produce obligations."""
         # Create a temporary backend change
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', dir='backend/src/engines', delete=False) as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".py", dir="backend/src/engines", delete=False
+        ) as f:
             f.write("# Test backend change\ndef test_function():\n    return 42\n")
             temp_path = f.name
 
@@ -136,13 +148,17 @@ class TestOperationalValidation:
             plan_result = cp.plan(json_out=False)
 
             # Record the run
-            run_id = recorder.record_run({
-                "scenario": "backend_unit_change",
-                "changed_files": [temp_path],
-                "resolved_capabilities": ["credit-card-engine"],  # Expected from path
-                "obligations": ["unit", "property", "contract"],
-                "final_decision": "planned" if plan_result == 0 else "error",
-            })
+            run_id = recorder.record_run(
+                {
+                    "scenario": "backend_unit_change",
+                    "changed_files": [temp_path],
+                    "resolved_capabilities": [
+                        "credit-card-engine"
+                    ],  # Expected from path
+                    "obligations": ["unit", "property", "contract"],
+                    "final_decision": "planned" if plan_result == 0 else "error",
+                }
+            )
 
             assert run_id is not None
         finally:
@@ -150,21 +166,27 @@ class TestOperationalValidation:
 
     def test_scenario_3_frontend_change(self, recorder):
         """Scenario 3: Frontend change - should resolve frontend capabilities."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.tsx', dir='frontend/components', delete=False) as f:
-            f.write("// Test frontend change\nexport function TestComponent() { return <div>Test</div>; }\n")
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".tsx", dir="frontend/components", delete=False
+        ) as f:
+            f.write(
+                "// Test frontend change\nexport function TestComponent() { return <div>Test</div>; }\n"
+            )
             temp_path = f.name
 
         try:
             cp = ControlPlane()
             plan_result = cp.plan(json_out=False)
 
-            run_id = recorder.record_run({
-                "scenario": "frontend_change",
-                "changed_files": [temp_path],
-                "resolved_capabilities": ["frontend-component"],
-                "obligations": ["unit", "e2e"],
-                "final_decision": "planned" if plan_result == 0 else "error",
-            })
+            run_id = recorder.record_run(
+                {
+                    "scenario": "frontend_change",
+                    "changed_files": [temp_path],
+                    "resolved_capabilities": ["frontend-component"],
+                    "obligations": ["unit", "e2e"],
+                    "final_decision": "planned" if plan_result == 0 else "error",
+                }
+            )
 
             assert run_id is not None
         finally:
@@ -172,21 +194,27 @@ class TestOperationalValidation:
 
     def test_scenario_4_api_contract_change(self, recorder):
         """Scenario 4: API contract change - should trigger contract verification."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', dir='backend/src/routers', delete=False) as f:
-            f.write("# Test API change\nfrom fastapi import APIRouter\nrouter = APIRouter()\n@router.get('/test')\ndef test(): return {'status': 'ok'}\n")
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".py", dir="backend/src/routers", delete=False
+        ) as f:
+            f.write(
+                "# Test API change\nfrom fastapi import APIRouter\nrouter = APIRouter()\n@router.get('/test')\ndef test(): return {'status': 'ok'}\n"
+            )
             temp_path = f.name
 
         try:
             cp = ControlPlane()
             plan_result = cp.plan(json_out=False)
 
-            run_id = recorder.record_run({
-                "scenario": "api_contract_change",
-                "changed_files": [temp_path],
-                "resolved_capabilities": ["api-contract-gate"],
-                "obligations": ["contract", "unit"],
-                "final_decision": "planned" if plan_result == 0 else "error",
-            })
+            run_id = recorder.record_run(
+                {
+                    "scenario": "api_contract_change",
+                    "changed_files": [temp_path],
+                    "resolved_capabilities": ["api-contract-gate"],
+                    "obligations": ["contract", "unit"],
+                    "final_decision": "planned" if plan_result == 0 else "error",
+                }
+            )
 
             assert run_id is not None
         finally:
@@ -194,7 +222,9 @@ class TestOperationalValidation:
 
     def test_scenario_5_capability_change(self, recorder):
         """Scenario 5: Capability change - should trigger capability verification."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', dir='runtime/foundation/verification', delete=False) as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".py", dir="runtime/foundation/verification", delete=False
+        ) as f:
             f.write("# Test capability change\n")
             temp_path = f.name
 
@@ -202,13 +232,15 @@ class TestOperationalValidation:
             cp = ControlPlane()
             plan_result = cp.plan(json_out=False)
 
-            run_id = recorder.record_run({
-                "scenario": "capability_change",
-                "changed_files": [temp_path],
-                "resolved_capabilities": ["verification-runtime"],
-                "obligations": ["unit", "property"],
-                "final_decision": "planned" if plan_result == 0 else "error",
-            })
+            run_id = recorder.record_run(
+                {
+                    "scenario": "capability_change",
+                    "changed_files": [temp_path],
+                    "resolved_capabilities": ["verification-runtime"],
+                    "obligations": ["unit", "property"],
+                    "final_decision": "planned" if plan_result == 0 else "error",
+                }
+            )
 
             assert run_id is not None
         finally:
@@ -217,20 +249,28 @@ class TestOperationalValidation:
     def test_scenario_6_mutation_sensitive_change(self, recorder):
         """Scenario 6: Mutation-sensitive change - should trigger mutation verification."""
         # This is tested by the mutation workflow, not a direct plan
-        run_id = recorder.record_run({
-            "scenario": "mutation_sensitive_change",
-            "changed_files": ["backend/src/engines/credit_card_engine.py"],
-            "resolved_capabilities": ["credit-card-engine"],
-            "obligations": ["mutation"],
-            "final_decision": "requires_mutation_campaign",
-        })
+        run_id = recorder.record_run(
+            {
+                "scenario": "mutation_sensitive_change",
+                "changed_files": ["backend/src/engines/credit_card_engine.py"],
+                "resolved_capabilities": ["credit-card-engine"],
+                "obligations": ["mutation"],
+                "final_decision": "requires_mutation_campaign",
+            }
+        )
 
         assert run_id is not None
 
     def test_scenario_7_rename(self, recorder):
         """Scenario 7: Rename - should be detected by capability resolver."""
-        from runtime.foundation.verification.capability_graph_resolver import CapabilityGraphResolver, FileChange, ChangeKind
-        from runtime.foundation.verification.capability_catalog import get_capability_catalog
+        from runtime.foundation.verification.capability_catalog import (
+            get_capability_catalog,
+        )
+        from runtime.foundation.verification.capability_graph_resolver import (
+            CapabilityGraphResolver,
+            ChangeKind,
+            FileChange,
+        )
 
         catalog = get_capability_catalog()
         resolver = CapabilityGraphResolver(registry=catalog)
@@ -239,26 +279,38 @@ class TestOperationalValidation:
         rename_change = FileChange(
             kind=ChangeKind.RENAMED,
             old_path="backend/src/engines/old_name.py",
-            new_path="backend/src/engines/new_name.py"
+            new_path="backend/src/engines/new_name.py",
         )
 
         resolution = resolver.resolve(changes=[rename_change])
-        assert hasattr(resolution, 'affected_capability_ids')
+        assert hasattr(resolution, "affected_capability_ids")
 
-        run_id = recorder.record_run({
-            "scenario": "rename",
-            "changed_files": ["backend/src/engines/new_name.py"],
-            "resolved_capabilities": resolution.affected_capability_ids if hasattr(resolution, 'affected_capability_ids') else [],
-            "obligations": ["unit"],
-            "final_decision": "planned",
-        })
+        run_id = recorder.record_run(
+            {
+                "scenario": "rename",
+                "changed_files": ["backend/src/engines/new_name.py"],
+                "resolved_capabilities": (
+                    resolution.affected_capability_ids
+                    if hasattr(resolution, "affected_capability_ids")
+                    else []
+                ),
+                "obligations": ["unit"],
+                "final_decision": "planned",
+            }
+        )
 
         assert run_id is not None
 
     def test_scenario_8_deletion(self, recorder):
         """Scenario 8: Deletion - should be detected and produce obligations."""
-        from runtime.foundation.verification.capability_graph_resolver import CapabilityGraphResolver, FileChange, ChangeKind
-        from runtime.foundation.verification.capability_catalog import get_capability_catalog
+        from runtime.foundation.verification.capability_catalog import (
+            get_capability_catalog,
+        )
+        from runtime.foundation.verification.capability_graph_resolver import (
+            CapabilityGraphResolver,
+            ChangeKind,
+            FileChange,
+        )
 
         catalog = get_capability_catalog()
         resolver = CapabilityGraphResolver(registry=catalog)
@@ -266,27 +318,37 @@ class TestOperationalValidation:
         delete_change = FileChange(
             kind=ChangeKind.DELETED,
             old_path="backend/src/engines/deleted_engine.py",
-            new_path=""
+            new_path="",
         )
 
         resolution = resolver.resolve(changes=[delete_change])
 
-        run_id = recorder.record_run({
-            "scenario": "deletion",
-            "changed_files": ["backend/src/engines/deleted_engine.py"],
-            "resolved_capabilities": resolution.affected_capability_ids if hasattr(resolution, 'affected_capability_ids') else [],
-            "obligations": ["unit"],
-            "final_decision": "planned",
-        })
+        run_id = recorder.record_run(
+            {
+                "scenario": "deletion",
+                "changed_files": ["backend/src/engines/deleted_engine.py"],
+                "resolved_capabilities": (
+                    resolution.affected_capability_ids
+                    if hasattr(resolution, "affected_capability_ids")
+                    else []
+                ),
+                "obligations": ["unit"],
+                "final_decision": "planned",
+            }
+        )
 
         assert run_id is not None
 
     def test_scenario_9_cross_layer_change(self, recorder):
         """Scenario 9: Cross-layer change - should resolve both frontend and backend capabilities."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', dir='backend/src/routers', delete=False) as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".py", dir="backend/src/routers", delete=False
+        ) as f:
             f.write("# Backend change\n")
             backend_path = f.name
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.tsx', dir='frontend/components', delete=False) as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".tsx", dir="frontend/components", delete=False
+        ) as f:
             f.write("// Frontend change\n")
             frontend_path = f.name
 
@@ -294,13 +356,18 @@ class TestOperationalValidation:
             cp = ControlPlane()
             plan_result = cp.plan(json_out=False)
 
-            run_id = recorder.record_run({
-                "scenario": "cross_layer_change",
-                "changed_files": [backend_path, frontend_path],
-                "resolved_capabilities": ["api-contract-gate", "frontend-component"],
-                "obligations": ["contract", "unit", "e2e"],
-                "final_decision": "planned" if plan_result == 0 else "error",
-            })
+            run_id = recorder.record_run(
+                {
+                    "scenario": "cross_layer_change",
+                    "changed_files": [backend_path, frontend_path],
+                    "resolved_capabilities": [
+                        "api-contract-gate",
+                        "frontend-component",
+                    ],
+                    "obligations": ["contract", "unit", "e2e"],
+                    "final_decision": "planned" if plan_result == 0 else "error",
+                }
+            )
 
             assert run_id is not None
         finally:
@@ -309,33 +376,39 @@ class TestOperationalValidation:
 
     def test_scenario_10_unmapped_change(self, recorder):
         """Scenario 10: Intentionally unmapped change - should produce UNMAPPED state."""
-        from runtime.foundation.verification.capability_graph_resolver import CapabilityGraphResolver, FileChange, ChangeKind
-        from runtime.foundation.verification.capability_catalog import get_capability_catalog
+        from runtime.foundation.verification.capability_catalog import (
+            get_capability_catalog,
+        )
+        from runtime.foundation.verification.capability_graph_resolver import (
+            CapabilityGraphResolver,
+            ChangeKind,
+            FileChange,
+        )
 
         catalog = get_capability_catalog()
         resolver = CapabilityGraphResolver(registry=catalog)
 
         # Create a file with no capability mapping
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write("# Completely unknown file\ndef unknown_function():\n    pass\n")
             temp_path = f.name
 
         try:
             unmapped_change = FileChange(
-                kind=ChangeKind.ADDED,
-                old_path=None,
-                new_path=temp_path
+                kind=ChangeKind.ADDED, old_path=None, new_path=temp_path
             )
 
-            resolution = resolver.resolve(changes=[unmapped_change])
+            resolver.resolve(changes=[unmapped_change])
 
-            run_id = recorder.record_run({
-                "scenario": "unmapped_change",
-                "changed_files": [temp_path],
-                "resolved_capabilities": [],
-                "obligations": ["unmapped-review"],
-                "final_decision": "blocked_unmapped",
-            })
+            run_id = recorder.record_run(
+                {
+                    "scenario": "unmapped_change",
+                    "changed_files": [temp_path],
+                    "resolved_capabilities": [],
+                    "obligations": ["unmapped-review"],
+                    "final_decision": "blocked_unmapped",
+                }
+            )
 
             assert run_id is not None
         finally:
@@ -349,27 +422,36 @@ class TestOperationalValidation:
             obligation_id="test.fail",
             change=change,
             capability=Capability(capability_id="cap1", authority="test"),
-            requirement=Requirement(requirement_id="req1", capability_id="cap1", obligation_kind=ObligationKind.UNIT, rationale="test"),
-            disposition=Disposition.OPEN
+            requirement=Requirement(
+                requirement_id="req1",
+                capability_id="cap1",
+                obligation_kind=ObligationKind.UNIT,
+                rationale="test",
+            ),
+            disposition=Disposition.OPEN,
         )
 
         # No execution records = FAILED
-        reconciliation = reconcile_obligations(ObligationSet(set_id="test", obligations=[obl]), [])
+        reconciliation = reconcile_obligations(
+            ObligationSet(set_id="test", obligations=[obl]), []
+        )
 
-        run_id = recorder.record_run({
-            "scenario": "failed_verification",
-            "changed_files": ["test.py"],
-            "resolved_capabilities": ["cap1"],
-            "obligations": ["unit"],
-            "reconciliation": {
-                "complete": reconciliation.complete,
-                "satisfied": reconciliation.satisfied,
-                "total_required": reconciliation.total_required,
-                "failed_obligations": reconciliation.failed_obligations
-            },
-            "final_decision": "failed",
-            "failures": ["No execution record for obligation test.fail"]
-        })
+        run_id = recorder.record_run(
+            {
+                "scenario": "failed_verification",
+                "changed_files": ["test.py"],
+                "resolved_capabilities": ["cap1"],
+                "obligations": ["unit"],
+                "reconciliation": {
+                    "complete": reconciliation.complete,
+                    "satisfied": reconciliation.satisfied,
+                    "total_required": reconciliation.total_required,
+                    "failed_obligations": reconciliation.failed_obligations,
+                },
+                "final_decision": "failed",
+                "failures": ["No execution record for obligation test.fail"],
+            }
+        )
 
         assert not reconciliation.complete
         assert run_id is not None
@@ -380,21 +462,25 @@ class TestOperationalValidation:
             cache_path = Path(tmpdir) / "cache.json"
             cache = VerificationCache(cache_path)
 
-            verdict = CachedVerdict(overall_status="pass", passed=10, failed=0, skipped=0)
+            verdict = CachedVerdict(
+                overall_status="pass", passed=10, failed=0, skipped=0
+            )
             cache.save("profile", "old_commit", ["file1.py"], verdict)
 
             # Try to replay with current commit
             result = cache.replay("current_commit", ["file1.py"], "profile")
 
-            run_id = recorder.record_run({
-                "scenario": "stale_evidence",
-                "changed_files": ["file1.py"],
-                "resolved_capabilities": [],
-                "obligations": [],
-                "reconciliation": {},
-                "final_decision": "evidence_invalidated",
-                "invalidated_evidence": ["cache entry for old_commit"],
-            })
+            run_id = recorder.record_run(
+                {
+                    "scenario": "stale_evidence",
+                    "changed_files": ["file1.py"],
+                    "resolved_capabilities": [],
+                    "obligations": [],
+                    "reconciliation": {},
+                    "final_decision": "evidence_invalidated",
+                    "invalidated_evidence": ["cache entry for old_commit"],
+                }
+            )
 
             assert not result.reusable
             assert run_id is not None
@@ -405,7 +491,9 @@ class TestOperationalValidation:
             cache_path = Path(tmpdir) / "cache.json"
             cache = VerificationCache(cache_path)
 
-            verdict = CachedVerdict(overall_status="pass", passed=10, failed=0, skipped=0)
+            verdict = CachedVerdict(
+                overall_status="pass", passed=10, failed=0, skipped=0
+            )
             cache.save("profile", "commit_X", ["test_file.py"], verdict)
 
             # Create test file
@@ -415,15 +503,21 @@ class TestOperationalValidation:
             # Replay with same commit and files
             result = cache.replay("commit_X", ["test_file.py"], "profile")
 
-            run_id = recorder.record_run({
-                "scenario": "cache_reuse",
-                "changed_files": ["test_file.py"],
-                "resolved_capabilities": [],
-                "obligations": [],
-                "reconciliation": {},
-                "final_decision": "cache_reused" if result.reusable else "cache_miss",
-                "reused_evidence": ["cache entry for commit_X"] if result.reusable else [],
-            })
+            run_id = recorder.record_run(
+                {
+                    "scenario": "cache_reuse",
+                    "changed_files": ["test_file.py"],
+                    "resolved_capabilities": [],
+                    "obligations": [],
+                    "reconciliation": {},
+                    "final_decision": (
+                        "cache_reused" if result.reusable else "cache_miss"
+                    ),
+                    "reused_evidence": (
+                        ["cache entry for commit_X"] if result.reusable else []
+                    ),
+                }
+            )
 
             assert run_id is not None
 
@@ -433,7 +527,9 @@ class TestOperationalValidation:
             cache_path = Path(tmpdir) / "cache.json"
             cache = VerificationCache(cache_path, root=tmpdir)
 
-            verdict = CachedVerdict(overall_status="pass", passed=10, failed=0, skipped=0)
+            verdict = CachedVerdict(
+                overall_status="pass", passed=10, failed=0, skipped=0
+            )
             cache.save("profile", "commit_X", ["test_file.py"], verdict)
 
             # Create test file
@@ -441,7 +537,7 @@ class TestOperationalValidation:
             test_file.write_text("print('hello')")
 
             # First replay - should work
-            result1 = cache.replay("commit_X", ["test_file.py"], "profile")
+            cache.replay("commit_X", ["test_file.py"], "profile")
 
             # Modify the file
             test_file.write_text("print('hello world')")
@@ -449,15 +545,21 @@ class TestOperationalValidation:
             # Second replay - should invalidate due to content change
             result2 = cache.replay("commit_X", ["test_file.py"], "profile")
 
-            run_id = recorder.record_run({
-                "scenario": "cache_invalidation",
-                "changed_files": ["test_file.py"],
-                "resolved_capabilities": [],
-                "obligations": [],
-                "reconciliation": {},
-                "final_decision": "cache_invalidated" if not result2.reusable else "cache_reused",
-                "invalidated_evidence": ["content hash mismatch"] if not result2.reusable else [],
-            })
+            run_id = recorder.record_run(
+                {
+                    "scenario": "cache_invalidation",
+                    "changed_files": ["test_file.py"],
+                    "resolved_capabilities": [],
+                    "obligations": [],
+                    "reconciliation": {},
+                    "final_decision": (
+                        "cache_invalidated" if not result2.reusable else "cache_reused"
+                    ),
+                    "invalidated_evidence": (
+                        ["content hash mismatch"] if not result2.reusable else []
+                    ),
+                }
+            )
 
             assert run_id is not None
 
@@ -475,13 +577,12 @@ class TestOperationalValidation:
         executor boundary produces a real execution_id and evidence_id
         without invoking a second semantic authority.
         """
+        from runtime.foundation.verification.evidence_planner import PlannedTask
         from runtime.foundation.verification.executor_pipeline import (
             ADAPTERS,
             collect_repo_fingerprints,
             execute_task,
-            EvidenceAwarePlan,
         )
-        from runtime.foundation.verification.evidence_planner import PlannedTask
 
         # Construct a small, bounded executable task using the canonical
         # executor pipeline — the same path the CI workflow exercises.
@@ -496,21 +597,33 @@ class TestOperationalValidation:
         task = ADAPTERS["invariant"](planned, fps)
         evidence = execute_task(task, per_step_timeout=180)
 
-        run_id = recorder.record_run({
-            "scenario": "ci_equivalent_execution",
-            "changed_files": [],
-            "resolved_capabilities": [task.capability],
-            "obligations": [task.task_id],
-            "plan_identity": f"ci::scenario15::{task.task_id}",
-            "execution_identity": evidence.execution_id,
-            "evidence_identities": [evidence.notes.split(";")[1].strip() if ";" in evidence.notes else evidence.notes],
-            "reconciliation": {
-                "exit_code": evidence.exit_code,
-                "failure_kind": evidence.failure_kind.value if evidence.failure_kind else None,
-            },
-            "final_decision": "ci_verified" if evidence.exit_code == 0 else "ci_failed",
-            "failures": [evidence.failure_message] if evidence.failure_kind else [],
-        })
+        run_id = recorder.record_run(
+            {
+                "scenario": "ci_equivalent_execution",
+                "changed_files": [],
+                "resolved_capabilities": [task.capability],
+                "obligations": [task.task_id],
+                "plan_identity": f"ci::scenario15::{task.task_id}",
+                "execution_identity": evidence.execution_id,
+                "evidence_identities": [
+                    (
+                        evidence.notes.split(";")[1].strip()
+                        if ";" in evidence.notes
+                        else evidence.notes
+                    )
+                ],
+                "reconciliation": {
+                    "exit_code": evidence.exit_code,
+                    "failure_kind": (
+                        evidence.failure_kind.value if evidence.failure_kind else None
+                    ),
+                },
+                "final_decision": (
+                    "ci_verified" if evidence.exit_code == 0 else "ci_failed"
+                ),
+                "failures": [evidence.failure_message] if evidence.failure_kind else [],
+            }
+        )
 
         assert run_id is not None
         # CI-equivalence: local execution produces a real execution_id,
@@ -524,14 +637,18 @@ class TestOperationalValidation:
         cp = ControlPlane()
         plan_result = cp.plan(json_out=False)
 
-        run_id = recorder.record_run({
-            "scenario": "self_verification",
-            "changed_files": ["runtime/foundation/verification/control_plane_facade.py"],
-            "resolved_capabilities": ["verification-runtime", "control-plane"],
-            "obligations": ["unit", "property", "invariant"],
-            "reconciliation": {},
-            "final_decision": "self_verified" if plan_result == 0 else "error",
-        })
+        run_id = recorder.record_run(
+            {
+                "scenario": "self_verification",
+                "changed_files": [
+                    "runtime/foundation/verification/control_plane_facade.py"
+                ],
+                "resolved_capabilities": ["verification-runtime", "control-plane"],
+                "obligations": ["unit", "property", "invariant"],
+                "reconciliation": {},
+                "final_decision": "self_verified" if plan_result == 0 else "error",
+            }
+        )
 
         assert run_id is not None
 
@@ -543,7 +660,9 @@ class TestOperationalValidationSummary:
         """All 16 scenarios should be recorded."""
         # The individual test methods above record each scenario
         # This test just verifies the summary file exists and is valid
-        summary_file = Path("runtime/generated/m9-c50/phase-11/operations/operations-summary.json")
+        summary_file = Path(
+            "runtime/generated/m9-c50/phase-11/operations/operations-summary.json"
+        )
         assert summary_file.exists()
 
         with open(summary_file) as f:
@@ -562,7 +681,9 @@ class TestOperationalValidationSummary:
 
     def test_operational_history_machine_readable(self, recorder):
         """Operational history should be machine-readable JSON."""
-        summary_file = Path("runtime/generated/m9-c50/phase-11/operations/operations-summary.json")
+        summary_file = Path(
+            "runtime/generated/m9-c50/phase-11/operations/operations-summary.json"
+        )
         with open(summary_file) as f:
             summary = json.load(f)
 

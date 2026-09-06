@@ -85,7 +85,9 @@ def build_task_list() -> dict[str, Any]:
     oset = _build_obligation_set()
     items = [_obligation_to_task_item(o) for o in oset.obligations]
     open_count = sum(1 for o in oset.obligations if o.disposition == Disposition.OPEN)
-    closed_count = sum(1 for o in oset.obligations if o.disposition == Disposition.CLOSED)
+    closed_count = sum(
+        1 for o in oset.obligations if o.disposition == Disposition.CLOSED
+    )
     data = {
         "open_count": open_count,
         "closed_count": closed_count,
@@ -120,9 +122,7 @@ def build_task_detail(task_id: str) -> dict[str, Any] | None:
     data = {
         "id": target.obligation_id,
         "name": (
-            target.requirement.rationale
-            if target.requirement
-            else target.obligation_id
+            target.requirement.rationale if target.requirement else target.obligation_id
         ),
         "capability_id": (
             target.capability.capability_id if target.capability else "unknown"

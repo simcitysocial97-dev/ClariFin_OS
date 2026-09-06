@@ -7,12 +7,9 @@ the JSON shape. Phase 2 services populate these contracts from
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 from runtime.platform.api.contracts._primitives import Identity, Status, Timestamp
-
 
 TASK_LIST_KIND: str = "platform.task_list"
 TASK_DETAIL_KIND: str = "platform.task_detail"
@@ -27,7 +24,7 @@ class TaskListItem(BaseModel):
     capability_id: str = Field(min_length=1, max_length=256)
     status: Status
     created_at: Timestamp
-    closed_at: Optional[Timestamp] = None
+    closed_at: Timestamp | None = None
 
 
 class TaskListData(BaseModel):
@@ -50,11 +47,11 @@ class TaskDetailData(BaseModel):
     capability_id: str = Field(min_length=1, max_length=256)
     status: Status
     created_at: Timestamp
-    closed_at: Optional[Timestamp] = None
+    closed_at: Timestamp | None = None
     plan: list[str] = Field(default_factory=list)
     obligations: list[str] = Field(default_factory=list)
     evidence_ids: list[str] = Field(default_factory=list)
-    decision_id: Optional[str] = None
+    decision_id: str | None = None
 
 
 class TaskDetailEnvelope(BaseModel):

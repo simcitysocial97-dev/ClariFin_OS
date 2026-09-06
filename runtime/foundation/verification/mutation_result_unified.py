@@ -30,14 +30,13 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-
 # Status buckets from the orchestrator (richer) that map into the canonical
 # 6-bucket vocabulary. Anything outside this map is recorded as orchestrator
 # auxiliary provenance.
 _ORCH_TO_CANON: dict[str, str] = {
     "killed": "killed",
     "survived": "survived",
-    "equivalent": "survived",          # equivalent → behaves as survived for scoring
+    "equivalent": "survived",  # equivalent → behaves as survived for scoring
     "no_tests": "no_tests",
     "timeout": "timeout",
     "execution_error": "not_checked",  # infra failure → not_checked (excluded from score)
@@ -128,9 +127,10 @@ def project_orchestrator_to_canonical(
         buckets[canon] += count
 
     # Determine gate states.
-    infra_failed = rich["execution_error"] > 0 and sum(
-        v for k, v in rich.items() if k != "execution_error"
-    ) == 0
+    infra_failed = (
+        rich["execution_error"] > 0
+        and sum(v for k, v in rich.items() if k != "execution_error") == 0
+    )
     execution_status = "INFRASTRUCTURE_FAILURE" if infra_failed else "PASS"
     evidence_complete = True  # orchestrator always records per-mutant artifacts
     # Score (canonical scoring only includes scored statuses).
@@ -172,9 +172,7 @@ def project_orchestrator_to_canonical(
         selection_method=selection_method,
         execution_path=execution_path,
     )
-    return UnifiedMutationProjection(
-        canonical=canonical, orchestrator_provenance=rich
-    )
+    return UnifiedMutationProjection(canonical=canonical, orchestrator_provenance=rich)
 
 
 __all__ = [

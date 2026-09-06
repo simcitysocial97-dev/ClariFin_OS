@@ -358,7 +358,8 @@ def run_strengthen_analyze(argv: list[str]) -> int:
 def _coerce_survivor_entry(s: dict) -> dict:
     """Translate a new-format survivor catalog entry into the flat dict
     expected by SurvivorEvidence. Handles both legacy dict shape and the
-    m9-c45 mutation-survivors-*.json 'entries[*]' shape (key/function/source_file/old/new)."""
+    m9-c45 mutation-survivors-*.json 'entries[*]' shape (key/function/source_file/old/new).
+    """
     if "survivor_id" in s and "component" in s:
         return s
     key = s.get("key") or s.get("id") or ""
@@ -372,7 +373,9 @@ def _coerce_survivor_entry(s: dict) -> dict:
     # backend/tests/unit/engines/<engine_dir>
     if parts and parts[0] == "engines":
         parts = parts[1:]
-    component = ".".join(parts[:2]) if len(parts) >= 2 else (parts[0] if parts else "unknown")
+    component = (
+        ".".join(parts[:2]) if len(parts) >= 2 else (parts[0] if parts else "unknown")
+    )
     capability = function or component
     return {
         "survivor_id": key,

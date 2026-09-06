@@ -154,26 +154,26 @@ def _classify_route(
                 "M52.3: C42.5 canonical environment check, absent from catalog. "
                 "Added as exec.environment-check (stage EXECUTION)."
             ),
-             notes="Precondition for blast-radius + config-authority.",
-         ),
-         "env-contract": CliRouteEntry(
-             route="env-contract",
-             implementation="runtime.foundation.verification.env_contract",
-             owning_capability="exec.environment-contract",
-             verification_profile=None,
-             evidence_kind="environment_contract",
-             executable=True,
-             diagnostic=False,
-             strengthening_related=False,
-             alias_of=None,
-             classification="NEW_CAPABILITY",
-             derivation_source=(
-                 "M9-C55: Authoritative environment contract for reproducible "
-                 "verification. Extends env-check with full identity dimensions."
-             ),
-             notes="C55 convergence milestone — single authoritative environment contract.",
-         ),
-         "evidence-execute": CliRouteEntry(
+            notes="Precondition for blast-radius + config-authority.",
+        ),
+        "env-contract": CliRouteEntry(
+            route="env-contract",
+            implementation="runtime.foundation.verification.env_contract",
+            owning_capability="exec.environment-contract",
+            verification_profile=None,
+            evidence_kind="environment_contract",
+            executable=True,
+            diagnostic=False,
+            strengthening_related=False,
+            alias_of=None,
+            classification="NEW_CAPABILITY",
+            derivation_source=(
+                "M9-C55: Authoritative environment contract for reproducible "
+                "verification. Extends env-check with full identity dimensions."
+            ),
+            notes="C55 convergence milestone — single authoritative environment contract.",
+        ),
+        "evidence-execute": CliRouteEntry(
             route="evidence-execute",
             implementation="runtime.foundation.verification.executor_pipeline",
             owning_capability="exec.evidence-execute",

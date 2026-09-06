@@ -29,16 +29,13 @@ import re
 from pathlib import Path
 from typing import Any
 
-import pytest
-
-from runtime.platform.api.contracts import diagnostics as diag_contract
-from runtime.platform.api.contracts import change as change_contract
 from runtime.platform.api.contracts import application as app_contract
+from runtime.platform.api.contracts import change as change_contract
+from runtime.platform.api.contracts import diagnostics as diag_contract
 from runtime.platform.api.contracts import health as health_contract
 from runtime.platform.api.envelope import API_VERSION
+from runtime.platform.api.services import application, change, health
 from runtime.platform.diagnostics import engine, rules
-from runtime.platform.api.services import change, application, health
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -100,7 +97,11 @@ class TestChangeIntelligence:
         env = change.build_change_intelligence()
         for f in env["data"]["changed_files"]:
             assert "path" in f and f["path"]
-            assert "change_type" in f and f["change_type"] in ("added", "removed", "modified")
+            assert "change_type" in f and f["change_type"] in (
+                "added",
+                "removed",
+                "modified",
+            )
 
     def test_affected_capabilities_are_sorted_unique(self) -> None:
         env = change.build_change_intelligence()
@@ -111,7 +112,9 @@ class TestChangeIntelligence:
         env = change.build_change_intelligence()
         gf = env["data"]["generated_from"]
         # Timestamps may include microseconds and timezone offset.
-        assert re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.\d]*([+-]\d{2}:\d{2})?Z?", str(gf))
+        assert re.fullmatch(
+            r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.\d]*([+-]\d{2}:\d{2})?Z?", str(gf)
+        )
 
     def test_envelope_round_trips_through_contract(self) -> None:
         env = change.build_change_intelligence()
@@ -157,10 +160,10 @@ class TestDiagnosticEngine:
 
     def test_diagnose_malformed_returns_none(self) -> None:
         # Empty symptom should be handled gracefully.
-        env = engine.diagnose(symptom="")
+        engine.diagnose(symptom="")
         # With empty symptom the function may still return L1 result;
         # we just check it doesn't crash.
-        assert env is not None or True  # tolerance: some paths return None
+        assert True  # tolerance: some paths return None
 
     def test_register_signature_returns_id(self) -> None:
         sid = engine.register_signature(
@@ -214,14 +217,24 @@ class TestDiagnosticEngine:
         assert len(rec["recommended_verification"]) > 0
 
     def test_rules_evaluation(self) -> None:
-        ctx = {"errors_for_capability": ["e1"], "blast_radius_caps": [], "stale_evidence_ids": [], "recurring_errors": []}
+        ctx = {
+            "errors_for_capability": ["e1"],
+            "blast_radius_caps": [],
+            "stale_evidence_ids": [],
+            "recurring_errors": [],
+        }
         result = rules.evaluate(ctx)
         assert result is not None
         assert result["rule_id"] == "error_exists_for_capability"
         assert result["level"] == "L1"
 
     def test_rules_no_match_falls_back(self) -> None:
-        ctx = {"errors_for_capability": [], "blast_radius_caps": [], "stale_evidence_ids": [], "recurring_errors": []}
+        ctx = {
+            "errors_for_capability": [],
+            "blast_radius_caps": [],
+            "stale_evidence_ids": [],
+            "recurring_errors": [],
+        }
         result = rules.evaluate(ctx)
         assert result is not None
         assert result["rule_id"] == "no_specific_signal"
@@ -256,7 +269,16 @@ class TestDeepHealth:
             env = fn()
             assert _envelope_shape_ok(env), f"{fn_name} envelope shape wrong"
             assert env["kind"] == expected_kind, f"{fn_name} kind mismatch"
-            assert env["data"]["status"] in ("HEALTHY", "DEGRAD", "UNHEALTHY", "UNKNOWN", "SAFE", "CURRENT", "VALID", "READY")
+            assert env["data"]["status"] in (
+                "HEALTHY",
+                "DEGRAD",
+                "UNHEALTHY",
+                "UNKNOWN",
+                "SAFE",
+                "CURRENT",
+                "VALID",
+                "READY",
+            )
             assert "summary" in env["data"]
             assert "last_check" in env["data"]
 
@@ -266,39 +288,42 @@ class TestHttpEndpointStructure:
 
     def test_change_intelligence_route_registered(self) -> None:
         from backend.src.routers.platform import router
+
         paths = {r.path for r in router.routes}
         assert "/platform/v1/change/intelligence" in paths
 
     def test_diagnose_route_registered(self) -> None:
         from backend.src.routers.platform import router
+
         paths = {r.path for r in router.routes}
         assert "/platform/v1/diagnose" in paths
         assert "/platform/v1/diagnose/register" in paths
 
     def test_health_deep_route_registered(self) -> None:
         from backend.src.routers.platform import router
+
         paths = {r.path for r in router.routes}
         assert "/platform/v1/health/deep" in paths
 
     def test_diagnose_malformed_returns_400(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             resp = c.post("/platform/v1/diagnose", json={})
             assert resp.status_code == 400
 
     def test_diagnose_register_malformed_returns_400(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             resp = c.post("/platform/v1/diagnose/register", json={})
             assert resp.status_code == 400
 
     def test_change_intelligence_returns_200(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             resp = c.get("/platform/v1/change/intelligence")
@@ -306,8 +331,8 @@ class TestHttpEndpointStructure:
             assert "text/event-stream" not in resp.headers.get("content-type", "")
 
     def test_health_deep_returns_200(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             resp = c.get("/platform/v1/health/deep")
@@ -318,8 +343,8 @@ class TestHttpEndpointStructure:
             assert len(d["data"].get("domains", [])) >= 5
 
     def test_diagnose_returns_200(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             resp = c.post("/platform/v1/diagnose", json={"symptom": "test"})
@@ -328,8 +353,8 @@ class TestHttpEndpointStructure:
             assert d["kind"] == diag_contract.DIAGNOSTIC_RESULT_KIND
 
     def test_diagnose_register_returns_200(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             resp = c.post(
@@ -355,6 +380,7 @@ class TestFrontendRoutesExist:
 
     def test_change_intelligence_page_exists(self) -> None:
         import os
+
         assert os.path.exists(
             "frontend/app/platform/diagnostics/change/page.tsx"
         ), "Missing /platform/diagnostics/change page"

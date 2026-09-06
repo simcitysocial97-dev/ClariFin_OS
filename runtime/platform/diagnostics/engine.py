@@ -21,11 +21,9 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from runtime.platform.api.contracts._primitives import Status, Timestamp
 from runtime.platform.api.services._helpers import envelope, now_iso
 
 logger = logging.getLogger(__name__)
@@ -123,7 +121,7 @@ def diagnose(
     Returns a ``platform.diagnostic_result`` envelope, or ``None`` when
     no rules matched and no recommendation can be produced.
     """
-    from runtime.platform.api.services import errors, change
+    from runtime.platform.api.services import change, errors
 
     # ---- L0: search signature store ----
     sig_data = _load_signatures()
@@ -156,8 +154,7 @@ def diagnose(
     else:
         # Check if any current error relates to the symptom.
         related = [
-            it for it in current_items
-            if error_code and it.get("code") == error_code
+            it for it in current_items if error_code and it.get("code") == error_code
         ]
         if related:
             level = "L1"
@@ -184,9 +181,16 @@ def diagnose(
         if recs:
             recommendation = [{"action": "run_verification", "target": recs[0]}]
         else:
-            recommendation = [{"action": "inspect_capability", "target": rec_sig["affected_capability"]}]
+            recommendation = [
+                {
+                    "action": "inspect_capability",
+                    "target": rec_sig["affected_capability"],
+                }
+            ]
     elif level == "L2":
-        recommendation = [{"action": "run_affected_verification", "target": capability_id}]
+        recommendation = [
+            {"action": "run_affected_verification", "target": capability_id}
+        ]
     elif level == "L1" and related:
         recommendation = [{"action": "inspect_error", "target": related[0]["id"]}]
     else:
@@ -199,7 +203,8 @@ def diagnose(
         "level": level,
         "fact": fact,
         "evidence": evidence,
-        "affected_capability": capability_id or (matched_sigs[0]["affected_capability"] if matched_sigs else None),
+        "affected_capability": capability_id
+        or (matched_sigs[0]["affected_capability"] if matched_sigs else None),
         "recommendation": recommendation,
         "generated_at": now_iso(),
     }

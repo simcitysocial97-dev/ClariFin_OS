@@ -431,12 +431,8 @@ class ControlPlane:
         # Standard CI reconciliation gate (mirrors verification-reconcile.yml)
         import os
 
-        os.environ.get(
-            "CI_PLAN_PATH", "runtime/generated/vea5-tier-plan.pr.json"
-        )
-        os.environ.get(
-            "CI_EVIDENCE_PATH", "runtime/generated/vea5-execution.pr.json"
-        )
+        os.environ.get("CI_PLAN_PATH", "runtime/generated/vea5-tier-plan.pr.json")
+        os.environ.get("CI_EVIDENCE_PATH", "runtime/generated/vea5-execution.pr.json")
         os.environ.get(
             "CI_REPORT_PATH", "runtime/generated/vea5-reconciliation.pr.json"
         )

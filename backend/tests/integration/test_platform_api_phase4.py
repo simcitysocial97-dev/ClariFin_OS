@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import json
 import time
-from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -112,9 +111,9 @@ class TestCacheTiming:
         assert r_cold.status_code == 200
         assert r_warm.status_code == 200
         # Warm must be materially faster (at least 3x or <5ms flat).
-        assert warm_ms < cold_ms, (
-            f"Warm ({warm_ms:.1f}ms) was not faster than cold ({cold_ms:.1f}ms)"
-        )
+        assert (
+            warm_ms < cold_ms
+        ), f"Warm ({warm_ms:.1f}ms) was not faster than cold ({cold_ms:.1f}ms)"
         # Both responses must be structurally identical envelopes.
         assert r_warm.json()["kind"] == r_cold.json()["kind"]
 

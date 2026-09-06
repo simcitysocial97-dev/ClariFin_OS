@@ -776,9 +776,9 @@
       }
     },
     "change": {
-      "_c": 261977.819844758,
-      "_ts": "2026-09-06T05:08:39Z",
-      "hash": "879ec979ce2a7f7e20a80e740c9c5194b34bc64515bdeef1ea9d8dc165a2b85b",
+      "_c": 264393.432514065,
+      "_ts": "2026-09-06T05:48:55Z",
+      "hash": "fe45dd08b92c0b60731c12d4e3e56206ddd028d6a26fd9878cdf312981c7aeed",
       "payload": {
         "data": {
           "affected_capabilities": [
@@ -803,19 +803,323 @@
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/diagnostic-signatures.json"
+              "path": "backend/tests/golden/test_regression.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/engineering-events.jsonl"
+              "path": "backend/tests/integration/acceptance/test_acceptance_matrix.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/integration/cross_layer/test_journey_account_crud.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/integration/cross_layer/test_journey_dashboard_metrics.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/integration/cross_layer/test_journey_loan_management.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/integration/performance/test_performance.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/integration/test_platform_api_phase3.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/integration/test_platform_api_phase4.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/integration/test_platform_api_phase6.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/mutation_infra/python_312_probes/control_probe.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/mutation_infra/python_312_probes/pep604_union.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/mutation_infra/python_312_probes/pep634_match.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/mutation_infra/python_312_probes/pep654_exception_groups.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/mutation_infra/python_312_probes/pep695_type_params.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/mutation_infra/python_312_probes/test_control_probe.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/mutation_infra/python_312_probes/test_pep604_union.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/mutation_infra/python_312_probes/test_pep634_match.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/mutation_infra/python_312_probes/test_pep654_exception_groups.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/mutation_infra/python_312_probes/test_pep695_type_params.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/test_m9_c56_scenarios.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/unit/engines/balance_engine/test_balance_engine_helpers.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/unit/engines/credit_card_engine/test_m9_c56_additional_gaps.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/unit/engines/credit_card_engine/test_m9_c56_boolean_flips.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/unit/engines/credit_card_engine/test_m9_c56_mutation_gaps.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/unit/engines/financial_events/test_financial_events.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/unit/engines/financial_events/test_m9_c56_behavioral_gaps.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/unit/engines/financial_events/test_m9_c56_lineage_gaps.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/unit/engines/financial_events/test_m9_c56_missing_keys.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/unit/repositories/test_account_repository.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/unit/services/test_recommendation_networth_services.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/api_schema_governance.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/authorization_boundary.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/c53_certification.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/c53_scenarios.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/c56_convergence.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/candidate_validation.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/capability_authority.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/capability_graph_resolver.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/cli_capability_matrix.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/cli_governance.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/cli_surface.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/control_plane_facade.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/convergence_pipeline.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/coverage_truth.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/engine_capability_bridge.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/env_contract.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/executor_pipeline.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/forensic_cli.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/frontend_financial_arithmetic_lint.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/function_audit.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/gap_classification.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/generation_eligibility.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/generation_engine.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/help_resolver.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/milestone_state.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_authority.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_execution/backend_interface.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_execution/cache.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_execution/cache_report.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_execution/config_fingerprint.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_execution/domain_model.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_execution/domain_model_report.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_execution/evidence.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_execution/forensics.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_execution/health.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_execution/mutmut_adapter.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_execution/orchestrator.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_execution/reliability_report.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_execution/verify_result.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_execution/workspace.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_execution/workspace_report.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_result_unified.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/obligation_reconciliation.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/test_cache_invalidation.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/test_command_consolidation.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/test_convergence_loop.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/test_false_certification_audit.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/test_quality.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/test_strengthening_pipeline.py"
             },
             {
               "change_type": "modified",
               "path": "runtime/generated/git-fetch-events.jsonl"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/platform/snapshot.json"
             },
             {
               "change_type": "modified",
@@ -827,11 +1131,55 @@
             },
             {
               "change_type": "modified",
+              "path": "runtime/platform/ai/config.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/ai/context/__init__.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/ai/context/builder.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/ai/context/cache.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/ai/context/provenance.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/ai/context/ranker.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/ai/context/serializer.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/ai/context/trimmer.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/ai/intent.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/ai/memory.py"
+            },
+            {
+              "change_type": "modified",
               "path": "runtime/platform/ai/orchestrator.py"
             },
             {
               "change_type": "modified",
               "path": "runtime/platform/ai/planner.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/ai/policy.py"
             },
             {
               "change_type": "modified",
@@ -851,6 +1199,10 @@
             },
             {
               "change_type": "modified",
+              "path": "runtime/platform/ai/runs.py"
+            },
+            {
+              "change_type": "modified",
               "path": "runtime/platform/ai/tools/__init__.py"
             },
             {
@@ -859,7 +1211,267 @@
             },
             {
               "change_type": "modified",
+              "path": "runtime/platform/api/contracts/_primitives.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/contracts/ai.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/contracts/application.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/contracts/architecture.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/contracts/capabilities.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/contracts/change.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/contracts/context.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/contracts/diagnostics.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/contracts/errors.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/contracts/events.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/contracts/evidence.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/contracts/executions.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/contracts/health.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/contracts/history.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/contracts/tasks.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/contracts/verification.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/errors.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/services/_comparison.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/services/application.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/services/architecture.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/services/capabilities.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/services/change.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/services/errors.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/services/events.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/services/evidence.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/services/executions.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/services/health.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/services/history.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/services/tasks.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/services/tasks_write.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/services/verification.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/api/services/verification_write.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/cache.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/diagnostics/__init__.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/diagnostics/engine.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/diagnostics/rules.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/system/evidence/aggregator_obsolete_disposition.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/system/evidence/tests/test_evidence_unification.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/audit_final_freeze.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c44_mutation_architecture.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c48_api_schema_governance.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c48_capability_graph.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c48_cli_governance.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c48_coverage_truth.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c48_frontend_arithmetic.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c48_function_audit.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c48_milestone_state.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c48_mutation_unified.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c48_test_quality.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c48_test_strengthening.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c50_ci_convergence.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c50_executor_adapters.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c50_final_governance.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c50_operational_lineage.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c50_operational_validation.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c50_self_verification.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c50_stop_gate3_capability_resolution.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c50_stop_gate4_execution_completeness.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c50_stop_gate6_strengthening_authority.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c50_stop_gate9_failure_modes.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c53.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_m9_c55.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_platform_api_phase1.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_platform_api_phase10_12.py"
+            },
+            {
+              "change_type": "modified",
               "path": "runtime/tests/test_platform_api_phase13.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_platform_api_phase14.py"
             },
             {
               "change_type": "modified",
@@ -867,15 +1479,23 @@
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/ai-context-packs/ctx-c1.json"
+              "path": "runtime/tests/test_platform_api_phase2.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/ai-context-packs/ctx-c2.json"
+              "path": "runtime/tests/test_platform_api_phase7.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/ai-context-packs/ctx-test123.json"
+              "path": "runtime/tests/test_platform_api_phase8.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_platform_api_phase9.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/verify.py"
             },
             {
               "change_type": "modified",
@@ -884,6 +1504,10 @@
             {
               "change_type": "modified",
               "path": "runtime/generated/ai-runs/ai-0324f408bcba.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-084beef15de9.json"
             },
             {
               "change_type": "modified",
@@ -1043,6 +1667,10 @@
             },
             {
               "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-44f77666283b.json"
+            },
+            {
+              "change_type": "modified",
               "path": "runtime/generated/ai-runs/ai-47982b8caa47.json"
             },
             {
@@ -1059,6 +1687,10 @@
             },
             {
               "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-4edc5f4a4397.json"
+            },
+            {
+              "change_type": "modified",
               "path": "runtime/generated/ai-runs/ai-4ff7fb3b9601.json"
             },
             {
@@ -1071,6 +1703,10 @@
             },
             {
               "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-520a33103366.json"
+            },
+            {
+              "change_type": "modified",
               "path": "runtime/generated/ai-runs/ai-599249c54f0f.json"
             },
             {
@@ -1080,6 +1716,10 @@
             {
               "change_type": "modified",
               "path": "runtime/generated/ai-runs/ai-5f217b4e39ee.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-60a4e477dbdf.json"
             },
             {
               "change_type": "modified",
@@ -1164,6 +1804,10 @@
             {
               "change_type": "modified",
               "path": "runtime/generated/ai-runs/ai-7e11440695bf.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-7e6c401cf5dd.json"
             },
             {
               "change_type": "modified",
@@ -1287,6 +1931,10 @@
             },
             {
               "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-aac0fa2d09b4.json"
+            },
+            {
+              "change_type": "modified",
               "path": "runtime/generated/ai-runs/ai-ab14806bac61.json"
             },
             {
@@ -1304,6 +1952,10 @@
             {
               "change_type": "modified",
               "path": "runtime/generated/ai-runs/ai-afa4cae53b00.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-b108051b2b7b.json"
             },
             {
               "change_type": "modified",
@@ -1335,6 +1987,14 @@
             },
             {
               "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-bde0874a696d.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-be4b8d3367f3.json"
+            },
+            {
+              "change_type": "modified",
               "path": "runtime/generated/ai-runs/ai-c15819ef5391.json"
             },
             {
@@ -1355,6 +2015,10 @@
             },
             {
               "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-c933d5e354dd.json"
+            },
+            {
+              "change_type": "modified",
               "path": "runtime/generated/ai-runs/ai-cbccc2ed61b4.json"
             },
             {
@@ -1364,6 +2028,10 @@
             {
               "change_type": "modified",
               "path": "runtime/generated/ai-runs/ai-cd8801ce69dc.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-ce2e05573270.json"
             },
             {
               "change_type": "modified",
@@ -1388,6 +2056,10 @@
             {
               "change_type": "modified",
               "path": "runtime/generated/ai-runs/ai-d7a56befc9f8.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-d87b5e2db8ce.json"
             },
             {
               "change_type": "modified",
@@ -1423,6 +2095,10 @@
             },
             {
               "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-edf9f9511acc.json"
+            },
+            {
+              "change_type": "modified",
               "path": "runtime/generated/ai-runs/ai-ee8ec9fab3fc.json"
             },
             {
@@ -1447,6 +2123,10 @@
             },
             {
               "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-f6c13a3bd5fe.json"
+            },
+            {
+              "change_type": "modified",
               "path": "runtime/generated/ai-runs/ai-f94b1d8ea42a.json"
             },
             {
@@ -1460,23 +2140,18 @@
             {
               "change_type": "modified",
               "path": "runtime/generated/ai-runs/ai-ffac667be185.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c57/phases-15-21/progress.md"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/ai/config.py"
             }
           ],
-          "generated_from": "2026-09-06T05:08:37.705338+00:00",
-          "recommended_verification": [],
+          "generated_from": "2026-09-06T05:48:53.799756+00:00",
+          "recommended_verification": [
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='capability:useBehaviourCapability', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability capability:useBehaviourCapability \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='capability:useLoansCapability', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability capability:useLoansCapability \u2014 no executable command available', has_executable_command=False)"
+          ],
           "risk": "HIGH",
           "stale_evidence": []
         },
-        "generated_at": "2026-09-06T05:08:39Z",
-        "id": "sha256:eda3ba1f4d8e8a2cd1123920dc6c8c67221d1e63e4a1969f0608f709afe34b28",
+        "generated_at": "2026-09-06T05:48:55Z",
+        "id": "sha256:834dc655f48b9be310b8f1987d1349d8c2c07f97feb5bcfe75ff4ec403900daf",
         "kind": "platform.change_intelligence",
         "version": "1.0.0"
       }
@@ -2261,6 +2936,6 @@
       }
     }
   },
-  "generated_at": "2026-09-06T05:08:39Z",
+  "generated_at": "2026-09-06T05:48:55Z",
   "version": "1"
 }

@@ -36,6 +36,7 @@ class Agent:
 # Phase 17 — Diagnostic Assistant
 # ---------------------------------------------------------------------------
 
+
 class DiagnosticAssistantAgent(Agent):
     """Phase 17 — AI Diagnostic Assistant.
 
@@ -48,7 +49,9 @@ class DiagnosticAssistantAgent(Agent):
     """
 
     def __init__(self) -> None:
-        super().__init__("diagnostic_assistant", "AI-assisted diagnostic interpretation", 1)
+        super().__init__(
+            "diagnostic_assistant", "AI-assisted diagnostic interpretation", 1
+        )
         self.enabled = True  # Level 1 enabled by default
 
     def execute(self, context: dict[str, Any]) -> dict[str, Any]:
@@ -60,16 +63,21 @@ class DiagnosticAssistantAgent(Agent):
 
         # Step 1: deterministic engine (L0-L5 ladder)
         from runtime.platform.diagnostics import engine as diag_engine
-        deterministic = diag_engine.diagnose(symptom=symptom, capability_id=capability_id)
+
+        deterministic = diag_engine.diagnose(
+            symptom=symptom, capability_id=capability_id
+        )
         det_data = deterministic["data"] if deterministic else {}
 
         # Step 2: change intelligence
         from runtime.platform.api.services import change as change_svc
+
         ci = change_svc.build_change_intelligence()
         ci_data = ci.get("data", {}) if ci else {}
 
         # Step 3: history (recent runs for capability)
         from runtime.platform.api.services import history as hist_svc
+
         try:
             hist = hist_svc.build_history_runs(page=1, page_size=5)
             hist_items = hist.get("data", {}).get("items", [])[:3]
@@ -81,13 +89,23 @@ class DiagnosticAssistantAgent(Agent):
 
         # Step 5: context pack
         from runtime.platform.ai.context import build_context_pack
-        pack = build_context_pack(symptom=symptom, capability_id=capability_id, run_id=run_id, intent_type="diagnose")
+
+        pack = build_context_pack(
+            symptom=symptom,
+            capability_id=capability_id,
+            run_id=run_id,
+            intent_type="diagnose",
+        )
 
         # Step 6: local model (deterministic fallback when Ollama unavailable)
         from runtime.platform.ai.providers.base import Message, RoutingProfile
         from runtime.platform.ai.providers.router import MODEL_ROUTER_INSTANCE
 
-        profile = RoutingProfile(task_kind="diagnose", context_size=pack.get("total_tokens_estimate", 1000), privacy="local")
+        profile = RoutingProfile(
+            task_kind="diagnose",
+            context_size=pack.get("total_tokens_estimate", 1000),
+            privacy="local",
+        )
         provider = MODEL_ROUTER_INSTANCE.route(profile)
         # Build prompt from deterministic facts
         prompt = (
@@ -120,9 +138,13 @@ class DiagnosticAssistantAgent(Agent):
                 "level": det_data.get("level"),
                 "fact": det_data.get("fact"),
                 "affected_capability": det_data.get("affected_capability"),
-                "recent_changes": [f.get("path") for f in ci_data.get("changed_files", [])][:5],
+                "recent_changes": [
+                    f.get("path") for f in ci_data.get("changed_files", [])
+                ][:5],
                 "historical_failures": len(hist_items),
-                "suggested_verification": [r.get("target") for r in det_data.get("recommendation", [])],
+                "suggested_verification": [
+                    r.get("target") for r in det_data.get("recommendation", [])
+                ],
                 "evidence_ids": evidence_ids,
             },
             "context_pack_id": pack.get("pack_id"),
@@ -132,7 +154,13 @@ class DiagnosticAssistantAgent(Agent):
                 "hypothesis": model_text[:500],
                 "evidence": evidence_ids,
                 "uncertainty": "MEDIUM" if not is_deterministic else "LOW",
-                "recommendation": det_data.get("recommendation", [{}])[0].get("target", "inspect_capability") if det_data.get("recommendation") else "run_affected_verification",
+                "recommendation": (
+                    det_data.get("recommendation", [{}])[0].get(
+                        "target", "inspect_capability"
+                    )
+                    if det_data.get("recommendation")
+                    else "run_affected_verification"
+                ),
                 "is_deterministic": is_deterministic,
                 "provider": provider_name,
             },
@@ -140,7 +168,11 @@ class DiagnosticAssistantAgent(Agent):
             "labels": {
                 "FACT": det_data.get("fact"),
                 "EVIDENCE": evidence_ids,
-                "INFERENCE": model_text[:500] if not is_deterministic else "deterministic fallback — no LLM inference",
+                "INFERENCE": (
+                    model_text[:500]
+                    if not is_deterministic
+                    else "deterministic fallback — no LLM inference"
+                ),
                 "HYPOTHESIS": model_text[:300],
                 "RECOMMENDATION": det_data.get("recommendation", []),
             },
@@ -158,7 +190,19 @@ class EngineeringAgent(Agent):
     Never reports success because a file changed — requires post-change evidence.
     """
 
-    LIFECYCLE = ["REQUEST", "UNDERSTAND", "INSPECT", "PLAN", "AUTHORIZE", "CHANGE", "EXECUTE", "VERIFY", "RECONCILE", "DECIDE", "LEARN"]
+    LIFECYCLE = [
+        "REQUEST",
+        "UNDERSTAND",
+        "INSPECT",
+        "PLAN",
+        "AUTHORIZE",
+        "CHANGE",
+        "EXECUTE",
+        "VERIFY",
+        "RECONCILE",
+        "DECIDE",
+        "LEARN",
+    ]
 
     def __init__(self) -> None:
         super().__init__("engineering_agent", "Controlled code modification", 2)
@@ -166,19 +210,26 @@ class EngineeringAgent(Agent):
 
     def execute(self, context: dict[str, Any]) -> dict[str, Any]:
         if not self.enabled:
-            raise PermissionError("EngineeringAgent is disabled — requires policy.enable_development_tools=true and human authorization")
+            raise PermissionError(
+                "EngineeringAgent is disabled — requires policy.enable_development_tools=true and human authorization"
+            )
         # Validate required fields for a patch
         symptom = context.get("symptom", "")
         evidence_id = context.get("evidence_id")
         if not evidence_id:
-            raise ValueError("EngineeringAgent requires {evidence_id} supporting the proposed change")
+            raise ValueError(
+                "EngineeringAgent requires {evidence_id} supporting the proposed change"
+            )
         # Produce provenance trail (no actual file write — framework only)
-        import hashlib, json, uuid, time
-        from datetime import UTC, datetime
+        import hashlib
+        import json
+        import uuid
 
         run_id = context.get("run_id", f"eng-{uuid.uuid4().hex[:8]}")
         # Simulate patch identity (content-addressed)
-        patch_content = json.dumps({"symptom": symptom, "evidence_id": evidence_id}, sort_keys=True).encode()
+        patch_content = json.dumps(
+            {"symptom": symptom, "evidence_id": evidence_id}, sort_keys=True
+        ).encode()
         patch_id = f"patch-{hashlib.sha256(patch_content).hexdigest()[:12]}"
         execution_id = f"exec-{uuid.uuid4().hex[:8]}"
         # Evidence would be produced by verification — stub
@@ -248,11 +299,14 @@ class WorkflowAutomationAgent(Agent):
 
     def execute(self, context: dict[str, Any]) -> dict[str, Any]:
         if not self.enabled:
-            raise PermissionError("WorkflowAutomation disabled — requires policy.enable_workflow_tools=true and per-task approval")
+            raise PermissionError(
+                "WorkflowAutomation disabled — requires policy.enable_workflow_tools=true and per-task approval"
+            )
         workflow_id = context.get("workflow_id", context.get("task_id", ""))
         if not workflow_id:
             raise ValueError("WorkflowAutomation requires {workflow_id} or {task_id}")
         import uuid
+
         return {
             "kind": "platform.workflow_result",
             "workflow_id": workflow_id,
@@ -282,10 +336,12 @@ def list_agents(*, enabled_only: bool = False) -> list[dict[str, Any]]:
     for name, agent in AGENT_REGISTRY.items():
         if enabled_only and not agent.enabled:
             continue
-        result.append({
-            "name": name,
-            "description": agent.description,
-            "authority_level": agent.authority_level,
-            "enabled": agent.enabled,
-        })
+        result.append(
+            {
+                "name": name,
+                "description": agent.description,
+                "authority_level": agent.authority_level,
+                "enabled": agent.enabled,
+            }
+        )
     return result

@@ -7,11 +7,11 @@ external (OpenRouter, Anthropic), or mock/deterministic.
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from abc import ABC, abstractmethod  # keep ABC for template
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Literal, Protocol
+from typing import Any, Protocol
 
 
 class ProviderKind(str, Enum):
@@ -138,7 +138,9 @@ class ModelProvider(Protocol):
 class BaseProvider(ABC):
     """Base class for model providers."""
 
-    def __init__(self, name: str, kind: ProviderKind, default_model: str, **model_kwargs: Any) -> None:
+    def __init__(
+        self, name: str, kind: ProviderKind, default_model: str, **model_kwargs: Any
+    ) -> None:
         self.name = name
         self.kind = kind
         self._default_model = default_model

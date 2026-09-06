@@ -57,7 +57,7 @@ def _canonicalize(value: Any) -> Any:
             if v is not None or _keep_none(_coerce_key(k))
         ]
         items.sort(key=lambda kv: kv[0])
-        return {k: v for k, v in items}
+        return dict(items)
     if isinstance(value, (list, tuple)):
         return [_canonicalize(item) for item in value]
     if isinstance(value, (str, int, float, bool)) or value is None:

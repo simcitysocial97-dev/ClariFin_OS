@@ -11,12 +11,9 @@ Phase 9B services populate these from the existing authority modules:
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 from runtime.platform.api.contracts._primitives import Identity, Status, Timestamp
-
 
 ARCHITECTURE_AUTHORITIES_KIND: str = "platform.architecture_authorities"
 ARCHITECTURE_AUTHORITY_KIND: str = "platform.architecture_authority"
@@ -76,7 +73,7 @@ class ArchitectureIssue(BaseModel):
     title: str = Field(min_length=1, max_length=256)
     location: str = Field(min_length=1, max_length=512)
     evidence: list[str] = Field(default_factory=list)
-    first_seen: Optional[Timestamp] = None
+    first_seen: Timestamp | None = None
 
 
 class ArchitectureFindingsData(BaseModel):

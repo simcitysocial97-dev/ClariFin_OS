@@ -1,0 +1,13 @@
+{
+  "id": "ai-edf9f9511acc",
+  "symptom": "regression test",
+  "mode": "MANUAL",
+  "capability_id": null,
+  "status": "PENDING",
+  "steps": [],
+  "created_at": "2026-09-06T05:13:16.681857Z",
+  "updated_at": "2026-09-06T05:13:16.681857Z",
+  "completed_at": null,
+  "error": null,
+  "audit_trail": []
+}

@@ -59,9 +59,12 @@ from runtime.foundation.verification.strengthening import (
     classify_survivor,
 )
 
-REPO_ROOT = __import__(
-    "pathlib", fromlist=["Path"]
-).Path(__file__).resolve().parent.parent.parent.parent
+REPO_ROOT = (
+    __import__("pathlib", fromlist=["Path"])
+    .Path(__file__)
+    .resolve()
+    .parent.parent.parent.parent
+)
 
 
 class GapClass(str, Enum):
@@ -118,9 +121,13 @@ class GapEvidence:
     capability: str
     location: str
     description: str
-    evidence_kind: str = ""  # mutation_operator | uncovered_branch | contract_rule | property_name | regression_id
+    evidence_kind: str = (
+        ""  # mutation_operator | uncovered_branch | contract_rule | property_name | regression_id
+    )
     evidence_detail: str = ""  # original/mutated snippet, contract rule, etc.
-    status: str = "survived"  # survived | no_tests | timeout | suspicious | uncovered | failed
+    status: str = (
+        "survived"  # survived | no_tests | timeout | suspicious | uncovered | failed
+    )
     notes: str = ""
     covering_tests: tuple[str, ...] = ()
     historical_count: int = 1  # how many times this gap has been observed

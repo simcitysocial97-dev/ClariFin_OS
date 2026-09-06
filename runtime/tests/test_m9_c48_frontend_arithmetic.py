@@ -7,7 +7,6 @@ from __future__ import annotations
 import json
 
 from runtime.foundation.verification.frontend_financial_arithmetic_lint import (
-    Finding,
     scan_frontend,
     scan_line,
     scan_paths,
@@ -119,6 +118,7 @@ def test_scan_frontend_real_repo_clean():
     d = rep.to_dict()
     # Persist for evidence.
     import os
+
     os.makedirs("runtime/generated/m9-c48", exist_ok=True)
     with open("runtime/generated/m9-c48/frontend-arithmetic-lint.json", "w") as f:
         json.dump(d, f, indent=2)

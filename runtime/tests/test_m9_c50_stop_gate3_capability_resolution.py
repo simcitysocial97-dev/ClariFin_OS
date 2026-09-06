@@ -9,8 +9,6 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-import pytest
-
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "runtime"))
 
 from foundation.verification.capability_graph_resolver import (
@@ -37,26 +35,44 @@ def parse_git_status_output(output: str) -> list:
             continue
         if line.startswith("D\t"):
             path = line[2:]
-            changes.append(FileChange(kind=ChangeKind.DELETED, old_path=None, new_path=path))
+            changes.append(
+                FileChange(kind=ChangeKind.DELETED, old_path=None, new_path=path)
+            )
         elif line.startswith("R"):
             # R can be "R" or "R099" etc. — find the first tab
             idx = line.index("\t")
-            rest = line[idx + 1:]
+            rest = line[idx + 1 :]
             parts = rest.split("\t")
-            changes.append(FileChange(kind=ChangeKind.RENAMED, old_path=parts[0], new_path=parts[1] if len(parts) > 1 else ""))
+            changes.append(
+                FileChange(
+                    kind=ChangeKind.RENAMED,
+                    old_path=parts[0],
+                    new_path=parts[1] if len(parts) > 1 else "",
+                )
+            )
         elif line.startswith("A\t"):
             path = line[2:]
-            changes.append(FileChange(kind=ChangeKind.ADDED, old_path=None, new_path=path))
+            changes.append(
+                FileChange(kind=ChangeKind.ADDED, old_path=None, new_path=path)
+            )
         elif line.startswith("M\t"):
             path = line[2:]
-            changes.append(FileChange(kind=ChangeKind.MODIFIED, old_path=path, new_path=path))
+            changes.append(
+                FileChange(kind=ChangeKind.MODIFIED, old_path=path, new_path=path)
+            )
     return changes
 
 
 class TestBackendChangeResolution:
     def test_backend_change_resolves_capabilities(self):
         resolver = CapabilityGraphResolver(FakeRegistry())
-        changes = [FileChange(kind=ChangeKind.MODIFIED, old_path="backend/src/engines/loan_engine.py", new_path="backend/src/engines/loan_engine.py")]
+        changes = [
+            FileChange(
+                kind=ChangeKind.MODIFIED,
+                old_path="backend/src/engines/loan_engine.py",
+                new_path="backend/src/engines/loan_engine.py",
+            )
+        ]
         res = resolver.resolve(changes=changes)
         assert res is not None
 
@@ -64,7 +80,13 @@ class TestBackendChangeResolution:
 class TestFrontendChangeResolution:
     def test_frontend_change_resolves_capabilities(self):
         resolver = CapabilityGraphResolver(FakeRegistry())
-        changes = [FileChange(kind=ChangeKind.MODIFIED, old_path="frontend/lib/components/Card.tsx", new_path="frontend/lib/components/Card.tsx")]
+        changes = [
+            FileChange(
+                kind=ChangeKind.MODIFIED,
+                old_path="frontend/lib/components/Card.tsx",
+                new_path="frontend/lib/components/Card.tsx",
+            )
+        ]
         res = resolver.resolve(changes=changes)
         assert res is not None
 
@@ -72,7 +94,11 @@ class TestFrontendChangeResolution:
 class TestUnknownChangeHandling:
     def test_unknown_change_is_explicit_not_silent(self):
         resolver = CapabilityGraphResolver(FakeRegistry())
-        changes = [FileChange(kind=ChangeKind.ADDED, old_path=None, new_path="unknown/path/x.py")]
+        changes = [
+            FileChange(
+                kind=ChangeKind.ADDED, old_path=None, new_path="unknown/path/x.py"
+            )
+        ]
         res = resolver.resolve(changes=changes)
         assert res is not None
 
@@ -109,7 +135,7 @@ class TestEndpointUnmappedBlocking:
     def test_endpoint_unmapped_generates_blocking_edge(self):
         resolver = CapabilityGraphResolver(FakeRegistry())
         res = resolver.resolve(changes=[], endpoints=[("GET", "/unknown-path")])
-        ep_edges = [e for e in res.edges if e.source_kind == "endpoint"]
+        [e for e in res.edges if e.source_kind == "endpoint"]
         # Edges may or may not be produced depending on registry state
         assert res is not None
 

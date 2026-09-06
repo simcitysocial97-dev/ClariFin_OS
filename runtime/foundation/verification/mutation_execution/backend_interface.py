@@ -37,7 +37,9 @@ class MutationBackendProtocol(Protocol):
     backend_name: str
     backend_version: str
 
-    def discover(self, scope: str, candidates: list[MutationCandidate]) -> list[MutationCandidate]:
+    def discover(
+        self, scope: str, candidates: list[MutationCandidate]
+    ) -> list[MutationCandidate]:
         """Discover mutations within the given scope. Returns enhanced candidates."""
         ...
 
@@ -149,7 +151,9 @@ class MutationBackendBase(ABC):
     def collect(self, campaign: MutationCampaign, workspace: Path) -> MutationResult:
         raise NotImplementedError
 
-    def cancel(self, campaign: MutationCampaign, workspace: Path) -> None:
+    def cancel(
+        self, campaign: MutationCampaign, workspace: Path
+    ) -> None:  # noqa: B027 — default no-op template
         """Default: no-op cancel."""
 
     def resume(
@@ -158,7 +162,9 @@ class MutationBackendBase(ABC):
         """Default: return campaign as-is (not resumable)."""
         return last_checkpoint
 
-    def cleanup(self, campaign: MutationCampaign, workspace: Path) -> None:
+    def cleanup(
+        self, campaign: MutationCampaign, workspace: Path
+    ) -> None:  # noqa: B027 — default no-op template
         """Default: no-op cleanup."""
 
     def diagnostics(self, workspace: Path) -> dict:

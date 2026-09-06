@@ -8,9 +8,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from runtime.platform.api.contracts.ai import AIStatus
-from runtime.platform.ai.policy import evaluate_policy, PolicyEngine
-
 
 class PlanStep:
     """A single step in a deterministic plan."""
@@ -77,21 +74,56 @@ class Plan:
 
 PLAN_TEMPLATES: dict[str, list[dict[str, Any]]] = {
     "observe": [
-        {"tool": "inspect_health", "args": {}, "level": 0, "desc": "Get system health snapshot"},
+        {
+            "tool": "inspect_health",
+            "args": {},
+            "level": 0,
+            "desc": "Get system health snapshot",
+        },
     ],
     "diagnose": [
-        {"tool": "inspect_health", "args": {}, "level": 0, "desc": "Get health baseline"},
-        {"tool": "run_diagnostic", "args": {"symptom": "{symptom}"}, "level": 1, "desc": "Run deterministic diagnostic"},
+        {
+            "tool": "inspect_health",
+            "args": {},
+            "level": 0,
+            "desc": "Get health baseline",
+        },
+        {
+            "tool": "run_diagnostic",
+            "args": {"symptom": "{symptom}"},
+            "level": 1,
+            "desc": "Run deterministic diagnostic",
+        },
     ],
     "verify": [
-        {"tool": "run_verification_capability", "args": {"capability_id": "{capability_id}"}, "level": 1, "desc": "Run targeted verification"},
+        {
+            "tool": "run_verification_capability",
+            "args": {"capability_id": "{capability_id}"},
+            "level": 1,
+            "desc": "Run targeted verification",
+        },
     ],
     "analyze": [
-        {"tool": "compute_change_intelligence", "args": {}, "level": 1, "desc": "Compute blast radius and stale evidence"},
-        {"tool": "compare_runs", "args": {"current": "LAST", "baseline": "LAST_PASS"}, "level": 1, "desc": "Compare with last pass"},
+        {
+            "tool": "compute_change_intelligence",
+            "args": {},
+            "level": 1,
+            "desc": "Compute blast radius and stale evidence",
+        },
+        {
+            "tool": "compare_runs",
+            "args": {"current": "LAST", "baseline": "LAST_PASS"},
+            "level": 1,
+            "desc": "Compare with last pass",
+        },
     ],
     "develop": [
-        {"tool": "propose_patch", "args": {"description": "{symptom}"}, "level": 2, "desc": "Propose code change"},
+        {
+            "tool": "propose_patch",
+            "args": {"description": "{symptom}"},
+            "level": 2,
+            "desc": "Propose code change",
+        },
     ],
 }
 
@@ -120,9 +152,13 @@ def build_plan(
                 key = v[1:-1]
                 if key == "symptom":
                     # Prefer explicit symptom argument; fall back to context
-                    args[k] = symptom if symptom else (context.get("symptom", "") if context else "")
+                    args[k] = (
+                        symptom
+                        if symptom
+                        else (context.get("symptom", "") if context else "")
+                    )
                 elif key == "capability_id":
-                    args[k] = (context.get("capability_id", "") if context else "")
+                    args[k] = context.get("capability_id", "") if context else ""
                     if not args[k] and symptom:
                         # Try to extract capability_id if mentioned in symptom (heuristic)
                         args[k] = ""

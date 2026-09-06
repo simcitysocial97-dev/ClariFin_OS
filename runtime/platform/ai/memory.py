@@ -58,7 +58,9 @@ class AIMemory:
         self._episodic["entries"].append(entry)
         self._save_json(self._episodic_file, self._episodic)
 
-    def get_episodic(self, run_id: str | None = None, limit: int = 50) -> list[dict[str, Any]]:
+    def get_episodic(
+        self, run_id: str | None = None, limit: int = 50
+    ) -> list[dict[str, Any]]:
         entries = self._episodic["entries"]
         if run_id:
             entries = [e for e in entries if e["run_id"] == run_id]
@@ -78,7 +80,9 @@ class AIMemory:
 
     def get_facts(self, *, prefix: str = "") -> dict[str, Any]:
         return {
-            k: v["value"] for k, v in self._operational["facts"].items() if k.startswith(prefix)
+            k: v["value"]
+            for k, v in self._operational["facts"].items()
+            if k.startswith(prefix)
         }
 
     def clear(self) -> None:

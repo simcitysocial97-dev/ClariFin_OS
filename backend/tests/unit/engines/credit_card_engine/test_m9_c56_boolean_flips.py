@@ -7,14 +7,15 @@ positive.
 
 from __future__ import annotations
 
-import pytest
 from datetime import date
+
+import pytest
+from src.engines.credit_card_engine.billing import _next_billing_day_after
+from src.engines.credit_card_engine.emi import compute_monthly_interest
 from src.engines.credit_card_engine.interest import (
     compute_daily_interest,
     compute_monthly_interest_simple,
 )
-from src.engines.credit_card_engine.emi import compute_monthly_interest
-from src.engines.credit_card_engine.billing import _next_billing_day_after
 
 
 class TestMonthlyInterestBooleanFlip:

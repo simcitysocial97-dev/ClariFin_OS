@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 # ---------------------------------------------------------------------------
 # Rule definitions
 # ---------------------------------------------------------------------------
@@ -73,7 +72,7 @@ def evaluate(ctx: dict[str, Any]) -> dict[str, Any] | None:
                     "fact": rule["fact"],
                     "recommendation": rule["recommendation"],
                 }
-        except Exception as exc:
+        except Exception:
             # A failing rule is treated as non-matching, not fatal.
             pass
     return None

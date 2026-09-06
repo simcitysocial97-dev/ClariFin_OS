@@ -17,7 +17,6 @@ from pydantic import BaseModel, Field
 
 from runtime.platform.api.contracts._primitives import Identity, Timestamp
 
-
 CHANGE_INTELLIGENCE_KIND: str = "platform.change_intelligence"
 
 

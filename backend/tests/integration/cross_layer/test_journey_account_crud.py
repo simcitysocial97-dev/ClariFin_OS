@@ -42,7 +42,9 @@ class TestAccountCRUDJourney:
             for field in required_fields:
                 assert field in account, f"Missing required field: {field}"
 
-            assert isinstance(account["balance_paise"], int), "balance_paise should be int"
+            assert isinstance(
+                account["balance_paise"], int
+            ), "balance_paise should be int"
             assert account["balance_paise"] >= 0, "balance_paise should be non-negative"
 
     def test_create_account_via_api(self, client: TestClient) -> None:
@@ -72,9 +74,9 @@ class TestAccountCRUDJourney:
         assert response.status_code == 200
 
         data = response.json()
-        assert data["total"] == len(data["accounts"]), (
-            f"total ({data['total']}) should match len(accounts) ({len(data['accounts'])})"
-        )
+        assert data["total"] == len(
+            data["accounts"]
+        ), f"total ({data['total']}) should match len(accounts) ({len(data['accounts'])})"
 
     def test_balance_precision_in_paise(self, client: TestClient) -> None:
         """All monetary values are in paise (integers), not rupees."""
@@ -83,9 +85,9 @@ class TestAccountCRUDJourney:
 
         data = response.json()
         for account in data["accounts"]:
-            assert isinstance(account["balance_paise"], int), (
-                f"balance_paise should be int, got {type(account['balance_paise'])}"
-            )
+            assert isinstance(
+                account["balance_paise"], int
+            ), f"balance_paise should be int, got {type(account['balance_paise'])}"
 
 
 class TestAccountServiceLayer:

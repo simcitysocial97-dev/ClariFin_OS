@@ -11,12 +11,10 @@ Classification: Category B (High Coverage / Low Mutation).
 
 from __future__ import annotations
 
-from datetime import date, timedelta
-from decimal import ROUND_HALF_EVEN, Decimal
+from datetime import date
 
 import pytest
 from src.engines.credit_card_engine.billing import (
-    compute_due_date,
     compute_minimum_due,
     compute_next_statement_date,
 )
@@ -26,7 +24,6 @@ from src.engines.credit_card_engine.interest import (
     compute_monthly_interest_simple,
 )
 from src.engines.credit_card_engine.metrics import compute_financial_metrics
-
 
 # ============================================================================
 # compute_financial_metrics: comparison boundary
@@ -232,7 +229,9 @@ class TestMinimumDueBoundary:
 
     def test_negative_outstanding_raises(self):
         """Negative outstanding must raise ValueError."""
-        with pytest.raises(ValueError, match="total_outstanding_paise must be non-negative"):
+        with pytest.raises(
+            ValueError, match="total_outstanding_paise must be non-negative"
+        ):
             compute_minimum_due(-1000)
 
 
@@ -346,6 +345,7 @@ class Testc56_18091:
     def test_import_18091(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -355,6 +355,7 @@ class Testc56_94936:
     def test_import_94936(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -364,6 +365,7 @@ class Testc56_09182:
     def test_import_09182(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -373,6 +375,7 @@ class Testc56_67975:
     def test_import_67975(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -382,6 +385,7 @@ class Testc56_49202:
     def test_import_49202(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import _next_billing_day_after
+
         assert _next_billing_day_after is not None
 
 
@@ -391,6 +395,7 @@ class Testc56_14369:
     def test_import_14369(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -400,6 +405,7 @@ class Testc56_25114:
     def test_import_25114(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -409,6 +415,7 @@ class Testc56_12588:
     def test_import_12588(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -418,6 +425,7 @@ class Testc56_18252:
     def test_import_18252(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -427,6 +435,7 @@ class Testc56_96879:
     def test_import_96879(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -436,6 +445,7 @@ class Testc56_02230:
     def test_import_02230(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -445,6 +455,7 @@ class Testc56_42149:
     def test_import_42149(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -454,6 +465,7 @@ class Testc56_47986:
     def test_import_47986(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -463,6 +475,7 @@ class Testc56_27715:
     def test_import_27715(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -472,6 +485,7 @@ class Testc56_51582:
     def test_import_51582(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import _next_billing_day_after
+
         assert _next_billing_day_after is not None
 
 
@@ -481,6 +495,7 @@ class Testc56_60178:
     def test_import_60178(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -490,6 +505,7 @@ class Testc56_79812:
     def test_import_79812(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -499,6 +515,7 @@ class Testc56_88004:
     def test_import_88004(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -508,6 +525,7 @@ class Testc56_49536:
     def test_import_49536(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -517,6 +535,7 @@ class Testc56_10251:
     def test_import_10251(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -526,6 +545,7 @@ class Testc56_56214:
     def test_import_56214(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_daily_interest
+
         assert compute_daily_interest is not None
 
 
@@ -535,6 +555,7 @@ class Testc56_04400:
     def test_import_04400(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_daily_interest
+
         assert compute_daily_interest is not None
 
 
@@ -544,6 +565,7 @@ class Testc56_88523:
     def test_import_88523(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_monthly_interest_simple
+
         assert compute_monthly_interest_simple is not None
 
 
@@ -553,6 +575,7 @@ class Testc56_69244:
     def test_import_69244(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_monthly_interest_simple
+
         assert compute_monthly_interest_simple is not None
 
 
@@ -562,6 +585,7 @@ class Testc56_02361:
     def test_import_02361(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -571,6 +595,7 @@ class Testc56_91918:
     def test_import_91918(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -580,6 +605,7 @@ class Testc56_87183:
     def test_import_87183(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -589,6 +615,7 @@ class Testc56_32291:
     def test_import_32291(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -598,6 +625,7 @@ class Testc56_82442:
     def test_import_82442(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -607,6 +635,7 @@ class Testc56_62077:
     def test_import_62077(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -616,6 +645,7 @@ class Testc56_42748:
     def test_import_42748(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -625,6 +655,7 @@ class Testc56_12802:
     def test_import_12802(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -634,6 +665,7 @@ class Testc56_01806:
     def test_import_01806(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -643,6 +675,7 @@ class Testc56_03503:
     def test_import_03503(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -652,6 +685,7 @@ class Testc56_40289:
     def test_import_40289(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -661,6 +695,7 @@ class Testc56_34861:
     def test_import_34861(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -670,6 +705,7 @@ class Testc56_37630:
     def test_import_37630(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -679,6 +715,7 @@ class Testc56_09773:
     def test_import_09773(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -688,6 +725,7 @@ class Testc56_71612:
     def test_import_71612(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -697,6 +735,7 @@ class Testc56_92293:
     def test_import_92293(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_daily_interest
+
         assert compute_daily_interest is not None
 
 
@@ -706,6 +745,7 @@ class Testc56_18811:
     def test_import_18811(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_daily_interest
+
         assert compute_daily_interest is not None
 
 
@@ -715,6 +755,7 @@ class Testc56_82549:
     def test_import_82549(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_monthly_interest_simple
+
         assert compute_monthly_interest_simple is not None
 
 
@@ -724,6 +765,7 @@ class Testc56_55711:
     def test_import_55711(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_monthly_interest_simple
+
         assert compute_monthly_interest_simple is not None
 
 
@@ -733,6 +775,7 @@ class Testc56_19185:
     def test_import_19185(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -742,6 +785,7 @@ class Testc56_94651:
     def test_import_94651(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -751,6 +795,7 @@ class Testc56_32036:
     def test_import_32036(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -760,6 +805,7 @@ class Testc56_08997:
     def test_import_08997(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -769,6 +815,7 @@ class Testc56_62153:
     def test_import_62153(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -778,6 +825,7 @@ class Testc56_86126:
     def test_import_86126(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -787,6 +835,7 @@ class Testc56_84624:
     def test_import_84624(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -796,6 +845,7 @@ class Testc56_30989:
     def test_import_30989(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -805,6 +855,7 @@ class Testc56_63978:
     def test_import_63978(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -814,6 +865,7 @@ class Testc56_30069:
     def test_import_30069(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -823,6 +875,7 @@ class Testc56_37615:
     def test_import_37615(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -832,6 +885,7 @@ class Testc56_64370:
     def test_import_64370(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -841,6 +895,7 @@ class Testc56_76119:
     def test_import_76119(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -850,6 +905,7 @@ class Testc56_00858:
     def test_import_00858(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -859,6 +915,7 @@ class Testc56_50972:
     def test_import_50972(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -868,6 +925,7 @@ class Testc56_88218:
     def test_import_88218(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -877,6 +935,7 @@ class Testc56_59942:
     def test_import_59942(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -886,6 +945,7 @@ class Testc56_49364:
     def test_import_49364(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import _next_billing_day_after
+
         assert _next_billing_day_after is not None
 
 
@@ -895,6 +955,7 @@ class Testc56_21199:
     def test_import_21199(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_statement_dates
+
         assert compute_statement_dates is not None
 
 
@@ -904,6 +965,7 @@ class Testc56_56578:
     def test_import_56578(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.foreclosure import compute_card_foreclosure
+
         assert compute_card_foreclosure is not None
 
 
@@ -913,6 +975,7 @@ class Testc56_85853:
     def test_import_85853(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.foreclosure import compute_card_foreclosure
+
         assert compute_card_foreclosure is not None
 
 
@@ -922,6 +985,7 @@ class Testc56_55998:
     def test_import_55998(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.foreclosure import compute_card_foreclosure
+
         assert compute_card_foreclosure is not None
 
 
@@ -931,6 +995,7 @@ class Testc56_44741:
     def test_import_44741(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.foreclosure import compute_card_foreclosure
+
         assert compute_card_foreclosure is not None
 
 
@@ -940,6 +1005,7 @@ class Testc56_79177:
     def test_import_79177(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -949,6 +1015,7 @@ class Testc56_80318:
     def test_import_80318(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -958,6 +1025,7 @@ class Testc56_20627:
     def test_import_20627(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_minimum_due
+
         assert compute_minimum_due is not None
 
 
@@ -967,6 +1035,7 @@ class Testc56_49092:
     def test_import_49092(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.utilization import compute_utilization
+
         assert compute_utilization is not None
 
 
@@ -976,6 +1045,7 @@ class Testc56_77375:
     def test_import_77375(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -985,6 +1055,7 @@ class Testc56_41758:
     def test_import_41758(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -994,6 +1065,7 @@ class Testc56_33053:
     def test_import_33053(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1003,6 +1075,7 @@ class Testc56_10599:
     def test_import_10599(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1012,6 +1085,7 @@ class Testc56_58627:
     def test_import_58627(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -1021,6 +1095,7 @@ class Testc56_96002:
     def test_import_96002(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -1030,6 +1105,7 @@ class Testc56_45285:
     def test_import_45285(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -1039,6 +1115,7 @@ class Testc56_29468:
     def test_import_29468(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -1048,6 +1125,7 @@ class Testc56_71903:
     def test_import_71903(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -1057,6 +1135,7 @@ class Testc56_27446:
     def test_import_27446(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_daily_interest
+
         assert compute_daily_interest is not None
 
 
@@ -1066,6 +1145,7 @@ class Testc56_33785:
     def test_import_33785(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_daily_interest
+
         assert compute_daily_interest is not None
 
 
@@ -1075,6 +1155,7 @@ class Testc56_56046:
     def test_import_56046(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_monthly_interest_simple
+
         assert compute_monthly_interest_simple is not None
 
 
@@ -1084,6 +1165,7 @@ class Testc56_57765:
     def test_import_57765(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_monthly_interest_simple
+
         assert compute_monthly_interest_simple is not None
 
 
@@ -1093,6 +1175,7 @@ class Testc56_82901:
     def test_import_82901(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1102,6 +1185,7 @@ class Testc56_18647:
     def test_import_18647(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1111,6 +1195,7 @@ class Testc56_05341:
     def test_import_05341(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1120,6 +1205,7 @@ class Testc56_42384:
     def test_import_42384(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1129,6 +1215,7 @@ class Testc56_28297:
     def test_import_28297(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1138,6 +1225,7 @@ class Testc56_68053:
     def test_import_68053(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1147,6 +1235,7 @@ class Testc56_69243:
     def test_import_69243(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1156,6 +1245,7 @@ class Testc56_29952:
     def test_import_29952(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -1165,6 +1255,7 @@ class Testc56_91228:
     def test_import_91228(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1174,6 +1265,7 @@ class Testc56_27702:
     def test_import_27702(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1183,6 +1275,7 @@ class Testc56_64029:
     def test_import_64029(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1192,6 +1285,7 @@ class Testc56_95415:
     def test_import_95415(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import _next_billing_day_after
+
         assert _next_billing_day_after is not None
 
 
@@ -1201,6 +1295,7 @@ class Testc56_75082:
     def test_import_75082(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -1210,6 +1305,7 @@ class Testc56_46207:
     def test_import_46207(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -1219,6 +1315,7 @@ class Testc56_94939:
     def test_import_94939(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -1228,6 +1325,7 @@ class Testc56_83674:
     def test_import_83674(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -1237,6 +1335,7 @@ class Testc56_54336:
     def test_import_54336(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -1246,6 +1345,7 @@ class Testc56_85925:
     def test_import_85925(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_daily_interest
+
         assert compute_daily_interest is not None
 
 
@@ -1255,6 +1355,7 @@ class Testc56_28631:
     def test_import_28631(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_daily_interest
+
         assert compute_daily_interest is not None
 
 
@@ -1264,6 +1365,7 @@ class Testc56_49519:
     def test_import_49519(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_monthly_interest_simple
+
         assert compute_monthly_interest_simple is not None
 
 
@@ -1273,6 +1375,7 @@ class Testc56_14845:
     def test_import_14845(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_monthly_interest_simple
+
         assert compute_monthly_interest_simple is not None
 
 
@@ -1282,6 +1385,7 @@ class Testc56_59307:
     def test_import_59307(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1291,6 +1395,7 @@ class Testc56_33156:
     def test_import_33156(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1300,6 +1405,7 @@ class Testc56_74581:
     def test_import_74581(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1309,6 +1415,7 @@ class Testc56_29040:
     def test_import_29040(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1318,6 +1425,7 @@ class Testc56_88608:
     def test_import_88608(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1327,6 +1435,7 @@ class Testc56_59251:
     def test_import_59251(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1336,6 +1445,7 @@ class Testc56_97197:
     def test_import_97197(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1345,6 +1455,7 @@ class Testc56_06042:
     def test_import_06042(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1354,6 +1465,7 @@ class Testc56_49579:
     def test_import_49579(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1363,6 +1475,7 @@ class Testc56_70198:
     def test_import_70198(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1372,6 +1485,7 @@ class Testc56_30856:
     def test_import_30856(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1381,6 +1495,7 @@ class Testc56_65290:
     def test_import_65290(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1390,6 +1505,7 @@ class Testc56_77037:
     def test_import_77037(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1399,6 +1515,7 @@ class Testc56_30694:
     def test_import_30694(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1408,6 +1525,7 @@ class Testc56_61789:
     def test_import_61789(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -1417,4 +1535,5 @@ class Testc56_81221:
     def test_import_81221(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None

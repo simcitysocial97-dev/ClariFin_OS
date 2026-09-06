@@ -22,25 +22,31 @@ from typing import Any
 # Canonical result states (M44.1 — must cover every observable outcome).
 # =========================================================================
 
+
 class MutationResultState(str, Enum):
     """Canonical mutation execution outcomes. No backend may introduce an
     undocumented state; unknown backend states map here explicitly."""
 
-    KILLED = "KILLED"           # targeted tests failed because of the mutation
-    SURVIVED = "SURVIVED"       # selected tests passed despite the mutation
-    EQUIVALENT = "EQUIVALENT"   # mutation cannot affect externally observable behaviour
-    NO_TESTS = "NO_TESTS"       # no valid selected test exercised the mutation
-    TIMEOUT = "TIMEOUT"         # execution exceeded defined timeout
+    KILLED = "KILLED"  # targeted tests failed because of the mutation
+    SURVIVED = "SURVIVED"  # selected tests passed despite the mutation
+    EQUIVALENT = "EQUIVALENT"  # mutation cannot affect externally observable behaviour
+    NO_TESTS = "NO_TESTS"  # no valid selected test exercised the mutation
+    TIMEOUT = "TIMEOUT"  # execution exceeded defined timeout
     EXECUTION_ERROR = "EXECUTION_ERROR"  # test process crashed / infrastructure failed
-    INVALID_MUTANT = "INVALID_MUTANT"    # mutated source identical to baseline or unapplyable
-    NOT_EXECUTED = "NOT_EXECUTED"        # scheduled but never attempted (e.g. campaign cancelled)
-    CANCELLED = "CANCELLED"      # explicitly cancelled by operator or campaign policy
-    UNKNOWN = "UNKNOWN"          # truly unclassifiable after exhaustive diagnostics
+    INVALID_MUTANT = (
+        "INVALID_MUTANT"  # mutated source identical to baseline or unapplyable
+    )
+    NOT_EXECUTED = (
+        "NOT_EXECUTED"  # scheduled but never attempted (e.g. campaign cancelled)
+    )
+    CANCELLED = "CANCELLED"  # explicitly cancelled by operator or campaign policy
+    UNKNOWN = "UNKNOWN"  # truly unclassifiable after exhaustive diagnostics
 
 
 # =========================================================================
 # Timeout taxonomy (M44.8).
 # =========================================================================
+
 
 class TimeoutKind(str, Enum):
     TEST_TIMEOUT = "test_timeout"
@@ -53,6 +59,7 @@ class TimeoutKind(str, Enum):
 # =========================================================================
 # Failure taxonomy (for infrastructure/retry tracking).
 # =========================================================================
+
 
 class InfrastructureFailureKind(str, Enum):
     NONE = "none"
@@ -74,20 +81,23 @@ class InfrastructureFailureKind(str, Enum):
 # MutationCampaign — top-level execution context (M44.1).
 # =========================================================================
 
+
 @dataclass(frozen=True, slots=True)
 class MutationCampaign:
     campaign_id: str
-    repository_revision: str           # git HEAD sha
-    environment_fingerprint: str       # from env.resolve_environment()
-    mutation_backend: str              # "mutmut" | "cosmic_ray" | ...
-    backend_version: str               # e.g. "3.7.0"
-    scope: str                         # "full" | engine name
-    test_selection: str                # compact description of selected tests
-    configuration_fingerprint: str     # M44.11 hash
-    execution_policy: str              # serial | parallel | shard:<N>
-    creation_timestamp: str            # ISO 8601
-    status: str = "PENDING"            # PENDING | INITIALIZED | RUNNING | PAUSED | COMPLETED | FAILED | CANCELLED
-    resumed_from: str | None = None    # parent campaign_id if this is a resume
+    repository_revision: str  # git HEAD sha
+    environment_fingerprint: str  # from env.resolve_environment()
+    mutation_backend: str  # "mutmut" | "cosmic_ray" | ...
+    backend_version: str  # e.g. "3.7.0"
+    scope: str  # "full" | engine name
+    test_selection: str  # compact description of selected tests
+    configuration_fingerprint: str  # M44.11 hash
+    execution_policy: str  # serial | parallel | shard:<N>
+    creation_timestamp: str  # ISO 8601
+    status: str = (
+        "PENDING"  # PENDING | INITIALIZED | RUNNING | PAUSED | COMPLETED | FAILED | CANCELLED
+    )
+    resumed_from: str | None = None  # parent campaign_id if this is a resume
     worker_count: int = 1
     shard_index: int | None = None
     shard_total: int | None = None
@@ -122,20 +132,21 @@ class MutationCampaign:
 # MutationCandidate — one source-level mutation (M44.1 + M44.2).
 # =========================================================================
 
+
 @dataclass(frozen=True, slots=True)
 class MutationCandidate:
-    canonical_mutant_id: str          # deterministic, backend-agnostic identifier
-    source_file: str                  # relative to repo root
-    source_hash: str                  # sha256 of baseline source file
-    function: str                     # fully qualified function/method name
+    canonical_mutant_id: str  # deterministic, backend-agnostic identifier
+    source_file: str  # relative to repo root
+    source_hash: str  # sha256 of baseline source file
+    function: str  # fully qualified function/method name
     line: int | None = None
     column: int | None = None
-    operator: str = ""                # e.g. "arithmetic_operator", "comparison_operator"
+    operator: str = ""  # e.g. "arithmetic_operator", "comparison_operator"
     original_expression: str = ""
     mutated_expression: str = ""
-    capability: str = ""              # from Verification Graph capability resolution
-    component: str = ""               # engine / module group name
-    risk: str = "medium"              # low | medium | high | critical
+    capability: str = ""  # from Verification Graph capability resolution
+    component: str = ""  # engine / module group name
+    risk: str = "medium"  # low | medium | high | critical
     selected_tests: tuple[str, ...] = ()
     backend_metadata: dict[str, Any] = field(default_factory=dict)
 
@@ -178,22 +189,25 @@ def derive_canonical_mutant_id(
 
     Derives from stable semantic information. Same revision + mutation => same id.
     """
-    payload = "|".join([
-        repository_revision,
-        source_file,
-        source_hash,
-        function or "",
-        str(line) if line is not None else "",
-        operator,
-        original_expression,
-        mutated_expression,
-    ])
+    payload = "|".join(
+        [
+            repository_revision,
+            source_file,
+            source_hash,
+            function or "",
+            str(line) if line is not None else "",
+            operator,
+            original_expression,
+            mutated_expression,
+        ]
+    )
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:20]
 
 
 # =========================================================================
 # MutationExecution — per-mutant execution record (M44.1).
 # =========================================================================
+
 
 @dataclass
 class MutationExecution:
@@ -206,7 +220,7 @@ class MutationExecution:
     duration_seconds: float = 0.0
     process_id: int | None = None
     exit_status: int | None = None
-    test_result: str = "UNKNOWN"     # pytest-style result for reference
+    test_result: str = "UNKNOWN"  # pytest-style result for reference
     timeout: TimeoutKind | None = None
     infrastructure_failure: InfrastructureFailureKind = InfrastructureFailureKind.NONE
     mutation_result: MutationResultState = MutationResultState.UNKNOWN
@@ -251,9 +265,7 @@ class MutationExecution:
             process_id=d.get("process_id"),
             exit_status=d.get("exit_status"),
             test_result=d.get("test_result", "UNKNOWN"),
-            timeout=(
-                TimeoutKind(d["timeout"]) if d.get("timeout") else None
-            ),
+            timeout=(TimeoutKind(d["timeout"]) if d.get("timeout") else None),
             infrastructure_failure=InfrastructureFailureKind(
                 d.get("infrastructure_failure", "none")
             ),
@@ -269,6 +281,7 @@ class MutationExecution:
 # =========================================================================
 # MutationResult — aggregated campaign outcome (M44.1).
 # =========================================================================
+
 
 @dataclass
 class MutationResult:
@@ -351,9 +364,7 @@ class MutationResult:
         """M44.24: % of executions producing a valid authoritative result."""
         if self.total_executions == 0:
             return None
-        return round(
-            self.successful_executions * 100.0 / self.total_executions, 2
-        )
+        return round(self.successful_executions * 100.0 / self.total_executions, 2)
 
     @property
     def scored_total(self) -> int:
@@ -373,14 +384,18 @@ class MutationResult:
 
     def reconcile(self) -> bool:
         """M44.14: every candidate must be accounted for."""
-        accounted = self.processed_total + self.not_executed + self.cancelled + self.unknown
+        accounted = (
+            self.processed_total + self.not_executed + self.cancelled + self.unknown
+        )
         return self.total_candidates == accounted
 
     def classification_summary(self) -> dict[str, Any]:
         return {
-            "state_counts": {s.value: getattr(self, s.name.lower())
-                             for s in MutationResultState
-                             if s != MutationResultState.UNKNOWN},
+            "state_counts": {
+                s.value: getattr(self, s.name.lower())
+                for s in MutationResultState
+                if s != MutationResultState.UNKNOWN
+            },
             "unknown": self.unknown,
             "total_candidates": self.total_candidates,
             "score": self.score,
@@ -392,6 +407,7 @@ class MutationResult:
 # =========================================================================
 # Persistence helpers.
 # =========================================================================
+
 
 def save_campaign_manifest(campaign: MutationCampaign, path: Path) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)

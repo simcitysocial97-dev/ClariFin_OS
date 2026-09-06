@@ -27,27 +27,23 @@ from __future__ import annotations
 import re
 from typing import Any
 
-import pytest
-
+from runtime.platform.ai import (
+    AI_ORCHESTRATOR_INSTANCE,
+    TOOL_REGISTRY_INSTANCE,
+    build_plan,
+    resolve_intent,
+)
+from runtime.platform.ai.context import CONTEXT_PACK_KIND, build_context_pack
 from runtime.platform.ai.providers import (
     MODEL_ROUTER_INSTANCE,
     ProviderKind,
     RoutingProfile,
-    CompletionResult,
-    LocalOllamaProvider,
-    DeterministicFallbackProvider,
 )
-from runtime.platform.ai.tools.handlers import LEVEL_0_HANDLERS, LEVEL_1_HANDLERS, execute_tool
-from runtime.platform.ai.context import build_context_pack, CONTEXT_PACK_KIND
-from runtime.platform.ai import (
-    AI_ORCHESTRATOR_INSTANCE,
-    POLICY_ENGINE_INSTANCE,
-    TOOL_REGISTRY_INSTANCE,
-    resolve_intent,
-    build_plan,
+from runtime.platform.ai.tools.handlers import (
+    LEVEL_0_HANDLERS,
+    LEVEL_1_HANDLERS,
+    execute_tool,
 )
-from runtime.platform.api.contracts.ai import AUTHORITY_LEVELS, AIMode
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -86,11 +82,13 @@ class TestModelRouter:
 
     def test_deterministic_provider_always_available(self) -> None:
         from runtime.platform.ai.providers.local import DETERMINISTIC_FALLBACK
+
         assert DETERMINISTIC_FALLBACK.is_available() is True
 
     def test_deterministic_complete_returns_fallback_text(self) -> None:
-        from runtime.platform.ai.providers.local import DETERMINISTIC_FALLBACK
         from runtime.platform.ai.providers.base import Message
+        from runtime.platform.ai.providers.local import DETERMINISTIC_FALLBACK
+
         result = DETERMINISTIC_FALLBACK.complete(
             messages=[Message(role="user", content="test symptom")],
         )
@@ -100,13 +98,16 @@ class TestModelRouter:
 
     def test_provider_health_tracking(self) -> None:
         from runtime.platform.ai.providers.local import DETERMINISTIC_FALLBACK
+
         health = DETERMINISTIC_FALLBACK.health
         assert health.reachable is True
         assert health.provider == "deterministic-fallback"
 
     def test_routing_profile_constraints(self) -> None:
         # Privacy=local should reject external providers
-        profile = RoutingProfile(task_kind="diagnose", context_size=1000, privacy="local")
+        profile = RoutingProfile(
+            task_kind="diagnose", context_size=1000, privacy="local"
+        )
         provider = MODEL_ROUTER_INSTANCE.route(profile)
         # Should route to local/deterministic
         assert provider.kind == ProviderKind.LOCAL
@@ -133,9 +134,16 @@ class TestLevel0Tools:
 
     def test_all_level_0_tools_registered(self) -> None:
         expected = {
-            "inspect_health", "inspect_capability", "inspect_architecture",
-            "inspect_errors", "inspect_history", "inspect_evidence",
-            "inspect_file", "search_code", "inspect_run", "inspect_ai_run",
+            "inspect_health",
+            "inspect_capability",
+            "inspect_architecture",
+            "inspect_errors",
+            "inspect_history",
+            "inspect_evidence",
+            "inspect_file",
+            "search_code",
+            "inspect_run",
+            "inspect_ai_run",
             "list_capabilities",
         }
         assert set(LEVEL_0_HANDLERS.keys()) == expected
@@ -146,7 +154,10 @@ class TestLevel0Tools:
 
     def test_list_capabilities_works(self) -> None:
         result = execute_tool("list_capabilities", {})
-        assert result.get("kind") in ("platform.capability_list", "platform.capabilities_list")
+        assert result.get("kind") in (
+            "platform.capability_list",
+            "platform.capabilities_list",
+        )
 
     def test_inspect_architecture_works(self) -> None:
         result = execute_tool("inspect_architecture", {})
@@ -154,6 +165,7 @@ class TestLevel0Tools:
 
     def test_tool_policy_enforced(self) -> None:
         from runtime.platform.ai.policy import POLICY_ENGINE_INSTANCE
+
         # Register tools in policy engine (done at router load time)
         for name in LEVEL_0_HANDLERS:
             POLICY_ENGINE_INSTANCE.register_tool(name, 0)
@@ -161,12 +173,16 @@ class TestLevel0Tools:
             POLICY_ENGINE_INSTANCE.register_tool(name, 1)
         # Level 0 tool in MANUAL mode should be allowed
         dec = POLICY_ENGINE_INSTANCE.evaluate(
-            tool_name="inspect_health", run_mode="MANUAL", run_authorization_level=0,
+            tool_name="inspect_health",
+            run_mode="MANUAL",
+            run_authorization_level=0,
         )
         assert dec.allowed is True
         # Level 1 tool in MANUAL mode should be denied
         dec2 = POLICY_ENGINE_INSTANCE.evaluate(
-            tool_name="run_diagnostic", run_mode="MANUAL", run_authorization_level=0,
+            tool_name="run_diagnostic",
+            run_mode="MANUAL",
+            run_authorization_level=0,
         )
         assert dec2.allowed is False
 
@@ -176,9 +192,14 @@ class TestLevel1Tools:
 
     def test_all_level_1_tools_registered(self) -> None:
         expected = {
-            "diagnose_failure", "compare_runs", "compute_change_intelligence",
-            "run_verification_capability", "run_diagnostic", "run_what_should_i_run",
-            "run_capability_group", "cancel_task",
+            "diagnose_failure",
+            "compare_runs",
+            "compute_change_intelligence",
+            "run_verification_capability",
+            "run_diagnostic",
+            "run_what_should_i_run",
+            "run_capability_group",
+            "cancel_task",
         }
         assert set(LEVEL_1_HANDLERS.keys()) == expected
 
@@ -192,19 +213,24 @@ class TestLevel1Tools:
         assert "kind" in result
 
     def test_compare_runs_returns_delta(self) -> None:
-        result = execute_tool("compare_runs", {"current_run_id": "LAST", "baseline": "LAST_PASS"})
+        result = execute_tool(
+            "compare_runs", {"current_run_id": "LAST", "baseline": "LAST_PASS"}
+        )
         # May return None if insufficient data; that's OK
         if result:
             assert "kind" in result
 
     def test_tool_requires_assisted_mode(self) -> None:
         from runtime.platform.ai.policy import POLICY_ENGINE_INSTANCE
+
         for name in LEVEL_0_HANDLERS:
             POLICY_ENGINE_INSTANCE.register_tool(name, 0)
         for name in LEVEL_1_HANDLERS:
             POLICY_ENGINE_INSTANCE.register_tool(name, 1)
         dec = POLICY_ENGINE_INSTANCE.evaluate(
-            tool_name="run_diagnostic", run_mode="ASSISTED", run_authorization_level=1,
+            tool_name="run_diagnostic",
+            run_mode="ASSISTED",
+            run_authorization_level=1,
         )
         assert dec.allowed is True
 
@@ -219,7 +245,10 @@ class TestAIDiagnosticAssistant:
 
     def test_deterministic_diagnostic_computed(self) -> None:
         """Deterministic engine produces diagnosis without LLM."""
-        result = execute_tool("diagnose_failure", {"symptom": "INTEGRITY_FAILED", "capability_id": "discover.blast-radius"})
+        result = execute_tool(
+            "diagnose_failure",
+            {"symptom": "INTEGRITY_FAILED", "capability_id": "discover.blast-radius"},
+        )
         assert result is not None
         # Must have deterministic fields
         assert "level" in result.get("data", {}) or "fact" in result.get("data", {})
@@ -236,7 +265,10 @@ class TestAIDiagnosticAssistant:
         # The deterministic diagnostic engine already ran
         diag = execute_tool("diagnose_failure", {"symptom": "test"})
         # AI would add inference on top, never replace the deterministic fact
-        assert "fact" in diag.get("data", {}) or diag.get("data", {}).get("level") is not None
+        assert (
+            "fact" in diag.get("data", {})
+            or diag.get("data", {}).get("level") is not None
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -249,6 +281,7 @@ class TestEngineeringAgentFramework:
 
     def test_level_2_tools_defined_in_agents(self) -> None:
         from runtime.platform.ai.agents import AGENT_REGISTRY
+
         eng_agent = AGENT_REGISTRY.get("engineering_agent")
         assert eng_agent is not None
         assert eng_agent.authority_level == 2
@@ -257,10 +290,10 @@ class TestEngineeringAgentFramework:
 
     def test_full_lifecycle_exists(self) -> None:
         """Lifecycle stages: REQUEST→UNDERSTAND→INSPECT→PLAN→AUTHORIZE→CHANGE→EXECUTE→VERIFY→RECONCILE→DECIDE→LEARN"""
-        lifecycle = ["REQUEST", "UNDERSTAND", "INSPECT", "PLAN", "AUTHORIZE", "CHANGE", "EXECUTE", "VERIFY", "RECONCILE", "DECIDE", "LEARN"]
         # These stages are documented in the design; we verify the framework acknowledges them
         from runtime.platform.ai.agents import EngineeringAgent
-        assert hasattr(EngineeringAgent, 'execute')
+
+        assert hasattr(EngineeringAgent, "execute")
 
 
 # ---------------------------------------------------------------------------
@@ -273,6 +306,7 @@ class TestFinancialAIFramework:
 
     def test_financial_agent_framework_exists(self) -> None:
         from runtime.platform.ai.agents import AGENT_REGISTRY
+
         fin_agent = AGENT_REGISTRY.get("financial_ai")
         assert fin_agent is not None
         assert fin_agent.authority_level == 1
@@ -282,7 +316,12 @@ class TestFinancialAIFramework:
         """Financial AI never writes — only interprets."""
         # Verify no write tools in level 0/1
         all_tool_names = set(LEVEL_0_HANDLERS.keys()) | set(LEVEL_1_HANDLERS.keys())
-        write_tools = {"create_transaction", "post_entry", "modify_balance", "delete_record"}
+        write_tools = {
+            "create_transaction",
+            "post_entry",
+            "modify_balance",
+            "delete_record",
+        }
         assert not (all_tool_names & write_tools)
 
 
@@ -296,6 +335,7 @@ class TestWorkflowAutomationFramework:
 
     def test_workflow_agent_framework_exists(self) -> None:
         from runtime.platform.ai.agents import AGENT_REGISTRY
+
         wf_agent = AGENT_REGISTRY.get("workflow_automation")
         assert wf_agent is not None
         assert wf_agent.authority_level == 3
@@ -312,7 +352,7 @@ class TestGateEIntegration:
 
     def test_end_to_end_ai_request_without_llm(self) -> None:
         """Full flow: symptom → intent → plan → tool execution → result."""
-        from runtime.platform.ai import resolve_intent, build_plan, execute_tool
+        from runtime.platform.ai import execute_tool
         from runtime.platform.ai.policy import POLICY_ENGINE_INSTANCE
 
         # Register tools in policy engine
@@ -325,7 +365,11 @@ class TestGateEIntegration:
         assert intent["required_level"] >= 0
 
         # Step 2: Build plan
-        plan = build_plan(symptom="build failure", intent_type=intent["intent_type"], required_level=intent["required_level"])
+        plan = build_plan(
+            symptom="build failure",
+            intent_type=intent["intent_type"],
+            required_level=intent["required_level"],
+        )
         assert plan["plan_id"].startswith("plan-")
         assert len(plan["steps"]) > 0
 
@@ -337,8 +381,8 @@ class TestGateEIntegration:
 
     def test_deterministic_fallback_produces_useful_output(self) -> None:
         """When no LLM available, deterministic fallback still helps operator."""
-        from runtime.platform.ai.providers.local import DETERMINISTIC_FALLBACK
         from runtime.platform.ai.providers.base import Message
+        from runtime.platform.ai.providers.local import DETERMINISTIC_FALLBACK
 
         result = DETERMINISTIC_FALLBACK.complete(
             messages=[Message(role="user", content="why is the build failing?")],
@@ -358,12 +402,13 @@ class TestHttpEndpointStructure:
 
     def test_ai_providers_route_registered(self) -> None:
         from backend.src.routers.platform import router
+
         paths = {r.path for r in router.routes}
         assert "/platform/v1/ai/providers" in paths
 
     def test_ai_providers_returns_200(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             resp = c.get("/platform/v1/ai/providers")
@@ -375,6 +420,7 @@ class TestHttpEndpointStructure:
     def test_execute_tool_endpoint_exists(self) -> None:
         """Tool execution via POST /ai/runs/{id}/steps verified in Phase 13 tests."""
         from backend.src.routers.platform import router
+
         paths = {r.path for r in router.routes}
         assert any("/ai/runs/" in p and "steps" in p for p in paths)
 

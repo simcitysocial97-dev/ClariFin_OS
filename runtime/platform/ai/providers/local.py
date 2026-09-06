@@ -6,10 +6,9 @@ Ollama is unavailable — falls back to deterministic responses.
 
 from __future__ import annotations
 
-import json
 import logging
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from runtime.platform.ai.providers.base import (
@@ -17,7 +16,6 @@ from runtime.platform.ai.providers.base import (
     CompletionResult,
     Message,
     ModelDescriptor,
-    ModelProvider,
     ProviderHealth,
     ProviderKind,
     ToolChoice,
@@ -26,7 +24,12 @@ from runtime.platform.ai.providers.base import (
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["LocalOllamaProvider", "LocalLargeProvider", "OpenRouterProvider", "DeterministicFallbackProvider"]
+__all__ = [
+    "LocalOllamaProvider",
+    "LocalLargeProvider",
+    "OpenRouterProvider",
+    "DeterministicFallbackProvider",
+]
 
 
 class LocalOllamaProvider(BaseProvider):
@@ -53,7 +56,14 @@ class LocalOllamaProvider(BaseProvider):
             ModelDescriptor(
                 name=self._default_model,
                 context_window=context_window,
-                capabilities=["classify", "summarize", "route", "tool_select", "simple_plan", "short_explain"],
+                capabilities=[
+                    "classify",
+                    "summarize",
+                    "route",
+                    "tool_select",
+                    "simple_plan",
+                    "short_explain",
+                ],
                 cost_per_1k_tokens=0.0,
                 latency_p50_ms=kwargs.get("latency_p50_ms", 800),
             ),
@@ -64,6 +74,7 @@ class LocalOllamaProvider(BaseProvider):
     def _check_availability(self) -> None:
         try:
             import httpx
+
             resp = httpx.get(f"{self._endpoint}/api/tags", timeout=5.0)
             if resp.status_code == 200:
                 self.mark_healthy()
@@ -97,10 +108,7 @@ class LocalOllamaProvider(BaseProvider):
 
         payload: dict[str, Any] = {
             "model": model,
-            "messages": [
-                {"role": m.role, "content": m.content}
-                for m in messages
-            ],
+            "messages": [{"role": m.role, "content": m.content} for m in messages],
             "stream": False,
             "options": {
                 "temperature": temperature,
@@ -175,8 +183,14 @@ class LocalLargeProvider(LocalOllamaProvider):
                 name=self._default_model,
                 context_window=context_window,
                 capabilities=[
-                    "classify", "summarize", "route", "tool_select",
-                    "plan", "explain", "patch", "test_generation",
+                    "classify",
+                    "summarize",
+                    "route",
+                    "tool_select",
+                    "plan",
+                    "explain",
+                    "patch",
+                    "test_generation",
                 ],
                 cost_per_1k_tokens=0.0,
                 latency_p50_ms=kwargs.get("latency_p50_ms", 2400),
@@ -213,8 +227,14 @@ class OpenRouterProvider(BaseProvider):
                 name=self._default_model,
                 context_window=kwargs.get("context_window", 200000),
                 capabilities=[
-                    "classify", "summarize", "route", "tool_select",
-                    "plan", "explain", "patch", "test_generation",
+                    "classify",
+                    "summarize",
+                    "route",
+                    "tool_select",
+                    "plan",
+                    "explain",
+                    "patch",
+                    "test_generation",
                     "long_context_analysis",
                 ],
                 cost_per_1k_tokens=0.003,
@@ -239,6 +259,7 @@ class OpenRouterProvider(BaseProvider):
             return
         try:
             import httpx
+
             headers = {"Authorization": f"Bearer {api_key}"}
             resp = httpx.get(f"{self._endpoint}/models", headers=headers, timeout=5.0)
             if resp.status_code == 200:
@@ -275,7 +296,9 @@ class OpenRouterProvider(BaseProvider):
         api_key = os.environ.get(self._api_key_env, "")
         if not api_key:
             raise RuntimeError("OpenRouter disabled — no API key")
-        import httpx, time
+        import time
+
+        import httpx
 
         model = model or self._default_model
         start = time.time()
@@ -287,13 +310,25 @@ class OpenRouterProvider(BaseProvider):
         }
         if tools:
             payload["tools"] = [
-                {"type": "function", "function": {"name": t.name, "description": t.description, "parameters": t.parameters}}
+                {
+                    "type": "function",
+                    "function": {
+                        "name": t.name,
+                        "description": t.description,
+                        "parameters": t.parameters,
+                    },
+                }
                 for t in tools
             ]
-        headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        }
         try:
             with httpx.Client(timeout=self._timeout_s) as client:
-                resp = client.post(f"{self._endpoint}/chat/completions", json=payload, headers=headers)
+                resp = client.post(
+                    f"{self._endpoint}/chat/completions", json=payload, headers=headers
+                )
                 resp.raise_for_status()
                 data = resp.json()
                 elapsed_ms = int((time.time() - start) * 1000)
@@ -301,7 +336,10 @@ class OpenRouterProvider(BaseProvider):
                 msg = choice.get("message") or {}
                 text = msg.get("content") or ""
                 tool_calls = msg.get("tool_calls")
-                usage = data.get("usage") or {"prompt_tokens": 0, "completion_tokens": 0}
+                usage = data.get("usage") or {
+                    "prompt_tokens": 0,
+                    "completion_tokens": 0,
+                }
                 # Normalize usage to dict[str,int]
                 if isinstance(usage, int):
                     usage = {"total_tokens": usage}
@@ -362,7 +400,9 @@ class DeterministicFallbackProvider(BaseProvider):
         symptom = last_user.content if last_user else ""
 
         # Build deterministic response
-        response_text = f"[DETERMINISTIC FALLBACK] Based on symptom '{symptom[:100]}':\n"
+        response_text = (
+            f"[DETERMINISTIC FALLBACK] Based on symptom '{symptom[:100]}':\n"
+        )
         response_text += "No LLM provider available. Use platform tools directly.\n"
         response_text += "Run: POST /platform/v1/diagnose with your symptom."
 
@@ -381,8 +421,8 @@ class DeterministicFallbackProvider(BaseProvider):
         return ProviderHealth(
             provider=self.name,
             reachable=True,
-            last_check=datetime.now(timezone.utc),
-            last_success=datetime.now(timezone.utc),
+            last_check=datetime.now(UTC),
+            last_success=datetime.now(UTC),
             last_failure=None,
             failure_streak=0,
             p50_latency_ms=0,

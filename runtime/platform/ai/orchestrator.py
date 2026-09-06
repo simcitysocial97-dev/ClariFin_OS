@@ -37,7 +37,7 @@ class AIOrchestrator:
         run_id = f"ai-{uuid.uuid4().hex[:12]}"
         now = datetime.now(UTC).isoformat().replace("+00:00", "Z")
 
-        run = {
+        run: dict[str, Any] = {
             "id": run_id,
             "symptom": symptom,
             "mode": mode,
@@ -52,7 +52,11 @@ class AIOrchestrator:
         }
         self._runs[run_id] = run
         self._persist_run(run_id)
-        self._audit(run_id, "run_created", {"symptom": symptom, "mode": mode, "capability_id": capability_id})
+        self._audit(
+            run_id,
+            "run_created",
+            {"symptom": symptom, "mode": mode, "capability_id": capability_id},
+        )
         return run
 
     def get_run(self, run_id: str) -> dict[str, Any] | None:
@@ -67,7 +71,9 @@ class AIOrchestrator:
             return run
         return None
 
-    def list_runs(self, *, limit: int = 50, status: str | None = None) -> list[dict[str, Any]]:
+    def list_runs(
+        self, *, limit: int = 50, status: str | None = None
+    ) -> list[dict[str, Any]]:
         """List AI runs, optionally filtered by status."""
         runs = list(self._runs.values())
         # Also load from disk for runs not in memory
@@ -102,7 +108,9 @@ class AIOrchestrator:
             return None
 
         if run["status"] not in ("PENDING", "RUNNING"):
-            raise ValueError(f"Run {run_id} is not executable (status: {run['status']})")
+            raise ValueError(
+                f"Run {run_id} is not executable (status: {run['status']})"
+            )
 
         step_number = len(run["steps"]) + 1
         started_at = datetime.now(UTC).isoformat().replace("+00:00", "Z")
@@ -126,7 +134,11 @@ class AIOrchestrator:
 
         # The actual tool execution is delegated to the policy engine / tool registry
         # This method just records the step initiation.
-        self._audit(run_id, "step_started", {"step": step_number, "tool": tool_name, "arguments": arguments})
+        self._audit(
+            run_id,
+            "step_started",
+            {"step": step_number, "tool": tool_name, "arguments": arguments},
+        )
 
         return step
 
@@ -185,13 +197,17 @@ class AIOrchestrator:
         run["updated_at"] = completed_at
         self._persist_run(run_id)
 
-        self._audit(run_id, "step_completed", {
-            "step": step_number,
-            "tool": step["tool_name"],
-            "success": error is None,
-            "evidence_id": evidence_id,
-            "duration_ms": duration_ms,
-        })
+        self._audit(
+            run_id,
+            "step_completed",
+            {
+                "step": step_number,
+                "tool": step["tool_name"],
+                "success": error is None,
+                "evidence_id": evidence_id,
+                "duration_ms": duration_ms,
+            },
+        )
 
         return True
 

@@ -1,0 +1,25 @@
+{
+  "id": "ai-94792ce85048",
+  "symptom": "test",
+  "mode": "MANUAL",
+  "capability_id": null,
+  "status": "CANCELLED",
+  "steps": [],
+  "created_at": "2026-09-06T04:16:57.351244Z",
+  "updated_at": "2026-09-06T04:16:57.351505Z",
+  "completed_at": "2026-09-06T04:16:57.351505Z",
+  "error": null,
+  "audit_trail": [
+    {
+      "event_id": "audit-0ff7bf1c28b2",
+      "event_type": "run_created",
+      "run_id": "ai-94792ce85048",
+      "timestamp": "2026-09-06T04:16:57.351485Z",
+      "payload": {
+        "symptom": "test",
+        "mode": "MANUAL",
+        "capability_id": null
+      }
+    }
+  ]
+}

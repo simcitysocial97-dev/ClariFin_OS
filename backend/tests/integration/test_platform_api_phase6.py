@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import pytest
 from fastapi.testclient import TestClient
-
 from src.api import app
 
 
@@ -23,7 +22,10 @@ def client():
 
 class TestVerificationWrite:
     def test_post_run_single(self, client):
-        r = client.post("/platform/v1/verification/run", json={"capability_id": "discover.blast-radius"})
+        r = client.post(
+            "/platform/v1/verification/run",
+            json={"capability_id": "discover.blast-radius"},
+        )
         assert r.status_code == 200, r.text
         body = r.json()
         assert body["kind"] == "platform.verification_run_result"
@@ -48,7 +50,9 @@ class TestVerificationWrite:
         assert r.json()["kind"] == "platform.verification_run_result"
 
     def test_post_run_group(self, client):
-        r = client.post("/platform/v1/verification/run/group", json={"group": "backend"})
+        r = client.post(
+            "/platform/v1/verification/run/group", json={"group": "backend"}
+        )
         assert r.status_code == 200
         assert r.json()["kind"] == "platform.verification_run_result"
         assert r.json()["data"]["capability_id"] == "backend"
@@ -69,7 +73,6 @@ class TestTaskCancel:
         body = r.json()
         assert body["kind"] == "platform.error"
         assert body["error"]["code"] == "NOT_FOUND"
-
 
     def test_cancel_existing_task(self, client):
         # Fetch a real task id from the live obligation set, then cancel it.

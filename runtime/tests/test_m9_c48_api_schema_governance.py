@@ -13,9 +13,7 @@ from runtime.foundation.verification.api_schema_governance import (
 
 
 def test_historical_defects_recorded():
-    assert any(
-        d["id"] == "loan-api-response-shape-c30-c32" for d in HISTORICAL_DEFECTS
-    )
+    assert any(d["id"] == "loan-api-response-shape-c30-c32" for d in HISTORICAL_DEFECTS)
 
 
 def test_workflow_present_in_real_repo():
@@ -76,6 +74,7 @@ def test_report_to_dict_schema(tmp_path):
 
 def test_real_repo_governance_persisted():
     import os
+
     rep = build_governance_report()
     os.makedirs("runtime/generated/m9-c48", exist_ok=True)
     with open("runtime/generated/m9-c48/api-schema-governance.json", "w") as f:

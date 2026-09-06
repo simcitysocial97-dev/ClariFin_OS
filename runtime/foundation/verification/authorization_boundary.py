@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -181,9 +181,7 @@ def evaluate_authorization(
     records: list[AuthorizationRecord] = []
 
     # 1. PROPOSED
-    proposed = create_proposed_state(
-        candidate_id, generation_id, evidence=evidence
-    )
+    proposed = create_proposed_state(candidate_id, generation_id, evidence=evidence)
     records.append(proposed)
 
     # If validation failed, reject immediately
@@ -280,7 +278,11 @@ def persist_authorization_records(
             "valid_states": list(
                 set(AuthorizationState.PROPOSED, AuthorizationState.VALIDATED)
                 | {AuthorizationState.AWAITING_HUMAN_AUTHORIZATION}
-                | {AuthorizationState.AUTHORIZED, AuthorizationState.REJECTED, AuthorizationState.EXPIRED}
+                | {
+                    AuthorizationState.AUTHORIZED,
+                    AuthorizationState.REJECTED,
+                    AuthorizationState.EXPIRED,
+                }
             ),
             "valid_transitions": {k: list(v) for k, v in VALID_TRANSITIONS.items()},
         },

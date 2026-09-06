@@ -44,9 +44,15 @@ class TestDashboardMetricsJourney:
         for field in required_fields:
             assert field in data, f"Missing required field: {field}"
 
-        assert isinstance(data["net_cash_flow_paise"], int), "net_cash_flow_paise should be int"
-        assert isinstance(data["total_income_paise"], int), "total_income_paise should be int"
-        assert isinstance(data["total_expenses_paise"], int), "total_expenses_paise should be int"
+        assert isinstance(
+            data["net_cash_flow_paise"], int
+        ), "net_cash_flow_paise should be int"
+        assert isinstance(
+            data["total_income_paise"], int
+        ), "total_income_paise should be int"
+        assert isinstance(
+            data["total_expenses_paise"], int
+        ), "total_expenses_paise should be int"
         assert isinstance(data["emi_paise"], int), "emi_paise should be int"
 
     def test_dashboard_rates_in_range(self, client: TestClient) -> None:
@@ -55,12 +61,12 @@ class TestDashboardMetricsJourney:
         assert response.status_code == 200
 
         data = response.json()
-        assert 0 <= data["savings_rate"] <= 1, (
-            f"savings_rate should be 0-1, got {data['savings_rate']}"
-        )
-        assert 0 <= data["emi_ratio"] <= 1, (
-            f"emi_ratio should be 0-1, got {data['emi_ratio']}"
-        )
+        assert (
+            0 <= data["savings_rate"] <= 1
+        ), f"savings_rate should be 0-1, got {data['savings_rate']}"
+        assert (
+            0 <= data["emi_ratio"] <= 1
+        ), f"emi_ratio should be 0-1, got {data['emi_ratio']}"
 
     def test_health_score_in_range(self, client: TestClient) -> None:
         """financial_health_score is 0-100 or null per DTO spec."""
@@ -70,7 +76,9 @@ class TestDashboardMetricsJourney:
         data = response.json()
         score = data["financial_health_score"]
         if score is not None:
-            assert 0 <= score <= 100, f"financial_health_score should be 0-100, got {score}"
+            assert (
+                0 <= score <= 100
+            ), f"financial_health_score should be 0-100, got {score}"
 
     def test_buffer_days_is_non_negative(self, client: TestClient) -> None:
         """buffer_days is a non-negative integer."""
@@ -79,7 +87,9 @@ class TestDashboardMetricsJourney:
 
         data = response.json()
         assert isinstance(data["buffer_days"], int), "buffer_days should be int"
-        assert data["buffer_days"] >= 0, f"buffer_days should be non-negative, got {data['buffer_days']}"
+        assert (
+            data["buffer_days"] >= 0
+        ), f"buffer_days should be non-negative, got {data['buffer_days']}"
 
 
 class TestDashboardServiceLayer:

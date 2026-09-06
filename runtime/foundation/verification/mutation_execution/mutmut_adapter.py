@@ -102,6 +102,7 @@ class MutmutAdapter(MutationBackendBase):
 
     def verify_tool_version(self, minimum_version: str = PINNED_MUTMUT) -> bool:
         import pkg_resources
+
         try:
             installed = pkg_resources.get_distribution("mutmut").version
             return installed == minimum_version
@@ -150,7 +151,9 @@ class MutmutAdapter(MutationBackendBase):
             res = subprocess.run(
                 [mutmut_bin, "results", "--no-progress"],
                 cwd=str(BACKEND_DIR),
-                capture_output=True, text=True, timeout=120,
+                capture_output=True,
+                text=True,
+                timeout=120,
                 env=self._venv_env(),
             )
         except Exception:
@@ -186,8 +189,11 @@ class MutmutAdapter(MutationBackendBase):
             # Derive canonical ID.
             canon_id = derive_canonical_mutant_id(
                 repository_revision=subprocess.run(
-                    ["git", "rev-parse", "HEAD"], cwd=str(REPO_ROOT),
-                    capture_output=True, text=True, timeout=10,
+                    ["git", "rev-parse", "HEAD"],
+                    cwd=str(REPO_ROOT),
+                    capture_output=True,
+                    text=True,
+                    timeout=10,
                 ).stdout.strip(),
                 source_file=source_file,
                 source_hash=source_hash,
@@ -198,16 +204,21 @@ class MutmutAdapter(MutationBackendBase):
                 mutated_expression="",
             )
 
-            collected.append(MutationCandidate(
-                canonical_mutant_id=canon_id,
-                source_file=source_file,
-                source_hash=source_hash,
-                function=function,
-                operator=self._infer_operator(mutant_key),
-                capability=self._infer_capability(source_file),
-                component=self._infer_component(source_file),
-                backend_metadata={"mutmut_key": mutant_key, "raw_status": status_text},
-            ))
+            collected.append(
+                MutationCandidate(
+                    canonical_mutant_id=canon_id,
+                    source_file=source_file,
+                    source_hash=source_hash,
+                    function=function,
+                    operator=self._infer_operator(mutant_key),
+                    capability=self._infer_capability(source_file),
+                    component=self._infer_component(source_file),
+                    backend_metadata={
+                        "mutmut_key": mutant_key,
+                        "raw_status": status_text,
+                    },
+                )
+            )
 
         return collected if collected else candidates
 
@@ -238,13 +249,17 @@ class MutmutAdapter(MutationBackendBase):
             res = subprocess.run(
                 [mutmut_bin, "new", "--no-run"],
                 cwd=str(workspace),
-                capture_output=True, text=True, timeout=300,
+                capture_output=True,
+                text=True,
+                timeout=300,
                 env=self._venv_env(),
             )
             if res.returncode not in (0, 2):  # 2 = some survived (expected)
-                raise RuntimeError(f"mutmut new exited rc={res.returncode}: {res.stderr}")
-        except subprocess.TimeoutExpired:
-            raise RuntimeError("mutmut new timed out")
+                raise RuntimeError(
+                    f"mutmut new exited rc={res.returncode}: {res.stderr}"
+                )
+        except subprocess.TimeoutExpired as exc:
+            raise RuntimeError("mutmut new timed out") from exc  # noqa: B904
 
         mutants_path = workspace / "mutants"
         if not mutants_path.is_dir():
@@ -279,7 +294,9 @@ class MutmutAdapter(MutationBackendBase):
         mutant_file = self._find_mutant_file(candidate, workspace)
         if mutant_file is None:
             execution.mutation_result = MutationResultState.INVALID_MUTANT
-            execution.infrastructure_failure = InfrastructureFailureKind.WORKSPACE_CORRUPTION
+            execution.infrastructure_failure = (
+                InfrastructureFailureKind.WORKSPACE_CORRUPTION
+            )
             execution.end_time = datetime.now(UTC).isoformat()
             execution.duration_seconds = 0.0
             return execution
@@ -299,7 +316,9 @@ class MutmutAdapter(MutationBackendBase):
         execution.verification_passed = True
 
         # Build and run the pytest command against the mutated source.
-        cmd = self._build_test_command(candidate, test_selection, workspace, mutant_file)
+        cmd = self._build_test_command(
+            candidate, test_selection, workspace, mutant_file
+        )
         result = self._run_with_isolation(cmd, environment, timeout, exec_id, workspace)
 
         execution.exit_status = result.get("exit_code")
@@ -377,10 +396,10 @@ class MutmutAdapter(MutationBackendBase):
 
         result.total_candidates = len(candidate_files)
         # Add any candidates with no execution record.
-        pending = len(candidate_files) - len(executed_ids & {
-            c.canonical_mutant_id
-            for c in self._load_candidates(workspace)
-        })
+        pending = len(candidate_files) - len(
+            executed_ids
+            & {c.canonical_mutant_id for c in self._load_candidates(workspace)}
+        )
         result.not_executed += max(0, pending)
 
         return result
@@ -467,15 +486,28 @@ class MutmutAdapter(MutationBackendBase):
         """Extract component/engine name from source file path."""
         for part in Path(source_file).parts:
             if "engine" in part or part in (
-                "engines", "core", "common", "financial_events", "credit_card_engine",
-                "account_engine", "loan_engine", "behaviour_engine", "reconciliation_engine",
-                "balance_engine", "ledger_audit_engine", "cashflow_engine",
-                "recommendation_engine", "transaction_intelligence", "financial_intelligence",
+                "engines",
+                "core",
+                "common",
+                "financial_events",
+                "credit_card_engine",
+                "account_engine",
+                "loan_engine",
+                "behaviour_engine",
+                "reconciliation_engine",
+                "balance_engine",
+                "ledger_audit_engine",
+                "cashflow_engine",
+                "recommendation_engine",
+                "transaction_intelligence",
+                "financial_intelligence",
             ):
                 return part
         return "unknown"
 
-    def _find_mutant_file(self, candidate: MutationCandidate, workspace: Path) -> Path | None:
+    def _find_mutant_file(
+        self, candidate: MutationCandidate, workspace: Path
+    ) -> Path | None:
         """Find the mutant source file in workspace/mutants/."""
         mutants_dir = workspace / "mutants"
         if not mutants_dir.exists():
@@ -512,7 +544,9 @@ class MutmutAdapter(MutationBackendBase):
                 return p.read_text(errors="replace")
         return ""
 
-    def _copy_source_to_workspace(self, candidates: list[MutationCandidate], workspace: Path) -> None:
+    def _copy_source_to_workspace(
+        self, candidates: list[MutationCandidate], workspace: Path
+    ) -> None:
         """Copy source files referenced by candidates into workspace/source/."""
         source_dir = workspace / "source"
         source_dir.mkdir(exist_ok=True)
@@ -544,8 +578,11 @@ class MutmutAdapter(MutationBackendBase):
         mutmut_key = candidate.backend_metadata.get("mutmut_key", "")
         if mutmut_key:
             return [
-                mutmut_bin, "run", mutmut_key,
-                "--no-mail", "--no-progress",
+                mutmut_bin,
+                "run",
+                mutmut_key,
+                "--no-mail",
+                "--no-progress",
             ]
         # Fallback: run pytest directly against the mutant file's parent directory
         # with the test selection, manipulating PYTHONPATH.
@@ -657,7 +694,9 @@ class MutmutAdapter(MutationBackendBase):
 
         if exit_code is None and test_result == "CRASHED":
             execution.mutation_result = MutationResultState.EXECUTION_ERROR
-            execution.infrastructure_failure = InfrastructureFailureKind.SUBPROCESS_CRASH
+            execution.infrastructure_failure = (
+                InfrastructureFailureKind.SUBPROCESS_CRASH
+            )
             return
 
         if exit_code is None:
@@ -688,7 +727,9 @@ class MutmutAdapter(MutationBackendBase):
         candidates = []
         for f in sorted(candidates_dir.glob("*.json")):
             try:
-                candidates.append(MutationCandidate.from_dict(json.loads(f.read_text())))
+                candidates.append(
+                    MutationCandidate.from_dict(json.loads(f.read_text()))
+                )
             except Exception:
                 continue
         return candidates
@@ -728,6 +769,4 @@ def create_adapter() -> MutmutAdapter:
 __all__ = [
     "MutmutAdapter",
     "create_adapter",
-    "EXIT_CODE_TO_STATE",
-    "TEXT_STATUS_TO_STATE",
 ]

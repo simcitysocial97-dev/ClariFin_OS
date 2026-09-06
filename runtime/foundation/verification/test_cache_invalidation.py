@@ -11,10 +11,6 @@ Tests for the cache contract that ensures:
 
 from __future__ import annotations
 
-import json
-
-import pytest
-
 from runtime.foundation.verification.cache import (
     CachedVerdict,
     ReplayResult,
@@ -33,7 +29,9 @@ class TestCacheInvalidation:
             profile="test",
             commit="abc123",
             changed_files=["file1.py"],
-            verdict=CachedVerdict(overall_status="pass", passed=10, failed=0, skipped=0),
+            verdict=CachedVerdict(
+                overall_status="pass", passed=10, failed=0, skipped=0
+            ),
         )
 
         is_valid = cache.is_valid(
@@ -51,7 +49,9 @@ class TestCacheInvalidation:
             profile="test",
             commit="abc123",
             changed_files=["file1.py"],
-            verdict=CachedVerdict(overall_status="pass", passed=10, failed=0, skipped=0),
+            verdict=CachedVerdict(
+                overall_status="pass", passed=10, failed=0, skipped=0
+            ),
         )
 
         is_valid = cache.is_valid(
@@ -69,7 +69,9 @@ class TestCacheInvalidation:
             profile="test",
             commit="abc123",
             changed_files=["file1.py"],
-            verdict=CachedVerdict(overall_status="pass", passed=10, failed=0, skipped=0),
+            verdict=CachedVerdict(
+                overall_status="pass", passed=10, failed=0, skipped=0
+            ),
             fingerprint={"ruff": "0.1.0", "mypy": "1.0"},
         )
 
@@ -89,7 +91,9 @@ class TestCacheInvalidation:
             profile="test",
             commit="abc123",
             changed_files=["file1.py"],
-            verdict=CachedVerdict(overall_status="pass", passed=10, failed=0, skipped=0),
+            verdict=CachedVerdict(
+                overall_status="pass", passed=10, failed=0, skipped=0
+            ),
             fingerprint={"ruff": "0.1.0"},
         )
 
@@ -113,7 +117,9 @@ class TestCacheReuse:
             profile="test",
             commit="abc123",
             changed_files=["file1.py"],
-            verdict=CachedVerdict(overall_status="pass", passed=10, failed=0, skipped=0),
+            verdict=CachedVerdict(
+                overall_status="pass", passed=10, failed=0, skipped=0
+            ),
         )
 
         result = cache.replay(
@@ -165,7 +171,9 @@ class TestCacheReuse:
         )
 
         if result.reusable and result.exit_code is not None:
-            assert result.exit_code != 0, "Must never return exit_code=0 for cached FAIL"
+            assert (
+                result.exit_code != 0
+            ), "Must never return exit_code=0 for cached FAIL"
 
     def test_replay_returns_not_reusable_when_invalid(self, tmp_path) -> None:
         """Invalid cache returns reusable=False, caller decides."""
@@ -279,7 +287,9 @@ class TestCachePersistence:
             profile="test",
             commit="abc123",
             changed_files=["file1.py", "file2.py"],
-            verdict=CachedVerdict(overall_status="pass", passed=50, failed=0, skipped=0),
+            verdict=CachedVerdict(
+                overall_status="pass", passed=50, failed=0, skipped=0
+            ),
         )
 
         cached = cache.get_verdict("test")
@@ -296,14 +306,18 @@ class TestCachePersistence:
             profile="quick",
             commit="abc123",
             changed_files=["file1.py"],
-            verdict=CachedVerdict(overall_status="pass", passed=100, failed=0, skipped=0),
+            verdict=CachedVerdict(
+                overall_status="pass", passed=100, failed=0, skipped=0
+            ),
         )
 
         cache.save(
             profile="golden",
             commit="abc123",
             changed_files=["file1.py"],
-            verdict=CachedVerdict(overall_status="pass", passed=10, failed=0, skipped=0),
+            verdict=CachedVerdict(
+                overall_status="pass", passed=10, failed=0, skipped=0
+            ),
         )
 
         quick_verdict = cache.get_verdict("quick")
@@ -326,7 +340,9 @@ class TestCacheContract:
             profile="test",
             commit="abc123",
             changed_files=["file1.py"],
-            verdict=CachedVerdict(overall_status="fail", passed=0, failed=10, skipped=0),
+            verdict=CachedVerdict(
+                overall_status="fail", passed=0, failed=10, skipped=0
+            ),
         )
 
         result = cache.replay(

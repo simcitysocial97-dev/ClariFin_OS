@@ -6,34 +6,27 @@ from __future__ import annotations
 
 import textwrap
 
-import pytest
-
 from runtime.foundation.verification.capability_graph_resolver import (
-    CapabilityEdge,
     CapabilityGraphResolver,
     ChangeKind,
     EndpointCapabilityMap,
     FileChange,
     SeverityTier,
     SymbolResolver,
-    UnresolvedSymbol,
     derive_capability_from_path,
     filter_requirements_by_tier,
     parse_git_status_output,
     severity_to_tier,
 )
 
-
 # ── C1 / Symbol resolution ────────────────────────────────────────────────
 
 
 def test_symbol_function():
-    src = textwrap.dedent(
-        """
+    src = textwrap.dedent("""
         def calculate_payment(amount, rate):
             return amount * rate
-        """
-    )
+        """)
     s, u = SymbolResolver().resolve("loans.py", src)
     assert not u
     funcs = [x for x in s if x.kind == "function"]
@@ -41,16 +34,14 @@ def test_symbol_function():
 
 
 def test_symbol_class_and_method():
-    src = textwrap.dedent(
-        """
+    src = textwrap.dedent("""
         class LoanService:
             def calculate_payment(self):
                 return 1
 
             def amortize(self):
                 return 2
-        """
-    )
+        """)
     s, u = SymbolResolver().resolve("service.py", src)
     assert not u
     classes = [x for x in s if x.kind == "class"]
@@ -131,10 +122,10 @@ def test_filter_requirements_by_tier():
             self.severity = severity
 
     r_crit = Req("critical")  # BLOCKING
-    r_high = Req("high")      # REQUIRED
-    r_med = Req("medium")     # PRIORITIZED
-    r_low = Req("low")        # OPTIONAL
-    r_info = Req("info")      # DIAGNOSTIC
+    r_high = Req("high")  # REQUIRED
+    r_med = Req("medium")  # PRIORITIZED
+    r_low = Req("low")  # OPTIONAL
+    r_info = Req("info")  # DIAGNOSTIC
     kept = filter_requirements_by_tier([r_crit, r_high, r_med, r_low, r_info])
     assert r_crit in kept
     assert r_high in kept
@@ -215,13 +206,15 @@ class _FakeBridge:
 
 def test_resolution_function_modification_produces_symbol_edge():
     r = _build_resolver()
-    src = textwrap.dedent(
-        """
+    src = textwrap.dedent("""
         def calculate_payment(amount):
             return amount
-        """
-    )
-    changes = [FileChange(ChangeKind.MODIFIED, None, "backend/src/engines/loan_engine/loans.py")]
+        """)
+    changes = [
+        FileChange(
+            ChangeKind.MODIFIED, None, "backend/src/engines/loan_engine/loans.py"
+        )
+    ]
     res = r.resolve(changes, sources={"backend/src/engines/loan_engine/loans.py": src})
     sym_edges = [e for e in res.edges if e.source_kind == "symbol"]
     assert any("calculate_payment" in e.source for e in sym_edges)
@@ -230,7 +223,9 @@ def test_resolution_function_modification_produces_symbol_edge():
 def test_resolution_class_modification_includes_method():
     r = _build_resolver()
     src = "class LoanService:\n    def calc(self):\n        return 1\n"
-    changes = [FileChange(ChangeKind.MODIFIED, None, "backend/src/engines/loan_engine/svc.py")]
+    changes = [
+        FileChange(ChangeKind.MODIFIED, None, "backend/src/engines/loan_engine/svc.py")
+    ]
     res = r.resolve(changes, sources={"backend/src/engines/loan_engine/svc.py": src})
     qnames = sorted(e.source for e in res.edges if e.source_kind == "symbol")
     assert any("LoanService.calc" in q for q in qnames)
@@ -265,21 +260,24 @@ def test_resolution_rename_invalidates_old_and_resolves_new():
         )
     ]
     res = r.resolve(changes)
-    new_edges = [e for e in res.edges if e.source == "backend/src/engines/loan_engine/new.py"]
+    new_edges = [
+        e for e in res.edges if e.source == "backend/src/engines/loan_engine/new.py"
+    ]
     invalidated = [
         e for e in res.edges if e.source == "backend/src/engines/loan_engine/old.py"
     ]
     assert any(e.capability_id == "loan-engine" for e in new_edges)
     assert any(e.capability_id == "INVALIDATED" for e in invalidated)
-    assert ("backend/src/engines/loan_engine/old.py", "backend/src/engines/loan_engine/new.py") in res.renamed_paths
+    assert (
+        "backend/src/engines/loan_engine/old.py",
+        "backend/src/engines/loan_engine/new.py",
+    ) in res.renamed_paths
 
 
 def test_resolution_deletion_marks_capability_deleted():
     r = _build_resolver()
     changes = [
-        FileChange(
-            ChangeKind.DELETED, None, "backend/src/engines/loan_engine/gone.py"
-        )
+        FileChange(ChangeKind.DELETED, None, "backend/src/engines/loan_engine/gone.py")
     ]
     res = r.resolve(changes)
     assert "loan-engine" in res.deleted_capabilities
@@ -288,8 +286,12 @@ def test_resolution_deletion_marks_capability_deleted():
 
 def test_resolution_unresolved_symbol_recorded_not_dropped():
     r = _build_resolver()
-    changes = [FileChange(ChangeKind.MODIFIED, None, "backend/src/engines/loan_engine/bad.py")]
-    res = r.resolve(changes, sources={"backend/src/engines/loan_engine/bad.py": "def broken(:\n"})
+    changes = [
+        FileChange(ChangeKind.MODIFIED, None, "backend/src/engines/loan_engine/bad.py")
+    ]
+    res = r.resolve(
+        changes, sources={"backend/src/engines/loan_engine/bad.py": "def broken(:\n"}
+    )
     assert any(u.reason == "syntax_error" for u in res.unresolved_symbols)
 
 
@@ -330,7 +332,9 @@ def test_resolution_affected_capabilities_deterministic_order():
     r = _build_resolver()
     changes = [
         FileChange(ChangeKind.MODIFIED, None, "backend/src/engines/loan_engine/a.py"),
-        FileChange(ChangeKind.MODIFIED, None, "backend/src/engines/credit_card_engine/b.py"),
+        FileChange(
+            ChangeKind.MODIFIED, None, "backend/src/engines/credit_card_engine/b.py"
+        ),
     ]
     res1 = r.resolve(changes)
     res2 = r.resolve(changes)

@@ -21,12 +21,10 @@
 from __future__ import annotations
 
 import json
-import re
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-
 
 HISTORICAL_DEFECTS: tuple[dict[str, str], ...] = (
     {
@@ -84,6 +82,7 @@ class GovernanceReport:
 
 def _git_sha() -> str:
     import subprocess
+
     try:
         out = subprocess.run(
             ["git", "rev-parse", "HEAD"],

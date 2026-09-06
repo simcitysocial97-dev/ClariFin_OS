@@ -1,0 +1,114 @@
+{
+  "id": "ai-b108051b2b7b",
+  "symptom": "test",
+  "mode": "ASSISTED",
+  "capability_id": null,
+  "status": "RUNNING",
+  "steps": [
+    {
+      "step_number": 1,
+      "tool_name": "inspect_health",
+      "arguments": {},
+      "result": {
+        "kind": "platform.health_snapshot",
+        "version": "1.0.0",
+        "generated_at": "2026-09-06T05:47:35Z",
+        "id": "sha256:7d183797e4a40d579af580a0199513338f97d68c2b9654b902c37471d5bfa7e1",
+        "data": {
+          "platform": "UNHEALTHY",
+          "backend": "HEALTHY",
+          "frontend": "HEALTHY",
+          "database": "HEALTHY",
+          "architecture": "SAFE",
+          "verification": "CURRENT",
+          "evidence": "VALID",
+          "ai": "READY",
+          "domains": [
+            {
+              "name": "Verification",
+              "status": "UNHEALTHY",
+              "last_check": "2026-09-06T05:47:35Z",
+              "source": "/platform/v1/verification",
+              "detail": "runs=2 passed=0 failed=0"
+            },
+            {
+              "name": "EventStore",
+              "status": "HEALTHY",
+              "last_check": "2026-09-06T05:47:35Z",
+              "source": "EngineeringEventStore",
+              "detail": "events=4"
+            }
+          ]
+        }
+      },
+      "error": null,
+      "started_at": "2026-09-06T05:47:35.824862Z",
+      "completed_at": "2026-09-06T05:47:35.853528Z",
+      "evidence_id": "sha256:7d183797e4a40d579af580a0199513338f97d68c2b9654b902c37471d5bfa7e1",
+      "duration_ms": 28
+    },
+    {
+      "step_number": 2,
+      "tool_name": "compute_change_intelligence",
+      "arguments": {},
+      "result": null,
+      "error": "'<' not supported between instances of 'VerificationSurfaceRequirement' and 'VerificationSurfaceRequirement'",
+      "started_at": "2026-09-06T05:47:35.855884Z",
+      "completed_at": "2026-09-06T05:47:37.802886Z",
+      "evidence_id": null,
+      "duration_ms": 1947
+    }
+  ],
+  "created_at": "2026-09-06T05:47:35.821717Z",
+  "updated_at": "2026-09-06T05:47:37.802886Z",
+  "completed_at": null,
+  "error": null,
+  "audit_trail": [
+    {
+      "event_id": "audit-c7c3e661597e",
+      "event_type": "run_created",
+      "run_id": "ai-b108051b2b7b",
+      "timestamp": "2026-09-06T05:47:35.821921Z",
+      "payload": {
+        "symptom": "test",
+        "mode": "ASSISTED",
+        "capability_id": null
+      }
+    },
+    {
+      "event_id": "audit-690d00e0767a",
+      "event_type": "step_started",
+      "run_id": "ai-b108051b2b7b",
+      "timestamp": "2026-09-06T05:47:35.825118Z",
+      "payload": {
+        "step": 1,
+        "tool": "inspect_health",
+        "arguments": {}
+      }
+    },
+    {
+      "event_id": "audit-7331c3a3cb8e",
+      "event_type": "step_completed",
+      "run_id": "ai-b108051b2b7b",
+      "timestamp": "2026-09-06T05:47:35.853801Z",
+      "payload": {
+        "step": 1,
+        "tool": "inspect_health",
+        "success": true,
+        "evidence_id": "sha256:7d183797e4a40d579af580a0199513338f97d68c2b9654b902c37471d5bfa7e1",
+        "duration_ms": 28
+      }
+    },
+    {
+      "event_id": "audit-1a8fb941ba12",
+      "event_type": "step_started",
+      "run_id": "ai-b108051b2b7b",
+      "timestamp": "2026-09-06T05:47:35.856158Z",
+      "payload": {
+        "step": 2,
+        "tool": "compute_change_intelligence",
+        "arguments": {}
+      }
+    }
+  ]
+}

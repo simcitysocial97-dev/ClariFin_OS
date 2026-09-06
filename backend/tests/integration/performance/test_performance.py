@@ -58,9 +58,10 @@ class TestConcurrentRequests:
         """Health endpoint handles 10 concurrent requests."""
         for _ in range(10):
             response = client.get("/api/health")
-            assert response.status_code in (200, 404), (
-                f"Health endpoint should respond, got {response.status_code}"
-            )
+            assert response.status_code in (
+                200,
+                404,
+            ), f"Health endpoint should respond, got {response.status_code}"
 
 
 class TestResourceUsage:
@@ -77,9 +78,12 @@ class TestResourceUsage:
         start = time.time()
         result = subprocess.run(
             [
-                ".venv/bin/python", "-m", "pytest",
+                ".venv/bin/python",
+                "-m",
+                "pytest",
                 "backend/tests/golden/",
-                "--tb=no", "-q",
+                "--tb=no",
+                "-q",
             ],
             capture_output=True,
             text=True,
@@ -153,8 +157,8 @@ class TestMemoryEfficiency:
 
     def test_loading_golden_datasets_is_fast(self) -> None:
         """Loading golden datasets is fast."""
-        from pathlib import Path
         import json
+        from pathlib import Path
 
         datasets_dir = Path("backend/tests/golden/datasets")
 

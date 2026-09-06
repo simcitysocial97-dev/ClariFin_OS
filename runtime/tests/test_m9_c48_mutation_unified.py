@@ -28,15 +28,15 @@ class FakeOrch:
 
 
 def _project(orch: FakeOrch, **overrides):
-    defaults = dict(
-        run_id="mut-test",
-        repository_sha="abc",
-        tree_sha="def",
-        python_version="3.12",
-        pytest_version="8.0",
-        mutmut_version="3.7.0",
-        config_hash="cfg",
-    )
+    defaults = {
+        "run_id": "mut-test",
+        "repository_sha": "abc",
+        "tree_sha": "def",
+        "python_version": "3.12",
+        "pytest_version": "8.0",
+        "mutmut_version": "3.7.0",
+        "config_hash": "cfg",
+    }
     defaults.update(overrides)
     return project_orchestrator_to_canonical(orchestrator_result=orch, **defaults)
 
@@ -111,9 +111,7 @@ def test_to_dict_roundtrip():
 
 
 def test_provenance_retains_rich_taxonomy():
-    proj = _project(
-        FakeOrch(killed=5, survived=2, equivalent=1, no_tests=1, timeout=1)
-    )
+    proj = _project(FakeOrch(killed=5, survived=2, equivalent=1, no_tests=1, timeout=1))
     p = proj.orchestrator_provenance
     assert p == {
         "killed": 5,

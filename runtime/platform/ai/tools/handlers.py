@@ -10,16 +10,16 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from runtime.platform.ai.providers.router import MODEL_ROUTER_INSTANCE
 from runtime.platform.api.services import (
-    health,
-    capabilities,
     architecture,
-    errors as errors_service,
-    history,
-    evidence,
+    capabilities,
     change,
-    verification,
+    evidence,
+    health,
+    history,
+)
+from runtime.platform.api.services import (
+    errors as errors_service,
 )
 
 logger = logging.getLogger(__name__)
@@ -68,7 +68,14 @@ def _handle_inspect_errors(args: dict[str, Any]) -> dict[str, Any]:
 def _handle_inspect_history(args: dict[str, Any]) -> dict[str, Any]:
     """GET /platform/v1/history/runs"""
     limit = args.get("limit", 20)
-    return {"kind": "platform.history_runs", "data": {"items": history.build_history_runs().get("data", {}).get("items", [])[:limit]}}
+    return {
+        "kind": "platform.history_runs",
+        "data": {
+            "items": history.build_history_runs()
+            .get("data", {})
+            .get("items", [])[:limit]
+        },
+    }
 
 
 def _handle_inspect_evidence(args: dict[str, Any]) -> dict[str, Any]:
@@ -83,14 +90,21 @@ def _handle_inspect_evidence(args: dict[str, Any]) -> dict[str, Any]:
 def _handle_inspect_file(args: dict[str, Any]) -> dict[str, Any]:
     """Read a repository file (read-only)."""
     from pathlib import Path
+
     path_str = args.get("path", "")
     try:
         p = Path(path_str)
         if not p.exists():
             raise FileNotFoundError(f"File not found: {path_str}")
-        return {"kind": "platform.file_content", "data": {"path": str(p), "content": p.read_text()[:4096]}}
+        return {
+            "kind": "platform.file_content",
+            "data": {"path": str(p), "content": p.read_text()[:4096]},
+        }
     except Exception as exc:
-        return {"kind": "platform.file_content", "data": {"path": path_str, "error": str(exc)}}
+        return {
+            "kind": "platform.file_content",
+            "data": {"path": path_str, "error": str(exc)},
+        }
 
 
 def _handle_search_code(args: dict[str, Any]) -> dict[str, Any]:
@@ -99,20 +113,30 @@ def _handle_search_code(args: dict[str, Any]) -> dict[str, Any]:
     limit = args.get("limit", 10)
     # Use ripgrep via subprocess for code search
     import subprocess
+
     try:
         result = subprocess.run(
             ["rg", "-n", "--color", "never", "-l", query, "--max-count", str(limit)],
-            capture_output=True, text=True, timeout=10,
+            capture_output=True,
+            text=True,
+            timeout=10,
         )
         files = [f.strip() for f in result.stdout.splitlines() if f.strip()]
-        return {"kind": "platform.code_search", "data": {"query": query, "results": files[:limit]}}
+        return {
+            "kind": "platform.code_search",
+            "data": {"query": query, "results": files[:limit]},
+        }
     except Exception as exc:
-        return {"kind": "platform.code_search", "data": {"query": query, "error": str(exc), "results": []}}
+        return {
+            "kind": "platform.code_search",
+            "data": {"query": query, "error": str(exc), "results": []},
+        }
 
 
 def _handle_inspect_run(args: dict[str, Any]) -> dict[str, Any]:
     """GET /platform/v1/executions/{id}"""
     from runtime.platform.api.services import executions
+
     eid = args.get("execution_id", "")
     result = executions.build_execution_detail(eid)
     if result is None:
@@ -159,6 +183,7 @@ LEVEL_0_HANDLERS: dict[str, Any] = {
 def _handle_diagnose_failure(args: dict[str, Any]) -> dict[str, Any]:
     """POST /platform/v1/diagnose"""
     from runtime.platform.diagnostics import engine
+
     return engine.diagnose(
         symptom=args.get("symptom", ""),
         error_code=args.get("error_code"),
@@ -171,7 +196,8 @@ def _handle_compare_runs(args: dict[str, Any]) -> dict[str, Any]:
     current = args.get("current_run_id", "LAST")
     baseline = args.get("baseline", "LAST_PASS")
     return history.build_history_compare(current_run_id=current, baseline=baseline) or {
-        "kind": "platform.history_compare", "data": {"delta": {}}
+        "kind": "platform.history_compare",
+        "data": {"delta": {}},
     }
 
 
@@ -183,6 +209,7 @@ def _handle_compute_change_intelligence(args: dict[str, Any]) -> dict[str, Any]:
 def _handle_run_verification_capability(args: dict[str, Any]) -> dict[str, Any]:
     """POST /platform/v1/verification/run"""
     from runtime.platform.api.services import verification_write
+
     cap_id = args.get("capability_id", "")
     return verification_write.build_run_result(capability_id=cap_id)
 
@@ -194,20 +221,29 @@ def _handle_run_diagnostic(args: dict[str, Any]) -> dict[str, Any]:
 
 def _handle_run_what_should_i_run(args: dict[str, Any]) -> dict[str, Any]:
     """POST /platform/v1/verification/what-should-i-run"""
-    from runtime.foundation.verification.control_plane_facade import ControlPlane, _collect_changed_files
+    from runtime.foundation.verification.control_plane_facade import (
+        ControlPlane,
+        _collect_changed_files,
+    )
+
     cp = ControlPlane()
     files = _collect_changed_files()
     plan = cp.planner.plan(files)
     recommendations = [t.task_id for t in plan.tasks[:5]]
-    return {"kind": "platform.verification_recommendation", "data": {"recommendations": recommendations}}
+    return {
+        "kind": "platform.verification_recommendation",
+        "data": {"recommendations": recommendations},
+    }
 
 
 def _handle_run_capability_group(args: dict[str, Any]) -> dict[str, Any]:
     """POST /platform/v1/verification/run/group"""
+    from runtime.platform.api.services import verification_write
+
     cap_ids = args.get("capability_ids", [])
     results = []
     for cap_id in cap_ids[:3]:  # limit group size
-        r = verification.build_run_result(capability_id=cap_id)
+        r = verification_write.build_run_result(capability_id=cap_id)
         results.append(r)
     return {"kind": "platform.verification_group_result", "data": {"results": results}}
 
@@ -216,7 +252,8 @@ def _handle_cancel_task(args: dict[str, Any]) -> dict[str, Any]:
     """POST /platform/v1/tasks/{id}/cancel"""
     task_id = args.get("task_id", "")
     from runtime.platform.api.services import tasks_write
-    result = tasks_write.cancel_task(task_id)
+
+    result = tasks_write.build_cancel_result(task_id=task_id)
     if result is None:
         raise ValueError(f"Task {task_id!r} not found")
     return result

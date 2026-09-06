@@ -21,7 +21,9 @@ def _git_sha() -> str:
         return subprocess.run(
             ["git", "rev-parse", "HEAD"],
             cwd=str(REPO_ROOT),
-            capture_output=True, text=True, timeout=10,
+            capture_output=True,
+            text=True,
+            timeout=10,
         ).stdout.strip()
     except Exception:
         return "unknown"
@@ -32,7 +34,9 @@ def _git_tree() -> str:
         return subprocess.run(
             ["git", "rev-parse", "HEAD^{tree}"],
             cwd=str(REPO_ROOT),
-            capture_output=True, text=True, timeout=10,
+            capture_output=True,
+            text=True,
+            timeout=10,
         ).stdout.strip()
     except Exception:
         return "unknown"
@@ -46,11 +50,14 @@ def _hash_file(path: Path) -> str:
 
 def _python_version() -> str:
     import sys
+
     return f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
 
 
 def _platform_info() -> str:
-    return f"{platform.system()}|{platform.machine()}|{platform.python_compiler() or ''}"
+    return (
+        f"{platform.system()}|{platform.machine()}|{platform.python_compiler() or ''}"
+    )
 
 
 def compute_configuration_fingerprint(
@@ -166,7 +173,9 @@ def build_full_fingerprint(
     }
 
 
-def fingerprints_compatible(old: dict[str, str], new: dict[str, str], *, loose: bool = False) -> bool:
+def fingerprints_compatible(
+    old: dict[str, str], new: dict[str, str], *, loose: bool = False
+) -> bool:
     """Check whether a cached result is still valid under a new configuration.
 
     Strict mode: all fields must match.

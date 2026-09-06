@@ -157,12 +157,24 @@ class TestWalkLineageMissingKeys:
     def test_mixed_complete_and_incomplete_events(self):
         """Mix of complete events and events with missing keys should work."""
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-01-15", "lifecycle_state": "open",
-             "outstanding_paise": 100000, "liability_change_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1",
-             "date_iso": "2025-02-15", "lifecycle_state": "open",
-             "outstanding_paise": 0, "liability_change_paise": -50000},
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-02-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 0,
+                "liability_change_paise": -50000,
+            },
             # Incomplete event
             {"event_type": "cash_advance", "account_id": "acc1"},
         ]
@@ -172,12 +184,24 @@ class TestWalkLineageMissingKeys:
     def test_event_with_id_zero_still_valid(self):
         """Event with id=0 should still process correctly."""
         events = [
-            {"id": 0, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-01-15", "lifecycle_state": "open",
-             "outstanding_paise": 100000, "liability_change_paise": 100000},
-            {"id": 1, "event_type": "emi_payment", "account_id": "acc1",
-             "date_iso": "2025-02-15", "lifecycle_state": "open",
-             "outstanding_paise": 0, "liability_change_paise": -50000},
+            {
+                "id": 0,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+            },
+            {
+                "id": 1,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-02-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 0,
+                "liability_change_paise": -50000,
+            },
         ]
         proposal = walk_lineage(events)
         assert len(proposal.proposed_links) == 1
@@ -189,10 +213,18 @@ class TestDetectRevocationsMissingKeys:
     def test_event_missing_transfer_id_not_grouped(self):
         """Event without transfer_id should not be grouped for revocation."""
         events = [
-            {"id": 1, "event_type": "fund_transfer_out",
-             "date_iso": "2026-08-01", "lifecycle_state": "open"},
-            {"id": 2, "event_type": "transfer_revocation",
-             "date_iso": "2026-08-03", "lifecycle_state": "open"},
+            {
+                "id": 1,
+                "event_type": "fund_transfer_out",
+                "date_iso": "2026-08-01",
+                "lifecycle_state": "open",
+            },
+            {
+                "id": 2,
+                "event_type": "transfer_revocation",
+                "date_iso": "2026-08-03",
+                "lifecycle_state": "open",
+            },
         ]
         result = detect_revocations(events, lookback_days=7)
         assert result.proposed_links == []
@@ -200,10 +232,19 @@ class TestDetectRevocationsMissingKeys:
     def test_revocation_missing_transfer_id_ignored(self):
         """Revocation event without transfer_id should be ignored."""
         events = [
-            {"id": 1, "event_type": "fund_transfer_out", "transfer_id": "t1",
-             "date_iso": "2026-08-01", "lifecycle_state": "open"},
-            {"id": 2, "event_type": "transfer_revocation",
-             "date_iso": "2026-08-03", "lifecycle_state": "open"},
+            {
+                "id": 1,
+                "event_type": "fund_transfer_out",
+                "transfer_id": "t1",
+                "date_iso": "2026-08-01",
+                "lifecycle_state": "open",
+            },
+            {
+                "id": 2,
+                "event_type": "transfer_revocation",
+                "date_iso": "2026-08-03",
+                "lifecycle_state": "open",
+            },
         ]
         result = detect_revocations(events, lookback_days=7)
         assert result.proposed_links == []
@@ -211,10 +252,20 @@ class TestDetectRevocationsMissingKeys:
     def test_event_with_none_transfer_id_not_grouped(self):
         """Event with transfer_id=None should not be grouped."""
         events = [
-            {"id": 1, "event_type": "fund_transfer_out", "transfer_id": None,
-             "date_iso": "2026-08-01", "lifecycle_state": "open"},
-            {"id": 2, "event_type": "transfer_revocation", "transfer_id": None,
-             "date_iso": "2026-08-03", "lifecycle_state": "open"},
+            {
+                "id": 1,
+                "event_type": "fund_transfer_out",
+                "transfer_id": None,
+                "date_iso": "2026-08-01",
+                "lifecycle_state": "open",
+            },
+            {
+                "id": 2,
+                "event_type": "transfer_revocation",
+                "transfer_id": None,
+                "date_iso": "2026-08-03",
+                "lifecycle_state": "open",
+            },
         ]
         result = detect_revocations(events, lookback_days=7)
         assert result.proposed_links == []
@@ -222,10 +273,19 @@ class TestDetectRevocationsMissingKeys:
     def test_revocation_missing_lifecycle_state_skipped(self):
         """Revocation event without lifecycle_state is skipped."""
         events = [
-            {"id": 1, "event_type": "fund_transfer_out", "transfer_id": "t1",
-             "date_iso": "2026-08-01", "lifecycle_state": "open"},
-            {"id": 2, "event_type": "transfer_revocation", "transfer_id": "t1",
-             "date_iso": "2026-08-03"},
+            {
+                "id": 1,
+                "event_type": "fund_transfer_out",
+                "transfer_id": "t1",
+                "date_iso": "2026-08-01",
+                "lifecycle_state": "open",
+            },
+            {
+                "id": 2,
+                "event_type": "transfer_revocation",
+                "transfer_id": "t1",
+                "date_iso": "2026-08-03",
+            },
         ]
         result = detect_revocations(events, lookback_days=7)
         assert result.proposed_links == []
@@ -237,12 +297,22 @@ class TestDetectRolloverMissingKeys:
     def test_event_missing_account_id_not_processed(self):
         """Events without account_id should not participate in rollover detection."""
         events = [
-            {"id": 1, "event_type": "cash_advance",
-             "date_iso": "2025-01-15", "lifecycle_state": "open",
-             "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "cash_advance",
-             "date_iso": "2025-02-15", "lifecycle_state": "open",
-             "liability_change_paise": 80000, "amount_paise": 80000},
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "cash_advance",
+                "date_iso": "2025-02-15",
+                "lifecycle_state": "open",
+                "liability_change_paise": 80000,
+                "amount_paise": 80000,
+            },
         ]
         proposal = detect_rollover_scenarios(events, lookback_days=90)
         # Without account_id, events aren't grouped; rollover may or may not be detected
@@ -252,12 +322,23 @@ class TestDetectRolloverMissingKeys:
     def test_event_missing_date_iso_skipped(self):
         """Event without date_iso should be skipped in rollover detection."""
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1",
-             "lifecycle_state": "open",
-             "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-02-15", "lifecycle_state": "open",
-             "liability_change_paise": 80000, "amount_paise": 80000},
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "lifecycle_state": "open",
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-02-15",
+                "lifecycle_state": "open",
+                "liability_change_paise": 80000,
+                "amount_paise": 80000,
+            },
         ]
         proposal = detect_rollover_scenarios(events, lookback_days=90)
         # First event has no date_iso; should be skipped gracefully

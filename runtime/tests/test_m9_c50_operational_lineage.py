@@ -9,11 +9,8 @@
 from __future__ import annotations
 
 import json
-import os
-import shutil
 import subprocess
-import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
@@ -22,7 +19,7 @@ from runtime.foundation.verification.control_plane_facade import ControlPlane
 from runtime.foundation.verification.executor_pipeline import ADAPTERS
 
 OUTPUT_DIR = Path("runtime/generated/m9-c50/phase-11/lineage")
-RUN_TIMESTAMP = datetime.now(timezone.utc).isoformat()
+RUN_TIMESTAMP = datetime.now(UTC).isoformat()
 
 
 def _git_sha() -> str:
@@ -63,7 +60,11 @@ class TestOperationalLineage:
         task_count = len(exec_plan.tasks) if exec_plan.tasks else 0
 
         # Record task identities for lineage
-        task_ids = [t.task_id for t in (exec_plan.tasks or [])] if hasattr(exec_plan, 'tasks') and exec_plan.tasks else []
+        task_ids = (
+            [t.task_id for t in (exec_plan.tasks or [])]
+            if hasattr(exec_plan, "tasks") and exec_plan.tasks
+            else []
+        )
 
         record = {
             "run_id": f"{scenario}-{hash((scenario, RUN_TIMESTAMP)) & 0xffffffff:08x}",
@@ -105,7 +106,9 @@ class TestOperationalLineage:
         )
         try:
             record = self._plan_and_record("backend_unit_change", [change_file])
-            (OUTPUT_DIR / "run-backend-unit-change.json").write_text(json.dumps(record, indent=2))
+            (OUTPUT_DIR / "run-backend-unit-change.json").write_text(
+                json.dumps(record, indent=2)
+            )
             assert record["plan_exit_code"] == 0
             assert record["plan_identity"] is not None
             assert record["execution_identity"] is not None
@@ -120,7 +123,9 @@ class TestOperationalLineage:
         )
         try:
             record = self._plan_and_record("frontend_change", [change_file])
-            (OUTPUT_DIR / "run-frontend-change.json").write_text(json.dumps(record, indent=2))
+            (OUTPUT_DIR / "run-frontend-change.json").write_text(
+                json.dumps(record, indent=2)
+            )
             assert record["plan_exit_code"] == 0
         finally:
             _remove_change(change_file)
@@ -128,11 +133,14 @@ class TestOperationalLineage:
     def test_scenario_4_contract_change(self):
         """API contract change: plan produces contract obligations."""
         change_file = _make_controlled_change(
-            "backend/src/routers/test_r4_probe.py", "# probe\nfrom fastapi import APIRouter\nr = APIRouter()\n"
+            "backend/src/routers/test_r4_probe.py",
+            "# probe\nfrom fastapi import APIRouter\nr = APIRouter()\n",
         )
         try:
             record = self._plan_and_record("contract_change", [change_file])
-            (OUTPUT_DIR / "run-contract-change.json").write_text(json.dumps(record, indent=2))
+            (OUTPUT_DIR / "run-contract-change.json").write_text(
+                json.dumps(record, indent=2)
+            )
             assert record["plan_exit_code"] == 0
         finally:
             _remove_change(change_file)
@@ -144,7 +152,9 @@ class TestOperationalLineage:
         )
         try:
             record = self._plan_and_record("capability_change", [change_file])
-            (OUTPUT_DIR / "run-capability-change.json").write_text(json.dumps(record, indent=2))
+            (OUTPUT_DIR / "run-capability-change.json").write_text(
+                json.dumps(record, indent=2)
+            )
             assert record["plan_exit_code"] == 0
         finally:
             _remove_change(change_file)
@@ -186,8 +196,12 @@ class TestOperationalLineage:
         try:
             rec1 = self._plan_and_record("cache_reuse_1", [change_file])
             rec2 = self._plan_and_record("cache_reuse_2", [change_file])
-            (OUTPUT_DIR / "run-cache-reuse-1.json").write_text(json.dumps(rec1, indent=2))
-            (OUTPUT_DIR / "run-cache-reuse-2.json").write_text(json.dumps(rec2, indent=2))
+            (OUTPUT_DIR / "run-cache-reuse-1.json").write_text(
+                json.dumps(rec1, indent=2)
+            )
+            (OUTPUT_DIR / "run-cache-reuse-2.json").write_text(
+                json.dumps(rec2, indent=2)
+            )
             assert rec1["plan_exit_code"] == 0
             assert rec2["plan_exit_code"] == 0
             # Same change should produce same task count (stable planning)
@@ -202,7 +216,9 @@ class TestOperationalLineage:
         )
         try:
             record = self._plan_and_record("failed_verification", [change_file])
-            (OUTPUT_DIR / "run-failed-verification.json").write_text(json.dumps(record, indent=2))
+            (OUTPUT_DIR / "run-failed-verification.json").write_text(
+                json.dumps(record, indent=2)
+            )
             assert record["plan_exit_code"] == 0
         finally:
             _remove_change(change_file)
@@ -214,7 +230,9 @@ class TestOperationalLineage:
         )
         try:
             record = self._plan_and_record("unmapped_change", [change_file])
-            (OUTPUT_DIR / "run-unmapped-change.json").write_text(json.dumps(record, indent=2))
+            (OUTPUT_DIR / "run-unmapped-change.json").write_text(
+                json.dumps(record, indent=2)
+            )
             assert record["plan_exit_code"] == 0
         finally:
             _remove_change(change_file)
@@ -229,7 +247,9 @@ class TestOperationalLineage:
         )
         try:
             record = self._plan_and_record("cross_layer", [bf, ff])
-            (OUTPUT_DIR / "run-cross-layer.json").write_text(json.dumps(record, indent=2))
+            (OUTPUT_DIR / "run-cross-layer.json").write_text(
+                json.dumps(record, indent=2)
+            )
             assert record["plan_exit_code"] == 0
         finally:
             _remove_change(bf)
@@ -239,11 +259,13 @@ class TestOperationalLineage:
         """Mutation-sensitive change."""
         change_file = _make_controlled_change(
             "backend/src/engines/credit_card_engine/core.py",
-            "# mutation probe - append comment\n# added for C50 R4\n"
+            "# mutation probe - append comment\n# added for C50 R4\n",
         )
         try:
             record = self._plan_and_record("mutation_sensitive", [change_file])
-            (OUTPUT_DIR / "run-mutation-sensitive.json").write_text(json.dumps(record, indent=2))
+            (OUTPUT_DIR / "run-mutation-sensitive.json").write_text(
+                json.dumps(record, indent=2)
+            )
             assert record["plan_exit_code"] == 0
         finally:
             # Restore original file
@@ -253,10 +275,17 @@ class TestOperationalLineage:
         """CI-equivalent: verify verify.py check exits cleanly on clean tree subset."""
         # Run a targeted subset of verification to prove CI equivalence
         r = subprocess.run(
-            [".venv/bin/python", "-m", "pytest",
-             "runtime/tests/test_m9_c50_stop_gate5_evidence_trust.py",
-             "-q", "--no-header"],
-            capture_output=True, text=True, timeout=30,
+            [
+                ".venv/bin/python",
+                "-m",
+                "pytest",
+                "runtime/tests/test_m9_c50_stop_gate5_evidence_trust.py",
+                "-q",
+                "--no-header",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         # This proves the canonical test infrastructure works
         assert r.returncode == 0, f"CI-equivalent test failed: {r.stdout[-200:]}"
@@ -290,10 +319,18 @@ class TestOperationalLineage:
 
         # Verify self-verification tests pass
         r = subprocess.run(
-            [".venv/bin/python", "-m", "pytest",
-             "runtime/tests/test_m9_c50_self_verification.py",
-             "-q", "--no-header", "--timeout=30"],
-            capture_output=True, text=True, timeout=60,
+            [
+                ".venv/bin/python",
+                "-m",
+                "pytest",
+                "runtime/tests/test_m9_c50_self_verification.py",
+                "-q",
+                "--no-header",
+                "--timeout=30",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=60,
         )
         assert r.returncode == 0, f"self-verification failed: {r.stdout[-300:]}"
 
@@ -316,7 +353,9 @@ class TestOperationalLineage:
             "reused_evidence": [],
             "invalidated_evidence": [],
         }
-        (OUTPUT_DIR / "run-self-verification.json").write_text(json.dumps(record, indent=2))
+        (OUTPUT_DIR / "run-self-verification.json").write_text(
+            json.dumps(record, indent=2)
+        )
 
     # ── Lineage validation ───────────────────────────────────────────────
 
@@ -326,9 +365,15 @@ class TestOperationalLineage:
         assert len(runs) >= 10, f"Expected ≥10 runs, got {len(runs)}"
 
         required_fields = {
-            "run_id", "timestamp", "repository_sha", "scenario",
-            "changed_files", "plan_identity", "execution_identity",
-            "final_decision", "plan_exit_code",
+            "run_id",
+            "timestamp",
+            "repository_sha",
+            "scenario",
+            "changed_files",
+            "plan_identity",
+            "execution_identity",
+            "final_decision",
+            "plan_exit_code",
         }
         null_identities = []
         for run_file in runs:
@@ -359,15 +404,17 @@ class TestOperationalLineage:
         summary = {"runs": [], "total": len(runs), "generated_at": RUN_TIMESTAMP}
         for run_file in runs:
             data = json.loads(run_file.read_text())
-            summary["runs"].append({
-                "run_id": data["run_id"],
-                "scenario": data["scenario"],
-                "plan_identity": data["plan_identity"],
-                "execution_identity": data["execution_identity"],
-                "final_decision": data["final_decision"],
-                "plan_exit_code": data["plan_exit_code"],
-                "task_count": data.get("task_count", 0),
-            })
+            summary["runs"].append(
+                {
+                    "run_id": data["run_id"],
+                    "scenario": data["scenario"],
+                    "plan_identity": data["plan_identity"],
+                    "execution_identity": data["execution_identity"],
+                    "final_decision": data["final_decision"],
+                    "plan_exit_code": data["plan_exit_code"],
+                    "task_count": data.get("task_count", 0),
+                }
+            )
         summary_file = OUTPUT_DIR.parent / "operations-summary.json"
         summary_file.write_text(json.dumps(summary, indent=2))
         assert summary["total"] == len(runs)

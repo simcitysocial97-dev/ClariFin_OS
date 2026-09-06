@@ -13,8 +13,8 @@ These tests prove the Gate 1 criteria from
 from __future__ import annotations
 
 import json
+import pathlib
 import re
-from datetime import datetime
 from typing import Any
 
 import pytest
@@ -25,7 +25,6 @@ from runtime.platform.api.contracts import (
     architecture,
     capabilities,
     change,
-    errors as errors_contract,
     events,
     evidence,
     executions,
@@ -33,6 +32,9 @@ from runtime.platform.api.contracts import (
     history,
     tasks,
     verification,
+)
+from runtime.platform.api.contracts import (
+    errors as errors_contract,
 )
 from runtime.platform.api.contracts._primitives import (
     Identity,
@@ -51,7 +53,6 @@ from runtime.platform.api.identity import (
     envelope_identity,
     error_identity,
 )
-
 
 # ---------------------------------------------------------------------------
 # 1. Canonical JSON
@@ -234,7 +235,9 @@ class TestPlatformError:
             layer="platform.x",
             message="boom",
         )
-        with pytest.raises(Exception):
+        with pytest.raises(
+            Exception
+        ):  # noqa: B017 — testing immutability guard requires broad exception
             err.message = "tampered"  # type: ignore[misc]
 
     def test_empty_layer_rejected(self) -> None:
@@ -918,8 +921,10 @@ class TestChangeIntelligenceContract:
             kind=change.CHANGE_INTELLIGENCE_KIND,
             data={
                 "changed_files": [
-                    {"path": "backend/src/engines/loan_engine/foo.py",
-                     "change_type": "modified"},
+                    {
+                        "path": "backend/src/engines/loan_engine/foo.py",
+                        "change_type": "modified",
+                    },
                 ],
                 "affected_capabilities": ["loan-engine"],
                 "stale_evidence": ["sha256:" + "a" * 64],
@@ -1003,12 +1008,13 @@ class TestNoNetworkDependency:
         import runtime.platform  # noqa: F401
         import runtime.platform.api  # noqa: F401
         import runtime.platform.api.contracts  # noqa: F401
+
         after = set(sys.modules)
         newly_loaded = after - before
         forbidden_now = {m.split(".")[0] for m in newly_loaded} & forbidden
-        assert not forbidden_now, (
-            f"platform package unexpectedly loaded network deps: {forbidden_now}"
-        )
+        assert (
+            not forbidden_now
+        ), f"platform package unexpectedly loaded network deps: {forbidden_now}"
 
     def test_contracts_module_has_no_io_imports(self) -> None:
         # Defensive: read the contracts package source and confirm no
@@ -1017,7 +1023,13 @@ class TestNoNetworkDependency:
 
         src_path = c.__file__
         assert src_path is not None
-        src = open(src_path, "r", encoding="utf-8").read()
-        for needle in ("import requests", "import httpx", "import aiohttp",
-                       "import fastapi", "import starlette", "import urllib3"):
+        src = pathlib.Path(src_path).read_text(encoding="utf-8")
+        for needle in (
+            "import requests",
+            "import httpx",
+            "import aiohttp",
+            "import fastapi",
+            "import starlette",
+            "import urllib3",
+        ):
             assert needle not in src, f"forbidden import found: {needle}"

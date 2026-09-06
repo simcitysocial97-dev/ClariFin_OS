@@ -204,9 +204,7 @@ class MutationOrchestrator:
 
     # ── private ─────────────────────────────────────────────────────────────
 
-    def _create_campaign(
-        self, mode: str, target: str | None
-    ) -> MutationCampaign:
+    def _create_campaign(self, mode: str, target: str | None) -> MutationCampaign:
         from runtime.foundation.verification.mutation_contract import (
             _FULL_SOURCE_PATHS,
             _FULL_TEST_SELECTION,
@@ -235,9 +233,13 @@ class MutationOrchestrator:
         )
 
         import subprocess
+
         repo_sha = subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=str(REPO_ROOT),
-            capture_output=True, text=True, timeout=10,
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=10,
         ).stdout.strip()
 
         return MutationCampaign(
@@ -249,7 +251,9 @@ class MutationOrchestrator:
             scope=scope,
             test_selection=SELECTION_METHOD,
             configuration_fingerprint=fp["configuration"],
-            execution_policy=f"parallel:{self.max_workers}" if self.max_workers > 1 else "serial",
+            execution_policy=(
+                f"parallel:{self.max_workers}" if self.max_workers > 1 else "serial"
+            ),
             creation_timestamp=datetime.now(UTC).isoformat(),
         )
 
@@ -263,7 +267,10 @@ class MutationOrchestrator:
             return False, "; ".join(env.errors)
 
         if self.backend.verify_tool_version() is False:
-            return False, f"mutmut version mismatch (pinned={self.backend.backend_version})"
+            return (
+                False,
+                f"mutmut version mismatch (pinned={self.backend.backend_version})",
+            )
 
         # Check baseline tests pass (quick subset for smoke, full for target/full).
         if mode in ("target", "full"):
@@ -271,6 +278,7 @@ class MutationOrchestrator:
             from runtime.foundation.verification.mutation_contract import (
                 ENGINE_SELECTION,
             )
+
             if target and target in ENGINE_SELECTION:
                 sel = ENGINE_SELECTION[target]
                 for test_path in sel.test_selection[:2]:  # sample first 2 test dirs
@@ -292,7 +300,9 @@ class MutationOrchestrator:
             existing = []
             for f in sorted(existing_dir.glob("*.json")):
                 try:
-                    existing.append(MutationCandidate.from_dict(json.loads(f.read_text())))
+                    existing.append(
+                        MutationCandidate.from_dict(json.loads(f.read_text()))
+                    )
                 except Exception:
                     continue
             if existing:
@@ -303,9 +313,20 @@ class MutationOrchestrator:
 
         # Assign canonical IDs and enrich.
         source_fp = compute_source_fingerprint(
-            [p for sel in __import__("runtime.foundation.verification.mutation_contract", fromlist=["ENGINE_SELECTION"]).ENGINE_SELECTION.values() for p in sel.source_paths]
-            if camp.scope == "full (all engines)" else
-            ([camp.scope] if camp.scope.startswith("src/") else [f"src/engines/{camp.scope}.py"])
+            [
+                p
+                for sel in __import__(
+                    "runtime.foundation.verification.mutation_contract",
+                    fromlist=["ENGINE_SELECTION"],
+                ).ENGINE_SELECTION.values()
+                for p in sel.source_paths
+            ]
+            if camp.scope == "full (all engines)"
+            else (
+                [camp.scope]
+                if camp.scope.startswith("src/")
+                else [f"src/engines/{camp.scope}.py"]
+            )
         )
 
         candidates = []
@@ -335,7 +356,10 @@ class MutationOrchestrator:
                 component=r.component,
                 risk=r.risk,
                 selected_tests=r.selected_tests,
-                backend_metadata={**r.backend_metadata, "campaign_id": camp.campaign_id},
+                backend_metadata={
+                    **r.backend_metadata,
+                    "campaign_id": camp.campaign_id,
+                },
             )
             candidates.append(r)
 
@@ -383,10 +407,15 @@ class MutationOrchestrator:
         for _i, candidate in enumerate(candidates):
             # Cache check.
             cached, entry = self.cache.get_or_skip(
-                candidate, camp.configuration_fingerprint,
+                candidate,
+                camp.configuration_fingerprint,
                 MutationResultState.SURVIVED,  # placeholder — will be overwritten
             )
-            if cached and entry and entry.result_state not in ("UNKNOWN", "NOT_EXECUTED"):
+            if (
+                cached
+                and entry
+                and entry.result_state not in ("UNKNOWN", "NOT_EXECUTED")
+            ):
                 # Apply cached result.
                 state = MutationResultState(entry.result_state)
                 self._apply_cached_result(result, state)
@@ -394,7 +423,11 @@ class MutationOrchestrator:
 
             # Execute with retry.
             execution = self._execute_with_retry(
-                candidate, camp, ws, timeout, worker_id,
+                candidate,
+                camp,
+                ws,
+                timeout,
+                worker_id,
             )
             result.total_executions += 1
             result.retries_total += execution.retry_count
@@ -404,11 +437,15 @@ class MutationOrchestrator:
 
             # Cache the result.
             if execution.mutation_result not in (
-                MutationResultState.UNKNOWN, MutationResultState.NOT_EXECUTED
+                MutationResultState.UNKNOWN,
+                MutationResultState.NOT_EXECUTED,
             ):
                 self.cache.put(
-                    candidate, camp.configuration_fingerprint,
-                    execution.mutation_result, execution, verified=execution.verification_passed,
+                    candidate,
+                    camp.configuration_fingerprint,
+                    execution.mutation_result,
+                    execution,
+                    verified=execution.verification_passed,
                 )
 
             self._apply_execution_result(result, execution)
@@ -425,6 +462,7 @@ class MutationOrchestrator:
     ) -> MutationResult:
         """Execute candidates in parallel with worker isolation."""
         import threading
+
         lock = threading.Lock()
 
         def _worker(candidate: MutationCandidate) -> MutationExecution:
@@ -453,11 +491,14 @@ class MutationOrchestrator:
                     result.retries_total += execution.retry_count
                     ws.persist_execution(execution.to_dict())
                     if execution.mutation_result not in (
-                        MutationResultState.UNKNOWN, MutationResultState.NOT_EXECUTED
+                        MutationResultState.UNKNOWN,
+                        MutationResultState.NOT_EXECUTED,
                     ):
                         self.cache.put(
-                            candidate, camp.configuration_fingerprint,
-                            execution.mutation_result, execution,
+                            candidate,
+                            camp.configuration_fingerprint,
+                            execution.mutation_result,
+                            execution,
                             verified=execution.verification_passed,
                         )
                     self._apply_execution_result(result, execution)
@@ -575,7 +616,9 @@ def create_orchestrator(
         adapter = MutmutAdapter()
     else:
         raise ValueError(f"Unknown backend: {backend}")
-    return MutationOrchestrator(backend=adapter, max_workers=max_workers, timeout=timeout)
+    return MutationOrchestrator(
+        backend=adapter, max_workers=max_workers, timeout=timeout
+    )
 
 
 __all__ = [

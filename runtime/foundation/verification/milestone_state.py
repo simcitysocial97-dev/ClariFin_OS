@@ -32,9 +32,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 import subprocess  # nosec - only used for git rev-parse
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
@@ -259,13 +258,18 @@ class Milestone:
         return d
 
     @classmethod
-    def _rebuild(cls, m: "Milestone", **overrides: Any) -> "Milestone":
+    def _rebuild(cls, m: Milestone, **overrides: Any) -> Milestone:
         d = m.to_dict()
         d.update(overrides)
         # Reconstitute status enum.
         d["status"] = MilestoneStatus(d["status"])
         # Tuples.
-        for k in ("files_changed", "acceptance_criteria", "dependencies", "artifact_paths"):
+        for k in (
+            "files_changed",
+            "acceptance_criteria",
+            "dependencies",
+            "artifact_paths",
+        ):
             d[k] = tuple(d.get(k, []))
         # If commands or evidence came in as already-built tuples, keep them;
         # otherwise rebuild from dict representation.
@@ -340,7 +344,7 @@ class MilestoneLedger:
 
     # ---------- Construction -----------------------------------------------
     @classmethod
-    def from_default_catalogue(cls) -> "MilestoneLedger":
+    def from_default_catalogue(cls) -> MilestoneLedger:
         ms: dict[str, Milestone] = {}
         for entry in DEFAULT_MILESTONES:
             ms[entry["id"]] = Milestone(
@@ -353,7 +357,7 @@ class MilestoneLedger:
         return cls(ms)
 
     @classmethod
-    def from_snapshot(cls, path: str | Path) -> "MilestoneLedger":
+    def from_snapshot(cls, path: str | Path) -> MilestoneLedger:
         p = Path(path)
         if not p.exists():
             return cls.from_default_catalogue()
@@ -369,9 +373,7 @@ class MilestoneLedger:
                 status=MilestoneStatus(entry["status"]),
                 scope=entry.get("scope", ""),
                 files_changed=tuple(entry.get("files_changed", [])),
-                commands=tuple(
-                    CommandRecord(**c) for c in entry.get("commands", [])
-                ),
+                commands=tuple(CommandRecord(**c) for c in entry.get("commands", [])),
                 evidence=tuple(Evidence(**e) for e in entry.get("evidence", [])),
                 acceptance_criteria=tuple(entry.get("acceptance_criteria", [])),
                 acceptance_result=entry.get("acceptance_result", ""),

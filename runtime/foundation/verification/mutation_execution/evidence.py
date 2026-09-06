@@ -95,7 +95,8 @@ def result_to_measurement_truth(
     set_evidence_fingerprint(record)
     record.completion_status = classify_completion(record=record)
     record.consumable_by_certification = (
-        record.completion_status == MeasurementCompletionStatus.AUTHORITATIVE_COMPLETE.value
+        record.completion_status
+        == MeasurementCompletionStatus.AUTHORITATIVE_COMPLETE.value
         and record.evidence_classification == EvidenceClassification.AUTHORITATIVE.value
     )
     return record
@@ -110,50 +111,64 @@ def result_to_evidence_artifact(
     artifacts = []
 
     # Reference the campaign manifest.
-    artifacts.append(EvidenceArtifactRef(
-        kind="mutation-campaign-manifest",
-        ref=str(workspace / "manifest.json"),
-    ))
+    artifacts.append(
+        EvidenceArtifactRef(
+            kind="mutation-campaign-manifest",
+            ref=str(workspace / "manifest.json"),
+        )
+    )
 
     # Reference aggregated results.
     evidence_path = workspace / "evidence" / "mutation-result.json"
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
     evidence_path.write_text(json.dumps(result.to_dict(), indent=2) + "\n")
-    artifacts.append(EvidenceArtifactRef(
-        kind="mutation-result",
-        ref=str(evidence_path.relative_to(workspace.root if hasattr(workspace, 'root') else workspace)),
-    ))
+    artifacts.append(
+        EvidenceArtifactRef(
+            kind="mutation-result",
+            ref=str(
+                evidence_path.relative_to(
+                    workspace.root if hasattr(workspace, "root") else workspace
+                )
+            ),
+        )
+    )
 
     # Reference per-execution logs.
     exec_dir = workspace / "executions"
     if exec_dir.exists():
         for ef in sorted(exec_dir.glob("*.json"))[:100]:  # cap at 100 refs
-            artifacts.append(EvidenceArtifactRef(
-                kind="mutation-execution",
-                ref=str(ef),
-            ))
+            artifacts.append(
+                EvidenceArtifactRef(
+                    kind="mutation-execution",
+                    ref=str(ef),
+                )
+            )
 
     # Build unit execution records for each candidate.
     units = []
     for i, art in enumerate(artifacts[:50]):  # limit units
-        units.append(UnitExecutionRecord(
-            unit_id=f"mutation-{i}",
-            provenance={
-                "campaign_id": campaign.campaign_id,
-                "scope": campaign.scope,
-                "backend": campaign.mutation_backend,
-            },
-            attempts=(ExecutionAttempt(
-                attempt_index=0,
-                command=f"mutmut run --target {campaign.scope}",
-                started_at=campaign.creation_timestamp,
-                ended_at=datetime.now(UTC).isoformat(),
-                duration_seconds=0.0,
-                exit_code=0 if result.reconcile() else 1,
-                status="pass" if result.reconcile() else "fail",
-                artifacts=(art,),
-            ),),
-        ))
+        units.append(
+            UnitExecutionRecord(
+                unit_id=f"mutation-{i}",
+                provenance={
+                    "campaign_id": campaign.campaign_id,
+                    "scope": campaign.scope,
+                    "backend": campaign.mutation_backend,
+                },
+                attempts=(
+                    ExecutionAttempt(
+                        attempt_index=0,
+                        command=f"mutmut run --target {campaign.scope}",
+                        started_at=campaign.creation_timestamp,
+                        ended_at=datetime.now(UTC).isoformat(),
+                        duration_seconds=0.0,
+                        exit_code=0 if result.reconcile() else 1,
+                        status="pass" if result.reconcile() else "fail",
+                        artifacts=(art,),
+                    ),
+                ),
+            )
+        )
 
     return {
         "schema": SCHEMA_VERSION,
@@ -161,7 +176,8 @@ def result_to_evidence_artifact(
         "generated_at": datetime.now(UTC).isoformat(),
         "result": result.to_dict(),
         "measurement_truth": result_to_measurement_truth(
-            campaign, result,
+            campaign,
+            result,
             command=f"verify.py mutation --target {campaign.scope}",
             requested_scope=campaign.scope,
             actual_scope=campaign.scope,
@@ -196,7 +212,12 @@ def _normalize_mutmut(raw: dict[str, Any]) -> MutationResult:
 
     return MutationResult(
         campaign_id=raw.get("run_id", "unknown"),
-        total_candidates=killed + survived + no_tests + timeout + suspicious + not_checked,
+        total_candidates=killed
+        + survived
+        + no_tests
+        + timeout
+        + suspicious
+        + not_checked,
         killed=killed,
         survived=survived,
         no_tests=no_tests,
@@ -205,9 +226,13 @@ def _normalize_mutmut(raw: dict[str, Any]) -> MutationResult:
     )
 
 
-def merge_shard_results(shards: list[tuple[MutationCampaign, MutationResult]]) -> MutationResult:
+def merge_shard_results(
+    shards: list[tuple[MutationCampaign, MutationResult]],
+) -> MutationResult:
     """Merge results from multiple shards into one authoritative result."""
-    merged = MutationResult(campaign_id=shards[0][0].campaign_id if shards else "merged")
+    merged = MutationResult(
+        campaign_id=shards[0][0].campaign_id if shards else "merged"
+    )
     for _camp, result in shards:
         merged.total_candidates += result.total_candidates
         merged.killed += result.killed

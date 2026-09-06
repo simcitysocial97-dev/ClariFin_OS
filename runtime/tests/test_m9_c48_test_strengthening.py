@@ -7,14 +7,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
-
 from runtime.foundation.verification.test_strengthening_pipeline import (
     CandidateState,
-    PipelineResult,
     TestStrengtheningPipeline,
 )
-
 
 VALID_CANDIDATE = '''
 def test_discriminator():
@@ -81,7 +77,7 @@ def test_promotion_happy_path(tmp_path):
 
             return B()
 
-    original = getattr(mod.TestStrengtheningPipeline, "_generate_candidate")
+    original = mod.TestStrengtheningPipeline._generate_candidate
 
     def _stub(self):
         cid = "test-cand-1"
@@ -105,6 +101,7 @@ def test_promotion_happy_path(tmp_path):
     assert Path(res.evidence_path).exists()
     # SHA is verifiable
     import hashlib
+
     actual = hashlib.sha256(Path(res.evidence_path).read_bytes()).hexdigest()
     assert res.artifact_sha256 == actual
 
@@ -126,7 +123,9 @@ def test_reject_syntax_error(tmp_path):
         p = _pipeline(tmp_path)
         res = p.run()
     finally:
-        mod.TestStrengtheningPipeline._generate_candidate = mod.TestStrengtheningPipeline._generate_candidate
+        mod.TestStrengtheningPipeline._generate_candidate = (
+            mod.TestStrengtheningPipeline._generate_candidate
+        )
     assert res.final_state == CandidateState.REJECTED_SYNTAX
 
 

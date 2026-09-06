@@ -91,7 +91,9 @@ def build_verification_recommendation() -> dict[str, Any]:
     cp = ControlPlane()
     files = _collect_changed_files()
     plan = cp.planner.plan(files)
-    directly_affected = sorted(plan.capability_resolution.directly_affected_capabilities)
+    directly_affected = sorted(
+        plan.capability_resolution.directly_affected_capabilities
+    )
     transitively = sorted(plan.capability_resolution.transitively_affected_capabilities)
     recommended = sorted(set(directly_affected + transitively))
     # Filter to capabilities that exist in the catalog (defensive: the

@@ -28,14 +28,10 @@
 from __future__ import annotations
 
 import ast
-import json
-import re
-from collections import Counter
-from dataclasses import asdict, dataclass, field
+from collections.abc import Iterable
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Iterable
-
 
 DISPOSITIONS: tuple[str, ...] = (
     "CANONICAL",
@@ -232,7 +228,11 @@ def audit_functions(
         if node.name.startswith("_") and not node.name.startswith("__"):
             disp = "UNREACHABLE"
             rationale = "private (underscore) — not part of public API"
-        elif node.name.startswith("cmd_") or node.name.endswith("_cli") or node.name == "main":
+        elif (
+            node.name.startswith("cmd_")
+            or node.name.endswith("_cli")
+            or node.name == "main"
+        ):
             disp = "CANONICAL"
             rationale = "CLI dispatch / entry point"
         elif node.name.startswith("_") and node.name.endswith("_"):
@@ -240,7 +240,9 @@ def audit_functions(
             rationale = "private helper"
         else:
             disp = "SUPPORTING"
-            rationale = "public; treated as supporting until canonical authority is recorded"
+            rationale = (
+                "public; treated as supporting until canonical authority is recorded"
+            )
         dispositions.append(
             FunctionDisposition(
                 file=str(p),

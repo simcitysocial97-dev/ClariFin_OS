@@ -14,10 +14,13 @@ from __future__ import annotations
 
 from typing import Any
 
-from runtime.system.observability.event_store import EngineeringEvent, EngineeringEventStore
 from runtime.platform.api.contracts import executions as executions_contract
 from runtime.platform.api.contracts._primitives import Status
 from runtime.platform.api.services._helpers import envelope, now_iso
+from runtime.system.observability.event_store import (
+    EngineeringEvent,
+    EngineeringEventStore,
+)
 
 __all__ = [
     "build_execution_detail",
@@ -25,7 +28,9 @@ __all__ = [
 ]
 
 
-def _event_to_stream_event_payload(execution_id: str, event: EngineeringEvent) -> dict[str, Any]:
+def _event_to_stream_event_payload(
+    execution_id: str, event: EngineeringEvent
+) -> dict[str, Any]:
     """Project one ``EngineeringEvent`` into a stream-event payload."""
 
     return {
@@ -58,15 +63,9 @@ def build_execution_detail(execution_id: str) -> dict[str, Any] | None:
     matching.sort(key=lambda e: (e.timestamp or "", e.event_id))
 
     capability_id = (
-        matching[-1].metadata.get("capability_id")
-        if matching[-1].metadata
-        else None
+        matching[-1].metadata.get("capability_id") if matching[-1].metadata else None
     )
-    task_id = (
-        matching[-1].metadata.get("task_id")
-        if matching[-1].metadata
-        else None
-    )
+    task_id = matching[-1].metadata.get("task_id") if matching[-1].metadata else None
 
     started = (
         matching[0].timestamp.isoformat().replace("+00:00", "Z")

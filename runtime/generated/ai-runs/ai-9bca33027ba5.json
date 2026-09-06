@@ -1,0 +1,73 @@
+{
+  "id": "ai-9bca33027ba5",
+  "symptom": "test",
+  "mode": "ASSISTED",
+  "capability_id": null,
+  "status": "RUNNING",
+  "steps": [
+    {
+      "step_number": 1,
+      "tool_name": "run_diagnostic",
+      "arguments": {
+        "symptom": "test"
+      },
+      "result": {
+        "kind": "platform.diagnostic_result",
+        "version": "1.0.0",
+        "generated_at": "2026-09-06T05:01:27Z",
+        "id": "sha256:0430796ec7c397ee287d0e1eb65032fa86e793c3925186b39ff792525a872539",
+        "data": {
+          "symptom": "test",
+          "error_code": null,
+          "capability_id": null,
+          "level": "L1",
+          "fact": "no_match",
+          "evidence": [],
+          "affected_capability": null,
+          "recommendation": [
+            {
+              "action": "run_full_verification",
+              "target": "all"
+            }
+          ],
+          "generated_at": "2026-09-06T05:01:27Z"
+        }
+      },
+      "error": null,
+      "started_at": "2026-09-06T05:01:22.279518Z",
+      "completed_at": "2026-09-06T05:01:27.866453Z",
+      "evidence_id": "sha256:0430796ec7c397ee287d0e1eb65032fa86e793c3925186b39ff792525a872539",
+      "duration_ms": 5586
+    }
+  ],
+  "created_at": "2026-09-06T05:01:22.262137Z",
+  "updated_at": "2026-09-06T05:01:27.866453Z",
+  "completed_at": null,
+  "error": null,
+  "audit_trail": [
+    {
+      "event_id": "audit-c09c3f2fb3b5",
+      "event_type": "run_created",
+      "run_id": "ai-9bca33027ba5",
+      "timestamp": "2026-09-06T05:01:22.262876Z",
+      "payload": {
+        "symptom": "test",
+        "mode": "ASSISTED",
+        "capability_id": null
+      }
+    },
+    {
+      "event_id": "audit-9c71b60c396a",
+      "event_type": "step_started",
+      "run_id": "ai-9bca33027ba5",
+      "timestamp": "2026-09-06T05:01:22.280442Z",
+      "payload": {
+        "step": 1,
+        "tool": "run_diagnostic",
+        "arguments": {
+          "symptom": "test"
+        }
+      }
+    }
+  ]
+}

@@ -40,13 +40,16 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-
 # ── Canonical declaration ──────────────────────────────────────────────────
-CANONICAL_ENTRYPOINT = "runtime.foundation.verification.mutation_runner.run_mutation_cli"
+CANONICAL_ENTRYPOINT = (
+    "runtime.foundation.verification.mutation_runner.run_mutation_cli"
+)
 CANONICAL_RUNNER_FUNCTION = (
     "runtime.foundation.verification.mutation_runner.execute_mutation"
 )
-CANONICAL_RESULT_TYPE = "runtime.foundation.verification.mutation_contract.MutationResult"
+CANONICAL_RESULT_TYPE = (
+    "runtime.foundation.verification.mutation_contract.MutationResult"
+)
 
 # Non-canonical / future-migration backends (declared, not promoted).
 NON_CANONICAL_BACKENDS: tuple[str, ...] = (

@@ -1887,9 +1887,25 @@ class Testc56_76435:
     def test_default_value_76435(self):
         """Test that kills the mutant by asserting correct behavior."""
         # String literal mutation in membership/condition check
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "outstanding_paise": 100000, "liability_change_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "outstanding_paise": 100000,
+                    "liability_change_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -1904,9 +1920,25 @@ class Testc56_75182:
     def test_default_value_75182(self):
         """Test that kills the mutant by asserting correct behavior."""
         # String literal mutation in membership/condition check
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "outstanding_paise": 100000, "liability_change_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "outstanding_paise": 100000,
+                    "liability_change_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -1923,12 +1955,35 @@ class Testc56_52130:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -1945,12 +2000,35 @@ class Testc56_30650:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -1967,12 +2045,35 @@ class Testc56_02535:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -1988,10 +2089,28 @@ class Testc56_95863:
         """Test that kills the mutant by asserting correct behavior."""
         # Mutation changes default value for missing key "liability_change_paise"
         # Original returns empty string, mutant returns None
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "lifecycle_state": "open",
+                    "outstanding_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
-        assert result is not None, "Function should handle missing liability_change_paise gracefully"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
+        assert (
+            result is not None
+        ), "Function should handle missing liability_change_paise gracefully"
 
 
 class Testc56_48152:
@@ -2006,10 +2125,28 @@ class Testc56_48152:
         """Test that kills the mutant by asserting correct behavior."""
         # Mutation changes default value for missing key "liability_change_paise"
         # Original returns empty string, mutant returns None
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "lifecycle_state": "open",
+                    "outstanding_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
-        assert result is not None, "Function should handle missing liability_change_paise gracefully"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
+        assert (
+            result is not None
+        ), "Function should handle missing liability_change_paise gracefully"
 
 
 class Testc56_89982:
@@ -2024,10 +2161,28 @@ class Testc56_89982:
         """Test that kills the mutant by asserting correct behavior."""
         # Mutation changes default value for missing key "liability_change_paise"
         # Original returns empty string, mutant returns None
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "lifecycle_state": "open",
+                    "outstanding_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
-        assert result is not None, "Function should handle missing liability_change_paise gracefully"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
+        assert (
+            result is not None
+        ), "Function should handle missing liability_change_paise gracefully"
 
 
 class Testc56_92132:
@@ -2043,12 +2198,35 @@ class Testc56_92132:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2065,12 +2243,35 @@ class Testc56_99148:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2090,20 +2291,53 @@ class Testc56_10945:
         # For "not in": original returns False (don't skip), mutant returns True (skip)
         # Test with lifecycle_state="partially_settled" events - should be processed by original
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "partially_settled", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "partially_settled",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         # walk_lineage returns LineageProposal object
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         # Original: processes partially_settled emi_payment -> links to advance, updates lifecycle to partially_settled
         # Mutant: skips partially_settled event -> no link created, no lifecycle update
-        assert len(result.proposed_links) == 1, f"Expected 1 proposed link, got {len(result.proposed_links)}"
-        assert result.proposed_links[0]["link_type"] == "settles", f"Expected settles link, got {result.proposed_links[0].get('link_type')}"
-        assert len(result.lifecycle_updates) == 1, f"Expected 1 lifecycle update, got {len(result.lifecycle_updates)}"
-        assert result.lifecycle_updates[0]["lifecycle_state"] == "partially_settled", f"Expected partially_settled, got {result.lifecycle_updates[0].get('lifecycle_state')}"
-        assert result.lifecycle_updates[0]["outstanding_paise"] == 50000, f"Expected outstanding 50000, got {result.lifecycle_updates[0].get('outstanding_paise')}"
+        assert (
+            len(result.proposed_links) == 1
+        ), f"Expected 1 proposed link, got {len(result.proposed_links)}"
+        assert (
+            result.proposed_links[0]["link_type"] == "settles"
+        ), f"Expected settles link, got {result.proposed_links[0].get('link_type')}"
+        assert (
+            len(result.lifecycle_updates) == 1
+        ), f"Expected 1 lifecycle update, got {len(result.lifecycle_updates)}"
+        assert (
+            result.lifecycle_updates[0]["lifecycle_state"] == "partially_settled"
+        ), f"Expected partially_settled, got {result.lifecycle_updates[0].get('lifecycle_state')}"
+        assert (
+            result.lifecycle_updates[0]["outstanding_paise"] == 50000
+        ), f"Expected outstanding 50000, got {result.lifecycle_updates[0].get('outstanding_paise')}"
         assert result is not None, "Function should return a result"
 
 
@@ -2123,20 +2357,53 @@ class Testc56_48469:
         # For "not in": original returns False (don't skip), mutant returns True (skip)
         # Test with lifecycle_state="partially_settled" events - should be processed by original
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "partially_settled", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "partially_settled",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         # walk_lineage returns LineageProposal object
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         # Original: processes partially_settled emi_payment -> links to advance, updates lifecycle to partially_settled
         # Mutant: skips partially_settled event -> no link created, no lifecycle update
-        assert len(result.proposed_links) == 1, f"Expected 1 proposed link, got {len(result.proposed_links)}"
-        assert result.proposed_links[0]["link_type"] == "settles", f"Expected settles link, got {result.proposed_links[0].get('link_type')}"
-        assert len(result.lifecycle_updates) == 1, f"Expected 1 lifecycle update, got {len(result.lifecycle_updates)}"
-        assert result.lifecycle_updates[0]["lifecycle_state"] == "partially_settled", f"Expected partially_settled, got {result.lifecycle_updates[0].get('lifecycle_state')}"
-        assert result.lifecycle_updates[0]["outstanding_paise"] == 50000, f"Expected outstanding 50000, got {result.lifecycle_updates[0].get('outstanding_paise')}"
+        assert (
+            len(result.proposed_links) == 1
+        ), f"Expected 1 proposed link, got {len(result.proposed_links)}"
+        assert (
+            result.proposed_links[0]["link_type"] == "settles"
+        ), f"Expected settles link, got {result.proposed_links[0].get('link_type')}"
+        assert (
+            len(result.lifecycle_updates) == 1
+        ), f"Expected 1 lifecycle update, got {len(result.lifecycle_updates)}"
+        assert (
+            result.lifecycle_updates[0]["lifecycle_state"] == "partially_settled"
+        ), f"Expected partially_settled, got {result.lifecycle_updates[0].get('lifecycle_state')}"
+        assert (
+            result.lifecycle_updates[0]["outstanding_paise"] == 50000
+        ), f"Expected outstanding 50000, got {result.lifecycle_updates[0].get('outstanding_paise')}"
         assert result is not None, "Function should return a result"
 
 
@@ -2151,9 +2418,25 @@ class Testc56_87203:
     def test_default_value_87203(self):
         """Test that kills the mutant by asserting correct behavior."""
         # String literal mutation in membership/condition check
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "outstanding_paise": 100000, "liability_change_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "outstanding_paise": 100000,
+                    "liability_change_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2168,9 +2451,25 @@ class Testc56_42918:
     def test_default_value_42918(self):
         """Test that kills the mutant by asserting correct behavior."""
         # String literal mutation in membership/condition check
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "outstanding_paise": 100000, "liability_change_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "outstanding_paise": 100000,
+                    "liability_change_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2187,12 +2486,35 @@ class Testc56_69922:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2209,12 +2531,35 @@ class Testc56_50029:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2231,12 +2576,35 @@ class Testc56_16443:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2252,10 +2620,28 @@ class Testc56_67038:
         """Test that kills the mutant by asserting correct behavior."""
         # Mutation changes default value for missing key "liability_change_paise"
         # Original returns empty string, mutant returns None
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "lifecycle_state": "open",
+                    "outstanding_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
-        assert result is not None, "Function should handle missing liability_change_paise gracefully"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
+        assert (
+            result is not None
+        ), "Function should handle missing liability_change_paise gracefully"
 
 
 class Testc56_94335:
@@ -2270,10 +2656,28 @@ class Testc56_94335:
         """Test that kills the mutant by asserting correct behavior."""
         # Mutation changes default value for missing key "liability_change_paise"
         # Original returns empty string, mutant returns None
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "lifecycle_state": "open",
+                    "outstanding_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
-        assert result is not None, "Function should handle missing liability_change_paise gracefully"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
+        assert (
+            result is not None
+        ), "Function should handle missing liability_change_paise gracefully"
 
 
 class Testc56_14050:
@@ -2288,10 +2692,28 @@ class Testc56_14050:
         """Test that kills the mutant by asserting correct behavior."""
         # Mutation changes default value for missing key "liability_change_paise"
         # Original returns empty string, mutant returns None
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "lifecycle_state": "open",
+                    "outstanding_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
-        assert result is not None, "Function should handle missing liability_change_paise gracefully"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
+        assert (
+            result is not None
+        ), "Function should handle missing liability_change_paise gracefully"
 
 
 class Testc56_85974:
@@ -2307,12 +2729,35 @@ class Testc56_85974:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2329,12 +2774,35 @@ class Testc56_83022:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2351,12 +2819,35 @@ class Testc56_49616:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2373,12 +2864,35 @@ class Testc56_61055:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2395,12 +2909,35 @@ class Testc56_75985:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2417,12 +2954,35 @@ class Testc56_62040:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2437,9 +2997,24 @@ class Testc56_01790:
     def test_default_value_01790(self):
         """Test that kills the mutant by asserting correct behavior."""
         # String literal mutation in membership/condition check
-        result = detect_rollover_scenarios(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "outstanding_paise": 100000, "liability_change_paise": 100000}], lookback_days=30)
+        result = detect_rollover_scenarios(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "outstanding_paise": 100000,
+                    "liability_change_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2454,9 +3029,24 @@ class Testc56_54658:
     def test_default_value_54658(self):
         """Test that kills the mutant by asserting correct behavior."""
         # String literal mutation in membership/condition check
-        result = detect_rollover_scenarios(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "outstanding_paise": 100000, "liability_change_paise": 100000}], lookback_days=30)
+        result = detect_rollover_scenarios(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "outstanding_paise": 100000,
+                    "liability_change_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2503,9 +3093,25 @@ class Testc56_26122:
     def test_default_value_26122(self):
         """Test that kills the mutant by asserting correct behavior."""
         # String literal mutation in membership/condition check
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "outstanding_paise": 100000, "liability_change_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "outstanding_paise": 100000,
+                    "liability_change_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2520,9 +3126,25 @@ class Testc56_62248:
     def test_default_value_62248(self):
         """Test that kills the mutant by asserting correct behavior."""
         # String literal mutation in membership/condition check
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "outstanding_paise": 100000, "liability_change_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "outstanding_paise": 100000,
+                    "liability_change_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2539,12 +3161,35 @@ class Testc56_55298:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2561,12 +3206,35 @@ class Testc56_68282:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2583,12 +3251,35 @@ class Testc56_14776:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2604,10 +3295,28 @@ class Testc56_89382:
         """Test that kills the mutant by asserting correct behavior."""
         # Mutation changes default value for missing key "liability_change_paise"
         # Original returns empty string, mutant returns None
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "lifecycle_state": "open",
+                    "outstanding_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
-        assert result is not None, "Function should handle missing liability_change_paise gracefully"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
+        assert (
+            result is not None
+        ), "Function should handle missing liability_change_paise gracefully"
 
 
 class Testc56_42677:
@@ -2622,10 +3331,28 @@ class Testc56_42677:
         """Test that kills the mutant by asserting correct behavior."""
         # Mutation changes default value for missing key "liability_change_paise"
         # Original returns empty string, mutant returns None
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "lifecycle_state": "open",
+                    "outstanding_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
-        assert result is not None, "Function should handle missing liability_change_paise gracefully"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
+        assert (
+            result is not None
+        ), "Function should handle missing liability_change_paise gracefully"
 
 
 class Testc56_26541:
@@ -2640,10 +3367,28 @@ class Testc56_26541:
         """Test that kills the mutant by asserting correct behavior."""
         # Mutation changes default value for missing key "liability_change_paise"
         # Original returns empty string, mutant returns None
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "lifecycle_state": "open",
+                    "outstanding_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
-        assert result is not None, "Function should handle missing liability_change_paise gracefully"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
+        assert (
+            result is not None
+        ), "Function should handle missing liability_change_paise gracefully"
 
 
 class Testc56_93653:
@@ -2659,12 +3404,35 @@ class Testc56_93653:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2681,12 +3449,35 @@ class Testc56_03242:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2703,12 +3494,35 @@ class Testc56_39678:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2725,12 +3539,35 @@ class Testc56_26758:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2747,12 +3584,35 @@ class Testc56_33848:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2769,12 +3629,35 @@ class Testc56_19226:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2789,9 +3672,24 @@ class Testc56_09831:
     def test_default_value_09831(self):
         """Test that kills the mutant by asserting correct behavior."""
         # String literal mutation in membership/condition check
-        result = detect_rollover_scenarios(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "outstanding_paise": 100000, "liability_change_paise": 100000}], lookback_days=30)
+        result = detect_rollover_scenarios(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "outstanding_paise": 100000,
+                    "liability_change_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -2806,9 +3704,24 @@ class Testc56_16363:
     def test_default_value_16363(self):
         """Test that kills the mutant by asserting correct behavior."""
         # String literal mutation in membership/condition check
-        result = detect_rollover_scenarios(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "outstanding_paise": 100000, "liability_change_paise": 100000}], lookback_days=30)
+        result = detect_rollover_scenarios(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "outstanding_paise": 100000,
+                    "liability_change_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -3049,9 +3962,25 @@ class Testc56_97003:
     def test_default_value_97003(self):
         """Test that kills the mutant by asserting correct behavior."""
         # String literal mutation in membership/condition check
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "outstanding_paise": 100000, "liability_change_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "outstanding_paise": 100000,
+                    "liability_change_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -3066,9 +3995,25 @@ class Testc56_83345:
     def test_default_value_83345(self):
         """Test that kills the mutant by asserting correct behavior."""
         # String literal mutation in membership/condition check
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "outstanding_paise": 100000, "liability_change_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "outstanding_paise": 100000,
+                    "liability_change_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -3085,12 +4030,35 @@ class Testc56_63869:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -3107,12 +4075,35 @@ class Testc56_47067:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -3129,12 +4120,35 @@ class Testc56_83774:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -3150,10 +4164,28 @@ class Testc56_93287:
         """Test that kills the mutant by asserting correct behavior."""
         # Mutation changes default value for missing key "liability_change_paise"
         # Original returns empty string, mutant returns None
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "lifecycle_state": "open",
+                    "outstanding_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
-        assert result is not None, "Function should handle missing liability_change_paise gracefully"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
+        assert (
+            result is not None
+        ), "Function should handle missing liability_change_paise gracefully"
 
 
 class Testc56_66455:
@@ -3168,10 +4200,28 @@ class Testc56_66455:
         """Test that kills the mutant by asserting correct behavior."""
         # Mutation changes default value for missing key "liability_change_paise"
         # Original returns empty string, mutant returns None
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "lifecycle_state": "open",
+                    "outstanding_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
-        assert result is not None, "Function should handle missing liability_change_paise gracefully"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
+        assert (
+            result is not None
+        ), "Function should handle missing liability_change_paise gracefully"
 
 
 class Testc56_66723:
@@ -3186,10 +4236,28 @@ class Testc56_66723:
         """Test that kills the mutant by asserting correct behavior."""
         # Mutation changes default value for missing key "liability_change_paise"
         # Original returns empty string, mutant returns None
-        result = walk_lineage(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000}], lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "lifecycle_state": "open",
+                    "outstanding_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+            revocation_lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
-        assert result is not None, "Function should handle missing liability_change_paise gracefully"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
+        assert (
+            result is not None
+        ), "Function should handle missing liability_change_paise gracefully"
 
 
 class Testc56_30469:
@@ -3205,12 +4273,35 @@ class Testc56_30469:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -3227,12 +4318,35 @@ class Testc56_16740:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -3249,12 +4363,35 @@ class Testc56_00512:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -3271,12 +4408,35 @@ class Testc56_14308:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -3293,12 +4453,35 @@ class Testc56_02833:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -3315,12 +4498,35 @@ class Testc56_47803:
         # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-10",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+                "amount_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000,
+                "liability_change_paise": -50000,
+                "amount_paise": 50000,
+            },
         ]
-        result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
+        result = walk_lineage(
+            events=events, lookback_days=30, revocation_lookback_days=30
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -3335,9 +4541,24 @@ class Testc56_41042:
     def test_default_value_41042(self):
         """Test that kills the mutant by asserting correct behavior."""
         # String literal mutation in membership/condition check
-        result = detect_rollover_scenarios(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "outstanding_paise": 100000, "liability_change_paise": 100000}], lookback_days=30)
+        result = detect_rollover_scenarios(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "outstanding_paise": 100000,
+                    "liability_change_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -3352,9 +4573,24 @@ class Testc56_04523:
     def test_default_value_04523(self):
         """Test that kills the mutant by asserting correct behavior."""
         # String literal mutation in membership/condition check
-        result = detect_rollover_scenarios(events=[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "outstanding_paise": 100000, "liability_change_paise": 100000}], lookback_days=30)
+        result = detect_rollover_scenarios(
+            events=[
+                {
+                    "id": 1,
+                    "event_type": "cash_advance",
+                    "account_id": "acc1",
+                    "date_iso": "2025-01-15",
+                    "outstanding_paise": 100000,
+                    "liability_change_paise": 100000,
+                }
+            ],
+            lookback_days=30,
+        )
         from src.engines.financial_events.lineage_walker import LineageProposal
-        assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
+
+        assert isinstance(
+            result, LineageProposal
+        ), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"
 
 
@@ -3590,6 +4826,7 @@ class Testc56_07209:
     def test_import_07209(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -3599,6 +4836,7 @@ class Testc56_89512:
     def test_import_89512(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3608,6 +4846,7 @@ class Testc56_40844:
     def test_import_40844(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3617,6 +4856,7 @@ class Testc56_19017:
     def test_import_19017(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3626,6 +4866,7 @@ class Testc56_91254:
     def test_import_91254(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import _next_billing_day_after
+
         assert _next_billing_day_after is not None
 
 
@@ -3635,6 +4876,7 @@ class Testc56_84162:
     def test_import_84162(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -3644,6 +4886,7 @@ class Testc56_57353:
     def test_import_57353(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -3653,6 +4896,7 @@ class Testc56_44742:
     def test_import_44742(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -3662,6 +4906,7 @@ class Testc56_65117:
     def test_import_65117(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -3671,6 +4916,7 @@ class Testc56_96070:
     def test_import_96070(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.emi import compute_monthly_interest
+
         assert compute_monthly_interest is not None
 
 
@@ -3680,6 +4926,7 @@ class Testc56_63157:
     def test_import_63157(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_daily_interest
+
         assert compute_daily_interest is not None
 
 
@@ -3689,6 +4936,7 @@ class Testc56_83217:
     def test_import_83217(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_daily_interest
+
         assert compute_daily_interest is not None
 
 
@@ -3698,6 +4946,7 @@ class Testc56_70494:
     def test_import_70494(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_monthly_interest_simple
+
         assert compute_monthly_interest_simple is not None
 
 
@@ -3707,6 +4956,7 @@ class Testc56_31000:
     def test_import_31000(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_monthly_interest_simple
+
         assert compute_monthly_interest_simple is not None
 
 
@@ -3716,6 +4966,7 @@ class Testc56_39963:
     def test_import_39963(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3725,6 +4976,7 @@ class Testc56_82666:
     def test_import_82666(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3734,6 +4986,7 @@ class Testc56_82067:
     def test_import_82067(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3743,6 +4996,7 @@ class Testc56_16326:
     def test_import_16326(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3752,6 +5006,7 @@ class Testc56_30293:
     def test_import_30293(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3761,6 +5016,7 @@ class Testc56_58337:
     def test_import_58337(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3770,6 +5026,7 @@ class Testc56_00366:
     def test_import_00366(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3779,6 +5036,7 @@ class Testc56_14556:
     def test_import_14556(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3788,6 +5046,7 @@ class Testc56_88282:
     def test_import_88282(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3797,6 +5056,7 @@ class Testc56_26688:
     def test_import_26688(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3806,6 +5066,7 @@ class Testc56_78144:
     def test_import_78144(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3815,6 +5076,7 @@ class Testc56_57857:
     def test_import_57857(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3824,6 +5086,7 @@ class Testc56_28825:
     def test_import_28825(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3833,6 +5096,7 @@ class Testc56_96534:
     def test_import_96534(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3842,6 +5106,7 @@ class Testc56_12327:
     def test_import_12327(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3851,6 +5116,7 @@ class Testc56_30398:
     def test_import_30398(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3860,6 +5126,7 @@ class Testc56_35813:
     def test_import_35813(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_next_statement_date
+
         assert compute_next_statement_date is not None
 
 
@@ -3869,6 +5136,7 @@ class Testc56_51786:
     def test_import_51786(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import _next_billing_day_after
+
         assert _next_billing_day_after is not None
 
 
@@ -3878,6 +5146,7 @@ class Testc56_26310:
     def test_import_26310(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_statement_dates
+
         assert compute_statement_dates is not None
 
 
@@ -3887,6 +5156,7 @@ class Testc56_48817:
     def test_import_48817(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.foreclosure import compute_card_foreclosure
+
         assert compute_card_foreclosure is not None
 
 
@@ -3896,6 +5166,7 @@ class Testc56_94574:
     def test_import_94574(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.foreclosure import compute_card_foreclosure
+
         assert compute_card_foreclosure is not None
 
 
@@ -3905,6 +5176,7 @@ class Testc56_38299:
     def test_import_38299(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.foreclosure import compute_card_foreclosure
+
         assert compute_card_foreclosure is not None
 
 
@@ -3914,6 +5186,7 @@ class Testc56_07252:
     def test_import_07252(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.foreclosure import compute_card_foreclosure
+
         assert compute_card_foreclosure is not None
 
 
@@ -3923,6 +5196,7 @@ class Testc56_29706:
     def test_import_29706(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -3932,6 +5206,7 @@ class Testc56_15805:
     def test_import_15805(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -3941,6 +5216,7 @@ class Testc56_65506:
     def test_import_65506(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.billing import compute_minimum_due
+
         assert compute_minimum_due is not None
 
 
@@ -3950,6 +5226,7 @@ class Testc56_26576:
     def test_import_26576(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.utilization import compute_utilization
+
         assert compute_utilization is not None
 
 
@@ -3959,6 +5236,7 @@ class Testc56_74070:
     def test_import_74070(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.interest import compute_daily_interest
+
         assert compute_daily_interest is not None
 
 
@@ -3968,6 +5246,7 @@ class Testc56_05758:
     def test_import_05758(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -3977,6 +5256,7 @@ class Testc56_37095:
     def test_import_37095(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -3986,6 +5266,7 @@ class Testc56_07235:
     def test_import_07235(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -3995,6 +5276,7 @@ class Testc56_94178:
     def test_import_94178(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -4004,6 +5286,7 @@ class Testc56_00503:
     def test_import_00503(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -4013,6 +5296,7 @@ class Testc56_13997:
     def test_import_13997(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -4022,6 +5306,7 @@ class Testc56_79301:
     def test_import_79301(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None
 
 
@@ -4031,4 +5316,5 @@ class Testc56_06825:
     def test_import_06825(self):
         """Verify the module and function are importable."""
         from engines.credit_card_engine.metrics import compute_financial_metrics
+
         assert compute_financial_metrics is not None

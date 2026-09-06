@@ -18,7 +18,7 @@ from __future__ import annotations
 import hashlib
 import json
 import subprocess  # nosec
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -91,7 +91,9 @@ def _tool_version(tool: str) -> str:
             capture_output=True,
             text=True,
             timeout=10,
-        ).stdout.strip().split("\n")[0]
+        )
+        .stdout.strip()
+        .split("\n")[0]
         or "unknown"
     )
 
@@ -180,9 +182,12 @@ def measure_coverage(
         pass
     duration = int((datetime.now(UTC) - start).total_seconds())
 
-    measurement_id = "cov-" + hashlib.sha256(
-        f"{repo_sha}|{tree_sha}|{test_scope}|{py_ver}|{pytest_ver}|{cov_ver}".encode()
-    ).hexdigest()[:12]
+    measurement_id = (
+        "cov-"
+        + hashlib.sha256(
+            f"{repo_sha}|{tree_sha}|{test_scope}|{py_ver}|{pytest_ver}|{cov_ver}".encode()
+        ).hexdigest()[:12]
+    )
 
     truth = CoverageTruth(
         repository_sha=repo_sha,

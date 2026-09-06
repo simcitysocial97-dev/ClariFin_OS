@@ -20,15 +20,21 @@ def build_workspace_report() -> dict:
             if d.is_dir() and (d / "manifest.json").exists():
                 try:
                     m = json.loads((d / "manifest.json").read_text())
-                    exec_count = len(list((d / "executions").glob("*.json"))) if (d / "executions").exists() else 0
-                    campaigns.append({
-                        "campaign_id": m.get("campaign_id"),
-                        "status": m.get("status"),
-                        "scope": m.get("scope"),
-                        "backend": m.get("mutation_backend"),
-                        "path": str(d.relative_to(REPO_ROOT)),
-                        "execution_records": exec_count,
-                    })
+                    exec_count = (
+                        len(list((d / "executions").glob("*.json")))
+                        if (d / "executions").exists()
+                        else 0
+                    )
+                    campaigns.append(
+                        {
+                            "campaign_id": m.get("campaign_id"),
+                            "status": m.get("status"),
+                            "scope": m.get("scope"),
+                            "backend": m.get("mutation_backend"),
+                            "path": str(d.relative_to(REPO_ROOT)),
+                            "execution_records": exec_count,
+                        }
+                    )
                 except Exception:
                     pass
 

@@ -20,9 +20,12 @@ from runtime.foundation.verification.gap_classification import (
     GapClassificationResult,
 )
 
-REPO_ROOT = __import__(
-    "pathlib", fromlist=["Path"]
-).Path(__file__).resolve().parent.parent.parent.parent
+REPO_ROOT = (
+    __import__("pathlib", fromlist=["Path"])
+    .Path(__file__)
+    .resolve()
+    .parent.parent.parent.parent
+)
 
 
 @dataclass(frozen=True, slots=True)

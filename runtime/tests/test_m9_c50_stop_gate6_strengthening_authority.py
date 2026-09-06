@@ -35,12 +35,12 @@ def _src(name: str) -> str:
 def test_mutation_execution_has_one_authority() -> None:
     ma = _load("runtime.foundation.verification.mutation_authority")
     audit = ma.authority_audit()
-    assert audit.canonical_resolvable, (
-        f"canonical entrypoint unresolvable: {audit.canonical_entrypoint}"
-    )
-    assert audit.canonical_runner_callable, (
-        f"canonical runner not callable: {audit.canonical_runner_function}"
-    )
+    assert (
+        audit.canonical_resolvable
+    ), f"canonical entrypoint unresolvable: {audit.canonical_entrypoint}"
+    assert (
+        audit.canonical_runner_callable
+    ), f"canonical runner not callable: {audit.canonical_runner_function}"
     # The canonical runner is the actual execution function, not a wrapper stub.
     runner = ma._resolve(audit.canonical_runner_function)
     assert callable(runner)
@@ -76,8 +76,16 @@ def test_orchestrator_results_project_to_canonical_contract() -> None:
     fake_orch = type(
         "_O",
         (),
-        {"killed": 3, "survived": 1, "equivalent": 0, "no_tests": 0,
-         "timeout": 0, "skipped": 0, "suspicious": 0, "generated": 4},
+        {
+            "killed": 3,
+            "survived": 1,
+            "equivalent": 0,
+            "no_tests": 0,
+            "timeout": 0,
+            "skipped": 0,
+            "suspicious": 0,
+            "generated": 4,
+        },
     )()
     proj = mru.project_orchestrator_to_canonical(
         orchestrator_result=fake_orch,
@@ -138,8 +146,6 @@ def test_forensic_services_internally_consumed() -> None:
     assert "canonical" in fcli_src.lower()
 
 
-
-
 # ── 6. Legacy forensic commands cannot bypass ──────────────────────────────
 
 
@@ -156,9 +162,9 @@ def test_legacy_forensic_commands_marked_deprecated() -> None:
         "mutation",  # canonical: strengthen
         "mutation-intel",
     ]:
-        assert ccp.classification_for(legacy) == "DEPRECATED", (
-            f"legacy forensic command {legacy!r} is not marked DEPRECATED"
-        )
+        assert (
+            ccp.classification_for(legacy) == "DEPRECATED"
+        ), f"legacy forensic command {legacy!r} is not marked DEPRECATED"
 
 
 def test_legacy_commands_route_through_canonical_facade() -> None:
@@ -174,8 +180,12 @@ def test_legacy_commands_route_through_canonical_facade() -> None:
 def test_mutation_evidence_in_common_evidence_model() -> None:
     cc = _load("runtime.foundation.verification.capability_catalog")
     kinds = set(cc.EVIDENCE_KINDS)
-    for required in ("mutation_score", "survivor_intel", "strengthening_proposal",
-                     "forensic_report"):
+    for required in (
+        "mutation_score",
+        "survivor_intel",
+        "strengthening_proposal",
+        "forensic_report",
+    ):
         assert required in kinds, f"{required!r} missing from EVIDENCE_KINDS"
 
 
@@ -197,9 +207,9 @@ def test_dormant_orchestrator_has_bounded_disposition() -> None:
     # No CLI route exposes the orchestrator directly.
     ccp = _load("runtime.foundation.verification.canonical_control_plane")
     for target in ccp._MIGRATION.values():
-        assert target[1] != "MutationOrchestrator", (
-            "MutationOrchestrator exposed as a CLI target — dormant disposition broken"
-        )
+        assert (
+            target[1] != "MutationOrchestrator"
+        ), "MutationOrchestrator exposed as a CLI target — dormant disposition broken"
 
 
 def test_orchestrator_not_imported_by_production_pipelines() -> None:
@@ -207,11 +217,14 @@ def test_orchestrator_not_imported_by_production_pipelines() -> None:
     the dormant orchestrator — the canonical path is mutation_runner."""
     ccp_src = _src("runtime.foundation.verification.canonical_control_plane")
     eo_src = _src("runtime.foundation.verification.execution_orchestrator")
-    for name, src in [("canonical_control_plane", ccp_src),
-                      ("execution_orchestrator", eo_src)]:
-        assert "from runtime.foundation.verification.mutation_execution" not in src, (
-            f"{name} imports the dormant MutationOrchestrator"
-        )
+    for name, src in [
+        ("canonical_control_plane", ccp_src),
+        ("execution_orchestrator", eo_src),
+    ]:
+        assert (
+            "from runtime.foundation.verification.mutation_execution" not in src
+        ), f"{name} imports the dormant MutationOrchestrator"
+
 
 def test_diagnose_routes_use_internal_services() -> None:
     ccp = _load("runtime.foundation.verification.canonical_control_plane")
@@ -220,9 +233,9 @@ def test_diagnose_routes_use_internal_services() -> None:
         ("forensic-report", ("diagnose", "forensic_report")),
         ("mutation", ("strengthen", "mutation_runner")),
     ]:
-        assert ccp._MIGRATION[cmd] == expected, (
-            f"{cmd} not routed through canonical service"
-        )
+        assert (
+            ccp._MIGRATION[cmd] == expected
+        ), f"{cmd} not routed through canonical service"
 
     # The canonical result type is resolvable and IS the contract type.
     ma = _load("runtime.foundation.verification.mutation_authority")
@@ -234,4 +247,3 @@ def test_diagnose_routes_use_internal_services() -> None:
     counts = mc.MutationCounts(killed=8, survived=2)
     assert counts.generated == 10
     assert "mutants_generated" in counts.as_dict()
-

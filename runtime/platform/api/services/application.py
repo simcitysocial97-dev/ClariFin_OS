@@ -60,9 +60,7 @@ def build_app_backend() -> dict[str, Any]:
         kind=application_contract.APP_BACKEND_KIND,
         subject="backend",
         status=Status.HEALTHY,
-        summary=(
-            f"backend obligations: open={open_n}, closed={closed_n}"
-        ),
+        summary=(f"backend obligations: open={open_n}, closed={closed_n}"),
         details=[f"open_obligations={open_n}", f"closed_obligations={closed_n}"],
     )
 
@@ -75,9 +73,7 @@ def build_app_frontend() -> dict[str, Any]:
         kind=application_contract.APP_FRONTEND_KIND,
         subject="frontend",
         status=Status.HEALTHY if open_n == 0 else Status.DEGRAD,
-        summary=(
-            f"frontend obligations tracked: {open_n} open"
-        ),
+        summary=(f"frontend obligations tracked: {open_n} open"),
         details=[f"open_obligations={open_n}"],
     )
 
@@ -108,8 +104,6 @@ def build_app_workflows() -> dict[str, Any]:
         kind=application_contract.APP_WORKFLOWS_KIND,
         subject="workflows",
         status=Status.HEALTHY,
-        summary=(
-            f"workflow obligations: open={open_n}, closed={closed_n}"
-        ),
+        summary=(f"workflow obligations: open={open_n}, closed={closed_n}"),
         details=[f"open={open_n}", f"closed={closed_n}"],
     )

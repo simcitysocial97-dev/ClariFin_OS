@@ -7,10 +7,10 @@ recommendations. No LLM required.
 from __future__ import annotations
 
 from runtime.platform.diagnostics.engine import (  # noqa: F401
-    diagnose,
     build_diagnostic_recommendation,
-    register_signature,
     bump_signature_occurrence,
+    diagnose,
+    register_signature,
 )
 from runtime.platform.diagnostics.rules import evaluate as evaluate_rules  # noqa: F401
 

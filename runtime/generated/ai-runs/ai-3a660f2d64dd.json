@@ -1,0 +1,61 @@
+{
+  "id": "ai-3a660f2d64dd",
+  "symptom": "diagnose build failure",
+  "mode": "ASSISTED",
+  "capability_id": null,
+  "status": "RUNNING",
+  "steps": [
+    {
+      "step_number": 1,
+      "tool_name": "inspect_health",
+      "arguments": {},
+      "result": null,
+      "error": null,
+      "started_at": "2026-09-06T04:43:31.852250Z",
+      "completed_at": null,
+      "evidence_id": null,
+      "duration_ms": null
+    },
+    {
+      "step_number": 2,
+      "tool_name": "run_diagnostic",
+      "arguments": {
+        "symptom": "build failing"
+      },
+      "result": null,
+      "error": null,
+      "started_at": "2026-09-06T04:43:31.856561Z",
+      "completed_at": null,
+      "evidence_id": null,
+      "duration_ms": null
+    }
+  ],
+  "created_at": "2026-09-06T04:43:31.846436Z",
+  "updated_at": "2026-09-06T04:43:31.856584Z",
+  "completed_at": null,
+  "error": null,
+  "audit_trail": [
+    {
+      "event_id": "audit-9b0e00011da6",
+      "event_type": "run_created",
+      "run_id": "ai-3a660f2d64dd",
+      "timestamp": "2026-09-06T04:43:31.846745Z",
+      "payload": {
+        "symptom": "diagnose build failure",
+        "mode": "ASSISTED",
+        "capability_id": null
+      }
+    },
+    {
+      "event_id": "audit-b0613d48a180",
+      "event_type": "step_started",
+      "run_id": "ai-3a660f2d64dd",
+      "timestamp": "2026-09-06T04:43:31.852725Z",
+      "payload": {
+        "step": 1,
+        "tool": "inspect_health",
+        "arguments": {}
+      }
+    }
+  ]
+}

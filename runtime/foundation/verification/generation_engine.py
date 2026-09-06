@@ -44,7 +44,7 @@ from __future__ import annotations
 import hashlib
 import json
 import time
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -52,7 +52,6 @@ from typing import Any
 from runtime.foundation.verification.authorization_boundary import (
     AuthorizationRecord,
     AuthorizationState,
-    build_authorization_report,
     evaluate_authorization,
 )
 from runtime.foundation.verification.candidate_validation import (
@@ -70,7 +69,6 @@ from runtime.foundation.verification.generation_eligibility import (
 )
 from runtime.foundation.verification.strengthening import (
     StrengtheningProposal,
-    generate_proposal,
 )
 from runtime.foundation.verification.test_generator import (
     CandidateTest,
@@ -130,7 +128,9 @@ class GenerationResult:
             "generated_at": self.generated_at,
             "source_evidence": self.source_evidence,
             "stages": [s.to_dict() for s in self.stages],
-            "classification": self.classification.to_dict() if self.classification else None,
+            "classification": (
+                self.classification.to_dict() if self.classification else None
+            ),
             "eligibility": self.eligibility.to_dict() if self.eligibility else None,
             "candidate": self.candidate.to_dict() if self.candidate else None,
             "validation": self.validation.to_dict() if self.validation else None,
@@ -210,9 +210,7 @@ def _render_candidate_code(
     return header + body
 
 
-def _derive_boundary_inputs(
-    original: str, mutated: str
-) -> tuple[str, str]:
+def _derive_boundary_inputs(original: str, mutated: str) -> tuple[str, str]:
     """Mechanically derive the discrimination input + assertion hint."""
     import re
 
@@ -331,7 +329,9 @@ class GenerationEngine:
         strategy = eligibility.strategy
 
         # Generate the candidate test
-        candidate = self._generate_candidate(gap, classification, strategy, generation_id)
+        candidate = self._generate_candidate(
+            gap, classification, strategy, generation_id
+        )
         stages.append(
             GenerationStageResult(
                 stage="test_generation",
@@ -425,7 +425,10 @@ class GenerationEngine:
             GenerationStageResult(
                 stage="pipeline_complete",
                 status="completed",
-                output={"final_state": final_state, "total_duration_seconds": total_duration},
+                output={
+                    "final_state": final_state,
+                    "total_duration_seconds": total_duration,
+                },
                 evidence=f"pipeline completed in {total_duration:.2f}s with state={final_state}",
                 duration_seconds=total_duration,
             )
@@ -455,7 +458,11 @@ class GenerationEngine:
     ) -> CandidateTest:
         """Generate a candidate test from a gap using the specified strategy."""
         cid = _id("cand", gap.gap_id, generation_id)
-        module = _module_of(gap.location.split(":")[0]) if ":" in gap.location else gap.location
+        module = (
+            _module_of(gap.location.split(":")[0])
+            if ":" in gap.location
+            else gap.location
+        )
 
         input_derivation, assertion_hint = _derive_boundary_inputs(
             gap.evidence_detail, ""
@@ -483,7 +490,9 @@ class GenerationEngine:
                 assertion_hint = "assert the property holds for all generated inputs"
                 assertion_form = "INVARIANT"
             elif gap.source == "contract_failure":
-                input_derivation = "exercise the contract endpoint with valid and invalid inputs"
+                input_derivation = (
+                    "exercise the contract endpoint with valid and invalid inputs"
+                )
                 assertion_hint = "assert the contract schema and invariants hold"
                 assertion_form = "INVARIANT"
             else:
@@ -505,7 +514,9 @@ class GenerationEngine:
             candidate_id=cid,
             evidence_kind=gap.source,
             evidence_ref=f"{gap.source}#{gap.gap_id}",
-            module_under_test=gap.location.split(":")[0] if ":" in gap.location else gap.location,
+            module_under_test=(
+                gap.location.split(":")[0] if ":" in gap.location else gap.location
+            ),
             import_target=module,
             input_derivation=input_derivation,
             assertion_form=assertion_form,
@@ -581,15 +592,11 @@ class GenerationEngine:
         # Build summary
         summary: dict[str, int] = {
             "total": len(results),
-            "authorized": sum(
-                1 for r in results if r.final_state == "AUTHORIZED"
-            ),
+            "authorized": sum(1 for r in results if r.final_state == "AUTHORIZED"),
             "awaiting_authorization": sum(
                 1 for r in results if r.final_state == "AWAITING_HUMAN_AUTHORIZATION"
             ),
-            "refused": sum(
-                1 for r in results if r.final_state == "REFUSED"
-            ),
+            "refused": sum(1 for r in results if r.final_state == "REFUSED"),
             "error": sum(1 for r in results if r.final_state == "ERROR"),
         }
 

@@ -10,11 +10,11 @@ Focuses on boundary conditions that kill genuinely behavioral mutations:
 from __future__ import annotations
 
 import pytest
-from src.engines.credit_card_engine.outstanding import compute_outstanding
-from src.engines.credit_card_engine.foreclosure import compute_card_foreclosure
 from src.engines.credit_card_engine.billing import compute_statement_dates
+from src.engines.credit_card_engine.foreclosure import compute_card_foreclosure
 from src.engines.credit_card_engine.interest import compute_monthly_interest_charge
 from src.engines.credit_card_engine.metrics import compute_financial_metrics
+from src.engines.credit_card_engine.outstanding import compute_outstanding
 
 
 class TestComputeOutstandingBoundary:
@@ -106,6 +106,7 @@ class TestComputeMonthlyInterestChargeBoundary:
     def test_single_day_positive_balance(self):
         """Single day with positive balance produces correct interest."""
         from src.engines.credit_card_engine.interest import compute_daily_interest
+
         expected = compute_daily_interest(100000, 2400)
         result = compute_monthly_interest_charge([("2025-01-01", 100000)], 2400)
         assert result == expected
@@ -113,6 +114,7 @@ class TestComputeMonthlyInterestChargeBoundary:
     def test_multiple_days_accumulate_correctly(self):
         """Multiple days accumulate interest correctly."""
         from src.engines.credit_card_engine.interest import compute_daily_interest
+
         daily = compute_daily_interest(50000, 2400)
         result = compute_monthly_interest_charge(
             [("2025-01-01", 50000), ("2025-01-02", 50000), ("2025-01-03", 50000)],
@@ -122,10 +124,13 @@ class TestComputeMonthlyInterestChargeBoundary:
 
     def test_zero_rate_across_multiple_days(self):
         """Zero rate produces zero interest regardless of balances."""
-        assert compute_monthly_interest_charge(
-            [("2025-01-01", 100000), ("2025-01-02", 100000)],
-            0,
-        ) == 0
+        assert (
+            compute_monthly_interest_charge(
+                [("2025-01-01", 100000), ("2025-01-02", 100000)],
+                0,
+            )
+            == 0
+        )
 
     def test_negative_balance_raises(self):
         """Negative balance in list must raise ValueError."""
@@ -163,6 +168,7 @@ class TestComputeStatementDatesBoundary:
     def test_statement_and_due_date_computed_together(self):
         """compute_statement_dates returns both dates as ISO strings."""
         from datetime import date
+
         result = compute_statement_dates(
             billing_day=15,
             due_day_offset=21,
@@ -178,6 +184,7 @@ class TestComputeStatementDatesBoundary:
     def test_last_statement_date_influences_next(self):
         """Providing last_statement_date advances the next statement."""
         from datetime import date
+
         result = compute_statement_dates(
             billing_day=10,
             due_day_offset=21,

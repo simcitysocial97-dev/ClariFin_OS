@@ -80,14 +80,10 @@ def build_change_intelligence() -> dict[str, Any]:
             + list(cap_res.transitively_affected_capabilities or [])
         )
     )
-    stale_evidence = sorted(
-        str(inv) for inv in (contract.evidence_invalidations or [])
-    )
-    affected_tests = sorted(
-        str(req) for req in (contract.required_tests or [])
-    )
+    stale_evidence = sorted(str(inv) for inv in (contract.evidence_invalidations or []))
+    affected_tests = sorted(str(req) for req in (contract.required_tests or []))
     affected_workflows = sorted(contract.affected_workflows or [])
-    recommended = sorted(contract.minimum_safe_verification or [])
+    recommended = sorted(str(r) for r in (contract.minimum_safe_verification or []))
 
     data = {
         "changed_files": changed_files,
@@ -97,6 +93,8 @@ def build_change_intelligence() -> dict[str, Any]:
         "affected_workflows": affected_workflows,
         "recommended_verification": recommended,
         "risk": _risk_from_contract(contract),
-        "generated_from": Timestamp(contract.generated_at) if contract.generated_at else now_iso(),
+        "generated_from": (
+            Timestamp(contract.generated_at) if contract.generated_at else now_iso()
+        ),
     }
     return envelope(kind=change_contract.CHANGE_INTELLIGENCE_KIND, data=data)

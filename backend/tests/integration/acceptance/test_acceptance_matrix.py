@@ -16,16 +16,19 @@ class TestAcceptanceMatrix:
     def test_app_boots(self, client: TestClient) -> None:
         """The FastAPI app boots and responds."""
         response = client.get("/")
-        assert response.status_code in (200, 404, 405), (
-            f"App should respond, got {response.status_code}"
-        )
+        assert response.status_code in (
+            200,
+            404,
+            405,
+        ), f"App should respond, got {response.status_code}"
 
     def test_health_endpoint(self, client: TestClient) -> None:
         """Health endpoint returns success."""
         response = client.get("/api/health")
-        assert response.status_code in (200, 404), (
-            f"Health endpoint should return 200 or 404, got {response.status_code}"
-        )
+        assert response.status_code in (
+            200,
+            404,
+        ), f"Health endpoint should return 200 or 404, got {response.status_code}"
 
 
 class TestAccountsAcceptance:
@@ -97,7 +100,11 @@ class TestNetworthAcceptance:
         assert response.status_code in (200, 404)
         if response.status_code == 200:
             data = response.json()
-            assert "total_net_worth_paise" in data or "net_worth_paise" in data or "assets" in data
+            assert (
+                "total_net_worth_paise" in data
+                or "net_worth_paise" in data
+                or "assets" in data
+            )
 
 
 class TestCashflowAcceptance:
@@ -128,7 +135,11 @@ class TestCrossLayerAcceptance:
     def test_account_to_networth_flow(self, client: TestClient) -> None:
         """Account creation should reflect in networth."""
         initial_accounts = client.get("/api/accounts/manage")
-        initial_count = initial_accounts.json().get("total", 0) if initial_accounts.status_code == 200 else 0
+        initial_count = (
+            initial_accounts.json().get("total", 0)
+            if initial_accounts.status_code == 200
+            else 0
+        )
 
         create_payload = {
             "name": "Cross-layer Test",
@@ -142,9 +153,9 @@ class TestCrossLayerAcceptance:
         updated_accounts = client.get("/api/accounts/manage")
         if updated_accounts.status_code == 200:
             updated_count = updated_accounts.json().get("total", 0)
-            assert updated_count >= initial_count, (
-                f"Account count should not decrease: {initial_count} -> {updated_count}"
-            )
+            assert (
+                updated_count >= initial_count
+            ), f"Account count should not decrease: {initial_count} -> {updated_count}"
 
 
 class TestAcceptanceInvariants:
@@ -185,10 +196,14 @@ def _validate_paise_integers(data, path: str) -> None:
     if isinstance(data, dict):
         for key, value in data.items():
             current = f"{path}.{key}"
-            if key.endswith("_paise") and isinstance(value, (int, float)) and not isinstance(value, bool):
-                assert isinstance(value, int), (
-                    f"{current} should be int, got {type(value).__name__}"
-                )
+            if (
+                key.endswith("_paise")
+                and isinstance(value, (int, float))
+                and not isinstance(value, bool)
+            ):
+                assert isinstance(
+                    value, int
+                ), f"{current} should be int, got {type(value).__name__}"
             else:
                 _validate_paise_integers(value, current)
     elif isinstance(data, list):

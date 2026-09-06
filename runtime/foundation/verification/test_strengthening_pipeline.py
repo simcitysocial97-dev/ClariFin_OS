@@ -44,11 +44,12 @@ import hashlib
 import json
 import subprocess  # nosec
 import uuid
-from dataclasses import asdict, dataclass, field
+from collections.abc import Callable
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 
 # ── Lifecycle states ───────────────────────────────────────────────────────
@@ -226,7 +227,9 @@ class TestStrengtheningPipeline:
         path.write_text(candidate.test_code)
         return path
 
-    def _evidence_artifact(self, candidate: CandidateTest, result: dict[str, Any]) -> Path:
+    def _evidence_artifact(
+        self, candidate: CandidateTest, result: dict[str, Any]
+    ) -> Path:
         path = self._evidence_dir / f"{candidate.candidate_id}-evidence.json"
         path.write_text(json.dumps(result, indent=2, sort_keys=True))
         return path
@@ -265,8 +268,14 @@ class TestStrengtheningPipeline:
 
         # Step 1: classify / diagnose (synthesized from survivor metadata).
         classification = self.survivor.get("classification") or "unknown"
-        self._record_step(steps, CandidateState.DISCOVERED, f"survivor {self.survivor.get('mutant_id')}")
-        self._record_step(steps, CandidateState.CLASSIFIED, f"classification={classification}")
+        self._record_step(
+            steps,
+            CandidateState.DISCOVERED,
+            f"survivor {self.survivor.get('mutant_id')}",
+        )
+        self._record_step(
+            steps, CandidateState.CLASSIFIED, f"classification={classification}"
+        )
         if classification == "equivalent" or classification == "ambiguous":
             self._record_step(steps, CandidateState.DIAGNOSED, "equivalent/ambiguous")
             return self._reject(
@@ -280,7 +289,9 @@ class TestStrengtheningPipeline:
         # Step 2: generate candidate.
         candidate = self._generate_candidate()
         if candidate is None:
-            self._record_step(steps, CandidateState.GENERATED, "generator returned nothing")
+            self._record_step(
+                steps, CandidateState.GENERATED, "generator returned nothing"
+            )
             return self._reject(
                 steps,
                 generated_at,
@@ -295,7 +306,9 @@ class TestStrengtheningPipeline:
 
         # Step 3: validate (parse the candidate).
         try:
-            compile(candidate.test_code, f"<candidate-{candidate.candidate_id}>", "exec")
+            compile(
+                candidate.test_code, f"<candidate-{candidate.candidate_id}>", "exec"
+            )
             syntax_ok = True
         except SyntaxError:
             syntax_ok = False
@@ -328,7 +341,9 @@ class TestStrengtheningPipeline:
             )
 
         # Step 6: re-execute mutant.
-        mutant_killed, mutant_out = self._mutant_executor(str(path), candidate.mutant_id)
+        mutant_killed, mutant_out = self._mutant_executor(
+            str(path), candidate.mutant_id
+        )
         self._record_step(
             steps,
             CandidateState.MUTANT_KILLED,
@@ -399,7 +414,9 @@ class TestStrengtheningPipeline:
             )
 
         # Should be unreachable given the gate above; defensive.
-        return self._reject(steps, generated_at, CandidateState.REJECTED_REGRESSION, reason)
+        return self._reject(
+            steps, generated_at, CandidateState.REJECTED_REGRESSION, reason
+        )
 
     def _reject(
         self,

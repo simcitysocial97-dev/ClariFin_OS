@@ -6,12 +6,9 @@ Phase 1 only fixes the JSON shape. Phase 2 services wrap
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 from runtime.platform.api.contracts._primitives import Identity, Status, Timestamp
-
 
 VERIFICATION_RUN_REQUEST_KIND: str = "platform.verification_run_request"
 VERIFICATION_RUN_RESULT_KIND: str = "platform.verification_run_result"
@@ -26,8 +23,8 @@ class VerificationRunRequestData(BaseModel):
     """
 
     capability_id: str = Field(min_length=1, max_length=256)
-    group: Optional[str] = None
-    authorization_token: Optional[str] = None
+    group: str | None = None
+    authorization_token: str | None = None
 
 
 class VerificationRunRequestEnvelope(BaseModel):
@@ -41,11 +38,11 @@ class VerificationRunRequestEnvelope(BaseModel):
 class VerificationRunResultData(BaseModel):
     capability_id: str = Field(min_length=1, max_length=256)
     status: Status
-    task_id: Optional[str] = None
-    execution_id: Optional[str] = None
+    task_id: str | None = None
+    execution_id: str | None = None
     started_at: Timestamp
-    finished_at: Optional[Timestamp] = None
-    duration_ms: Optional[int] = Field(default=None, ge=0)
+    finished_at: Timestamp | None = None
+    duration_ms: int | None = Field(default=None, ge=0)
     message: str = Field(min_length=1, max_length=1024)
 
 

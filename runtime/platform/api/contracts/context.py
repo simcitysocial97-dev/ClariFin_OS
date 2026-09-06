@@ -10,7 +10,6 @@ from pydantic import BaseModel, Field
 
 from runtime.platform.api.contracts._primitives import Identity, Timestamp
 
-
 CONTEXT_PACK_KIND: str = "platform.context_pack"
 
 

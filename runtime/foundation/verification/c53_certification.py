@@ -32,7 +32,6 @@ from pathlib import Path
 from typing import Any
 
 from runtime.foundation.verification.gap_classification import (
-    GapClass,
     GapEvidence,
     classify_gap,
 )
@@ -134,7 +133,7 @@ def build_c53_certification_report() -> C53CertificationReport:
         status="survived",
         notes="",
     )
-    classification = classify_gap(gate_pass := gap)  # noqa: E501
+    classification = classify_gap(_gate_pass := gap)  # noqa: E501
     gates.append(
         C53CertificationGate(
             gate_id="G2",
@@ -151,13 +150,112 @@ def build_c53_certification_report() -> C53CertificationReport:
     # ── Gate 3 — Classification ──────────────────────────────────────────
     # Evidence gaps are correctly classified
     test_gaps = [
-        ("A", GapEvidence("c3-a", "survivor", "cc", "m.m", "f.py:1", "d", "comparison", "if x>0:", "survived", "")),
-        ("B", GapEvidence("c3-b", "survivor", "cc", "m.m", "f.py:2", "d", "arithmetic", "a+b", "survived", "equivalent")),
-        ("C", GapEvidence("c3-c", "survivor", "cc", "m.m", "f.py:3", "d", "boolean", "logger.info(x)", "survived", "")),
-        ("D", GapEvidence("c3-d", "survivor", "cc", "m.m", "f.py:4", "d", "comparison", "if x:", "survived", "no_test_surface")),
-        ("E", GapEvidence("c3-e", "survivor", "cc", "m.m", "f.py:5", "d", "comparison", "if x:", "survived", "repeated_survivor", historical_count=5)),
-        ("F", GapEvidence("c3-f", "survivor", "cc", "m.m", "f.py:6", "d", "arithmetic", "x+y", "timeout", "")),
-        ("G", GapEvidence("c3-g", "historical_regression", "cc", "m.m", "f.py:7", "d", "comparison", "if x:", "survived", "known_regression")),
+        (
+            "A",
+            GapEvidence(
+                "c3-a",
+                "survivor",
+                "cc",
+                "m.m",
+                "f.py:1",
+                "d",
+                "comparison",
+                "if x>0:",
+                "survived",
+                "",
+            ),
+        ),
+        (
+            "B",
+            GapEvidence(
+                "c3-b",
+                "survivor",
+                "cc",
+                "m.m",
+                "f.py:2",
+                "d",
+                "arithmetic",
+                "a+b",
+                "survived",
+                "equivalent",
+            ),
+        ),
+        (
+            "C",
+            GapEvidence(
+                "c3-c",
+                "survivor",
+                "cc",
+                "m.m",
+                "f.py:3",
+                "d",
+                "boolean",
+                "logger.info(x)",
+                "survived",
+                "",
+            ),
+        ),
+        (
+            "D",
+            GapEvidence(
+                "c3-d",
+                "survivor",
+                "cc",
+                "m.m",
+                "f.py:4",
+                "d",
+                "comparison",
+                "if x:",
+                "survived",
+                "no_test_surface",
+            ),
+        ),
+        (
+            "E",
+            GapEvidence(
+                "c3-e",
+                "survivor",
+                "cc",
+                "m.m",
+                "f.py:5",
+                "d",
+                "comparison",
+                "if x:",
+                "survived",
+                "repeated_survivor",
+                historical_count=5,
+            ),
+        ),
+        (
+            "F",
+            GapEvidence(
+                "c3-f",
+                "survivor",
+                "cc",
+                "m.m",
+                "f.py:6",
+                "d",
+                "arithmetic",
+                "x+y",
+                "timeout",
+                "",
+            ),
+        ),
+        (
+            "G",
+            GapEvidence(
+                "c3-g",
+                "historical_regression",
+                "cc",
+                "m.m",
+                "f.py:7",
+                "d",
+                "comparison",
+                "if x:",
+                "survived",
+                "known_regression",
+            ),
+        ),
     ]
     classifications_correct = True
     for expected_class, g in test_gaps:
@@ -181,11 +279,33 @@ def build_c53_certification_report() -> C53CertificationReport:
 
     # ── Gate 4 — Eligibility ─────────────────────────────────────────────
     # Invalid generation requests are refused
-    equiv_gap = GapEvidence("c4-equiv", "survivor", "cc", "m.m", "f.py:1", "d", "arithmetic", "x+y", "survived", "equivalent")
+    equiv_gap = GapEvidence(
+        "c4-equiv",
+        "survivor",
+        "cc",
+        "m.m",
+        "f.py:1",
+        "d",
+        "arithmetic",
+        "x+y",
+        "survived",
+        "equivalent",
+    )
     equiv_class = classify_gap(equiv_gap)
     equiv_elig = determine_eligibility(equiv_class)
 
-    scope_gap = GapEvidence("c4-scope", "survivor", "cc", "m.m", "f.py:1", "d", "comparison", "if x:", "survived", "")
+    scope_gap = GapEvidence(
+        "c4-scope",
+        "survivor",
+        "cc",
+        "m.m",
+        "f.py:1",
+        "d",
+        "comparison",
+        "if x:",
+        "survived",
+        "",
+    )
     scope_class = classify_gap(scope_gap)
     scope_elig = determine_eligibility(scope_class, scope_capability="api-contracts")
 
@@ -365,7 +485,8 @@ def build_c53_certification_report() -> C53CertificationReport:
             description="Human authorization boundary remains enforced",
             passed=(
                 auth_result.final_state == "AWAITING_HUMAN_AUTHORIZATION"
-                and auth_result.authorization[-1].state == "AWAITING_HUMAN_AUTHORIZATION"
+                and auth_result.authorization[-1].state
+                == "AWAITING_HUMAN_AUTHORIZATION"
             ),
             evidence=f"final_state={auth_result.final_state}, auth_state={auth_result.authorization[-1].state if auth_result.authorization else 'none'}",
             derivation=(
@@ -432,13 +553,46 @@ def build_c53_certification_report() -> C53CertificationReport:
         ("measurement", RefusalCode.MEASUREMENT_FAILURE, "timeout"),
     ]
     all_refused = True
-    for name, expected_code, trigger in refuse_tests:
+    for name, expected_code, _trigger in refuse_tests:
         if name == "equivalent":
-            g = GapEvidence(f"c13-{name}", "survivor", "cc", "m.m", "f.py:1", "d", "arithmetic", "x+y", "survived", "equivalent")
+            g = GapEvidence(
+                f"c13-{name}",
+                "survivor",
+                "cc",
+                "m.m",
+                "f.py:1",
+                "d",
+                "arithmetic",
+                "x+y",
+                "survived",
+                "equivalent",
+            )
         elif name == "defensive":
-            g = GapEvidence(f"c13-{name}", "survivor", "cc", "m.m", "f.py:1", "d", "boolean", "logger.info(x)", "survived", "")
+            g = GapEvidence(
+                f"c13-{name}",
+                "survivor",
+                "cc",
+                "m.m",
+                "f.py:1",
+                "d",
+                "boolean",
+                "logger.info(x)",
+                "survived",
+                "",
+            )
         elif name == "measurement":
-            g = GapEvidence(f"c13-{name}", "survivor", "cc", "m.m", "f.py:1", "d", "arithmetic", "x+y", "timeout", "")
+            g = GapEvidence(
+                f"c13-{name}",
+                "survivor",
+                "cc",
+                "m.m",
+                "f.py:1",
+                "d",
+                "arithmetic",
+                "x+y",
+                "timeout",
+                "",
+            )
         else:
             continue
         c = classify_gap(g)

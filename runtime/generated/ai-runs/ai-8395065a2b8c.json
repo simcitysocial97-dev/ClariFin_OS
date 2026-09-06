@@ -1,0 +1,25 @@
+{
+  "id": "ai-8395065a2b8c",
+  "symptom": "test",
+  "mode": "MANUAL",
+  "capability_id": "discover.blast-radius",
+  "status": "CANCELLED",
+  "steps": [],
+  "created_at": "2026-09-05T23:33:38.738472Z",
+  "updated_at": "2026-09-05T23:33:38.753732Z",
+  "completed_at": "2026-09-05T23:33:38.753732Z",
+  "error": null,
+  "audit_trail": [
+    {
+      "event_id": "audit-9391ca0196c9",
+      "event_type": "run_created",
+      "run_id": "ai-8395065a2b8c",
+      "timestamp": "2026-09-05T23:33:38.738752Z",
+      "payload": {
+        "symptom": "test",
+        "mode": "MANUAL",
+        "capability_id": "discover.blast-radius"
+      }
+    }
+  ]
+}

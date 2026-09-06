@@ -56,7 +56,6 @@ def _emit_verification_events(
     """
 
     store = EngineeringEventStore()
-    caps = [capability_id] if capability_id else []
 
     store.append(
         EngineeringEvent(
@@ -69,7 +68,10 @@ def _emit_verification_events(
                 "task_ids": task_ids,
                 "mode": "platform-api",
             },
-            execution_context={"environment": "local", "source": "platform.verification.run"},
+            execution_context={
+                "environment": "local",
+                "source": "platform.verification.run",
+            },
             metadata={
                 "execution_id": execution_id,
                 "capability_id": capability_id or "unknown",
@@ -92,7 +94,10 @@ def _emit_verification_events(
                 "record_count": record_count,
                 "status": "completed",
             },
-            execution_context={"environment": "local", "source": "platform.verification.run"},
+            execution_context={
+                "environment": "local",
+                "source": "platform.verification.run",
+            },
             metadata={
                 "execution_id": execution_id,
                 "capability_id": capability_id or "unknown",
@@ -126,17 +131,31 @@ def _safe_run(capability_id: str | None = None) -> dict[str, Any]:
         report_id = contract.contract_id or uuid.uuid4().hex[:8]
         report_id = f"ver-{report_id[:8]}"
         # Use the most recent execution report timestamp if available
-        started_at = plan.generated_at if getattr(plan, "generated_at", None) else now_iso()
-        finalized = oset.finalized_label if hasattr(oset, "finalized_label") else "stale"
+        started_at = (
+            plan.generated_at if getattr(plan, "generated_at", None) else now_iso()
+        )
+        finalized = (
+            oset.finalized_label if hasattr(oset, "finalized_label") else "stale"
+        )
         # Keep capability_id routing intact: if a specific capability was
         # requested, only count matching tasks/obligations.
         if capability_id:
-            task_ids = [t.task_id for t in plan.tasks if getattr(t, "capability_id", capability_id) == capability_id]
+            task_ids = [
+                t.task_id
+                for t in plan.tasks
+                if getattr(t, "capability_id", capability_id) == capability_id
+            ]
             if not task_ids and plan.tasks:
                 task_ids = [plan.tasks[0].task_id]
         else:
             task_ids = [t.task_id for t in plan.tasks]
-        caps = sorted({getattr(t, "capability_id", "") for t in plan.tasks if getattr(t, "capability_id", "")})
+        caps = sorted(
+            {
+                getattr(t, "capability_id", "")
+                for t in plan.tasks
+                if getattr(t, "capability_id", "")
+            }
+        )
         result = {
             "ok": True,
             "report_id": report_id,
@@ -167,19 +186,19 @@ def _safe_run(capability_id: str | None = None) -> dict[str, Any]:
     except Exception as exc:  # noqa: BLE001
         logger.warning("Verification write path failed: %s", exc, exc_info=True)
         return {
-                "ok": False,
-                "report_id": f"failed-{uuid.uuid4().hex[:8]}",
-                "started_at": now_iso(),
-                "completed_at": now_iso(),
-                "duration_seconds": 0.0,
-                "final_decision": "error",
-                "decision_reason": str(exc),
-                "record_count": 0,
-                "task_ids": [],
-                "capabilities": [],
-                "escalations": [],
-                "evidence_reused": [],
-            }
+            "ok": False,
+            "report_id": f"failed-{uuid.uuid4().hex[:8]}",
+            "started_at": now_iso(),
+            "completed_at": now_iso(),
+            "duration_seconds": 0.0,
+            "final_decision": "error",
+            "decision_reason": str(exc),
+            "record_count": 0,
+            "task_ids": [],
+            "capabilities": [],
+            "escalations": [],
+            "evidence_reused": [],
+        }
 
 
 def build_run_result(
@@ -194,15 +213,27 @@ def build_run_result(
     Routes by ``capability_id``/``group``/``affected``/``full``. Only one
     of these can be non-None; if multiple are set, the most specific wins.
     """
-    mode = "single" if capability_id else "group" if group else "affected" if affected else "full" if full else "single"
-    target = capability_id or group or ("affected" if affected else "full" if full else None)
+    mode = (
+        "single"
+        if capability_id
+        else (
+            "group"
+            if group
+            else "affected" if affected else "full" if full else "single"
+        )
+    )
+    target = (
+        capability_id or group or ("affected" if affected else "full" if full else None)
+    )
 
     report = _safe_run(capability_id=capability_id)
 
     status_value = (
         Status.HEALTHY
         if report["final_decision"] == "certified"
-        else Status.DEGRAD if report["final_decision"] == "partial" else Status.UNHEALTHY
+        else (
+            Status.DEGRAD if report["final_decision"] == "partial" else Status.UNHEALTHY
+        )
     )
 
     task_id = report["task_ids"][0] if report["task_ids"] else report["report_id"]
@@ -214,7 +245,9 @@ def build_run_result(
         "task_id": task_id,
         "execution_id": execution_id,
         "started_at": Timestamp(str(report["started_at"])),
-        "finished_at": Timestamp(str(report["completed_at"])) if report["completed_at"] else None,
+        "finished_at": (
+            Timestamp(str(report["completed_at"])) if report["completed_at"] else None
+        ),
         "duration_ms": int(report["duration_seconds"] * 1000),
         "message": f"{mode} run complete: {report['final_decision']} ({report['decision_reason']})",
     }
@@ -241,11 +274,21 @@ def build_recent_runs(*, limit: int = 20) -> dict[str, Any]:
         runs.append(
             {
                 "id": event.event_id,
-                "started_at": Timestamp(str(event.timestamp.isoformat()).replace("+00:00", "Z")) if event.timestamp else now_iso(),
-                "finished_at": Timestamp(str(event.timestamp.isoformat()).replace("+00:00", "Z")) if event.timestamp else None,
+                "started_at": (
+                    Timestamp(str(event.timestamp.isoformat()).replace("+00:00", "Z"))
+                    if event.timestamp
+                    else now_iso()
+                ),
+                "finished_at": (
+                    Timestamp(str(event.timestamp.isoformat()).replace("+00:00", "Z"))
+                    if event.timestamp
+                    else None
+                ),
                 "duration_ms": payload.get("duration_ms"),
                 "status": (
-                    Status.HEALTHY.value if payload.get("passed", False) else Status.UNHEALTHY.value
+                    Status.HEALTHY.value
+                    if payload.get("passed", False)
+                    else Status.UNHEALTHY.value
                 ),
                 "capabilities_run": int(payload.get("capabilities_run", 0) or 0),
                 "capabilities_passed": int(payload.get("capabilities_passed", 0) or 0),

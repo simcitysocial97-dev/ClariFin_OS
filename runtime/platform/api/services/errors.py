@@ -51,8 +51,12 @@ def _integrity_failures() -> list[dict[str, Any]]:
                 "code": "INTEGRITY_FAILED",
                 "layer": "platform.evidence",
                 "message": result.test_case.description,
-                "first_seen": Timestamp(report.generated_at) if report.generated_at else now_iso(),
-                "last_seen": Timestamp(report.generated_at) if report.generated_at else now_iso(),
+                "first_seen": (
+                    Timestamp(report.generated_at) if report.generated_at else now_iso()
+                ),
+                "last_seen": (
+                    Timestamp(report.generated_at) if report.generated_at else now_iso()
+                ),
                 "occurrences": 1,
                 "affected_workflow": None,
             }
@@ -79,21 +83,19 @@ def _obligation_failures() -> list[dict[str, Any]]:
                 "id": f"obligation.{o.obligation_id}",
                 "code": "OBLIGATION_OPEN",
                 "layer": "platform.tasks",
-                "message": (
-                    req.rationale if req else o.obligation_id
-                ),
+                "message": (req.rationale if req else o.obligation_id),
                 "first_seen": Timestamp(o.created_at) if o.created_at else now_iso(),
                 "last_seen": Timestamp(o.created_at) if o.created_at else now_iso(),
                 "occurrences": 1,
-                "affected_workflow": (
-                    cap.capability_id if cap else None
-                ),
+                "affected_workflow": (cap.capability_id if cap else None),
             }
         )
     return items
 
 
-def _list_envelope(kind: str, window: str, items: list[dict[str, Any]]) -> dict[str, Any]:
+def _list_envelope(
+    kind: str, window: str, items: list[dict[str, Any]]
+) -> dict[str, Any]:
     return envelope(
         kind=kind,
         data={"window": window, "count": len(items), "items": items},
@@ -167,9 +169,7 @@ def build_errors_detail(error_id: str) -> dict[str, Any] | None:
                 "item": it,
                 "recent_occurrences": [it["last_seen"]],
                 "related_capabilities": (
-                    [it["affected_workflow"]]
-                    if it.get("affected_workflow")
-                    else []
+                    [it["affected_workflow"]] if it.get("affected_workflow") else []
                 ),
                 "related_evidence": [],
             }

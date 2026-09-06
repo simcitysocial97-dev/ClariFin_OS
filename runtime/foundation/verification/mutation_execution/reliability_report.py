@@ -40,8 +40,8 @@ def build_reliability_report() -> dict:
             "minimum": "95.0%",
             "preferred": "99.0%",
             "rationale": "A system with high mutation score but poor execution reliability "
-                        "is not trustworthy. The 95% floor ensures that at least 19 of 20 "
-                        "execution attempts produce valid results.",
+            "is not trustworthy. The 95% floor ensures that at least 19 of 20 "
+            "execution attempts produce valid results.",
         },
         "failure_budget": {
             "max_infrastructure_failure_rate": "5%",

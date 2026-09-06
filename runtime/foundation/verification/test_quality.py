@@ -32,11 +32,10 @@ from __future__ import annotations
 
 import re
 from collections import Counter
-from dataclasses import asdict, dataclass, field
+from collections.abc import Iterable
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Iterable
-
 
 QUALITY_CATEGORIES: tuple[str, ...] = (
     "EXECUTION_ONLY",
@@ -113,9 +112,7 @@ _RE_WEAK_ASSERT = re.compile(
     r"assert\s+(?:True|False|None|\d+(?:\.\d+)?|[\"'][^\"']*[\"'])\s*(?:,|$)",
     re.IGNORECASE,
 )
-_RE_MUTATION_SENSITIVE = re.compile(
-    r"\b(mutant|mutation|mutmut)\b", re.IGNORECASE
-)
+_RE_MUTATION_SENSITIVE = re.compile(r"\b(mutant|mutation|mutmut)\b", re.IGNORECASE)
 
 
 def classify_test_file(path: str | Path) -> TestClassification:

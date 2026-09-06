@@ -18,7 +18,6 @@ from runtime.foundation.verification.profiles import (
     profile_names,
 )
 
-
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
@@ -60,9 +59,9 @@ class TestProfileDefinitions:
         """No profile should have duplicate task IDs."""
         for profile in list_profiles():
             task_ids = profile.task_ids()
-            assert len(task_ids) == len(set(task_ids)), (
-                f"Profile {profile.name} has duplicate task IDs: {task_ids}"
-            )
+            assert len(task_ids) == len(
+                set(task_ids)
+            ), f"Profile {profile.name} has duplicate task IDs: {task_ids}"
 
     def test_profile_commands_are_deterministic(self) -> None:
         """Profile task list is deterministic across calls."""
@@ -115,9 +114,9 @@ class TestGoldenProfile:
         all_commands = []
         for task in profile.tasks:
             all_commands.extend(task.commands)
-        assert any("golden" in cmd for cmd in all_commands), (
-            "Golden profile should run golden tests"
-        )
+        assert any(
+            "golden" in cmd for cmd in all_commands
+        ), "Golden profile should run golden tests"
 
 
 class TestMutationProfile:
@@ -226,14 +225,14 @@ class TestNoConflictingProfiles:
         for profile in list_profiles():
             all_task_ids.extend(profile.task_ids())
 
-        assert len(all_task_ids) == len(set(all_task_ids)), (
-            f"Duplicate task IDs across profiles: {[t for t in all_task_ids if all_task_ids.count(t) > 1]}"
-        )
+        assert len(all_task_ids) == len(
+            set(all_task_ids)
+        ), f"Duplicate task IDs across profiles: {[t for t in all_task_ids if all_task_ids.count(t) > 1]}"
 
     def test_profile_descriptions_non_empty(self) -> None:
         """All profiles have non-empty descriptions."""
         for profile in list_profiles():
             assert profile.description, f"Profile {profile.name} has empty description"
-            assert len(profile.description) > 10, (
-                f"Profile {profile.name} description too short: {profile.description}"
-            )
+            assert (
+                len(profile.description) > 10
+            ), f"Profile {profile.name} description too short: {profile.description}"

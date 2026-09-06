@@ -59,21 +59,27 @@ def _authorities_payload() -> list[dict[str, Any]]:
         {
             "name": "route_authority",
             "owner": "runtime/foundation/verification/route_authority.py",
-            "status": Status.HEALTHY.value if route_shadows == 0 else Status.DEGRAD.value,
+            "status": (
+                Status.HEALTHY.value if route_shadows == 0 else Status.DEGRAD.value
+            ),
             "last_check": now_iso(),
             "issues": route_shadows,
         },
         {
             "name": "capability_authority",
             "owner": "runtime/foundation/verification/capability_authority.py",
-            "status": Status.HEALTHY.value if cap_resolvable else Status.UNHEALTHY.value,
+            "status": (
+                Status.HEALTHY.value if cap_resolvable else Status.UNHEALTHY.value
+            ),
             "last_check": now_iso(),
             "issues": cap_issues,
         },
         {
             "name": "control_plane_efficiency",
             "owner": "runtime/foundation/verification/control_plane_efficiency.py",
-            "status": Status.HEALTHY.value if eff_measurements > 0 else Status.UNKNOWN.value,
+            "status": (
+                Status.HEALTHY.value if eff_measurements > 0 else Status.UNKNOWN.value
+            ),
             "last_check": now_iso(),
             "issues": 0,
         },

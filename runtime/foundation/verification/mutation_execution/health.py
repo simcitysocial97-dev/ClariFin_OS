@@ -18,6 +18,7 @@ from runtime.foundation.verification.mutation_execution.domain_model import (
 @dataclass
 class CampaignHealth:
     """Structured health metrics for a mutation campaign."""
+
     campaign_id: str
     execution_reliability: float | None
     mutation_completeness: float | None
@@ -35,13 +36,13 @@ class CampaignHealth:
 class FailureBudget:
     """Maximum acceptable failure rates for campaign certification."""
 
-    max_infrastructure_failure_rate: float = 0.05      # 5%
-    max_unexplained_timeout_rate: float = 0.03         # 3%
-    max_invalid_execution_rate: float = 0.02           # 2%
-    max_retry_exhaustion_rate: float = 0.01            # 1%
-    max_worker_crash_rate: float = 0.01                # 1%
-    max_stale_cache_rate: float = 0.0                  # 0% (cache must never be stale)
-    max_unclassified_result_rate: float = 0.02         # 2%
+    max_infrastructure_failure_rate: float = 0.05  # 5%
+    max_unexplained_timeout_rate: float = 0.03  # 3%
+    max_invalid_execution_rate: float = 0.02  # 2%
+    max_retry_exhaustion_rate: float = 0.01  # 1%
+    max_worker_crash_rate: float = 0.01  # 1%
+    max_stale_cache_rate: float = 0.0  # 0% (cache must never be stale)
+    max_unclassified_result_rate: float = 0.02  # 2%
 
     def check(self, result: MutationResult) -> tuple[bool, list[str]]:
         """Check whether the result stays within the failure budget."""
@@ -89,7 +90,8 @@ def compute_health_metrics(result: MutationResult) -> CampaignHealth:
         execution_reliability=result.execution_reliability,
         mutation_completeness=(
             round(scored * 100.0 / result.total_candidates, 1)
-            if result.total_candidates > 0 else 0.0
+            if result.total_candidates > 0
+            else 0.0
         ),
         worker_failure_rate=round(result.infrastructure_failures / total, 4),
         timeout_rate=round(result.timeout / total, 4),
@@ -102,7 +104,9 @@ def compute_health_metrics(result: MutationResult) -> CampaignHealth:
     )
 
 
-def certification_check(result: MutationResult, budget: FailureBudget | None = None) -> dict[str, Any]:
+def certification_check(
+    result: MutationResult, budget: FailureBudget | None = None
+) -> dict[str, Any]:
     """M44.26: Determine whether a campaign passes certification gates."""
     if budget is None:
         budget = FailureBudget()
@@ -129,7 +133,11 @@ def certification_check(result: MutationResult, budget: FailureBudget | None = N
         "certifiable": reconciled and has_score and budget_ok and reliability_ok,
         "verdict": (
             "CERTIFIED"
-            if reconciled and has_score and budget_ok and reliability_ok and (result.score or 0) >= 80
+            if reconciled
+            and has_score
+            and budget_ok
+            and reliability_ok
+            and (result.score or 0) >= 80
             else "NOT_CERTIFIED"
         ),
     }

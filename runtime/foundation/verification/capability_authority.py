@@ -33,17 +33,14 @@
 from __future__ import annotations
 
 import importlib
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from typing import Any
-
 
 CANONICAL_AUTHORITY = (
     "runtime.foundation.verification.registry.registry.VerificationRegistry"
 )
-CANONICAL_FACTORY = (
-    "runtime.foundation.verification.registry.registry.get_registry"
-)
+CANONICAL_FACTORY = "runtime.foundation.verification.registry.registry.get_registry"
 DERIVED_PROJECTIONS: tuple[str, ...] = (
     "runtime.foundation.verification.capability_contract.CapabilityContractRegistry",
 )
@@ -132,9 +129,7 @@ def assert_no_competing_authority() -> CapabilityAuthorityAudit:
             f"Canonical capability authority missing: {CANONICAL_AUTHORITY}"
         )
     if not audit.canonical_factory_callable:
-        raise RuntimeError(
-            f"Canonical capability factory missing: {CANONICAL_FACTORY}"
-        )
+        raise RuntimeError(f"Canonical capability factory missing: {CANONICAL_FACTORY}")
     return audit
 
 

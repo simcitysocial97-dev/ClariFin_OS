@@ -30,7 +30,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-
 # ---------------------------------------------------------------------------
 # Default configuration
 # ---------------------------------------------------------------------------
@@ -89,10 +88,10 @@ def _load_from_env() -> dict[str, Any]:
     config: dict[str, Any] = {}
     for key, value in os.environ.items():
         if key.startswith("AI_"):
-            config_key = key[len("AI_"):].lower()
+            config_key = key[len("AI_") :].lower()
             config[config_key] = value
         elif key.startswith("OPENROUTER_"):
-            config_key = "openrouter_" + key[len("OPENROUTER_"):].lower()
+            config_key = "openrouter_" + key[len("OPENROUTER_") :].lower()
             config[config_key] = value
     return config
 
@@ -103,6 +102,7 @@ def _load_from_yaml(path: Path) -> dict[str, Any] | None:
         return None
     try:
         import yaml
+
         data = yaml.safe_load(path.read_text())
         if isinstance(data, dict):
             return data
@@ -154,14 +154,22 @@ class AIConfig:
     privacy: str = "local"
     latency_budget_ms: int = 30_000
     cost_budget_usd: float = 0.0
-    fallback_chain: list[str] = field(default_factory=lambda: [
-        "local-small", "local-large", "openrouter", "deterministic-fallback",
-    ])
+    fallback_chain: list[str] = field(
+        default_factory=lambda: [
+            "local-small",
+            "local-large",
+            "openrouter",
+            "deterministic-fallback",
+        ]
+    )
     providers: dict[str, dict[str, Any]] = field(default_factory=dict)
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "AIConfig":
-        fallback = data.get("fallback_chain", ["local-small", "local-large", "openrouter", "deterministic-fallback"])
+    def from_dict(cls, data: dict[str, Any]) -> AIConfig:
+        fallback = data.get(
+            "fallback_chain",
+            ["local-small", "local-large", "openrouter", "deterministic-fallback"],
+        )
         providers = data.get("providers", {})
         return cls(
             provider=data.get("provider", "local-small"),
@@ -176,19 +184,23 @@ class AIConfig:
             providers=providers,
         )
 
-    def with_provider(self, provider_name: str) -> "AIConfig":
+    def with_provider(self, provider_name: str) -> AIConfig:
         """Create a new config with a different primary provider."""
         new_providers = dict(self.providers)
         if provider_name in new_providers:
             new_providers[provider_name]["enabled"] = True
             # Move to front of fallback chain
-            chain = [provider_name] + [p for p in self.fallback_chain if p != provider_name]
+            chain = [provider_name] + [
+                p for p in self.fallback_chain if p != provider_name
+            ]
         else:
             chain = list(self.fallback_chain)
         return AIConfig(
             provider=provider_name,
             model=new_providers.get(provider_name, {}).get("default_model", self.model),
-            endpoint=new_providers.get(provider_name, {}).get("endpoint", self.endpoint),
+            endpoint=new_providers.get(provider_name, {}).get(
+                "endpoint", self.endpoint
+            ),
             temperature=self.temperature,
             max_tokens=self.max_tokens,
             privacy=self.privacy,

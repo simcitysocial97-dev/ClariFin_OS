@@ -15,7 +15,6 @@ from pydantic import BaseModel, Field
 
 from runtime.platform.api.contracts._primitives import Identity, Status, Timestamp
 
-
 APP_BACKEND_KIND: str = "platform.app_backend"
 APP_FRONTEND_KIND: str = "platform.app_frontend"
 APP_DOMAIN_KIND: str = "platform.app_domain"

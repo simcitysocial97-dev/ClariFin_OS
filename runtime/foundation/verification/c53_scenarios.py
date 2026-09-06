@@ -143,10 +143,16 @@ def _run_scenario_b_distinguishing_survivor() -> C53ScenarioResult:
             "gap_id": gap.gap_id,
             "generation_id": result.generation_id,
             "final_state": result.final_state,
-            "gap_class": result.classification.gap_class.value if result.classification else None,
+            "gap_class": (
+                result.classification.gap_class.value if result.classification else None
+            ),
             "candidate_id": result.candidate.candidate_id if result.candidate else None,
-            "validation_passed": result.validation.overall_passed if result.validation else None,
-            "auth_state": result.authorization[-1].state if result.authorization else None,
+            "validation_passed": (
+                result.validation.overall_passed if result.validation else None
+            ),
+            "auth_state": (
+                result.authorization[-1].state if result.authorization else None
+            ),
         },
         execution_time_seconds=time.time() - start,
     )
@@ -365,9 +371,13 @@ def _run_scenario_g_property_failure() -> C53ScenarioResult:
         description="Property-test failure → candidate property/regression test proposal",
         passed=passed,
         details={
-            "gap_class": result.classification.gap_class.value if result.classification else None,
+            "gap_class": (
+                result.classification.gap_class.value if result.classification else None
+            ),
             "candidate_id": result.candidate.candidate_id if result.candidate else None,
-            "assertion_form": result.candidate.assertion_form if result.candidate else None,
+            "assertion_form": (
+                result.candidate.assertion_form if result.candidate else None
+            ),
             "final_state": result.final_state,
         },
         execution_time_seconds=time.time() - start,
@@ -406,7 +416,9 @@ def _run_scenario_h_contract_failure() -> C53ScenarioResult:
         description="Contract failure → candidate contract test proposal",
         passed=passed,
         details={
-            "gap_class": result.classification.gap_class.value if result.classification else None,
+            "gap_class": (
+                result.classification.gap_class.value if result.classification else None
+            ),
             "candidate_id": result.candidate.candidate_id if result.candidate else None,
             "final_state": result.final_state,
         },
@@ -438,12 +450,8 @@ def _run_scenario_i_candidate_fails_validation() -> C53ScenarioResult:
         gap_class="A",
     )
 
-    passed = (
-        not validation.overall_passed
-        and any(
-            d.dimension == "syntax" and not d.passed
-            for d in validation.dimensions
-        )
+    passed = not validation.overall_passed and any(
+        d.dimension == "syntax" and not d.passed for d in validation.dimensions
     )
 
     return C53ScenarioResult(
@@ -498,9 +506,13 @@ def _run_scenario_j_requires_authorization() -> C53ScenarioResult:
         description="Generated candidate passes but requires human authorization → remains pending",
         passed=passed,
         details={
-            "validation_passed": result.validation.overall_passed if result.validation else None,
+            "validation_passed": (
+                result.validation.overall_passed if result.validation else None
+            ),
             "final_state": result.final_state,
-            "auth_state": result.authorization[-1].state if result.authorization else None,
+            "auth_state": (
+                result.authorization[-1].state if result.authorization else None
+            ),
         },
         execution_time_seconds=time.time() - start,
     )
@@ -541,7 +553,9 @@ def _run_scenario_k_authorized_candidate() -> C53ScenarioResult:
         details={
             "final_state": result.final_state,
             "certification_impact": result.certification_impact,
-            "auth_state": result.authorization[-1].state if result.authorization else None,
+            "auth_state": (
+                result.authorization[-1].state if result.authorization else None
+            ),
         },
         execution_time_seconds=time.time() - start,
     )
@@ -610,7 +624,8 @@ def _run_scenario_m_scope_expansion() -> C53ScenarioResult:
     # Restrict scope to a different capability — this gap should be refused
     classification = classify_gap(gap)
     eligibility = determine_eligibility(
-        classification, scope_capability="api-contracts"  # Different from gap's capability
+        classification,
+        scope_capability="api-contracts",  # Different from gap's capability
     )
 
     passed = (
@@ -668,7 +683,9 @@ def _run_scenario_n_cross_capability() -> C53ScenarioResult:
         description="Cross-capability dependency → correct targeted scope",
         passed=passed,
         details={
-            "gap_class": result.classification.gap_class.value if result.classification else None,
+            "gap_class": (
+                result.classification.gap_class.value if result.classification else None
+            ),
             "candidate_id": result.candidate.candidate_id if result.candidate else None,
             "final_state": result.final_state,
             "scope": "measure.mutation",

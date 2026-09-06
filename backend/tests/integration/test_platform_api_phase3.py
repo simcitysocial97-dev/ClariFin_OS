@@ -41,18 +41,24 @@ def _assert_envelope_ok(resp, expected_kind_prefix: str | None = None) -> dict:
     Returns the parsed JSON body for downstream assertion.
     """
 
-    assert resp.status_code == 200, (
-        f"Expected 200, got {resp.status_code}:\n{resp.text[:500]}"
-    )
+    assert (
+        resp.status_code == 200
+    ), f"Expected 200, got {resp.status_code}:\n{resp.text[:500]}"
     body = resp.json()
-    assert set(body.keys()) == {"kind", "version", "generated_at", "id", "data"}, (
-        f"Envelope keys: {sorted(body.keys())}"
-    )
+    assert set(body.keys()) == {
+        "kind",
+        "version",
+        "generated_at",
+        "id",
+        "data",
+    }, f"Envelope keys: {sorted(body.keys())}"
     assert body["version"] == "1.0.0"
     assert re.fullmatch(r"sha256:[0-9a-f]{64}", body["id"])
     assert re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", body["generated_at"])
     if expected_kind_prefix and not body["kind"].startswith(expected_kind_prefix):
-        pytest.fail(f"Expected kind prefix {expected_kind_prefix!r}, got {body['kind']!r}")
+        pytest.fail(
+            f"Expected kind prefix {expected_kind_prefix!r}, got {body['kind']!r}"
+        )
     return body
 
 
@@ -62,9 +68,9 @@ def _assert_error_envelope(resp, status_code: int = 404) -> dict:
     Returns the parsed JSON body.
     """
 
-    assert resp.status_code == status_code, (
-        f"Expected {status_code}, got {resp.status_code}:\n{resp.text[:500]}"
-    )
+    assert (
+        resp.status_code == status_code
+    ), f"Expected {status_code}, got {resp.status_code}:\n{resp.text[:500]}"
     body = resp.json()
     assert body["kind"] == "platform.error"
     assert body["version"] == "1.0.0"
@@ -81,14 +87,24 @@ def _assert_error_envelope(resp, status_code: int = 404) -> dict:
 
 class TestHealth:
     def test_health_returns_correct_kind(self, client):
-        body = _assert_envelope_ok(client.get("/platform/v1/health"), "platform.health_snapshot")
+        body = _assert_envelope_ok(
+            client.get("/platform/v1/health"), "platform.health_snapshot"
+        )
         assert body["data"]["platform"] in ("HEALTHY", "DEGRAD", "UNHEALTHY", "UNKNOWN")
 
     def test_health_data_has_required_top_level_fields(self, client):
         body = _assert_envelope_ok(client.get("/platform/v1/health"))
         data = body["data"]
-        for field in ("backend", "frontend", "database", "architecture",
-                      "verification", "evidence", "ai", "domains"):
+        for field in (
+            "backend",
+            "frontend",
+            "database",
+            "architecture",
+            "verification",
+            "evidence",
+            "ai",
+            "domains",
+        ):
             assert field in data, f"Missing top-level health field: {field}"
 
 
@@ -99,8 +115,9 @@ class TestHealth:
 
 class TestCapabilities:
     def test_list_has_55_capabilities(self, client):
-        body = _assert_envelope_ok(client.get("/platform/v1/capabilities"),
-                                   "platform.capability_list")
+        body = _assert_envelope_ok(
+            client.get("/platform/v1/capabilities"), "platform.capability_list"
+        )
         items = body["data"]["items"]
         assert body["data"]["count"] == 55
         assert len(items) == 55
@@ -118,7 +135,8 @@ class TestCapabilities:
 
     def test_detail_for_unknown_capability_returns_404(self, client):
         _assert_error_envelope(
-            client.get("/platform/v1/capabilities/nonexistent-cap-id"), 404,
+            client.get("/platform/v1/capabilities/nonexistent-cap-id"),
+            404,
         )
 
     def test_graph_for_known_capability(self, client):
@@ -138,8 +156,9 @@ class TestCapabilities:
 
 class TestTasks:
     def test_list_matches_live_obligations(self, client):
-        body = _assert_envelope_ok(client.get("/platform/v1/tasks"),
-                                   "platform.task_list")
+        body = _assert_envelope_ok(
+            client.get("/platform/v1/tasks"), "platform.task_list"
+        )
         items = body["data"]["items"]
         assert body["data"]["open_count"] + body["data"]["closed_count"] == len(items)
         # The repo has 13 open obligations (verified in Phase 2).
@@ -160,7 +179,8 @@ class TestTasks:
 
     def test_detail_for_unknown_task_returns_404(self, client):
         _assert_error_envelope(
-            client.get("/platform/v1/tasks/obl-nonexistent"), 404,
+            client.get("/platform/v1/tasks/obl-nonexistent"),
+            404,
         )
 
 
@@ -194,7 +214,8 @@ class TestVerification:
 class TestExecutions:
     def test_detail_for_unknown_execution_returns_404(self, client):
         _assert_error_envelope(
-            client.get("/platform/v1/executions/nonexistent-execution-id"), 404,
+            client.get("/platform/v1/executions/nonexistent-execution-id"),
+            404,
         )
 
 
@@ -205,14 +226,16 @@ class TestExecutions:
 
 class TestEvidence:
     def test_list_returns_valid_envelope(self, client):
-        body = _assert_envelope_ok(client.get("/platform/v1/evidence"),
-                                   "platform.evidence_list")
+        body = _assert_envelope_ok(
+            client.get("/platform/v1/evidence"), "platform.evidence_list"
+        )
         assert body["data"]["count"] >= 0
         assert len(body["data"]["items"]) == body["data"]["count"]
 
     def test_detail_for_unknown_evidence_returns_404(self, client):
         _assert_error_envelope(
-            client.get("/platform/v1/evidence/nonexistent-evidence-id"), 404,
+            client.get("/platform/v1/evidence/nonexistent-evidence-id"),
+            404,
         )
 
 
@@ -223,8 +246,9 @@ class TestEvidence:
 
 class TestHistory:
     def test_runs_default_page(self, client):
-        body = _assert_envelope_ok(client.get("/platform/v1/history/runs"),
-                                   "platform.history_runs")
+        body = _assert_envelope_ok(
+            client.get("/platform/v1/history/runs"), "platform.history_runs"
+        )
         assert body["data"]["page"] == 1
         assert body["data"]["page_size"] == 20
         assert body["data"]["total"] >= 0
@@ -250,7 +274,8 @@ class TestHistory:
 
     def test_run_detail_for_unknown_returns_404(self, client):
         _assert_error_envelope(
-            client.get("/platform/v1/history/runs/unknown-run-id"), 404,
+            client.get("/platform/v1/history/runs/unknown-run-id"),
+            404,
         )
 
 
@@ -260,19 +285,27 @@ class TestHistory:
 
 
 class TestErrors:
-    @pytest.mark.parametrize("endpoint", [
-        "/platform/v1/errors/current",
-        "/platform/v1/errors/recent",
-        "/platform/v1/errors/recurring",
-        "/platform/v1/errors/frequency",
-    ])
+    @pytest.mark.parametrize(
+        "endpoint",
+        [
+            "/platform/v1/errors/current",
+            "/platform/v1/errors/recent",
+            "/platform/v1/errors/recurring",
+            "/platform/v1/errors/frequency",
+        ],
+    )
     def test_error_endpoints_return_valid_envelopes(self, client, endpoint):
         body = _assert_envelope_ok(client.get(endpoint))
-        assert "count" in body["data"] or "total" in body["data"] or "buckets" in body["data"]
+        assert (
+            "count" in body["data"]
+            or "total" in body["data"]
+            or "buckets" in body["data"]
+        )
 
     def test_error_detail_for_unknown_returns_404(self, client):
         _assert_error_envelope(
-            client.get("/platform/v1/errors/nonexistent-error-id"), 404,
+            client.get("/platform/v1/errors/nonexistent-error-id"),
+            404,
         )
 
 
@@ -288,8 +321,12 @@ class TestArchitecture:
             "platform.architecture_authorities",
         )
         names = {a["name"] for a in body["data"]["items"]}
-        assert {"configuration_authority", "route_authority",
-                "capability_authority", "control_plane_efficiency"} <= names
+        assert {
+            "configuration_authority",
+            "route_authority",
+            "capability_authority",
+            "control_plane_efficiency",
+        } <= names
 
     def test_authority_detail_for_known(self, client):
         body = _assert_envelope_ok(
@@ -300,16 +337,20 @@ class TestArchitecture:
 
     def test_authority_detail_for_unknown_returns_404(self, client):
         _assert_error_envelope(
-            client.get("/platform/v1/architecture/authority/nonexistent-authority"), 404,
+            client.get("/platform/v1/architecture/authority/nonexistent-authority"),
+            404,
         )
 
-    @pytest.mark.parametrize("endpoint", [
-        "/platform/v1/architecture/boundaries",
-        "/platform/v1/architecture/duplicates",
-        "/platform/v1/architecture/bypasses",
-        "/platform/v1/architecture/deprecations",
-        "/platform/v1/architecture/unmapped",
-    ])
+    @pytest.mark.parametrize(
+        "endpoint",
+        [
+            "/platform/v1/architecture/boundaries",
+            "/platform/v1/architecture/duplicates",
+            "/platform/v1/architecture/bypasses",
+            "/platform/v1/architecture/deprecations",
+            "/platform/v1/architecture/unmapped",
+        ],
+    )
     def test_findings_endpoints_return_valid_envelopes(self, client, endpoint):
         body = _assert_envelope_ok(client.get(endpoint))
         assert "count" in body["data"]
@@ -341,13 +382,16 @@ class TestEvents:
 
 
 class TestApplication:
-    @pytest.mark.parametrize("endpoint", [
-        "/platform/v1/app/backend",
-        "/platform/v1/app/frontend",
-        "/platform/v1/app/domain",
-        "/platform/v1/app/financial",
-        "/platform/v1/app/workflows",
-    ])
+    @pytest.mark.parametrize(
+        "endpoint",
+        [
+            "/platform/v1/app/backend",
+            "/platform/v1/app/frontend",
+            "/platform/v1/app/domain",
+            "/platform/v1/app/financial",
+            "/platform/v1/app/workflows",
+        ],
+    )
     def test_application_readiness_endpoints(self, client, endpoint):
         body = _assert_envelope_ok(client.get(endpoint))
         assert body["data"]["subject"]
@@ -445,15 +489,17 @@ class TestNoBypass:
     def test_router_module_has_no_c50_executor_imports(self):
         """The router must not import from executor*.py."""
 
-        import runtime.platform.api.services as svc
         import pathlib
-        src = open(pathlib.Path(svc.__path__[0]) / "history.py").read()
+
+        import runtime.platform.api.services as svc
+
+        src = (pathlib.Path(svc.__path__[0]) / "history.py").read_text()
         for forbidden in (
             "executor",
             "obligation",
             "evidence_contract",
             "canonical_control_plane",
         ):
-            assert f"import {forbidden}" not in src, (
-                f"Router module imports forbidden symbol '{forbidden}'"
-            )
+            assert (
+                f"import {forbidden}" not in src
+            ), f"Router module imports forbidden symbol '{forbidden}'"

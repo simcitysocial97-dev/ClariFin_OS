@@ -23,12 +23,11 @@ from typing import Any
 
 import pytest
 
-from runtime.platform.api.contracts import errors as errors_contract
 from runtime.platform.api.contracts import architecture as architecture_contract
 from runtime.platform.api.contracts import capabilities as capabilities_contract
+from runtime.platform.api.contracts import errors as errors_contract
 from runtime.platform.api.envelope import API_VERSION
-from runtime.platform.api.services import errors, architecture, capabilities
-
+from runtime.platform.api.services import architecture, capabilities, errors
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -132,7 +131,9 @@ class TestArchitectureSafetyCenter:
         assert env["data"]["name"] == "configuration_authority"
 
     def test_authority_detail_for_unknown_returns_none(self) -> None:
-        assert architecture.build_architecture_authority("nonexistent-authority") is None
+        assert (
+            architecture.build_architecture_authority("nonexistent-authority") is None
+        )
 
     def test_boundaries(self) -> None:
         env = architecture.build_architecture_boundaries()
@@ -234,7 +235,9 @@ class TestCapabilityExplorer:
         cap_id = list_env["data"]["items"][0]["id"]
         detail_env = capabilities.build_capability_detail(cap_id)
         assert detail_env is not None
-        parsed = capabilities_contract.CapabilityDetailEnvelope.model_validate(detail_env)
+        parsed = capabilities_contract.CapabilityDetailEnvelope.model_validate(
+            detail_env
+        )
         assert parsed.data.id == cap_id
         assert isinstance(parsed.data.dependencies, list)
 
@@ -291,24 +294,24 @@ class TestHttpEndpointStructure:
         assert any("/capabilities/{capability_id}" in p for p in paths)
 
     def test_errors_detail_returns_404_for_unknown(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as client:
             resp = client.get("/platform/v1/errors/nonexistent-id")
             assert resp.status_code == 404
 
     def test_architecture_authority_detail_returns_404_for_unknown(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as client:
             resp = client.get("/platform/v1/architecture/authority/nonexistent")
             assert resp.status_code == 404
 
     def test_capabilities_detail_returns_404_for_unknown(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as client:
             resp = client.get("/platform/v1/capabilities/nonexistent-cap")
@@ -325,48 +328,56 @@ class TestFrontendRoutesExist:
 
     def test_errors_page_exists(self) -> None:
         import os
+
         assert os.path.exists(
             "frontend/app/platform/errors/page.tsx"
         ), "Missing /platform/errors page"
 
     def test_architecture_page_exists(self) -> None:
         import os
+
         assert os.path.exists(
             "frontend/app/platform/architecture/page.tsx"
         ), "Missing /platform/architecture page"
 
     def test_capabilities_list_page_exists(self) -> None:
         import os
+
         assert os.path.exists(
             "frontend/app/platform/capabilities/page.tsx"
         ), "Missing /platform/capabilities page"
 
     def test_capabilities_detail_page_exists(self) -> None:
         import os
+
         assert os.path.exists(
             "frontend/app/platform/capabilities/[capabilityId]/page.tsx"
         ), "Missing /platform/capabilities/[id] page"
 
     def test_history_compare_page_exists(self) -> None:
         import os
+
         assert os.path.exists(
             "frontend/app/platform/history/compare/page.tsx"
         ), "Missing /platform/history/compare page"
 
     def test_diagnostics_page_exists(self) -> None:
         import os
+
         assert os.path.exists(
             "frontend/app/platform/diagnostics/page.tsx"
         ), "Missing /platform/diagnostics page"
 
     def test_sidebar_component_exists(self) -> None:
         import os
+
         assert os.path.exists(
             "frontend/components/platform/sidebar.tsx"
         ), "Missing sidebar component"
 
     def test_hooks_exist(self) -> None:
         import os
+
         assert os.path.exists(
             "frontend/lib/hooks/use-platform-capabilities.ts"
         ), "Missing usePlatformCapabilities hook"

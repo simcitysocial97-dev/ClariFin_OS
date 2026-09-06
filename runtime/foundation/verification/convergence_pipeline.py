@@ -21,10 +21,8 @@
 
 from __future__ import annotations
 
-import ast
 import inspect
 import json
-import re
 import subprocess
 import sys
 import time
@@ -113,7 +111,14 @@ class ConvergenceResult:
 
 def load_mutation_survivors(component: str) -> list[GapTarget]:
     """Load mutation survivors from C45 intel for a given component."""
-    intel_path = REPO_ROOT / "backend" / "tests" / "generated" / "mutation" / f"mutation-survivor-intel-{component}.json"
+    intel_path = (
+        REPO_ROOT
+        / "backend"
+        / "tests"
+        / "generated"
+        / "mutation"
+        / f"mutation-survivor-intel-{component}.json"
+    )
     if not intel_path.exists():
         return []
 
@@ -142,7 +147,14 @@ def load_mutation_survivors(component: str) -> list[GapTarget]:
 
 def load_mutation_summary(component: str) -> dict[str, Any]:
     """Load the mutation summary for a component."""
-    path = REPO_ROOT / "backend" / "tests" / "generated" / "mutation" / f"mutation-summary-{component}.json"
+    path = (
+        REPO_ROOT
+        / "backend"
+        / "tests"
+        / "generated"
+        / "mutation"
+        / f"mutation-summary-{component}.json"
+    )
     if path.exists():
         with open(path) as f:
             return json.load(f)
@@ -153,7 +165,12 @@ def load_overall_mutation_score() -> float:
     """Compute the overall mutation score across all engines."""
     total_killed = 0
     total_mutants = 0
-    for engine in ["account_engine", "credit_card_engine", "financial_events", "loan_engine"]:
+    for engine in [
+        "account_engine",
+        "credit_card_engine",
+        "financial_events",
+        "loan_engine",
+    ]:
         summary = load_mutation_summary(engine)
         if summary and summary.get("mutants_generated", 0) > 0:
             total_killed += summary.get("killed", 0)
@@ -202,14 +219,21 @@ def _classify_strategy(target: GapTarget) -> str:
         # "in" operator is NOT a boolean operator for our purposes
         # Also "not in" is membership, not boolean negation
         # Also "or" in context of `dict.get() or default` is default fallback, not boolean
-        if ((" and " in orig or " and " in mut) and not (".get(" in orig and " or " in orig)):
+        if (" and " in orig or " and " in mut) and not (
+            ".get(" in orig and " or " in orig
+        ):
             return "boolean"
-        if ((" or " in orig or " or " in mut) and not (".get(" in orig and " or " in orig)):
+        if (" or " in orig or " or " in mut) and not (
+            ".get(" in orig and " or " in orig
+        ):
             return "boolean"
-        if (" not " in orig or " not " in mut) and " not in " not in orig and " not in " not in mut:
+        if (
+            (" not " in orig or " not " in mut)
+            and " not in " not in orig
+            and " not in " not in mut
+        ):
             return "boolean"
-        if (" == " in orig or " == " in mut or
-            " != " in orig or " != " in mut):
+        if " == " in orig or " == " in mut or " != " in orig or " != " in mut:
             return "boolean"
     if "comparison" in sub:
         return "boundary"
@@ -228,7 +252,11 @@ def _classify_strategy(target: GapTarget) -> str:
     # Boolean operator mutations - explicit boolean operators only
     if (" and " in orig and " or " in mut) or (" or " in orig and " and " in mut):
         return "boolean"
-    if (" not " in orig) != (" not " in mut) and " not in " not in orig and " not in " not in mut:
+    if (
+        (" not " in orig) != (" not " in mut)
+        and " not in " not in orig
+        and " not in " not in mut
+    ):
         return "boolean"
     if (" == " in orig and " != " in mut) or (" != " in orig and " == " in mut):
         return "boolean"
@@ -244,18 +272,27 @@ def _classify_strategy(target: GapTarget) -> str:
     # String/constant mutations (default values, string literals changed)
     if ".get(" in orig:
         # dict.get default value mutations
-        if (", \"\")" in orig or ', "")' in orig or ", '')" in orig) and ("None" in mut or "XXXX" in mut or ", )" in mut):
+        if (', "")' in orig or ', "")' in orig or ", '')" in orig) and (
+            "None" in mut or "XXXX" in mut or ", )" in mut
+        ):
             return "default_value"
-        if (", 0)" in orig or ", 1)" in orig) and ("None" in mut or "XXXX" in mut or ", )" in mut or ", 1)" in mut or ", 0)" in mut):
+        if (", 0)" in orig or ", 1)" in orig) and (
+            "None" in mut
+            or "XXXX" in mut
+            or ", )" in mut
+            or ", 1)" in mut
+            or ", 0)" in mut
+        ):
             return "default_value"
         # Also catch `.get("key", ) or fallback` pattern
         if ", )" in mut and " or " in mut:
             return "default_value"
-    
+
     # String literal mutations (e.g., "partially_settled" -> "XXpartially_settledXX")
     if '"' in orig and '"' in mut:
         # Check if it's a string literal change (not in a comparison)
         import re
+
         # Find string literals in both
         orig_strings = re.findall(r'"([^"]*)"', orig)
         mut_strings = re.findall(r'"([^"]*)"', mut)
@@ -285,6 +322,7 @@ def _get_function_signature(module_path: str, func_name: str) -> dict[str, Any] 
         sys.path.insert(0, src_path)
     try:
         import importlib
+
         mod = importlib.import_module(module_path)
         func = getattr(mod, func_name, None)
         if func is None:
@@ -293,19 +331,33 @@ def _get_function_signature(module_path: str, func_name: str) -> dict[str, Any] 
         params = {}
         for pname, pinfo in sig.parameters.items():
             params[pname] = {
-                "default": pinfo.default if pinfo.default is not inspect.Parameter.empty else None,
-                "annotation": str(pinfo.annotation) if pinfo.annotation is not inspect.Parameter.empty else None,
+                "default": (
+                    pinfo.default
+                    if pinfo.default is not inspect.Parameter.empty
+                    else None
+                ),
+                "annotation": (
+                    str(pinfo.annotation)
+                    if pinfo.annotation is not inspect.Parameter.empty
+                    else None
+                ),
                 "kind": str(pinfo.kind),
             }
         return {
             "params": params,
-            "return_annotation": str(sig.return_annotation) if sig.return_annotation is not inspect.Parameter.empty else None,
+            "return_annotation": (
+                str(sig.return_annotation)
+                if sig.return_annotation is not inspect.Parameter.empty
+                else None
+            ),
         }
     except Exception:
         return None
 
 
-def _generate_test_args(param_info: dict[str, Any], strategy: str, target: GapTarget) -> dict[str, str]:
+def _generate_test_args(
+    param_info: dict[str, Any], strategy: str, target: GapTarget
+) -> dict[str, str]:
     """Generate test arguments for a function based on its signature and strategy.
 
     Returns a dict of {param_name: value_expression}.
@@ -334,19 +386,31 @@ def _generate_test_args(param_info: dict[str, Any], strategy: str, target: GapTa
             args[pname] = "100.0"
         elif "bool" in annotation.lower():
             args[pname] = "True"
-        elif "list" in annotation.lower() or "List" in annotation or pname_lower in ("events", "balances", "daily_balances"):
+        elif (
+            "list" in annotation.lower()
+            or "List" in annotation
+            or pname_lower in ("events", "balances", "daily_balances")
+        ):
             if "events" in pname_lower:
                 # Generate a simple event dict for financial_events functions
-                args[pname] = """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                args[pname] = (
+                    """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                )
             elif "balances" in pname_lower:
                 args[pname] = """[("2025-01-15", 100000)]"""
             else:
                 args[pname] = "[]"
-        elif "dict" in annotation.lower() or "Dict" in annotation or pname_lower in ("event", "existing", "candidate"):
+        elif (
+            "dict" in annotation.lower()
+            or "Dict" in annotation
+            or pname_lower in ("event", "existing", "candidate")
+        ):
             if "event" in pname_lower:
-                args[pname] = '{"id": 1, "event_type": "test", "lifecycle_state": "open"}'
+                args[pname] = (
+                    '{"id": 1, "event_type": "test", "lifecycle_state": "open"}'
+                )
             else:
-                args[pname] = '{}'
+                args[pname] = "{}"
         elif "str" in annotation.lower():
             if "date" in pname_lower or "iso" in pname_lower:
                 args[pname] = '"2025-01-15"'
@@ -386,49 +450,85 @@ def _generate_mutation_targeted_args(
 
         pname_lower = pname.lower()
 
-# Default value mutations: test with missing key to expose the default change
+        # Default value mutations: test with missing key to expose the default change
         if strategy == "default_value":
             # Check list FIRST (before dict) because list[dict] contains "dict"
-            if "list" in annotation.lower() or "List" in annotation or pname_lower in ("events", "balances", "daily_balances"):
+            if (
+                "list" in annotation.lower()
+                or "List" in annotation
+                or pname_lower in ("events", "balances", "daily_balances")
+            ):
                 # For list of events, generate events MISSING the key that has the mutated default
                 if "events" in pname_lower:
                     # Extract the key being mutated from the original expression
                     import re
+
                     key_match = re.search(r'\.get\("([^"]+)"', orig)
                     if key_match:
                         missing_key = key_match.group(1)
                         # Generate an event list where one event is missing that key
                         if missing_key == "event_type":
-                            args[pname] = """[{"id": 1, "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                            args[pname] = (
+                                """[{"id": 1, "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                            )
                         elif missing_key == "lifecycle_state":
-                            args[pname] = """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                            args[pname] = (
+                                """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                            )
                         elif missing_key == "account_id":
-                            args[pname] = """[{"id": 1, "event_type": "cash_advance", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                            args[pname] = (
+                                """[{"id": 1, "event_type": "cash_advance", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                            )
                         elif missing_key == "date_iso":
-                            args[pname] = """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                            args[pname] = (
+                                """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                            )
                         elif missing_key == "outstanding_paise":
-                            args[pname] = """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "liability_change_paise": 100000}]"""
+                            args[pname] = (
+                                """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "liability_change_paise": 100000}]"""
+                            )
                         elif missing_key == "liability_change_paise":
-                            args[pname] = """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000}]"""
+                            args[pname] = (
+                                """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000}]"""
+                            )
                         else:
-                            args[pname] = """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                            args[pname] = (
+                                """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                            )
                     else:
                         # Check for string literal mutations in tuples/conditions (e.g., "partially_settled" in lifecycle_state check)
                         # These mutate the expected values in membership tests
                         # We need events that HAVE the mutated value to expose the difference
-                        if 'lifecycle_state' in orig and ('"partially_settled"' in orig or '"PARTIALLY_SETTLED"' in orig or '"XXpartially_settledXX"' in orig):
+                        if "lifecycle_state" in orig and (
+                            '"partially_settled"' in orig
+                            or '"PARTIALLY_SETTLED"' in orig
+                            or '"XXpartially_settledXX"' in orig
+                        ):
                             # Mutation in lifecycle_state membership check - test with partially_settled state
-                            args[pname] = """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "partially_settled", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
-                        elif 'event_type' in orig and ('"cash_advance"' in orig or '"repayment"' in orig):
-                            args[pname] = """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                            args[pname] = (
+                                """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "partially_settled", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                            )
+                        elif "event_type" in orig and (
+                            '"cash_advance"' in orig or '"repayment"' in orig
+                        ):
+                            args[pname] = (
+                                """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                            )
                         else:
                             # Default event list
-                            args[pname] = """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                            args[pname] = (
+                                """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                            )
                 elif "balances" in pname_lower:
                     args[pname] = """[("2025-01-15", 100000)]"""
                 else:
                     args[pname] = "[]"
-            elif "dict" in annotation.lower() or "Dict" in annotation or pname_lower in ("event", "existing", "candidate", "config", "params", "kwargs"):
+            elif (
+                "dict" in annotation.lower()
+                or "Dict" in annotation
+                or pname_lower
+                in ("event", "existing", "candidate", "config", "params", "kwargs")
+            ):
                 # For dict params, pass a dict WITHOUT the key that has the mutated default
                 if "event" in pname_lower and 'event.get("event_type"' in orig:
                     # Mutation: event.get("event_type", "") -> event.get("event_type", None)
@@ -439,7 +539,9 @@ def _generate_mutation_targeted_args(
                     key_match = __import__("re").search(r'event\.get\("([^"]+)"', orig)
                     if key_match:
                         missing_key = key_match.group(1)
-                        args[pname] = f'{{"id": 1, "other_key": "value"}}'  # missing the mutated key
+                        args[pname] = (
+                            '{"id": 1, "other_key": "value"}'  # missing the mutated key
+                        )
                     else:
                         args[pname] = '{"id": 1}'
                 else:
@@ -477,17 +579,14 @@ def _generate_mutation_targeted_args(
             if "int" in annotation.lower():
                 # Extract boundary value from mutation if possible
                 import re
-                match = re.search(r'(<=|>=|<|>)\s*(\d+)', mut)
+
+                match = re.search(r"(<=|>=|<|>)\s*(\d+)", mut)
                 if match:
                     op, val = match.groups()
                     val = int(val)
-                    if op == "<=":
+                    if op == "<=" or op == ">=":
                         args[pname] = str(val)  # At boundary
-                    elif op == ">=":
-                        args[pname] = str(val)  # At boundary
-                    elif op == "<":
-                        args[pname] = str(val)  # At boundary (mutant would exclude)
-                    elif op == ">":
+                    elif op == "<" or op == ">":
                         args[pname] = str(val)  # At boundary (mutant would exclude)
                 else:
                     args[pname] = "0"
@@ -500,10 +599,16 @@ def _generate_mutation_targeted_args(
 
         # Input variation (call_arg, dict_key): test with specific key variations
         elif strategy == "input_variation":
-            if "dict" in annotation.lower() or "Dict" in annotation or pname_lower in ("event", "existing", "candidate"):
+            if (
+                "dict" in annotation.lower()
+                or "Dict" in annotation
+                or pname_lower in ("event", "existing", "candidate")
+            ):
                 if "event" in pname_lower:
                     # Test with various event structures to hit the key mutation
-                    args[pname] = '{"id": 1, "event_type": "cash_advance", "account_id": "acc1"}'
+                    args[pname] = (
+                        '{"id": 1, "event_type": "cash_advance", "account_id": "acc1"}'
+                    )
                 else:
                     args[pname] = "{}"
             elif "list" in annotation.lower() or "List" in annotation:
@@ -528,18 +633,30 @@ def _generate_mutation_targeted_args(
                 args[pname] = "100.0"
             elif "bool" in annotation.lower():
                 args[pname] = "True"
-            elif "list" in annotation.lower() or "List" in annotation or pname_lower in ("events", "balances", "daily_balances"):
+            elif (
+                "list" in annotation.lower()
+                or "List" in annotation
+                or pname_lower in ("events", "balances", "daily_balances")
+            ):
                 if "events" in pname_lower:
-                    args[pname] = """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                    args[pname] = (
+                        """[{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000}]"""
+                    )
                 elif "balances" in pname_lower:
                     args[pname] = """[("2025-01-15", 100000)]"""
                 else:
                     args[pname] = "[]"
-            elif "dict" in annotation.lower() or "Dict" in annotation or pname_lower in ("event", "existing", "candidate"):
+            elif (
+                "dict" in annotation.lower()
+                or "Dict" in annotation
+                or pname_lower in ("event", "existing", "candidate")
+            ):
                 if "event" in pname_lower:
-                    args[pname] = '{"id": 1, "event_type": "test", "lifecycle_state": "open"}'
+                    args[pname] = (
+                        '{"id": 1, "event_type": "test", "lifecycle_state": "open"}'
+                    )
                 else:
-                    args[pname] = '{}'
+                    args[pname] = "{}"
             elif "str" in annotation.lower():
                 if "date" in pname_lower or "iso" in pname_lower:
                     args[pname] = '"2025-01-15"'
@@ -568,7 +685,7 @@ def _generate_mutation_specific_test(
     The test is designed so that:
     - It PASSES with the original (correct) code
     - It FAILS with the mutated code
-    
+
     This is what makes it a MUTATION-KILLING test.
     """
     orig = target.original_expression
@@ -591,6 +708,7 @@ def _generate_mutation_specific_test(
         elif 'event.get("' in orig:
             # Generic dict.get default mutation
             import re
+
             key_match = re.search(r'event\.get\("([^"]+)"', orig)
             if key_match:
                 key = key_match.group(1)
@@ -640,23 +758,27 @@ def _generate_mutation_specific_test(
         assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should not return None when default changed"'''
             else:
-                assertion = f'''        # Default value mutation
+                assertion = f"""        # Default value mutation
         result = {func_call}
         from src.engines.financial_events.lineage_walker import LineageProposal
         assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
-        assert result is not None'''
-        
+        assert result is not None"""
+
         # String literal mutations in membership checks
-        elif '"partially_settled"' in orig or '"PARTIALLY_SETTLED"' in orig or '"XXpartially_settledXX"' in orig:
+        elif (
+            '"partially_settled"' in orig
+            or '"PARTIALLY_SETTLED"' in orig
+            or '"XXpartially_settledXX"' in orig
+        ):
             if "lifecycle_state" in orig and "not in" in orig:
-                assertion = f'''        # String literal mutation in lifecycle_state membership check
+                assertion = '''        # String literal mutation in lifecycle_state membership check
         # Original: "partially_settled" in ("open", "partially_settled") -> True
         # Mutant:   "XXpartially_settledXX" in ("open", "partially_settled") -> False
         # For "not in": original returns False (don't skip), mutant returns True (skip)
         # Test with lifecycle_state="partially_settled" events - should be processed by original
         events = [
-            {{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000}},
-            {{"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "partially_settled", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}}
+            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
+            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "partially_settled", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
         ]
         result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
         # walk_lineage returns LineageProposal object
@@ -664,11 +786,11 @@ def _generate_mutation_specific_test(
         assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
         # Original: processes partially_settled emi_payment -> links to advance, updates lifecycle to partially_settled
         # Mutant: skips partially_settled event -> no link created, no lifecycle update
-        assert len(result.proposed_links) == 1, f"Expected 1 proposed link, got {{len(result.proposed_links)}}"
-        assert result.proposed_links[0]["link_type"] == "settles", f"Expected settles link, got {{result.proposed_links[0].get('link_type')}}"
-        assert len(result.lifecycle_updates) == 1, f"Expected 1 lifecycle update, got {{len(result.lifecycle_updates)}}"
-        assert result.lifecycle_updates[0]["lifecycle_state"] == "partially_settled", f"Expected partially_settled, got {{result.lifecycle_updates[0].get('lifecycle_state')}}"
-        assert result.lifecycle_updates[0]["outstanding_paise"] == 50000, f"Expected outstanding 50000, got {{result.lifecycle_updates[0].get('outstanding_paise')}}"
+        assert len(result.proposed_links) == 1, f"Expected 1 proposed link, got {len(result.proposed_links)}"
+        assert result.proposed_links[0]["link_type"] == "settles", f"Expected settles link, got {result.proposed_links[0].get('link_type')}"
+        assert len(result.lifecycle_updates) == 1, f"Expected 1 lifecycle update, got {len(result.lifecycle_updates)}"
+        assert result.lifecycle_updates[0]["lifecycle_state"] == "partially_settled", f"Expected partially_settled, got {result.lifecycle_updates[0].get('lifecycle_state')}"
+        assert result.lifecycle_updates[0]["outstanding_paise"] == 50000, f"Expected outstanding 50000, got {result.lifecycle_updates[0].get('outstanding_paise')}"
         assert result is not None, "Function should return a result"'''
             else:
                 assertion = f'''        # String literal mutation in membership/condition check
@@ -676,14 +798,14 @@ def _generate_mutation_specific_test(
         from src.engines.financial_events.lineage_walker import LineageProposal
         assert isinstance(result, LineageProposal), "walk_lineage should return LineageProposal"
         assert result is not None, "Function should return a result"'''
-        
+
         # Fallback for any other default_value mutations not covered above
         else:
-            assertion = f'''        # Default value mutation (fallback)
+            assertion = '''        # Default value mutation (fallback)
         # Test with events that exercise the mutated default
         events = [
-            {{"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000}},
-            {{"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}}
+            {"id": 1, "event_type": "cash_advance", "account_id": "acc1", "date_iso": "2025-01-10", "lifecycle_state": "open", "outstanding_paise": 100000, "liability_change_paise": 100000, "amount_paise": 100000},
+            {"id": 2, "event_type": "emi_payment", "account_id": "acc1", "date_iso": "2025-01-15", "lifecycle_state": "open", "outstanding_paise": 50000, "liability_change_paise": -50000, "amount_paise": 50000}
         ]
         result = walk_lineage(events=events, lookback_days=30, revocation_lookback_days=30)
         from src.engines.financial_events.lineage_walker import LineageProposal
@@ -701,7 +823,7 @@ def _generate_mutation_specific_test(
         # Mutant: only one condition needs to be True
         assert result is not None, "Boolean logic should behave correctly"'''
         elif "or" in orig and "and" in mut:
-            assertion = f'''        # Boolean mutation: "or" -> "and" 
+            assertion = f'''        # Boolean mutation: "or" -> "and"
         result = {func_call}
         assert result is not None, "Boolean logic should behave correctly"'''
         elif "==" in orig and "!=" in mut:
@@ -814,7 +936,6 @@ class Test{test_id}:
     )
 
 
-
 def _generate_targeted_test(target: GapTarget) -> GeneratedTest:
     """Generate a TARGETED, runnable test for a mutation survivor.
 
@@ -864,6 +985,8 @@ def _generate_targeted_test(target: GapTarget) -> GeneratedTest:
         mutation_targeted=target.gap_id,
         rationale=f"Strategy={strategy}; targeted test to kill mutation: {target.original_expression[:50]}... -> {target.mutated_expression[:50]}...",
     )
+
+
 def _generate_import_test(target: GapTarget) -> GeneratedTest:
     """Fallback: generate a test that just imports the module."""
     module = _module_from_source(target.source_file)
@@ -905,25 +1028,66 @@ def _get_existing_test_file(target: GapTarget) -> Path:
 
     if "financial_events" in component:
         candidates = [
-            REPO_ROOT / "backend" / "tests" / "unit" / "engines" / "financial_events" / "test_financial_events.py",
-            REPO_ROOT / "backend" / "tests" / "unit" / "engines" / "financial_events" / "test_m9_c56_lineage_gaps.py",
+            REPO_ROOT
+            / "backend"
+            / "tests"
+            / "unit"
+            / "engines"
+            / "financial_events"
+            / "test_financial_events.py",
+            REPO_ROOT
+            / "backend"
+            / "tests"
+            / "unit"
+            / "engines"
+            / "financial_events"
+            / "test_m9_c56_lineage_gaps.py",
         ]
     elif "credit_card" in component:
         candidates = [
-            REPO_ROOT / "backend" / "tests" / "unit" / "engines" / "credit_card_engine" / "test_m9_c56_mutation_gaps.py",
-            REPO_ROOT / "backend" / "tests" / "unit" / "engines" / "credit_card_engine" / "test_m9_c56_boolean_flips.py",
+            REPO_ROOT
+            / "backend"
+            / "tests"
+            / "unit"
+            / "engines"
+            / "credit_card_engine"
+            / "test_m9_c56_mutation_gaps.py",
+            REPO_ROOT
+            / "backend"
+            / "tests"
+            / "unit"
+            / "engines"
+            / "credit_card_engine"
+            / "test_m9_c56_boolean_flips.py",
         ]
     elif "loan" in component:
         candidates = [
-            REPO_ROOT / "backend" / "tests" / "unit" / "engines" / "loan_engine" / "test_loan_engine.py",
+            REPO_ROOT
+            / "backend"
+            / "tests"
+            / "unit"
+            / "engines"
+            / "loan_engine"
+            / "test_loan_engine.py",
         ]
     elif "account" in component:
         candidates = [
-            REPO_ROOT / "backend" / "tests" / "unit" / "engines" / "account" / "test_account_engine.py",
+            REPO_ROOT
+            / "backend"
+            / "tests"
+            / "unit"
+            / "engines"
+            / "account"
+            / "test_account_engine.py",
         ]
     else:
         candidates = [
-            REPO_ROOT / "backend" / "tests" / "unit" / "engines" / f"test_{component}.py",
+            REPO_ROOT
+            / "backend"
+            / "tests"
+            / "unit"
+            / "engines"
+            / f"test_{component}.py",
         ]
 
     # Return the first existing file, or the first candidate
@@ -940,7 +1104,7 @@ def _get_existing_test_file(target: GapTarget) -> Path:
 
 def apply_generated_test(test: GeneratedTest) -> bool:
     """Write a generated test to disk. Additive only -- never modifies existing tests.
-    
+
     Appends methods to existing convergence test class if present, otherwise creates new class.
     """
     test_path = Path(test.test_file_path)
@@ -950,14 +1114,14 @@ def apply_generated_test(test: GeneratedTest) -> bool:
         existing = test_path.read_text()
         if test.test_function_name in existing:
             return False  # Already written
-        
+
         # Check if our convergence test class already exists
         class_name = f"Test{test.test_id}"
         class_header = f"class {class_name}:"
-        
+
         if class_header in existing:
             # Find the class and insert method before the next class or end of file
-            lines = existing.split('\n')
+            lines = existing.split("\n")
             insert_idx = -1
             in_our_class = False
             for i, line in enumerate(lines):
@@ -966,12 +1130,12 @@ def apply_generated_test(test: GeneratedTest) -> bool:
                 elif in_our_class and line.strip().startswith("class "):
                     insert_idx = i
                     break
-            
+
             if insert_idx == -1:
                 insert_idx = len(lines)
-            
+
             # Extract just the method from test_code (skip the class definition)
-            test_lines = test.test_code.strip().split('\n')
+            test_lines = test.test_code.strip().split("\n")
             method_lines = []
             in_method = False
             for line in test_lines:
@@ -979,18 +1143,20 @@ def apply_generated_test(test: GeneratedTest) -> bool:
                     in_method = True
                 if in_method:
                     method_lines.append(line)
-            
+
             if method_lines:
                 # Insert with proper indentation
-                new_lines = lines[:insert_idx] + [''] + method_lines + lines[insert_idx:]
-                test_path.write_text('\n'.join(new_lines))
+                new_lines = (
+                    lines[:insert_idx] + [""] + method_lines + lines[insert_idx:]
+                )
+                test_path.write_text("\n".join(new_lines))
                 return True
-        
+
         # Fallback: append entire test code (creates new class)
         test_path.write_text(existing + "\n" + test.test_code)
     else:
         header = '"""\nM9-C56 Autonomous Convergence Tests.\n\n'
-        header += 'Auto-generated by the convergence pipeline.\n'
+        header += "Auto-generated by the convergence pipeline.\n"
         header += '"""\n\nimport pytest\n'
         test_path.write_text(header + test.test_code)
 
@@ -1014,9 +1180,13 @@ def run_focused_tests(test_paths: list[str]) -> tuple[bool, str, int]:
 
     # Run with verbose output to count passed tests reliably
     cmd = [
-        ".venv/bin/python", "-m", "pytest",
+        ".venv/bin/python",
+        "-m",
+        "pytest",
         *existing,
-        "--tb=short", "-v", "--no-header",
+        "--tb=short",
+        "-v",
+        "--no-header",
     ]
 
     try:
@@ -1036,12 +1206,15 @@ def run_focused_tests(test_paths: list[str]) -> tuple[bool, str, int]:
 def run_targeted_mutation(component: str) -> dict[str, Any]:
     """Run targeted mutation for a component and return the summary."""
     cmd = [
-        ".venv/bin/python", "runtime/verify.py", "mutation",
-        "--target", component,
+        ".venv/bin/python",
+        "runtime/verify.py",
+        "mutation",
+        "--target",
+        component,
     ]
 
     try:
-        result = subprocess.run(
+        subprocess.run(
             cmd, cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=600
         )
         return load_mutation_summary(component)
@@ -1150,7 +1323,9 @@ def run_convergence(
     )
 
 
-def emit_convergence_ledger(result: ConvergenceResult, out_dir: Path | None = None) -> Path:
+def emit_convergence_ledger(
+    result: ConvergenceResult, out_dir: Path | None = None
+) -> Path:
     """Emit the convergence ledger to disk."""
     out_dir = out_dir or REPO_ROOT / "runtime" / "generated" / "m9-c56" / "convergence"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -1193,7 +1368,9 @@ def main() -> int:
         print(f"  Tests applied:    {result.tests_applied}")
         print(f"  Tests passed:     {result.tests_passed}")
         print(f"  Survivors killed: {result.survivors_killed}")
-        print(f"  Score: {result.initial_score}% -> {result.final_score}% ({result.final_score - result.initial_score:+.2f} pp)")
+        print(
+            f"  Score: {result.initial_score}% -> {result.final_score}% ({result.final_score - result.initial_score:+.2f} pp)"
+        )
         print(f"  Duration: {result.duration_seconds}s")
         if result.errors:
             print(f"\n  Errors ({len(result.errors)}):")

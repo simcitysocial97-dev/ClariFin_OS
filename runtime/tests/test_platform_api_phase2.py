@@ -28,16 +28,38 @@ import pytest
 
 from runtime.platform.api.contracts import (
     application as application_contract,
+)
+from runtime.platform.api.contracts import (
     architecture as architecture_contract,
+)
+from runtime.platform.api.contracts import (
     capabilities as capabilities_contract,
+)
+from runtime.platform.api.contracts import (
     change as change_contract,
+)
+from runtime.platform.api.contracts import (
     errors as errors_contract,
+)
+from runtime.platform.api.contracts import (
     events as events_contract,
+)
+from runtime.platform.api.contracts import (
     evidence as evidence_contract,
+)
+from runtime.platform.api.contracts import (
     executions as executions_contract,
+)
+from runtime.platform.api.contracts import (
     health as health_contract,
+)
+from runtime.platform.api.contracts import (
     history as history_contract,
+)
+from runtime.platform.api.contracts import (
     tasks as tasks_contract,
+)
+from runtime.platform.api.contracts import (
     verification as verification_contract,
 )
 from runtime.platform.api.envelope import API_VERSION
@@ -61,13 +83,10 @@ def _envelope_shape_ok(env: dict) -> bool:
     """Validate that ``env`` has the canonical 5-key envelope shape."""
 
     return (
-        set(env.keys())
-        == {"kind", "version", "generated_at", "id", "data"}
+        set(env.keys()) == {"kind", "version", "generated_at", "id", "data"}
         and env["version"] == API_VERSION
         and re.fullmatch(r"sha256:[0-9a-f]{64}", env["id"])
-        and re.fullmatch(
-            r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", env["generated_at"]
-        )
+        and re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", env["generated_at"])
     )
 
 
@@ -182,7 +201,9 @@ class TestVerificationService:
     def test_recommendation_uses_real_planner(self) -> None:
         env = verification.build_verification_recommendation()
         assert _envelope_shape_ok(env)
-        parsed = verification_contract.VerificationRecommendationEnvelope.model_validate(env)
+        parsed = (
+            verification_contract.VerificationRecommendationEnvelope.model_validate(env)
+        )
         # The recommendation list must be a list of strings (capability IDs).
         assert isinstance(parsed.data.recommended, list)
         for cap_id in parsed.data.recommended:
@@ -193,7 +214,9 @@ class TestVerificationService:
             capability_id="discover.blast-radius",
         )
         assert _envelope_shape_ok(env)
-        parsed = verification_contract.VerificationRunRequestEnvelope.model_validate(env)
+        parsed = verification_contract.VerificationRunRequestEnvelope.model_validate(
+            env
+        )
         assert parsed.data.capability_id == "discover.blast-radius"
 
     def test_run_result_round_trip(self) -> None:
@@ -287,7 +310,9 @@ class TestArchitectureService:
     def test_authorities_list(self) -> None:
         env = architecture.build_architecture_authorities()
         assert _envelope_shape_ok(env)
-        parsed = architecture_contract.ArchitectureAuthoritiesEnvelope.model_validate(env)
+        parsed = architecture_contract.ArchitectureAuthoritiesEnvelope.model_validate(
+            env
+        )
         names = {it.name for it in parsed.data.items}
         # The four C50 architecture authorities must all be present.
         assert {
@@ -331,7 +356,9 @@ class TestArchitectureService:
         ):
             env = fn()
             assert _envelope_shape_ok(env), f"{fn.__name__} returned bad envelope"
-            parsed = architecture_contract.ArchitectureFindingsEnvelope.model_validate(env)
+            parsed = architecture_contract.ArchitectureFindingsEnvelope.model_validate(
+                env
+            )
             assert parsed.kind == expected_kind
 
 
@@ -474,9 +501,8 @@ class TestGate2EndToEnd:
         oset = cp._plan_to_obligations(plan, _collect_changed_files())
         env = tasks.build_task_list()
         parsed = tasks_contract.TaskListEnvelope.model_validate(env)
-        assert (
-            parsed.data.open_count + parsed.data.closed_count
-            == len(oset.obligations)
+        assert parsed.data.open_count + parsed.data.closed_count == len(
+            oset.obligations
         )
 
     def test_change_intelligence_risk_matches_blast_radius(self) -> None:

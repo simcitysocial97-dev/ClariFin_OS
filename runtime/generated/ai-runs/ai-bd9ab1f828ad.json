@@ -1,0 +1,13 @@
+{
+  "id": "ai-bd9ab1f828ad",
+  "symptom": "test failure",
+  "mode": "MANUAL",
+  "capability_id": null,
+  "status": "PENDING",
+  "steps": [],
+  "created_at": "2026-09-05T23:49:20.382338Z",
+  "updated_at": "2026-09-05T23:49:20.382338Z",
+  "completed_at": null,
+  "error": null,
+  "audit_trail": []
+}

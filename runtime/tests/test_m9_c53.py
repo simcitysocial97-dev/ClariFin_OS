@@ -659,12 +659,8 @@ class TestC53EndToEnd(unittest.TestCase):
         r1 = engine.generate_from_gap(gap)
         r2 = engine.generate_from_gap(gap)
         self.assertEqual(r1.final_state, r2.final_state)
-        self.assertEqual(
-            r1.classification.gap_class, r2.classification.gap_class
-        )
-        self.assertEqual(
-            r1.candidate.candidate_id, r2.candidate.candidate_id
-        )
+        self.assertEqual(r1.classification.gap_class, r2.classification.gap_class)
+        self.assertEqual(r1.candidate.candidate_id, r2.candidate.candidate_id)
 
 
 class TestC53RegressionPreservation(unittest.TestCase):

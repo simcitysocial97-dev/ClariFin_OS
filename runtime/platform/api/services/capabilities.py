@@ -38,9 +38,19 @@ def _entry_to_list_item(entry: Any) -> dict[str, Any]:
     return {
         "id": entry.capability_id,
         "name": entry.name,
-        "stage": entry.stage.value if hasattr(entry.stage, "value") else str(entry.stage),
-        "cost": entry.cost_class.value if hasattr(entry.cost_class, "value") else str(entry.cost_class),
-        "authorization": entry.authorization.value if hasattr(entry.authorization, "value") else str(entry.authorization),
+        "stage": (
+            entry.stage.value if hasattr(entry.stage, "value") else str(entry.stage)
+        ),
+        "cost": (
+            entry.cost_class.value
+            if hasattr(entry.cost_class, "value")
+            else str(entry.cost_class)
+        ),
+        "authorization": (
+            entry.authorization.value
+            if hasattr(entry.authorization, "value")
+            else str(entry.authorization)
+        ),
         "produces": list(entry.produces or []),
         "triggers": list(entry.trigger_conditions or []),
     }
@@ -59,7 +69,9 @@ def build_capability_list() -> dict[str, Any]:
     seen_stages: set[str] = set()
     items: list[dict[str, Any]] = []
     for entry in entries:
-        stage_value = entry.stage.value if hasattr(entry.stage, "value") else str(entry.stage)
+        stage_value = (
+            entry.stage.value if hasattr(entry.stage, "value") else str(entry.stage)
+        )
         seen_stages.add(stage_value)
         items.append(_entry_to_list_item(entry))
 
@@ -84,9 +96,19 @@ def build_capability_detail(capability_id: str) -> dict[str, Any] | None:
     if entry is None:
         return None
 
-    stage_value = entry.stage.value if hasattr(entry.stage, "value") else str(entry.stage)
-    cost_value = entry.cost_class.value if hasattr(entry.cost_class, "value") else str(entry.cost_class)
-    auth_value = entry.authorization.value if hasattr(entry.authorization, "value") else str(entry.authorization)
+    stage_value = (
+        entry.stage.value if hasattr(entry.stage, "value") else str(entry.stage)
+    )
+    cost_value = (
+        entry.cost_class.value
+        if hasattr(entry.cost_class, "value")
+        else str(entry.cost_class)
+    )
+    auth_value = (
+        entry.authorization.value
+        if hasattr(entry.authorization, "value")
+        else str(entry.authorization)
+    )
 
     data = {
         "id": entry.capability_id,

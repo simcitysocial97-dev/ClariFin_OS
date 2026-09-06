@@ -33,8 +33,8 @@ def compute_history_delta(
 
     # --- repository changes ---
     # Derived from blast-radius payload when available; empty otherwise.
-    current_blast = (current.get("blast_radius") or {})
-    baseline_blast = (baseline.get("blast_radius") or {})
+    current_blast = current.get("blast_radius") or {}
+    baseline_blast = baseline.get("blast_radius") or {}
     current_files = set(current_blast.get("affected_tests", []) or [])
     baseline_files = set(baseline_blast.get("affected_tests", []) or [])
     repository_changes = {
@@ -74,12 +74,14 @@ def compute_history_delta(
     base_status = baseline.get("status", "UNKNOWN")
     capability_state_changes: list[dict[str, Any]] = []
     if cur_status != base_status:
-        capability_state_changes.append({
-            "capability": "system",
-            "from": base_status,
-            "to": cur_status,
-            "evidence": current.get("id", ""),
-        })
+        capability_state_changes.append(
+            {
+                "capability": "system",
+                "from": base_status,
+                "to": cur_status,
+                "evidence": current.get("id", ""),
+            }
+        )
 
     return {
         "repository_changes": repository_changes,

@@ -6,10 +6,7 @@ Every tool invocation passes through policy evaluation before execution.
 
 from __future__ import annotations
 
-from typing import Any
-
-from runtime.platform.api.contracts.ai import PolicyDecision, AUTHORITY_LEVELS
-
+from runtime.platform.api.contracts.ai import AUTHORITY_LEVELS, PolicyDecision
 
 # ---------------------------------------------------------------------------
 # Policy Engine
@@ -79,12 +76,17 @@ class PolicyEngine:
             )
 
         # Check explicit authorization for this run
-        if run_id and run_id in self._authorizations:
-            if self._authorizations[run_id].get(tool_name) is True:
-                return PolicyDecision(allowed=True, reason="explicitly_authorized")
+        if (
+            run_id
+            and run_id in self._authorizations
+            and self._authorizations[run_id].get(tool_name) is True
+        ):
+            return PolicyDecision(allowed=True, reason="explicitly_authorized")
 
         # Check if level is enabled by default (levels 0-1 are default enabled)
-        level_info = next((l for l in AUTHORITY_LEVELS if l.level == required_level), None)
+        level_info = next(
+            (lvl for lvl in AUTHORITY_LEVELS if lvl.level == required_level), None
+        )
         if level_info and level_info.enabled_by_default:
             return PolicyDecision(allowed=True, reason="enabled_by_default")
 

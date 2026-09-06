@@ -19,7 +19,9 @@ __all__ = ["ContextPackCache", "CONTEXT_PACK_CACHE_INSTANCE"]
 class ContextPackCache:
     """In-memory cache with disk persistence for context packs."""
 
-    def __init__(self, base_dir: str | Path = "runtime/generated/ai-context-packs") -> None:
+    def __init__(
+        self, base_dir: str | Path = "runtime/generated/ai-context-packs"
+    ) -> None:
         self._base = Path(base_dir)
         self._base.mkdir(parents=True, exist_ok=True)
         self._memory: dict[str, dict[str, Any]] = {}
@@ -67,11 +69,11 @@ class ContextPackCache:
     def clear(self) -> None:
         """Clear all cached packs."""
         self._memory.clear()
+        import contextlib
+
         for path in self._base.glob("*.json"):
-            try:
+            with contextlib.suppress(Exception):
                 path.unlink()
-            except Exception:
-                pass
 
     def count(self) -> int:
         return len(self._memory)

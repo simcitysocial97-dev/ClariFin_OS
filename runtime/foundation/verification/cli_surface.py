@@ -360,7 +360,7 @@ def migration_map() -> dict[str, dict[str, str]]:
 
 def canonical_help() -> str:
     """Operator-facing help text for the canonical CLI."""
-    tree = canonical_tree()
+    canonical_tree()
     lines = ["verify <operation> [args]", ""]
     lines.append("Canonical operations:")
     for op in CanonicalOperation:
@@ -372,7 +372,9 @@ def canonical_help() -> str:
         lines.append(f"  {q.value}")
     lines.append("")
     lines.append("Examples:")
-    lines.append("  verify check                # plan + execute verification for current change")
+    lines.append(
+        "  verify check                # plan + execute verification for current change"
+    )
     lines.append("  verify plan                 # plan only, no execution")
     lines.append("  verify plan --json          # machine-readable plan")
     lines.append("  verify run --plan plan.json # execute a plan")

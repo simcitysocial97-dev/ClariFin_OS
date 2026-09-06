@@ -19,12 +19,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from runtime.system.observability.analytics import AnalyticsEngine
-from runtime.system.observability.event_store import EngineeringEventStore
-from runtime.system.observability.health_report import EngineeringHealthReport
 from runtime.platform.api.contracts import health as health_contract
 from runtime.platform.api.contracts._primitives import Status
 from runtime.platform.api.services._helpers import envelope, now_iso
+from runtime.system.observability.analytics import AnalyticsEngine
+from runtime.system.observability.event_store import EngineeringEventStore
+from runtime.system.observability.health_report import EngineeringHealthReport
 
 __all__ = ["build_health_snapshot"]
 
@@ -58,11 +58,7 @@ def build_health_snapshot() -> dict[str, Any]:
     # (the markdown body is intentionally not exposed over the API).
     _ = EngineeringHealthReport(analytics=analytics, event_store=store).generate()
 
-    snapshot_status = (
-        Status.HEALTHY
-        if verif_status == Status.HEALTHY
-        else verif_status
-    )
+    snapshot_status = Status.HEALTHY if verif_status == Status.HEALTHY else verif_status
 
     domains = [
         {
@@ -78,7 +74,9 @@ def build_health_snapshot() -> dict[str, Any]:
         },
         {
             "name": "EventStore",
-            "status": Status.HEALTHY.value if store.count() > 0 else Status.UNKNOWN.value,
+            "status": (
+                Status.HEALTHY.value if store.count() > 0 else Status.UNKNOWN.value
+            ),
             "last_check": now_iso(),
             "source": "EngineeringEventStore",
             "detail": f"events={store.count()}",

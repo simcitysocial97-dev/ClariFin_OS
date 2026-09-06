@@ -30,13 +30,11 @@
 
 from __future__ import annotations
 
-import json
 import re
-from dataclasses import asdict, dataclass, field
+from collections.abc import Iterable
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Iterable
-
 
 MONETARY_KEYWORDS: tuple[str, ...] = (
     "amount",
@@ -75,16 +73,12 @@ MONETARY_KEYWORDS: tuple[str, ...] = (
 # Identifier pattern: a JS/TS identifier that contains a monetary keyword
 # (case-insensitive). Allows word-boundary awareness so 'subtotal' matches
 # but 'totally' (without word boundary) does not.
-_IDENT_RE = re.compile(
-    r"\b([A-Za-z_][A-Za-z0-9_]*)\b"
-)
+_IDENT_RE = re.compile(r"\b([A-Za-z_][A-Za-z0-9_]*)\b")
 
 # Arithmetic operator pattern. We avoid regexing `+` and `-` because they
 # are common in template literals; we use word-boundary operators or
 # tokens in arithmetic contexts (assignment, comparison, return).
-_ARITH_RE = re.compile(
-    r"(?:^|[^=!<>])(\*|\*\*|/|%)\s*([^=])"
-)
+_ARITH_RE = re.compile(r"(?:^|[^=!<>])(\*|\*\*|/|%)\s*([^=])")
 
 # Plus/minus in arithmetic context: variable (op) variable, with operators
 # preceded by spaces (heuristic for arithmetic, not string concat).
@@ -134,10 +128,7 @@ class LintReport:
 
 def _is_monetary(name: str) -> bool:
     n = name.lower()
-    for kw in MONETARY_KEYWORDS:
-        if kw in n:
-            return True
-    return False
+    return any(kw in n for kw in MONETARY_KEYWORDS)
 
 
 def _is_format_or_display_context(line: str) -> bool:
@@ -153,13 +144,15 @@ def _is_format_or_display_context(line: str) -> bool:
         return True
     # Property/type declarations: e.g., `paise: number;` or
     # `credit_limit_paise?: number;` — no arithmetic.
-    if re.search(r":\s*\w+(?:[\.<>\[\],\s\|]+(?:\w+|null))*;\s*(?://.*)?$", line.strip()):
+    if re.search(
+        r":\s*\w+(?:[\.<>\[\],\s\|]+(?:\w+|null))*;\s*(?://.*)?$", line.strip()
+    ):
         return True
     # Field declarations of object types.
-    if "amount:" in lower or "balance:" in lower or "paise:" in lower:
-        # Only treat as display if it's clearly a field declaration.
-        if re.search(r"^\s*[A-Za-z_][A-Za-z0-9_]*\??:\s*", line):
-            return True
+    if ("amount:" in lower or "balance:" in lower or "paise:" in lower) and re.search(
+        r"^\s*[A-Za-z_][A-Za-z0-9_]*\??:\s*", line
+    ):
+        return True
     # BPS → percent conversion (unit conversion for display).
     if re.search(r"/\s*100\b", line) and "Bps" in line:
         return True
@@ -167,9 +160,9 @@ def _is_format_or_display_context(line: str) -> bool:
         return True
     # Pagination arithmetic (offset = (page - 1) * limit) is non-monetary
     # and legitimate on the frontend.
-    if re.search(r"\(\s*page\s*-\s*1\s*\)\s*\*\s*limit\b", line, re.IGNORECASE):
-        return True
-    return False
+    return bool(
+        re.search(r"\(\s*page\s*-\s*1\s*\)\s*\*\s*limit\b", line, re.IGNORECASE)
+    )
 
 
 def _is_string_context(line: str, idx: int) -> bool:
@@ -183,9 +176,7 @@ def _is_string_context(line: str, idx: int) -> bool:
     if dquotes % 2 == 1:
         return True
     squotes = chunk.count("'") - chunk.count("\\'")
-    if squotes % 2 == 1:
-        return True
-    return False
+    return squotes % 2 == 1
 
 
 def _is_comment(line: str) -> bool:
@@ -200,11 +191,11 @@ def scan_line(file: str, line_no: int, line: str) -> list[Finding]:
 
     # 1. * / % / ** operator scan
     for m in _ARITH_RE.finditer(line):
-        op = m.group(1)
+        m.group(1)
         # Look left of the operator for an identifier (monetary).
         prefix = line[: m.start(1)]
         left_match = list(_IDENT_RE.finditer(prefix))
-        right_match = list(_IDENT_RE.finditer(line[m.end(1):]))
+        right_match = list(_IDENT_RE.finditer(line[m.end(1) :]))
         if not left_match or not right_match:
             continue
         left = left_match[-1].group(1)
@@ -226,7 +217,7 @@ def scan_line(file: str, line_no: int, line: str) -> list[Finding]:
 
     # 2. + / - between two identifiers (heuristic).
     for m in _PLUSMINUS_RE.finditer(line):
-        a, op, b = m.group(1), m.group(2), m.group(3)
+        a, _op, b = m.group(1), m.group(2), m.group(3)
         if _is_monetary(a) and _is_monetary(b):
             col = m.start(1)
             if _is_string_context(line, col):
@@ -258,7 +249,7 @@ def scan_line(file: str, line_no: int, line: str) -> list[Finding]:
 
     # 3. variable (op) numeric literal.
     for m in _PLUSMINUS_LITERAL_RE.finditer(line):
-        a, op, lit = m.group(1), m.group(2), m.group(3)
+        a, _op, _lit = m.group(1), m.group(2), m.group(3)
         if _is_monetary(a):
             col = m.start(1)
             if _is_string_context(line, col):

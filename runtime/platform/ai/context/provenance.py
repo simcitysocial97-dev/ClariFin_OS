@@ -9,9 +9,8 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
-from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 
 class ProvenanceKind(str, Enum):
@@ -33,11 +32,11 @@ class ProvenanceEntry:
 
     kind: ProvenanceKind
     id: str
-    path: Optional[str] = None
-    symbol: Optional[str] = None
-    line_range: Optional[tuple[int, int]] = None
-    fingerprint: Optional[str] = None
-    timestamp: Optional[str] = None
+    path: str | None = None
+    symbol: str | None = None
+    line_range: tuple[int, int] | None = None
+    fingerprint: str | None = None
+    timestamp: str | None = None
     metadata: dict[str, Any] = None  # type: ignore[assignment]
 
     def __post_init__(self) -> None:
@@ -65,9 +64,7 @@ class ProvenanceEntry:
             "line_end": self.line_range[1] if self.line_range else 0,
             "fingerprint": self.fingerprint or "",
         }
-        return hashlib.sha256(
-            str(sorted(canonical.items())).encode()
-        ).digest()
+        return hashlib.sha256(str(sorted(canonical.items())).encode()).digest()
 
 
 class ProvenanceTracker:

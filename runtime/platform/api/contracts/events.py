@@ -15,7 +15,6 @@ from pydantic import BaseModel, Field
 
 from runtime.platform.api.contracts._primitives import Identity, Timestamp
 
-
 EVENTS_LIST_KIND: str = "platform.events_list"
 EVENTS_STREAM_KIND: str = "platform.events_stream"
 

@@ -69,7 +69,7 @@ def test_engine_capability_records_have_authority():
 def test_register_engine_capabilities_idempotent():
     reg = get_registry()
     reg.load()
-    before = len(reg._capabilities)
+    len(reg._capabilities)
     n1 = register_engine_capabilities(reg)
     n2 = register_engine_capabilities(reg)
     assert n1 >= 0

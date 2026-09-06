@@ -66,16 +66,32 @@ class TestMergeLifecycleBooleanFlips:
     def test_settled_beats_all_other_states(self):
         """Settled (rank 3) beats every other state regardless of boolean direction."""
         for state in ["open", "revoked", "partially_settled"]:
-            existing = {"event_id": 1, "lifecycle_state": state, "outstanding_paise": 100}
-            candidate = {"event_id": 1, "lifecycle_state": "settled", "outstanding_paise": 0}
+            existing = {
+                "event_id": 1,
+                "lifecycle_state": state,
+                "outstanding_paise": 100,
+            }
+            candidate = {
+                "event_id": 1,
+                "lifecycle_state": "settled",
+                "outstanding_paise": 0,
+            }
             result = _merge_lifecycle_update(existing, candidate)
             assert result["lifecycle_state"] == "settled"
 
     def test_open_loses_to_revoked_partially_settled_settled(self):
         """Open (rank 0) loses to all higher-ranked states."""
         for target in ["revoked", "partially_settled", "settled"]:
-            existing = {"event_id": 1, "lifecycle_state": "open", "outstanding_paise": 100}
-            candidate = {"event_id": 1, "lifecycle_state": target, "outstanding_paise": 0}
+            existing = {
+                "event_id": 1,
+                "lifecycle_state": "open",
+                "outstanding_paise": 100,
+            }
+            candidate = {
+                "event_id": 1,
+                "lifecycle_state": target,
+                "outstanding_paise": 0,
+            }
             result = _merge_lifecycle_update(existing, candidate)
             assert result["lifecycle_state"] == target
 
@@ -91,15 +107,33 @@ class TestWalkLineageBooleanFlips:
         for events that are neither repayment nor non-repayment in unexpected ways.
         """
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-01-15", "lifecycle_state": "open",
-             "outstanding_paise": 100000, "liability_change_paise": 100000},
-            {"id": 2, "event_type": "income", "account_id": "acc1",
-             "date_iso": "2025-02-15", "lifecycle_state": "open",
-             "outstanding_paise": 0, "liability_change_paise": 0},
-            {"id": 3, "event_type": "emi_payment", "account_id": "acc1",
-             "date_iso": "2025-02-16", "lifecycle_state": "open",
-             "outstanding_paise": 0, "liability_change_paise": -50000},
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "income",
+                "account_id": "acc1",
+                "date_iso": "2025-02-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 0,
+                "liability_change_paise": 0,
+            },
+            {
+                "id": 3,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-02-16",
+                "lifecycle_state": "open",
+                "outstanding_paise": 0,
+                "liability_change_paise": -50000,
+            },
         ]
         proposal = walk_lineage(events)
         # Only event 3 (emi_payment) should match event 1 (cash_advance)
@@ -116,41 +150,92 @@ class TestWalkLineageBooleanFlips:
         settle an earlier repayment (documenting existing behavior).
         """
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-01-15", "lifecycle_state": "open",
-             "outstanding_paise": 100000, "liability_change_paise": 100000},
-            {"id": 2, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-02-15", "lifecycle_state": "open",
-             "outstanding_paise": 80000, "liability_change_paise": 80000},
-            {"id": 3, "event_type": "emi_payment", "account_id": "acc1",
-             "date_iso": "2025-03-15", "lifecycle_state": "open",
-             "outstanding_paise": 0, "liability_change_paise": -50000},
-            {"id": 4, "event_type": "emi_payment", "account_id": "acc1",
-             "date_iso": "2025-04-15", "lifecycle_state": "open",
-             "outstanding_paise": 0, "liability_change_paise": -40000},
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-02-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 80000,
+                "liability_change_paise": 80000,
+            },
+            {
+                "id": 3,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-03-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 0,
+                "liability_change_paise": -50000,
+            },
+            {
+                "id": 4,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-04-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 0,
+                "liability_change_paise": -40000,
+            },
         ]
         proposal = walk_lineage(events)
         assert len(proposal.proposed_links) == 2
         # Repayment 3 matches advance 2; repayment 4 matches advance 3 (also a liability event)
-        link_map = {link["event_id"]: link["linked_event_id"] for link in proposal.proposed_links}
+        link_map = {
+            link["event_id"]: link["linked_event_id"]
+            for link in proposal.proposed_links
+        }
         assert link_map[3] == 2
         assert link_map[4] == 3
 
     def test_multiple_repayments_each_match_different_advances(self):
         """Multiple repayments should each match their respective advances."""
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-01-15", "lifecycle_state": "open",
-             "outstanding_paise": 100000, "liability_change_paise": 100000},
-            {"id": 2, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-02-15", "lifecycle_state": "open",
-             "outstanding_paise": 80000, "liability_change_paise": 80000},
-            {"id": 3, "event_type": "emi_payment", "account_id": "acc1",
-             "date_iso": "2025-03-15", "lifecycle_state": "open",
-             "outstanding_paise": 0, "liability_change_paise": -50000},
-            {"id": 4, "event_type": "emi_payment", "account_id": "acc1",
-             "date_iso": "2025-04-15", "lifecycle_state": "open",
-             "outstanding_paise": 0, "liability_change_paise": -40000},
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-02-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 80000,
+                "liability_change_paise": 80000,
+            },
+            {
+                "id": 3,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-03-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 0,
+                "liability_change_paise": -50000,
+            },
+            {
+                "id": 4,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-04-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 0,
+                "liability_change_paise": -40000,
+            },
         ]
         proposal = walk_lineage(events)
         assert len(proposal.proposed_links) == 2
@@ -162,10 +247,20 @@ class TestDetectRevocationsNumericLiterals:
     def test_revocation_window_exact_boundary(self):
         """Revocation exactly at the lookback boundary is within window."""
         events = [
-            {"id": 1, "event_type": "fund_transfer_out", "transfer_id": "t1",
-             "date_iso": "2026-08-01", "lifecycle_state": "open"},
-            {"id": 2, "event_type": "transfer_revocation", "transfer_id": "t1",
-             "date_iso": "2026-08-08", "lifecycle_state": "open"},
+            {
+                "id": 1,
+                "event_type": "fund_transfer_out",
+                "transfer_id": "t1",
+                "date_iso": "2026-08-01",
+                "lifecycle_state": "open",
+            },
+            {
+                "id": 2,
+                "event_type": "transfer_revocation",
+                "transfer_id": "t1",
+                "date_iso": "2026-08-08",
+                "lifecycle_state": "open",
+            },
         ]
         result = detect_revocations(events, lookback_days=7)
         # Day diff = 7, which equals lookback_days, so it's accepted
@@ -174,10 +269,20 @@ class TestDetectRevocationsNumericLiterals:
     def test_revocation_one_day_past_boundary_rejected(self):
         """Revocation one day past the lookback window is rejected."""
         events = [
-            {"id": 1, "event_type": "fund_transfer_out", "transfer_id": "t1",
-             "date_iso": "2026-08-01", "lifecycle_state": "open"},
-            {"id": 2, "event_type": "transfer_revocation", "transfer_id": "t1",
-             "date_iso": "2026-08-09", "lifecycle_state": "open"},
+            {
+                "id": 1,
+                "event_type": "fund_transfer_out",
+                "transfer_id": "t1",
+                "date_iso": "2026-08-01",
+                "lifecycle_state": "open",
+            },
+            {
+                "id": 2,
+                "event_type": "transfer_revocation",
+                "transfer_id": "t1",
+                "date_iso": "2026-08-09",
+                "lifecycle_state": "open",
+            },
         ]
         result = detect_revocations(events, lookback_days=7)
         # Day diff = 8, exceeds lookback_days=7, rejected
@@ -186,10 +291,20 @@ class TestDetectRevocationsNumericLiterals:
     def test_negative_date_difference_rejected(self):
         """Revocation before the transfer date is rejected (negative days)."""
         events = [
-            {"id": 1, "event_type": "fund_transfer_out", "transfer_id": "t1",
-             "date_iso": "2026-08-05", "lifecycle_state": "open"},
-            {"id": 2, "event_type": "transfer_revocation", "transfer_id": "t1",
-             "date_iso": "2026-08-01", "lifecycle_state": "open"},
+            {
+                "id": 1,
+                "event_type": "fund_transfer_out",
+                "transfer_id": "t1",
+                "date_iso": "2026-08-05",
+                "lifecycle_state": "open",
+            },
+            {
+                "id": 2,
+                "event_type": "transfer_revocation",
+                "transfer_id": "t1",
+                "date_iso": "2026-08-01",
+                "lifecycle_state": "open",
+            },
         ]
         result = detect_revocations(events, lookback_days=7)
         # Revocation before transfer → negative days_diff → rejected
@@ -206,12 +321,24 @@ class TestDetectRolloverBooleanAndNumeric:
         advances cannot be rollovers.
         """
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-01-15", "lifecycle_state": "open",
-             "outstanding_paise": 100000, "liability_change_paise": 100000},
-            {"id": 2, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-01-15", "lifecycle_state": "open",
-             "outstanding_paise": 80000, "liability_change_paise": 80000},
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 80000,
+                "liability_change_paise": 80000,
+            },
         ]
         proposal = detect_rollover_scenarios(events, lookback_days=90)
         assert len(proposal.proposed_links) == 0
@@ -219,12 +346,24 @@ class TestDetectRolloverBooleanAndNumeric:
     def test_rollover_at_lookback_boundary_detected(self):
         """Rollover at exactly lookback_days is detected."""
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-01-01", "lifecycle_state": "open",
-             "outstanding_paise": 100000, "liability_change_paise": 100000},
-            {"id": 2, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-03-31", "lifecycle_state": "open",
-             "outstanding_paise": 80000, "liability_change_paise": 80000},
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-01",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-03-31",
+                "lifecycle_state": "open",
+                "outstanding_paise": 80000,
+                "liability_change_paise": 80000,
+            },
         ]
         proposal = detect_rollover_scenarios(events, lookback_days=90)
         # Jan 1 to Mar 31 = 89 days, within 90-day window
@@ -233,12 +372,24 @@ class TestDetectRolloverBooleanAndNumeric:
     def test_rollover_beyond_lookback_not_detected(self):
         """Rollover beyond lookback window is not detected."""
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-01-01", "lifecycle_state": "open",
-             "outstanding_paise": 100000, "liability_change_paise": 100000},
-            {"id": 2, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-04-02", "lifecycle_state": "open",
-             "outstanding_paise": 80000, "liability_change_paise": 80000},
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-01",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-04-02",
+                "lifecycle_state": "open",
+                "outstanding_paise": 80000,
+                "liability_change_paise": 80000,
+            },
         ]
         proposal = detect_rollover_scenarios(events, lookback_days=90)
         # Jan 1 to Apr 2 = 91 days, exceeds 90-day window
@@ -247,12 +398,24 @@ class TestDetectRolloverBooleanAndNumeric:
     def test_only_open_advances_considered_for_rollover(self):
         """Only open advances are considered for rollover detection."""
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-01-15", "lifecycle_state": "settled",
-             "outstanding_paise": 0, "liability_change_paise": 100000},
-            {"id": 2, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-02-15", "lifecycle_state": "open",
-             "outstanding_paise": 80000, "liability_change_paise": 80000},
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "settled",
+                "outstanding_paise": 0,
+                "liability_change_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-02-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 80000,
+                "liability_change_paise": 80000,
+            },
         ]
         proposal = detect_rollover_scenarios(events, lookback_days=90)
         # Settled advance should not be a rollover source
@@ -264,14 +427,21 @@ class TestPredicateBooleanFlips:
 
     def test_predicate_exhaustive_types(self):
         """Test all known event types against each predicate."""
-        liability_types = {"cash_advance", "credit_card_cash_advance",
-                          "liability_increase", "emi_payment"}
+        liability_types = {
+            "cash_advance",
+            "credit_card_cash_advance",
+            "liability_increase",
+            "emi_payment",
+        }
         repayment_types = {"liability_repayment", "emi_payment"}
         transfer_types = {"fund_transfer_out", "fund_transfer_in", "transfer"}
 
-        all_types = liability_types | repayment_types | transfer_types | {
-            "income", "expense", "fee", "charge", "payment"
-        }
+        all_types = (
+            liability_types
+            | repayment_types
+            | transfer_types
+            | {"income", "expense", "fee", "charge", "payment"}
+        )
 
         for etype in all_types:
             event = {"event_type": etype}

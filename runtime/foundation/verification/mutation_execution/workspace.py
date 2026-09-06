@@ -78,7 +78,9 @@ class MutationWorkspace:
 
     # ── Lifecycle ───────────────────────────────────────────────────────────
 
-    def create(self, copy_source: bool = True, source_scope: list[str] | None = None) -> MutationWorkspace:
+    def create(
+        self, copy_source: bool = True, source_scope: list[str] | None = None
+    ) -> MutationWorkspace:
         """Create workspace directory structure. Optionally copy source."""
         self.root.mkdir(parents=True, exist_ok=True)
         self.source_dir.mkdir(exist_ok=True)
@@ -105,7 +107,12 @@ class MutationWorkspace:
             if src.is_dir():
                 if dst.exists():
                     shutil.rmtree(dst)
-                shutil.copytree(src, dst, symlinks=True, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+                shutil.copytree(
+                    src,
+                    dst,
+                    symlinks=True,
+                    ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+                )
             else:
                 dst.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(src, dst)
@@ -176,6 +183,7 @@ def load_campaign_manifest(path: Path) -> MutationCampaign:
     from runtime.foundation.verification.mutation_execution.domain_model import (
         load_campaign_manifest as _load,
     )
+
     return _load(path)
 
 
@@ -198,6 +206,7 @@ def create_workspace(
 ) -> MutationWorkspace:
     """Factory function to create a new campaign workspace."""
     import uuid as _uuid
+
     cid = campaign_id or f"mut-{_uuid.uuid4().hex[:12]}"
     now = datetime.now(UTC).isoformat()
 
@@ -247,16 +256,22 @@ def list_campaigns() -> list[dict[str, Any]]:
         if d.is_dir() and (d / "manifest.json").exists():
             try:
                 camp = load_campaign_manifest(d / "manifest.json")
-                exec_count = len(list((d / "executions").glob("*.json"))) if (d / "executions").exists() else 0
-                campaigns.append({
-                    "campaign_id": camp.campaign_id,
-                    "status": camp.status,
-                    "scope": camp.scope,
-                    "backend": camp.mutation_backend,
-                    "creation_timestamp": camp.creation_timestamp,
-                    "execution_records": exec_count,
-                    "path": str(d.relative_to(REPO_ROOT)),
-                })
+                exec_count = (
+                    len(list((d / "executions").glob("*.json")))
+                    if (d / "executions").exists()
+                    else 0
+                )
+                campaigns.append(
+                    {
+                        "campaign_id": camp.campaign_id,
+                        "status": camp.status,
+                        "scope": camp.scope,
+                        "backend": camp.mutation_backend,
+                        "creation_timestamp": camp.creation_timestamp,
+                        "execution_records": exec_count,
+                        "path": str(d.relative_to(REPO_ROOT)),
+                    }
+                )
             except Exception:
                 pass
     return campaigns

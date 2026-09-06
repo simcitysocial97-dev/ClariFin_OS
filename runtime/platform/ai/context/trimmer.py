@@ -35,9 +35,7 @@ class TrimmerResult:
             "status": self.status,
             "kept_count": len(self.kept_components),
             "omitted_count": len(self.omitted_components),
-            "omitted_types": [
-                o.component_type for o in self.omitted_components
-            ],
+            "omitted_types": [o.component_type for o in self.omitted_components],
         }
 
 

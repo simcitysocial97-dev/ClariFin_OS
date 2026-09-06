@@ -20,39 +20,22 @@ Test scope:
 
 from __future__ import annotations
 
-import json
 import re
 from typing import Any
 
-import pytest
-
-from runtime.platform.api.contracts.ai import (
-    AIMode,
-    AIStatus,
-    AuthorityLevel,
-    AUTHORITY_LEVELS,
-    AI_RUN_KIND,
-    AI_RUN_LIST_KIND,
-    AI_TOOL_KIND,
-    AI_TOOL_LIST_KIND,
-    AI_MODE_KIND,
-)
-from runtime.platform.api.contracts import ai as ai_contract
-from runtime.platform.api.envelope import API_VERSION
 from runtime.platform.ai import (
-    AI_ORCHESTRATOR_INSTANCE,
     TOOL_REGISTRY_INSTANCE,
-    POLICY_ENGINE_INSTANCE,
-    resolve_intent,
-    infer_mode_from_intent,
     build_plan,
-    register_builtin_tools,
     evaluate_policy,
+    infer_mode_from_intent,
+    resolve_intent,
 )
-from runtime.platform.ai.tools import LEVEL_0_TOOLS, LEVEL_1_TOOLS
 from runtime.platform.ai.orchestrator import AIOrchestrator
-from runtime.platform.ai.policy import PolicyEngine
-
+from runtime.platform.api.contracts import ai as ai_contract
+from runtime.platform.api.contracts.ai import (
+    AUTHORITY_LEVELS,
+)
+from runtime.platform.api.envelope import API_VERSION
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -130,8 +113,8 @@ class TestAIModeAndAuthority:
     """Phase 13: mode endpoint and authority level configuration."""
 
     def test_mode_endpoint_returns_manual_default(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             resp = c.get("/platform/v1/ai/mode")
@@ -241,12 +224,14 @@ class TestToolStepExecution:
     """Phase 13: step execution with policy enforcement."""
 
     def test_step_execution_allowed_in_correct_mode(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             # Start run in ASSISTED mode (allows level 1)
-            run_resp = c.post("/platform/v1/ai/runs", json={"symptom": "test", "mode": "ASSISTED"})
+            run_resp = c.post(
+                "/platform/v1/ai/runs", json={"symptom": "test", "mode": "ASSISTED"}
+            )
             run_id = run_resp.json()["data"]["id"]
 
             # Execute a level 1 tool (should be allowed) — Phase 16 now executes
@@ -263,12 +248,14 @@ class TestToolStepExecution:
             assert data["status"] in ("PENDING", "RUNNING", "COMPLETED")
 
     def test_step_execution_denied_by_policy(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             # Start run in MANUAL mode (only allows level 0)
-            run_resp = c.post("/platform/v1/ai/runs", json={"symptom": "test", "mode": "MANUAL"})
+            run_resp = c.post(
+                "/platform/v1/ai/runs", json={"symptom": "test", "mode": "MANUAL"}
+            )
             run_id = run_resp.json()["data"]["id"]
 
             # Try to execute level 1 tool (should be denied)
@@ -376,8 +363,12 @@ class TestNoModelRequired:
         assert plan1["steps"] == plan2["steps"]
 
         # Policy evaluation
-        dec1 = evaluate_policy(tool_name="inspect_health", run_mode="MANUAL", run_authorization_level=0)
-        dec2 = evaluate_policy(tool_name="inspect_health", run_mode="MANUAL", run_authorization_level=0)
+        dec1 = evaluate_policy(
+            tool_name="inspect_health", run_mode="MANUAL", run_authorization_level=0
+        )
+        dec2 = evaluate_policy(
+            tool_name="inspect_health", run_mode="MANUAL", run_authorization_level=0
+        )
         assert dec1.allowed == dec2.allowed
 
     def test_no_external_dependencies(self) -> None:
@@ -397,11 +388,13 @@ class TestHttpEndpointStructure:
 
     def test_ai_mode_route_registered(self) -> None:
         from backend.src.routers.platform import router
+
         paths = {r.path for r in router.routes}
         assert "/platform/v1/ai/mode" in paths
 
     def test_ai_runs_routes_registered(self) -> None:
         from backend.src.routers.platform import router
+
         paths = {r.path for r in router.routes}
         assert "/platform/v1/ai/runs" in paths
         assert any("/ai/runs/{run_id}" in p for p in paths)
@@ -410,13 +403,14 @@ class TestHttpEndpointStructure:
 
     def test_ai_tools_routes_registered(self) -> None:
         from backend.src.routers.platform import router
+
         paths = {r.path for r in router.routes}
         assert "/platform/v1/ai/tools" in paths
         assert any("/ai/tools/{tool_name}" in p for p in paths)
 
     def test_ai_runs_post_returns_200(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             resp = c.post("/platform/v1/ai/runs", json={"symptom": "test"})
@@ -426,8 +420,8 @@ class TestHttpEndpointStructure:
             assert d["data"]["status"] == "PENDING"
 
     def test_ai_runs_get_returns_list(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             resp = c.get("/platform/v1/ai/runs")
@@ -437,8 +431,8 @@ class TestHttpEndpointStructure:
             assert "count" in d["data"]
 
     def test_ai_mode_returns_correct_kind(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             resp = c.get("/platform/v1/ai/mode")
@@ -447,8 +441,8 @@ class TestHttpEndpointStructure:
             assert d["kind"] == ai_contract.AI_MODE_KIND
 
     def test_ai_tools_returns_correct_kind(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             resp = c.get("/platform/v1/ai/tools")
@@ -466,19 +460,25 @@ class TestGate13Integration:
     """Full integration test for Gate 13."""
 
     def test_full_lifecycle_with_policy_enforcement(self) -> None:
-        from src.api import app
         from fastapi.testclient import TestClient
+        from src.api import app
 
         with TestClient(app, raise_server_exceptions=True) as c:
             # 1. Start AI run
-            run_resp = c.post("/platform/v1/ai/runs", json={"symptom": "test failure", "mode": "ASSISTED"})
+            run_resp = c.post(
+                "/platform/v1/ai/runs",
+                json={"symptom": "test failure", "mode": "ASSISTED"},
+            )
             assert run_resp.status_code == 200
             run_id = run_resp.json()["data"]["id"]
 
             # 2. Execute allowed step (level 1 in ASSISTED)
             step_resp = c.post(
                 f"/platform/v1/ai/runs/{run_id}/steps",
-                json={"tool_name": "run_diagnostic", "arguments": {"symptom": "build failure"}},
+                json={
+                    "tool_name": "run_diagnostic",
+                    "arguments": {"symptom": "build failure"},
+                },
             )
             assert step_resp.status_code == 200
             step = step_resp.json()["data"]["step"]

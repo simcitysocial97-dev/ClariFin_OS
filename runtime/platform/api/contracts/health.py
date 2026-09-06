@@ -7,12 +7,9 @@ the shape. Services that fill this contract live in Phase 2.
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 from runtime.platform.api.contracts._primitives import Identity, Status, Timestamp
-
 
 HEALTH_KIND: str = "platform.health_snapshot"
 
@@ -24,7 +21,7 @@ class DomainHealth(BaseModel):
     status: Status
     last_check: Timestamp
     source: str = Field(min_length=1, max_length=256)
-    detail: Optional[str] = None
+    detail: str | None = None
 
 
 class HealthSnapshotData(BaseModel):

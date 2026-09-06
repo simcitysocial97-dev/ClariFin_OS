@@ -53,7 +53,9 @@ class AIRunsStore:
         path.write_text(json.dumps(run_data, indent=2, default=str))
         logger.debug("Updated AI run: %s", run_id)
 
-    def list(self, *, limit: int = 50, status: str | None = None) -> list[dict[str, Any]]:
+    def list(
+        self, *, limit: int = 50, status: str | None = None
+    ) -> list[dict[str, Any]]:
         """List AI runs, newest first."""
         runs = []
         for path in self._base.glob("*.json"):

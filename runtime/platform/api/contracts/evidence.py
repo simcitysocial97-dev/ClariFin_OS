@@ -7,12 +7,9 @@ Phase 2 services populate these contracts from
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 from runtime.platform.api.contracts._primitives import Identity, Status, Timestamp
-
 
 EVIDENCE_LIST_KIND: str = "platform.evidence_list"
 EVIDENCE_DETAIL_KIND: str = "platform.evidence_detail"
@@ -22,8 +19,8 @@ EVIDENCE_COMPARE_KIND: str = "platform.evidence_compare"
 class EvidenceListItem(BaseModel):
     id: str = Field(min_length=1, max_length=256)
     kind: str = Field(min_length=1, max_length=64)
-    capability_id: Optional[str] = Field(default=None, max_length=256)
-    execution_id: Optional[str] = Field(default=None, max_length=256)
+    capability_id: str | None = Field(default=None, max_length=256)
+    execution_id: str | None = Field(default=None, max_length=256)
     collected_at: Timestamp
     status: Status
     summary: str = Field(min_length=1, max_length=1024)
@@ -45,8 +42,8 @@ class EvidenceListEnvelope(BaseModel):
 class EvidenceDetailData(BaseModel):
     id: str = Field(min_length=1, max_length=256)
     kind: str = Field(min_length=1, max_length=64)
-    capability_id: Optional[str] = Field(default=None, max_length=256)
-    execution_id: Optional[str] = Field(default=None, max_length=256)
+    capability_id: str | None = Field(default=None, max_length=256)
+    execution_id: str | None = Field(default=None, max_length=256)
     collected_at: Timestamp
     status: Status
     summary: str = Field(min_length=1, max_length=1024)

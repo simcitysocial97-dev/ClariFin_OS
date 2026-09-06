@@ -47,45 +47,76 @@ from runtime.foundation.verification.mutation_execution.workspace import (
 # M44.2 — Canonical Mutation Identifier
 # =========================================================================
 
+
 class TestCanonicalMutantId:
     def test_deterministic_for_same_input(self):
         """Same inputs -> same ID."""
         id1 = derive_canonical_mutant_id(
-            repository_revision="abc123", source_file="src/foo.py",
-            source_hash="deadbeef", function="bar", line=10,
-            operator="arithmetic", original_expression="a+b", mutated_expression="a-b",
+            repository_revision="abc123",
+            source_file="src/foo.py",
+            source_hash="deadbeef",
+            function="bar",
+            line=10,
+            operator="arithmetic",
+            original_expression="a+b",
+            mutated_expression="a-b",
         )
         id2 = derive_canonical_mutant_id(
-            repository_revision="abc123", source_file="src/foo.py",
-            source_hash="deadbeef", function="bar", line=10,
-            operator="arithmetic", original_expression="a+b", mutated_expression="a-b",
+            repository_revision="abc123",
+            source_file="src/foo.py",
+            source_hash="deadbeef",
+            function="bar",
+            line=10,
+            operator="arithmetic",
+            original_expression="a+b",
+            mutated_expression="a-b",
         )
         assert id1 == id2
         assert len(id1) == 20
 
     def test_different_source_file_gives_different_id(self):
         id1 = derive_canonical_mutant_id(
-            repository_revision="abc", source_file="src/a.py",
-            source_hash="h1", function="f", line=1,
-            operator="op", original_expression="x", mutated_expression="y",
+            repository_revision="abc",
+            source_file="src/a.py",
+            source_hash="h1",
+            function="f",
+            line=1,
+            operator="op",
+            original_expression="x",
+            mutated_expression="y",
         )
         id2 = derive_canonical_mutant_id(
-            repository_revision="abc", source_file="src/b.py",
-            source_hash="h2", function="f", line=1,
-            operator="op", original_expression="x", mutated_expression="y",
+            repository_revision="abc",
+            source_file="src/b.py",
+            source_hash="h2",
+            function="f",
+            line=1,
+            operator="op",
+            original_expression="x",
+            mutated_expression="y",
         )
         assert id1 != id2
 
     def test_different_operator_gives_different_id(self):
         id1 = derive_canonical_mutant_id(
-            repository_revision="abc", source_file="src/f.py",
-            source_hash="h", function="g", line=1,
-            operator="arithmetic", original_expression="a+b", mutated_expression="a-b",
+            repository_revision="abc",
+            source_file="src/f.py",
+            source_hash="h",
+            function="g",
+            line=1,
+            operator="arithmetic",
+            original_expression="a+b",
+            mutated_expression="a-b",
         )
         id2 = derive_canonical_mutant_id(
-            repository_revision="abc", source_file="src/f.py",
-            source_hash="h", function="g", line=1,
-            operator="comparison", original_expression="a>b", mutated_expression="a<b",
+            repository_revision="abc",
+            source_file="src/f.py",
+            source_hash="h",
+            function="g",
+            line=1,
+            operator="comparison",
+            original_expression="a>b",
+            mutated_expression="a<b",
         )
         assert id1 != id2
 
@@ -93,11 +124,18 @@ class TestCanonicalMutantId:
         """Round-trip through dict preserves ID."""
         c = MutationCandidate(
             canonical_mutant_id=derive_canonical_mutant_id(
-                repository_revision="r", source_file="s.py",
-                source_hash="h", function="f", line=1,
-                operator="op", original_expression="o", mutated_expression="m",
+                repository_revision="r",
+                source_file="s.py",
+                source_hash="h",
+                function="f",
+                line=1,
+                operator="op",
+                original_expression="o",
+                mutated_expression="m",
             ),
-            source_file="s.py", source_hash="h", function="f",
+            source_file="s.py",
+            source_hash="h",
+            function="f",
         )
         d = c.to_dict()
         c2 = MutationCandidate.from_dict(d)
@@ -108,13 +146,19 @@ class TestCanonicalMutantId:
 # M44.1 — Domain Model Round-trip
 # =========================================================================
 
+
 class TestDomainModel:
     def test_campaign_roundtrip(self):
         camp = MutationCampaign(
-            campaign_id="test-camp", repository_revision="abc",
-            environment_fingerprint="fp", mutation_backend="mutmut",
-            backend_version="3.7.0", scope="full", test_selection="tests/",
-            configuration_fingerprint="cfg", execution_policy="serial",
+            campaign_id="test-camp",
+            repository_revision="abc",
+            environment_fingerprint="fp",
+            mutation_backend="mutmut",
+            backend_version="3.7.0",
+            scope="full",
+            test_selection="tests/",
+            configuration_fingerprint="cfg",
+            execution_policy="serial",
             creation_timestamp="2026-01-01T00:00:00Z",
         )
         d = camp.to_dict()
@@ -124,11 +168,17 @@ class TestDomainModel:
 
     def test_candidate_roundtrip(self):
         c = MutationCandidate(
-            canonical_mutant_id="abc123", source_file="src/f.py",
-            source_hash="dead", function="foo", line=42,
-            operator="arithmetic", original_expression="a+b",
-            mutated_expression="a-b", capability="test_cap",
-            component="test_comp", selected_tests=("t1", "t2"),
+            canonical_mutant_id="abc123",
+            source_file="src/f.py",
+            source_hash="dead",
+            function="foo",
+            line=42,
+            operator="arithmetic",
+            original_expression="a+b",
+            mutated_expression="a-b",
+            capability="test_cap",
+            component="test_comp",
+            selected_tests=("t1", "t2"),
         )
         d = c.to_dict()
         c2 = MutationCandidate.from_dict(d)
@@ -137,10 +187,13 @@ class TestDomainModel:
 
     def test_execution_roundtrip(self):
         ex = MutationExecution(
-            execution_id="exec-1", campaign_id="camp-1",
-            mutant_id="mut-1", worker_id="w-1",
+            execution_id="exec-1",
+            campaign_id="camp-1",
+            mutant_id="mut-1",
+            worker_id="w-1",
             mutation_result=MutationResultState.KILLED,
-            exit_status=1, duration_seconds=5.5,
+            exit_status=1,
+            duration_seconds=5.5,
             verification_passed=True,
         )
         d = ex.to_dict()
@@ -150,21 +203,29 @@ class TestDomainModel:
 
     def test_result_reconcile(self):
         r = MutationResult(
-            campaign_id="c", total_candidates=10,
-            killed=5, survived=3, no_tests=1, timeout=1,
+            campaign_id="c",
+            total_candidates=10,
+            killed=5,
+            survived=3,
+            no_tests=1,
+            timeout=1,
         )
         assert r.reconcile() is True
         assert r.score == 55.56
 
     def test_result_not_reconciled(self):
         r = MutationResult(
-            campaign_id="c", total_candidates=10,
-            killed=5, survived=3,  # missing 2
+            campaign_id="c",
+            total_candidates=10,
+            killed=5,
+            survived=3,  # missing 2
         )
         assert r.reconcile() is False
 
     def test_result_classification_summary(self):
-        r = MutationResult(campaign_id="c", total_candidates=10, killed=7, survived=2, timeout=1)
+        r = MutationResult(
+            campaign_id="c", total_candidates=10, killed=7, survived=2, timeout=1
+        )
         s = r.classification_summary()
         assert s["state_counts"]["KILLED"] == 7
         assert s["reconciled"] is True
@@ -175,6 +236,7 @@ class TestDomainModel:
 # M44.8 — Timeout Architecture
 # =========================================================================
 
+
 class TestTimeoutClassification:
     def test_timeout_kind_values(self):
         assert TimeoutKind.TEST_TIMEOUT.value == "test_timeout"
@@ -182,16 +244,22 @@ class TestTimeoutClassification:
 
     def test_execution_with_test_timeout(self):
         ex = MutationExecution(
-            execution_id="e1", campaign_id="c1", mutant_id="m1",
-            worker_id="w1", timeout=TimeoutKind.TEST_TIMEOUT,
+            execution_id="e1",
+            campaign_id="c1",
+            mutant_id="m1",
+            worker_id="w1",
+            timeout=TimeoutKind.TEST_TIMEOUT,
             mutation_result=MutationResultState.TIMEOUT,
         )
         assert ex.timeout == TimeoutKind.TEST_TIMEOUT
 
     def test_execution_without_timeout(self):
         ex = MutationExecution(
-            execution_id="e1", campaign_id="c1", mutant_id="m1",
-            worker_id="w1", mutation_result=MutationResultState.KILLED,
+            execution_id="e1",
+            campaign_id="c1",
+            mutant_id="m1",
+            worker_id="w1",
+            mutation_result=MutationResultState.KILLED,
         )
         assert ex.timeout is None
 
@@ -199,6 +267,7 @@ class TestTimeoutClassification:
 # =========================================================================
 # M44.4 — Mutmut Adapter Status Mapping
 # =========================================================================
+
 
 class TestMutmutAdapterStatusMapping:
     def test_exit_code_to_state_mapping(self):
@@ -218,17 +287,22 @@ class TestMutmutAdapterStatusMapping:
         assert _TEXT_STATUS_TO_STATE["survived"] == MutationResultState.SURVIVED
         assert _TEXT_STATUS_TO_STATE["no tests"] == MutationResultState.NO_TESTS
         assert _TEXT_STATUS_TO_STATE["timeout"] == MutationResultState.TIMEOUT
-        assert _TEXT_STATUS_TO_STATE["suspicious"] == MutationResultState.EXECUTION_ERROR
+        assert (
+            _TEXT_STATUS_TO_STATE["suspicious"] == MutationResultState.EXECUTION_ERROR
+        )
         assert _TEXT_STATUS_TO_STATE["not checked"] == MutationResultState.NOT_EXECUTED
         assert _TEXT_STATUS_TO_STATE["skipped"] == MutationResultState.EXECUTION_ERROR
-        assert _TEXT_STATUS_TO_STATE["interrupted"] == MutationResultState.EXECUTION_ERROR
+        assert (
+            _TEXT_STATUS_TO_STATE["interrupted"] == MutationResultState.EXECUTION_ERROR
+        )
 
     def test_never_maps_crash_to_survived(self):
         """Critical invariant: tool crash must never become SURVIVED."""
         for code, state in _EXIT_CODE_TO_STATE.items():
             if code in (2, 35, None):  # interrupted, suspicious, not-checked
-                assert state != MutationResultState.SURVIVED, \
-                    f"Code {code} must not map to SURVIVED"
+                assert (
+                    state != MutationResultState.SURVIVED
+                ), f"Code {code} must not map to SURVIVED"
 
     def test_never_maps_crash_to_killed(self):
         """Critical invariant: tool crash must never become KILLED."""
@@ -241,13 +315,19 @@ class TestMutmutAdapterStatusMapping:
 # M44.6/7 — Workspace Isolation
 # =========================================================================
 
+
 class TestWorkspaceIsolation:
     def test_create_workspace_structure(self, tmp_path):
         camp = MutationCampaign(
-            campaign_id="ws-test", repository_revision="abc",
-            environment_fingerprint="fp", mutation_backend="mutmut",
-            backend_version="3.7.0", scope="target", test_selection="tests/",
-            configuration_fingerprint="cfg", execution_policy="serial",
+            campaign_id="ws-test",
+            repository_revision="abc",
+            environment_fingerprint="fp",
+            mutation_backend="mutmut",
+            backend_version="3.7.0",
+            scope="target",
+            test_selection="tests/",
+            configuration_fingerprint="cfg",
+            execution_policy="serial",
             creation_timestamp="2026-01-01T00:00:00Z",
         )
         ws = MutationWorkspace(camp, root=tmp_path / "campaigns" / "ws-test")
@@ -264,19 +344,27 @@ class TestWorkspaceIsolation:
 
     def test_workspace_persist_and_load_execution(self, tmp_path):
         camp = MutationCampaign(
-            campaign_id="ws-test2", repository_revision="abc",
-            environment_fingerprint="fp", mutation_backend="mutmut",
-            backend_version="3.7.0", scope="target", test_selection="tests/",
-            configuration_fingerprint="cfg", execution_policy="serial",
+            campaign_id="ws-test2",
+            repository_revision="abc",
+            environment_fingerprint="fp",
+            mutation_backend="mutmut",
+            backend_version="3.7.0",
+            scope="target",
+            test_selection="tests/",
+            configuration_fingerprint="cfg",
+            execution_policy="serial",
             creation_timestamp="2026-01-01T00:00:00Z",
         )
         ws = MutationWorkspace(camp, root=tmp_path / "campaigns" / "ws-test2")
         ws.create(copy_source=False)
 
         ex = MutationExecution(
-            execution_id="exec-1", campaign_id="ws-test2",
-            mutant_id="mut-1", worker_id="w-1",
-            mutation_result=MutationResultState.KILLED, exit_status=1,
+            execution_id="exec-1",
+            campaign_id="ws-test2",
+            mutant_id="mut-1",
+            worker_id="w-1",
+            mutation_result=MutationResultState.KILLED,
+            exit_status=1,
         )
         path = ws.persist_execution(ex.to_dict())
         assert path.exists()
@@ -286,11 +374,17 @@ class TestWorkspaceIsolation:
 
     def test_workspace_mark_complete(self, tmp_path):
         camp = MutationCampaign(
-            campaign_id="ws-test3", repository_revision="abc",
-            environment_fingerprint="fp", mutation_backend="mutmut",
-            backend_version="3.7.0", scope="target", test_selection="tests/",
-            configuration_fingerprint="cfg", execution_policy="serial",
-            creation_timestamp="2026-01-01T00:00:00Z", status="RUNNING",
+            campaign_id="ws-test3",
+            repository_revision="abc",
+            environment_fingerprint="fp",
+            mutation_backend="mutmut",
+            backend_version="3.7.0",
+            scope="target",
+            test_selection="tests/",
+            configuration_fingerprint="cfg",
+            execution_policy="serial",
+            creation_timestamp="2026-01-01T00:00:00Z",
+            status="RUNNING",
         )
         ws = MutationWorkspace(camp, root=tmp_path / "campaigns" / "ws-test3")
         ws.create(copy_source=False)
@@ -301,10 +395,15 @@ class TestWorkspaceIsolation:
 
     def test_workspace_cleanup(self, tmp_path):
         camp = MutationCampaign(
-            campaign_id="ws-test4", repository_revision="abc",
-            environment_fingerprint="fp", mutation_backend="mutmut",
-            backend_version="3.7.0", scope="target", test_selection="tests/",
-            configuration_fingerprint="cfg", execution_policy="serial",
+            campaign_id="ws-test4",
+            repository_revision="abc",
+            environment_fingerprint="fp",
+            mutation_backend="mutmut",
+            backend_version="3.7.0",
+            scope="target",
+            test_selection="tests/",
+            configuration_fingerprint="cfg",
+            execution_policy="serial",
             creation_timestamp="2026-01-01T00:00:00Z",
         )
         ws = MutationWorkspace(camp, root=tmp_path / "campaigns" / "ws-test4")
@@ -313,7 +412,11 @@ class TestWorkspaceIsolation:
         assert not ws.root.exists()
 
     def test_list_campaigns_empty(self, tmp_path):
-        campaigns = list_campaigns.__wrapped__(tmp_path) if hasattr(list_campaigns, '__wrapped__') else []
+        campaigns = (
+            list_campaigns.__wrapped__(tmp_path)
+            if hasattr(list_campaigns, "__wrapped__")
+            else []
+        )
         # With empty dir, should return empty
         assert isinstance(campaigns, list)
 
@@ -322,58 +425,81 @@ class TestWorkspaceIsolation:
 # M44.11 — Configuration Fingerprint
 # =========================================================================
 
+
 class TestConfigFingerprint:
     def test_deterministic(self):
         fp1 = build_full_fingerprint(
-            backend="mutmut", backend_version="3.7.0",
+            backend="mutmut",
+            backend_version="3.7.0",
             source_paths=["src/engines/foo.py"],
             test_selection=["tests/test_foo.py"],
-            timeout_seconds=300, worker_count=1,
+            timeout_seconds=300,
+            worker_count=1,
         )
         fp2 = build_full_fingerprint(
-            backend="mutmut", backend_version="3.7.0",
+            backend="mutmut",
+            backend_version="3.7.0",
             source_paths=["src/engines/foo.py"],
             test_selection=["tests/test_foo.py"],
-            timeout_seconds=300, worker_count=1,
+            timeout_seconds=300,
+            worker_count=1,
         )
         assert fp1["configuration"] == fp2["configuration"]
 
     def test_different_backend_gives_different_fp(self):
         fp1 = build_full_fingerprint(
-            backend="mutmut", backend_version="3.7.0",
-            source_paths=["src/f.py"], test_selection=["tests/t.py"],
-            timeout_seconds=300, worker_count=1,
+            backend="mutmut",
+            backend_version="3.7.0",
+            source_paths=["src/f.py"],
+            test_selection=["tests/t.py"],
+            timeout_seconds=300,
+            worker_count=1,
         )
         fp2 = build_full_fingerprint(
-            backend="cosmic_ray", backend_version="1.0.0",
-            source_paths=["src/f.py"], test_selection=["tests/t.py"],
-            timeout_seconds=300, worker_count=1,
+            backend="cosmic_ray",
+            backend_version="1.0.0",
+            source_paths=["src/f.py"],
+            test_selection=["tests/t.py"],
+            timeout_seconds=300,
+            worker_count=1,
         )
         assert fp1["configuration"] != fp2["configuration"]
 
     def test_fingerprints_compatible_strict(self):
         fp1 = build_full_fingerprint(
-            backend="mutmut", backend_version="3.7.0",
-            source_paths=["src/f.py"], test_selection=["tests/t.py"],
-            timeout_seconds=300, worker_count=1,
+            backend="mutmut",
+            backend_version="3.7.0",
+            source_paths=["src/f.py"],
+            test_selection=["tests/t.py"],
+            timeout_seconds=300,
+            worker_count=1,
         )
         fp2 = build_full_fingerprint(
-            backend="mutmut", backend_version="3.7.0",
-            source_paths=["src/f.py"], test_selection=["tests/t.py"],
-            timeout_seconds=300, worker_count=1,
+            backend="mutmut",
+            backend_version="3.7.0",
+            source_paths=["src/f.py"],
+            test_selection=["tests/t.py"],
+            timeout_seconds=300,
+            worker_count=1,
         )
         assert fingerprints_compatible(fp1, fp2, loose=False) is True
 
     def test_fingerprints_incompatible_on_backend_change(self):
         fp1 = build_full_fingerprint(
-            backend="mutmut", backend_version="3.7.0",
-            source_paths=["src/f.py"], test_selection=["tests/t.py"],
-            timeout_seconds=300, worker_count=1,
+            backend="mutmut",
+            backend_version="3.7.0",
+            source_paths=["src/f.py"],
+            test_selection=["tests/t.py"],
+            timeout_seconds=300,
+            worker_count=1,
         )
         fp2 = build_full_fingerprint(
-            backend="mutmut", backend_version="3.8.0",
-            source_paths=["src/f.py"], test_selection=["tests/t.py"],
-            timeout_seconds=300, worker_count=1,
+            backend="mutmut",
+            backend_version="3.8.0",
+            source_paths=["src/f.py"],
+            test_selection=["tests/t.py"],
+            timeout_seconds=300,
+            worker_count=1,
         )
         assert fingerprints_compatible(fp1, fp2, loose=False) is False
 
@@ -381,6 +507,7 @@ class TestConfigFingerprint:
 # =========================================================================
 # M44.12 — Cache Architecture
 # =========================================================================
+
 
 class TestMutationCache:
     def test_cache_miss(self):
@@ -391,8 +518,10 @@ class TestMutationCache:
     def test_cache_put_and_get(self):
         cache = MutationCache()
         c = MutationCandidate(
-            canonical_mutant_id="mut-1", source_file="src/f.py",
-            source_hash="deadbeef", function="foo",
+            canonical_mutant_id="mut-1",
+            source_file="src/f.py",
+            source_hash="deadbeef",
+            function="foo",
         )
         cache.put(c, "config-fp", MutationResultState.KILLED)
         entry = cache.get("mut-1", "config-fp", "deadbeef")
@@ -402,8 +531,10 @@ class TestMutationCache:
     def test_cache_invalidation(self):
         cache = MutationCache()
         c = MutationCandidate(
-            canonical_mutant_id="mut-1", source_file="src/f.py",
-            source_hash="deadbeef", function="foo",
+            canonical_mutant_id="mut-1",
+            source_file="src/f.py",
+            source_hash="deadbeef",
+            function="foo",
         )
         cache.put(c, "config-fp", MutationResultState.KILLED)
         cache.invalidate("mut-1", "source_changed")
@@ -414,14 +545,18 @@ class TestMutationCache:
         cache = MutationCache()
         for i in range(5):
             c = MutationCandidate(
-                canonical_mutant_id=f"srcinv-f-{i}", source_file="srcinv_f.py",
-                source_hash="hash_srcinv_f", function="foo",
+                canonical_mutant_id=f"srcinv-f-{i}",
+                source_file="srcinv_f.py",
+                source_hash="hash_srcinv_f",
+                function="foo",
             )
             cache.put(c, "fp_srcinv", MutationResultState.SURVIVED)
         for i in range(5):
             c = MutationCandidate(
-                canonical_mutant_id=f"srcinv-g-{i}", source_file="srcinv_g.py",
-                source_hash="hash_srcinv_g", function="bar",
+                canonical_mutant_id=f"srcinv-g-{i}",
+                source_file="srcinv_g.py",
+                source_hash="hash_srcinv_g",
+                function="bar",
             )
             cache.put(c, "fp_srcinv", MutationResultState.SURVIVED)
 
@@ -436,8 +571,10 @@ class TestMutationCache:
         cache = MutationCache()
         for i in range(3):
             c = MutationCandidate(
-                canonical_mutant_id=f"stats-mut-{i}", source_file="src/f.py",
-                source_hash="h_stats", function="foo",
+                canonical_mutant_id=f"stats-mut-{i}",
+                source_file="src/f.py",
+                source_hash="h_stats",
+                function="foo",
             )
             cache.put(c, "fp_stats", MutationResultState.KILLED)
         stats = cache.stats()
@@ -449,11 +586,17 @@ class TestMutationCache:
 # M44.24/25 — Health Metrics + Failure Budget
 # =========================================================================
 
+
 class TestHealthMetrics:
     def test_high_reliability(self):
         r = MutationResult(
-            campaign_id="c1", total_candidates=100, total_executions=100,
-            successful_executions=98, killed=70, survived=20, timeout=8,
+            campaign_id="c1",
+            total_candidates=100,
+            total_executions=100,
+            successful_executions=98,
+            killed=70,
+            survived=20,
+            timeout=8,
             infrastructure_failures=2,
         )
         metrics = compute_health_metrics(r)
@@ -462,9 +605,15 @@ class TestHealthMetrics:
 
     def test_failure_budget_pass(self):
         r = MutationResult(
-            campaign_id="c1", total_candidates=100, total_executions=100,
-            killed=80, survived=15, timeout=3,
-            infrastructure_failures=2, execution_error=0, unknown=0,
+            campaign_id="c1",
+            total_candidates=100,
+            total_executions=100,
+            killed=80,
+            survived=15,
+            timeout=3,
+            infrastructure_failures=2,
+            execution_error=0,
+            unknown=0,
         )
         budget = FailureBudget()
         ok, violations = budget.check(r)
@@ -473,9 +622,15 @@ class TestHealthMetrics:
 
     def test_failure_budget_violation(self):
         r = MutationResult(
-            campaign_id="c1", total_candidates=100, total_executions=100,
-            killed=50, survived=30, timeout=5,
-            infrastructure_failures=10, execution_error=5, unknown=0,
+            campaign_id="c1",
+            total_candidates=100,
+            total_executions=100,
+            killed=50,
+            survived=30,
+            timeout=5,
+            infrastructure_failures=10,
+            execution_error=5,
+            unknown=0,
         )
         budget = FailureBudget()
         ok, violations = budget.check(r)
@@ -484,9 +639,15 @@ class TestHealthMetrics:
 
     def test_certification_check_pass(self):
         r = MutationResult(
-            campaign_id="c1", total_candidates=100, total_executions=100,
-            successful_executions=99, killed=85, survived=10, timeout=2,
-            execution_error=1, no_tests=2,  # 85+10+2+1+2 = 100 -> reconciled; timeout=2% < 3% budget
+            campaign_id="c1",
+            total_candidates=100,
+            total_executions=100,
+            successful_executions=99,
+            killed=85,
+            survived=10,
+            timeout=2,
+            execution_error=1,
+            no_tests=2,  # 85+10+2+1+2 = 100 -> reconciled; timeout=2% < 3% budget
         )
         check = certification_check(r)
         # Score = 85/(85+10+2) = 87.63%, reconciled, budget pass, reliability 99% >= 95%
@@ -499,8 +660,13 @@ class TestHealthMetrics:
 
     def test_certification_check_fail_low_score(self):
         r = MutationResult(
-            campaign_id="c1", total_candidates=100, total_executions=100,
-            successful_executions=100, killed=50, survived=45, timeout=5,
+            campaign_id="c1",
+            total_candidates=100,
+            total_executions=100,
+            successful_executions=100,
+            killed=50,
+            survived=45,
+            timeout=5,
         )
         check = certification_check(r)
         assert check["certifiable"] is False
@@ -511,20 +677,28 @@ class TestHealthMetrics:
 # M44.14 — Correctness Gate
 # =========================================================================
 
+
 class TestCorrectnessGate:
     def test_verify_killed_requires_source_diff(self, tmp_path):
         from runtime.foundation.verification.mutation_execution.verify_result import (
             MutationCorrectnessGate,
         )
+
         gate = MutationCorrectnessGate()
         c = MutationCandidate(
-            canonical_mutant_id="m1", source_file="src/f.py",
-            source_hash="original_hash", function="foo",
-            original_expression="a+b", mutated_expression="a-b",
+            canonical_mutant_id="m1",
+            source_file="src/f.py",
+            source_hash="original_hash",
+            function="foo",
+            original_expression="a+b",
+            mutated_expression="a-b",
         )
         ex = MutationExecution(
-            execution_id="e1", campaign_id="c1", mutant_id="m1",
-            worker_id="w1", mutation_result=MutationResultState.KILLED,
+            execution_id="e1",
+            campaign_id="c1",
+            mutant_id="m1",
+            worker_id="w1",
+            mutation_result=MutationResultState.KILLED,
             exit_status=1,
         )
         # workspace has no mutant file -> verification fails
@@ -535,15 +709,22 @@ class TestCorrectnessGate:
         from runtime.foundation.verification.mutation_execution.verify_result import (
             MutationCorrectnessGate,
         )
+
         gate = MutationCorrectnessGate()
         c = MutationCandidate(
-            canonical_mutant_id="m1", source_file="src/f.py",
-            source_hash="original_hash", function="foo",
-            original_expression="a+b", mutated_expression="a-b",
+            canonical_mutant_id="m1",
+            source_file="src/f.py",
+            source_hash="original_hash",
+            function="foo",
+            original_expression="a+b",
+            mutated_expression="a-b",
         )
         ex = MutationExecution(
-            execution_id="e1", campaign_id="c1", mutant_id="m1",
-            worker_id="w1", mutation_result=MutationResultState.SURVIVED,
+            execution_id="e1",
+            campaign_id="c1",
+            mutant_id="m1",
+            worker_id="w1",
+            mutation_result=MutationResultState.SURVIVED,
             exit_status=0,
         )
         # No mutant file means tests ran against original = INVALID_EXECUTION
@@ -555,12 +736,15 @@ class TestCorrectnessGate:
 # M44.20 — Sharding
 # =========================================================================
 
+
 class TestSharding:
     def test_deterministic_shard_assignment(self):
         candidates = [
             MutationCandidate(
                 canonical_mutant_id=f"mut-{i:04d}",
-                source_file="src/f.py", source_hash="h", function="foo",
+                source_file="src/f.py",
+                source_hash="h",
+                function="foo",
             )
             for i in range(100)
         ]
@@ -585,8 +769,10 @@ class TestSharding:
     def test_single_shard_returns_all(self):
         candidates = [
             MutationCandidate(
-                canonical_mutant_id=f"mut-{i}", source_file="s.py",
-                source_hash="h", function="f",
+                canonical_mutant_id=f"mut-{i}",
+                source_file="s.py",
+                source_hash="h",
+                function="f",
             )
             for i in range(10)
         ]
@@ -600,12 +786,21 @@ class TestSharding:
 # M44.17 — Backend-Agnostic Evidence
 # =========================================================================
 
+
 class TestEvidenceLayer:
     def test_normalize_mutmut_format(self):
         from runtime.foundation.verification.mutation_execution.evidence import (
             normalize_backend_results,
         )
-        raw = {"killed": 80, "survived": 15, "no_tests": 3, "timeout": 2, "suspicious": 0, "not_checked": 0}
+
+        raw = {
+            "killed": 80,
+            "survived": 15,
+            "no_tests": 3,
+            "timeout": 2,
+            "suspicious": 0,
+            "not_checked": 0,
+        }
         result = normalize_backend_results(raw, "mutmut")
         assert result.killed == 80
         assert result.survived == 15
@@ -615,16 +810,43 @@ class TestEvidenceLayer:
         from runtime.foundation.verification.mutation_execution.evidence import (
             merge_shard_results,
         )
-        r1 = MutationResult(campaign_id="s1", total_candidates=50, killed=40, survived=10)
-        r2 = MutationResult(campaign_id="s2", total_candidates=50, killed=35, survived=15)
-        merged = merge_shard_results([
-            (MagicMock(campaign_id="merged", scope="full (all engines)", backend_version="3.7.0",
-                        mutation_backend="mutmut", environment_fingerprint="", configuration_fingerprint="",
-                        creation_timestamp="", execution_policy="shard:2"), r1),
-            (MagicMock(campaign_id="merged", scope="full (all engines)", backend_version="3.7.0",
-                        mutation_backend="mutmut", environment_fingerprint="", configuration_fingerprint="",
-                        creation_timestamp="", execution_policy="shard:2"), r2),
-        ])
+
+        r1 = MutationResult(
+            campaign_id="s1", total_candidates=50, killed=40, survived=10
+        )
+        r2 = MutationResult(
+            campaign_id="s2", total_candidates=50, killed=35, survived=15
+        )
+        merged = merge_shard_results(
+            [
+                (
+                    MagicMock(
+                        campaign_id="merged",
+                        scope="full (all engines)",
+                        backend_version="3.7.0",
+                        mutation_backend="mutmut",
+                        environment_fingerprint="",
+                        configuration_fingerprint="",
+                        creation_timestamp="",
+                        execution_policy="shard:2",
+                    ),
+                    r1,
+                ),
+                (
+                    MagicMock(
+                        campaign_id="merged",
+                        scope="full (all engines)",
+                        backend_version="3.7.0",
+                        mutation_backend="mutmut",
+                        environment_fingerprint="",
+                        configuration_fingerprint="",
+                        creation_timestamp="",
+                        execution_policy="shard:2",
+                    ),
+                    r2,
+                ),
+            ]
+        )
         assert merged.killed == 75
         assert merged.survived == 25
         assert merged.total_candidates == 100

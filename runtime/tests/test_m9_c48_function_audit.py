@@ -6,7 +6,6 @@ import json
 
 from runtime.foundation.verification.function_audit import (
     DISPOSITIONS,
-    FunctionAuditReport,
     audit_functions,
 )
 
@@ -52,7 +51,7 @@ def test_canonical_authorities_recorded():
     canonicals = [d for d in rep.dispositions if d.disposition == "CANONICAL"]
     # The function_audit module itself must contain canonical entries
     # (audit_functions, build_disposition, classify_commands, …).
-    names = {(d.file.split("/")[-1], d.name) for d in canonicals}
+    {(d.file.split("/")[-1], d.name) for d in canonicals}
     assert any(d.file.endswith("function_audit.py") for d in canonicals)
     assert any(d.file.endswith("cli_governance.py") for d in canonicals)
 
@@ -61,7 +60,7 @@ def test_duplicate_authorities_recorded():
     rep = audit_functions()
     duplicates = [d for d in rep.dispositions if d.disposition == "DUPLICATE-AUTHORITY"]
     # orchestrator.py run/shard/create_orchestrator are flagged.
-    dups_names = {(d.file.split("/")[-1], d.name) for d in duplicates}
+    {(d.file.split("/")[-1], d.name) for d in duplicates}
     assert any("orchestrator" in d.file and d.name == "run" for d in duplicates)
 
 
@@ -69,6 +68,7 @@ def test_persisted_to_real_repo():
     rep = audit_functions()
     d = rep.to_dict()
     import os
+
     os.makedirs("runtime/generated/m9-c48", exist_ok=True)
     with open("runtime/generated/m9-c48/function-audit.json", "w") as f:
         json.dump(d, f, indent=2)

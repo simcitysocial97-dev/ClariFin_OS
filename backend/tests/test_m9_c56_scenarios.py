@@ -48,12 +48,24 @@ class TestScenarioA_GenuineSurvivorKilled:
         from src.engines.financial_events.lineage_walker import walk_lineage
 
         events = [
-            {"id": 1, "event_type": "cash_advance", "account_id": "acc1",
-             "date_iso": "2025-01-15", "lifecycle_state": "open",
-             "outstanding_paise": 100000, "liability_change_paise": 100000},
-            {"id": 2, "event_type": "emi_payment", "account_id": "acc1",
-             "date_iso": "2025-02-15", "lifecycle_state": "open",
-             "outstanding_paise": 0, "liability_change_paise": -50000},
+            {
+                "id": 1,
+                "event_type": "cash_advance",
+                "account_id": "acc1",
+                "date_iso": "2025-01-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000,
+                "liability_change_paise": 100000,
+            },
+            {
+                "id": 2,
+                "event_type": "emi_payment",
+                "account_id": "acc1",
+                "date_iso": "2025-02-15",
+                "lifecycle_state": "open",
+                "outstanding_paise": 0,
+                "liability_change_paise": -50000,
+            },
         ]
         proposal = walk_lineage(events)
         assert len(proposal.proposed_links) == 1
@@ -177,8 +189,12 @@ class TestScenarioF_NoTestPopulation:
         if recon_path.exists():
             with open(recon_path) as f:
                 recon = json.load(f)
-            no_mut = [c for c in recon["components"] if not c["mutation"]["mutants_generated"]]
-            assert len(no_mut) > 0, "Components without mutation data should be identified"
+            no_mut = [
+                c for c in recon["components"] if not c["mutation"]["mutants_generated"]
+            ]
+            assert (
+                len(no_mut) > 0
+            ), "Components without mutation data should be identified"
 
 
 # ============================================================================
@@ -238,12 +254,21 @@ class TestScenarioJ_StaleEvidenceInvalidated:
 
     def test_mutation_summary_has_fingerprint(self):
         """Mutation summaries carry fingerprints for staleness detection."""
-        summary_path = REPO_ROOT / "backend" / "tests" / "generated" / "mutation" / "mutation-summary.json"
+        summary_path = (
+            REPO_ROOT
+            / "backend"
+            / "tests"
+            / "generated"
+            / "mutation"
+            / "mutation-summary.json"
+        )
         if summary_path.exists():
             with open(summary_path) as f:
                 summary = json.load(f)
             assert "config_hash" in summary, "Config hash enables staleness detection"
-            assert "repository_sha" in summary, "Repository SHA enables staleness detection"
+            assert (
+                "repository_sha" in summary
+            ), "Repository SHA enables staleness detection"
 
 
 # ============================================================================
@@ -256,8 +281,12 @@ class TestScenarioK_ConfigDrift:
 
     def test_c55_environment_contract_exists(self):
         """The C55 environment contract provides drift detection."""
-        contract_path = REPO_ROOT / "runtime" / "generated" / "m9-c55" / "environment-contract.json"
-        assert contract_path.exists(), "Environment contract should exist for drift detection"
+        contract_path = (
+            REPO_ROOT / "runtime" / "generated" / "m9-c55" / "environment-contract.json"
+        )
+        assert (
+            contract_path.exists()
+        ), "Environment contract should exist for drift detection"
 
 
 # ============================================================================
@@ -330,12 +359,10 @@ class TestScenarioO_DimensionsSeparate:
         if recon_path.exists():
             with open(recon_path) as f:
                 recon = json.load(f)
-            found_divergence = False
             for c in recon["components"]:
                 cov = c["coverage"].get("line_pct") or 0
                 mut = c["mutation"].get("score") or 0
                 if abs(cov - mut) > 20:
-                    found_divergence = True
                     break
             # Not all repos have strong divergence; this is informational
             assert True
@@ -351,8 +378,8 @@ class TestScenarioP_RegressionRejected:
 
     def test_all_existing_tests_still_pass(self):
         """All existing tests pass (no regression introduced)."""
-        from src.engines.financial_events.lineage_walker import walk_lineage
         from src.engines.credit_card_engine.interest import compute_daily_interest
+        from src.engines.financial_events.lineage_walker import walk_lineage
 
         assert walk_lineage([]).proposed_links == []
         assert compute_daily_interest(100000, 2400) > 0
@@ -375,7 +402,9 @@ class TestScenarioQ_DiminishingReturns:
             items = queue.get("queue", [])
             scores = [q["priority_score"] for q in items if q["priority"] != "PRESERVE"]
             if scores:
-                assert scores == sorted(scores, reverse=True), "Queue should be sorted by priority score"
+                assert scores == sorted(
+                    scores, reverse=True
+                ), "Queue should be sorted by priority score"
 
 
 # ============================================================================
@@ -414,7 +443,9 @@ class TestScenarioS_BoundedResidual:
             with open(reg_path) as f:
                 reg = json.load(f)
             for gap in reg.get("gaps", []):
-                assert "gap_type" in gap, f"Gap {gap.get('gap_id')} missing classification"
+                assert (
+                    "gap_type" in gap
+                ), f"Gap {gap.get('gap_id')} missing classification"
                 assert gap["gap_type"] in (
                     "GENUINE_BEHAVIORAL_GAP",
                     "UNCOVERED_REACHABLE_BEHAVIOR",

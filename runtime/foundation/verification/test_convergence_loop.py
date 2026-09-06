@@ -6,7 +6,7 @@ infrastructure work together in a continuous loop.
 
 from __future__ import annotations
 
-import pytest
+from datetime import UTC
 
 
 class TestConvergencePipelineImports:
@@ -20,7 +20,9 @@ class TestConvergencePipelineImports:
 
     def test_convergence_result_imports(self) -> None:
         """ConvergenceResult can be imported."""
-        from runtime.foundation.verification.convergence_pipeline import ConvergenceResult
+        from runtime.foundation.verification.convergence_pipeline import (
+            ConvergenceResult,
+        )
 
         assert ConvergenceResult is not None
 
@@ -36,13 +38,16 @@ class TestConvergenceDataClasses:
 
     def test_convergence_result_creates(self) -> None:
         """ConvergenceResult can be instantiated."""
-        from runtime.foundation.verification.convergence_pipeline import ConvergenceResult
-        from datetime import datetime, timezone
+        from datetime import datetime
+
+        from runtime.foundation.verification.convergence_pipeline import (
+            ConvergenceResult,
+        )
 
         result = ConvergenceResult(
             run_id="test-run-1",
-            started_at=datetime.now(timezone.utc).isoformat(),
-            completed_at=datetime.now(timezone.utc).isoformat(),
+            started_at=datetime.now(UTC).isoformat(),
+            completed_at=datetime.now(UTC).isoformat(),
             initial_score=80.0,
             final_score=85.0,
             targets_loaded=10,
@@ -84,7 +89,9 @@ class TestVerificationOrchestrator:
 
     def test_orchestrator_imports(self) -> None:
         """Verification orchestrator can be imported."""
-        from runtime.foundation.verification.orchestrator import VerificationOrchestrator
+        from runtime.foundation.verification.orchestrator import (
+            VerificationOrchestrator,
+        )
 
         assert VerificationOrchestrator is not None
 
@@ -94,8 +101,8 @@ class TestVerificationIntegration:
 
     def test_profiles_work_with_cache(self, tmp_path) -> None:
         """Verification profiles work with cache system."""
-        from runtime.foundation.verification.profiles import get_profile
         from runtime.foundation.verification.cache import VerificationCache
+        from runtime.foundation.verification.profiles import get_profile
 
         profile = get_profile("quick")
         assert profile.name == "quick"
@@ -126,13 +133,16 @@ class TestVerificationLoop:
 
     def test_convergence_result_to_dict(self) -> None:
         """ConvergenceResult can be serialized to dict."""
-        from runtime.foundation.verification.convergence_pipeline import ConvergenceResult
-        from datetime import datetime, timezone
+        from datetime import datetime
+
+        from runtime.foundation.verification.convergence_pipeline import (
+            ConvergenceResult,
+        )
 
         result = ConvergenceResult(
             run_id="test-1",
-            started_at=datetime.now(timezone.utc).isoformat(),
-            completed_at=datetime.now(timezone.utc).isoformat(),
+            started_at=datetime.now(UTC).isoformat(),
+            completed_at=datetime.now(UTC).isoformat(),
             initial_score=75.0,
             final_score=80.0,
             targets_loaded=5,
@@ -152,7 +162,6 @@ class TestVerificationLoop:
     def test_cache_integrates_with_profiles(self, tmp_path) -> None:
         """Cache correctly handles profile results."""
         from runtime.foundation.verification.cache import (
-            CachedVerdict,
             VerificationCache,
         )
 
@@ -169,7 +178,9 @@ class TestVerificationLoop:
             VerificationEvidence,
         )
 
-        coverage = CoverageEvidence(percentage=90.0, covered_lines=900, total_lines=1000)
+        coverage = CoverageEvidence(
+            percentage=90.0, covered_lines=900, total_lines=1000
+        )
         mutation = MutationEvidence(score=85.0, killed=85, survived=15)
 
         evidence = VerificationEvidence(

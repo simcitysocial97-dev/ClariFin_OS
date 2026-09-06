@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import datetime
 from typing import Any
 
 
@@ -43,7 +42,11 @@ def compute_pack_id(pack: dict[str, Any]) -> str:
     always produce the same pack_id regardless of when it was built.
     """
     # Create a copy without temporal fields for hashing
-    compact = {k: v for k, v in pack.items() if k not in ("generated_at", "checksum", "pack_id")}
+    compact = {
+        k: v
+        for k, v in pack.items()
+        if k not in ("generated_at", "checksum", "pack_id")
+    }
     serialized = serialize_context_pack(compact)
     digest = hashlib.sha256(serialized.encode()).hexdigest()
     return f"ctx-{digest[:16]}"

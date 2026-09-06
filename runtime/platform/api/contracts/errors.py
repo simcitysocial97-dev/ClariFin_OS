@@ -13,7 +13,6 @@ from pydantic import BaseModel, Field
 
 from runtime.platform.api.contracts._primitives import Identity, Timestamp
 
-
 ERRORS_CURRENT_KIND: str = "platform.errors_current"
 ERRORS_RECENT_KIND: str = "platform.errors_recent"
 ERRORS_RECURRING_KIND: str = "platform.errors_recurring"

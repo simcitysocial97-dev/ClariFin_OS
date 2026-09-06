@@ -84,20 +84,20 @@ class MutationCache:
         if self._index_path.exists():
             try:
                 data = json.loads(self._index_path.read_text())
-                self._entries = {
-                    k: CacheEntry.from_dict(v)
-                    for k, v in data.items()
-                }
+                self._entries = {k: CacheEntry.from_dict(v) for k, v in data.items()}
             except Exception:
                 self._entries = {}
         self._loaded = True
 
     def _persist(self) -> None:
         self._index_path.write_text(
-            json.dumps({k: v.to_dict() for k, v in self._entries.items()}, indent=2) + "\n"
+            json.dumps({k: v.to_dict() for k, v in self._entries.items()}, indent=2)
+            + "\n"
         )
 
-    def get(self, mutant_id: str, config_fp: str, source_hash: str) -> CacheEntry | None:
+    def get(
+        self, mutant_id: str, config_fp: str, source_hash: str
+    ) -> CacheEntry | None:
         """Lookup a cached result. Returns None if miss or invalidated."""
         self._ensure_loaded()
         entry = self._entries.get(mutant_id)
@@ -204,7 +204,9 @@ class MutationCache:
     ) -> tuple[bool, CacheEntry | None]:
         """Get from cache, or store and return (was_cached, entry)."""
         self._ensure_loaded()
-        existing = self.get(candidate.canonical_mutant_id, config_fp, candidate.source_hash)
+        existing = self.get(
+            candidate.canonical_mutant_id, config_fp, candidate.source_hash
+        )
         if existing is not None:
             return True, existing
         self.put(candidate, config_fp, result_state, execution, verified)

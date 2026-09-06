@@ -10,10 +10,7 @@ from __future__ import annotations
 from decimal import Decimal
 from unittest.mock import patch
 
-import pytest
-
 from src.services.recommendation_service import RecommendationService
-
 
 # ============================================================
 # RecommendationService tests
@@ -58,12 +55,15 @@ class TestRecommendationService:
         actually inspect the profile values.
         """
         with patch.object(
-            RecommendationService, "_demo_profile", create=True, return_value={
+            RecommendationService,
+            "_demo_profile",
+            create=True,
+            return_value={
                 "borrowed_lifestyle_ratio": Decimal("0.50"),
                 "foir": Decimal("0.65"),
                 "liquidity_months": 1,
                 "current_subscriptions": [],
-            }
+            },
         ):
             result = RecommendationService().get_recommendations()
             severities = {r.severity for r in result["recommendations"]}
@@ -82,6 +82,7 @@ class TestNetWorthWorkspaceService:
         from src.services.networth_workspace_service import (
             NetWorthWorkspaceService,
         )
+
         return NetWorthWorkspaceService(db_path=temp_db)
 
     def test_init_assigns_repos(self, temp_db) -> None:

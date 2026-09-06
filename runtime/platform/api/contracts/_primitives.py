@@ -71,7 +71,7 @@ class Timestamp(str):
         }
 
     @staticmethod
-    def _validate(value: Any) -> "Timestamp":
+    def _validate(value: Any) -> Timestamp:
         if isinstance(value, Timestamp):
             return value
         if not isinstance(value, str):
@@ -114,7 +114,7 @@ class Identity(str):
         }
 
     @staticmethod
-    def _validate(value: Any) -> "Identity":
+    def _validate(value: Any) -> Identity:
         if isinstance(value, Identity):
             return value
         if not isinstance(value, str):

@@ -19,11 +19,12 @@ from runtime.foundation.verification.control_plane_facade import (
     ControlPlane,
     _collect_changed_files,
 )
-from runtime.foundation.verification.obligation import Disposition
 from runtime.platform.api.contracts import tasks as tasks_contract
-from runtime.platform.api.contracts._primitives import Status
 from runtime.platform.api.services._helpers import envelope, now_iso
-from runtime.system.observability.event_store import EngineeringEvent, EngineeringEventStore
+from runtime.system.observability.event_store import (
+    EngineeringEvent,
+    EngineeringEventStore,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +64,12 @@ def build_cancel_result(*, task_id: str) -> dict[str, Any] | None:
             timestamp=datetime.now(UTC),
             payload={"task_id": task_id, "reason": reason},
             execution_context={"source": "platform.tasks.cancel"},
-            metadata={"task_id": task_id, "capability_id": target.capability.capability_id if target.capability else "unknown"},
+            metadata={
+                "task_id": task_id,
+                "capability_id": (
+                    target.capability.capability_id if target.capability else "unknown"
+                ),
+            },
         )
     )
 
@@ -76,4 +82,3 @@ def build_cancel_result(*, task_id: str) -> dict[str, Any] | None:
         kind=tasks_contract.TASK_CANCEL_KIND,
         data=data,
     )
-

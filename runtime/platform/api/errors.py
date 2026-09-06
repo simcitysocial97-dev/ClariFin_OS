@@ -36,7 +36,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
 
 
 class PlatformErrorCode(str, Enum):
@@ -69,8 +68,8 @@ class PlatformError:
     code: PlatformErrorCode
     layer: str
     message: str
-    capability_id: Optional[str] = None
-    evidence_id: Optional[str] = None
+    capability_id: str | None = None
+    evidence_id: str | None = None
 
     def __post_init__(self) -> None:
         if not self.layer or not isinstance(self.layer, str):
