@@ -61,6 +61,7 @@ from runtime.platform.ai import (
     TOOL_REGISTRY_INSTANCE,
     register_builtin_tools,
     evaluate_policy,
+    MODEL_ROUTER_INSTANCE,
 )
 from runtime.platform.ai.context import build_context_pack
 from runtime.platform.cache import snapshot
@@ -1107,6 +1108,18 @@ async def post_ai_step(run_id: str, request: Request) -> JSONResponse:
         "status": "PENDING",
     }
     return envelope(kind=ai_contract.AI_RUN_KIND, data=data)
+
+
+# ---------------------------------------------------------------------------
+# AI Provider Registry (Phase 15)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/ai/providers")
+async def get_ai_providers() -> JSONResponse:
+    """List all registered model providers with health status."""
+    providers = MODEL_ROUTER_INSTANCE.list_providers()
+    return envelope(kind="platform.ai_providers", data={"providers": providers})
 
 
 # ---------------------------------------------------------------------------

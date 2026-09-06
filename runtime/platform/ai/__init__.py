@@ -10,6 +10,7 @@ from runtime.platform.ai.intent import resolve_intent, infer_mode_from_intent, R
 from runtime.platform.ai.planner import build_plan, Plan, PlanStep
 from runtime.platform.ai.policy import PolicyEngine, evaluate_policy, POLICY_ENGINE_INSTANCE
 from runtime.platform.ai.tools import ToolRegistry, TOOL_REGISTRY_INSTANCE, register_builtin_tools
+from runtime.platform.ai.tools.handlers import ALL_HANDLERS, execute_tool
 from runtime.platform.ai.runs import AIRunsStore, AI_RUNS_STORE_INSTANCE
 from runtime.platform.ai.memory import AIMemory, AI_MEMORY_INSTANCE
 from runtime.platform.ai.agents import Agent, AGENT_REGISTRY, get_agent, list_agents
@@ -34,6 +35,23 @@ from runtime.platform.api.contracts.ai import (
     AI_AUDIT_KIND,
     AI_MODE_KIND,
 )
+# Phase 15: Model routing
+from runtime.platform.ai.providers import (
+    ModelRouter,
+    MODEL_ROUTER_INSTANCE,
+    ProviderKind,
+    RoutingProfile,
+    CompletionResult,
+    LocalOllamaProvider,
+    DeterministicFallbackProvider,
+    LOCAL_OLLAMA_PROVIDER,
+    DETERMINISTIC_FALLBACK,
+)
+# Phase 14: Context engine
+from runtime.platform.ai.context import (
+    build_context_pack,
+    CONTEXT_PACK_KIND,
+)
 
 __all__ = [
     # Orchestrator
@@ -55,6 +73,8 @@ __all__ = [
     "ToolRegistry",
     "TOOL_REGISTRY_INSTANCE",
     "register_builtin_tools",
+    "ALL_HANDLERS",
+    "execute_tool",
     # Runs
     "AIRunsStore",
     "AI_RUNS_STORE_INSTANCE",
@@ -86,4 +106,17 @@ __all__ = [
     "AI_POLICY_KIND",
     "AI_AUDIT_KIND",
     "AI_MODE_KIND",
+    # Providers (Phase 15)
+    "ModelRouter",
+    "MODEL_ROUTER_INSTANCE",
+    "ProviderKind",
+    "RoutingProfile",
+    "CompletionResult",
+    "LocalOllamaProvider",
+    "DeterministicFallbackProvider",
+    "LOCAL_OLLAMA_PROVIDER",
+    "DETERMINISTIC_FALLBACK",
+    # Context (Phase 14)
+    "build_context_pack",
+    "CONTEXT_PACK_KIND",
 ]
