@@ -1,0 +1,40 @@
+    class InvestmentsDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase15_21.py::TestHttpEndpointStructure::test_ai_providers_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/loans_dto.py:191: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class LoansDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase15_21.py::TestHttpEndpointStructure::test_ai_providers_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/net_worth_dto.py:138: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class NetWorthDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase15_21.py::TestHttpEndpointStructure::test_ai_providers_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/reconciliation_dto.py:138: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ReconciliationDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase15_21.py::TestHttpEndpointStructure::test_ai_providers_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/reconciliation_dto.py:230: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ReconciliationsListResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase15_21.py::TestHttpEndpointStructure::test_ai_providers_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/reconciliation_dto.py:270: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ReconciliationScanResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase15_21.py::TestHttpEndpointStructure::test_ai_providers_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:12: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class MoneyDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase15_21.py::TestHttpEndpointStructure::test_ai_providers_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:27: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class TransactionDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase15_21.py::TestHttpEndpointStructure::test_ai_providers_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:70: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class TransactionListResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase15_21.py::TestHttpEndpointStructure::test_ai_providers_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:84: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CategorySummaryDTO(BaseModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+32 passed, 20 warnings in 19.79s

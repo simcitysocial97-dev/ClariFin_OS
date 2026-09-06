@@ -1,0 +1,25 @@
+{
+  "kind": "platform.financial_ai_result",
+  "version": "1.0.0",
+  "generated_at": "2026-09-06T05:20:47Z",
+  "id": "sha256:15769c811a0f2af539130432629f9934d01416854819ba3f47ebbcaacb11d63c",
+  "data": {
+    "kind": "platform.financial_ai_result",
+    "query": "cashflow overview",
+    "deterministic": {
+      "status": "HEALTHY",
+      "summary": "financial arithmetic owned by backend engines (36 engines, 17 services)",
+      "last_check": "2026-09-06T05:20:47Z",
+      "source": "/platform/v1/app/financial"
+    },
+    "ai_interpretation": {
+      "note": "Interpretation only \u2014 no financial calculation performed by AI",
+      "hypothesis": "Based on deterministic status HEALTHY: financial model is authoritative",
+      "evidence": [
+        "sha256:d5f929d1b50becf2f2d83e02ed5da29f6e6ac85f6d3c4ba640bc9f1c63eb8b5a"
+      ]
+    },
+    "read_only": true,
+    "never_calculator": true
+  }
+}

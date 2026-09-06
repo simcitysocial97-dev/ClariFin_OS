@@ -123,15 +123,12 @@ def _handle_inspect_run(args: dict[str, Any]) -> dict[str, Any]:
 def _handle_inspect_ai_run(args: dict[str, Any]) -> dict[str, Any]:
     """GET /platform/v1/ai/runs/{id}"""
     run_id = args.get("run_id", "")
-    run = MODEL_ROUTER_INSTANCE._providers.get("__orchestrator__")
-    if not hasattr(MODEL_ROUTER_INSTANCE, '_orchestrator'):
-        from runtime.platform.ai import AI_ORCHESTRATOR_INSTANCE
-        run = AI_ORCHESTRATOR_INSTANCE.get_run(run_id)
-    else:
-        run = getattr(MODEL_ROUTER_INSTANCE, '_orchestrator').get_run(run_id)
+    from runtime.platform.ai import AI_ORCHESTRATOR_INSTANCE
+
+    run = AI_ORCHESTRATOR_INSTANCE.get_run(run_id)
     if run is None:
         raise ValueError(f"AI run {run_id!r} not found")
-    return run
+    return {"kind": "platform.ai_run", "data": run}
 
 
 def _handle_list_capabilities(args: dict[str, Any]) -> dict[str, Any]:
@@ -185,8 +182,9 @@ def _handle_compute_change_intelligence(args: dict[str, Any]) -> dict[str, Any]:
 
 def _handle_run_verification_capability(args: dict[str, Any]) -> dict[str, Any]:
     """POST /platform/v1/verification/run"""
+    from runtime.platform.api.services import verification_write
     cap_id = args.get("capability_id", "")
-    return verification.build_run_result(capability_id=cap_id)
+    return verification_write.build_run_result(capability_id=cap_id)
 
 
 def _handle_run_diagnostic(args: dict[str, Any]) -> dict[str, Any]:

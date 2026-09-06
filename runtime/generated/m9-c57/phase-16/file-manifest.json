@@ -1,0 +1,31 @@
+{
+  "manifest": [
+    {
+      "file": "runtime/platform/ai/tools/__init__.py",
+      "lines": 345,
+      "sha256": "e94af7f74c58cbb19f6eb57cdfb05a7461ede6994037b8066873d0676176e0bc"
+    },
+    {
+      "file": "runtime/platform/ai/tools/handlers.py",
+      "lines": 247,
+      "sha256": "20e838b7ebbd2e8301eff9e6d0a43c6bacf7603b06f3cc42857611795c218a38"
+    },
+    {
+      "file": "runtime/platform/ai/orchestrator.py",
+      "lines": 249,
+      "sha256": "7764dab50e9ed672ac4acb1e9d0d23ed0933428e2c3e4a14eb03174db5160fbd"
+    },
+    {
+      "file": "runtime/platform/ai/policy.py",
+      "lines": 128,
+      "sha256": "108129e35a5a48f664ef252b88c0a549bc66b43d095bbe94e928361a3bf4724c"
+    },
+    {
+      "file": "backend/src/routers/platform.py",
+      "lines": 1542,
+      "sha256": "3f293dfad034c5d45909b3e672174aa9d4b027bd02438b61610e5d92184ebe9b"
+    }
+  ],
+  "total_lines": 2511,
+  "generated_at": "2026-09-06T05:00:00Z"
+}

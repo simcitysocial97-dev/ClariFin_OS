@@ -1,0 +1,13 @@
+{
+  "kind": "platform.error",
+  "version": "1.0.0",
+  "generated_at": "2026-09-06T05:20:47Z",
+  "id": "sha256:874d692f39adb51e9199fe9176484ba48f2adb1cb8c7770a3f66698f3e82d7c8",
+  "error": {
+    "code": "POLICY_DENIED",
+    "layer": "platform.ai",
+    "message": "Workflow Automation disabled \u2014 requires policy.enable_workflow_tools=true and per-task approval",
+    "evidence_id": null,
+    "capability_id": null
+  }
+}

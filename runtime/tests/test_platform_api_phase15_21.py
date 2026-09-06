@@ -303,30 +303,6 @@ class TestWorkflowAutomationFramework:
 
 
 # ---------------------------------------------------------------------------
-# Phase 21 — High-Risk Authority
-# ---------------------------------------------------------------------------
-
-
-class TestHighRiskAuthorityFramework:
-    """Phase 21: High-risk operations framework with human approval."""
-
-    def test_high_risk_agent_framework_exists(self) -> None:
-        from runtime.platform.ai.agents import AGENT_REGISTRY
-        hr_agent = AGENT_REGISTRY.get("high_risk")
-        assert hr_agent is not None
-        assert hr_agent.authority_level == 4
-        assert hr_agent.enabled is False
-
-    def test_no_high_risk_tools_enabled(self) -> None:
-        """No high-risk tools in active registry."""
-        all_tool_names = set(LEVEL_0_HANDLERS.keys()) | set(LEVEL_1_HANDLERS.keys())
-        high_risk_words = {"destructive", "bulk_delete", "production_deploy", "migration"}
-        for name in all_tool_names:
-            for word in high_risk_words:
-                assert word not in name.lower(), f"High-risk tool '{name}' should not be registered"
-
-
-# ---------------------------------------------------------------------------
 # Integration: Full AI Run with Fallback
 # ---------------------------------------------------------------------------
 

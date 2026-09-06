@@ -1,0 +1,55 @@
+{
+  "kind": "platform.ai_diagnose_result",
+  "version": "1.0.0",
+  "generated_at": "2026-09-06T05:20:47Z",
+  "id": "sha256:fed79a1caec93931cb38a5a98a9a6f7ccae1299c7a4c091f1a888a970baa7a7b",
+  "data": {
+    "kind": "platform.ai_diagnose_result",
+    "deterministic": {
+      "level": "L0",
+      "fact": "known_failure_signature_matched",
+      "affected_capability": "discover.blast-radius",
+      "recent_changes": [
+        "backend/src/routers/platform.py",
+        "runtime/generated/diagnostic-signatures.json",
+        "runtime/generated/engineering-events.jsonl",
+        "runtime/generated/git-fetch-events.jsonl",
+        "runtime/generated/platform/snapshot.json"
+      ],
+      "historical_failures": 2,
+      "suggested_verification": [
+        "discover.blast-radius"
+      ],
+      "evidence_ids": [
+        "sig-70bebf3aa98d"
+      ]
+    },
+    "context_pack_id": "ctx-63989b3a07b33b3d",
+    "context_sources": [],
+    "ai_assisted": {
+      "model": "deterministic-fallback:deterministic",
+      "hypothesis": "[DETERMINISTIC FALLBACK] Based on symptom 'Symptom: INTEGRITY_FAILED in discover.blast-radius\nDeterministic level: L0\nDeterministic fact: known':\nNo LLM provider available. Use platform tools directly.\nRun: POST /platform/v1/diagnose with your symptom.",
+      "evidence": [
+        "sig-70bebf3aa98d"
+      ],
+      "uncertainty": "LOW",
+      "recommendation": "discover.blast-radius",
+      "is_deterministic": true,
+      "provider": "deterministic-fallback"
+    },
+    "labels": {
+      "FACT": "known_failure_signature_matched",
+      "EVIDENCE": [
+        "sig-70bebf3aa98d"
+      ],
+      "INFERENCE": "deterministic fallback \u2014 no LLM inference",
+      "HYPOTHESIS": "[DETERMINISTIC FALLBACK] Based on symptom 'Symptom: INTEGRITY_FAILED in discover.blast-radius\nDeterministic level: L0\nDeterministic fact: known':\nNo LLM provider available. Use platform tools directly.\nRun: POST /platform/v1/diagnose with your symptom.",
+      "RECOMMENDATION": [
+        {
+          "action": "inspect_capability",
+          "target": "discover.blast-radius"
+        }
+      ]
+    }
+  }
+}

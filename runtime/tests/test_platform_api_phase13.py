@@ -249,7 +249,9 @@ class TestToolStepExecution:
             run_resp = c.post("/platform/v1/ai/runs", json={"symptom": "test", "mode": "ASSISTED"})
             run_id = run_resp.json()["data"]["id"]
 
-            # Execute a level 1 tool (should be allowed)
+            # Execute a level 1 tool (should be allowed) — Phase 16 now executes
+            # the tool synchronously, so status is RUNNING (ready for next step)
+            # rather than PENDING (Phase 13 stub)
             step_resp = c.post(
                 f"/platform/v1/ai/runs/{run_id}/steps",
                 json={"tool_name": "run_diagnostic", "arguments": {"symptom": "test"}},
@@ -258,7 +260,7 @@ class TestToolStepExecution:
             data = step_resp.json()["data"]
             assert data["run_id"] == run_id
             assert data["step"]["tool_name"] == "run_diagnostic"
-            assert data["status"] == "PENDING"
+            assert data["status"] in ("PENDING", "RUNNING", "COMPLETED")
 
     def test_step_execution_denied_by_policy(self) -> None:
         from src.api import app

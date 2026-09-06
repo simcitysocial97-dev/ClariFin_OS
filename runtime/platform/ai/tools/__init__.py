@@ -268,8 +268,54 @@ LEVEL_1_TOOLS: list[dict[str, Any]] = [
 
 
 def register_builtin_tools(registry: "ToolRegistry") -> None:
-    """Register all built-in Level 0 and 1 tools with mock handlers."""
-    # Level 0
+    """Register all built-in Level 0 and 1 tools.
+
+    Phase 16: wire to real platform service handlers instead of mocks.
+    Falls back to mock only if handlers module is unavailable.
+    """
+    try:
+        from runtime.platform.ai.tools.handlers import LEVEL_0_HANDLERS, LEVEL_1_HANDLERS
+
+        # Level 0 — real handlers backed by platform services
+        for tpl in LEVEL_0_TOOLS:
+            name = tpl["name"]
+            handler = LEVEL_0_HANDLERS.get(name)
+            if handler is None:
+                logger.warning("No real handler for %s — using mock", name)
+                handler = lambda args, _n=name: {"status": "mock", "tool": _n, "args": args}
+            schema = ToolSchema(
+                name=name,
+                description=tpl["description"],
+                authority_level=tpl["level"],
+                parameters=[ToolParameter(**p) for p in tpl["params"]],
+                returns=tpl["returns"],
+                idempotent=True,
+                side_effects="read",
+            )
+            registry.register(schema, handler)
+
+        # Level 1 — real handlers (may create tasks/evidence)
+        for tpl in LEVEL_1_TOOLS:
+            name = tpl["name"]
+            handler = LEVEL_1_HANDLERS.get(name)
+            if handler is None:
+                logger.warning("No real handler for %s — using mock", name)
+                handler = lambda args, _n=name: {"status": "mock", "tool": _n, "args": args}
+            schema = ToolSchema(
+                name=name,
+                description=tpl["description"],
+                authority_level=tpl["level"],
+                parameters=[ToolParameter(**p) for p in tpl["params"]],
+                returns=tpl["returns"],
+                idempotent=False,
+                side_effects="read",
+            )
+            registry.register(schema, handler)
+        return
+    except Exception as exc:
+        logger.warning("Real handler wiring failed (%s) — falling back to mocks", exc)
+
+    # Fallback: mocks (should not happen in normal operation)
     for tpl in LEVEL_0_TOOLS:
         schema = ToolSchema(
             name=tpl["name"],
@@ -282,7 +328,6 @@ def register_builtin_tools(registry: "ToolRegistry") -> None:
         )
         registry.register(schema, lambda args: {"status": "mock", "tool": schema.name, "args": args})
 
-    # Level 1
     for tpl in LEVEL_1_TOOLS:
         schema = ToolSchema(
             name=tpl["name"],

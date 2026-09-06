@@ -20,8 +20,12 @@ from runtime.platform.ai.providers.base import (
 )
 from runtime.platform.ai.providers.local import (
     LocalOllamaProvider,
+    LocalLargeProvider,
+    OpenRouterProvider,
     DeterministicFallbackProvider,
     LOCAL_OLLAMA_PROVIDER,
+    LOCAL_LARGE_PROVIDER,
+    OPENROUTER_PROVIDER,
     DETERMINISTIC_FALLBACK,
 )
 from runtime.platform.ai.providers.router import (

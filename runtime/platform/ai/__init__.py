@@ -43,8 +43,12 @@ from runtime.platform.ai.providers import (
     RoutingProfile,
     CompletionResult,
     LocalOllamaProvider,
+    LocalLargeProvider,
+    OpenRouterProvider,
     DeterministicFallbackProvider,
     LOCAL_OLLAMA_PROVIDER,
+    LOCAL_LARGE_PROVIDER,
+    OPENROUTER_PROVIDER,
     DETERMINISTIC_FALLBACK,
 )
 # Phase 14: Context engine

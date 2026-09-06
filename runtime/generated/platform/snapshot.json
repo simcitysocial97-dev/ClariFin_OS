@@ -776,9 +776,9 @@
       }
     },
     "change": {
-      "_c": 236464.62854939,
-      "_ts": "2026-09-05T22:03:26Z",
-      "hash": "ba1a44c8feb2c078976150fdc1d5b0118f146362a23d9dbcb4bc42d0e21119d3",
+      "_c": 261977.819844758,
+      "_ts": "2026-09-06T05:08:39Z",
+      "hash": "879ec979ce2a7f7e20a80e740c9c5194b34bc64515bdeef1ea9d8dc165a2b85b",
       "payload": {
         "data": {
           "affected_capabilities": [
@@ -803,6 +803,10 @@
             },
             {
               "change_type": "modified",
+              "path": "runtime/generated/diagnostic-signatures.json"
+            },
+            {
+              "change_type": "modified",
               "path": "runtime/generated/engineering-events.jsonl"
             },
             {
@@ -815,44 +819,664 @@
             },
             {
               "change_type": "modified",
-              "path": "frontend/app/platform/diagnostics/change/page.tsx"
+              "path": "runtime/platform/ai/__init__.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c57/phase-10/file-manifest.json"
+              "path": "runtime/platform/ai/agents.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c57/phase-10/test-results.txt"
+              "path": "runtime/platform/ai/orchestrator.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/api/contracts/diagnostics.py"
+              "path": "runtime/platform/ai/planner.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/diagnostics/__init__.py"
+              "path": "runtime/platform/ai/providers/__init__.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/diagnostics/engine.py"
+              "path": "runtime/platform/ai/providers/base.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/diagnostics/rules.py"
+              "path": "runtime/platform/ai/providers/local.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/tests/test_platform_api_phase10_12.py"
+              "path": "runtime/platform/ai/providers/router.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/ai/tools/__init__.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/ai/tools/handlers.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_platform_api_phase13.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_platform_api_phase15_21.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-context-packs/ctx-c1.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-context-packs/ctx-c2.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-context-packs/ctx-test123.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-01f71e4a8605.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-0324f408bcba.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-0dd05a14c16e.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-0e50de43a1cf.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-12fed327d8d4.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-14ef4d5af76d.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-158f90b37fae.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-15b9c60c6665.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-179ed83b275f.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-17d6b9e74c7b.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-185605d7b379.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-1a38a9d2d158.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-1ab85b266c03.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-1b4a2621d5a4.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-1bf6cd05045c.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-211102b4dec2.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-2147c644b18b.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-22a566d4cce6.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-26ea5a8f9507.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-2957dc6f1570.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-2b2b7ae0a670.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-2bec5f4646a4.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-2e30c0f2a3b5.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-3104e6a43a24.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-32e635e0fe6d.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-332b6132a62d.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-33d1841ec8c3.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-347cd27ddcbf.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-34ee1fc84f15.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-35682a424ff9.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-3682d20e24e7.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-36d17598340f.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-377b62af3f7f.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-37eac8866ed7.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-389e22db81ad.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-3a660f2d64dd.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-3b094b9e5aed.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-3cd69ef28908.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-4081c4d28004.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-43c5adfa5501.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-44d7f7da7d12.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-47982b8caa47.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-47f14fc3091e.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-4887b03b441c.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-4be63ac120ca.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-4ff7fb3b9601.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-512efb4223cf.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-51496fe33d04.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-599249c54f0f.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-5be2c5b978fa.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-5f217b4e39ee.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-60de6859f721.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-626870b36fb4.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-63b0d69c1816.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-645062c0db2a.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-69307910c988.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-6a577150f973.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-6b53403eeb7e.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-6cd9a01b5089.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-6d111716410a.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-71699c424a1e.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-71a3131342d8.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-71af8156fa27.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-722a43a2ead2.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-72a2d7fa837e.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-73acd71a8e92.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-73e89bdff86c.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-7404be67e100.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-7aa727d75897.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-7c156a0df33d.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-7cd8dbdd2169.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-7e11440695bf.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-7ff9dbd06d76.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-810cbce11081.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-8273ed1e4d58.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-8327f2ce5616.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-8395065a2b8c.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-84c4e56100f6.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-84cdc04e67ac.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-85c6f9b498ba.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-87ec992cea2d.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-8bbd30143b60.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-8cf7362145e9.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-8dc072d17b9b.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-9079c311485e.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-94792ce85048.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-957c2bdc89ec.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-9647fa15e977.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-97d6866fe404.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-98dc6b2d3cea.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-99e42617cdf5.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-9bca33027ba5.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-9e94e3c7ecd7.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-a0513c3802d3.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-a168fbef7e6f.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-a2bf56376c6e.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-a2d4446fce19.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-a40e836a7a00.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-a55c3f4e391e.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-a5c41854a722.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-a7d832e84afd.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-a910498c5e72.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-ab14806bac61.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-ab322910f244.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-abb42263e201.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-ae2c92529e23.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-afa4cae53b00.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-b24b1d44b711.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-b343b35a6a0c.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-b5890c5954a0.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-b5f96efd79bf.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-baccfede8a8d.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-bd56d68ad13d.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-bd9ab1f828ad.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-c15819ef5391.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-c4282cf47d5a.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-c750cc883500.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-c7b18cc03712.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-c8de5facef7f.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-cbccc2ed61b4.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-cd31c005ad99.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-cd8801ce69dc.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-cff3cf029f95.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-d05298b59901.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-d0df8ce04481.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-d2c8488696ee.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-d4c92e80d106.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-d7a56befc9f8.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-db87d7ee0320.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-dbf91d427db4.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-e36092acf3c9.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-e3c4f3a93ea6.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-e4ffc0f25c13.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-e909b2ded6bd.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-eb5e30f6869f.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-ed4038e8ef98.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-ee8ec9fab3fc.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-ef0baa093dc8.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-f18883e0b864.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-f42e2948462e.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-f475873e19ef.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-f5fd6eb80f10.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-f94b1d8ea42a.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-fb9b47bf3d75.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-fbff2761e923.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-ffac667be185.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c57/phases-15-21/progress.md"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/ai/config.py"
             }
           ],
-          "generated_from": "2026-09-05T22:03:24.691840+00:00",
+          "generated_from": "2026-09-06T05:08:37.705338+00:00",
           "recommended_verification": [],
           "risk": "HIGH",
           "stale_evidence": []
         },
-        "generated_at": "2026-09-05T22:03:26Z",
-        "id": "sha256:ed10cda249d1439ee1f7ee1af48627b9b9f337823493f2bf9cfc80db2a4e454d",
+        "generated_at": "2026-09-06T05:08:39Z",
+        "id": "sha256:eda3ba1f4d8e8a2cd1123920dc6c8c67221d1e63e4a1969f0608f709afe34b28",
         "kind": "platform.change_intelligence",
         "version": "1.0.0"
       }
@@ -1637,6 +2261,6 @@
       }
     }
   },
-  "generated_at": "2026-09-05T22:03:26Z",
+  "generated_at": "2026-09-06T05:08:39Z",
   "version": "1"
 }

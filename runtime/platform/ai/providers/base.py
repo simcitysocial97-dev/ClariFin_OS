@@ -9,9 +9,9 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Protocol
+from typing import Any, Literal, Protocol
 
 
 class ProviderKind(str, Enum):
@@ -146,7 +146,7 @@ class BaseProvider(ABC):
         self._health: ProviderHealth = ProviderHealth(
             provider=name,
             reachable=False,
-            last_check=datetime.utcnow(),
+            last_check=datetime.now(UTC),
             last_success=None,
             last_failure=None,
         )
@@ -167,8 +167,8 @@ class BaseProvider(ABC):
         self._health = ProviderHealth(
             provider=self.name,
             reachable=True,
-            last_check=datetime.utcnow(),
-            last_success=datetime.utcnow(),
+            last_check=datetime.now(UTC),
+            last_success=datetime.now(UTC),
             last_failure=self._health.last_failure,
             failure_streak=0,
             p50_latency_ms=latency_ms or self._health.p50_latency_ms,
@@ -179,9 +179,9 @@ class BaseProvider(ABC):
         self._health = ProviderHealth(
             provider=self.name,
             reachable=False,
-            last_check=datetime.utcnow(),
+            last_check=datetime.now(UTC),
             last_success=self._health.last_success,
-            last_failure=datetime.utcnow(),
+            last_failure=datetime.now(UTC),
             failure_streak=self._failure_streak,
             notes=notes or self._health.notes,
         )

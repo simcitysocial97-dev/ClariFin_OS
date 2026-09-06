@@ -138,8 +138,16 @@ class AIOrchestrator:
         result: dict[str, Any] | None = None,
         error: str | None = None,
         evidence_id: str | None = None,
+        finalize: bool | None = None,
     ) -> bool:
-        """Mark a step as completed with result or error."""
+        """Mark a step as completed with result or error.
+
+        finalize semantics:
+          None  → legacy auto-complete: COMPLETED if no pending steps left
+                  (preserves Phase 13 test expectations)
+          False → stay RUNNING to allow sequential tool chaining (Phase 16)
+          True  → force COMPLETED/FAILED regardless of pending
+        """
         run = self.get_run(run_id)
         if not run:
             return False
@@ -159,13 +167,20 @@ class AIOrchestrator:
         step["evidence_id"] = evidence_id
         step["duration_ms"] = duration_ms
 
-        # If this is the last step (no more pending), mark run as completed
         pending_steps = [s for s in run["steps"] if s["completed_at"] is None]
-        if not pending_steps:
+        if finalize is True:
             run["status"] = "COMPLETED" if error is None else "FAILED"
             run["completed_at"] = completed_at
-        else:
+        elif finalize is False:
             run["status"] = "RUNNING"
+            run["completed_at"] = None
+        else:  # legacy auto-complete
+            if not pending_steps:
+                run["status"] = "COMPLETED" if error is None else "FAILED"
+                run["completed_at"] = completed_at
+            else:
+                run["status"] = "RUNNING"
+                run["completed_at"] = None
 
         run["updated_at"] = completed_at
         self._persist_run(run_id)
@@ -178,6 +193,19 @@ class AIOrchestrator:
             "duration_ms": duration_ms,
         })
 
+        return True
+
+    def finalize_run(self, run_id: str) -> bool:
+        """Explicitly mark a RUNNING run as COMPLETED (evidence-backed)."""
+        run = self.get_run(run_id)
+        if not run or run["status"] not in ("RUNNING", "PENDING"):
+            return False
+        now = datetime.now(UTC).isoformat().replace("+00:00", "Z")
+        run["status"] = "COMPLETED"
+        run["completed_at"] = now
+        run["updated_at"] = now
+        self._persist_run(run_id)
+        self._audit(run_id, "run_completed", {})
         return True
 
     def cancel_run(self, run_id: str) -> bool:

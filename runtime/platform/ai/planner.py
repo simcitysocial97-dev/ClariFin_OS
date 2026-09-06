@@ -119,9 +119,13 @@ def build_plan(
             if isinstance(v, str) and v.startswith("{") and v.endswith("}"):
                 key = v[1:-1]
                 if key == "symptom":
-                    args[k] = context.get("symptom", "") if context else ""
+                    # Prefer explicit symptom argument; fall back to context
+                    args[k] = symptom if symptom else (context.get("symptom", "") if context else "")
                 elif key == "capability_id":
-                    args[k] = context.get("capability_id", "") if context else ""
+                    args[k] = (context.get("capability_id", "") if context else "")
+                    if not args[k] and symptom:
+                        # Try to extract capability_id if mentioned in symptom (heuristic)
+                        args[k] = ""
                 else:
                     args[k] = v
             else:

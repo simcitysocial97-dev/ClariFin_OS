@@ -1042,7 +1042,13 @@ async def get_ai_tool(tool_name: str) -> JSONResponse:
 
 @router.post("/ai/runs/{run_id}/steps")
 async def post_ai_step(run_id: str, request: Request) -> JSONResponse:
-    """Execute a tool step within an AI run."""
+    """Execute a tool step within an AI run — Phase 16 real execution.
+
+    Flow: Tool Registry → Policy Engine → Platform API service → C50 authority.
+    Records step via orchestrator, enforces policy server-side, executes via
+    registry (schema validated), completes step with result/evidence, and
+    persists audit event. No AI bypasses policy.
+    """
     body: dict[str, Any] = {}
     try:
         if request.headers.get("content-length", "0") != "0":
@@ -1069,12 +1075,17 @@ async def post_ai_step(run_id: str, request: Request) -> JSONResponse:
     if run is None:
         return _not_found(f"AI run {run_id!r} not found", "platform.ai")
 
-    # Policy check
+    # Idempotency: if a step with same tool+args already exists and completed, return it
+    if idempotency_key:
+        for s in run.get("steps", []):
+            if s.get("tool_name") == tool_name and s.get("arguments") == arguments and s.get("completed_at"):
+                return envelope(kind=ai_contract.AI_RUN_KIND, data={"run_id": run_id, "step": s, "status": run.get("status", "PENDING")})
+
+    # Policy check — server-side mandatory
     mode = run.get("mode", "MANUAL")
-    # Map mode to max authorization level
     mode_levels = {"MANUAL": 0, "ASSISTED": 1, "AUTONOMOUS": 4}
     run_authorization_level = mode_levels.get(mode, 0)
-    
+
     policy = evaluate_policy(
         tool_name=tool_name,
         run_mode=run.get("mode", "MANUAL"),
@@ -1091,7 +1102,7 @@ async def post_ai_step(run_id: str, request: Request) -> JSONResponse:
         )
         return JSONResponse(content=error_envelope(error=err), status_code=403)
 
-    # Execute step via orchestrator
+    # Execute step via orchestrator (records PENDING)
     step = AI_ORCHESTRATOR_INSTANCE.execute_step(
         run_id=run_id,
         tool_name=tool_name,
@@ -1100,14 +1111,38 @@ async def post_ai_step(run_id: str, request: Request) -> JSONResponse:
     if step is None:
         return _not_found(f"Failed to execute step for run {run_id!r}", "platform.ai")
 
-    # For Phase 13, we just record the step initiation
-    # Actual tool execution will be implemented in Phase 16+
-    data = {
-        "run_id": run_id,
-        "step": step,
-        "status": "PENDING",
-    }
-    return envelope(kind=ai_contract.AI_RUN_KIND, data=data)
+    # Real tool invocation via registry (schema validated → handler → platform service)
+    try:
+        result = TOOL_REGISTRY_INSTANCE.invoke(tool_name, arguments)
+        # Complete step with result — stay RUNNING to allow next tool in sequence
+        # (explicit finalize via POST /ai/runs/{id}/finalize when workflow complete)
+        is_final = bool(body.get("finalize", False)) if isinstance(body, dict) else False
+        AI_ORCHESTRATOR_INSTANCE.complete_step(
+            run_id, step["step_number"], result=result, evidence_id=result.get("id") if isinstance(result, dict) else None,
+            finalize=is_final,
+        )
+        refreshed = AI_ORCHESTRATOR_INSTANCE.get_run(run_id)
+        completed_step = next((s for s in refreshed["steps"] if s["step_number"] == step["step_number"]), step)
+        data = {
+            "run_id": run_id,
+            "step": completed_step,
+            "result": result,
+            "status": refreshed.get("status", "RUNNING"),
+        }
+        return envelope(kind=ai_contract.AI_RUN_KIND, data=data)
+    except Exception as exc:
+        logger.warning("Tool %s failed: %s", tool_name, exc, exc_info=True)
+        is_final = bool(body.get("finalize", False)) if isinstance(body, dict) else False
+        AI_ORCHESTRATOR_INSTANCE.complete_step(run_id, step["step_number"], error=str(exc)[:500], finalize=is_final)
+        refreshed = AI_ORCHESTRATOR_INSTANCE.get_run(run_id)
+        completed_step = next((s for s in refreshed["steps"] if s["step_number"] == step["step_number"]), step)
+        data = {
+            "run_id": run_id,
+            "step": completed_step,
+            "error": str(exc)[:500],
+            "status": refreshed.get("status", "FAILED" if is_final else "RUNNING"),
+        }
+        return envelope(kind=ai_contract.AI_RUN_KIND, data=data)
 
 
 # ---------------------------------------------------------------------------
@@ -1120,6 +1155,258 @@ async def get_ai_providers() -> JSONResponse:
     """List all registered model providers with health status."""
     providers = MODEL_ROUTER_INSTANCE.list_providers()
     return envelope(kind="platform.ai_providers", data={"providers": providers})
+
+
+@router.get("/ai/agents")
+async def get_ai_agents() -> JSONResponse:
+    """List all AI agents with authority level and enabled flag (Phases 17-20)."""
+    from runtime.platform.ai.agents import list_agents
+
+    agents = list_agents()
+    return envelope(kind="platform.ai_agents", data={"count": len(agents), "items": agents})
+
+
+@router.get("/ai/agents/{agent_name}")
+async def get_ai_agent(agent_name: str) -> JSONResponse:
+    """Get single agent detail."""
+    from runtime.platform.ai.agents import get_agent
+
+    agent = get_agent(agent_name)
+    if agent is None:
+        return _not_found(f"Agent {agent_name!r} not found", "platform.ai")
+    data = {"name": agent.name, "description": agent.description, "authority_level": agent.authority_level, "enabled": agent.enabled}
+    return envelope(kind="platform.ai_agent", data=data)
+
+
+@router.post("/ai/diagnose")
+async def post_ai_diagnose(request: Request) -> JSONResponse:
+    """Phase 17 — AI Diagnostic Assistant (deterministic + model interpretation).
+
+    Correct sequence per IMPLEMENTATION_ROADMAP §17:
+      USER SYMPTOM → DETERMINISTIC ENGINE → CHANGE INTELLIGENCE → HISTORY
+      → EVIDENCE → CONTEXT PACK → LOCAL MODEL → STRUCTURED INTERPRETATION
+
+    Distinguishes FACT/EVIDENCE/INFERENCE/HYPOTHESIS/RECOMMENDATION.
+    Never overwrites deterministic evidence.
+    """
+    body: dict[str, Any] = {}
+    try:
+        if request.headers.get("content-length", "0") != "0":
+            body = await request.json()
+    except Exception:
+        body = {}
+
+    symptom = body.get("symptom", "") if isinstance(body, dict) else ""
+    capability_id = body.get("capability_id") if isinstance(body, dict) else None
+    run_id = body.get("run_id") if isinstance(body, dict) else None
+
+    if not symptom:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+
+        err = PlatformError(
+            code=PlatformErrorCode.MALFORMED_REQUEST,
+            layer="platform.ai",
+            message="POST /ai/diagnose requires {symptom}",
+        )
+        return JSONResponse(content=error_envelope(error=err), status_code=400)
+
+    from runtime.platform.ai.agents import get_agent
+
+    agent = get_agent("diagnostic_assistant")
+    if agent is None:
+        return _not_found("diagnostic_assistant agent not found", "platform.ai")
+
+    try:
+        result = agent.execute({"symptom": symptom, "capability_id": capability_id, "run_id": run_id})
+        return envelope(kind="platform.ai_diagnose_result", data=result)
+    except Exception as exc:
+        logger.warning("AI diagnose failed: %s", exc, exc_info=True)
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+
+        err = PlatformError(code=PlatformErrorCode.INTERNAL, layer="platform.ai", message=str(exc))
+        return JSONResponse(content=error_envelope(error=err), status_code=500)
+
+
+@router.post("/ai/financial/interpret")
+async def post_ai_financial_interpret(request: Request) -> JSONResponse:
+    """Phase 19 — Financial AI (read-only interpretation).
+
+    Deterministic financial model → authoritative result → AI interpretation.
+    LLM never calculator. Disabled by default — requires explicit enablement.
+    """
+    body: dict[str, Any] = {}
+    try:
+        if request.headers.get("content-length", "0") != "0":
+            body = await request.json()
+    except Exception:
+        body = {}
+
+    query = body.get("query") or body.get("symptom") or "" if isinstance(body, dict) else ""
+
+    from runtime.platform.ai.agents import get_agent
+
+    agent = get_agent("financial_ai")
+    if agent is None:
+        return _not_found("financial_ai agent not found", "platform.ai")
+    if not agent.enabled:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+
+        err = PlatformError(
+            code=PlatformErrorCode.POLICY_DENIED,
+            layer="platform.ai",
+            message="Financial AI disabled — requires explicit enablement (policy.enable_financial_ai=true)",
+        )
+        return JSONResponse(content=error_envelope(error=err), status_code=403)
+
+    try:
+        result = agent.execute({"query": query})
+        return envelope(kind="platform.financial_ai_result", data=result)
+    except Exception as exc:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+
+        err = PlatformError(code=PlatformErrorCode.INTERNAL, layer="platform.ai", message=str(exc))
+        return JSONResponse(content=error_envelope(error=err), status_code=500)
+
+
+@router.post("/ai/workflow/run")
+async def post_ai_workflow_run(request: Request) -> JSONResponse:
+    """Phase 20 — Controlled Workflow Automation (Level 3).
+
+    Requires explicit policy + per-task authorization. Disabled by default.
+    """
+    body: dict[str, Any] = {}
+    try:
+        if request.headers.get("content-length", "0") != "0":
+            body = await request.json()
+    except Exception:
+        body = {}
+
+    workflow_id = (body.get("workflow_id") or body.get("task_id") or "") if isinstance(body, dict) else ""
+
+    from runtime.platform.ai.agents import get_agent
+
+    agent = get_agent("workflow_automation")
+    if agent is None:
+        return _not_found("workflow_automation agent not found", "platform.ai")
+    if not agent.enabled:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+
+        err = PlatformError(
+            code=PlatformErrorCode.POLICY_DENIED,
+            layer="platform.ai",
+            message="Workflow Automation disabled — requires policy.enable_workflow_tools=true and per-task approval",
+        )
+        return JSONResponse(content=error_envelope(error=err), status_code=403)
+
+    if not workflow_id:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+
+        err = PlatformError(
+            code=PlatformErrorCode.MALFORMED_REQUEST,
+            layer="platform.ai",
+            message="POST /ai/workflow/run requires {workflow_id}",
+        )
+        return JSONResponse(content=error_envelope(error=err), status_code=400)
+
+    try:
+        result = agent.execute({"workflow_id": workflow_id})
+        return envelope(kind="platform.workflow_result", data=result)
+    except Exception as exc:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+
+        err = PlatformError(code=PlatformErrorCode.INTERNAL, layer="platform.ai", message=str(exc))
+        return JSONResponse(content=error_envelope(error=err), status_code=500)
+
+
+@router.post("/ai/engineering/execute")
+async def post_ai_engineering_execute(request: Request) -> JSONResponse:
+    """Phase 18 — Engineering Agent (Level 2, disabled by default).
+
+    Full lifecycle: REQUEST→UNDERSTAND→INSPECT→PLAN→AUTHORIZE→CHANGE→EXECUTE→VERIFY→RECONCILE→DECIDE→LEARN
+    Requires evidence_id and human authorization. Never reports success without evidence.
+    """
+    body: dict[str, Any] = {}
+    try:
+        if request.headers.get("content-length", "0") != "0":
+            body = await request.json()
+    except Exception:
+        body = {}
+
+    symptom = body.get("symptom", "") if isinstance(body, dict) else ""
+    evidence_id = body.get("evidence_id") if isinstance(body, dict) else None
+
+    from runtime.platform.ai.agents import get_agent
+
+    agent = get_agent("engineering_agent")
+    if agent is None:
+        return _not_found("engineering_agent agent not found", "platform.ai")
+    if not agent.enabled:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+
+        err = PlatformError(
+            code=PlatformErrorCode.POLICY_DENIED,
+            layer="platform.ai",
+            message="Engineering Agent disabled — requires policy.enable_development_tools=true and human authorization",
+        )
+        return JSONResponse(content=error_envelope(error=err), status_code=403)
+
+    if not evidence_id:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+
+        err = PlatformError(
+            code=PlatformErrorCode.MALFORMED_REQUEST,
+            layer="platform.ai",
+            message="POST /ai/engineering/execute requires {evidence_id}",
+        )
+        return JSONResponse(content=error_envelope(error=err), status_code=400)
+
+    try:
+        result = agent.execute({"symptom": symptom, "evidence_id": evidence_id, "run_id": body.get("run_id") if isinstance(body, dict) else None})
+        return envelope(kind="platform.engineering_result", data=result)
+    except Exception as exc:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+
+        err = PlatformError(code=PlatformErrorCode.INTERNAL, layer="platform.ai", message=str(exc))
+        return JSONResponse(content=error_envelope(error=err), status_code=500)
+
+
+@router.post("/ai/runs/{run_id}/finalize")
+async def post_ai_run_finalize(run_id: str) -> JSONResponse:
+    """Explicitly finalize a RUNNING AI run (Phase 16 multi-step support)."""
+    success = AI_ORCHESTRATOR_INSTANCE.finalize_run(run_id)
+    if not success:
+        return _not_found(f"AI run {run_id!r} not found or not finalizable", "platform.ai")
+    run = AI_ORCHESTRATOR_INSTANCE.get_run(run_id)
+    return envelope(kind=ai_contract.AI_RUN_KIND, data=run)
+
+
+@router.get("/ai/runs/{run_id}/trace")
+async def get_ai_run_trace(run_id: str) -> JSONResponse:
+    """Full trace for an AI run (Phase 13 observability)."""
+    run = AI_ORCHESTRATOR_INSTANCE.get_run(run_id)
+    if run is None:
+        return _not_found(f"AI run {run_id!r} not found", "platform.ai")
+    # Provide full observability trace per AI_CONTROL_LAYER_DESIGN §6
+    trace = {
+        "request": {"symptom": run.get("symptom"), "mode": run.get("mode"), "capability_id": run.get("capability_id")},
+        "steps": run.get("steps", []),
+        "audit_trail": run.get("audit_trail", []),
+        "status": run.get("status"),
+        "created_at": run.get("created_at"),
+        "updated_at": run.get("updated_at"),
+        "completed_at": run.get("completed_at"),
+    }
+    return envelope(kind="platform.ai_run_trace", data={"run_id": run_id, "trace": trace})
 
 
 # ---------------------------------------------------------------------------
@@ -1183,3 +1470,72 @@ def register_platform_routes(app: FastAPI) -> None:
     install_correlation_middleware(app)
     app.include_router(router)
     logger.info("Registered Platform API routes at /platform/v1")
+
+
+# ---------------------------------------------------------------------------
+# AI Configuration endpoints (Phase 15 — flexible model switching)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/ai/config")
+async def get_ai_config() -> JSONResponse:
+    """Get current AI configuration (provider, model, endpoints)."""
+    from runtime.platform.ai.config import get_ai_config
+    cfg = get_ai_config()
+    data = {
+        "provider": cfg.provider,
+        "model": cfg.model,
+        "endpoint": cfg.endpoint,
+        "temperature": cfg.temperature,
+        "max_tokens": cfg.max_tokens,
+        "privacy": cfg.privacy,
+        "enabled_providers": [
+            name for name, conf in cfg.providers.items()
+            if cfg.is_provider_enabled(name)
+        ],
+        "fallback_chain": cfg.fallback_chain,
+    }
+    return envelope(kind="platform.ai_config", data=data)
+
+
+@router.post("/ai/config/provider")
+async def post_ai_config_provider(request: Request) -> JSONResponse:
+    """Switch AI provider (e.g., local-small → local-large → openrouter)."""
+    body: dict[str, Any] = {}
+    try:
+        if request.headers.get("content-length", "0") != "0":
+            body = await request.json()
+    except Exception:
+        body = {}
+
+    provider_name = body.get("provider") if isinstance(body, dict) else None
+    if not provider_name:
+        from runtime.platform.api.envelope import error_envelope
+        from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+        err = PlatformError(
+            code=PlatformErrorCode.MALFORMED_REQUEST,
+            layer="platform.ai",
+            message="POST /ai/config/provider requires {provider}",
+        )
+        return JSONResponse(content=error_envelope(error=err), status_code=400)
+
+    from runtime.platform.ai.config import get_ai_config, set_ai_config
+    cfg = get_ai_config()
+    if provider_name not in cfg.providers:
+        return _not_found(f"Provider {provider_name!r} not found", "platform.ai")
+
+    new_cfg = cfg.with_provider(provider_name)
+    set_ai_config(**{
+        "provider": new_cfg.provider,
+        "model": new_cfg.model,
+        "endpoint": new_cfg.endpoint,
+        "providers": cfg.providers,
+    })
+
+    data = {
+        "previous_provider": cfg.provider,
+        "new_provider": new_cfg.provider,
+        "new_model": new_cfg.model,
+        "fallback_chain": new_cfg.fallback_chain,
+    }
+    return envelope(kind="platform.ai_config_switched", data=data)
