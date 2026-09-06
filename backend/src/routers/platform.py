@@ -62,6 +62,7 @@ from runtime.platform.ai import (
     register_builtin_tools,
     evaluate_policy,
 )
+from runtime.platform.ai.context import build_context_pack
 from runtime.platform.cache import snapshot
 from runtime.platform.diagnostics import engine as diagnostics_engine
 from runtime.platform.api.services._helpers import now_iso, envelope
@@ -1111,6 +1112,43 @@ async def post_ai_step(run_id: str, request: Request) -> JSONResponse:
 # ---------------------------------------------------------------------------
 # App registration helper
 # ---------------------------------------------------------------------------
+
+
+@router.get("/context/pack")
+async def get_context_pack(
+    symptom: str = Query(..., min_length=1, max_length=512),
+    capability_id: str | None = Query(default=None),
+    run_id: str | None = Query(default=None),
+    intent_type: str = Query(default="diagnose"),
+    token_budget: int = Query(default=8000, ge=1000, le=32000),
+) -> JSONResponse:
+    """Build a context pack for an AI diagnostic request."""
+    from runtime.platform.api.contracts import context as context_contract
+    from runtime.platform.api.envelope import error_envelope
+    from runtime.platform.api.errors import PlatformError, PlatformErrorCode
+
+    try:
+        pack = build_context_pack(
+            symptom=symptom,
+            capability_id=capability_id,
+            run_id=run_id,
+            intent_type=intent_type,
+            token_budget=token_budget,
+        )
+        # Add checksum
+        import hashlib, json
+        serialized = json.dumps(pack, sort_keys=True, separators=(",", ":"))
+        pack["checksum"] = hashlib.sha256(serialized.encode()).hexdigest()
+
+        return envelope(kind=context_contract.CONTEXT_PACK_KIND, data=pack)
+    except Exception as exc:
+        logger.warning("Context pack build failed: %s", exc, exc_info=True)
+        err = PlatformError(
+            code=PlatformErrorCode.INTERNAL,
+            layer="platform.context",
+            message=str(exc),
+        )
+        return JSONResponse(content=error_envelope(error=err), status_code=500)
 
 
 def register_platform_routes(app: FastAPI) -> None:

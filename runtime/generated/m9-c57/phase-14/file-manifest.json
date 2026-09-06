@@ -1,0 +1,56 @@
+{
+  "manifest": [
+    {
+      "file": "runtime/platform/ai/context/__init__.py",
+      "lines": 55,
+      "sha256": "95c88fb36da716468230c646a84add8beaac1ac811e597d1513ddad52f8815f2"
+    },
+    {
+      "file": "runtime/platform/ai/context/builder.py",
+      "lines": 325,
+      "sha256": "07c2222aa98e595960bcbac5d38d36a0ef098046ef8296a6798ee183f0c08ab3"
+    },
+    {
+      "file": "runtime/platform/ai/context/ranker.py",
+      "lines": 96,
+      "sha256": "a1e9a4d6c348dd52c502fba38deb0c73bd6c16ee0f3ed0f67643678a679b8792"
+    },
+    {
+      "file": "runtime/platform/ai/context/trimmer.py",
+      "lines": 76,
+      "sha256": "5df2d749db48b21cc3d1e49a2731c4b39cd19bda4c0c094502ff9b0034998731"
+    },
+    {
+      "file": "runtime/platform/ai/context/provenance.py",
+      "lines": 124,
+      "sha256": "1bddc15c74722da6a1e93a38b23bf3cabdaabe2e50c015397d480bf456b4a40e"
+    },
+    {
+      "file": "runtime/platform/ai/context/serializer.py",
+      "lines": 60,
+      "sha256": "1e316876770fac5569e3e2c3149120d0331ed3bfff3a58a3101525153f15031e"
+    },
+    {
+      "file": "runtime/platform/ai/context/cache.py",
+      "lines": 84,
+      "sha256": "33eae6c2166543318df3f1768cb664ecb1e4adda350314fce1ec20ed86bdafc8"
+    },
+    {
+      "file": "runtime/platform/api/contracts/context.py",
+      "lines": 67,
+      "sha256": "b38f9efdbbde0375776875154c9cb8d4b01c2609b8b683be173baf8765b3aefb"
+    },
+    {
+      "file": "backend/src/routers/platform.py",
+      "lines": 1172,
+      "sha256": "83e8a0a2b94fb1935c423f11351017f08475035cfb23cfd33e0879fb8112b4ca"
+    },
+    {
+      "file": "runtime/tests/test_platform_api_phase14.py",
+      "lines": 434,
+      "sha256": "a92e3cc91c6ea7266c3c192ae7af181be22efc73b6373006e30130f72d3198f6"
+    }
+  ],
+  "total_lines": 2493,
+  "generated_at": "2026-09-06T00:30:00Z"
+}

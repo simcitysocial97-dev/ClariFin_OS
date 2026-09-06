@@ -1,0 +1,199 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- /home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/vasantha/AI-Projects/ClariFin_OS
+configfile: pyproject.toml
+plugins: asyncio-1.4.0, schemathesis-4.25.2, hypothesis-6.167.1, cov-7.1.0, anyio-4.14.2, xdist-3.8.0, timeout-2.4.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 32 items
+
+runtime/tests/test_platform_api_phase14.py::TestContextBuilder::test_same_inputs_produce_same_pack_id PASSED [  3%]
+runtime/tests/test_platform_api_phase14.py::TestContextBuilder::test_different_symptoms_produce_different_ids PASSED [  6%]
+runtime/tests/test_platform_api_phase14.py::TestContextBuilder::test_pack_has_required_fields PASSED [  9%]
+runtime/tests/test_platform_api_phase14.py::TestContextBuilder::test_pack_status_complete_without_budget_exceeded PASSED [ 12%]
+runtime/tests/test_platform_api_phase14.py::TestContextBuilder::test_pack_status_incomplete_with_small_budget FAILED [ 15%]
+runtime/tests/test_platform_api_phase14.py::TestContextBuilder::test_pack_includes_provenance_sources PASSED [ 18%]
+runtime/tests/test_platform_api_phase14.py::TestSerializer::test_canonical_value_orders_dict_keys PASSED [ 21%]
+runtime/tests/test_platform_api_phase14.py::TestSerializer::test_serialize_produces_deterministic_json PASSED [ 25%]
+runtime/tests/test_platform_api_phase14.py::TestSerializer::test_compute_pack_id_is_consistent PASSED [ 28%]
+runtime/tests/test_platform_api_phase14.py::TestSerializer::test_compute_pack_checksum PASSED [ 31%]
+runtime/tests/test_platform_api_phase14.py::TestRanker::test_rank_sorts_descending PASSED [ 34%]
+runtime/tests/test_platform_api_phase14.py::TestRanker::test_select_top_within_budget FAILED [ 37%]
+runtime/tests/test_platform_api_phase14.py::TestRanker::test_select_top_all_fit PASSED [ 40%]
+runtime/tests/test_platform_api_phase14.py::TestTrimmer::test_trim_fits_budget PASSED [ 43%]
+runtime/tests/test_platform_api_phase14.py::TestTrimmer::test_trim_exceeds_budget_becomes_incomplete PASSED [ 46%]
+runtime/tests/test_platform_api_phase14.py::TestTrimmer::test_check_budget_quick_check PASSED [ 50%]
+runtime/tests/test_platform_api_phase14.py::TestTrimmer::test_trim_zero_budget PASSED [ 53%]
+runtime/tests/test_platform_api_phase14.py::TestProvenance::test_add_and_retrieve_entry PASSED [ 56%]
+runtime/tests/test_platform_api_phase14.py::TestProvenance::test_source_ref_format PASSED [ 59%]
+runtime/tests/test_platform_api_phase14.py::TestProvenance::test_fingerprint_bytes_deterministic PASSED [ 62%]
+runtime/tests/test_platform_api_phase14.py::TestProvenance::test_count_and_clear PASSED [ 65%]
+runtime/tests/test_platform_api_phase14.py::TestCache::test_put_and_get FAILED [ 68%]
+runtime/tests/test_platform_api_phase14.py::TestCache::test_miss_returns_none FAILED [ 71%]
+runtime/tests/test_platform_api_phase14.py::TestCache::test_invalidate FAILED [ 75%]
+runtime/tests/test_platform_api_phase14.py::TestCache::test_count FAILED [ 78%]
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered PASSED [ 81%]
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_endpoint_returns_200 PASSED [ 84%]
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_endpoint_requires_symptom PASSED [ 87%]
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_endpoint_validates_budget PASSED [ 90%]
+runtime/tests/test_platform_api_phase14.py::TestGate14Integration::test_full_lifecycle_determinism PASSED [ 93%]
+runtime/tests/test_platform_api_phase14.py::TestGate14Integration::test_budget_violation_not_silent FAILED [ 96%]
+runtime/tests/test_platform_api_phase14.py::TestGate14Integration::test_provenance_traces_all_components PASSED [100%]
+
+=================================== FAILURES ===================================
+_______ TestContextBuilder.test_pack_status_incomplete_with_small_budget _______
+runtime/tests/test_platform_api_phase14.py:103: in test_pack_status_incomplete_with_small_budget
+    assert pack["status"] == "incomplete"
+E   AssertionError: assert 'complete' == 'incomplete'
+E     
+E     - incomplete
+E     ? --
+E     + complete
+___________________ TestRanker.test_select_top_within_budget ___________________
+runtime/tests/test_platform_api_phase14.py:183: in test_select_top_within_budget
+    assert kept[0].component_type == "high"
+E   AssertionError: assert 'low' == 'high'
+E     
+E     - high
+E     + low
+__________________________ TestCache.test_put_and_get __________________________
+runtime/tests/test_platform_api_phase14.py:298: in test_put_and_get
+    cache.put(pack)
+runtime/platform/ai/context/cache.py:50: in put
+    path = self._pack_path(pack_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/platform/ai/context/cache.py:80: in _pack_path
+    return self._base / f"{pack_id}.json"
+           ^^^^^^^^^^
+E   AttributeError: 'ContextPackCache' object has no attribute '_base'
+_______________________ TestCache.test_miss_returns_none _______________________
+runtime/tests/test_platform_api_phase14.py:306: in test_miss_returns_none
+    assert cache.get("nonexistent") is None
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/platform/ai/context/cache.py:32: in get
+    path = self._pack_path(pack_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/platform/ai/context/cache.py:80: in _pack_path
+    return self._base / f"{pack_id}.json"
+           ^^^^^^^^^^
+E   AttributeError: 'ContextPackCache' object has no attribute '_base'
+__________________________ TestCache.test_invalidate ___________________________
+runtime/tests/test_platform_api_phase14.py:311: in test_invalidate
+    cache.put({"pack_id": "ctx-inv1", "kind": "test"})
+runtime/platform/ai/context/cache.py:50: in put
+    path = self._pack_path(pack_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/platform/ai/context/cache.py:80: in _pack_path
+    return self._base / f"{pack_id}.json"
+           ^^^^^^^^^^
+E   AttributeError: 'ContextPackCache' object has no attribute '_base'
+_____________________________ TestCache.test_count _____________________________
+runtime/tests/test_platform_api_phase14.py:320: in test_count
+    cache.put({"pack_id": "ctx-c1", "kind": "test"})
+runtime/platform/ai/context/cache.py:50: in put
+    path = self._pack_path(pack_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/platform/ai/context/cache.py:80: in _pack_path
+    return self._base / f"{pack_id}.json"
+           ^^^^^^^^^^
+E   AttributeError: 'ContextPackCache' object has no attribute '_base'
+____________ TestGate14Integration.test_budget_violation_not_silent ____________
+runtime/tests/test_platform_api_phase14.py:405: in test_budget_violation_not_silent
+    assert pack["status"] == "incomplete"
+E   AssertionError: assert 'complete' == 'incomplete'
+E     
+E     - incomplete
+E     ? --
+E     + complete
+=============================== warnings summary ===============================
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/account_dto.py:12: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class AccountDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/account_dto.py:48: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class AccountListResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/accounts_dto.py:153: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class AccountsDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/behaviour_dto.py:138: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class BehaviourDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/cashflow_dto.py:136: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CashflowSummaryDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/credit_cards_dto.py:186: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CreditCardsDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/dashboard_dto.py:14: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class DashboardSummaryDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/dashboard_dto.py:65: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class OverviewDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/dashboard_dto.py:100: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CategoryBreakdownDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/forecast_dto.py:141: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ForecastDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/investments_dto.py:143: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class InvestmentsDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/loans_dto.py:191: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class LoansDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/net_worth_dto.py:138: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class NetWorthDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/reconciliation_dto.py:138: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ReconciliationDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/reconciliation_dto.py:230: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ReconciliationsListResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/reconciliation_dto.py:270: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ReconciliationScanResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:12: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class MoneyDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:27: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class TransactionDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:70: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class TransactionListResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase14.py::TestHttpEndpointStructure::test_context_pack_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:84: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CategorySummaryDTO(BaseModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED runtime/tests/test_platform_api_phase14.py::TestContextBuilder::test_pack_status_incomplete_with_small_budget
+FAILED runtime/tests/test_platform_api_phase14.py::TestRanker::test_select_top_within_budget
+FAILED runtime/tests/test_platform_api_phase14.py::TestCache::test_put_and_get
+FAILED runtime/tests/test_platform_api_phase14.py::TestCache::test_miss_returns_none
+FAILED runtime/tests/test_platform_api_phase14.py::TestCache::test_invalidate
+FAILED runtime/tests/test_platform_api_phase14.py::TestCache::test_count - At...
+FAILED runtime/tests/test_platform_api_phase14.py::TestGate14Integration::test_budget_violation_not_silent
+================== 7 failed, 25 passed, 20 warnings in 8.84s ===================
