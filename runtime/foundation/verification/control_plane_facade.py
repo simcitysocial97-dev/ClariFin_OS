@@ -636,7 +636,51 @@ def main() -> int:
 
 
 def _dispatch_canonical(operation: str, args: list[str]) -> int:
-    """Dispatch to the canonical control plane method."""
+    """Dispatch to the canonical control plane method.
+
+    CANONICAL_ALIAS values (quick, backend, frontend, contracts, runtime,
+    golden, graph, full, playwright, etc.) are not canonical operations
+    themselves — they are profile aliases for CHECK. Route them through
+    profile-aware execution instead of a generic check so the correct
+    verification profile runs.
+    """
+    PROFILE_ALIASES = {
+        "quick",
+        "backend",
+        "frontend",
+        "contracts",
+        "runtime",
+        "golden",
+        "graph",
+        "full",
+        "playwright",
+        "api-contracts",
+    }
+    # Map api-contracts -> contracts profile
+    _PROFILE_MAP = {"api-contracts": "contracts"}
+    if operation in _PROFILE_MAP:
+        operation = _PROFILE_MAP[operation]
+    if operation in PROFILE_ALIASES:
+        import subprocess
+
+        from runtime.foundation.verification.profiles import get_profile
+
+        try:
+            profile = get_profile(operation)
+        except ValueError as e:
+            print(str(e), file=sys.stderr)
+            return 1
+        # Run each task's commands sequentially; fail fast on first failure
+        for task in profile.tasks:
+            for cmd in task.commands:
+                result = subprocess.run(cmd, shell=True)
+                if result.returncode != 0:
+                    print(
+                        f"[profile:{operation}] task {task.id!r} failed (exit {result.returncode})",
+                        file=sys.stderr,
+                    )
+                    return result.returncode
+        return 0
     cp = ControlPlane()
     if operation == CanonicalOperation.CHECK.value:
         return cp.check()

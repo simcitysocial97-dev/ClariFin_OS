@@ -8,6 +8,8 @@ No profile may contain duplicated commands.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from dataclasses import dataclass
 
 from runtime.foundation.verification.models import (
@@ -62,7 +64,7 @@ _VERIFY_QUICK_TASKS = (
         id="quick-mypy",
         name="MyPy type check",
         profile="quick",
-        commands=["python3 -m mypy backend/src/ --ignore-missing-imports"],
+        commands=['bash -c "cd backend && ../.venv/bin/python -m mypy src"'],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.QUICK,
         estimated_duration_seconds=60,
@@ -101,7 +103,7 @@ _VERIFY_BACKEND_TASKS = (
         id="backend-mypy",
         name="MyPy type check",
         profile="backend",
-        commands=["python3 -m mypy backend/src/ --ignore-missing-imports"],
+        commands=['bash -c "cd backend && ../.venv/bin/python -m mypy src"'],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.BACKEND,
         estimated_duration_seconds=60,
@@ -128,7 +130,7 @@ _VERIFY_BACKEND_TASKS = (
         id="backend-schemathesis",
         name="Schemathesis contract tests",
         profile="backend",
-        commands=["schemathesis run backend/tests/contract/"],
+        commands=["bash .github/scripts/run_contract_tests.sh"],
         category=VerificationCategory.CONTRACT,
         scope=VerificationScope.BACKEND,
         estimated_duration_seconds=180,
@@ -201,7 +203,7 @@ _VERIFY_CONTRACTS_TASKS = (
         id="contracts-schemathesis",
         name="Schemathesis contract validation",
         profile="contracts",
-        commands=["schemathesis run backend/tests/contract/"],
+        commands=["bash .github/scripts/run_contract_tests.sh"],
         category=VerificationCategory.CONTRACT,
         scope=VerificationScope.CONTRACTS,
         estimated_duration_seconds=180,
@@ -278,7 +280,7 @@ _VERIFY_FULL_TASKS = (
         id="full-mypy",
         name="MyPy type check",
         profile="full",
-        commands=["python3 -m mypy backend/src/ --ignore-missing-imports"],
+        commands=['bash -c "cd backend && ../.venv/bin/python -m mypy src"'],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.FULL,
         estimated_duration_seconds=60,
@@ -305,7 +307,7 @@ _VERIFY_FULL_TASKS = (
         id="full-schemathesis",
         name="Schemathesis contract tests",
         profile="full",
-        commands=["schemathesis run backend/tests/contract/"],
+        commands=["bash .github/scripts/run_contract_tests.sh"],
         category=VerificationCategory.CONTRACT,
         scope=VerificationScope.FULL,
         estimated_duration_seconds=180,

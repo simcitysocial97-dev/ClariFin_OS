@@ -1,9 +1,9 @@
 {
   "domains": {
     "capabilities": {
-      "_c": 220340.465749033,
-      "_ts": "2026-09-05T17:34:42Z",
-      "hash": "854c33239eb13b5e0f190cc0fb6d052c4dd04f1374955990935a9c2c24f3c25e",
+      "_c": 290952.584384832,
+      "_ts": "2026-09-06T14:20:38Z",
+      "hash": "73d9e18e6cf573d9fa2e9edc6ce7ad4f46b40526d4c88dc115d1fe49f64c930b",
       "payload": {
         "data": {
           "categories": [
@@ -769,353 +769,36 @@
             }
           ]
         },
-        "generated_at": "2026-09-05T17:34:42Z",
+        "generated_at": "2026-09-06T14:20:38Z",
         "id": "sha256:5316987b8b1d0518a089806afeaca29464fda75fd1d9c48bfc66eb68396c465c",
         "kind": "platform.capability_list",
         "version": "1.0.0"
       }
     },
     "change": {
-      "_c": 264393.432514065,
-      "_ts": "2026-09-06T05:48:55Z",
-      "hash": "fe45dd08b92c0b60731c12d4e3e56206ddd028d6a26fd9878cdf312981c7aeed",
+      "_c": 287839.434822267,
+      "_ts": "2026-09-06T13:28:45Z",
+      "hash": "3cc19addadb18076ba3c4e988c765087bb3b69e75fdf506b3fb3cf6f1652f7eb",
       "payload": {
         "data": {
           "affected_capabilities": [
             "api-contracts",
             "loan-engine"
           ],
-          "affected_tests": [
-            "frontend/tests/src"
-          ],
-          "affected_workflows": [
-            "backend",
-            "contracts",
-            "frontend",
-            "run_backend_verification",
-            "run_contract_tests",
-            "run_frontend_verification"
-          ],
+          "affected_tests": [],
+          "affected_workflows": [],
           "changed_files": [
-            {
-              "change_type": "modified",
-              "path": "backend/src/routers/platform.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/golden/test_regression.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/integration/acceptance/test_acceptance_matrix.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/integration/cross_layer/test_journey_account_crud.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/integration/cross_layer/test_journey_dashboard_metrics.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/integration/cross_layer/test_journey_loan_management.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/integration/performance/test_performance.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/integration/test_platform_api_phase3.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/integration/test_platform_api_phase4.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/integration/test_platform_api_phase6.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/mutation_infra/python_312_probes/control_probe.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/mutation_infra/python_312_probes/pep604_union.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/mutation_infra/python_312_probes/pep634_match.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/mutation_infra/python_312_probes/pep654_exception_groups.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/mutation_infra/python_312_probes/pep695_type_params.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/mutation_infra/python_312_probes/test_control_probe.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/mutation_infra/python_312_probes/test_pep604_union.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/mutation_infra/python_312_probes/test_pep634_match.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/mutation_infra/python_312_probes/test_pep654_exception_groups.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/mutation_infra/python_312_probes/test_pep695_type_params.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/test_m9_c56_scenarios.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/unit/engines/balance_engine/test_balance_engine_helpers.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/unit/engines/credit_card_engine/test_m9_c56_additional_gaps.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/unit/engines/credit_card_engine/test_m9_c56_boolean_flips.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/unit/engines/credit_card_engine/test_m9_c56_mutation_gaps.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/unit/engines/financial_events/test_financial_events.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/unit/engines/financial_events/test_m9_c56_behavioral_gaps.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/unit/engines/financial_events/test_m9_c56_lineage_gaps.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/unit/engines/financial_events/test_m9_c56_missing_keys.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/unit/repositories/test_account_repository.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "backend/tests/unit/services/test_recommendation_networth_services.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/api_schema_governance.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/authorization_boundary.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/c53_certification.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/c53_scenarios.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/c56_convergence.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/candidate_validation.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/capability_authority.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/capability_graph_resolver.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/cli_capability_matrix.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/cli_governance.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/cli_surface.py"
-            },
             {
               "change_type": "modified",
               "path": "runtime/foundation/verification/control_plane_facade.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/foundation/verification/convergence_pipeline.py"
+              "path": "runtime/foundation/verification/profiles.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/foundation/verification/coverage_truth.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/engine_capability_bridge.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/env_contract.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/executor_pipeline.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/forensic_cli.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/frontend_financial_arithmetic_lint.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/function_audit.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/gap_classification.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/generation_eligibility.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/generation_engine.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/help_resolver.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/milestone_state.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_authority.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_execution/backend_interface.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_execution/cache.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_execution/cache_report.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_execution/config_fingerprint.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_execution/domain_model.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_execution/domain_model_report.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_execution/evidence.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_execution/forensics.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_execution/health.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_execution/mutmut_adapter.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_execution/orchestrator.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_execution/reliability_report.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_execution/verify_result.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_execution/workspace.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_execution/workspace_report.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_result_unified.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/obligation_reconciliation.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/test_cache_invalidation.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/test_command_consolidation.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/test_convergence_loop.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/test_false_certification_audit.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/test_quality.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/test_strengthening_pipeline.py"
+              "path": "runtime/generated/diagnostic-signatures.json"
             },
             {
               "change_type": "modified",
@@ -1123,1664 +806,203 @@
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/__init__.py"
+              "path": "runtime/generated/platform/snapshot.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/agents.py"
+              "path": "runtime/generated/ai-context-packs/ctx-c1.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/config.py"
+              "path": "runtime/generated/ai-context-packs/ctx-c2.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/context/__init__.py"
+              "path": "runtime/generated/ai-context-packs/ctx-test123.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/context/builder.py"
+              "path": "runtime/generated/ai-runs/ai-110515c45a2e.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/context/cache.py"
+              "path": "runtime/generated/ai-runs/ai-1c11302dceae.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/context/provenance.py"
+              "path": "runtime/generated/ai-runs/ai-1eece536bd1f.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/context/ranker.py"
+              "path": "runtime/generated/ai-runs/ai-47c9a816bfe2.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/context/serializer.py"
+              "path": "runtime/generated/ai-runs/ai-49c7426f5512.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/context/trimmer.py"
+              "path": "runtime/generated/ai-runs/ai-4d0210197ae1.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/intent.py"
+              "path": "runtime/generated/ai-runs/ai-4f59502bdc58.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/memory.py"
+              "path": "runtime/generated/ai-runs/ai-505c19ae1241.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/orchestrator.py"
+              "path": "runtime/generated/ai-runs/ai-7afe2f982090.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/planner.py"
+              "path": "runtime/generated/ai-runs/ai-7d0cc9fed821.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/policy.py"
+              "path": "runtime/generated/ai-runs/ai-99dff4f36fe8.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/providers/__init__.py"
+              "path": "runtime/generated/ai-runs/ai-9e25f401f3b9.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/providers/base.py"
+              "path": "runtime/generated/ai-runs/ai-a60753eee720.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/providers/local.py"
+              "path": "runtime/generated/ai-runs/ai-a77365728029.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/providers/router.py"
+              "path": "runtime/generated/ai-runs/ai-b42ba4ce3c87.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/runs.py"
+              "path": "runtime/generated/ai-runs/ai-b887beaaa852.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/tools/__init__.py"
+              "path": "runtime/generated/ai-runs/ai-cee6ba81d698.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/ai/tools/handlers.py"
+              "path": "runtime/generated/ai-runs/ai-dcc30c06d054.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/api/contracts/_primitives.py"
+              "path": "runtime/generated/ai-runs/ai-e00718f9e4e5.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/platform/api/contracts/ai.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/contracts/application.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/contracts/architecture.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/contracts/capabilities.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/contracts/change.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/contracts/context.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/contracts/diagnostics.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/contracts/errors.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/contracts/events.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/contracts/evidence.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/contracts/executions.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/contracts/health.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/contracts/history.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/contracts/tasks.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/contracts/verification.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/errors.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/services/_comparison.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/services/application.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/services/architecture.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/services/capabilities.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/services/change.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/services/errors.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/services/events.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/services/evidence.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/services/executions.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/services/health.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/services/history.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/services/tasks.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/services/tasks_write.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/services/verification.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/api/services/verification_write.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/cache.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/diagnostics/__init__.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/diagnostics/engine.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/diagnostics/rules.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/system/evidence/aggregator_obsolete_disposition.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/system/evidence/tests/test_evidence_unification.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/audit_final_freeze.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c44_mutation_architecture.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c48_api_schema_governance.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c48_capability_graph.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c48_cli_governance.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c48_coverage_truth.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c48_frontend_arithmetic.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c48_function_audit.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c48_milestone_state.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c48_mutation_unified.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c48_test_quality.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c48_test_strengthening.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c50_ci_convergence.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c50_executor_adapters.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c50_final_governance.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c50_operational_lineage.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c50_operational_validation.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c50_self_verification.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c50_stop_gate3_capability_resolution.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c50_stop_gate4_execution_completeness.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c50_stop_gate6_strengthening_authority.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c50_stop_gate9_failure_modes.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c53.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c55.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_platform_api_phase1.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_platform_api_phase10_12.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_platform_api_phase13.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_platform_api_phase14.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_platform_api_phase15_21.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_platform_api_phase2.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_platform_api_phase7.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_platform_api_phase8.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_platform_api_phase9.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/verify.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-01f71e4a8605.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-0324f408bcba.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-084beef15de9.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-0dd05a14c16e.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-0e50de43a1cf.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-12fed327d8d4.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-14ef4d5af76d.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-158f90b37fae.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-15b9c60c6665.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-179ed83b275f.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-17d6b9e74c7b.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-185605d7b379.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-1a38a9d2d158.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-1ab85b266c03.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-1b4a2621d5a4.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-1bf6cd05045c.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-211102b4dec2.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-2147c644b18b.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-22a566d4cce6.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-26ea5a8f9507.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-2957dc6f1570.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-2b2b7ae0a670.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-2bec5f4646a4.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-2e30c0f2a3b5.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-3104e6a43a24.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-32e635e0fe6d.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-332b6132a62d.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-33d1841ec8c3.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-347cd27ddcbf.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-34ee1fc84f15.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-35682a424ff9.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-3682d20e24e7.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-36d17598340f.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-377b62af3f7f.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-37eac8866ed7.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-389e22db81ad.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-3a660f2d64dd.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-3b094b9e5aed.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-3cd69ef28908.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-4081c4d28004.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-43c5adfa5501.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-44d7f7da7d12.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-44f77666283b.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-47982b8caa47.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-47f14fc3091e.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-4887b03b441c.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-4be63ac120ca.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-4edc5f4a4397.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-4ff7fb3b9601.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-512efb4223cf.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-51496fe33d04.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-520a33103366.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-599249c54f0f.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-5be2c5b978fa.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-5f217b4e39ee.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-60a4e477dbdf.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-60de6859f721.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-626870b36fb4.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-63b0d69c1816.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-645062c0db2a.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-69307910c988.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-6a577150f973.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-6b53403eeb7e.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-6cd9a01b5089.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-6d111716410a.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-71699c424a1e.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-71a3131342d8.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-71af8156fa27.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-722a43a2ead2.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-72a2d7fa837e.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-73acd71a8e92.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-73e89bdff86c.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-7404be67e100.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-7aa727d75897.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-7c156a0df33d.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-7cd8dbdd2169.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-7e11440695bf.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-7e6c401cf5dd.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-7ff9dbd06d76.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-810cbce11081.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-8273ed1e4d58.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-8327f2ce5616.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-8395065a2b8c.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-84c4e56100f6.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-84cdc04e67ac.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-85c6f9b498ba.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-87ec992cea2d.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-8bbd30143b60.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-8cf7362145e9.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-8dc072d17b9b.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-9079c311485e.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-94792ce85048.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-957c2bdc89ec.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-9647fa15e977.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-97d6866fe404.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-98dc6b2d3cea.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-99e42617cdf5.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-9bca33027ba5.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-9e94e3c7ecd7.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-a0513c3802d3.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-a168fbef7e6f.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-a2bf56376c6e.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-a2d4446fce19.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-a40e836a7a00.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-a55c3f4e391e.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-a5c41854a722.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-a7d832e84afd.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-a910498c5e72.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-aac0fa2d09b4.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-ab14806bac61.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-ab322910f244.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-abb42263e201.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-ae2c92529e23.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-afa4cae53b00.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-b108051b2b7b.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-b24b1d44b711.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-b343b35a6a0c.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-b5890c5954a0.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-b5f96efd79bf.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-baccfede8a8d.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-bd56d68ad13d.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-bd9ab1f828ad.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-bde0874a696d.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-be4b8d3367f3.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-c15819ef5391.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-c4282cf47d5a.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-c750cc883500.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-c7b18cc03712.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-c8de5facef7f.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-c933d5e354dd.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-cbccc2ed61b4.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-cd31c005ad99.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-cd8801ce69dc.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-ce2e05573270.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-cff3cf029f95.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-d05298b59901.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-d0df8ce04481.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-d2c8488696ee.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-d4c92e80d106.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-d7a56befc9f8.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-d87b5e2db8ce.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-db87d7ee0320.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-dbf91d427db4.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-e36092acf3c9.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-e3c4f3a93ea6.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-e4ffc0f25c13.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-e909b2ded6bd.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-eb5e30f6869f.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-ed4038e8ef98.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-edf9f9511acc.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-ee8ec9fab3fc.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-ef0baa093dc8.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-f18883e0b864.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-f42e2948462e.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-f475873e19ef.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-f5fd6eb80f10.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-f6c13a3bd5fe.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-f94b1d8ea42a.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-fb9b47bf3d75.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-fbff2761e923.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-ffac667be185.json"
+              "path": "runtime/generated/ai-runs/ai-e54bc699d32b.json"
             }
           ],
-          "generated_from": "2026-09-06T05:48:53.799756+00:00",
-          "recommended_verification": [
-            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='capability:useBehaviourCapability', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability capability:useBehaviourCapability \u2014 no executable command available', has_executable_command=False)",
-            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='capability:useLoansCapability', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability capability:useLoansCapability \u2014 no executable command available', has_executable_command=False)"
-          ],
+          "generated_from": "2026-09-06T13:28:43.828505+00:00",
+          "recommended_verification": [],
           "risk": "HIGH",
           "stale_evidence": []
         },
-        "generated_at": "2026-09-06T05:48:55Z",
-        "id": "sha256:834dc655f48b9be310b8f1987d1349d8c2c07f97feb5bcfe75ff4ec403900daf",
+        "generated_at": "2026-09-06T13:28:45Z",
+        "id": "sha256:80b4ca2014707f95f62c9bf6928358b0246a7305b48f347f8ece2e549980bca9",
         "kind": "platform.change_intelligence",
         "version": "1.0.0"
       }
     },
     "events": {
-      "_c": 205921.23523641,
-      "_ts": "2026-09-05T13:19:58Z",
-      "hash": "25d1829d7db64945c70b75756eb1fac15edc1c0af4452790d45f24a985a6f0ee",
+      "_c": 290976.795844824,
+      "_ts": "2026-09-06T14:21:02Z",
+      "hash": "124385f302c20b66bd35bff67a463027057d2d29e9b318af06ab17470402bd5a",
       "payload": {
         "data": {
-          "count": 5,
+          "count": 4,
           "items": [
             {
-              "capability_id": null,
-              "emitted_at": "2026-08-30 08:18:34.955940+00:00",
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-06 04:22:08.408528+00:00",
               "event_type": "VerificationCompleted",
-              "execution_id": null,
-              "id": "1f51f5a5-3b4a-44c0-ab89-fd40ac173055",
+              "execution_id": "ver-brc-1d39",
+              "id": "vc-ver-brc-1d39",
               "payload": {
-                "blast_radius": {
-                  "affected_capabilities": [
-                    "useLoansCapability",
-                    "useReconciliationCapability",
-                    "useBehaviourCapability",
-                    "useAccountsCapability",
-                    "useCreditCardsCapability",
-                    "capability:useCashflowCapability",
-                    "capability:useForecastCapability",
-                    "capability:useInvestmentsCapability",
-                    "capability:useNetWorthCapability",
-                    "capability:useTransactionCapability",
-                    "capability:useBehaviourCapability",
-                    "capability:useAccountsCapability",
-                    "capability:useCreditCardsCapability",
-                    "capability:useLoansCapability",
-                    "capability:useReconciliationCapability"
-                  ],
-                  "affected_engines": [
-                    "backend/src/engines/loan_engine",
-                    "backend/src/engines/reconciliation_engine.py",
-                    "backend/src/engines/behaviour_engine",
-                    "backend/src/engines/account_engine",
-                    "backend/src/engines/credit_card_engine",
-                    "engine:account_engine",
-                    "engine:balance_engine",
-                    "engine:behaviour_engine",
-                    "engine:cashflow_engine",
-                    "engine:credit_card_engine",
-                    "engine:financial_events",
-                    "engine:financial_intelligence",
-                    "engine:ledger_audit_engine",
-                    "engine:loan_engine",
-                    "engine:recommendation_engine",
-                    "engine:reconciliation_engine",
-                    "engine:transaction_intelligence",
-                    "test:backend/tests/audits/test_audit_minimal.py",
-                    "test:backend/tests/capability/financial_events/__init__.py",
-                    "test:backend/tests/capability/financial_events/test_capability.py",
-                    "test:backend/tests/capability/financial_events/test_revocation.py",
-                    "test:backend/tests/capability/household_cashflow/test_capability.py",
-                    "test:backend/tests/capability/pattern_analysis/test_capability.py",
-                    "test:backend/tests/capability/transaction_intelligence/__init__.py",
-                    "test:backend/tests/capability/transaction_intelligence/test_capability.py",
-                    "test:backend/tests/contract/generated/test_financial_events.py",
-                    "test:backend/tests/invariants/financial_events.py",
-                    "test:backend/tests/invariants/test_determinism.py",
-                    "test:backend/tests/invariants/test_reconciliation_determinism.py",
-                    "test:backend/tests/invariants/test_reconciliation_properties.py",
-                    "test:backend/tests/properties/behaviour/test_engine_properties.py",
-                    "test:backend/tests/properties/cashflow/test_engine_properties.py",
-                    "test:backend/tests/properties/credit_card_engine/__init__.py",
-                    "test:backend/tests/properties/credit_card_engine/test_billing_properties.py",
-                    "test:backend/tests/properties/credit_card_engine/test_emi_properties.py",
-                    "test:backend/tests/properties/credit_card_engine/test_interest_properties.py",
-                    "test:backend/tests/properties/credit_cards/test_engine_properties.py",
-                    "test:backend/tests/properties/financial_events/__init__.py",
-                    "test:backend/tests/properties/financial_events/test_engine_properties.py",
-                    "test:backend/tests/properties/financial_events/test_lineage_properties.py",
-                    "test:backend/tests/properties/forecasting/test_engine_properties.py",
-                    "test:backend/tests/properties/lending/test_engine_properties.py",
-                    "test:backend/tests/properties/loan_engine/__init__.py",
-                    "test:backend/tests/properties/loan_engine/test_amortization_properties.py",
-                    "test:backend/tests/properties/loan_engine/test_emi_properties.py",
-                    "test:backend/tests/properties/loan_engine/test_floating_rate_properties.py",
-                    "test:backend/tests/properties/loan_engine/test_foreclosure_properties.py",
-                    "test:backend/tests/properties/loan_engine/test_metrics_properties.py",
-                    "test:backend/tests/properties/loan_engine/test_prepayment_properties.py",
-                    "test:backend/tests/properties/recommendations/test_engine_properties.py",
-                    "test:backend/tests/properties/reconciliation/test_engine_properties.py",
-                    "test:backend/tests/properties/transaction_intelligence/__init__.py",
-                    "test:backend/tests/properties/transaction_intelligence/test_engine_properties.py",
-                    "test:backend/tests/unit/engines/account/test_account_engine.py",
-                    "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
-                    "test:backend/tests/unit/engines/behaviour/test_core.py",
-                    "test:backend/tests/unit/engines/behaviour/test_integration.py",
-                    "test:backend/tests/unit/engines/behaviour/test_metrics.py",
-                    "test:backend/tests/unit/engines/behaviour/test_patterns.py",
-                    "test:backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
-                    "test:backend/tests/unit/engines/financial_events/__init__.py",
-                    "test:backend/tests/unit/engines/financial_events/test_financial_events.py",
-                    "test:backend/tests/unit/engines/loan/test_amortization.py",
-                    "test:backend/tests/unit/engines/loan/test_loan_engine.py",
-                    "test:backend/tests/unit/engines/recommendation/test_recommendation_engine.py",
-                    "test:backend/tests/unit/engines/reconciliation/test_reconciliation.py",
-                    "test:backend/tests/unit/engines/transaction_intelligence/__init__.py"
-                  ],
-                  "affected_services": [
-                    "backend/src/services/loan_analysis_service.py",
-                    "backend/src/services/loan_service.py",
-                    "backend/src/services/loan_simulation_service.py",
-                    "backend/src/services/transaction_intelligence_service.py",
-                    "backend/src/services/reconciliation_service.py",
-                    "backend/src/services/behaviour_service.py",
-                    "backend/src/services/dashboard_service.py",
-                    "backend/src/services/import_service.py",
-                    "backend/src/services/account_service.py",
-                    "backend/src/services/credit_card_service.py",
-                    "service:backend/src/services/transaction_service.py",
-                    "service:backend/src/services/dashboard_service.py",
-                    "service:backend/src/services/import_service.py",
-                    "service:backend/src/services/__init__.py",
-                    "service:backend/src/services/account_service.py",
-                    "service:backend/src/services/audit_service.py",
-                    "service:backend/src/services/behaviour_service.py",
-                    "service:backend/src/services/credit_card_service.py",
-                    "service:backend/src/services/financial_events_service.py",
-                    "service:backend/src/services/financial_intelligence_service.py",
-                    "service:backend/src/services/loan_analysis_service.py",
-                    "service:backend/src/services/loan_service.py",
-                    "service:backend/src/services/loan_simulation_service.py",
-                    "service:backend/src/services/recommendation_service.py",
-                    "service:backend/src/services/reconciliation_service.py",
-                    "service:backend/src/services/statement_service.py",
-                    "service:backend/src/services/transaction_intelligence_service.py"
-                  ],
-                  "affected_tests": [
-                    "backend/tests/properties/lending/test_engine_properties.py",
-                    "backend/tests/properties/loan_engine/__init__.py",
-                    "backend/tests/properties/loan_engine/test_amortization_properties.py",
-                    "backend/tests/properties/loan_engine/test_emi_properties.py",
-                    "backend/tests/properties/loan_engine/test_floating_rate_properties.py",
-                    "backend/tests/properties/loan_engine/test_foreclosure_properties.py",
-                    "backend/tests/properties/loan_engine/test_metrics_properties.py",
-                    "backend/tests/properties/loan_engine/test_prepayment_properties.py",
-                    "backend/tests/unit/engines/loan/test_amortization.py",
-                    "backend/tests/unit/engines/loan/test_loan_engine.py",
-                    "backend/tests/invariants/test_reconciliation_determinism.py",
-                    "backend/tests/invariants/test_reconciliation_properties.py",
-                    "backend/tests/properties/reconciliation/test_engine_properties.py",
-                    "backend/tests/unit/engines/reconciliation/test_reconciliation.py",
-                    "backend/tests/capability/pattern_analysis/test_capability.py",
-                    "backend/tests/properties/behaviour/test_engine_properties.py",
-                    "backend/tests/properties/recommendations/test_engine_properties.py",
-                    "backend/tests/unit/engines/behavior/test_behavior_engine.py",
-                    "backend/tests/unit/engines/behaviour/test_core.py",
-                    "backend/tests/unit/engines/behaviour/test_integration.py",
-                    "backend/tests/unit/engines/behaviour/test_metrics.py",
-                    "backend/tests/unit/engines/behaviour/test_patterns.py",
-                    "backend/tests/unit/engines/account/test_account_engine.py",
-                    "backend/tests/properties/credit_card_engine/__init__.py",
-                    "backend/tests/properties/credit_card_engine/test_billing_properties.py",
-                    "backend/tests/properties/credit_card_engine/test_emi_properties.py",
-                    "backend/tests/properties/credit_card_engine/test_interest_properties.py",
-                    "backend/tests/properties/credit_cards/test_engine_properties.py",
-                    "backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
-                    "backend/tests/audits/test_audit_minimal.py",
-                    "backend/tests/capability/financial_events/test_revocation.py",
-                    "backend/tests/capability/transaction_intelligence/test_capability.py",
-                    "backend/tests/invariants/test_determinism.py",
-                    "backend/tests/properties/cashflow/test_engine_properties.py",
-                    "backend/tests/properties/financial_events/test_engine_properties.py",
-                    "backend/tests/properties/financial_events/test_lineage_properties.py",
-                    "backend/tests/properties/forecasting/test_engine_properties.py",
-                    "backend/tests/properties/transaction_intelligence/test_engine_properties.py",
-                    "backend/tests/unit/engines/financial_events/test_financial_events.py",
-                    "backend/tests/capability/financial_events/__init__.py",
-                    "backend/tests/capability/financial_events/test_capability.py",
-                    "backend/tests/capability/household_cashflow/test_capability.py",
-                    "backend/tests/capability/transaction_intelligence/__init__.py",
-                    "backend/tests/contract/generated/test_financial_events.py",
-                    "backend/tests/invariants/financial_events.py",
-                    "backend/tests/properties/financial_events/__init__.py",
-                    "backend/tests/properties/transaction_intelligence/__init__.py",
-                    "backend/tests/unit/engines/financial_events/__init__.py",
-                    "backend/tests/unit/engines/recommendation/test_recommendation_engine.py",
-                    "backend/tests/unit/engines/transaction_intelligence/__init__.py"
-                  ]
-                },
-                "cache_hit": false,
-                "duration_seconds": 628.9923410760093,
-                "evidence_count": 0,
-                "failed": 2,
-                "metadata": {},
-                "passed": 2,
-                "profile": "backend",
-                "skipped": 0,
-                "status": "failed"
-              },
-              "task_id": null
-            },
-            {
-              "capability_id": null,
-              "emitted_at": "2026-08-30 08:01:35.242492+00:00",
-              "event_type": "VerificationCompleted",
-              "execution_id": null,
-              "id": "72f687c0-4fe1-4bf7-a7ce-e5dccbaad63c",
-              "payload": {
-                "blast_radius": {
-                  "affected_capabilities": [
-                    "useLoansCapability",
-                    "useReconciliationCapability",
-                    "useBehaviourCapability",
-                    "useAccountsCapability",
-                    "useCreditCardsCapability",
-                    "capability:useCashflowCapability",
-                    "capability:useForecastCapability",
-                    "capability:useInvestmentsCapability",
-                    "capability:useNetWorthCapability",
-                    "capability:useTransactionCapability",
-                    "capability:useBehaviourCapability",
-                    "capability:useAccountsCapability",
-                    "capability:useCreditCardsCapability",
-                    "capability:useLoansCapability",
-                    "capability:useReconciliationCapability"
-                  ],
-                  "affected_engines": [
-                    "backend/src/engines/loan_engine",
-                    "backend/src/engines/reconciliation_engine.py",
-                    "backend/src/engines/behaviour_engine",
-                    "backend/src/engines/account_engine",
-                    "backend/src/engines/credit_card_engine",
-                    "engine:account_engine",
-                    "engine:balance_engine",
-                    "engine:behaviour_engine",
-                    "engine:cashflow_engine",
-                    "engine:credit_card_engine",
-                    "engine:financial_events",
-                    "engine:financial_intelligence",
-                    "engine:ledger_audit_engine",
-                    "engine:loan_engine",
-                    "engine:recommendation_engine",
-                    "engine:reconciliation_engine",
-                    "engine:transaction_intelligence",
-                    "test:backend/tests/audits/test_audit_minimal.py",
-                    "test:backend/tests/capability/financial_events/__init__.py",
-                    "test:backend/tests/capability/financial_events/test_capability.py",
-                    "test:backend/tests/capability/financial_events/test_revocation.py",
-                    "test:backend/tests/capability/household_cashflow/test_capability.py",
-                    "test:backend/tests/capability/pattern_analysis/test_capability.py",
-                    "test:backend/tests/capability/transaction_intelligence/__init__.py",
-                    "test:backend/tests/capability/transaction_intelligence/test_capability.py",
-                    "test:backend/tests/contract/generated/test_financial_events.py",
-                    "test:backend/tests/invariants/financial_events.py",
-                    "test:backend/tests/invariants/test_determinism.py",
-                    "test:backend/tests/invariants/test_reconciliation_determinism.py",
-                    "test:backend/tests/invariants/test_reconciliation_properties.py",
-                    "test:backend/tests/properties/behaviour/test_engine_properties.py",
-                    "test:backend/tests/properties/cashflow/test_engine_properties.py",
-                    "test:backend/tests/properties/credit_card_engine/__init__.py",
-                    "test:backend/tests/properties/credit_card_engine/test_billing_properties.py",
-                    "test:backend/tests/properties/credit_card_engine/test_emi_properties.py",
-                    "test:backend/tests/properties/credit_card_engine/test_interest_properties.py",
-                    "test:backend/tests/properties/credit_cards/test_engine_properties.py",
-                    "test:backend/tests/properties/financial_events/__init__.py",
-                    "test:backend/tests/properties/financial_events/test_engine_properties.py",
-                    "test:backend/tests/properties/financial_events/test_lineage_properties.py",
-                    "test:backend/tests/properties/forecasting/test_engine_properties.py",
-                    "test:backend/tests/properties/lending/test_engine_properties.py",
-                    "test:backend/tests/properties/loan_engine/__init__.py",
-                    "test:backend/tests/properties/loan_engine/test_amortization_properties.py",
-                    "test:backend/tests/properties/loan_engine/test_emi_properties.py",
-                    "test:backend/tests/properties/loan_engine/test_floating_rate_properties.py",
-                    "test:backend/tests/properties/loan_engine/test_foreclosure_properties.py",
-                    "test:backend/tests/properties/loan_engine/test_metrics_properties.py",
-                    "test:backend/tests/properties/loan_engine/test_prepayment_properties.py",
-                    "test:backend/tests/properties/recommendations/test_engine_properties.py",
-                    "test:backend/tests/properties/reconciliation/test_engine_properties.py",
-                    "test:backend/tests/properties/transaction_intelligence/__init__.py",
-                    "test:backend/tests/properties/transaction_intelligence/test_engine_properties.py",
-                    "test:backend/tests/unit/engines/account/test_account_engine.py",
-                    "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
-                    "test:backend/tests/unit/engines/behaviour/test_core.py",
-                    "test:backend/tests/unit/engines/behaviour/test_integration.py",
-                    "test:backend/tests/unit/engines/behaviour/test_metrics.py",
-                    "test:backend/tests/unit/engines/behaviour/test_patterns.py",
-                    "test:backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
-                    "test:backend/tests/unit/engines/financial_events/__init__.py",
-                    "test:backend/tests/unit/engines/financial_events/test_financial_events.py",
-                    "test:backend/tests/unit/engines/loan/test_amortization.py",
-                    "test:backend/tests/unit/engines/loan/test_loan_engine.py",
-                    "test:backend/tests/unit/engines/recommendation/test_recommendation_engine.py",
-                    "test:backend/tests/unit/engines/reconciliation/test_reconciliation.py",
-                    "test:backend/tests/unit/engines/transaction_intelligence/__init__.py"
-                  ],
-                  "affected_services": [
-                    "backend/src/services/loan_analysis_service.py",
-                    "backend/src/services/loan_service.py",
-                    "backend/src/services/loan_simulation_service.py",
-                    "backend/src/services/transaction_intelligence_service.py",
-                    "backend/src/services/reconciliation_service.py",
-                    "backend/src/services/behaviour_service.py",
-                    "backend/src/services/dashboard_service.py",
-                    "backend/src/services/import_service.py",
-                    "backend/src/services/account_service.py",
-                    "backend/src/services/credit_card_service.py",
-                    "service:backend/src/services/transaction_service.py",
-                    "service:backend/src/services/dashboard_service.py",
-                    "service:backend/src/services/import_service.py",
-                    "service:backend/src/services/__init__.py",
-                    "service:backend/src/services/account_service.py",
-                    "service:backend/src/services/audit_service.py",
-                    "service:backend/src/services/behaviour_service.py",
-                    "service:backend/src/services/credit_card_service.py",
-                    "service:backend/src/services/financial_events_service.py",
-                    "service:backend/src/services/financial_intelligence_service.py",
-                    "service:backend/src/services/loan_analysis_service.py",
-                    "service:backend/src/services/loan_service.py",
-                    "service:backend/src/services/loan_simulation_service.py",
-                    "service:backend/src/services/recommendation_service.py",
-                    "service:backend/src/services/reconciliation_service.py",
-                    "service:backend/src/services/statement_service.py",
-                    "service:backend/src/services/transaction_intelligence_service.py"
-                  ],
-                  "affected_tests": [
-                    "backend/tests/properties/lending/test_engine_properties.py",
-                    "backend/tests/properties/loan_engine/__init__.py",
-                    "backend/tests/properties/loan_engine/test_amortization_properties.py",
-                    "backend/tests/properties/loan_engine/test_emi_properties.py",
-                    "backend/tests/properties/loan_engine/test_floating_rate_properties.py",
-                    "backend/tests/properties/loan_engine/test_foreclosure_properties.py",
-                    "backend/tests/properties/loan_engine/test_metrics_properties.py",
-                    "backend/tests/properties/loan_engine/test_prepayment_properties.py",
-                    "backend/tests/unit/engines/loan/test_amortization.py",
-                    "backend/tests/unit/engines/loan/test_loan_engine.py",
-                    "backend/tests/invariants/test_reconciliation_determinism.py",
-                    "backend/tests/invariants/test_reconciliation_properties.py",
-                    "backend/tests/properties/reconciliation/test_engine_properties.py",
-                    "backend/tests/unit/engines/reconciliation/test_reconciliation.py",
-                    "backend/tests/capability/pattern_analysis/test_capability.py",
-                    "backend/tests/properties/behaviour/test_engine_properties.py",
-                    "backend/tests/properties/recommendations/test_engine_properties.py",
-                    "backend/tests/unit/engines/behavior/test_behavior_engine.py",
-                    "backend/tests/unit/engines/behaviour/test_core.py",
-                    "backend/tests/unit/engines/behaviour/test_integration.py",
-                    "backend/tests/unit/engines/behaviour/test_metrics.py",
-                    "backend/tests/unit/engines/behaviour/test_patterns.py",
-                    "backend/tests/unit/engines/account/test_account_engine.py",
-                    "backend/tests/properties/credit_card_engine/__init__.py",
-                    "backend/tests/properties/credit_card_engine/test_billing_properties.py",
-                    "backend/tests/properties/credit_card_engine/test_emi_properties.py",
-                    "backend/tests/properties/credit_card_engine/test_interest_properties.py",
-                    "backend/tests/properties/credit_cards/test_engine_properties.py",
-                    "backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
-                    "backend/tests/audits/test_audit_minimal.py",
-                    "backend/tests/capability/financial_events/test_revocation.py",
-                    "backend/tests/capability/transaction_intelligence/test_capability.py",
-                    "backend/tests/invariants/test_determinism.py",
-                    "backend/tests/properties/cashflow/test_engine_properties.py",
-                    "backend/tests/properties/financial_events/test_engine_properties.py",
-                    "backend/tests/properties/financial_events/test_lineage_properties.py",
-                    "backend/tests/properties/forecasting/test_engine_properties.py",
-                    "backend/tests/properties/transaction_intelligence/test_engine_properties.py",
-                    "backend/tests/unit/engines/financial_events/test_financial_events.py",
-                    "backend/tests/capability/financial_events/__init__.py",
-                    "backend/tests/capability/financial_events/test_capability.py",
-                    "backend/tests/capability/household_cashflow/test_capability.py",
-                    "backend/tests/capability/transaction_intelligence/__init__.py",
-                    "backend/tests/contract/generated/test_financial_events.py",
-                    "backend/tests/invariants/financial_events.py",
-                    "backend/tests/properties/financial_events/__init__.py",
-                    "backend/tests/properties/transaction_intelligence/__init__.py",
-                    "backend/tests/unit/engines/financial_events/__init__.py",
-                    "backend/tests/unit/engines/recommendation/test_recommendation_engine.py",
-                    "backend/tests/unit/engines/transaction_intelligence/__init__.py"
-                  ]
-                },
-                "cache_hit": false,
-                "duration_seconds": 746.6498354929936,
-                "evidence_count": 0,
-                "failed": 1,
-                "metadata": {},
-                "passed": 3,
-                "profile": "backend",
-                "skipped": 0,
-                "status": "failed"
-              },
-              "task_id": null
-            },
-            {
-              "capability_id": null,
-              "emitted_at": "2026-08-30 07:48:07.373590+00:00",
-              "event_type": "VerificationCompleted",
-              "execution_id": null,
-              "id": "0c962cab-079d-4b99-95a2-06240b07e0ef",
-              "payload": {
-                "blast_radius": 0,
-                "cache_hit": true,
+                "capability_id": "discover.blast-radius",
                 "duration_seconds": 0.0,
-                "evidence_count": 0,
-                "failed": 0,
-                "metadata": {},
-                "passed": 0,
-                "profile": "backend",
-                "skipped": 0,
-                "status": "fail"
+                "execution_id": "ver-brc-1d39",
+                "final_decision": "stale",
+                "record_count": 1,
+                "status": "completed",
+                "task_ids": [
+                  "task-0001"
+                ]
               },
-              "task_id": null
+              "task_id": "task-0001"
             },
             {
-              "capability_id": null,
-              "emitted_at": "2026-08-30 07:38:55.029396+00:00",
-              "event_type": "VerificationCompleted",
-              "execution_id": null,
-              "id": "86401158-84c0-4272-a6e7-fb90137d5a8d",
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-06 04:22:08.408364+00:00",
+              "event_type": "VerificationStarted",
+              "execution_id": "ver-brc-1d39",
+              "id": "vs-ver-brc-1d39",
               "payload": {
-                "blast_radius": 0,
-                "cache_hit": true,
+                "capability_id": "discover.blast-radius",
+                "execution_id": "ver-brc-1d39",
+                "mode": "platform-api",
+                "task_ids": [
+                  "task-0001"
+                ]
+              },
+              "task_id": "task-0001"
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-06 04:22:06.423033+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": "ver-brc-1d39",
+              "id": "vc-ver-brc-1d39",
+              "payload": {
+                "capability_id": "discover.blast-radius",
                 "duration_seconds": 0.0,
-                "evidence_count": 0,
-                "failed": 0,
-                "metadata": {},
-                "passed": 0,
-                "profile": "backend",
-                "skipped": 0,
-                "status": "fail"
+                "execution_id": "ver-brc-1d39",
+                "final_decision": "stale",
+                "record_count": 1,
+                "status": "completed",
+                "task_ids": [
+                  "task-0001"
+                ]
               },
-              "task_id": null
+              "task_id": "task-0001"
             },
             {
-              "capability_id": null,
-              "emitted_at": "2026-08-30 07:32:06.365835+00:00",
-              "event_type": "VerificationCompleted",
-              "execution_id": null,
-              "id": "a5ab0b02-b6f2-489f-8740-37acbdc77fb3",
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-06 04:22:06.422731+00:00",
+              "event_type": "VerificationStarted",
+              "execution_id": "ver-brc-1d39",
+              "id": "vs-ver-brc-1d39",
               "payload": {
-                "blast_radius": {
-                  "affected_capabilities": [
-                    "useLoansCapability",
-                    "useReconciliationCapability",
-                    "useBehaviourCapability",
-                    "useAccountsCapability",
-                    "useCreditCardsCapability",
-                    "capability:useCashflowCapability",
-                    "capability:useForecastCapability",
-                    "capability:useInvestmentsCapability",
-                    "capability:useNetWorthCapability",
-                    "capability:useTransactionCapability",
-                    "capability:useBehaviourCapability",
-                    "capability:useAccountsCapability",
-                    "capability:useCreditCardsCapability",
-                    "capability:useLoansCapability",
-                    "capability:useReconciliationCapability"
-                  ],
-                  "affected_engines": [
-                    "backend/src/engines/loan_engine",
-                    "backend/src/engines/reconciliation_engine.py",
-                    "backend/src/engines/behaviour_engine",
-                    "backend/src/engines/account_engine",
-                    "backend/src/engines/credit_card_engine",
-                    "engine:account_engine",
-                    "engine:balance_engine",
-                    "engine:behaviour_engine",
-                    "engine:cashflow_engine",
-                    "engine:credit_card_engine",
-                    "engine:financial_events",
-                    "engine:financial_intelligence",
-                    "engine:ledger_audit_engine",
-                    "engine:loan_engine",
-                    "engine:recommendation_engine",
-                    "engine:reconciliation_engine",
-                    "engine:transaction_intelligence",
-                    "test:backend/tests/audits/test_audit_minimal.py",
-                    "test:backend/tests/capability/financial_events/__init__.py",
-                    "test:backend/tests/capability/financial_events/test_capability.py",
-                    "test:backend/tests/capability/financial_events/test_revocation.py",
-                    "test:backend/tests/capability/household_cashflow/test_capability.py",
-                    "test:backend/tests/capability/pattern_analysis/test_capability.py",
-                    "test:backend/tests/capability/transaction_intelligence/__init__.py",
-                    "test:backend/tests/capability/transaction_intelligence/test_capability.py",
-                    "test:backend/tests/contract/generated/test_financial_events.py",
-                    "test:backend/tests/invariants/financial_events.py",
-                    "test:backend/tests/invariants/test_determinism.py",
-                    "test:backend/tests/invariants/test_reconciliation_determinism.py",
-                    "test:backend/tests/invariants/test_reconciliation_properties.py",
-                    "test:backend/tests/properties/behaviour/test_engine_properties.py",
-                    "test:backend/tests/properties/cashflow/test_engine_properties.py",
-                    "test:backend/tests/properties/credit_card_engine/__init__.py",
-                    "test:backend/tests/properties/credit_card_engine/test_billing_properties.py",
-                    "test:backend/tests/properties/credit_card_engine/test_emi_properties.py",
-                    "test:backend/tests/properties/credit_card_engine/test_interest_properties.py",
-                    "test:backend/tests/properties/credit_cards/test_engine_properties.py",
-                    "test:backend/tests/properties/financial_events/__init__.py",
-                    "test:backend/tests/properties/financial_events/test_engine_properties.py",
-                    "test:backend/tests/properties/financial_events/test_lineage_properties.py",
-                    "test:backend/tests/properties/forecasting/test_engine_properties.py",
-                    "test:backend/tests/properties/lending/test_engine_properties.py",
-                    "test:backend/tests/properties/loan_engine/__init__.py",
-                    "test:backend/tests/properties/loan_engine/test_amortization_properties.py",
-                    "test:backend/tests/properties/loan_engine/test_emi_properties.py",
-                    "test:backend/tests/properties/loan_engine/test_floating_rate_properties.py",
-                    "test:backend/tests/properties/loan_engine/test_foreclosure_properties.py",
-                    "test:backend/tests/properties/loan_engine/test_metrics_properties.py",
-                    "test:backend/tests/properties/loan_engine/test_prepayment_properties.py",
-                    "test:backend/tests/properties/recommendations/test_engine_properties.py",
-                    "test:backend/tests/properties/reconciliation/test_engine_properties.py",
-                    "test:backend/tests/properties/transaction_intelligence/__init__.py",
-                    "test:backend/tests/properties/transaction_intelligence/test_engine_properties.py",
-                    "test:backend/tests/unit/engines/account/test_account_engine.py",
-                    "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
-                    "test:backend/tests/unit/engines/behaviour/test_core.py",
-                    "test:backend/tests/unit/engines/behaviour/test_integration.py",
-                    "test:backend/tests/unit/engines/behaviour/test_metrics.py",
-                    "test:backend/tests/unit/engines/behaviour/test_patterns.py",
-                    "test:backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
-                    "test:backend/tests/unit/engines/financial_events/__init__.py",
-                    "test:backend/tests/unit/engines/financial_events/test_financial_events.py",
-                    "test:backend/tests/unit/engines/loan/test_amortization.py",
-                    "test:backend/tests/unit/engines/loan/test_loan_engine.py",
-                    "test:backend/tests/unit/engines/recommendation/test_recommendation_engine.py",
-                    "test:backend/tests/unit/engines/reconciliation/test_reconciliation.py",
-                    "test:backend/tests/unit/engines/transaction_intelligence/__init__.py"
-                  ],
-                  "affected_services": [
-                    "backend/src/services/loan_analysis_service.py",
-                    "backend/src/services/loan_service.py",
-                    "backend/src/services/loan_simulation_service.py",
-                    "backend/src/services/transaction_intelligence_service.py",
-                    "backend/src/services/reconciliation_service.py",
-                    "backend/src/services/behaviour_service.py",
-                    "backend/src/services/dashboard_service.py",
-                    "backend/src/services/import_service.py",
-                    "backend/src/services/account_service.py",
-                    "backend/src/services/credit_card_service.py",
-                    "service:backend/src/services/transaction_service.py",
-                    "service:backend/src/services/dashboard_service.py",
-                    "service:backend/src/services/import_service.py",
-                    "service:backend/src/services/__init__.py",
-                    "service:backend/src/services/account_service.py",
-                    "service:backend/src/services/audit_service.py",
-                    "service:backend/src/services/behaviour_service.py",
-                    "service:backend/src/services/credit_card_service.py",
-                    "service:backend/src/services/financial_events_service.py",
-                    "service:backend/src/services/financial_intelligence_service.py",
-                    "service:backend/src/services/loan_analysis_service.py",
-                    "service:backend/src/services/loan_service.py",
-                    "service:backend/src/services/loan_simulation_service.py",
-                    "service:backend/src/services/recommendation_service.py",
-                    "service:backend/src/services/reconciliation_service.py",
-                    "service:backend/src/services/statement_service.py",
-                    "service:backend/src/services/transaction_intelligence_service.py"
-                  ],
-                  "affected_tests": [
-                    "backend/tests/properties/lending/test_engine_properties.py",
-                    "backend/tests/properties/loan_engine/__init__.py",
-                    "backend/tests/properties/loan_engine/test_amortization_properties.py",
-                    "backend/tests/properties/loan_engine/test_emi_properties.py",
-                    "backend/tests/properties/loan_engine/test_floating_rate_properties.py",
-                    "backend/tests/properties/loan_engine/test_foreclosure_properties.py",
-                    "backend/tests/properties/loan_engine/test_metrics_properties.py",
-                    "backend/tests/properties/loan_engine/test_prepayment_properties.py",
-                    "backend/tests/unit/engines/loan/test_amortization.py",
-                    "backend/tests/unit/engines/loan/test_loan_engine.py",
-                    "backend/tests/invariants/test_reconciliation_determinism.py",
-                    "backend/tests/invariants/test_reconciliation_properties.py",
-                    "backend/tests/properties/reconciliation/test_engine_properties.py",
-                    "backend/tests/unit/engines/reconciliation/test_reconciliation.py",
-                    "backend/tests/capability/pattern_analysis/test_capability.py",
-                    "backend/tests/properties/behaviour/test_engine_properties.py",
-                    "backend/tests/properties/recommendations/test_engine_properties.py",
-                    "backend/tests/unit/engines/behavior/test_behavior_engine.py",
-                    "backend/tests/unit/engines/behaviour/test_core.py",
-                    "backend/tests/unit/engines/behaviour/test_integration.py",
-                    "backend/tests/unit/engines/behaviour/test_metrics.py",
-                    "backend/tests/unit/engines/behaviour/test_patterns.py",
-                    "backend/tests/unit/engines/account/test_account_engine.py",
-                    "backend/tests/properties/credit_card_engine/__init__.py",
-                    "backend/tests/properties/credit_card_engine/test_billing_properties.py",
-                    "backend/tests/properties/credit_card_engine/test_emi_properties.py",
-                    "backend/tests/properties/credit_card_engine/test_interest_properties.py",
-                    "backend/tests/properties/credit_cards/test_engine_properties.py",
-                    "backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
-                    "backend/tests/audits/test_audit_minimal.py",
-                    "backend/tests/capability/financial_events/test_revocation.py",
-                    "backend/tests/capability/transaction_intelligence/test_capability.py",
-                    "backend/tests/invariants/test_determinism.py",
-                    "backend/tests/properties/cashflow/test_engine_properties.py",
-                    "backend/tests/properties/financial_events/test_engine_properties.py",
-                    "backend/tests/properties/financial_events/test_lineage_properties.py",
-                    "backend/tests/properties/forecasting/test_engine_properties.py",
-                    "backend/tests/properties/transaction_intelligence/test_engine_properties.py",
-                    "backend/tests/unit/engines/financial_events/test_financial_events.py",
-                    "backend/tests/capability/financial_events/__init__.py",
-                    "backend/tests/capability/financial_events/test_capability.py",
-                    "backend/tests/capability/household_cashflow/test_capability.py",
-                    "backend/tests/capability/transaction_intelligence/__init__.py",
-                    "backend/tests/contract/generated/test_financial_events.py",
-                    "backend/tests/invariants/financial_events.py",
-                    "backend/tests/properties/financial_events/__init__.py",
-                    "backend/tests/properties/transaction_intelligence/__init__.py",
-                    "backend/tests/unit/engines/financial_events/__init__.py",
-                    "backend/tests/unit/engines/recommendation/test_recommendation_engine.py",
-                    "backend/tests/unit/engines/transaction_intelligence/__init__.py"
-                  ]
-                },
-                "cache_hit": false,
-                "duration_seconds": 664.6556520769955,
-                "evidence_count": 0,
-                "failed": 2,
-                "metadata": {},
-                "passed": 2,
-                "profile": "backend",
-                "skipped": 0,
-                "status": "failed"
+                "capability_id": "discover.blast-radius",
+                "execution_id": "ver-brc-1d39",
+                "mode": "platform-api",
+                "task_ids": [
+                  "task-0001"
+                ]
               },
-              "task_id": null
+              "task_id": "task-0001"
             }
           ],
           "window": "recent"
         },
-        "generated_at": "2026-09-05T13:19:58Z",
-        "id": "sha256:f616a93b8c25b648c9fa1e363457e0c02b381519cba0ea5e48fc2d30678ee206",
+        "generated_at": "2026-09-06T14:21:02Z",
+        "id": "sha256:b6c240e225c34ab520902f5a97bfd2c6ff4a0a8fef2d5a22b0b0261b6ed29cbd",
         "kind": "platform.events_list",
         "version": "1.0.0"
       }
     },
     "health": {
-      "_c": 205917.766323473,
-      "_ts": "2026-09-05T13:19:54Z",
-      "hash": "d18f53d8208caca955be935413868fd21adfe2e2dc61c1345f1162eea1d2c977",
+      "_c": 290952.528094744,
+      "_ts": "2026-09-06T14:20:38Z",
+      "hash": "4df6473c7cbcfbf713679623b5abc59fef96ef6fa1b6f9434b8dd45faa505a6a",
       "payload": {
         "data": {
           "ai": "READY",
@@ -2789,15 +1011,15 @@
           "database": "HEALTHY",
           "domains": [
             {
-              "detail": "runs=75 passed=25 failed=38",
-              "last_check": "2026-09-05T13:19:54Z",
+              "detail": "runs=2 passed=0 failed=0",
+              "last_check": "2026-09-06T14:20:38Z",
               "name": "Verification",
               "source": "/platform/v1/verification",
               "status": "UNHEALTHY"
             },
             {
-              "detail": "events=75",
-              "last_check": "2026-09-05T13:19:54Z",
+              "detail": "events=4",
+              "last_check": "2026-09-06T14:20:38Z",
               "name": "EventStore",
               "source": "EngineeringEventStore",
               "status": "HEALTHY"
@@ -2808,16 +1030,16 @@
           "platform": "UNHEALTHY",
           "verification": "CURRENT"
         },
-        "generated_at": "2026-09-05T13:19:54Z",
-        "id": "sha256:84e586417a28d31cdf34df0c3d35bec08b103c6f97a218de2757b401ab657c0f",
+        "generated_at": "2026-09-06T14:20:38Z",
+        "id": "sha256:598a52a70d4e4747d54d585ab04923549eb3ec41c3f124f8942fdf9e8502131f",
         "kind": "platform.health_snapshot",
         "version": "1.0.0"
       }
     },
     "tasks": {
-      "_c": 205921.223487155,
-      "_ts": "2026-09-05T13:19:58Z",
-      "hash": "c163a8880c885637e7837ae59271066ed5a3c0c3e3fa03fccf8d76128ac12be1",
+      "_c": 290955.111482685,
+      "_ts": "2026-09-06T14:20:40Z",
+      "hash": "cb45cbc40e910f0565705bc62de6b3b2ec6dc5d665468b1f2e9b808393cd18f4",
       "payload": {
         "data": {
           "closed_count": 0,
@@ -2825,117 +1047,117 @@
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-05T13:19:58.244793Z",
-              "id": "obl-b6b12066510c-0",
+              "created_at": "2026-09-06T14:20:40.684193Z",
+              "id": "obl-fa254c421a76-0",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-05T13:19:58.244811Z",
-              "id": "obl-b6b12066510c-1",
+              "created_at": "2026-09-06T14:20:40.684216Z",
+              "id": "obl-fa254c421a76-1",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-05T13:19:58.244825Z",
-              "id": "obl-b6b12066510c-2",
+              "created_at": "2026-09-06T14:20:40.684233Z",
+              "id": "obl-fa254c421a76-2",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-05T13:19:58.244838Z",
-              "id": "obl-b6b12066510c-3",
+              "created_at": "2026-09-06T14:20:40.684248Z",
+              "id": "obl-fa254c421a76-3",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-05T13:19:58.244852Z",
-              "id": "obl-b6b12066510c-4",
+              "created_at": "2026-09-06T14:20:40.684263Z",
+              "id": "obl-fa254c421a76-4",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-05T13:19:58.244865Z",
-              "id": "obl-b6b12066510c-5",
+              "created_at": "2026-09-06T14:20:40.684278Z",
+              "id": "obl-fa254c421a76-5",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-05T13:19:58.244878Z",
-              "id": "obl-b6b12066510c-6",
+              "created_at": "2026-09-06T14:20:40.684293Z",
+              "id": "obl-fa254c421a76-6",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-05T13:19:58.244892Z",
-              "id": "obl-b6b12066510c-7",
+              "created_at": "2026-09-06T14:20:40.684307Z",
+              "id": "obl-fa254c421a76-7",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-05T13:19:58.244904Z",
-              "id": "obl-b6b12066510c-8",
+              "created_at": "2026-09-06T14:20:40.684322Z",
+              "id": "obl-fa254c421a76-8",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-05T13:19:58.244918Z",
-              "id": "obl-b6b12066510c-9",
+              "created_at": "2026-09-06T14:20:40.684335Z",
+              "id": "obl-fa254c421a76-9",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-05T13:19:58.244931Z",
-              "id": "obl-b6b12066510c-10",
+              "created_at": "2026-09-06T14:20:40.684348Z",
+              "id": "obl-fa254c421a76-10",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-05T13:19:58.244944Z",
-              "id": "obl-b6b12066510c-11",
+              "created_at": "2026-09-06T14:20:40.684362Z",
+              "id": "obl-fa254c421a76-11",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-05T13:19:58.244957Z",
-              "id": "obl-b6b12066510c-12",
+              "created_at": "2026-09-06T14:20:40.684374Z",
+              "id": "obl-fa254c421a76-12",
               "name": "Directly affected by change",
               "status": "OPEN"
             }
           ],
           "open_count": 13
         },
-        "generated_at": "2026-09-05T13:19:58Z",
-        "id": "sha256:956bcd2a86f423f286b26e0b912ff63616294be34f5eef3eea19b25a06d53001",
+        "generated_at": "2026-09-06T14:20:40Z",
+        "id": "sha256:860341e99967ae1f02550abfcebb0a7278f4ebe0c000daf87bb3b05b41ebaa07",
         "kind": "platform.task_list",
         "version": "1.0.0"
       }
     }
   },
-  "generated_at": "2026-09-06T05:48:55Z",
+  "generated_at": "2026-09-06T14:21:02Z",
   "version": "1"
 }

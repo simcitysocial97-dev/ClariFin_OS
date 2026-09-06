@@ -170,7 +170,7 @@ _CLASSIFICATION: dict[str, str] = {
     "certify-v5": "COMPATIBILITY",
     "intelligence-audit": "DEPRECATED",
     "audit": "DEPRECATED",
-    "api-contracts": "DEPRECATED",  # canonical: inspect evidence
+    "api-contracts": "CANONICAL_ALIAS",  # canonical: contracts profile
     "contract-governance": "DEPRECATED",
     "mutation": "DEPRECATED",  # canonical: strengthen
     "measurement-truth": "DEPRECATED",
@@ -319,7 +319,6 @@ _MIGRATION: dict[str, tuple[str, str]] = {
     "measurement-truth-report": ("inspect", "measurement_truth_report"),
     "execution-report": ("inspect", "execution_report"),
     "execution-status": ("inspect", "execution_status"),
-    "api-contracts": ("inspect", "api_contract_gate"),
     "contract-governance": ("inspect", "contract_governance"),
     "dashboard": ("inspect", "dashboard"),
     "bypass-audit": ("inspect", "bypass_audit"),

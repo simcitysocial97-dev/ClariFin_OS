@@ -119,7 +119,7 @@ class ContextBuilder:
                 if result.omitted_components
                 else []
             ),
-            "sources": self.provenance.list_entries(),
+            "sources": [entry.source_ref for entry in self.provenance.list_entries()],
             "pack_id": None,  # computed after serialization
         }
 

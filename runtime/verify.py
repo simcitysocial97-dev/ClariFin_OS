@@ -25,6 +25,48 @@ from runtime.foundation.verification.control_plane_facade import (
 )
 
 
+def _record_verification_event(
+    report: Any | None,
+    profile_name: str,
+    elapsed: float,
+    *,
+    cache_hit: bool = False,
+    status: str | None = None,
+) -> None:
+    """Record a verification event for observability tracking."""
+    try:
+        from runtime.system.observability.event_store import (
+            EngineeringEventStore,
+            create_event,
+        )
+        from runtime.system.observability.execution_context import create_context
+        from runtime.system.observability.repository import (
+            LocalMetricsRepository,
+        )
+
+        store = EngineeringEventStore()
+        metrics = LocalMetricsRepository()
+        event_ctx = create_context(commit_sha="", branch="local")
+        event = create_event(
+            type="verification_record",
+            payload={
+                "report": report,
+                "profile_name": profile_name,
+                "elapsed": elapsed,
+                "cache_hit": cache_hit,
+                "status": status,
+            },
+            execution_context=event_ctx,
+        )
+        store.append(event)
+    except Exception as exc:
+        import logging
+
+        logging.getLogger(__name__).warning(
+            "Failed to record verification event: %s", exc
+        )
+
+
 def main() -> int:
     """Single dispatcher: all commands flow through the canonical control plane."""
     return canonical_main()
