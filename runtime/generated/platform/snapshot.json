@@ -1,9 +1,9 @@
 {
   "domains": {
     "capabilities": {
-      "_c": 290952.584384832,
-      "_ts": "2026-09-06T14:20:38Z",
-      "hash": "73d9e18e6cf573d9fa2e9edc6ce7ad4f46b40526d4c88dc115d1fe49f64c930b",
+      "_c": 292075.698566002,
+      "_ts": "2026-09-06T14:39:21Z",
+      "hash": "da4dc2f05de6c6073067c02b51065ac0e048d35243c34cf0ec25f35fdce956a1",
       "payload": {
         "data": {
           "categories": [
@@ -769,7 +769,7 @@
             }
           ]
         },
-        "generated_at": "2026-09-06T14:20:38Z",
+        "generated_at": "2026-09-06T14:39:21Z",
         "id": "sha256:5316987b8b1d0518a089806afeaca29464fda75fd1d9c48bfc66eb68396c465c",
         "kind": "platform.capability_list",
         "version": "1.0.0"
@@ -1000,9 +1000,9 @@
       }
     },
     "health": {
-      "_c": 290952.528094744,
-      "_ts": "2026-09-06T14:20:38Z",
-      "hash": "4df6473c7cbcfbf713679623b5abc59fef96ef6fa1b6f9434b8dd45faa505a6a",
+      "_c": 292075.648663107,
+      "_ts": "2026-09-06T14:39:21Z",
+      "hash": "552ab78d995aa344b01b1b1e52f3c5dc7ab9d97419c5400226dfc899485cd261",
       "payload": {
         "data": {
           "ai": "READY",
@@ -1012,14 +1012,14 @@
           "domains": [
             {
               "detail": "runs=2 passed=0 failed=0",
-              "last_check": "2026-09-06T14:20:38Z",
+              "last_check": "2026-09-06T14:39:21Z",
               "name": "Verification",
               "source": "/platform/v1/verification",
               "status": "UNHEALTHY"
             },
             {
               "detail": "events=4",
-              "last_check": "2026-09-06T14:20:38Z",
+              "last_check": "2026-09-06T14:39:21Z",
               "name": "EventStore",
               "source": "EngineeringEventStore",
               "status": "HEALTHY"
@@ -1030,16 +1030,16 @@
           "platform": "UNHEALTHY",
           "verification": "CURRENT"
         },
-        "generated_at": "2026-09-06T14:20:38Z",
-        "id": "sha256:598a52a70d4e4747d54d585ab04923549eb3ec41c3f124f8942fdf9e8502131f",
+        "generated_at": "2026-09-06T14:39:21Z",
+        "id": "sha256:3110a02078bea3a357fc40815b72a4d86340a506fe46511d64b22ca3265d19b6",
         "kind": "platform.health_snapshot",
         "version": "1.0.0"
       }
     },
     "tasks": {
-      "_c": 290955.111482685,
-      "_ts": "2026-09-06T14:20:40Z",
-      "hash": "cb45cbc40e910f0565705bc62de6b3b2ec6dc5d665468b1f2e9b808393cd18f4",
+      "_c": 292080.105745489,
+      "_ts": "2026-09-06T14:39:25Z",
+      "hash": "9461e6e1bf27405a86ad7442883051dcd9d1749bb7012b2d7cd51279f05d1286",
       "payload": {
         "data": {
           "closed_count": 0,
@@ -1047,7 +1047,7 @@
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-06T14:20:40.684193Z",
+              "created_at": "2026-09-06T14:39:25.681102Z",
               "id": "obl-fa254c421a76-0",
               "name": "Directly affected by change",
               "status": "OPEN"
@@ -1055,7 +1055,7 @@
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-06T14:20:40.684216Z",
+              "created_at": "2026-09-06T14:39:25.681118Z",
               "id": "obl-fa254c421a76-1",
               "name": "Directly affected by change",
               "status": "OPEN"
@@ -1063,7 +1063,7 @@
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-06T14:20:40.684233Z",
+              "created_at": "2026-09-06T14:39:25.681130Z",
               "id": "obl-fa254c421a76-2",
               "name": "Directly affected by change",
               "status": "OPEN"
@@ -1071,7 +1071,7 @@
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-06T14:20:40.684248Z",
+              "created_at": "2026-09-06T14:39:25.681138Z",
               "id": "obl-fa254c421a76-3",
               "name": "Directly affected by change",
               "status": "OPEN"
@@ -1079,7 +1079,7 @@
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-06T14:20:40.684263Z",
+              "created_at": "2026-09-06T14:39:25.681148Z",
               "id": "obl-fa254c421a76-4",
               "name": "Directly affected by change",
               "status": "OPEN"
@@ -1087,7 +1087,7 @@
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-06T14:20:40.684278Z",
+              "created_at": "2026-09-06T14:39:25.681156Z",
               "id": "obl-fa254c421a76-5",
               "name": "Directly affected by change",
               "status": "OPEN"
@@ -1095,7 +1095,7 @@
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-06T14:20:40.684293Z",
+              "created_at": "2026-09-06T14:39:25.681165Z",
               "id": "obl-fa254c421a76-6",
               "name": "Directly affected by change",
               "status": "OPEN"
@@ -1103,7 +1103,7 @@
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-06T14:20:40.684307Z",
+              "created_at": "2026-09-06T14:39:25.681174Z",
               "id": "obl-fa254c421a76-7",
               "name": "Directly affected by change",
               "status": "OPEN"
@@ -1111,7 +1111,7 @@
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-06T14:20:40.684322Z",
+              "created_at": "2026-09-06T14:39:25.681183Z",
               "id": "obl-fa254c421a76-8",
               "name": "Directly affected by change",
               "status": "OPEN"
@@ -1119,7 +1119,7 @@
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-06T14:20:40.684335Z",
+              "created_at": "2026-09-06T14:39:25.681191Z",
               "id": "obl-fa254c421a76-9",
               "name": "Directly affected by change",
               "status": "OPEN"
@@ -1127,7 +1127,7 @@
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-06T14:20:40.684348Z",
+              "created_at": "2026-09-06T14:39:25.681199Z",
               "id": "obl-fa254c421a76-10",
               "name": "Directly affected by change",
               "status": "OPEN"
@@ -1135,7 +1135,7 @@
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-06T14:20:40.684362Z",
+              "created_at": "2026-09-06T14:39:25.681208Z",
               "id": "obl-fa254c421a76-11",
               "name": "Directly affected by change",
               "status": "OPEN"
@@ -1143,7 +1143,7 @@
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-06T14:20:40.684374Z",
+              "created_at": "2026-09-06T14:39:25.681216Z",
               "id": "obl-fa254c421a76-12",
               "name": "Directly affected by change",
               "status": "OPEN"
@@ -1151,13 +1151,13 @@
           ],
           "open_count": 13
         },
-        "generated_at": "2026-09-06T14:20:40Z",
-        "id": "sha256:860341e99967ae1f02550abfcebb0a7278f4ebe0c000daf87bb3b05b41ebaa07",
+        "generated_at": "2026-09-06T14:39:25Z",
+        "id": "sha256:788081d70a61f450e7765b96b117957fdfeb37fafd2546f65bccafc20b50c6e2",
         "kind": "platform.task_list",
         "version": "1.0.0"
       }
     }
   },
-  "generated_at": "2026-09-06T14:21:02Z",
+  "generated_at": "2026-09-06T14:39:25Z",
   "version": "1"
 }
