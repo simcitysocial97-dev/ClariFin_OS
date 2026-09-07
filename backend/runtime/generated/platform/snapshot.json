@@ -1,9 +1,9 @@
 {
   "domains": {
     "capabilities": {
-      "_c": 297345.994145906,
-      "_ts": "2026-09-06T16:07:11Z",
-      "hash": "88a7ac7a543dfa06619e6798fa9064344f6e69070b1ef49942519df07891732b",
+      "_c": 355384.003551381,
+      "_ts": "2026-09-07T16:04:51Z",
+      "hash": "2e09030f9d0f5ec3f242214a658d089a67e9fe7332e45352f345d7ea77767d4b",
       "payload": {
         "data": {
           "categories": [
@@ -769,16 +769,16 @@
             }
           ]
         },
-        "generated_at": "2026-09-06T16:07:11Z",
+        "generated_at": "2026-09-07T16:04:51Z",
         "id": "sha256:5316987b8b1d0518a089806afeaca29464fda75fd1d9c48bfc66eb68396c465c",
         "kind": "platform.capability_list",
         "version": "1.0.0"
       }
     },
     "change": {
-      "_c": 315580.603600163,
-      "_ts": "2026-09-07T01:51:13Z",
-      "hash": "de0ec7a76c35b37b67ae3b3c77bafe99222db41e8f99b9c6dddfede48d088765",
+      "_c": 355385.978064077,
+      "_ts": "2026-09-07T16:04:53Z",
+      "hash": "3da0d9cd09f444342a80d4c03aee9bcef337feaf54f96718828fabf1bd84a90f",
       "payload": {
         "data": {
           "affected_capabilities": [
@@ -798,59 +798,11 @@
             },
             {
               "change_type": "modified",
-              "path": "backend/tests/invariants/_m4_probe_live/test_m4_exit_probe.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "frontend/__tests__/use-accounts.test.ts"
-            },
-            {
-              "change_type": "modified",
-              "path": "frontend/__tests__/use-cards.test.ts"
-            },
-            {
-              "change_type": "modified",
-              "path": "frontend/__tests__/use-cashflow.test.ts"
-            },
-            {
-              "change_type": "modified",
-              "path": "frontend/__tests__/use-dashboard-metrics.test.ts"
-            },
-            {
-              "change_type": "modified",
-              "path": "frontend/__tests__/use-investments.test.ts"
-            },
-            {
-              "change_type": "modified",
-              "path": "frontend/__tests__/use-loans.test.ts"
-            },
-            {
-              "change_type": "modified",
-              "path": "frontend/__tests__/use-overview.test.ts"
-            },
-            {
-              "change_type": "modified",
-              "path": "frontend/__tests__/use-reconciliation.test.ts"
-            },
-            {
-              "change_type": "modified",
-              "path": "frontend/app/platform/capabilities/page.tsx"
-            },
-            {
-              "change_type": "modified",
-              "path": "frontend/app/platform/errors/page.tsx"
-            },
-            {
-              "change_type": "modified",
-              "path": "frontend/app/platform/verification/run/[capability]/page.tsx"
-            },
-            {
-              "change_type": "modified",
-              "path": "frontend/lib/hooks/use-live-execution.ts"
-            },
-            {
-              "change_type": "modified",
               "path": "runtime/generated/engineering-events.jsonl"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/engineering-history.json"
             },
             {
               "change_type": "modified",
@@ -858,32 +810,40 @@
             },
             {
               "change_type": "modified",
-              "path": "runtime/verify.py"
+              "path": "runtime/generated/m9-c49/logs/execplan-dece40df20b0/exec-0001-stderr.log"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-07084c57e3f6/exec-0001-stderr.log"
+              "path": "runtime/generated/m9-c49/logs/execplan-dece40df20b0/exec-0001-stdout.log"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-07084c57e3f6/exec-0001-stdout.log"
+              "path": "runtime/generated/m9-c49/logs/execplan-dece40df20b0/exec-0002-stderr.log"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c57/post-implementation-convergence/progress.md"
+              "path": "runtime/generated/m9-c49/logs/execplan-dece40df20b0/exec-0002-stdout.log"
             },
             {
               "change_type": "modified",
-              "path": "scripts/launch.sh"
+              "path": "runtime/generated/m9-c49/logs/execplan-dece40df20b0/exec-0003-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-dece40df20b0/exec-0003-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c57/post-certification-audit/progress.md"
             }
           ],
-          "generated_from": "2026-09-07T01:51:11.994489+00:00",
+          "generated_from": "2026-09-07T16:04:51.919314+00:00",
           "recommended_verification": [],
           "risk": "HIGH",
           "stale_evidence": []
         },
-        "generated_at": "2026-09-07T01:51:13Z",
-        "id": "sha256:72ca53b17aed0c06999a36e366f8601e2b9326739313599d3ff2a782cb0bb31c",
+        "generated_at": "2026-09-07T16:04:53Z",
+        "id": "sha256:4aa3d76bb6975b43388ed5cb6de82b93ab9cdbfa8b7ef9fb984bf49f0383c46a",
         "kind": "platform.change_intelligence",
         "version": "1.0.0"
       }
@@ -1302,9 +1262,9 @@
       }
     },
     "health": {
-      "_c": 315244.565433731,
-      "_ts": "2026-09-07T01:45:37Z",
-      "hash": "eec79dbef2facede7dd0be70ce000c33f5c7be03f50e14fc8b41ce4d9f6069dd",
+      "_c": 355254.077846473,
+      "_ts": "2026-09-07T16:02:41Z",
+      "hash": "1480b121d0870fe63806a2198bab7f81afab909bf8c8c2bfc7b6b392e5a2fd9e",
       "payload": {
         "data": {
           "ai": "READY",
@@ -1313,15 +1273,15 @@
           "database": "HEALTHY",
           "domains": [
             {
-              "detail": "runs=2 passed=0 failed=0",
-              "last_check": "2026-09-07T01:45:37Z",
+              "detail": "runs=10 passed=4 failed=1",
+              "last_check": "2026-09-07T16:02:41Z",
               "name": "Verification",
               "source": "/platform/v1/verification",
-              "status": "UNHEALTHY"
+              "status": "DEGRAD"
             },
             {
-              "detail": "events=4",
-              "last_check": "2026-09-07T01:45:37Z",
+              "detail": "events=20",
+              "last_check": "2026-09-07T16:02:41Z",
               "name": "EventStore",
               "source": "EngineeringEventStore",
               "status": "HEALTHY"
@@ -1329,16 +1289,16 @@
           ],
           "evidence": "VALID",
           "frontend": "HEALTHY",
-          "platform": "UNHEALTHY",
+          "platform": "DEGRAD",
           "verification": "CURRENT"
         },
-        "generated_at": "2026-09-07T01:45:37Z",
-        "id": "sha256:addca4258c33bd51df2fc64e4e0cea899c428136aaa57ef1b944805469f55fff",
+        "generated_at": "2026-09-07T16:02:41Z",
+        "id": "sha256:8a80b60df6745683377ef1d9334e953d4e722dc392e2b091d2a3b3b313c312d2",
         "kind": "platform.health_snapshot",
         "version": "1.0.0"
       }
     }
   },
-  "generated_at": "2026-09-07T01:51:13Z",
+  "generated_at": "2026-09-07T16:04:53Z",
   "version": "1"
 }
