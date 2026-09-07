@@ -1,5 +1,893 @@
 {
   "domains": {
+    "capabilities": {
+      "_c": 297345.994145906,
+      "_ts": "2026-09-06T16:07:11Z",
+      "hash": "88a7ac7a543dfa06619e6798fa9064344f6e69070b1ef49942519df07891732b",
+      "payload": {
+        "data": {
+          "categories": [
+            "certification",
+            "diagnosis",
+            "discovery",
+            "evidence_inspection",
+            "execution",
+            "measurement",
+            "planning",
+            "strengthening"
+          ],
+          "count": 55,
+          "items": [
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "discover.blast-radius",
+              "name": "Blast-Radius Contract (C50)",
+              "produces": [
+                "blast_radius_contract",
+                "evidence_invalidations"
+              ],
+              "stage": "discovery",
+              "triggers": [
+                "changed_file",
+                "proposed_change"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "discover.capability-for",
+              "name": "Capability-For (problem -> capability resolver)",
+              "produces": [
+                "capability_resolution",
+                "blast_radius_contract"
+              ],
+              "stage": "discovery",
+              "triggers": [
+                "changed_file",
+                "test_failure",
+                "mutation_survivor",
+                "coverage_drop",
+                "workflow_failure",
+                "quality_failure",
+                "proposed_change",
+                "stale_evidence",
+                "unknown_failure"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "discover.capability-graph",
+              "name": "Capability Dependency Graph (C51)",
+              "produces": [
+                "blast_radius_contract"
+              ],
+              "stage": "discovery",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "discover.capability-inventory",
+              "name": "Command Inventory (C48)",
+              "produces": [
+                "capability_catalog"
+              ],
+              "stage": "discovery",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "discover.latent-capability-audit",
+              "name": "Latent Capability Audit (C51)",
+              "produces": [
+                "diagnostic_report"
+              ],
+              "stage": "discovery",
+              "triggers": [
+                "proposed_change"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "discover.resolve-capabilities",
+              "name": "Capability Resolution (C48)",
+              "produces": [
+                "capability_resolution",
+                "evidence_invalidations"
+              ],
+              "stage": "discovery",
+              "triggers": [
+                "changed_file",
+                "proposed_change"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "discover.what-should-i-run",
+              "name": "What-Should-I-Run (C50)",
+              "produces": [
+                "blast_radius_contract"
+              ],
+              "stage": "discovery",
+              "triggers": [
+                "changed_file",
+                "proposed_change"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "plan.control-plane",
+              "name": "Control-Plane Plan (C48)",
+              "produces": [
+                "control_plane_plan"
+              ],
+              "stage": "planning",
+              "triggers": [
+                "changed_file",
+                "proposed_change"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "plan.deep-contract",
+              "name": "Deep Contract Manifest",
+              "produces": [
+                "certification_report"
+              ],
+              "stage": "planning",
+              "triggers": []
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "plan.execution-plan",
+              "name": "Execution Plan (C49)",
+              "produces": [
+                "execution_plan"
+              ],
+              "stage": "planning",
+              "triggers": [
+                "changed_file",
+                "proposed_change"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "plan.local-gate",
+              "name": "Local Gate (pre-push)",
+              "produces": [
+                "tier_plan_manifest"
+              ],
+              "stage": "planning",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "plan.tier-plan",
+              "name": "Tier-Aware Plan (VEA-5)",
+              "produces": [
+                "tier_plan_manifest"
+              ],
+              "stage": "planning",
+              "triggers": [
+                "changed_file",
+                "proposed_change"
+              ]
+            },
+            {
+              "authorization": "operator",
+              "cost": "low",
+              "id": "evidence.pipeline-plan",
+              "name": "Evidence Plan Pipeline (C42)",
+              "produces": [
+                "execution_report",
+                "evidence_invalidations"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "exec.environment-check",
+              "name": "Canonical Environment Check (C42.5)",
+              "produces": [
+                "environment_fingerprint"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "quality_failure",
+                "workflow_failure"
+              ]
+            },
+            {
+              "authorization": "operator",
+              "cost": "low",
+              "id": "exec.evidence-execute",
+              "name": "Evidence Pipeline Execute (C42.28)",
+              "produces": [
+                "execution_report"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "exec.execution-evidence",
+              "name": "Execution Evidence Emission (VEA-5 M5-C)",
+              "produces": [
+                "execution_report"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "operator",
+              "cost": "low",
+              "id": "exec.orchestrator",
+              "name": "Execution Orchestrator (C49)",
+              "produces": [
+                "execution_report",
+                "evidence_invalidations"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "quality.black",
+              "name": "Black Format (repository-wide)",
+              "produces": [
+                "format_report"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "quality_failure"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "quality.mypy",
+              "name": "Mypy Typecheck (scoped boundaries)",
+              "produces": [
+                "typecheck_report"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "quality_failure"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "quality.pytest",
+              "name": "Pytest (backend + runtime suites)",
+              "produces": [
+                "test_pass"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "test_failure"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "quality.ruff",
+              "name": "Ruff Lint (repository-wide)",
+              "produces": [
+                "lint_report"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "quality_failure"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "measure.coverage",
+              "name": "Coverage Measurement (C47 canonical)",
+              "produces": [
+                "coverage_measurement"
+              ],
+              "stage": "measurement",
+              "triggers": [
+                "coverage_drop",
+                "stale_evidence"
+              ]
+            },
+            {
+              "authorization": "human",
+              "cost": "low",
+              "id": "measure.mutation",
+              "name": "Mutation Testing (C47 authoritative)",
+              "produces": [
+                "mutation_score",
+                "survivor_intel"
+              ],
+              "stage": "measurement",
+              "triggers": [
+                "mutation_survivor"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "measure.mutation-inventory",
+              "name": "Mutation Population Inventory",
+              "produces": [
+                "capability_catalog"
+              ],
+              "stage": "measurement",
+              "triggers": [
+                "mutation_survivor"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "measure.truth-report",
+              "name": "Measurement Truth Report (C47/C48)",
+              "produces": [
+                "certification_report"
+              ],
+              "stage": "measurement",
+              "triggers": [
+                "coverage_drop",
+                "stale_evidence",
+                "mutation_survivor"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "diagnose.bypass-audit",
+              "name": "Control-Plane Bypass Audit (C51)",
+              "produces": [
+                "forensic_report"
+              ],
+              "stage": "diagnosis",
+              "triggers": [
+                "unknown_failure"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "diagnose.failure-attribution",
+              "name": "Pipeline Failure Attribution (VEA-2 M6)",
+              "produces": [
+                "diagnostic_report"
+              ],
+              "stage": "diagnosis",
+              "triggers": [
+                "workflow_failure",
+                "unknown_failure"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "diagnose.intelligence",
+              "name": "Engineering Intelligence Layer",
+              "produces": [
+                "diagnostic_report",
+                "blast_radius_contract"
+              ],
+              "stage": "diagnosis",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "human",
+              "cost": "low",
+              "id": "strengthen.capability-pipeline",
+              "name": "Capability-Aware Strengthening Pipeline (C48)",
+              "produces": [
+                "strengthening_proposal",
+                "survivor_intel"
+              ],
+              "stage": "strengthening",
+              "triggers": [
+                "mutation_survivor"
+              ]
+            },
+            {
+              "authorization": "human",
+              "cost": "low",
+              "id": "strengthen.forensic",
+              "name": "Forensic Diagnostic Lab (C42.30)",
+              "produces": [
+                "forensic_report",
+                "strengthening_proposal"
+              ],
+              "stage": "strengthening",
+              "triggers": [
+                "mutation_survivor"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "strengthen.survivor-intel",
+              "name": "Durable Survivor Intelligence (C45)",
+              "produces": [
+                "survivor_intel"
+              ],
+              "stage": "strengthening",
+              "triggers": [
+                "mutation_survivor"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "evidence.config-authority",
+              "name": "Configuration Authority Verification (C51)",
+              "produces": [
+                "environment_fingerprint"
+              ],
+              "stage": "evidence_inspection",
+              "triggers": [
+                "quality_failure"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "evidence.execution-status",
+              "name": "Execution Report Status",
+              "produces": [],
+              "stage": "evidence_inspection",
+              "triggers": []
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "evidence.inspect-truth",
+              "name": "Measurement Truth Inspection (C47)",
+              "produces": [],
+              "stage": "evidence_inspection",
+              "triggers": [
+                "stale_evidence"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "evidence.knowledge-base",
+              "name": "Verification Knowledge Base (C3/C42)",
+              "produces": [
+                "diagnostic_report"
+              ],
+              "stage": "evidence_inspection",
+              "triggers": [
+                "unknown_failure"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "evidence.reconcile",
+              "name": "VEA-5 Plan Reconciliation Gate (C42.27)",
+              "produces": [
+                "reconciliation_report"
+              ],
+              "stage": "evidence_inspection",
+              "triggers": [
+                "workflow_failure",
+                "stale_evidence"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "evidence.reconcile-pipeline",
+              "name": "Evidence Pipeline Reconciliation (C42.28)",
+              "produces": [
+                "reconciliation_report"
+              ],
+              "stage": "evidence_inspection",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "evidence.workspace-status",
+              "name": "Workspace Status & Metrics",
+              "produces": [
+                "environment_fingerprint"
+              ],
+              "stage": "evidence_inspection",
+              "triggers": []
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "certify.api-contracts",
+              "name": "API Contract Integrity Gate (C27)",
+              "produces": [
+                "certification_report"
+              ],
+              "stage": "certification",
+              "triggers": [
+                "changed_file",
+                "proposed_change"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "certify.audit",
+              "name": "Engineering Platform Certification Audit",
+              "produces": [
+                "certification_report"
+              ],
+              "stage": "certification",
+              "triggers": [
+                "unknown_failure",
+                "stale_evidence"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "certify.contract-governance",
+              "name": "Contract Governance Certification (C30)",
+              "produces": [
+                "certification_report"
+              ],
+              "stage": "certification",
+              "triggers": [
+                "stale_evidence"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "certify.evidence-pipeline",
+              "name": "Evidence Pipeline Certification (C42.28)",
+              "produces": [
+                "certification_report"
+              ],
+              "stage": "certification",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "low",
+              "id": "certify.integrity",
+              "name": "Architecture Integrity Verification",
+              "produces": [
+                "certification_report"
+              ],
+              "stage": "certification",
+              "triggers": [
+                "quality_failure",
+                "unknown_failure"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "moderate",
+              "id": "exec.profile.quick",
+              "name": "Profile: Quick Verification",
+              "produces": [
+                "execution_report",
+                "test_pass"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "moderate",
+              "id": "exec.profile.backend",
+              "name": "Profile: Backend Verification",
+              "produces": [
+                "execution_report",
+                "test_pass"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "moderate",
+              "id": "exec.profile.frontend",
+              "name": "Profile: Frontend Verification",
+              "produces": [
+                "execution_report",
+                "test_pass"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "moderate",
+              "id": "exec.profile.contracts",
+              "name": "Profile: Contract Verification",
+              "produces": [
+                "execution_report",
+                "test_pass"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "moderate",
+              "id": "exec.profile.property",
+              "name": "Profile: Property Testing",
+              "produces": [
+                "execution_report",
+                "test_pass"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "high",
+              "id": "exec.profile.integration",
+              "name": "Profile: Integration Tests",
+              "produces": [
+                "execution_report",
+                "test_pass"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "moderate",
+              "id": "exec.profile.migration",
+              "name": "Profile: Migration Verification",
+              "produces": [
+                "execution_report",
+                "test_pass"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "high",
+              "id": "exec.profile.repository",
+              "name": "Profile: Repository Verification",
+              "produces": [
+                "execution_report",
+                "test_pass"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "extreme",
+              "id": "exec.profile.full",
+              "name": "Profile: Full Verification",
+              "produces": [
+                "execution_report",
+                "test_pass"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "moderate",
+              "id": "exec.profile.runtime",
+              "name": "Profile: Runtime Verification",
+              "produces": [
+                "execution_report",
+                "test_pass"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "high",
+              "id": "exec.profile.golden",
+              "name": "Profile: Golden Regression",
+              "produces": [
+                "execution_report",
+                "test_pass"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "changed_file"
+              ]
+            },
+            {
+              "authorization": "none",
+              "cost": "high",
+              "id": "exec.profile.playwright",
+              "name": "Profile: Playwright E2E",
+              "produces": [
+                "execution_report",
+                "test_pass"
+              ],
+              "stage": "execution",
+              "triggers": [
+                "changed_file"
+              ]
+            }
+          ]
+        },
+        "generated_at": "2026-09-06T16:07:11Z",
+        "id": "sha256:5316987b8b1d0518a089806afeaca29464fda75fd1d9c48bfc66eb68396c465c",
+        "kind": "platform.capability_list",
+        "version": "1.0.0"
+      }
+    },
+    "change": {
+      "_c": 315580.603600163,
+      "_ts": "2026-09-07T01:51:13Z",
+      "hash": "de0ec7a76c35b37b67ae3b3c77bafe99222db41e8f99b9c6dddfede48d088765",
+      "payload": {
+        "data": {
+          "affected_capabilities": [
+            "api-contracts",
+            "loan-engine"
+          ],
+          "affected_tests": [],
+          "affected_workflows": [],
+          "changed_files": [
+            {
+              "change_type": "modified",
+              "path": "backend/runtime/generated/git-fetch-events.jsonl"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/runtime/generated/platform/snapshot.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/invariants/_m4_probe_live/test_m4_exit_probe.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/use-accounts.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/use-cards.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/use-cashflow.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/use-dashboard-metrics.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/use-investments.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/use-loans.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/use-overview.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/use-reconciliation.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/app/platform/capabilities/page.tsx"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/app/platform/errors/page.tsx"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/app/platform/verification/run/[capability]/page.tsx"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/lib/hooks/use-live-execution.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/engineering-events.jsonl"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/git-fetch-events.jsonl"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/verify.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-07084c57e3f6/exec-0001-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-07084c57e3f6/exec-0001-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c57/post-implementation-convergence/progress.md"
+            },
+            {
+              "change_type": "modified",
+              "path": "scripts/launch.sh"
+            }
+          ],
+          "generated_from": "2026-09-07T01:51:11.994489+00:00",
+          "recommended_verification": [],
+          "risk": "HIGH",
+          "stale_evidence": []
+        },
+        "generated_at": "2026-09-07T01:51:13Z",
+        "id": "sha256:72ca53b17aed0c06999a36e366f8601e2b9326739313599d3ff2a782cb0bb31c",
+        "kind": "platform.change_intelligence",
+        "version": "1.0.0"
+      }
+    },
     "events": {
       "_c": 214979.871591093,
       "_ts": "2026-09-05T16:05:20Z",
@@ -414,9 +1302,9 @@
       }
     },
     "health": {
-      "_c": 214989.882544146,
-      "_ts": "2026-09-05T16:05:30Z",
-      "hash": "213208d0e25dc30cfacf3b5ae26bbf1d513d57f8316a6d607f9a032e37478eb9",
+      "_c": 315244.565433731,
+      "_ts": "2026-09-07T01:45:37Z",
+      "hash": "eec79dbef2facede7dd0be70ce000c33f5c7be03f50e14fc8b41ce4d9f6069dd",
       "payload": {
         "data": {
           "ai": "READY",
@@ -425,15 +1313,15 @@
           "database": "HEALTHY",
           "domains": [
             {
-              "detail": "runs=75 passed=25 failed=38",
-              "last_check": "2026-09-05T16:05:30Z",
+              "detail": "runs=2 passed=0 failed=0",
+              "last_check": "2026-09-07T01:45:37Z",
               "name": "Verification",
               "source": "/platform/v1/verification",
               "status": "UNHEALTHY"
             },
             {
-              "detail": "events=75",
-              "last_check": "2026-09-05T16:05:30Z",
+              "detail": "events=4",
+              "last_check": "2026-09-07T01:45:37Z",
               "name": "EventStore",
               "source": "EngineeringEventStore",
               "status": "HEALTHY"
@@ -444,13 +1332,13 @@
           "platform": "UNHEALTHY",
           "verification": "CURRENT"
         },
-        "generated_at": "2026-09-05T16:05:30Z",
-        "id": "sha256:71d35795c233384d88156a331e43c2afc060ca175bb6131a23d9d4f0b22c2629",
+        "generated_at": "2026-09-07T01:45:37Z",
+        "id": "sha256:addca4258c33bd51df2fc64e4e0cea899c428136aaa57ef1b944805469f55fff",
         "kind": "platform.health_snapshot",
         "version": "1.0.0"
       }
     }
   },
-  "generated_at": "2026-09-05T16:05:30Z",
+  "generated_at": "2026-09-07T01:51:13Z",
   "version": "1"
 }

@@ -20,7 +20,7 @@ export default function CapabilitiesPage() {
   const [stageFilter, setStageFilter] = useState<string>('all');
 
   const categories = data?.data?.categories ?? [];
-  const items = data?.data?.items ?? [];
+  const items = useMemo(() => data?.data?.items ?? [], [data?.data?.items]);
 
   const filtered = useMemo(() => {
     let result = items;

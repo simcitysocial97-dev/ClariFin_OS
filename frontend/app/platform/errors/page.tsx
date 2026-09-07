@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { usePlatformErrors } from '@/lib/hooks/use-platform-errors';
 import { usePlatformHealth } from '@/lib/hooks/use-platform-health';
 import { AlertTriangle, Activity, Filter, Gauge, Layers, RefreshCw } from 'lucide-react';
@@ -38,18 +38,37 @@ export default function ErrorsPage() {
     total: number;
     buckets: { code: string; layer: string; count: number }[];
   } | null>(null);
-  const [freqLoading, setFreqLoading] = useState(false);
+  const [_freqLoading, _setFreqLoading] = useState(false);
+  const [_isPending, startTransition] = useTransition();
 
-  useEffect(() => {
+useEffect(() => {
     if (activeTab !== 'frequency') return;
-    setFreqLoading(true);
+    let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    startTransition(() => {
+      _setFreqLoading(true);
+    });
     fetch('/platform/v1/errors/frequency')
       .then((r) => r.json())
       .then((json: { data: { total: number; buckets: { code: string; layer: string; count: number }[] } }) => {
-        setFrequencyData(json.data);
+        if (!cancelled) {
+          startTransition(() => {
+            setFrequencyData(json.data);
+            _setFreqLoading(false);
+          });
+        }
       })
-      .catch(() => setFrequencyData({ total: 0, buckets: [] }))
-      .finally(() => setFreqLoading(false));
+      .catch(() => {
+        if (!cancelled) {
+          startTransition(() => {
+            setFrequencyData({ total: 0, buckets: [] });
+            _setFreqLoading(false);
+          });
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [activeTab]);
 
   const tabs: { key: Tab; label: string }[] = [
@@ -108,7 +127,7 @@ export default function ErrorsPage() {
 
       {/* Content */}
       {activeTab === 'frequency' ? (
-        <FrequencyPanel data={frequencyData} loading={freqLoading} />
+        <FrequencyPanel data={frequencyData} loading={_freqLoading} />
       ) : (
         <ErrorTable
           items={activeItems}

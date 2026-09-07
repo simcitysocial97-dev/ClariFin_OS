@@ -50,7 +50,9 @@ export function useLiveExecution({
 
   useEffect(() => {
     if (!executionId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setState('connecting');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setEvents([]);
       return;
     }

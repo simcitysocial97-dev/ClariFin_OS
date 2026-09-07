@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useTransition } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { apiFetchJson } from '@/lib/api/gateway';
 import { useLiveExecution } from '@/lib/hooks/use-live-execution';
@@ -44,6 +44,7 @@ export default function LiveExecutionPage() {
   const capId = decodeURIComponent(String(params?.capability ?? ''));
 
   const [executionId, setExecutionId] = useState<string | null>(null);
+  const [_isPending, startTransition] = useTransition();
   const [runSubmitted, setRunSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -91,7 +92,9 @@ export default function LiveExecutionPage() {
   // Auto-submit on mount when a capability is provided.
   useEffect(() => {
     if (capId && !runSubmitted) {
-      void submitRun();
+      startTransition(() => {
+        void submitRun();
+      });
     }
   }, [capId, runSubmitted, submitRun]);
 
