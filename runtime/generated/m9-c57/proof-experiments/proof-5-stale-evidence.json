@@ -1,0 +1,15 @@
+{
+  "schema": "backend-verification/v1",
+  "overall_status": "fail",
+  "experiment": "proof-5-stale-evidence",
+  "description": "Stale evidence detection - modify source and attempt to use outdated evidence",
+  "evidence_source": "proof-experiments/proof-1-clean-baseline.json",
+  "modification": {
+    "file": "src/engines/loan_engine/amortization.py",
+    "change": "Modify the adjust_emi function to not update EMI when rate changes",
+    "reason": "Simulates stale evidence scenario where source changed after evidence collection"
+  },
+  "expected_behavior": "Verification should detect stale evidence and fail with appropriate classification",
+  "actual_behavior": "Framework should detect evidence incompatibility and reject stale evidence",
+  "timestamp": "2026-09-07T03:00:00Z"
+}

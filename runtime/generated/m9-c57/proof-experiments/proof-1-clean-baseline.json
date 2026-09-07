@@ -1,0 +1,41 @@
+{
+  "schema": "backend-verification/v1",
+  "overall_status": "fail",
+  "unit_id": "",
+  "phases": [
+    {
+      "phase": "contract",
+      "status": "pass",
+      "exit_code": 0,
+      "duration_seconds": 92,
+      "log": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/contract.log",
+      "junit": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/contract-junit.xml"
+    },
+    {
+      "phase": "invariants",
+      "status": "pass",
+      "exit_code": 0,
+      "duration_seconds": 92,
+      "log": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/invariants.log",
+      "junit": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/invariants-junit.xml"
+    },
+    {
+      "phase": "properties",
+      "status": "fail",
+      "exit_code": 1,
+      "duration_seconds": 92,
+      "log": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/properties.log",
+      "junit": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/properties-junit.xml"
+    },
+    {
+      "phase": "unit-engines",
+      "status": "pass",
+      "exit_code": 0,
+      "duration_seconds": 92,
+      "log": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/unit-engines.log",
+      "junit": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/unit-engines-junit.xml"
+    }
+  ],
+  "generated": 161,
+  "total": 161
+}

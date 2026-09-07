@@ -104,8 +104,21 @@ for i in "${!names[@]}"; do
   name="${names[$i]}"
   out="${outputs[$i]}"
   code="${codes[$i]}"
-  duration=$(( now - ${starts[$i]} ))
   junit="$EVIDENCE_DIR/${name}-junit.xml"
+  # Read actual duration from JUnit XML (more accurate than bash timestamps for parallel runs)
+  duration=$("$PY" - "$junit" <<'PYEOF'
+import sys, xml.etree.ElementTree as ET
+try:
+    root = ET.parse(sys.argv[1]).getroot()
+    ts = root if root.tag == 'testsuite' else root.find('testsuite')
+    if ts is not None:
+        print(int(float(ts.get('time', 0))))
+    else:
+        print(0)
+except:
+    print(0)
+PYEOF
+)
 
   echo "--- phase: $name ---"
   cat "$out"
