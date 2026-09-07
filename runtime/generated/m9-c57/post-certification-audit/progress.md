@@ -260,6 +260,32 @@ VERIFICATION SYSTEM = OPERATIONAL (canonical paths) with 2 material planning/tru
 
 ---
 
+## PHASE 4 — REPOSITORY VERIFICATION TOPOLOGY
+
+**Recorded:** 2026-09-07T17:05Z
+
+| Subsystem | Exists | Tested | Verified by C57 | Observable | Known defects | Confidence |
+| --------- | ------ | ------ | --------------- | ---------- | ------------- | ---------- |
+| `backend` (app/engine) | ✓ 8 engine packages, 30 routers, 32 services, 27 repos | ✓ unit 75f, integration 12f, contract 27f (161 tests), capability 13f, invariants 10f, properties 25f, golden | PARTIAL — `backend` profile exists; **contract stage red (G7)**; mutation: P0 engines ≥80% (account 94.5%) | ✓ via API health + RunRecords + contract coverage JSON | G7 gate failure; 0% coverage on recommendation_service; statement/import/transaction_intelligence thin coverage | **HIGH** — verifiable & diagnosable (gate pollution aside) |
+| `frontend` | ✓ Next.js 16, 13 domain surfaces + 6 platform surfaces | ✓ vitest 35 test files, playwright 232 tests (2 projects), tsc | PARTIAL — `frontend` profile exists; **lint task broken locally (G6)**; playwright **broken in CI (S2)**; build OK | ✓ GUI exists (platform console) but **unservable via launcher (G5)** | G5, G6, S2 | **MEDIUM** — build/type/test verifiable; serve path broken; E2E signal dead in CI |
+| `runtime` (verification foundation) | ✓ 106 test files + full C42–C57 machinery | ✓ runtime/tests (106f) — **11 known failures (8 vea5 + 3 platform-api)** | ✓ INTACT (Phase 1: C57 core certified, this audit re-proven) | ✓ events/RunRecords/metrics live | C2: check unusability (G4), ci/reconcile exit-code contract (8 tests), import-path duality (3 tests), dual workflow truths (yaml vs profiles) | **HIGH** |
+| `platform` (API + AI + diagnostics) | ✓ 100+ platform routes, AI layer (22 files) | PARTIAL — 3 platform-api structural tests failing; AI layer no dedicated suite found this audit | ✓ API live-probed extensively (Phases 12/13) | ✓ OPERATIONAL (diagnose/capabilities/errors/history/evidence/architecture live) | execution/stream routes untrusted (3 failing tests); AI model routing local-only | **MEDIUM-HIGH** |
+| `tests` (top-level `testing/`) | ✓ exists | ✓ | UNKNOWN (not inventoried deeply) | — | Possible duplication with backend/runtime test trees — flagged for next objective | LOW |
+| `contracts` (schemathesis/OpenAPI) | ✓ OpenAPI + generated contract tests + `gen:types` | ✓ 161 contract tests | PARTIAL — gate red on coverage scoping (G7) | ✓ contract-coverage.json | G7 | HIGH |
+| `integration` | ✓ backend/tests/integration (12f) + e2e (playwright) | ✓ | PARTIAL — `integration` profile unwired in CI; playwright S2 | ✓ | S2 | MEDIUM |
+| `properties` | ✓ 25 property files (hypothesis) | ✓ (floating-rate now passing) | ✓ via `property` workflow (unwired — `run_property_tests.sh` only referenced by capability mapping; no workflow invokes the property profile) | ✓ | Property profile not in any CI workflow | MEDIUM |
+| `E2E` (playwright) | ✓ 2 projects / 232 tests | ✓ in design | ✓ profile exists | — | **S2 browser mismatch → dead in CI**; local untested this audit | LOW (CI) |
+| `golden/regression` | ✓ tests/golden + capability | ✓ daily golden.yml | ✓ profile | ✓ 90d artifacts | S9 dead input, S13 ungarded upload | MEDIUM |
+| `CI` | ✓ 13 workflows | — | — | ✓ (via GH Actions) | S1–S11 (Phase 8) | HIGH |
+| `scripts` (launchers) | ✓ 6 scripts + start.sh/.bat | PARTIAL (probed this audit) | `bootstrap`/`env-doctor`/`verify` WORKING; `start`/`serve` partial/broken (G5) | ✓ | G5, G8, 0.0.0.0, reload-scope | HIGH |
+| `configuration` | ✓ pyproject, .coveragerc, verification.yaml, next.config, playwright.config | — | Drift: C38.5 dist family; yaml-vs-profiles split; fail_under scoping | ✓ | Multiple (Phases 3/8) | HIGH |
+| `generated state` | ✓ runtime/generated + backend/tests/generated + frontend dist | — | Traceable C57 evidence; duplicate roots (F-7/F-8) | ✓ | F-7, F-8 | HIGH |
+| `documentation` | ✓ docs/ (extensive) + memory-bank | — | **STALE** — `EXECUTION_STATE.md` (2026-08-05, "Next: Production Hardening") is a month behind M9-C57; `.github/scripts/README.md` references retired `backend.yml` + old coverage flow | — | D-5 stale docs | HIGH |
+
+**Topology verdict:** every major subsystem EXISTS and is at minimum *locally* verifiable; the gaps are (a) gate pollution (G7), (b) CI dead-paths (S1/S2/S3), (c) launcher serve path (G5), (d) local planning time-boundedness (G4), (e) framework test debt (Phase 10), (f) duplicate truth/config roots (C3/C6).
+
+---
+
 ## PHASE 5 — BACKEND AUDIT (summary)
 
 **Recorded:** 2026-09-07T16:40Z
@@ -352,6 +378,127 @@ VERIFICATION SYSTEM = OPERATIONAL (canonical paths) with 2 material planning/tru
 
 ```
 LIFECYCLE = backend operational; frontend serve BROKEN (G5); stop/restart/logs MISSING; status/health/diagnostics WORKING
+```
+
+---
+
+## PHASE 8 — CI/CD AUDIT
+
+**Recorded:** 2026-09-07T17:02Z (from full workflow + script + composite-action analysis)
+
+### Workflow matrix
+
+| Workflow | Intended purpose | Current status | Root cause (if failing) | C57 diagnostic view | Blocking? |
+| -------- | ---------------- | -------------- | ----------------------- | ------------------- | --------- |
+| `api-contracts.yml` (5min) | M9-C27 contract gate: `verify api-contracts` (contracts profile) | **RED (false-negative)** | S4: `backend/.coveragerc fail_under=40` vs 38.69% contract-only coverage — 161/161 tests pass, gate exits non-zero. Also S5: uploads `api-contract-evidence.json` which the contracts profile never produces (writer = orphaned `api_schema_governance` certify pipeline) + 5-min budget tight (npm ci + pip + 104s suite) | G7 cluster C2: verification-truth scoping pollution | **YES** — the contract integrity gate cannot pass as configured |
+| `backend-verify.yml` (30min) | `verify backend` full suite incl. contract stage | **RED at contract stage** | S4 same fail-under gate (task 6); rest of profile (ruff/black/mypy/unit/integration) green per quick profile evidence | G7 cluster C2 | **YES** — backend verification cannot complete green |
+| `frontend-verify.yml` (25min) | `verify frontend` (eslint/tsc/vitest/build) | **UNKNOWN-likely GREEN in CI** | CI runs `npm ci` → eslint 9.39.5 (locked) → flat config works (G6 is local-only). Path filters include dead `backend/src/mappers/**` (S8). Legacy `--ext` variant exists only in unwired `run_frontend_verification.sh:71` (would fail if invoked — ESLint 9 rejects `--ext`) | G6 cluster C3 (local only) | No (CI path coherent) |
+| `quality.yml` (10min) | `verify quick` merge-blocking gate | **AT RISK** (S6) | 10-min budget vs bootstrap + cold mypy + single-process unbounded unit suite (no `--timeout`, no xdist); no path filter (runs on every push to any branch) | C3 budget risk | Risk, not confirmed fail |
+| `playwright.yml` (90min × 2 shards) | `verify playwright` E2E matrix (chromium, mobile-chrome) | **RED (both shards)** | S2: installs Chromium for Playwright **1.58.2** but `@playwright/test` is **1.63.0** → `npx playwright test 1.63.0` looks for its own pinned browser revision → launch fails for both shards. Also S8: `e2e/**` path filter matches nothing (specs in `frontend/tests/e2e/specs`) | C2/C6 CI infrastructure drift (browser pin vs test-runner pin) | **YES** — E2E layer cannot run in CI |
+| `mutation.yml` (15/90min) | env-check → `mutation --smoke` gate → full 80% campaign + jq/bc classify | **LIKELY GREEN** (S12) | Summary contract intact: `mutation-summary.json` path corrected (old double-summary jq bug — memory correction — is FIXED); classify never masks; threshold 80% | C42 state: P0 engines at 94.5% (account_engine) | No |
+| `verification-runtime.yml` (30min) | `verify runtime` (runtime/tests + integrity) | **RED (partial)** | runtime/test suite contains the known-failing files (Phase 10: 8+3 failures) → `pytest runtime/tests/ -q` exits non-zero; profile is fail-fast | C2: framework test debt in runtime/ | **YES** — runtime self-verification red |
+| `verification-reconcile.yml` (30min) | VEA-5 plan/tier/runtime/reconcile gate (exit code = gate) | **PARTIAL** | Uses DEPRECATED aliases (`reconcile`, `exec-evidence` — canonical_control_plane.py:158-159); `--duration 0.0` hardcoded; S11: on push events `--base main` fallback → can yield exit 2 (planning divergence) on non-main pushes with no real defect; the `ci`/`reconcile` exit-code contract itself is broken per 8 local test failures | C1/C2: legacy alias surface + exit-code contract | Depends on branch; contract is defective |
+| `golden.yml` (30min) | `verify golden` daily (tests/golden + tests/capability) | **UNKNOWN** (not run this audit) | S9: `dataset` dispatch input never forwarded (dead wiring); S13: uploads entire `backend/tests/generated/` (size-unguarded) | — | No (scheduled) |
+| `dependency-update.yml` (15min) | weekly pip-audit + npm audit | **MUTED BY DESIGN** | S10: all findings masked (`|| true` / `|| echo`) — cannot fail on findings; unpinned `pip install pip-audit`; broken `npm outdated` records synthetic `{"outdated":false}` | C3: monitoring without teeth | No (by design, but weak) |
+| `m9-forensic-diagnostic-lab.yml` (20min) | PR forensic evidence capture | **RED (hard)** | S1: `m9-forensic-diagnostic-lab.yml:152` `sha256sum python -m runtime.verify` — hashes a command line, not a file → `sha256sum: python: No such file` → step (unmasked, `bash -e`) fails the **entire job every run** before evidence upload. S7: even fixed, workload >> 20-min budget | C6: broken evidence-capture pipeline | **YES** — forensic diagnostics in CI are dead |
+| `security-codeql.yml` (45min) | CodeQL python+js analysis | **PRESUMED OPERATIONAL** | No static defect found; no continue-on-error (findings enforced via code scanning) | — | No |
+| `release.yml` (30min) | release build + notes | **BROKEN ARTIFACT** | S3: uploads `frontend/.next` but C38.5 `distDir: 'dist'` → build writes `frontend/dist`; upload `if-no-files-found: warn` → job "succeeds" with an **empty artifact**; `generate_release_notes.sh:20` also bakes the stale `.next` path | **C1/C6: build-output directory drift (same family as G5)** | **YES** (release artifacts empty) |
+
+### CI global observations
+
+1. **No `.venv` in CI** — setup-python-runtime pip-installs `-e ".[all]"` into runner Python; scripts' venv-first resolvers fall back to `python3`. Consistent with `env.py` (venv-first then PATH), so tooling parity holds.
+2. **C38.5 dist-drift family (G5 + S3 + stale snapshot)**: after moving `distDir` to `dist`, **`launch.sh serve_frontend` (checks `out/`), `release.yml` (uploads `.next`), `generate_release_notes.sh` (notes `.next`), and `frontend/generated/toolchain-lock.json:177` (stale `CI ? 'export'` snapshot)** still reference the old output directories. One root cause, four broken consumers → cluster **C6**.
+3. **Two broken hard-fail jobs** (forensic lab S1, playwright S2) + **two false-red gates** (api-contracts, backend-verify via S4) + **one dead runtime gate** (runtime/tests failures) = **5 of 13 workflows currently cannot be red→green on real defects alone**. The CI signal is structurally polluted.
+4. **Dead wiring**: `full` profile invoked by no workflow; `integration` profile invoked by no workflow; golden `dataset` + mutation `target-path`/`engine-name` inputs unwired; `e2e/**` and `backend/src/mappers/**` path filters match nothing.
+5. **DEPRECATED alias survival**: `verification-reconcile.yml` runs `reconcile`/`exec-evidence` via the C49 compat shim while the local tests for that same command's exit-code contract fail (Phase 10) — the CI reconcile gate is built on a contract the test suite currently fails to prove.
+
+---
+
+## PHASE 9 — TEST & CONTRACT AUDIT
+
+**Recorded:** 2026-09-07T17:08Z
+
+| Category | Location | Count (files) | Authoritative? | Executed by canonical profile/CI? | Quality notes |
+| -------- | -------- | ------------- | -------------- | ---------------------------------- | ------------- |
+| unit | `backend/tests/unit/` | 75 | **YES — primary** (quick/quality/CI) | ✓ `quick`, `backend`, `quality.yml` | `-x` fail-fast; no per-test `--timeout` in quick (S6 budget risk) |
+| property | `backend/tests/properties/` | 25 | YES (loan engine etc.) | PARTIAL — `run_property_tests.sh` referenced in capability mapping but **no CI workflow runs the property profile**; rc=5→0 masking (S10) | Strong hypotheses; floating-rate now passing |
+| integration | `backend/tests/integration/` | 12 | YES | PARTIAL — `integration` profile exists (600s est.) but **unwired in CI**; rc=5→0 masking | — |
+| contract | `backend/tests/contract/` (incl. generated) | 27 (161 tests) | YES (api-contracts gate) | ✓ `contracts`/`backend` profiles + CI | **All pass; gate red on coverage scoping (G7)** |
+| capability | `backend/tests/capability/` (12 domains) | 13 | YES (golden.yml runs golden+capability) | ✓ `golden` profile daily | Capability-level functional tests |
+| invariants | `backend/tests/invariants/` | 10 | YES (financial invariants) | Partially via unit/integration | — |
+| architecture | `backend/tests/architecture/` | 2 | YES (layering rules) | PARTIAL (run_fast_checks.sh runs arch+meta) | — |
+| golden | `backend/tests/golden/` + builders/datasets | 1 (+datasets) | YES (regression baseline) | ✓ daily golden.yml | datasets = golden data |
+| E2E | `frontend/tests/e2e/specs/` (playwright) | 232 tests / 2 projects | YES | ✓ playwright.yml — **currently dead (S2)** | sharded by project (C8) |
+| frontend unit | `frontend/tests/` + `__tests__` | 35 | YES | ✓ frontend-verify (vitest) | — |
+| runtime/framework | `runtime/tests/` | 106 | YES (self-verification) | ✓ verification-runtime.yml — **currently red (11 known failures)** | The framework tests its own exit-code/alias/import contracts — 8+3 fail |
+| mutation infra | `backend/tests/mutation_infra/` (+mutants mirror) | probes | YES (C42) | ✓ mutation.yml (smoke+full) | 94.5% account_engine latest |
+| stale/suspect | top-level `testing/`, `runtime/` root-level `test_*.py` (14 files directly under `runtime/foundation/verification/`), `backend/tests/meta` (6), `probes` (1) | — | UNKNOWN | `pytest runtime/tests/ -q` does NOT collect the 14 verification-package-embedded tests (they live in `runtime/foundation/verification/`, not `runtime/tests/`) | **Duplicated/orphaned test placement**: canonical runtime self-verification misses embedded framework tests; `testing/` top-level dir unowned |
+
+### Key test-layer defects
+
+1. **T-1 (Phase 10):** 11 runtime/framework tests fail (8 vea5 CLI exit-code contract + 3 platform-api import-path). These sit in the canonical `verification-runtime` CI gate → the framework's self-verification is red.
+2. **T-2:** 14 `test_*.py` files live inside `runtime/foundation/verification/` (package dir) — outside `runtime/tests/` → not collected by the `runtime` profile (`pytest runtime/tests/`). Framework self-tests are partially invisible to canonical self-verification.
+3. **T-3:** `testing/` top-level directory — unowned test tree (not in any profile, not in runtime/tests) — duplication risk (D-6).
+4. **T-4:** rc=5→0 masking in integration/property/migration scripts (S10) — "no tests collected" silently passes.
+5. **T-5:** `full` and `integration` profiles are defined but wired to no CI workflow — two layers of verification exist only as definitions.
+6. **Weak-assertion areas (coverage-truth, not score-chasing):** recommendation_service (0%), statement_repository (16.7%), import_service (15.3%), transaction_intelligence_service (9.0%) — the services behind live routes have the weakest direct verification.
+
+```
+TEST LAYER = authoritative categories exist and are well-separated; the framework self-test debt (T-1/T-2) and two orphan/unwired layers (T-3/T-5) are the material gaps.
+```
+
+---
+
+## PHASE 10 — KNOWN FAILURE RECONCILIATION
+
+**Recorded:** 2026-09-07T17:12Z (all re-executed this audit unless noted)
+
+| # | Previously known failure | CURRENTLY FAILING? | CAUSE | USER IMPACT | C57 IMPACT | RECOMMENDED ACTION |
+| - | ------------------------ | ------------------ | ----- | ----------- | ---------- | ------------------ |
+| K-1 | `test_vea5_m8r_cli_reconcile.py` (9 failures, cert record) | **YES — 8 failures** (was 9; 1 recovered) | framework/contract — `ci`/`reconcile` exit-code contract violated: tests expect exit 1 (environment divergence) / 2 (planning divergence) on mismatched `vea5-*.pr.json` evidence, `ci` returns 0. Tests also invoke **legacy direct-script** `python3 runtime/verify.py` (non-canonical form) | medium — reconcile gate semantics unproven | medium — the VEA-5 reconcile CI gate (verification-reconcile.yml) rests on this unproven contract; also a DEPRECATED alias in CI | **fix (objective)** — restore/decide the `ci` exit-code contract (0/1/2 semantics) and make the 8 tests canonical-form; this is the same "execution-context + exit-code contract" cluster (C1/C2) |
+| K-2 | `test_platform_api_phase7.py` (3 failures, ModuleNotFoundError `src`) | **YES — 3 failures (same root cause)** | test-defect/execution-context — tests import `backend.src.routers.platform` from **repo root**; `backend/src` uses `src.*` absolute imports resolvable only with `cwd=backend` → `ModuleNotFoundError: No module named 'src'` | low | medium — execution/stream/platform routes unverified (affects "runtime control" diagnostic surface) | **fix (objective)** — canonical import bridge (make `backend.src` importable from repo root via installed package path, or point runtime tests at the API app fixture the same way the CI does), or re-scope tests to the service layer |
+| K-3 | floating-point property failures (`test_simulate_floating_rate_schedule_rate_application`) | **NO — PASSES** (re-run green, 1 xpass alongside) | was: backend application bug (floating-rate EMI adjustment) — now fixed during C57 convergence commits | — | — | **RESOLVED** — remove from frozen-failure list; keep xfail/skip markers review (1 test xpassing suggests a stale xfail marker) |
+| K-4 | contract coverage threshold 38.69% < 40% (G7) | **YES — reproduces exactly** | configuration/scoping — `backend/.coveragerc:52 fail_under=40` applied to contract-only `--cov=.` run; 161/161 pass, gate red | medium — contract/backend signals polluted | high — 2 CI gates + 3 profiles false-red | **fix (objective)** — coverage-gate policy convergence (wire per-scope `check_coverage_threshold.py` or correct `.coveragerc` scoping; retire the orphan) |
+| K-5 | frontend ESLint (G6) | **YES — locally only** | environment drift — local `node_modules` = eslint 10.10.0 vs lock 9.39.5 | low | low | **fix** — `npm ci` (canonical provisioning); add drift self-diagnosis (cluster C3) |
+| K-6 | launcher lifecycle (G5/G8) | **YES — `start` frontend half; `serve` fully** | infrastructure — `out` vs `dist` + static-serve-vs-server-mode (G5); missing stop/restart/logs surface (G8) | high (app unusable end-to-end) | low | **fix (objective)** — lifecycle convergence (clusters C1+C6) |
+| K-7 | uvicorn lifecycle (G8) | **RESHAPED — no crash; control surface missing** | infrastructure — no process ownership; `--reload` watches test artifacts; 0.0.0.0 bind | low-medium | none | **fix** — merged into lifecycle objective |
+| K-8 | broad verification timeout (G4) | **YES — worse** (4,588 files; >5min, no output at 120s/300s) | framework/design — local boundary = merge-base(main, HEAD); 132-commit divergent branch | medium | high — "what changed" locally unusable | **fix (objective)** — boundary configurability/convergence + timeout/progress (cluster C2) |
+| K-9 | intelligence component readiness (behaviour/financial_intelligence/transaction_intelligence) | **PARTIAL** | backend — services operational (API 200s) but thin direct coverage (9–60%); frontend duplicates computation (113 lint violations) | medium | medium | **redesign/investigate (objective)** — single-source-of-truth decision: move client intelligence to backend endpoints OR ratify display-only formatting (D-3) |
+| K-10 | CI workflow failures (not in original G-list — discovered) | **YES — S1 (forensic lab hard-fail), S2 (playwright shards dead), S3 (release artifact empty), S4 (2 gates false-red)** | infrastructure — command typo, browser pin drift, build-dir drift, coverage scoping | high (E2E + forensic diagnostics dead in CI) | medium | **fix (objective)** — CI convergence (cluster C6) |
+| K-11 | mutation jq double-summary path bug (memory correction) | **NO — FIXED** (`mutation-summary.json` correct in current code; S12) | was CI script defect | — | — | **RESOLVED/STALE** — memory record superseded |
+| K-12 | Earnd app 4 pre-existing failures (AGENTS.md baseline note) | **UNKNOWN-stale** | environment (docker ports) | low | none | **investigate/defer** — pre-dates C57; re-baseline in next env objective |
+
+```
+KNOWN FAILURES = 6 materially open (K-1,K-2,K-4,K-6/K-7,K-8,K-10), 2 resolved (K-3,K-11), 1 reshaped (K-7), 1 stale-unknown (K-12)
+```
+
+---
+
+## PHASE 11 — ARCHITECTURAL DRIFT AUDIT
+
+**Recorded:** 2026-09-07T17:15Z
+
+Authoritative references: C52 GOVERNING-PLAN (control-plane chain, "no silent bypasses"), C51 CERTIFICATION (44 capabilities/13 profiles/76 routes), C48 (frontend format-only rule), C38.5 (Next server-mode everywhere), M9-C57 canonical execution contract, AGENTS.md (venv model).
+
+| ID | Drift | Type | Evidence | Severity |
+| -- | ----- | ---- | -------- | -------- |
+| D-1 | **Two parallel verification-workflow truth systems**: `verification.yaml` "workflows" (bash scripts, Program 11.5) vs `profiles.py` tasks (Program 7B) define the same scopes with diverging commands; only profiles.py is executed by `control_plane_facade` | duplicate implementations / obsolete abstraction | yaml `quick`=run_fast_checks.sh vs profiles `quick`=inline ruff/black/mypy/pytest | HIGH — config authority split (violates C51 "config authority" intent) |
+| D-2 | **DEPRECATED alias surface still load-bearing**: `reconcile`, `exec-evidence`, `metrics` (→doctor) alive via C49 shim; `verification-reconcile.yml` built on deprecated `reconcile`; 8 local tests fail on its contract | obsolete abstractions | canonical_control_plane.py:158-159 deprecation notes; K-1 | MEDIUM |
+| D-3 | **Dual financial-intelligence implementation**: frontend `lib/intelligence/*` engines compute debt/EMI/risk/savings from paise values vs backend `financial_intelligence`+`behaviour_engine` same-domain services | duplicated implementations + architecture violation (C48 rule) | 113 lint findings; backend routes live | HIGH — two sources of financial truth |
+| D-4 | **Documented-but-unwired capabilities**: `full` + `integration` + `property` profiles defined, zero CI wiring; `run_full_verification.sh` references the old coverage flow; 4 capabilities in yaml without module coverage (runtime-verification/golden/e2e/mutation have empty module lists) | documented but unimplemented (wiring) | Phase 8/9 | MEDIUM |
+| D-5 | **Stale authoritative docs**: `docs/EXECUTION_STATE.md` (2026-08-05, "Engineering Platform Closure COMPLETE, Next: Production Hardening") contradicts actual state (C57 certified 2026-09-07, app not launchable); `.github/scripts/README.md` cites retired `backend.yml` + pre-C57 coverage flow | stale documentation | docs/ vs current | MEDIUM — misleads future runs |
+| D-6 | **Orphaned/unowned code & trees**: `testing/` top-level test dir; 14 framework tests embedded in `runtime/foundation/verification/` (outside runtime/tests); `.github/scripts/check_coverage_threshold.py` (0 callers); `unrelated/` (empty); `runtime/runtime/generated` (stray tree); `backend/mutants` (mirror) | duplicate/obsolete | Phases 9/14 | MEDIUM |
+| D-7 | **C38.5 build-dir drift (out/.next vs dist)** across launcher, release workflow, release-notes script, stale toolchain-lock snapshot — documented decision implemented in `next.config.ts` but 4 consumers never updated | architecture violation (decision not propagated) | G5 + S3 + toolchain-lock.json:177 | HIGH — 4 broken consumers of one decision |
+| D-8 | **Import-context duality**: backend `src.*` imports require cwd=backend; runtime layer imports `backend.src.*` from repo root (3 failing tests); AGENTS.md mandates repo-root module execution but the backend package is not installable/importable from root (not in pyproject packages) | accidental coupling / missing boundary | K-2 | MEDIUM-HIGH |
+| D-9 | **Dual run-history sources** (events JSONL vs RunRecords JSON) feed different consumers (analytics vs history UI) with different populations | missing boundary | Phase 1 note 5 | LOW-MEDIUM |
+| D-10 | **AI runtime control partially unproven** (3 failing structure tests) while exposed via console; AI model routing single-provider proven | incomplete runtime integration | K-2 / Phase 12 | LOW-MEDIUM |
+| D-11 | Implemented-but-undocumented (minor): platform health snapshot `frontend: HEALTHY` assertion has no live probe (false when :3000 down) | undocumented behavior | live capture (Phase 7) | LOW |
+
+**Implemented but undocumented**: platform console GUI (`app/platform/*`) — richly implemented, only weakly referenced in docs; `POST /diagnose` deterministic engine (Phase 11 of platform router) — functional, under-documented.
+**Missing boundaries**: backend import boundary (D-8), financial-truth boundary frontend↔backend (D-3), coverage-truth boundary (D-1/K-4), workflow-truth boundary (D-1).
+
+```
+DRIFT = 11 confirmed deviations. 3 are material: D-1 (dual workflow truth), D-3 (dual financial-intelligence truth), D-7 (C38.5 build-dir consumer drift).
 ```
 
 ---
@@ -452,6 +599,69 @@ No new GUI machinery is needed; the existing console + deterministic diagnose AP
 - **F-8 duplicate `runtime/` tree** (`runtime/runtime/generated`) + **`backend/mutants`** mirror: parallel generated roots duplicate state.
 - **F-9 drifted `frontend/node_modules`** (g6): not reproducible from lock.
 - **F-10 stale reports** in `test-results/`/`dependency-reports` masquerading as current.
+
+---
+
+
+## PHASE 15 — SECURITY / SAFETY / FINANCIAL INTEGRITY REVIEW (targeted, non-pentest)
+
+**Recorded:** 2026-09-07T17:18Z
+
+| Area | State | Risk | Note |
+| ---- | ----- | ---- | ---- |
+| Secrets/config handling | **ACCEPTABLE** | LOW | `backend/src/config.py` + env; no secrets committed found in sampled paths (no `.env` in git; `.gitignore` covers venv/dist/node_modules); provider endpoint configured, no provider **keys** in repo |
+| Provider credentials | **ACCEPTABLE** | LOW | Ollama local endpoint `http://localhost:11434` (no credential plane); `providers/local.py` — machine-local only |
+| API authorization boundaries | **GAP (local app)** | MEDIUM | `/api/*` and `/platform/v1/*` routes show no auth layer in sampled handlers (platform.py uses plain `Request` → JSONResponse; no API-key/OAuth middleware observed). For a local personal-finance app this is the *designed* trust model (single-user LAN), **but** `uvicorn --host 0.0.0.0` (launch.sh:64) makes that trust model network-exposed by default on multi-homed machines |
+| Tool authority (AI) | **DESIGN PRESENT** | LOW-MEDIUM | C51 authorization levels NONE/OPERATOR/HUMAN/CI_ONLY in capability metadata; AI tools surface (19) exposed via API with no per-call auth (same local-trust model); `policy.py` + `bypass_enforcement` exist in runtime — **operational enforcement of tool authz not proven this audit** (no authz test run) |
+| AI tool execution boundaries | **PARTIAL** | MEDIUM | `POST /platform/v1/ai/engineering/execute` exists (AI can trigger engineering actions); boundaries enforced by policy module — **needs an enforcement test** before the AI execute path is exposed beyond localhost |
+| Financial mutation boundaries | **STRONG (design)** | LOW | `control_plane_facade`/`authorization_boundary.py`/`bypass_enforcement.py` architecture; C57 phase-18/19 evidence (`live-financial-denied.json`, `live-engineering-denied.json`, `live-financial-sample.json`) proves live financial mutations are DENIED outside certification paths — this is the C57 "controlled financial mutation" gate, evidenced in `m9-c57/phase-18`/`phase-19` |
+| Ledger immutability | **DESIGN PRESENT** | LOW | `ledger_audit_engine.py` capability + reconciliation confirm/reject flow (approve/audit semantics); no append-only guarantee mechanism observed at storage layer (SQLite + repository layer) — **audit-trail engine exists, storage-level immutability not enforced** (acceptable for MVP scope; note for hardening) |
+| Destructive operations | **CONTROLLED** | LOW | destructive paths (reconciliation reject, import execute) are service-gated; no shell-out to rm/destroy in sampled routers |
+| Evidence tampering | **GAP (integrity)** | MEDIUM | evidence = git-tracked JSONL/JSON under `runtime/generated/` — writable by any local process; no signing/append-only guarantee. C57 traceability is *operational* (proven) but not *cryptographically tamper-evident*. Acceptable for current scope; document as a hardening item (do not build now) |
+| Generated-state trust | **GAP (trust roots)** | MEDIUM | duplicate state roots (F-7 dual finance.db, F-8 stray runtime tree) mean an operator/tool could read the wrong "truth"; platform `health/deep` reports `evidence: VALID` without integrity check |
+
+```
+SECURITY = no acute exploit-class findings in scope; 3 governance gaps: (a) 0.0.0.0 default bind + no authz on API/AI-execute, (b) evidence tamper-evidence (no signing), (c) duplicate state trust-roots. All are hardening items, none block the next objective.
+```
+
+---
+
+## PHASE 16 — PRODUCT READINESS GAP ANALYSIS (4 layers)
+
+**Recorded:** 2026-09-07T17:20Z
+
+### LAYER 1 — Verification Foundation
+- Current state: **CERTIFIED (C57) — operationally intact** (re-proven Phase 1).
+- Working: canonical execution, env contract, profiles, event/RunRecord observability, outcome normalization, interruption safety, idempotency, deterministic diagnose, capability catalog (44/55), blast-radius.
+- Known defects: K-1 (8 tests), K-2 (3 tests), G4 (local plan unusability), G7 (coverage-truth scoping), D-1 (dual workflow truth), T-2/T-3 (test placement).
+- Missing: per-task timeout/progress surface; unified run-history; local boundary configurability; coverage-gate policy.
+- Blocking: nothing blocks *building on top* of it; K-1/K-2 block *trusting its self-verification* (CI runtime gate red).
+
+### LAYER 2 — Platform Infrastructure
+- Current state: **OPERATIONAL API + AI control layer; broken in CI (S1/S2) and in app-serve (G5)**.
+- Working: platform API (157 paths), health/deep snapshots, error analytics, evidence API, history API, architecture API, deterministic diagnose, AI agents/tools/runs, task/executions surface.
+- Known defects: K-10 (S1 forensic lab dead, S2 E2E dead, S3 release artifact empty), K-6 (G5 frontend unservable → platform console GUI unreachable), runtime-control unproven (K-2).
+- Missing: logs surface (plain app logs), CI-state ingestion into platform, process lifecycle (stop/restart/logs), evidence integrity (no signing).
+- Blocking: **G5 blocks the GUI end-state; S2 blocks E2E trust; S1 blocks CI forensic diagnostics.**
+
+### LAYER 3 — ClariFin_OS Application
+- Current state: **backend FUNCTIONAL (start/health/DB validation green; 157 API paths; engines mutation-verified on P0); frontend BUILDS + TYPES + unit-tests but UNSERVABLE via launcher**.
+- Working: accounts/loans/cards/cashflow/forecast/reconciliation APIs + DTOs (217 `_paise`), ledger/reconciliation semantics, financial correctness (integer paise, Decimal-mediated floats), startup validation.
+- Known defects: K-4/K-9 (coverage thin on recommendation/statement/import/transaction_intelligence; frontend dual-intelligence D-3 with 113 violations), K-6 frontend serve, K-12 stale Earnd note, F-7 dual DB roots.
+- Missing: end-to-end served application; single-source financial intelligence; authz boundary (local trust model explicit).
+- Blocking: **G5 (cannot run the app via canonical launcher) is the single highest user-visible blocker.**
+
+### LAYER 4 — Product / User Experience
+- Current state: **DEMONSTRABLE pieces; not product-ready**.
+- Working: domain UI surfaces (13) + platform console (6) implemented in Next.js; dashboard/summary API; export CSV; import detect.
+- Known defects: app not servable (G5); E2E proof dead in CI (S2); no CI-state in console; no log view; Windows path untested.
+- Missing: one-click runnability in every environment; onboarding; real-data validation; hardening (authz/evidence integrity).
+- Blocking: G5 (runnability) → then S2 (E2E trust) → then hardening.
+
+```
+PRODUCT = Layer 1 ready, Layer 2 API-ready (CI-broken), Layer 3 backend-functional/frontend-unserved, Layer 4 not-ready.
+The minimum path to "real ClariFin_OS usage" is: make it runnable (G5) → make the signal trustworthy (G7/K-1/K-2/S1/S2) → single-source intelligence (D-3) → harden.
+```
 
 ---
 
