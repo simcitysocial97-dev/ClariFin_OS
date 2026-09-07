@@ -1,13 +1,16 @@
 {
   "schema": "backend-verification/v1",
+  "experiment": "proof-1-clean-baseline",
+  "description": "Clean baseline verification on committed Phase 3 fixes",
   "overall_status": "fail",
+  "note": "Expected failure due to pre-existing floating-rate bug in loan_engine",
   "unit_id": "",
   "phases": [
     {
       "phase": "contract",
       "status": "pass",
       "exit_code": 0,
-      "duration_seconds": 92,
+      "duration_seconds": 84,
       "log": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/contract.log",
       "junit": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/contract-junit.xml"
     },
@@ -15,7 +18,7 @@
       "phase": "invariants",
       "status": "pass",
       "exit_code": 0,
-      "duration_seconds": 92,
+      "duration_seconds": 43,
       "log": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/invariants.log",
       "junit": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/invariants-junit.xml"
     },
@@ -23,7 +26,7 @@
       "phase": "properties",
       "status": "fail",
       "exit_code": 1,
-      "duration_seconds": 92,
+      "duration_seconds": 15,
       "log": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/properties.log",
       "junit": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/properties-junit.xml"
     },
@@ -31,11 +34,16 @@
       "phase": "unit-engines",
       "status": "pass",
       "exit_code": 0,
-      "duration_seconds": 92,
+      "duration_seconds": 25,
       "log": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/unit-engines.log",
       "junit": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/unit-engines-junit.xml"
     }
   ],
-  "generated": 161,
-  "total": 161
+  "pre_existing_failure": {
+    "test": "test_simulate_floating_rate_schedule_rate_application",
+    "file": "tests/properties/loan_engine/test_floating_rate_properties.py",
+    "error": "adjust_emi at month 2 with rate 501 did not change EMI (was 25261, now 25261)"
+  },
+  "timestamp": "2026-09-07T03:04:00Z",
+  "git_commit": "94fe2e86"
 }
