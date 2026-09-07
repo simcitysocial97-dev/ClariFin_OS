@@ -1,9 +1,9 @@
 # .github/workflows/mutation.yml
 #
 # PURPOSE: Mutation testing — finds gaps in test effectiveness (nightly).
-# RESPONSIBILITY: Run `runtime/verify.py mutation` — the ONLY verification command.
+# RESPONSIBILITY: Run `python -m runtime.verify mutation` — the ONLY verification command.
 # Rule 1: no engineering logic in YAML. Rule 2: single responsibility. Rule 8:
-# delegate to runtime/verify.py. Rule 9: append `verify.py status` summary.
+# delegate to python -m runtime.verify. Rule 9: append `runtime.verify status` summary.
 # Concurrency: never cancel (mutation is in the Rule 6 exception list).
 #
 # Two jobs:
@@ -11,7 +11,7 @@
 #                    before the expensive full campaign. Proves the mutation
 #                    pipeline can distinguish killed/survived/no-test.
 #   mutation       — authoritative full campaign (80% gate). needs: mutation-smoke.
-# Both delegate to runtime/verify.py; no mutation logic lives in YAML.
+# Both delegate to python -m runtime.verify; no mutation logic lives in YAML.
 
 name: Mutation Testing
 
@@ -53,10 +53,10 @@ jobs:
           python-version: "3.12"
 
       - name: Verify canonical environment
-        run: python runtime/verify.py env-check
+        run: python -m runtime.verify env-check
 
       - name: Run bounded mutation smoke
-        run: python runtime/verify.py mutation --smoke
+        run: python -m runtime.verify mutation --smoke
 
   mutation:
     name: Mutation Testing (authoritative)
@@ -75,10 +75,10 @@ jobs:
           python-version: "3.12"
 
       - name: Verify canonical environment
-        run: python runtime/verify.py env-check
+        run: python -m runtime.verify env-check
 
       - name: Run mutation testing
-        run: python runtime/verify.py mutation
+        run: python -m runtime.verify mutation
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
@@ -207,7 +207,7 @@ jobs:
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          python runtime/verify.py status >> $GITHUB_STEP_SUMMARY
+          python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
         shell: bash
 
       - name: Fail if mutation gate not satisfied

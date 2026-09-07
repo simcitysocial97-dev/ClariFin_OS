@@ -22,13 +22,10 @@ Per GUIDING_DOCUMENT.md §13 and §68.
 """
 
 import os
-import sys
 import tempfile
 from pathlib import Path
 
 import pytest
-
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "runtime"))
 
 from runtime.foundation.verification.bypass_enforcement import (
     build_bypass_enforcement_report,
@@ -442,7 +439,9 @@ class TestSelfVerificationCIIntegration:
             assert os.path.exists(wf_path), f"Missing workflow: {wf}"
             with open(wf_path) as f:
                 content = f.read()
-                assert "verify.py" in content, f"{wf} does not reference verify.py"
+                assert (
+                    "python -m runtime.verify" in content or "verify.py" in content
+                ), f"{wf} does not reference verify.py"
 
     def test_local_ci_equivalence(self):
         """Local and CI should use same canonical entrypoint."""

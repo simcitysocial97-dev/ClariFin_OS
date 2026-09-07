@@ -74,5 +74,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          python runtime/verify.py status >> $GITHUB_STEP_SUMMARY
+          python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
         shell: bash

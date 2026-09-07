@@ -4,7 +4,7 @@
 # M9-C42.5 — Bounded local mutation smoke (thin wrapper).
 #
 # Delegates to the single canonical runner:
-#   python runtime/verify.py mutation --smoke
+#   python -m runtime.verify mutation --smoke
 # which runs the clean-room fixture in backend/tests/mutation_infra/ and proves
 # the mutation pipeline produces killed / survived / no-tests classifications.
 # It is NOT a mutation score. The authoritative full campaign runs in CI.
@@ -21,4 +21,4 @@ else
   PY="$(command -v python3 || command -v python)"
 fi
 
-exec "$PY" runtime/verify.py mutation --smoke "$@"
+exec "$PY" -m runtime.verify mutation --smoke "$@"

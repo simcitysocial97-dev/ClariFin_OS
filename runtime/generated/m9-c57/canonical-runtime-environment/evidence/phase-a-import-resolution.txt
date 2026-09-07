@@ -1,0 +1,27 @@
+=== A: sys.path remnants in entry point (must be none) ===
+22:execution makes CPython place `runtime/` at sys.path[0], which shadows the
+26:`runtime.platform` resolves through its explicit package path; no sys.path
+
+=== B: canonical module execution import probe (repo root cwd) ===
+sys.executable: /home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python
+platform.origin: /usr/lib/python3.12/platform.py
+platform.system(): Linux
+uuid: /usr/lib/python3.12/uuid.py
+runtime.platform: /home/vasantha/AI-Projects/ClariFin_OS/runtime/platform/__init__.py
+
+=== C: guard sweep — remaining REPO_ROOT insert guards in runtime/** (non-generated) ===
+runtime/system/evidence/cli/cli.py:88:        sys.path.insert(0, str(repo_root))
+
+=== D: documented retained boundaries ===
+runtime/foundation/verification/api_contracts/c30_certification.py:32:    sys.path.insert(0, str(BACKEND_DIR))
+runtime/foundation/verification/api_contracts/c30_certification.py:647:sys.path.insert(0, 'backend')
+runtime/foundation/verification/api_contracts/gate.py:26:    sys.path.insert(0, str(BACKEND_DIR))
+runtime/foundation/verification/convergence_pipeline.py:322:        sys.path.insert(0, src_path)
+
+=== E: backup file removed ===
+D  runtime/verify.py.backup-1788501617
+ls: cannot access 'runtime/verify.py.backup-1788501617': No such file or directory
+
+=== F: observability record path test ===
+....                                                                     [100%]
+4 passed in 0.44s

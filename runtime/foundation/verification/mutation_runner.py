@@ -23,34 +23,6 @@
 
 from __future__ import annotations
 
-# Force stdlib imports before any local package shadowing can occur.
-# When running from runtime/verify.py, the runtime/ directory is on sys.path[0],
-# which causes `import platform` to resolve to runtime.platform instead of stdlib.
-# We explicitly resolve stdlib modules first.
-import builtins as _builtins
-_import = __import__
-
-
-def _stdlib_import(name: str) -> object:
-    """Import a module using only stdlib search path, bypassing local packages."""
-    import sys
-    # Temporarily save and clear the problematic path entry
-    orig_path = sys.path.copy()
-    try:
-        # Remove entries that could shadow stdlib (like the runtime/ dir)
-        sys.path = [p for p in sys.path if not (
-            p == '' or  # current directory
-            'runtime' in p.lower()  # local runtime package
-        )]
-        return _import(name)
-    finally:
-        sys.path = orig_path
-
-
-# Import critical stdlib modules before local package interference
-_stdlib_platform = _stdlib_import('platform')
-_platform_system = _stdlib_platform.system
-
 import argparse
 import atexit
 import contextlib

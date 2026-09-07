@@ -1,0 +1,21 @@
+Linux vasantha-Lenovo-IdeaPad-S145-15IWL 7.0.0-30-generic #30~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Fri Aug  7 13:27:52 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+
+/home/vasantha/AI-Projects/ClariFin_OS
+0224abd5 Remove temporary test file
+
+Python 3.12.3
+Name: clarinfin-verification
+Version: 1.0.0
+Summary: ClariFin OS — Unified Verification Runtime & single Python environment
+ERROR: Pipe to stdout was broken
+
+platform: /usr/lib/python3.12/platform.py
+uuid: /usr/lib/python3.12/uuid.py
+executable: /home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python
+
+Name: httpx2
+Version: 2.12.0
+Name: httpcore2
+Version: 2.12.0
+Name: truststore
+Version: 0.10.4

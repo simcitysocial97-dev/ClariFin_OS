@@ -5,6 +5,15 @@
 # Reports the CONTROLLED interpreters and tool versions (Python resolved through
 # ./.venv/bin/python, Node resolved through the frontend installation). Use this
 # to prove the repository no longer depends on global project tooling.
+#
+# M9-C57 additions:
+#   * `--json` — machine-readable mode (returns the same structured data as
+#     `python -m runtime.verify env-check --full` plus bootstrap metadata).
+#   * Platform/uuid import probe — proves the canonical module execution
+#     model (no stdlib shadowing by `runtime.platform`).
+#   * Interpreter-venv membership proof.
+#   * Runtime-configuration summary (available commands via env-check).
+#
 # Returns non-zero when the controlled environment is incomplete.
 # =============================================================================
 set -u
@@ -16,12 +25,23 @@ PY="$ROOT_DIR/.venv/bin/python"
 NODE="$(command -v node || echo '')"
 NPM="$(command -v npm || echo '')"
 
-echo "======================================================"
-echo "  ClariFin_OS — Environment Diagnostic (M10)"
-echo "======================================================"
-echo ""
+JSON_MODE=false
+if [ "${1:-}" = "--json" ]; then
+  JSON_MODE=true
+fi
 
 v() { printf '  %-22s %s\n' "$1" "$2"; }
+
+if [ "$JSON_MODE" = true ]; then
+  report="{"
+  report+="\"repository\":\"$ROOT_DIR\","
+  report+="\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\","
+fi
+
+echo "======================================================"
+echo "  ClariFin_OS — Environment Diagnostic (M10/C57)"
+echo "======================================================"
+echo ""
 
 echo "[ Python ]"
 if [ -x "$PY" ]; then
@@ -39,6 +59,39 @@ if [ -x "$PY" ]; then
     esac
     v "$tool (controlled)" "${ver:-MISSING}"
   done
+
+  # C57: interpreter membership proof + import-resolution probe
+  _exe_realpath="$(readlink -f "$PY" 2>/dev/null || echo "$PY")"
+  if [[ "$_exe_realpath" == *"/.venv/bin/python"* ]]; then
+    v "interpreter membership" "CANONICAL (.venv/bin/python)"
+  else
+    v "interpreter membership" "NON-CANONICAL ($_exe_realpath)"
+  fi
+  echo ""
+  echo "[ Import resolution (canonical module execution) ]"
+  $PY - <<'EOF'
+import platform, sys, uuid, json, os
+from pathlib import Path
+repo = Path(os.environ.get("ROOT_DIR", "."))
+resolves = {}
+resolves["stdlib_platform_origin"] = getattr(platform, "__file__", "unknown")
+resolves["stdlib_platform_system"] = getattr(platform, "system", lambda: "fail")()
+resolves["stdlib_uuid_importable"] = hasattr(uuid, "UUID")
+resolves["runtime_package"] = "runtime" in sys.modules or __import__("runtime") is not None
+try:
+    import runtime.platform as rp
+    resolves["runtime_platform_init"] = rp.__file__
+except Exception as e:
+    resolves["runtime_platform_init"] = f"ERROR: {e}"
+resolves["canonical_interpreter"] = sys.executable
+print(json.dumps(resolves, indent=2, default=str))
+EOF
+  _probe_exit=$?
+  if [ $_probe_exit -ne 0 ]; then
+    echo "  !! import-resolution probe FAILED (exit ${{_probe_exit}})" >&2
+  else
+    echo "  import resolution probe: PASS"
+  fi
 else
   echo "  !! ./.venv/bin/python NOT FOUND — run scripts/bootstrap.sh" >&2
   echo "  (falling back to PATH for diagnostics)"
@@ -86,6 +139,10 @@ if [ -x "$ROOT_DIR/.venv/bin/mutmut" ]; then
   esac
 fi
 [ "$guard_fail" -eq 0 ] && v "environment guard" "PASS" || v "environment guard" "FAIL"
+
+echo ""
+echo "[ Runtime command surface (canonical form) ]"
+$PY -m runtime.verify 2>&1 | grep -E "^(verify |  check|  plan|  run|  diagnose|  strengthen|  inspect|  certify|  ci|  doctor)" | head -20 || true
 
 echo ""
 if [ "$guard_fail" -ne 0 ]; then

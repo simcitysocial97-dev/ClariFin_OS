@@ -236,7 +236,7 @@ _VERIFY_GRAPH_TASKS = (
         name="Graph integrity check",
         profile="graph",
         commands=[
-            "python3 -c 'from runtime.foundation.repository.graph.graph_service import RepositoryGraphService; s=RepositoryGraphService(); s.load()'"
+            "python3 -c 'from runtime.foundation.repository.graph.graph_service import RepositoryGraphService; s=RepositoryGraphService(index_path=\"runtime/generated/dependency-graph-v2.json\"); s.load()'"
         ],
         category=VerificationCategory.ARCHITECTURAL,
         scope=VerificationScope.REPOSITORY,
@@ -353,7 +353,7 @@ _VERIFY_FULL_TASKS = (
         name="Graph integrity check",
         profile="full",
         commands=[
-            "python3 -c 'from runtime.foundation.repository.graph.graph_service import RepositoryGraphService; s=RepositoryGraphService(); s.load()'"
+            "python3 -c 'from runtime.foundation.repository.graph.graph_service import RepositoryGraphService; s=RepositoryGraphService(index_path=\"runtime/generated/dependency-graph-v2.json\"); s.load()'"
         ],
         category=VerificationCategory.ARCHITECTURAL,
         scope=VerificationScope.FULL,

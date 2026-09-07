@@ -1,6 +1,13 @@
 #!/bin/bash
 # ClariFin OS Launcher (Cross-platform)
 # Simple operational entry points for ClariFin OS
+#
+# Canonical execution contract (M9-C57): all Python runtime commands are invoked
+# through the repository-managed .venv and as modules (`python -m runtime.verify`),
+# not as bare files. No ambient PATH, no PYTHONPATH hacking.
+#
+# Local backend development uses `uvicorn` via `-m uvicorn` from the backend
+# directory; sys.path[0] = cwd covers `src.*` imports, so no PYTHONPATH is needed.
 
 set -e
 
@@ -16,6 +23,7 @@ Usage:
     ./scripts/launch.sh <command>
 
 Commands:
+    start         One-click: backend (dev/reload) + frontend (production serve)
     backend       Start the FastAPI backend server (http://localhost:8000)
     frontend      Start the Next.js frontend in dev mode (http://localhost:3000)
     serve         Serve the built frontend (http://localhost:3000)
@@ -25,10 +33,10 @@ Commands:
     help          Show this help message
 
 Examples:
+    ./scripts/launch.sh start
     ./scripts/launch.sh backend
     ./scripts/launch.sh frontend
-    ./scripts/launch.sh verify
-    ./scripts/launch.sh health
+    ./scripts/launch.sh verify quick
 
 Verification Commands:
     verify check     Primary verification entrypoint
@@ -38,6 +46,7 @@ Verification Commands:
     verify backend   Backend verification profile
     verify frontend  Frontend verification profile
     verify quick     Quick quality gate
+    verify mutation  Mutation testing (authoritative or --smoke)
 
 EOF
 }
@@ -48,9 +57,11 @@ start_backend() {
         echo "Python venv not found. Run: bash scripts/bootstrap.sh"
         exit 1
     fi
-    source .venv/bin/activate
     cd backend
-    PYTHONPATH=. ../.venv/bin/uvicorn src.api:app --host 0.0.0.0 --port 8000 --reload
+    # Canonical invocation: -m uvicorn puts cwd on sys.path[0] so `src.api`
+    # resolves without PYTHONPATH. The .venv python is authoritative here.
+    "$REPO_ROOT/.venv/bin/python" -m uvicorn src.api:app \
+        --host 0.0.0.0 --port 8000 --reload
 }
 
 start_frontend() {
@@ -62,7 +73,7 @@ start_frontend() {
 serve_frontend() {
     echo "Serving ClariFin OS Frontend (production build)..."
     if [ ! -d "frontend/out" ]; then
-        echo "Frontend not built. Run: npm run build in frontend directory"
+        echo "Frontend not built. Run: cd frontend && npm run build"
         exit 1
     fi
     npx serve@latest frontend/out -p 3000 -s
@@ -74,8 +85,8 @@ run_verify() {
         echo "Python venv not found. Run: bash scripts/bootstrap.sh"
         exit 1
     fi
-    source .venv/bin/activate
-    .venv/bin/python runtime/verify.py check
+    # Canonical module invocation from the repository root.
+    "$REPO_ROOT/.venv/bin/python" -m runtime.verify check "$@"
 }
 
 check_health() {
@@ -106,6 +117,42 @@ check_platform() {
 COMMAND="${1:-help}"
 
 case "$COMMAND" in
+    start)
+        echo "═══════════════════════════════════════════════════════════"
+        echo "  ClariFin OS — Starting (backend dev + frontend serve)"
+        echo "═══════════════════════════════════════════════════════════"
+        echo ""
+        # Start backend in background (hot reload).
+        start_backend &
+        BACKEND_PID=$!
+        # Wait for backend readiness at :8000.
+        echo "Waiting for backend to be ready..."
+        for i in {1..30}; do
+            if curl -s http://localhost:8000/docs > /dev/null 2>&1; then
+                echo "Backend is ready!"
+                break
+            fi
+            sleep 1
+            if [ "$i" -eq 30 ]; then
+                echo "Warning: Backend may not be ready yet"
+            fi
+        done
+        echo ""
+        echo "═══════════════════════════════════════════════════════════"
+        echo -e "  ClariFin OS is running!"
+        echo ""
+        echo "  Frontend:  http://localhost:3000"
+        echo "  Backend:   http://localhost:8000"
+        echo "  API Docs:  http://localhost:8000/docs"
+        echo ""
+        echo "Press Ctrl+C to stop"
+        echo "═══════════════════════════════════════════════════════════"
+        echo ""
+        # Serve frontend (foreground); wait for backend in background.
+        ( serve_frontend ) &
+        FRONTEND_PID=$!
+        wait "$BACKEND_PID" "$FRONTEND_PID"
+        ;;
     backend)
         start_backend
         ;;
@@ -117,11 +164,10 @@ case "$COMMAND" in
         ;;
     verify)
         shift
-        if [ -z "$1" ]; then
+        if [ -z "${1:-}" ]; then
             run_verify
         else
-            source .venv/bin/activate
-            .venv/bin/python runtime/verify.py "$@"
+            "$REPO_ROOT/.venv/bin/python" -m runtime.verify "$@"
         fi
         ;;
     health)

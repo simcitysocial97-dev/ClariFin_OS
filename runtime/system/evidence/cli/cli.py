@@ -82,12 +82,11 @@ def main() -> int:
 
     args = parser.parse_args()
 
-    # Ensure repo root in sys.path for imports
+    # Workspace root for path-relative evidence operations (no sys.path
+    # manipulation: the runtime package is installed, canonical contract).
     repo_root = args.workspace
-    if str(repo_root) not in sys.path:
-        sys.path.insert(0, str(repo_root))
 
-    # Import after path setup
+    # Import after path resolution
     from runtime.system.evidence.api import (
         build_verification_evidence,
         collect_all_evidence,

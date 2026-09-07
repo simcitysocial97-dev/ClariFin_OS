@@ -10,7 +10,7 @@
 #
 # ARCHITECTURE POSITION: Security analysis is a DISTINCT VEA-5 category (see
 #   runtime/foundation/verification/evidence_contract.py DeepVerificationDomain.
-#   SECURITY). It does NOT delegate to `runtime/verify.py` (CodeQL is GitHub-
+#   SECURITY). It does NOT delegate to `python -m runtime.verify` (CodeQL is GitHub-
 #   native and cannot run inside the local execution budget); it does NOT replace
 #   any existing verification owner (unit/integration/contract/frontend/mutation/
 #   golden/playwright/dependency). It is the `deep-codeql` DEEP surface made real.

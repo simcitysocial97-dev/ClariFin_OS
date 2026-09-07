@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # .github/scripts/run_integration_tests.sh
 # Integration tests: API integration and cross-capability tests.
-# Invoked by: python runtime/verify.py integration
+# Invoked by: python -m runtime.verify integration
 # Exit code: 0 = pass, non-zero = fail
 
 set -uo pipefail

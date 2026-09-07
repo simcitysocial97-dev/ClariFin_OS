@@ -27,15 +27,12 @@ import hashlib
 import json
 import os
 import subprocess
-import sys
 import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import pytest
-
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "runtime"))
 
 from runtime.foundation.verification.cache import CachedVerdict, VerificationCache
 from runtime.foundation.verification.control_plane_facade import ControlPlane

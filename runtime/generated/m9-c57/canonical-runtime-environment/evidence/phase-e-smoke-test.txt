@@ -1,0 +1,15 @@
+=== CANONICAL SMOKE TEST (M9-C57) ===
+Date: 2026-09-07T10:33:48Z
+Command: .venv/bin/python -m runtime.verify quick
+
+All checks passed!
+All done! ✨ 🍰 ✨
+705 files would be left unchanged.
+There are no .py[i] files in directory 'backend/src'
+[profile:quick] task 'quick-mypy' failed (exit 2)
+
+real	0m1.589s
+user	0m1.233s
+sys	0m0.129s
+
+Exit code: 0

@@ -3,7 +3,7 @@
 # Engineering Runtime self-verification.
 # Executes the runtime's own test suite (runtime/tests/) plus a quick
 # integrity scan. This is the canonical "runtime" verification gate.
-# Invoked by: python runtime/verify.py runtime
+# Invoked by: python -m runtime.verify runtime
 # Exit code: 0 = pass, non-zero = fail
 
 set -euo pipefail
@@ -41,7 +41,7 @@ fi
 
 # ── Integrity engine scan ─────────────────────────
 echo -e "\n${YELLOW}[2/2] Architectural integrity...${NC}"
-if "$PY" runtime/verify.py integrity; then
+if "$PY" -m runtime.verify integrity; then
   echo -e "${GREEN}✓ Integrity scan passed${NC}"
 else
   echo -e "${RED}✗ Integrity scan failed${NC}"

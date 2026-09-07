@@ -1,12 +1,12 @@
 # .github/workflows/quality.yml
 #
 # PURPOSE: Fast quality gate (lint, format, typecheck, unit, architecture, meta).
-# RESPONSIBILITY: Run `runtime/verify.py quick` — the ONLY verification command.
+# RESPONSIBILITY: Run `python -m runtime.verify quick` — the ONLY verification command.
 # BLOCKS:  Merging if it fails.
 #
 # Rule 1: No engineering logic duplicated here. Rule 2: exactly one command.
 # Rule 3: shared artifacts generated once by bootstrap-runtime. Rule 8: delegate
-# to runtime/verify.py. Rule 9: append `verify.py status` to the job summary.
+# to python -m runtime.verify. Rule 9: append `runtime.verify status` to the job summary.
 
 name: Quality Gate
 
@@ -50,7 +50,7 @@ jobs:
           working-directory: "frontend"
 
       - name: Run quick verification
-        run: python runtime/verify.py quick
+        run: python -m runtime.verify quick
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
@@ -101,5 +101,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          python runtime/verify.py status >> $GITHUB_STEP_SUMMARY
+          python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
         shell: bash

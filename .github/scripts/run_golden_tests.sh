@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # .github/scripts/run_golden_tests.sh
 # Golden dataset regression tests + capability tests.
-# Invoked by: python runtime/verify.py golden
+# Invoked by: python -m runtime.verify golden
 # Exit code: 0 = pass, non-zero = fail
 
 set -euo pipefail

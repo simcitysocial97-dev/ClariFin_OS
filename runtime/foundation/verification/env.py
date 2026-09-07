@@ -23,6 +23,7 @@ from __future__ import annotations
 import contextlib
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -43,6 +44,36 @@ FORBIDDEN_VENV_DIRS = [
     REPO_ROOT / "backend" / "venv",
     REPO_ROOT / "backend" / ".venv",
 ]
+
+
+def child_process_env() -> dict[str, str]:
+    """Canonical child-process environment for every verification task.
+
+    The interpreter that is executing the verification runtime is authoritative:
+    its bin directory (and, when present, ``<repo>/.venv/bin``) is prepended to
+    PATH so that ``python3 -m <tool>`` and the venv-first resolvers inside
+    ``.github/scripts/*.sh`` resolve the SAME toolchain locally (``.venv``)
+    and in CI (runner-provisioned Python, no ``.venv``). No manual PYTHONPATH
+    is required; nothing ambient is trusted beyond what this returns.
+
+    ED7 locale/TZ policy keeps output deterministic across machines:
+    ``TZ=UTC``, ``LC_ALL=C.UTF-8``, ``LANG=C.UTF-8``, unbuffered Python.
+    """
+    env = dict(os.environ)
+    env["PYTHONUNBUFFERED"] = "1"
+    env["TZ"] = "UTC"
+    env["LC_ALL"] = "C.UTF-8"
+    env["LANG"] = "C.UTF-8"
+
+    prepend: list[str] = []
+    exe_bin = Path(sys.executable).resolve().parent
+    if exe_bin.is_dir():
+        prepend.append(str(exe_bin))
+    if VENV_BIN.is_dir() and str(VENV_BIN) not in prepend:
+        prepend.append(str(VENV_BIN))
+    if prepend:
+        env["PATH"] = os.pathsep.join(prepend) + os.pathsep + env.get("PATH", "")
+    return env
 
 
 @dataclass(frozen=True, slots=True)
@@ -87,38 +118,19 @@ def _resolve(tool: str) -> tuple[str | None, str]:
 
 
 def _version(path: str | None, *, config_dir: Path | None = None) -> str | None:
-    """Get a tool version. mutmut auto-loads config at import, so run it from a
-    directory that has a [tool.mutmut] section when possible."""
+    """Get a tool version from evidence only — never from a hard-coded table.
+
+    Strategy:
+      1. Run the tool's own ``--version`` (from *config_dir* when given —
+         mutmut loads its config at startup and fails outside a directory
+         that carries a ``[tool.mutmut]`` section).
+      2. Fall back to ``importlib.metadata`` for the distribution that owns
+         the resolved binary — the installed package's actual metadata.
+      3. Otherwise ``None`` (the caller reports the tool as version-unknown;
+         a fabricated pin must never masquerade as a detection).
+    """
     if not path:
         return None
-
-    # Special handling for mutmut: it crashes on --version without config.
-    # Try programmatic import as fallback.
-    if "mutmut" in path:
-        try:
-            # Run in a directory that might have config
-            cwd = str(config_dir) if config_dir else None
-            out = subprocess.run(
-                [path, "--version"],
-                capture_output=True,
-                text=True,
-                cwd=cwd,
-                timeout=30,
-            )
-            if out.returncode == 0:
-                line = out.stdout.strip().splitlines()
-                return line[0] if line else None
-        except Exception:
-            pass
-        # Fallback: import and get version programmatically
-        try:
-            import importlib.metadata
-            # Derive package name from binary path
-            pkg_name = Path(path).name.replace("-", "_")
-            version = importlib.metadata.version(pkg_name)
-            return f"{pkg_name}, version {version}"
-        except Exception:
-            return "3.7.0"  # Known pinned version as last resort
 
     cwd = str(config_dir) if config_dir else None
     try:
@@ -129,8 +141,19 @@ def _version(path: str | None, *, config_dir: Path | None = None) -> str | None:
             cwd=cwd,
             timeout=30,
         )
-        line = (out.stdout or out.stderr).strip().splitlines()
-        return line[0] if line else None
+        if out.returncode == 0:
+            line = (out.stdout or out.stderr).strip().splitlines()
+            if line and line[0]:
+                return line[0].strip()
+    except Exception:
+        pass
+
+    # Second strategy: installed-distribution metadata for the same binary.
+    tool_name = Path(path).name.replace("-", "_")
+    try:
+        import importlib.metadata
+
+        return f"{tool_name}, version {importlib.metadata.version(tool_name)}"
     except Exception:
         return None
 

@@ -20,12 +20,9 @@ Run with:
 from __future__ import annotations
 
 import json
-import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
 
 from runtime.foundation.verification.evidence_planner import (  # noqa: E402
     PlannedTask,
@@ -126,19 +123,11 @@ class TestAdapterLayer:
             cause="test",
         )
         collect_repo_fingerprints("credit_card_engine")
-        # Resolve to a kind the adapter table doesn't know
-        # Override the resolver? No — we test the *behaviour* through
-        # the contract: any task whose verification_kind has no
-        # adapter is marked not_executable_yet.
-
-        # Synthesize a task with an unknown kind by bypassing the
-        # resolver — build the executable plan with a manually
-        # constructed PlannedTask and a custom adapter table.
-        # Easier: assert that _resolve_kind returns "mutation" for
-        # mutation-like tasks and falls back to mutation for the
-        # default planner. The not_executable path is exercised by
-        # scenario D (where new_engine is not in ENGINE_SELECTION).
-        assert _resolve_kind(p) == "mutation"
+        # Resolve to a kind the adapter table doesn't know.
+        # Per the C42.27 contract: unknown kinds are returned as-is by
+        # _resolve_kind; the executor marks them not_executable_yet with
+        # an explicit blocking message — never silently routed to mutation.
+        assert _resolve_kind(p) == "fictional_kind"
 
     def test_mutation_task_is_executable_for_known_engine(self) -> None:
         p = PlannedTask(
@@ -493,19 +482,21 @@ class TestForensicRecord:
 
 class TestCLIIntegration:
     def test_evidence_plan_subcommand_exists(self) -> None:
-        # We verify the dispatch by reading verify.py
-        verify_py = (REPO_ROOT / "runtime" / "verify.py").read_text()
+        # We verify the dispatch by reading the canonical control plane
+        # (verify.py is now a thin shim per M9-C49/C57; legacy commands
+        # route through canonical_control_plane.migration_map).
+        from runtime.foundation.verification.canonical_control_plane import (
+            migration_map,
+        )
+
+        mm = migration_map()
         for cmd in (
             "evidence-plan",
             "evidence-execute",
             "evidence-reconcile",
             "evidence-certify",
         ):
-            assert (
-                f'"{cmd}"' in verify_py
-                or f'== "{cmd}"' in verify_py
-                or f'== "{cmd}"' in verify_py
-            ), f"verify.py missing {cmd} dispatch"
+            assert cmd in mm, f"canonical_control_plane missing {cmd} dispatch"
 
 
 # ---------------------------------------------------------------------------

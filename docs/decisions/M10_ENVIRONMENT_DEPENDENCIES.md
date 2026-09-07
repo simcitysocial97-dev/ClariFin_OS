@@ -131,7 +131,7 @@ Only A-class (safe) / B-class (minor) upgrades implemented, validated locally.
 |---------|------------------|
 | `scripts/bootstrap.sh` | python3 (once) → creates `./.venv` |
 | `scripts/env-doctor.sh` | `./.venv/bin/python` |
-| `scripts/verify.sh quick/backend/runtime/frontend/contract/golden/e2e/mutation` | `./.venv/bin/python runtime/verify.py …` |
+| `scripts/verify.sh quick/backend/runtime/frontend/contract/golden/e2e/mutation` | `./.venv/bin/python -m runtime.verify …` |
 | `scripts/verify.sh mutation-smoke` | `./.venv/bin` mutmut |
 | `scripts/verify-fast.sh` (Cline hook) | `./.venv/bin/python` |
 

@@ -21,15 +21,12 @@ from __future__ import annotations
 
 import importlib.util
 import json
-import sys
 from pathlib import Path
 from typing import Any
 
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
 
 from runtime.foundation.verification.diagnostic_agent import (  # noqa: E402
     CAUSAL_CHAIN_STAGES,

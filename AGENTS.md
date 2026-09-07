@@ -15,16 +15,22 @@ The **ONLY** sanctioned Python environment is the repository-root virtualenv:
 
 1. **Always** run Python commands through the root `.venv`. From the repo root, prefer:
 
-   ```bash
-   .venv/bin/python runtime/verify.py ...
-   .venv/bin/python -m pytest ...
-   ```
+    ```bash
+    .venv/bin/python -m runtime.verify ...
+    .venv/bin/python -m pytest ...
+    ```
 
-   OR activate it first for a shell session:
+    OR activate it first for a shell session:
 
-   ```bash
-   source .venv/bin/activate
-   ```
+    ```bash
+    source .venv/bin/activate
+    ```
+
+    Canonical invocation is always module execution (`python -m runtime.verify`) from
+    the repository root — this guarantees the standard library `platform` module
+    resolves correctly (direct script execution places `runtime/` at sys.path[0] and
+    shadows stdlib `platform` with `runtime.platform`; the canonical model prevents
+    this collision by architecture).
 
 2. **NEVER** create, use, or rely on a `backend/venv` or `backend/.venv`.
    Those are forbidden shadow environments (root cause of M9-C42.5 toolchain drift).
@@ -41,10 +47,10 @@ The **ONLY** sanctioned Python environment is the repository-root virtualenv:
 
 5. Verify the environment before mutation/CI-sensitive work:
 
-   ```bash
-   .venv/bin/python runtime/verify.py env-check     # machine-readable fingerprint
-   bash scripts/env-doctor.sh                       # environment diagnostic guard
-   ```
+    ```bash
+    .venv/bin/python -m runtime.verify env-check     # machine-readable fingerprint
+    bash scripts/env-doctor.sh                       # environment diagnostic guard
+    ```
 
 ### CI note
 
@@ -55,12 +61,12 @@ locally and in CI.
 
 ## Verification Runtime Commands
 
-Use `python runtime/verify.py` (inside `.venv`) for platform verification:
+Use `python -m runtime.verify` (inside `.venv`, from the repo root) for platform verification:
 
-- `runtime/verify.py status | metrics | history | deps | verify-status | integrity`
-- `runtime/verify.py env-check` — canonical environment check
-- `runtime/verify.py mutation --smoke` — bounded mutation infra smoke
-- `runtime/verify.py mutation` — authoritative full campaign (CI only)
+- `python -m runtime.verify status | metrics | history | deps | verify-status | integrity`
+- `python -m runtime.verify env-check` — canonical environment check
+- `python -m runtime.verify mutation --smoke` — bounded mutation infra smoke
+- `python -m runtime.verify mutation` — authoritative full campaign (CI only)
 
 **Do NOT** run the full mutation campaign locally during debugging milestones.
 

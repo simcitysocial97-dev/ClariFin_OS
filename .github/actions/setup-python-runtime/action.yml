@@ -62,5 +62,5 @@ runs:
       run: |
         python --version
         python -m pytest --version
-        python runtime/verify.py 2>/dev/null || true
+        python -m runtime.verify 2>/dev/null || true
         echo "Environment ready"

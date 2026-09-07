@@ -23,12 +23,9 @@ Re-run function/module governance audit.
 Re-run architecture acceptance tests.
 """
 
-import sys
 from pathlib import Path
 
 import pytest
-
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "runtime"))
 
 from runtime.foundation.verification.cache import CachedVerdict, VerificationCache
 from runtime.foundation.verification.canonical_control_plane import (
@@ -558,7 +555,6 @@ class TestFinalMaturityAssessment:
 
 import os
 import tempfile
-from pathlib import Path
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--tb=short"])

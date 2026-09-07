@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # .github/scripts/run_full_verification.sh
 # Full verification: fast checks + backend + frontend.
-# Invoked by: python runtime/verify.py full
+# Invoked by: python -m runtime.verify full
 # Exit code: 0 = pass, non-zero = fail
 
 set -uo pipefail

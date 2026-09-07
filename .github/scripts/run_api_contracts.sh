@@ -34,11 +34,11 @@ echo "================================================"
 echo "  M9-C27 — API Contract Integrity Gate"
 echo "================================================"
 
-"$PY" runtime/verify.py api-contracts
+"$PY" -m runtime.verify api-contracts
 rc=$?
 
 # Persist the human summary as evidence
-"$PY" runtime/verify.py api-contracts > "$EVIDENCE_DIR/api-contracts.log" 2>&1 || true
+"$PY" -m runtime.verify api-contracts > "$EVIDENCE_DIR/api-contracts.log" 2>&1 || true
 
 if [ "$rc" -eq 0 ]; then
   echo ""

@@ -6,14 +6,14 @@
 #   topology. This workflow does NOT replace backend-verify / frontend-verify /
 #   quality / verification-runtime / golden / mutation / dependency-update /
 #   playwright / release. It runs the runtime verification through the same
-#   `runtime/verify.py` contract and adds the M5 reconciliation gate on top.
+#   `python -m runtime.verify` contract and adds the M5 reconciliation gate on top.
 # M8: path filters broadened (backend/** + runtime/**) so a backend/verification
 #   PR cannot skip this gate via its own path filters (branch-protection
 #   enforcement reality). Operator action: mark the `reconcile-gate` job a
 #   REQUIRED status check in branch protection.
 #
-# Rule 1: no engineering logic in YAML. Rule 2: delegate to runtime/verify.py.
-# Rule 8: every workflow ends with `verify.py status` summary. Rule 9: path
+# Rule 1: no engineering logic in YAML. Rule 2: delegate to python -m runtime.verify.
+# Rule 8: every workflow ends with `runtime.verify status` summary. Rule 9: path
 # filtering so unrelated changes do not trigger this gate.
 #
 # Exit contract (M5-E):
@@ -68,7 +68,7 @@ jobs:
       - name: Emit PR TierPlan manifest (M5-B)
         id: plan
         run: |
-          python runtime/verify.py plan \
+          python -m runtime.verify plan \
             --tier pr \
             --base "${GITHUB_BASE_REF:-main}" \
             --head "$GITHUB_SHA" \
@@ -81,7 +81,7 @@ jobs:
         id: verify
         continue-on-error: true
         run: |
-          python runtime/verify.py runtime
+          python -m runtime.verify runtime
         shell: bash
 
       # M5-C / M6-A — persist the execution-evidence artifact (M6-A v2 schema:
@@ -89,7 +89,7 @@ jobs:
       # artifact, never the live job state.
       - name: Emit execution-evidence artifact (M5-C / M6-A)
         run: |
-          python runtime/verify.py exec-evidence \
+          python -m runtime.verify exec-evidence \
             --plan runtime/generated/vea5-tier-plan.pr.json \
             --profile runtime \
             --report runtime/generated/verification-report.md \
@@ -109,7 +109,7 @@ jobs:
       - name: Reconcile (M5-D / M5-E)
         id: reconcile
         run: |
-          python runtime/verify.py reconcile \
+          python -m runtime.verify reconcile \
             --plan runtime/generated/vea5-tier-plan.pr.json \
             --evidence runtime/generated/vea5-execution.pr.json \
             --report runtime/generated/vea5-reconciliation.pr.json \
@@ -132,5 +132,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          python runtime/verify.py status >> $GITHUB_STEP_SUMMARY
+          python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
         shell: bash

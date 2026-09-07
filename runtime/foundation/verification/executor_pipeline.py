@@ -70,8 +70,6 @@ from pathlib import Path
 from typing import Any, Literal
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
 
 assert (REPO_ROOT / "backend").is_dir(), f"REPO_ROOT sanity check failed: {REPO_ROOT}"
 

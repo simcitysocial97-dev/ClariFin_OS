@@ -3,22 +3,22 @@
 # scripts/verify.sh — ClariFin_OS repository-owned verification dispatcher (M10)
 #
 # All repository verification must be invoked through this wrapper (or the
-# underlying ./.venv/bin/python runtime/verify.py). Commands resolve through the
+# underlying ./.venv/bin/python -m runtime.verify). Commands resolve through the
 # controlled ./.venv interpreter — never through whatever is first on PATH.
 #
 # Usage:
 #   ./scripts/verify.sh bootstrap       (alias to scripts/bootstrap.sh)
 #   ./scripts/verify.sh doctor          (alias to scripts/env-doctor.sh)
-#   ./scripts/verify.sh quick           -> runtime/verify.py quick
-#   ./scripts/verify.sh backend         -> runtime/verify.py backend
-#   ./scripts/verify.sh runtime         -> runtime/verify.py runtime
-#   ./scripts/verify.sh frontend        -> runtime/verify.py frontend
-#   ./scripts/verify.sh contract        -> runtime/verify.py contracts
-#   ./scripts/verify.sh golden          -> runtime/verify.py golden
-#   ./scripts/verify.sh e2e             -> runtime/verify.py playwright
+#   ./scripts/verify.sh quick           -> -m runtime.verify quick
+#   ./scripts/verify.sh backend         -> -m runtime.verify backend
+#   ./scripts/verify.sh runtime         -> -m runtime.verify runtime
+#   ./scripts/verify.sh frontend        -> -m runtime.verify frontend
+#   ./scripts/verify.sh contract        -> -m runtime.verify contracts
+#   ./scripts/verify.sh golden          -> -m runtime.verify golden
+#   ./scripts/verify.sh e2e             -> -m runtime.verify playwright
 #   ./scripts/verify.sh mutation-smoke  -> bash .github/scripts/run_mutation_local_smoke.sh
-#   ./scripts/verify.sh mutation        -> runtime/verify.py mutation
-#   ./scripts/verify.sh <any>           -> runtime/verify.py <any>
+#   ./scripts/verify.sh mutation        -> -m runtime.verify mutation
+#   ./scripts/verify.sh <any>           -> -m runtime.verify <any>
 # =============================================================================
 set -euo pipefail
 
@@ -37,18 +37,18 @@ case "$CMD" in
     bash "$ROOT_DIR/scripts/bootstrap.sh";;
   doctor|env|env-doctor)
     bash "$ROOT_DIR/scripts/env-doctor.sh";;
-  quick)          exec "$ROOT_DIR/.venv/bin/python" runtime/verify.py quick "$@";;
-  backend)        exec "$ROOT_DIR/.venv/bin/python" runtime/verify.py backend "$@";;
-  runtime)        exec "$ROOT_DIR/.venv/bin/python" runtime/verify.py runtime "$@";;
-  frontend)       exec "$ROOT_DIR/.venv/bin/python" runtime/verify.py frontend "$@";;
-  contract)       exec "$ROOT_DIR/.venv/bin/python" runtime/verify.py contracts "$@";;
-  golden)         exec "$ROOT_DIR/.venv/bin/python" runtime/verify.py golden "$@";;
-  e2e)            exec "$ROOT_DIR/.venv/bin/python" runtime/verify.py playwright "$@";;
+  quick)          exec "$ROOT_DIR/.venv/bin/python" -m runtime.verify quick "$@";;
+  backend)        exec "$ROOT_DIR/.venv/bin/python" -m runtime.verify backend "$@";;
+  runtime)        exec "$ROOT_DIR/.venv/bin/python" -m runtime.verify runtime "$@";;
+  frontend)       exec "$ROOT_DIR/.venv/bin/python" -m runtime.verify frontend "$@";;
+  contract)       exec "$ROOT_DIR/.venv/bin/python" -m runtime.verify contracts "$@";;
+  golden)         exec "$ROOT_DIR/.venv/bin/python" -m runtime.verify golden "$@";;
+  e2e)            exec "$ROOT_DIR/.venv/bin/python" -m runtime.verify playwright "$@";;
   mutation-smoke)
-    exec "$ROOT_DIR/.venv/bin/python" runtime/verify.py mutation --smoke "$@";;
-  mutation)       exec "$ROOT_DIR/.venv/bin/python" runtime/verify.py mutation "$@";;
+    exec "$ROOT_DIR/.venv/bin/python" -m runtime.verify mutation --smoke "$@";;
+  mutation)       exec "$ROOT_DIR/.venv/bin/python" -m runtime.verify mutation "$@";;
   help|--help|-h)
     sed -n '1,32p' "$0";;
   *)
-    exec "$ROOT_DIR/.venv/bin/python" runtime/verify.py "$CMD" "$@";;
+    exec "$ROOT_DIR/.venv/bin/python" -m runtime.verify "$CMD" "$@";;
 esac

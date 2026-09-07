@@ -5,7 +5,7 @@
 #
 # The ONLY mutation executor now lives in
 #   runtime/foundation/verification/mutation_runner.py
-# invoked via `python runtime/verify.py mutation`. This wrapper exists so the
+# invoked via `python -m runtime.verify mutation`. This wrapper exists so the
 # existing profile/registry/tier/evidence-contract references keep working and
 # route to that single canonical runner. No mutation logic lives here.
 #
@@ -25,4 +25,4 @@ else
   PY="$(command -v python3 || command -v python)"
 fi
 
-exec "$PY" runtime/verify.py mutation "$@"
+exec "$PY" -m runtime.verify mutation "$@"

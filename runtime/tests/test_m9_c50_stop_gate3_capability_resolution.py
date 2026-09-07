@@ -6,12 +6,7 @@
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "runtime"))
-
-from foundation.verification.capability_graph_resolver import (
+from runtime.foundation.verification.capability_graph_resolver import (
     CapabilityGraphResolver,
     ChangeKind,
     FileChange,

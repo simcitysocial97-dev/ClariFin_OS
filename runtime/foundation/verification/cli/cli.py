@@ -30,11 +30,6 @@ def _find_repo_root() -> Path:
     return Path.cwd()
 
 
-# Ensure repository root is in sys.path for imports
-REPO_ROOT = _find_repo_root()
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
-
 from runtime.foundation.verification.models import (  # noqa: E402
     VerificationPlan,
     VerificationScope,
@@ -394,8 +389,6 @@ def backend_cli_cmd(
     verify backend --plan    Show plan without running
     """
     repo_root = _find_repo_root()
-    if str(repo_root) not in sys.path:
-        sys.path.insert(0, str(repo_root))
 
     from runtime.foundation.verification.planner.plan_models import (
         VerificationPlan as SelectivePlan,
@@ -519,8 +512,6 @@ def backend_cli_cmd(
 def evidence_cli():
     """Download and display latest verification evidence from GitHub Actions."""
     repo_root = _find_repo_root()
-    if str(repo_root) not in sys.path:
-        sys.path.insert(0, str(repo_root))
 
     gh_check = subprocess.run(
         ["which", "gh"],

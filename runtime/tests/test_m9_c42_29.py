@@ -17,13 +17,10 @@ Run with:
 from __future__ import annotations
 
 import hashlib
-import sys
 from pathlib import Path
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
 
 from runtime.foundation.verification.ci_evidence import (  # noqa: E402
     CI_EVIDENCE_SCHEMA,

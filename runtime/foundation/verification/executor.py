@@ -67,26 +67,16 @@ class Executor:
     def _build_exec_env(self) -> dict[str, str]:
         """Build the canonical execution environment (called once at init).
 
-        Locally: ensures .venv/bin tools (python, pytest, ruff, black, mypy, mutmut, etc.)
-        are resolved before any system installations.
-        CI: .venv absent at repo_root; falls through to runner-provided PATH (equivalent semantics).
-
-        ED7: Explicit locale/TZ policy for deterministic execution:
-        - TZ=UTC: All date/time operations use UTC
-        - LC_ALL=C.UTF-8: C locale with UTF-8 encoding for consistent sorting/formatting
-        - LANG=C.UTF-8: Base locale for applications that don't set LC_ALL
-        - PYTHONUNBUFFERED=1: Unbuffered Python output for real-time logging
+        Delegates to env.child_process_env — the single canonical
+        child-environment contract shared by every executor:
+          * venv/bin (and the runtime interpreter's bin dir) precede PATH,
+          * locally the .venv toolchain is used, in CI the runner-provisioned
+            Python is used (no .venv present),
+          * ED7 locale/TZ policy for deterministic output.
         """
-        env = dict(os.environ)
-        env["PYTHONUNBUFFERED"] = "1"
-        # ED7: Deterministic locale/TZ policy
-        env["TZ"] = "UTC"
-        env["LC_ALL"] = "C.UTF-8"
-        env["LANG"] = "C.UTF-8"
-        venv_bin = self._repo_root / ".venv" / "bin"
-        if venv_bin.exists():
-            env["PATH"] = f"{venv_bin}{os.pathsep}{env.get('PATH', '')}"
-        return env
+        from runtime.foundation.verification.env import child_process_env
+
+        return child_process_env()
 
     def _kill_process_group(self) -> None:
         """Kill the entire process group associated with the current command.

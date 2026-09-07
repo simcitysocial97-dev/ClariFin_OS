@@ -44,7 +44,6 @@ import hashlib
 import json
 import re
 import subprocess
-import sys
 import time
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
@@ -53,8 +52,6 @@ from pathlib import Path
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
 
 # C49 generated evidence root.
 GENERATED_ROOT = REPO_ROOT / "runtime" / "generated" / "m9-c49"
@@ -1345,10 +1342,15 @@ class ExecutionOrchestrator:
         stdout_data = ""
         stderr_data = ""
         try:
+            # Canonical child environment (M9-C57): venv-first PATH + ED7
+            # locale/TZ, shared with executor.py via env.child_process_env.
+            from runtime.foundation.verification.env import child_process_env
+
             proc = subprocess.run(
                 command,
                 shell=True,
                 cwd=str(REPO_ROOT),
+                env=child_process_env(),
                 capture_output=True,
                 text=True,
                 timeout=spec.timeout_seconds,

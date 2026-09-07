@@ -149,8 +149,8 @@ jobs:
         run: |
           {
             echo "=== verify.py identity ==="
-            sha256sum runtime/verify.py
-            git status --short runtime/verify.py
+            sha256sum python -m runtime.verify
+            git status --short python -m runtime.verify
 
             echo
             echo "=== orchestrator.py identity ==="
@@ -172,7 +172,7 @@ jobs:
             echo "=== verify.py relevant functions ==="
             grep -nE \
               'changed_files|base_ref|GITHUB_BASE_REF|GITHUB_SHA|VerificationReport|profile|timeout' \
-              runtime/verify.py || true
+              python -m runtime.verify || true
           } > runtime/generated/evidence/verification-source.txt
 
       - name: Capture Python environment
@@ -439,14 +439,14 @@ jobs:
             done
           } > runtime/generated/evidence/shell-differential.txt
 
-      - name: Run verify.py quick with complete capture
+      - name: Run runtime.verify quick with complete capture
         continue-on-error: true
         run: |
           set +e
 
           START=$(date +%s)
 
-          python runtime/verify.py quick \
+          python -m runtime.verify quick \
             > runtime/generated/evidence/verify-quick.stdout.log 2>&1
 
           EXIT_CODE=$?
@@ -461,14 +461,14 @@ jobs:
 
           exit 0
 
-      - name: Run verify.py backend with complete capture
+      - name: Run runtime.verify backend with complete capture
         continue-on-error: true
         run: |
           set +e
 
           START=$(date +%s)
 
-          python runtime/verify.py backend \
+          python -m runtime.verify backend \
             > runtime/generated/evidence/verify-backend.stdout.log 2>&1
 
           EXIT_CODE=$?

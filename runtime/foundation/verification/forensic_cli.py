@@ -40,8 +40,6 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
 
 DEFAULT_RECORD = "runtime/generated/m9-c42.28/forensic-execution-record.json"
 

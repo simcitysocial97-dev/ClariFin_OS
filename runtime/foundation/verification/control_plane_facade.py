@@ -42,8 +42,6 @@ from pathlib import Path
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
 
 # Canonical imports — these are the ONLY internal modules the facade consumes.
 from runtime.foundation.intelligence import (
@@ -663,6 +661,7 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
     if operation in PROFILE_ALIASES:
         import subprocess
 
+        from runtime.foundation.verification.env import child_process_env
         from runtime.foundation.verification.profiles import get_profile
 
         try:
@@ -670,10 +669,14 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
         except ValueError as e:
             print(str(e), file=sys.stderr)
             return 1
-        # Run each task's commands sequentially; fail fast on first failure
+        # Run each task's commands sequentially; fail fast on first failure.
+        # Canonical execution contract (M9-C57): pinned cwd = repo root and the
+        # canonical child environment (venv-first PATH + ED7 locale/TZ) so
+        # profile tasks resolve the same toolchain locally and in CI.
+        env = child_process_env()
         for task in profile.tasks:
             for cmd in task.commands:
-                result = subprocess.run(cmd, shell=True)
+                result = subprocess.run(cmd, shell=True, cwd=str(REPO_ROOT), env=env)
                 if result.returncode != 0:
                     print(
                         f"[profile:{operation}] task {task.id!r} failed (exit {result.returncode})",

@@ -2,7 +2,7 @@
 # .github/scripts/run_playwright_tests.sh
 # End-to-end Playwright browser tests.
 # Requires: node + browsers pre-installed by CI node setup.
-# Invoked by: python runtime/verify.py playwright
+# Invoked by: python -m runtime.verify playwright
 # Exit code: 0 = pass, non-zero = fail
 
 set -euo pipefail

@@ -5,14 +5,14 @@ Validates, against docs/GITHUB_ACTIONS_CONSTITUTION.md and the Program 11.5
 rules:
   1. Every workflow + composite action is valid YAML.
   2. No workflow inlines setup-python / setup-node / upload-artifact / cache.
-  3. Every verification workflow executes exactly one `python runtime/verify.py`
-     command (the profile for that workflow).
+   3. Every verification workflow executes exactly one `python -m runtime.verify`
+      command (the profile for that workflow).
   4. No duplicated runtime-artifact generation (build_cross_layer_map / build_index
      must only run inside bootstrap-runtime).
   5. No duplicated artifact names within a workflow.
   6. Concurrency is configured; cancel-in-progress follows the exception list.
   7. Path filters configured on push/PR triggers (where applicable).
-  8. Every workflow ends with `python runtime/verify.py status`.
+   8. Every workflow ends with `python -m runtime.verify status`.
   9. Every composite action references existing scripts/commands.
 """
 
@@ -153,8 +153,8 @@ def validate_workflow(path: Path) -> None:
                 or "save_index" in run
             ):
                 found_inline_gen = True
-            if "python runtime/verify.py" in run:
-                prof = run.strip().split("python runtime/verify.py")[-1].split()[0]
+            if "python -m runtime.verify" in run:
+                prof = run.strip().split("python -m runtime.verify")[-1].split()[0]
                 if prof in ("status", "env-check"):
                     # Auxiliary non-gate commands:
                     #   status    — Rule 9 job-summary append (never a verdict).
@@ -177,8 +177,8 @@ def validate_workflow(path: Path) -> None:
                         found_verify_profile = True
                     else:
                         err(
-                            f"{name}/{job_id}: runs `verify.py {prof}` but should be "
-                            f"`verify.py {expected}` (Rule 8)"
+                            f"{name}/{job_id}: runs `runtime.verify {prof}` but should be "
+                            f"`runtime.verify {expected}` (Rule 8)"
                         )
             # artifact names via upload-runtime
             name_in = step.get("with", {}).get("name")
@@ -189,10 +189,10 @@ def validate_workflow(path: Path) -> None:
     if name in VERIFICATION_PROFILES:
         if not found_verify_profile:
             err(
-                f"{name}: missing required `python runtime/verify.py {VERIFICATION_PROFILES[name]}` (Rule 8)"
+                f"{name}: missing required `python -m runtime.verify {VERIFICATION_PROFILES[name]}` (Rule 8)"
             )
         if not found_status:
-            err(f"{name}: missing `python runtime/verify.py status` summary (Rule 9)")
+            err(f"{name}: missing `python -m runtime.verify status` summary (Rule 9)")
         if found_inline_gen:
             err(f"{name}: inlines shared-artifact generation (Rule 3)")
 
