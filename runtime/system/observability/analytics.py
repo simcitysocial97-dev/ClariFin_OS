@@ -150,13 +150,22 @@ class AnalyticsEngine:
             return {"total_runs": 0, "success_rate": 0.0}
         passed = sum(1 for r in records if r.status == "passed")
         failed = sum(1 for r in records if r.status == "failed")
+        legacy_completed = sum(
+            1 for r in records if r.status in ("completed", "unknown")
+        )
         durations = [r.duration_seconds for r in records if r.duration_seconds > 0]
         avg_duration = sum(durations) / len(durations) if durations else 0.0
+        # Outcome denominator excludes legacy/unresolved lifecycle states.
+        outcome_denominator = passed + failed
+        success_rate = (
+            round(passed / outcome_denominator, 4) if outcome_denominator > 0 else 0.0
+        )
         return {
             "total_runs": len(records),
             "passed_runs": passed,
             "failed_runs": failed,
-            "success_rate": round(passed / len(records), 4) if records else 0.0,
+            "legacy_completed": legacy_completed,
+            "success_rate": success_rate,
             "avg_duration_seconds": round(avg_duration, 2),
             "min_duration_seconds": round(min(durations), 2) if durations else 0.0,
             "max_duration_seconds": round(max(durations), 2) if durations else 0.0,

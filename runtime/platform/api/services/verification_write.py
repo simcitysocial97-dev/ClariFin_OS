@@ -92,7 +92,7 @@ def _emit_verification_events(
                 "final_decision": final_decision,
                 "duration_seconds": duration_seconds,
                 "record_count": record_count,
-                "status": "completed",
+                "status": "passed" if final_decision == "certified" else "failed",
             },
             execution_context={
                 "environment": "local",

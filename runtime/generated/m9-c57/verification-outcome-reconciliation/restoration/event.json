@@ -1,0 +1,28 @@
+{
+  "event_id": "6f5ab666-fd1c-4103-846d-6184f6125a63",
+  "event_type": "VerificationCompleted",
+  "timestamp": "2026-09-07T15:24:26.621492+00:00",
+  "execution_context": {
+    "environment": "local",
+    "runner": "developer-workstation",
+    "verification_depth": "fast",
+    "intent": "developer-feedback",
+    "trigger": "manual",
+    "commit_sha": "",
+    "branch": "local",
+    "timestamp": "2026-09-07T15:24:26.619034+00:00",
+    "metadata": {}
+  },
+  "payload": {
+    "profile": "quick",
+    "status": "passed",
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "duration_seconds": 49.90720450197114,
+    "evidence_count": 0,
+    "cache_hit": false,
+    "final_decision": "certified"
+  },
+  "metadata": {}
+}

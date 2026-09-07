@@ -37,6 +37,20 @@ from runtime.foundation.verification.control_plane_facade import (
 )
 
 
+def _normalize_status(status: str) -> str:
+    """Normalize verification status to the canonical analytics vocabulary.
+
+    Analytics (_compute_verification_metrics) counts ``status == "passed"`` as
+    successful and ``status == "failed"`` as unsuccessful. Legacy callers may
+    pass ``"pass"`` / ``"fail"``; normalise them so both histories converge.
+    """
+    if status in ("pass", "passed"):
+        return "passed"
+    if status in ("fail", "failed"):
+        return "failed"
+    return status
+
+
 def _record_verification_event(
     report: Any | None,
     profile_name: str,
@@ -53,6 +67,10 @@ def _record_verification_event(
     miss) contributes its summary metrics; a cache replay (report is None)
     records the stored verdict with zeroed counters. Failures are logged,
     never raised — observability must not break verification.
+
+    Additionally emits a ``VerificationCompleted`` event so the analytics
+    engine (which reads only that event type) can attribute the run to
+    total_runs / passed_runs / success_rate.
     """
     try:
         from runtime.system.observability.event_store import (
@@ -66,13 +84,13 @@ def _record_verification_event(
         )
 
         if report is not None:
-            _status = report.summary.overall_status.value
+            _status = _normalize_status(report.summary.overall_status.value)
             _passed = report.summary.passed
             _failed = report.summary.failed
             _skipped = report.summary.skipped
             _evidence = len(report.evidence_files)
         else:
-            _status = status or "unknown"
+            _status = _normalize_status(status or "unknown")
             _passed = 0
             _failed = 0
             _skipped = 0
@@ -80,7 +98,9 @@ def _record_verification_event(
 
         ctx = create_context(commit_sha="", branch="local")
         event_store = EngineeringEventStore()
-        event = create_event(
+
+        # --- verification_record event (legacy path — preserved for tests) ---
+        record_event = create_event(
             "verification_record",
             ctx.to_dict(),
             {
@@ -94,12 +114,30 @@ def _record_verification_event(
                 "cache_hit": cache_hit,
             },
         )
-        event_store.append(event)
+        event_store.append(record_event)
+
+        # --- VerificationCompleted event (analytics-visible path) ----------
+        completed_event = create_event(
+            "VerificationCompleted",
+            ctx.to_dict(),
+            {
+                "profile": profile_name,
+                "status": _status,
+                "passed": _passed,
+                "failed": _failed,
+                "skipped": _skipped,
+                "duration_seconds": elapsed,
+                "evidence_count": _evidence,
+                "cache_hit": cache_hit,
+                "final_decision": "certified" if _status == "passed" else "failed",
+            },
+        )
+        event_store.append(completed_event)
 
         LocalMetricsRepository().append(
             RunRecord(
-                run_id=event.event_id,
-                timestamp=event.timestamp,
+                run_id=record_event.event_id,
+                timestamp=record_event.timestamp,
                 environment=ctx.environment.value,
                 runner=ctx.runner.value,
                 verification_depth=ctx.verification_depth.value,

@@ -660,9 +660,11 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
         operation = _PROFILE_MAP[operation]
     if operation in PROFILE_ALIASES:
         import subprocess
+        import time
 
         from runtime.foundation.verification.env import child_process_env
         from runtime.foundation.verification.profiles import get_profile
+        from runtime.verify import _record_verification_event
 
         try:
             profile = get_profile(operation)
@@ -674,6 +676,8 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
         # canonical child environment (venv-first PATH + ED7 locale/TZ) so
         # profile tasks resolve the same toolchain locally and in CI.
         env = child_process_env()
+        run_start = time.monotonic()
+        final_exit = 0
         for task in profile.tasks:
             for cmd in task.commands:
                 result = subprocess.run(cmd, shell=True, cwd=str(REPO_ROOT), env=env)
@@ -682,7 +686,23 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
                         f"[profile:{operation}] task {task.id!r} failed (exit {result.returncode})",
                         file=sys.stderr,
                     )
-                    return result.returncode
+                    final_exit = result.returncode
+                    # Do not record interrupted runs (SIGINT=130, SIGTERM=143).
+                    if final_exit not in (130, 143):
+                        _record_verification_event(
+                            None,
+                            profile_name=operation,
+                            elapsed=time.monotonic() - run_start,
+                            status="fail",
+                        )
+                    return final_exit
+        elapsed = time.monotonic() - run_start
+        _record_verification_event(
+            None,
+            profile_name=operation,
+            elapsed=elapsed,
+            status="pass",
+        )
         return 0
     cp = ControlPlane()
     if operation == CanonicalOperation.CHECK.value:

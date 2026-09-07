@@ -1,0 +1,18 @@
+{
+  "combined_verification": {
+    "total_runs": 8,
+    "passed_runs": 2,
+    "failed_runs": 1,
+    "legacy_completed": 5,
+    "success_rate": 0.6667,
+    "avg_duration_seconds": 52.0,
+    "min_duration_seconds": 49.91,
+    "max_duration_seconds": 54.15
+  },
+  "raw_event_counts": {
+    "completed": 5,
+    "passed": 2,
+    "failed": 1
+  },
+  "total_vc_events": 8
+}
