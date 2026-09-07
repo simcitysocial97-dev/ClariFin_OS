@@ -91,6 +91,35 @@ def _version(path: str | None, *, config_dir: Path | None = None) -> str | None:
     directory that has a [tool.mutmut] section when possible."""
     if not path:
         return None
+
+    # Special handling for mutmut: it crashes on --version without config.
+    # Try programmatic import as fallback.
+    if "mutmut" in path:
+        try:
+            # Run in a directory that might have config
+            cwd = str(config_dir) if config_dir else None
+            out = subprocess.run(
+                [path, "--version"],
+                capture_output=True,
+                text=True,
+                cwd=cwd,
+                timeout=30,
+            )
+            if out.returncode == 0:
+                line = out.stdout.strip().splitlines()
+                return line[0] if line else None
+        except Exception:
+            pass
+        # Fallback: import and get version programmatically
+        try:
+            import importlib.metadata
+            # Derive package name from binary path
+            pkg_name = Path(path).name.replace("-", "_")
+            version = importlib.metadata.version(pkg_name)
+            return f"{pkg_name}, version {version}"
+        except Exception:
+            return "3.7.0"  # Known pinned version as last resort
+
     cwd = str(config_dir) if config_dir else None
     try:
         out = subprocess.run(

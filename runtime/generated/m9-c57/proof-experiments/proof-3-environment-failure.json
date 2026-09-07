@@ -1,0 +1,35 @@
+{
+  "schema": "backend-verification/v1",
+  "experiment": "proof-3-environment-failure",
+  "description": "Controlled environment failure - verify INFRASTRUCTURE_FAILURE classification",
+  "tests": [
+    {
+      "name": "infrastructure_failure_builder",
+      "status": "pass",
+      "details": "build_infrastructure_failure() correctly creates INFRASTRUCTURE_FAILURE with execution_status=FAIL, mutation_score=null, evidence_complete=false",
+      "gate_classification": {
+        "gate_a_pass": false,
+        "gate_b_pass": null,
+        "gate_c_pass": null,
+        "verdict": "NOT EVALUABLE (execution failure)"
+      }
+    },
+    {
+      "name": "missing_test_paths_detection",
+      "status": "pass",
+      "details": "All test paths in ENGINE_SELECTION exist in backend/"
+    },
+    {
+      "name": "baseline_gate_validation",
+      "status": "pass",
+      "details": "Environment resolution reports consistent state"
+    }
+  ],
+  "framework_behavior_verified": {
+    "never_pretends_to_have_mutation_score": true,
+    "correctly_classifies_as_infrastructure_failure": true,
+    "gate_classification_works_correctly": true
+  },
+  "timestamp": "2026-09-07T03:30:00Z",
+  "git_commit": "3cf53c41"
+}
