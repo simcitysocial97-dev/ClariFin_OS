@@ -60,6 +60,7 @@ def _runs_from_event_store(
     store: EngineeringEventStore,
 ) -> list[dict[str, Any]]:
     """Project ``VerificationCompleted`` events into HistoryRunSummary rows."""
+    from runtime.system.observability.outcome import outcome_to_platform_status
 
     rows: list[dict[str, Any]] = []
     for event in store.iter_events():
@@ -74,11 +75,7 @@ def _runs_from_event_store(
                 ),
                 "finished_at": Timestamp(event.timestamp) if event.timestamp else None,
                 "duration_ms": payload.get("duration_ms"),
-                "status": (
-                    Status.HEALTHY.value
-                    if payload.get("passed", False)
-                    else Status.UNHEALTHY.value
-                ),
+                "status": outcome_to_platform_status(payload.get("status")),
                 "capabilities_run": int(payload.get("capabilities_run", 0) or 0),
                 "capabilities_passed": int(payload.get("capabilities_passed", 0) or 0),
                 "capabilities_failed": int(payload.get("capabilities_failed", 0) or 0),

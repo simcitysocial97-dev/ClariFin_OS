@@ -147,15 +147,24 @@ class AnalyticsEngine:
 
     def _compute_verification_metrics(self, records: list[RunRecord]) -> dict[str, Any]:
         if not records:
-            return {"total_runs": 0, "success_rate": 0.0}
+            return {
+                "total_runs": 0,
+                "success_rate": 0.0,
+                "blocked_runs": 0,
+                "interrupted_runs": 0,
+            }
         passed = sum(1 for r in records if r.status == "passed")
         failed = sum(1 for r in records if r.status == "failed")
+        blocked = sum(1 for r in records if r.status == "blocked")
+        interrupted = sum(1 for r in records if r.status == "interrupted")
         legacy_completed = sum(
             1 for r in records if r.status in ("completed", "unknown")
         )
         durations = [r.duration_seconds for r in records if r.duration_seconds > 0]
         avg_duration = sum(durations) / len(durations) if durations else 0.0
-        # Outcome denominator excludes legacy/unresolved lifecycle states.
+        # Outcome denominator excludes non-outcome states: legacy/unresolved
+        # lifecycle states (Policy C) and blocked/interrupted runs (O-2 — a
+        # run that never verified is neither a success nor a failure).
         outcome_denominator = passed + failed
         success_rate = (
             round(passed / outcome_denominator, 4) if outcome_denominator > 0 else 0.0
@@ -164,6 +173,8 @@ class AnalyticsEngine:
             "total_runs": len(records),
             "passed_runs": passed,
             "failed_runs": failed,
+            "blocked_runs": blocked,
+            "interrupted_runs": interrupted,
             "legacy_completed": legacy_completed,
             "success_rate": success_rate,
             "avg_duration_seconds": round(avg_duration, 2),

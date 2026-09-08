@@ -1,8 +1,26 @@
 # ClariFin OS — Verification Runtime Configuration
-# This file is the single source of truth for verification settings.
-# Populated incrementally through Programs 2-10 and the Program 11.5
-# GitHub Actions consolidation.
-# Do not edit manually — use verification CLI commands.
+#
+# O-2 configuration authority split:
+#   THIS FILE (verification.yaml) is the canonical source of truth for:
+#     - workflow definitions (single-command scripts),
+#     - capability declarations (id/name/description/categories/scopes/workflows),
+#     - script inventory,
+#     - coverage/threshold metadata consumed by the registry and planner.
+#   The `VerificationRegistry` loads this file at runtime and merges its
+#   built-in defaults field-by-field (yaml wins over defaults on every key).
+#
+# `profiles.py` is the canonical source of truth for:
+#   - multi-command task-list execution under the profile alias surface
+#     (`verify quick|backend|frontend|contracts|graph|full|runtime|golden|playwright`).
+#   Each alias profile's ``tasks`` tuple drives direct subprocess execution
+#   via the facade's alias path; these tasks are NOT loaded from this yaml.
+#
+# An executable reconciliation test pins the relationship: every alias name
+# must have a corresponding workflow (or be explicitly allowlisted as
+# alias-only), and every yaml workflow must reference a script that exists
+# on disk.
+#
+# Do not edit manually — use verification CLI commands where possible.
 
 version: "1.0"
 

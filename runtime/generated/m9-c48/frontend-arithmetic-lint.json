@@ -1,6 +1,6 @@
 {
   "schema": "m9-c48/frontend-financial-arithmetic-lint@1",
-  "generated_at": "2026-09-07T16:18:42+00:00",
+  "generated_at": "2026-09-08T08:43:33+00:00",
   "scanned_files": [
     "frontend/__tests__/api-contracts/analytics.contract.test.ts",
     "frontend/__tests__/api-contracts/banks.contract.test.ts",

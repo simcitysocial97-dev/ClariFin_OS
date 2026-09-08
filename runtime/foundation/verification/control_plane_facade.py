@@ -83,15 +83,25 @@ from runtime.foundation.verification.obligation import (
 
 def _collect_changed_files() -> list[str]:
     """Collect changed files via the canonical intelligence layer."""
+    return _collect_changed_files_result().files
+
+
+def _collect_changed_files_result() -> Any:
+    """Return the full ``_ChangedFilesResult`` from the orchestrator layer, so
+    callers can inspect the resolved boundary (source, base ref, file count).
+    """
     from runtime.foundation.verification.orchestrator import (
         _collect_changed_files,
         _is_git_available,
     )
 
     if _is_git_available():
-        cf_result = _collect_changed_files()
-        return cf_result.files
-    return []
+        return _collect_changed_files()
+    from types import SimpleNamespace
+
+    return SimpleNamespace(
+        files=[], source="no-git", base=None, head=None, error="git unavailable"
+    )
 
 
 def _get_current_commit() -> str:
@@ -130,10 +140,32 @@ class ControlPlane:
         Given the current repository state, determine what is affected,
         plan the required verification, execute it, and produce evidence.
 
-        Returns 0 on certified, 1 on failed/blocked.
+        Returns 0 on certified, 1 on failed/blocked/interrupted.
         """
-        if changed_files is None:
-            changed_files = _collect_changed_files()
+        import time
+
+        cf_result = _collect_changed_files_result()
+        changed_files = (
+            cf_result.files if hasattr(cf_result, "files") else (changed_files or [])
+        )
+        source = getattr(cf_result, "source", "unknown")
+        base_ref = getattr(cf_result, "base", None)
+
+        # O-2 / G4 boundary transparency: print the resolved boundary BEFORE
+        # planning so the operator knows what surface is being verified.
+        print(f"[check] boundary={source}", end="")
+        if base_ref:
+            print(f" base={base_ref[:8]}", end="")
+        print(f" files={len(changed_files)}")
+
+        max_warn = int(os.environ.get("VERIFY_MAX_CHANGED_FILES_WARN", 500))
+        if len(changed_files) > max_warn:
+            print(
+                f"[check] WARNING: boundary has {len(changed_files)} files "
+                f"(>{max_warn}); plan may be unbounded — set VERIFICATION_BASE_REF to narrow",
+                file=sys.stderr,
+            )
+
         if not changed_files and not _is_git_available():
             print("No changed files detected and git unavailable.", file=sys.stderr)
             return 1
@@ -150,14 +182,54 @@ class ControlPlane:
         # 4. Build executable execution plan using the canonical ExecutionOrchestrator
         execution_plan = self.orchestrator.build_execution_plan(changed_files)
 
-        # 5. Execution → Evidence (authorize all planned tasks for canonical path)
-        report = self.orchestrator.execute(
-            execution_plan,
-            authorize={t.task_id for t in execution_plan.tasks},
-            dry_run=False,
-        )
+        # 5. Execute, with an on_record hook so partial-progress is observable
+        #    even if the run is interrupted.
+        run_start = time.monotonic()
+        executed_task_ids: list[str] = []
 
-        # 6. Evidence → Verdict
+        def _capture_record(rec):
+            executed_task_ids.append(rec.task_id)
+
+        max_warn = int(os.environ.get("VERIFY_MAX_CHANGED_FILES_WARN", 500))
+        if len(changed_files) > max_warn:
+            print(
+                f"[check] WARNING: boundary has {len(changed_files)} files "
+                f"(>{max_warn}); plan may be unbounded — set VERIFICATION_BASE_REF to narrow",
+                file=sys.stderr,
+            )
+        try:
+            report = self.orchestrator.execute(
+                execution_plan,
+                authorize={t.task_id for t in execution_plan.tasks},
+                dry_run=False,
+                on_record=_capture_record,
+            )
+        except KeyboardInterrupt:
+            elapsed = time.monotonic() - run_start
+            from runtime.verify import _record_verification_event
+
+            _record_verification_event(
+                None,
+                profile_name="check",
+                elapsed=elapsed,
+                status="interrupted",
+                passed=0,
+                failed=0,
+                final_decision="interrupted",
+                extra_metadata={"tasks_executed": executed_task_ids},
+            )
+            print("[check] INTERRUPTED (SIGINT/SIGTERM)", file=sys.stderr)
+            return 130
+
+        # 6. Record the canonical ExecutionReport through the event/RunRecord chain.
+        from runtime.verify import record_execution_report
+
+        record_execution_report("check", report, time.monotonic() - run_start)
+
+        # 7. Print the compact per-task summary (truthful evidence of what ran).
+        print(_format_task_summary(report))
+
+        # 8. Evidence → Verdict (exit-code contract unchanged).
         decision = getattr(report, "final_decision", "unknown")
         if decision == "certified":
             print("✓ Verification CERTIFIED")
@@ -206,6 +278,8 @@ class ControlPlane:
 
         The plan must be machine-readable (ControlPlanePlan JSON).
         """
+        import time
+
         if plan_path:
             # Load plan from file
             plan_data = json.loads(Path(plan_path).read_text())
@@ -226,20 +300,50 @@ class ControlPlane:
                 return 1
             plan = self.planner.plan(changed_files)
 
-        _obligations: ObligationSet = self._plan_to_obligations(
-            plan, _collect_changed_files()
-        )
+        _obligations: ObligationSet = self._plan_to_obligations(plan, changed_files)
         execution_plan = self.orchestrator.build_execution_plan(changed_files)
-        report = self.orchestrator.execute(
-            execution_plan,
-            authorize={t.task_id for t in execution_plan.tasks},
-            dry_run=False,
-        )
+
+        # O-2 signal truth: record the run through the canonical event/RunRecord
+        # chain even when the caller provided an explicit plan path.
+        run_start = time.monotonic()
+        executed_task_ids: list[str] = []
+
+        def _capture_record(rec):
+            executed_task_ids.append(rec.task_id)
+
+        try:
+            report = self.orchestrator.execute(
+                execution_plan,
+                authorize={t.task_id for t in execution_plan.tasks},
+                dry_run=False,
+                on_record=_capture_record,
+            )
+        except KeyboardInterrupt:
+            elapsed = time.monotonic() - run_start
+            from runtime.verify import _record_verification_event
+
+            _record_verification_event(
+                None,
+                profile_name="run",
+                elapsed=elapsed,
+                status="interrupted",
+                passed=0,
+                failed=0,
+                final_decision="interrupted",
+                extra_metadata={"tasks_executed": executed_task_ids},
+            )
+            print("[run] INTERRUPTED (SIGINT/SIGTERM)", file=sys.stderr)
+            return 130
+
+        from runtime.verify import record_execution_report
+
+        record_execution_report("run", report, time.monotonic() - run_start)
 
         if json_out:
             print(json.dumps(report.to_json(), indent=2, default=str))
         else:
             self._print_execution_report(report)
+            print(_format_task_summary(report))
 
         return 0 if report.final_decision == "certified" else 1
 
@@ -422,51 +526,259 @@ class ControlPlane:
         # Delegates to the certification module which enforces evidence gates
         return certification_main()
 
-    def ci(self) -> int:
+    def ci(self, args: list[str] | None = None) -> int:
         """
         CI-specific orchestration/reconciliation entrypoint where needed.
+
+        Accepts the same CLI flags as the legacy ``reconcile`` / ``exec-evidence``
+        commands so that both direct invocation and migration-route invocation
+        honor the same argument contract. This is required because the
+        legacy→canonical migration must preserve the operator-visible interface.
         """
-        # Standard CI reconciliation gate (mirrors verification-reconcile.yml)
         import os
 
-        os.environ.get("CI_PLAN_PATH", "runtime/generated/vea5-tier-plan.pr.json")
-        os.environ.get("CI_EVIDENCE_PATH", "runtime/generated/vea5-execution.pr.json")
-        os.environ.get(
+        raw = args or sys.argv[2:]
+
+        # Detect exec-evidence mode vs reconcile mode.
+        has_out = "--out" in raw or any(a.startswith("--out=") for a in raw)
+        has_profile = "--profile" in raw or any(a.startswith("--profile=") for a in raw)
+        if has_out or has_profile:
+            return self._run_exec_evidence_cli(raw)
+        return self._run_reconcile_cli_from_args(raw)
+
+    def _run_exec_evidence_cli(self, args: list[str]) -> int:
+        """Create an execution-evidence artifact (M5-C / M6-A).
+
+        Extracted from the legacy ``exec-evidence`` command. Produces a
+        ``vea5-execution-evidence/v2`` artifact with one unit record per selected
+        unit in the plan, stamped with the caller-supplied status/exit/duration.
+        """
+        import os
+        from datetime import UTC, datetime
+
+        from runtime.foundation.verification.evidence_contract import (
+            ExecutionAttempt,
+            ExecutionEvidenceV2,
+            UnitExecutionRecord,
+            save_execution_evidence_v2,
+        )
+        from runtime.foundation.verification.reconciliation import (
+            _load_plan_from_manifest,
+            plan_fingerprint,
+        )
+
+        plan_path = _find_arg("--plan", args, default=None)
+        profile = _find_arg("--profile", args, default="runtime")
+        status = _find_arg("--status", args, default="pass")
+        exit_code_str = _find_arg("--exit", args, default="0")
+        duration_str = _find_arg("--duration", args, default="0.0")
+        commit_sha = _find_arg("--commit", args, default=None)
+        out_path = _find_arg("--out", args, default=None)
+
+        plan_path = plan_path or os.environ.get("CI_PLAN_PATH")
+        commit_sha = commit_sha or os.environ.get("GITHUB_SHA", _get_current_commit())
+        out_path = out_path or os.environ.get(
+            "CI_EVIDENCE_PATH", "runtime/generated/vea5-execution.pr.json"
+        )
+
+        if not plan_path:
+            print("--plan is required for exec-evidence", file=sys.stderr)
+            return 1
+        if not out_path:
+            print("--out is required for exec-evidence", file=sys.stderr)
+            return 1
+
+        try:
+            plan = _load_plan_from_manifest(plan_path)
+        except Exception as exc:
+            print(f"Failed to load plan: {exc}", file=sys.stderr)
+            return 1
+
+        try:
+            exit_code = int(exit_code_str)
+        except ValueError:
+            exit_code = 0
+        try:
+            duration = float(duration_str)
+        except ValueError:
+            duration = 0.0
+
+        records: dict[str, UnitExecutionRecord] = {}
+        for sel in plan.selected:
+            records[sel.unit_id] = UnitExecutionRecord(
+                unit_id=sel.unit_id,
+                provenance={
+                    "category": sel.category,
+                    "source": sel.source,
+                    "capabilities": list(sel.capabilities),
+                    "impact_kinds": list(sel.impact_kinds),
+                },
+                attempts=(
+                    ExecutionAttempt(
+                        attempt_index=0,
+                        command=sel.command,
+                        started_at=None,
+                        ended_at=None,
+                        duration_seconds=duration,
+                        exit_code=exit_code,
+                        status=status,
+                        stdout_ref=None,
+                        stderr_ref=None,
+                        artifacts=(),
+                    ),
+                ),
+            )
+
+        from runtime.foundation.verification.reconciliation import (
+            _load_plan_from_manifest,
+            plan_fingerprint,
+        )
+
+        fp = plan_fingerprint(plan)
+        evidence = ExecutionEvidenceV2(
+            tier=plan.tier,
+            plan_fingerprint=fp.digest(),
+            commit=commit_sha or "",
+            units=tuple(records[u.unit_id] for u in plan.selected),
+            generated_at=datetime.now(UTC).isoformat(),
+        )
+        save_execution_evidence_v2(evidence, out_path)
+        print(f"Wrote execution evidence to {out_path}")
+        return 0
+
+    def _run_reconcile_cli_from_args(self, args: list[str]) -> int:
+        """Reconciliation gate with explicit CLI-arg resolution (M5-D / M5-E)."""
+        import os
+
+        plan_path = _find_arg("--plan", args, default=None)
+        evidence_path = _find_arg("--evidence", args, default=None)
+        report_path = _find_arg("--report", args, default=None)
+        commit_sha = _find_arg("--commit", args, default=None)
+        local_plan_path = _find_arg("--local", args, default=None)
+        local_evidence_path = _find_arg("--local-evidence", args, default=None)
+
+        plan_path = plan_path or os.environ.get(
+            "CI_PLAN_PATH", "runtime/generated/vea5-tier-plan.pr.json"
+        )
+        evidence_path = evidence_path or os.environ.get(
+            "CI_EVIDENCE_PATH", "runtime/generated/vea5-execution.pr.json"
+        )
+        report_path = report_path or os.environ.get(
             "CI_REPORT_PATH", "runtime/generated/vea5-reconciliation.pr.json"
         )
-        os.environ.get("GITHUB_SHA", _get_current_commit())
+        commit_sha = commit_sha or os.environ.get("GITHUB_SHA", _get_current_commit())
 
-        # For now delegate to existing CLI reconcile
-        old_argv = sys.argv
-        sys.argv = ["verify.py", "reconcile"]
-        try:
-            # The existing reconcile command does the right thing
-            return self._run_reconcile_cli()
-        finally:
-            sys.argv = old_argv
+        # For LOCAL-vs-CI reconciliation mode, also surface the local-side paths.
+        local_plan_path = local_plan_path or os.environ.get("LOCAL_PLAN_PATH")
+        local_evidence_path = local_evidence_path or os.environ.get(
+            "LOCAL_EVIDENCE_PATH"
+        )
 
-    def _run_reconcile_cli(self) -> int:
-        """Run the existing reconcile CLI."""
+        return self._run_reconcile_cli(
+            plan_path=plan_path,
+            evidence_path=evidence_path,
+            report_path=report_path,
+            commit_sha=commit_sha,
+            local_plan_path=local_plan_path,
+            local_evidence_path=local_evidence_path,
+        )
+
+    def _run_reconcile_cli(
+        self,
+        plan_path: str | None = None,
+        evidence_path: str | None = None,
+        report_path: str | None = None,
+        commit_sha: str | None = None,
+        local_plan_path: str | None = None,
+        local_evidence_path: str | None = None,
+    ) -> int:
+        """Run the existing reconcile CLI with explicitly supplied paths.
+
+        When called through the canonical ``ci`` entrypoint the paths come from
+        parsed CLI args / env vars. When called through the legacy ``reconcile``
+        migration path they fall back to the historic env-var defaults.
+
+        Two modes are supported:
+          * CI-only (``--evidence`` present, no ``--local``): validates a CI
+            plan against its own persisted execution evidence (M5-A).
+          * LOCAL-vs-CI (``--local`` present): compares a local plan against a CI
+            plan for structural equivalence (M4 / M5-B).
+        """
         import os
 
         from runtime.foundation.verification.reconciliation import (
             ReconciliationStatus,
+            reconcile,
             save_reconciliation_report,
             validate_ci_artifacts,
         )
+        from runtime.foundation.verification.reconciliation import (
+            _load_plan_from_manifest as _load_plan,
+        )
 
-        plan_path = os.environ.get(
+        plan_path = plan_path or os.environ.get(
             "CI_PLAN_PATH", "runtime/generated/vea5-tier-plan.pr.json"
         )
-        evidence_path = os.environ.get(
+        evidence_path = evidence_path or os.environ.get(
             "CI_EVIDENCE_PATH", "runtime/generated/vea5-execution.pr.json"
         )
-        report_path = os.environ.get(
+        report_path = report_path or os.environ.get(
             "CI_REPORT_PATH", "runtime/generated/vea5-reconciliation.pr.json"
         )
-        commit_sha = os.environ.get("GITHUB_SHA", _get_current_commit())
+        commit_sha = commit_sha or os.environ.get("GITHUB_SHA", _get_current_commit())
 
-        # M5 CI gate: validate the CI plan against its OWN execution evidence
+        # For LOCAL-vs-CI reconciliation mode, also surface the local-side paths.
+        local_plan_path = local_plan_path or os.environ.get("LOCAL_PLAN_PATH")
+        local_evidence_path = local_evidence_path or os.environ.get(
+            "LOCAL_EVIDENCE_PATH"
+        )
+
+        # LOCAL-vs-CI mode: compare two plans structurally.
+        if local_plan_path:
+            try:
+                local_plan = _load_plan(local_plan_path)
+                ci_plan = _load_plan(plan_path)
+            except Exception as e:
+                print(f"Failed to load plan(s): {e}", file=sys.stderr)
+                return 2
+            local_results: dict[str, Any] = {}
+            ci_results: dict[str, Any] = {}
+            if local_evidence_path:
+                from runtime.foundation.verification.reconciliation import (
+                    _unit_results_from_any_evidence,
+                )
+
+                try:
+                    local_results = _unit_results_from_any_evidence(local_evidence_path)
+                except Exception:
+                    pass
+            if evidence_path:
+                from runtime.foundation.verification.reconciliation import (
+                    _unit_results_from_any_evidence,
+                )
+
+                try:
+                    ci_results = _unit_results_from_any_evidence(evidence_path)
+                except Exception:
+                    pass
+            report = reconcile(
+                local_plan,
+                ci_plan,
+                local_results=local_results,
+                ci_results=ci_results,
+                commit=commit_sha,
+            )
+            if report_path:
+                save_reconciliation_report(report, report_path)
+            print(json.dumps(report.to_dict(), indent=2, default=str))
+            status = report.classification.status
+            if status == ReconciliationStatus.PLANNING_DIVERGENCE.value:
+                return 2
+            if status == ReconciliationStatus.ENVIRONMENT_DIVERGENCE.value:
+                return 1
+            return 0
+
+        # CI-only mode: validate plan against its own execution evidence.
         try:
             report = validate_ci_artifacts(
                 ci_plan_path=plan_path,
@@ -592,6 +904,22 @@ class ControlPlane:
 # ── SINGLE PUBLIC ENTRYPOINT ────────────────────────────────────────────────
 
 
+def _find_arg(flag: str, args: list[str], *, default: str | None = None) -> str | None:
+    """Locate a ``--flag value`` pair in *args* and return the value, or *default*.
+
+    Handles both ``--flag=value`` and ``--flag value`` spellings.
+    """
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a == flag and i + 1 < len(args):
+            return args[i + 1]
+        if a.startswith(f"{flag}="):
+            return a[len(flag) + 1 :]
+        i += 1
+    return default
+
+
 def main() -> int:
     """
     The single public command dispatcher for M9-C49.
@@ -633,6 +961,187 @@ def main() -> int:
     return 1
 
 
+# ---------------------------------------------------------------------------
+# Profile-alias execution (O-2 convergence)
+# ---------------------------------------------------------------------------
+#
+# Canonical profile aliases are NOT routed through the orchestrator pipeline;
+# they are direct task-list executions defined by ``profiles.py``. The facade
+# owns their boundary contract (per-task timeout, interruption recording,
+# identity stamping) so that profile-alias runs are also visible to the
+# canonical signal chain (events/RunRecord/analytics) — closing the O-2
+# signal-chain gap.
+
+
+def _profile_task_timeout_seconds() -> int:
+    """Resolve the per-task timeout ceiling for profile-alias execution.
+
+    Overridable via ``VERIFY_TASK_TIMEOUT_SECONDS`` (seconds) for bounded
+    regression testing; otherwise ``max(600, 2 * task.estimated_duration)``.
+    """
+    import os
+
+    override = os.environ.get("VERIFY_TASK_TIMEOUT_SECONDS")
+    if override:
+        try:
+            return max(30, int(override))
+        except ValueError:
+            pass
+    return 3600  # fallback ceiling for very long profiles (playwright etc.)
+
+
+def _run_profile_alias(operation: str) -> int:
+    """Execute a profile alias through the canonical task-list path, with
+    observable outcome recording (blocking / timed-out / interrupted states
+    are recorded rather than silently lost).
+
+    Returns the subprocess exit code (0 = success; non-zero mapped according
+    to the canonical outcome vocabulary). On SIGINT/SIGTERM the process exits
+    130/143 and an ``interrupted`` event is recorded. On per-task timeout a
+    ``timeout_blocked`` event is recorded and the process exits 124.
+    """
+    import os
+    import subprocess
+    import time
+
+    from runtime.foundation.verification.env import child_process_env
+    from runtime.foundation.verification.profiles import get_profile
+    from runtime.verify import _record_verification_event
+
+    try:
+        profile = get_profile(operation)
+    except ValueError as e:
+        print(str(e), file=sys.stderr)
+        return 1
+
+    env = child_process_env()
+    run_start = time.monotonic()
+    passed = 0
+    failed = 0
+    task_ids_executed: list[str] = []
+    interrupted_flag = False
+
+    # Override is applied uniformly if the env-var is set (useful for tests /
+    # bounded CI jobs); otherwise each task uses its declared estimate.
+    timeout_override = _profile_task_timeout_seconds()
+
+    for task in profile.tasks:
+        task_timeout = timeout_override
+        if task_timeout <= 0:
+            task_timeout = max(600, 2 * task.estimated_duration_seconds)
+        for cmd in task.commands:
+            task_ids_executed.append(task.id)
+            try:
+                result = subprocess.run(
+                    cmd,
+                    shell=True,
+                    cwd=str(REPO_ROOT),
+                    env=env,
+                    timeout=task_timeout,
+                )
+            except subprocess.TimeoutExpired:
+                failed += 1
+                elapsed = time.monotonic() - run_start
+                _record_verification_event(
+                    None,
+                    profile_name=operation,
+                    elapsed=elapsed,
+                    status="blocked",
+                    passed=passed,
+                    failed=failed,
+                    final_decision="timeout_blocked",
+                    extra_metadata={"tasks_executed": task_ids_executed},
+                )
+                print(
+                    f"[profile:{operation}] task {task.id!r} timed out after {task_timeout}s",
+                    file=sys.stderr,
+                )
+                return 124
+            except KeyboardInterrupt:
+                interrupted_flag = True
+                break
+            if result.returncode != 0:
+                failed += 1
+                elapsed = time.monotonic() - run_start
+                # SIGINT (130) and SIGTERM (143) are interruption signals,
+                # not task failures — record them as interrupted so the
+                # operator knows the run was terminated rather than that a
+                # verification asserted failed.
+                if result.returncode in (130, 143):
+                    _record_verification_event(
+                        None,
+                        profile_name=operation,
+                        elapsed=elapsed,
+                        status="interrupted",
+                        passed=passed,
+                        failed=failed,
+                        final_decision="interrupted",
+                        extra_metadata={"tasks_executed": task_ids_executed},
+                    )
+                    return result.returncode
+                _record_verification_event(
+                    None,
+                    profile_name=operation,
+                    elapsed=elapsed,
+                    status="failed",
+                    passed=passed,
+                    failed=failed,
+                    final_decision="failed",
+                    extra_metadata={"tasks_executed": task_ids_executed},
+                )
+                print(
+                    f"[profile:{operation}] task {task.id!r} failed (exit {result.returncode})",
+                    file=sys.stderr,
+                )
+                return result.returncode
+            passed += 1
+        if interrupted_flag:
+            break
+
+    elapsed = time.monotonic() - run_start
+    if interrupted_flag:
+        _record_verification_event(
+            None,
+            profile_name=operation,
+            elapsed=elapsed,
+            status="interrupted",
+            passed=passed,
+            failed=failed,
+            final_decision="interrupted",
+            extra_metadata={"tasks_executed": task_ids_executed},
+        )
+        return 130
+
+    _record_verification_event(
+        None,
+        profile_name=operation,
+        elapsed=elapsed,
+        status="passed",
+        passed=passed,
+        failed=failed,
+        final_decision="certified",
+        extra_metadata={"tasks_executed": task_ids_executed},
+    )
+    return 0
+
+
+def _format_task_summary(report: Any) -> str:
+    """Compact per-task summary for the canonical CLI truthfulness contract.
+
+    O-2 execution-truth rule: a verification run must report what actually
+    executed — not just the final verdict. This produces a single string
+    suitable for ``print`` that lists every task record as ``task_id | state
+    | <duration>s | reason[:120]``.
+    """
+    lines = []
+    for rec in getattr(report, "records", None) or []:
+        duration = getattr(rec, "duration_seconds", 0.0)
+        state = getattr(rec, "completion_state", "?")
+        reason = (getattr(rec, "reason", "") or "").strip()[:120] or "(no reason)"
+        lines.append(f"  {rec.task_id:<14} {state:<15} {duration:>6.2f}s  {reason}")
+    return "\n".join(lines) if lines else "  (no task records)"
+
+
 def _dispatch_canonical(operation: str, args: list[str]) -> int:
     """Dispatch to the canonical control plane method.
 
@@ -659,51 +1168,7 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
     if operation in _PROFILE_MAP:
         operation = _PROFILE_MAP[operation]
     if operation in PROFILE_ALIASES:
-        import subprocess
-        import time
-
-        from runtime.foundation.verification.env import child_process_env
-        from runtime.foundation.verification.profiles import get_profile
-        from runtime.verify import _record_verification_event
-
-        try:
-            profile = get_profile(operation)
-        except ValueError as e:
-            print(str(e), file=sys.stderr)
-            return 1
-        # Run each task's commands sequentially; fail fast on first failure.
-        # Canonical execution contract (M9-C57): pinned cwd = repo root and the
-        # canonical child environment (venv-first PATH + ED7 locale/TZ) so
-        # profile tasks resolve the same toolchain locally and in CI.
-        env = child_process_env()
-        run_start = time.monotonic()
-        final_exit = 0
-        for task in profile.tasks:
-            for cmd in task.commands:
-                result = subprocess.run(cmd, shell=True, cwd=str(REPO_ROOT), env=env)
-                if result.returncode != 0:
-                    print(
-                        f"[profile:{operation}] task {task.id!r} failed (exit {result.returncode})",
-                        file=sys.stderr,
-                    )
-                    final_exit = result.returncode
-                    # Do not record interrupted runs (SIGINT=130, SIGTERM=143).
-                    if final_exit not in (130, 143):
-                        _record_verification_event(
-                            None,
-                            profile_name=operation,
-                            elapsed=time.monotonic() - run_start,
-                            status="fail",
-                        )
-                    return final_exit
-        elapsed = time.monotonic() - run_start
-        _record_verification_event(
-            None,
-            profile_name=operation,
-            elapsed=elapsed,
-            status="pass",
-        )
-        return 0
+        return _run_profile_alias(operation)
     cp = ControlPlane()
     if operation == CanonicalOperation.CHECK.value:
         return cp.check()

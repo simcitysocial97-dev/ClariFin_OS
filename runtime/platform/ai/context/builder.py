@@ -146,8 +146,11 @@ class ContextBuilder:
             for event in store.iter_events():
                 if event.event_type != "VerificationCompleted":
                     continue
-                failed = (event.payload or {}).get("passed", True)
-                if not failed:
+                payload = event.payload or {}
+                status = payload.get("status") or "unknown"
+                # Truthful selection by canonical outcome — never re-infer from
+                # raw counters (which are opaque in the plan-only path).
+                if status == "failed":
                     ref = self.provenance.add(
                         build_provenance(
                             "event",
@@ -166,9 +169,10 @@ class ContextBuilder:
                             data={
                                 "event_id": event.event_id,
                                 "timestamp": event.timestamp.isoformat(),
+                                "status": status,
                             },
                             provenance_ref=ref,
-                            token_estimate=estimate_tokens(str(event.payload or {})),
+                            token_estimate=estimate_tokens(str(payload)),
                             relevance_score=100,
                         )
                     )
@@ -258,7 +262,10 @@ class ContextBuilder:
                     RankedComponent(
                         component_type="recent_run",
                         source_kind="history",
-                        data={"run_id": event.event_id, "status": "completed"},
+                        data={
+                            "run_id": event.event_id,
+                            "status": (event.payload or {}).get("status", "unknown"),
+                        },
                         provenance_ref=ref,
                         token_estimate=200,
                         relevance_score=60,

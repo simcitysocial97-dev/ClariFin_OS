@@ -1,0 +1,177 @@
+.....................................F.................................. [  3%]
+........................................................................ [  7%]
+........................................................................ [ 11%]
+........................................................................ [ 15%]
+........................................................................ [ 19%]
+........................................................................ [ 23%]
+........................................................................ [ 27%]
+........................................................................ [ 31%]
+........................................................................ [ 34%]
+........................................................................ [ 38%]
+....sssssssssssss....................................................F.. [ 42%]
+....................................................................s... [ 46%]
+........................................................................ [ 50%]
+.......................F.....F.....F.F.F.F.............................F [ 54%]
+FF.....F.F.FF......................................................F.... [ 58%]
+.................F.F..F...........................F..................... [ 62%]
+........F............................................................... [ 65%]
+........................................................................ [ 69%]
+........................................................................ [ 73%]
+........................................................................ [ 77%]
+.F.............................F........................................ [ 81%]
+.................................................................s...... [ 85%]
+........................................................................ [ 89%]
+...................F....F......FFFFFFFF................................. [ 93%]
+........................................................................ [ 96%]
+..........................................................               [100%]
+=============================== warnings summary ===============================
+runtime/foundation/verification/test_generator.py:220
+  /home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/test_generator.py:220: PytestCollectionWarning: cannot collect test class 'TestGenerator' because it has a __init__ constructor (from: runtime/tests/test_c43_test_generator.py)
+    class TestGenerator:
+
+runtime/foundation/verification/graph_model.py:120
+  /home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/graph_model.py:120: PytestCollectionWarning: cannot collect test class 'TestSurfaceNode' because it has a __init__ constructor (from: runtime/tests/test_m9_c42_27.py)
+    @dataclass(frozen=True, slots=True)
+
+runtime/foundation/verification/test_strengthening_pipeline.py:152
+  /home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/test_strengthening_pipeline.py:152: PytestCollectionWarning: cannot collect test class 'TestStrengtheningPipeline' because it has a __init__ constructor (from: runtime/tests/test_m9_c48_test_strengthening.py)
+    class TestStrengtheningPipeline:
+
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+runtime/tests/test_backend_evidence.py::TestBackendEvidenceSchema::test_schema_key_is_versioned
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1313: PytestRemovedIn10Warning: Class-scoped fixture defined as instance method is deprecated.
+  Instance attributes set in this fixture will NOT be visible to test methods,
+  as each test gets a new instance while the fixture runs only once per class.
+  Use @classmethod decorator and set attributes on cls instead.
+  See https://docs.pytest.org/en/stable/deprecations.html#class-scoped-fixture-as-instance-method
+    fixturefunc = resolve_fixture_function(fixturedef, request)
+
+runtime/tests/test_cross_layer_planner.py: 8 warnings
+runtime/tests/test_false_positive_rate.py: 1 warning
+runtime/tests/test_m9c3_verification_gate.py: 1 warning
+runtime/tests/test_orchestrator.py: 20 warnings
+runtime/tests/test_runtime_performance.py: 3 warnings
+runtime/tests/test_snapshots.py: 2 warnings
+runtime/tests/test_verification_identity_execution.py: 46 warnings
+  <string>:6: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/account_dto.py:12: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class AccountDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/account_dto.py:48: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class AccountListResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/accounts_dto.py:153: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class AccountsDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/behaviour_dto.py:138: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class BehaviourDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/cashflow_dto.py:136: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CashflowSummaryDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/credit_cards_dto.py:186: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CreditCardsDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/dashboard_dto.py:14: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class DashboardSummaryDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/dashboard_dto.py:65: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class OverviewDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/dashboard_dto.py:100: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CategoryBreakdownDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/forecast_dto.py:141: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ForecastDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/investments_dto.py:143: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class InvestmentsDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/loans_dto.py:191: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class LoansDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/net_worth_dto.py:138: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class NetWorthDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/reconciliation_dto.py:138: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ReconciliationDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/reconciliation_dto.py:230: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ReconciliationsListResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/reconciliation_dto.py:270: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ReconciliationScanResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:12: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class MoneyDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:27: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class TransactionDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:70: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class TransactionListResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase10_12.py::TestHttpEndpointStructure::test_change_intelligence_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:84: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CategorySummaryDTO(BaseModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED runtime/tests/test_backend_evidence.py::TestMutationRunnerPortability::test_mutation_runner_uses_canonical_python
+FAILED runtime/tests/test_m9_c50_final_governance.py::TestFinalWorkflowGovernance::test_verification_workflows_delegate_to_verify_py
+FAILED runtime/tests/test_m9_c51.py::TestM9C51LatentAudit::test_findings_are_classified
+FAILED runtime/tests/test_m9_c52.py::TestM521CatalogCompleteness::test_all_capabilities_resolve_to_actual_code
+FAILED runtime/tests/test_m9_c52.py::TestM522RouteAuthority::test_route_authority_artifact_passes
+FAILED runtime/tests/test_m9_c52.py::TestM522RouteAuthority::test_strengthen_survivor_single_canonical_binding
+FAILED runtime/tests/test_m9_c52.py::TestM523CliCapabilityMatrix::test_cli_matrix_artifact_generates
+FAILED runtime/tests/test_m9_c52.py::TestM523CliCapabilityMatrix::test_operational_observability_routes_explicitly_marked
+FAILED runtime/tests/test_m9_c53.py::TestC53RegressionPreservation::test_c51_tests_still_pass
+FAILED runtime/tests/test_m9_c53.py::TestC53RegressionPreservation::test_c52_tests_still_pass
+FAILED runtime/tests/test_m9_c54.py::TestC54WorkflowDiscovery::test_inventory_classifies_verification_steps
+FAILED runtime/tests/test_m9_c54.py::TestC54CommandExtraction::test_api_contract_command_classified
+FAILED runtime/tests/test_m9_c54.py::TestC54CommandExtraction::test_golden_command_classified
+FAILED runtime/tests/test_m9_c54.py::TestC54CommandExtraction::test_verify_py_backend_classified
+FAILED runtime/tests/test_m9_c54.py::TestC54CommandExtraction::test_verify_py_mutation_classified
+FAILED runtime/tests/test_m9_c54.py::TestC54ActualFailureInjection::test_invalid_command_fails
+FAILED runtime/tests/test_m9_c55.py::TestC55BaselinePreservation::test_g1_c54_baseline_json_exists
+FAILED runtime/tests/test_m9_c55.py::TestC55BaselinePreservation::test_g1_regression_green
+FAILED runtime/tests/test_m9_c55.py::TestC55EnvironmentContract::test_g5_all_python_tools_match_pins
+FAILED runtime/tests/test_m9_c55.py::TestC55ReproducibilityExperiments::test_g20_backend_repeated_verification
+FAILED runtime/tests/test_m9_c55.py::TestC55CertificationGates::test_g30_regression_green
+FAILED runtime/tests/test_platform_api_phase14.py::TestContextBuilder::test_same_inputs_produce_same_pack_id
+FAILED runtime/tests/test_platform_api_phase14.py::TestGate14Integration::test_full_lifecycle_determinism
+FAILED runtime/tests/test_vea5_m8_merge_enforcement.py::test_m81_stale_workflows_use_verification_command_pattern
+FAILED runtime/tests/test_vea5_m8_merge_enforcement.py::test_m83_local_gate_cli_emits_manifest_no_base
+FAILED runtime/tests/test_vea5_m8r_cli_reconcile.py::test_reconcile_ci_valid_pass_is_same_plan_exit_0
+FAILED runtime/tests/test_vea5_m8r_cli_reconcile.py::test_reconcile_ci_missing_evidence_is_explicit_no_evidence_nonzero
+FAILED runtime/tests/test_vea5_m8r_cli_reconcile.py::test_reconcile_ci_failed_execution_is_preserved_nonzero
+FAILED runtime/tests/test_vea5_m8r_cli_reconcile.py::test_reconcile_ci_malformed_evidence_is_rejected_nonzero
+FAILED runtime/tests/test_vea5_m8r_cli_reconcile.py::test_reconcile_ci_wrong_fingerprint_is_planning_divergence_exit_2
+FAILED runtime/tests/test_vea5_m8r_cli_reconcile.py::test_reconcile_expected_tier_difference_exit_0
+FAILED runtime/tests/test_vea5_m8r_cli_reconcile.py::test_reconcile_planning_divergence_exit_2
+FAILED runtime/tests/test_vea5_m8r_cli_reconcile.py::test_reconcile_environment_divergence_exit_1
+33 failed, 1810 passed, 15 skipped, 106 warnings in 1772.84s (0:29:32)
+PYTEST_EXIT=1

@@ -48,11 +48,18 @@ def _emit_verification_events(
     final_decision: str,
     duration_seconds: float,
     record_count: int,
+    status: str | None = None,
 ) -> None:
     """Append VerificationStarted and VerificationCompleted events.
 
     Phase 7: these events carry ``execution_id`` in metadata so that
     the execution SSE stream can replay them and poll for new ones.
+
+    O-2 signal truth: the caller passes the canonical outcome status
+    (passed / failed / blocked / interrupted / unknown / completed); this
+    function never derives it from ``final_decision`` — that was the false-
+    certification path that counted planning-only runs as real passed/failed
+    events.
     """
 
     store = EngineeringEventStore()
@@ -80,6 +87,14 @@ def _emit_verification_events(
         )
     )
 
+    # Default to deriving the canonical status only when the caller does not
+    # supply it; callers MUST supply it when the run is not a real execution
+    # (e.g. plan-only). This preserves backward compatibility for legacy
+    # callers while forcing explicit truth for the new plan-only path.
+    effective_status = status or (
+        "passed" if final_decision == "certified" else "failed"
+    )
+
     store.append(
         EngineeringEvent(
             event_id=f"vc-{execution_id}",
@@ -92,7 +107,8 @@ def _emit_verification_events(
                 "final_decision": final_decision,
                 "duration_seconds": duration_seconds,
                 "record_count": record_count,
-                "status": "passed" if final_decision == "certified" else "failed",
+                "status": effective_status,
+                "executed": status is not None and status not in ("unknown",),
             },
             execution_context={
                 "environment": "local",
@@ -163,7 +179,7 @@ def _safe_run(capability_id: str | None = None) -> dict[str, Any]:
             "started_at": started_at,
             "completed_at": started_at,
             "duration_seconds": 0.0,
-            "final_decision": "stale" if finalized == "stale" else "certified",
+            "final_decision": "planned_not_executed",
             "decision_reason": f"derived from {len(files)} changed files; {len(getattr(contract, 'directly_affected_capabilities', []) or [])} capabilities affected",
             "record_count": len(task_ids),
             "task_ids": task_ids,
@@ -181,6 +197,7 @@ def _safe_run(capability_id: str | None = None) -> dict[str, Any]:
             final_decision=result["final_decision"],
             duration_seconds=result["duration_seconds"],
             record_count=result["record_count"],
+            status="unknown",
         )
         return result
     except Exception as exc:  # noqa: BLE001
@@ -228,13 +245,17 @@ def build_run_result(
 
     report = _safe_run(capability_id=capability_id)
 
-    status_value = (
-        Status.HEALTHY
-        if report["final_decision"] == "certified"
-        else (
-            Status.DEGRAD if report["final_decision"] == "partial" else Status.UNHEALTHY
-        )
-    )
+    # O-2 signal truth: the envelope's health status reflects the honest
+    # final_decision, not an independent inference from counts.
+    decision = report["final_decision"]
+    if decision == "certified":
+        status_value = Status.HEALTHY
+    elif decision == "partial":
+        status_value = Status.DEGRAD
+    elif decision == "planned_not_executed":
+        status_value = Status.UNKNOWN
+    else:
+        status_value = Status.UNHEALTHY
 
     task_id = report["task_ids"][0] if report["task_ids"] else report["report_id"]
     execution_id = report["report_id"]
@@ -267,6 +288,8 @@ def build_recent_runs(*, limit: int = 20) -> dict[str, Any]:
 
     store = EngineeringEventStore()
     runs: list[dict[str, Any]] = []
+    from runtime.system.observability.outcome import outcome_to_platform_status
+
     for event in store.iter_events():
         if event.event_type != "VerificationCompleted":
             continue
@@ -285,11 +308,7 @@ def build_recent_runs(*, limit: int = 20) -> dict[str, Any]:
                     else None
                 ),
                 "duration_ms": payload.get("duration_ms"),
-                "status": (
-                    Status.HEALTHY.value
-                    if payload.get("passed", False)
-                    else Status.UNHEALTHY.value
-                ),
+                "status": outcome_to_platform_status(payload.get("status")),
                 "capabilities_run": int(payload.get("capabilities_run", 0) or 0),
                 "capabilities_passed": int(payload.get("capabilities_passed", 0) or 0),
                 "capabilities_failed": int(payload.get("capabilities_failed", 0) or 0),

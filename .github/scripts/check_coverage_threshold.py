@@ -2,10 +2,23 @@
 """
 .github/scripts/check_coverage_threshold.py
 
-Reads coverage.json and enforces minimum thresholds.
-Exits with code 1 if any threshold is not met.
+O-2 retired: ORPHAN — no active consumers, no callers in CI or profiles.
 
-Usage:
+This script enforces per-group minimum coverage thresholds (overall /
+engines / services / repositories) by reading a coverage.json artifact. It
+was intended to become the canonical coverage gate for O-2's configuration
+reconciliation but was NOT wired in because:
+  - wiring it would introduce a new active threshold policy (scope expansion);
+  - its per-group thresholds are opinionated and would change gate semantics
+    if activated without a deliberate follow-on objective;
+  - the current scoping conflation (G7) is already resolved by the
+    contract-profile override described in .coveragerc + run_contract_tests.sh.
+
+RETAINED for reference only. Any future operator or AI that considers
+wiring this in must document the rationale explicitly and measure its
+actual impact before enabling.
+
+Previous usage:
     python check_coverage_threshold.py --coverage-file path/to/coverage.json
 """
 

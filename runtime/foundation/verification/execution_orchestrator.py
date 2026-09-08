@@ -45,6 +45,7 @@ import json
 import re
 import subprocess
 import time
+from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
@@ -1128,6 +1129,7 @@ class ExecutionOrchestrator:
         plan: ExecutionPlan,
         authorize: set[str] | None = None,
         dry_run: bool = False,
+        on_record: Callable[["TaskExecutionRecord"], None] | None = None,
     ) -> ExecutionReport:
         """Execute the plan and produce an ExecutionReport.
 
@@ -1137,6 +1139,10 @@ class ExecutionOrchestrator:
           AUTHORIZATION_REQUIRED without executing.
         * ``dry_run`` plans and validates but never runs commands; useful for
           acceptance tests and inspection.
+        * ``on_record`` is an optional callback invoked with each
+          TaskExecutionRecord as it is produced. Callers use it to observe
+          in-flight progress (and to capture partial progress if the run is
+          interrupted) without changing orchestration semantics.
         """
         authorize = set(authorize or [])
         validation_errors, live_fp = self.validate_execution(plan)
@@ -1164,6 +1170,11 @@ class ExecutionOrchestrator:
         started_at = datetime.now(UTC).isoformat()
         t0 = time.monotonic()
 
+        def _push_record(rec: TaskExecutionRecord) -> None:
+            records.append(rec)
+            if on_record is not None:
+                on_record(rec)
+
         # Section 6 stop-on-sufficiency state
         any_mandatory_fail = False
 
@@ -1171,7 +1182,7 @@ class ExecutionOrchestrator:
             # Re-evaluation: live fingerprint may have changed mid-run
             current_fp = RepositoryFingerprint.capture()
             if current_fp.fingerprint != live_fp.fingerprint:
-                records.append(
+                _push_record(
                     self._make_record(
                         spec,
                         plan,
@@ -1194,7 +1205,7 @@ class ExecutionOrchestrator:
             # Stop on sufficiency (Section 6): skip escalation if all
             # mandatory tasks so far are PASS/REUSED.
             if spec.is_escalation and not any_mandatory_fail:
-                records.append(
+                _push_record(
                     self._make_record(
                         spec,
                         plan,
@@ -1233,7 +1244,7 @@ class ExecutionOrchestrator:
                             "completion_status": "AUTHORITATIVE_COMPLETE",
                         },
                     )
-                    records.append(record)
+                    _push_record(record)
                     evidence_reused.append(spec.task_id)
                     continue
 
@@ -1258,13 +1269,13 @@ class ExecutionOrchestrator:
                         "with --authorize <task_id> or --authorize all"
                     ),
                 )
-                records.append(record)
+                _push_record(record)
                 escalations_triggered.append(spec.task_id)
                 continue
 
             # Execute.
             record = self._execute_task(spec, plan, live_fp)
-            records.append(record)
+            _push_record(record)
             if spec.is_mandatory and record.completion_state in NON_PASS_STATES:
                 any_mandatory_fail = True
             if record.completion_state in (CompletionState.FAILED,):

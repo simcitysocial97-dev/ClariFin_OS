@@ -1,5 +1,14 @@
 # backend/.coveragerc
 # Coverage configuration for pytest-cov
+#
+# O-2 note: ``fail_under = 40`` is a full-suite coverage floor intended for
+# runs that execute the complete backend test suite with coverage enabled.
+# Profile scripts that scope coverage to a subset (e.g. the contracts
+# profile measuring only ``tests/contract/``) MUST override this floor at
+# invocation time (via ``--cov-fail-under=N``) so the floor is enforced
+# only against slices it was designed for. Leaving it un-overridden on a
+# subset-scoped run conflates slice health with whole-backend health and
+# produces a permanent false-red (G7).
 
 [run]
 source = src
@@ -49,6 +58,8 @@ omit =
 [report]
 show_missing = True
 skip_covered = False
+# O-2: this floor applies to full-suite runs; subset-scoped profiles must
+# override it at invocation (see run_contract_tests.sh comment).
 fail_under = 40
 precision = 2
 

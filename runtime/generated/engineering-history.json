@@ -8280,6 +8280,333 @@
       "evidence_count": 0,
       "cache_hit": false,
       "metadata": {}
+    },
+    {
+      "run_id": "df8682ce-a4e4-4fc0-ac69-a2fe077abc67",
+      "timestamp": "2026-09-08T10:16:41.204065+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "failed",
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 6.464807118987665,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black"
+        ]
+      }
+    },
+    {
+      "run_id": "afaffbfc-5f68-4d53-adcf-2812b41a4c20",
+      "timestamp": "2026-09-08T10:18:33.516875+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "failed",
+      "passed": 3,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 76.99632716696942,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
+    },
+    {
+      "run_id": "990c5ae7-0822-4d97-b1fe-be53e6fd7d40",
+      "timestamp": "2026-09-08T10:20:18.130988+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 46.48724298400339,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
+    },
+    {
+      "run_id": "6ad1f826-8213-4f5c-ac24-7e2e6fda7cf8",
+      "timestamp": "2026-09-08T10:21:48.318706+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 45.610628160007764,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
+    },
+    {
+      "run_id": "30d0c087-386c-4359-955a-507cad7efa36",
+      "timestamp": "2026-09-08T11:13:08.528689+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "failed",
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 3.020962641981896,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black"
+        ]
+      }
+    },
+    {
+      "run_id": "13ca305d-fa1b-46b6-89c9-490880558eaa",
+      "timestamp": "2026-09-08T11:24:38.669152+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 72.62453969800845,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
+    },
+    {
+      "run_id": "da05ef43-8933-4cdf-8263-b28d404f3ebb",
+      "timestamp": "2026-09-08T11:27:09.004332+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 56.44766927504679,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
+    },
+    {
+      "run_id": "1f65ef6f-25c4-4260-b3a6-5032c8ac42f7",
+      "timestamp": "2026-09-08T11:28:32.195779+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 48.78832344803959,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
+    },
+    {
+      "run_id": "73a46290-2cfe-4b7d-a25b-afb4b070fbe7",
+      "timestamp": "2026-09-08T11:29:52.291488+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "failed",
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 2.045143916970119,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black"
+        ]
+      }
+    },
+    {
+      "run_id": "287d9047-7817-42dd-996f-91327883309c",
+      "timestamp": "2026-09-08T11:31:27.069794+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 69.29894794902066,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
+    },
+    {
+      "run_id": "78bf84ea-c52d-4c55-aa02-4ada959dfa6f",
+      "timestamp": "2026-09-08T11:37:15.346245+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "contracts",
+      "status": "failed",
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 48.682136289949995,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "contracts-schemathesis"
+        ]
+      }
+    },
+    {
+      "run_id": "d5f2daff-e64c-436e-a990-233584e1b0e7",
+      "timestamp": "2026-09-08T11:39:41.975860+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 68.8901931590517,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
     }
   ],
   "ci": [
@@ -16985,6 +17312,333 @@
       "evidence_count": 0,
       "cache_hit": false,
       "metadata": {}
+    },
+    {
+      "run_id": "df8682ce-a4e4-4fc0-ac69-a2fe077abc67",
+      "timestamp": "2026-09-08T10:16:41.204065+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "failed",
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 6.464807118987665,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black"
+        ]
+      }
+    },
+    {
+      "run_id": "afaffbfc-5f68-4d53-adcf-2812b41a4c20",
+      "timestamp": "2026-09-08T10:18:33.516875+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "failed",
+      "passed": 3,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 76.99632716696942,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
+    },
+    {
+      "run_id": "990c5ae7-0822-4d97-b1fe-be53e6fd7d40",
+      "timestamp": "2026-09-08T10:20:18.130988+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 46.48724298400339,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
+    },
+    {
+      "run_id": "6ad1f826-8213-4f5c-ac24-7e2e6fda7cf8",
+      "timestamp": "2026-09-08T10:21:48.318706+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 45.610628160007764,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
+    },
+    {
+      "run_id": "30d0c087-386c-4359-955a-507cad7efa36",
+      "timestamp": "2026-09-08T11:13:08.528689+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "failed",
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 3.020962641981896,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black"
+        ]
+      }
+    },
+    {
+      "run_id": "13ca305d-fa1b-46b6-89c9-490880558eaa",
+      "timestamp": "2026-09-08T11:24:38.669152+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 72.62453969800845,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
+    },
+    {
+      "run_id": "da05ef43-8933-4cdf-8263-b28d404f3ebb",
+      "timestamp": "2026-09-08T11:27:09.004332+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 56.44766927504679,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
+    },
+    {
+      "run_id": "1f65ef6f-25c4-4260-b3a6-5032c8ac42f7",
+      "timestamp": "2026-09-08T11:28:32.195779+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 48.78832344803959,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
+    },
+    {
+      "run_id": "73a46290-2cfe-4b7d-a25b-afb4b070fbe7",
+      "timestamp": "2026-09-08T11:29:52.291488+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "failed",
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 2.045143916970119,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black"
+        ]
+      }
+    },
+    {
+      "run_id": "287d9047-7817-42dd-996f-91327883309c",
+      "timestamp": "2026-09-08T11:31:27.069794+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 69.29894794902066,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
+    },
+    {
+      "run_id": "78bf84ea-c52d-4c55-aa02-4ada959dfa6f",
+      "timestamp": "2026-09-08T11:37:15.346245+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "contracts",
+      "status": "failed",
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 48.682136289949995,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "contracts-schemathesis"
+        ]
+      }
+    },
+    {
+      "run_id": "d5f2daff-e64c-436e-a990-233584e1b0e7",
+      "timestamp": "2026-09-08T11:39:41.975860+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 68.8901931590517,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
     }
   ]
 }

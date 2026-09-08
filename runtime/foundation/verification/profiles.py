@@ -4,6 +4,18 @@ Verification Profiles — Program 7B
 Immutable verification profiles that expand into deterministic tasks.
 Each profile maps to a specific set of verification commands.
 No profile may contain duplicated commands.
+
+O-2 configuration authority (converged with verification.yaml):
+  - These profiles OWN the task-list execution surface used by the
+    canonical profile aliases (`verify quick|backend|...`): each profile
+    is a tuple of VerificationTask instances whose ``commands`` list is
+    executed sequentially (fail-fast) through the facade.
+  - verification.yaml workflows/capabilities own the planner/registry
+    surface consumed by `verify check` (capability-driven execution).
+  - The two surfaces must remain explicitly reconciled; the reconciliation
+    is tested by ``test_m9c57_verification_self_contract.py`` (O2-D).
+    Adding a profile name here without a matching yaml workflow (or an
+    explicit allowlist entry) will fail the reconciliation test.
 """
 
 from __future__ import annotations
