@@ -17,7 +17,7 @@ cat > RELEASE_NOTES.md <<EOF
 Generated artifacts are ready for deployment.
 
 ## Assets
-- Frontend distribution (frontend/.next)
+- Frontend distribution (frontend/dist)
 - Release notes (RELEASE_NOTES.md)
 
 ## Verification

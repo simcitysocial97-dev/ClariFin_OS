@@ -114,3 +114,7 @@ target/
 # Mutation cache (mutmut working state)
 .mutmut-cache/
 mutants/
+runtime/generated/launcher/
+
+# Backend runtime-generated artifacts (events logs, platform snapshots)
+backend/runtime/generated/

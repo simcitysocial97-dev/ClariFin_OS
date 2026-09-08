@@ -55,7 +55,7 @@ jobs:
         uses: ./.github/actions/upload-runtime
         with:
           name: frontend-dist
-          path: frontend/.next
+          path: frontend/dist
           retention-days: 90
           if-condition: always()
 
