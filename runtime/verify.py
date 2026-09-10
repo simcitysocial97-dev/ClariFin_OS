@@ -277,9 +277,11 @@ def _record_verification_event(
             )
         )
     except Exception as exc:
-        import logging
+        from runtime.foundation.verification.structured_logging import (
+            get_logger,
+        )
 
-        logging.getLogger(__name__).warning(
+        get_logger(__name__).warning(
             "Failed to record verification event: %s", exc
         )
 
@@ -345,6 +347,52 @@ def record_execution_report(
 def main() -> int:
     """Single dispatcher: all commands flow through the canonical control plane."""
     return canonical_main()
+
+
+# ---------------------------------------------------------------------------
+# Legacy command wrappers — thin compatibility shims for capability-catalog
+# references that resolve via symbol inspection (M9-C52 catalog completeness).
+# Each delegates to canonical_main by adjusting sys.argv so the dispatcher
+# routes through migration_map() exactly as it would from the CLI.
+# ---------------------------------------------------------------------------
+
+def cmd_plan(argv: list[str] | None = None) -> int:
+    _delegate(["plan"], argv)
+
+def cmd_local_gate(argv: list[str] | None = None) -> int:
+    _delegate(["local-gate"], argv)
+
+def cmd_deep_contract(argv: list[str] | None = None) -> int:
+    _delegate(["deep-contract"], argv)
+
+def cmd_exec_evidence(argv: list[str] | None = None) -> int:
+    _delegate(["exec-evidence"], argv)
+
+def cmd_diagnose_failures(argv: list[str] | None = None) -> int:
+    _delegate(["diagnose-failures"], argv)
+
+def cmd_intelligence(argv: list[str] | None = None) -> int:
+    _delegate(["intelligence"], argv)
+
+def execution_status(argv: list[str] | None = None) -> int:
+    _delegate(["execution-status"], argv)
+
+def cmd_reconcile(argv: list[str] | None = None) -> int:
+    _delegate(["reconcile"], argv)
+
+def cmd_audit(argv: list[str] | None = None) -> int:
+    _delegate(["audit"], argv)
+
+
+def _delegate(prefix: list[str], argv: list[str] | None) -> int:
+    """Run canonical_main with argv set to prefix + optional extra args."""
+    import sys as _sys  # noqa: PLC0415
+    old_argv = _sys.argv
+    _sys.argv = ["verify.py", *prefix, *(argv or [])]
+    try:
+        return canonical_main()
+    finally:
+        _sys.argv = old_argv
 
 
 if __name__ == "__main__":

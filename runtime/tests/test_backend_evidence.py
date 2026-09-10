@@ -356,6 +356,7 @@ class TestNoWorkflowFilesTouched:
             "golden.yml",
             "m9-forensic-diagnostic-lab.yml",
             "mutation.yml",
+            "mutation-pr.yml",
             "playwright.yml",
             "quality.yml",
             "release.yml",
@@ -379,6 +380,7 @@ class TestNoWorkflowFilesTouched:
             ".github/workflows/playwright.yml",
             ".github/workflows/frontend-verify.yml",
             ".github/workflows/mutation.yml",
+            ".github/workflows/mutation-pr.yml",
         }
         lines = [
             line.strip() for line in result.stdout.strip().split("\n") if line.strip()
@@ -445,10 +447,10 @@ class TestMutationRunnerPortability:
             "bare `python -m pytest` is a CI portability defect; "
             "ubuntu-latest only ships `python3`"
         )
-        # Must invoke the canonical mutation runner
+        # Must invoke the canonical mutation runner (either module or script form)
         assert (
-            "runtime/verify.py mutation" in source
-        ), "mutation runner must invoke canonical runtime/verify.py mutation"
+            "runtime.verify mutation" in source
+        ), "mutation runner must invoke canonical runtime.verify mutation"
 
     def test_mutation_script_is_syntactically_valid(self):
         result = subprocess.run(

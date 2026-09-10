@@ -1,0 +1,151 @@
+# .github/workflows/mutation-pr.yml
+#
+# PURPOSE: Incremental mutation testing for pull requests.
+# RESPONSIBILITY: Run mutation ONLY on engines affected by changed files.
+# This provides fast feedback (<5 min typical) without running the full
+# 27-minute campaign. Full coverage happens in mutation.yml (nightly).
+#
+# Rule 1: no engineering logic in YAML. Rule 2: single responsibility.
+# Rule 8: delegate to python -m runtime.verify.
+# Concurrency: cancel in-progress PR runs on new commits.
+
+name: Mutation Testing (PR Incremental)
+
+on:
+  pull_request:
+    paths:
+      - 'backend/src/engines/**'
+      - 'backend/src/services/**'
+      - 'backend/tests/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  incremental-mutation:
+    name: Incremental Mutation (PR)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0  # Need full history for git diff
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      - name: Verify canonical environment
+        run: python -m runtime.verify env-check
+
+      - name: Get changed files
+        id: changed
+        run: |
+          # Fetch base ref if not already fetched
+          git fetch origin ${{ github.base_ref }} --depth=1 2>/dev/null || true
+          
+          # Get changed Python files in backend/src/engines or backend/src/services
+          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '^backend/src/(engines|services)/' || echo "")
+          
+          if [ -z "$CHANGED" ]; then
+            echo "no_changes=true" >> $GITHUB_OUTPUT
+            echo "No engine/service files changed, skipping mutation"
+          else
+            echo "no_changes=false" >> $GITHUB_OUTPUT
+            echo "files=$CHANGED" >> $GITHUB_OUTPUT
+            echo "Changed files:"
+            echo "$CHANGED"
+          fi
+
+      - name: Run incremental mutation
+        if: steps.changed.outputs.no_changes == 'false'
+        id: mutation
+        run: |
+          FILES="${{ steps.changed.outputs.files }}"
+          
+          python -m runtime.verify mutation --incremental --changed-files $FILES --allow-dirty \
+            2>&1 | tee mutation_output.txt
+          
+          EXIT_CODE=${PIPESTATUS[0]}
+          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+          
+          # Extract metrics from output
+          ENGINES=$(grep "Affected engines:" mutation_output.txt | sed 's/.*Affected engines: //' || echo "unknown")
+          SCORE=$(grep "Mutation score:" mutation_output.txt | awk '{print $NF}' || echo "N/A")
+          KILLED=$(grep "Killed:" mutation_output.txt | awk '{print $2}' || echo "0")
+          SURVIVED=$(grep "Survived:" mutation_output.txt | awk '{print $2}' || echo "0")
+          
+          echo "engines=$ENGINES" >> $GITHUB_OUTPUT
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+          echo "killed=$KILLED" >> $GITHUB_OUTPUT
+          echo "survived=$SURVIVED" >> $GITHUB_OUTPUT
+
+      - name: Upload mutation report
+        if: always() && steps.changed.outputs.no_changes == 'false'
+        uses: actions/upload-artifact@v7
+        with:
+          name: mutation-pr-report
+          path: |
+            mutation_output.txt
+            backend/tests/generated/mutation/
+          retention-days: 30
+
+      - name: Comment on PR
+        if: always() && steps.changed.outputs.no_changes == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const output = fs.readFileSync('mutation_output.txt', 'utf8');
+            const exitCode = '${{ steps.mutation.outputs.exit_code }}';
+            const engines = '${{ steps.mutation.outputs.engines }}';
+            const score = '${{ steps.mutation.outputs.score }}';
+            const killed = '${{ steps.mutation.outputs.killed }}';
+            const survived = '${{ steps.mutation.outputs.survived }}';
+            
+            let status = '✅ PASSED';
+            let statusIcon = '✅';
+            if (exitCode === '2') {
+              status = '❌ FAILED - Below threshold';
+              statusIcon = '❌';
+            } else if (exitCode === '1') {
+              status = '⚠️ NOT EVALUATED - Infrastructure failure';
+              statusIcon = '⚠️';
+            }
+            
+            const comment = `## 🧬 Incremental Mutation Testing
+            
+            **Status:** ${statusIcon} ${status}
+            **Affected engines:** ${engines}
+            **Score:** ${score}%
+            **Killed/Survived:** ${killed}/${survived}
+            
+            <details>
+            <summary>Mutation output</summary>
+            
+            \`\`\`
+            ${output.slice(0, 6000)}
+            \`\`\`
+            
+            </details>`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Fail if below threshold
+        if: steps.mutation.outputs.exit_code == '2'
+        run: |
+          echo "❌ Mutation score below 80% threshold for affected engines: ${{ steps.mutation.outputs.engines }}"
+          exit 1

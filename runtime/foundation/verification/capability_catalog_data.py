@@ -998,7 +998,7 @@ _REGISTRATIONS_EVIDENCE = [
             "execution-status [--plan PLAN] [--latest] [--json] | "
             "execution-report [--plan PLAN] [--latest] [--json]"
         ),
-        implementation="runtime/verify.py:execution-status",
+        implementation="runtime/verify.py:execution_status",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(),
         input_types=("plan_id",),

@@ -214,7 +214,7 @@ norecursedirs = [
     "node_modules",
     "frontend/node_modules"
 ]
-pythonpath = ["backend/src", "backend/tests"]
+pythonpath = ["backend", "backend/src", "backend/tests"]
 markers = [
     "capability: mark test as capability smoke test",
     "contract: mark test as contract test",

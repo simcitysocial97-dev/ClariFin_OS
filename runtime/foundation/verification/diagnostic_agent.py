@@ -353,6 +353,8 @@ class DiagnosticReport:
     q7_what_was_not_tested: dict[str, Any]
     q8_uncertainties: tuple[Uncertainty, ...]
     q9_verdict: dict[str, Any]
+    q10_financial_diagnosis: dict[str, Any]
+    q11_minimal_fix: dict[str, Any]
 
     record_validation: RecordValidation
     explainability: Explainability
@@ -373,6 +375,8 @@ class DiagnosticReport:
             "q7_what_was_not_tested": self.q7_what_was_not_tested,
             "q8_uncertainties": [u.to_dict() for u in self.q8_uncertainties],
             "q9_verdict": self.q9_verdict,
+            "q10_financial_diagnosis": self.q10_financial_diagnosis,
+            "q11_minimal_fix": self.q11_minimal_fix,
             "record_validation": self.record_validation.to_dict(),
             "explainability": self.explainability.to_dict(),
         }
@@ -437,6 +441,8 @@ class DiagnosticForensicAgent:
         q6 = self._answer_q6(record, ci_correlation=ci_correlation)
         q7 = self._answer_q7(record, q3=q3, q4=q4, q5=q5)
         q8 = self._answer_q8(record, q3=q3, q6=q6, ci_correlation=ci_correlation)
+        q10 = self._answer_q10(record)
+        q11 = self._answer_q11(record, q10=q10)
         q9, explain = self._answer_q9(
             record,
             validation=validation,
@@ -472,6 +478,8 @@ class DiagnosticForensicAgent:
             q7_what_was_not_tested=q7,
             q8_uncertainties=tuple(q8),
             q9_verdict=q9,
+            q10_financial_diagnosis=q10,
+            q11_minimal_fix=q11,
             record_validation=validation,
             explainability=explain,
         )
@@ -950,11 +958,102 @@ class DiagnosticForensicAgent:
             explain,
         )
 
+    # -- Q10 — Financial semantic diagnosis --------------------------------
+
+    def _answer_q10(self, record: dict[str, Any]) -> dict[str, Any]:
+        """Diagnose financial semantic failures when present."""
+        diagnosis = self._diagnose_financial_semantics(record)
+        return diagnosis
+
+    def _diagnose_financial_semantics(
+        self, record: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Diagnose financial semantic failures from the forensic record.
+
+        Inspects execution_results for SemanticFailure markers; when found,
+        resolves affected concepts via FinancialBlastRadius and surfaces
+        the violated invariant and remediation hint.
+        """
+        results = (record.get("execution_results", {}) or {}).get(
+            "by_component", {}
+        )
+        if not results:
+            return {"financial_diagnosis": "none"}
+
+        # Look for semantic_failure inside any component's evidence
+        for comp, ev in results.items():
+            sf = ev.get("semantic_failure") if isinstance(ev, dict) else None
+            if sf and isinstance(sf, dict) and sf.get("invariant_id"):
+                try:
+                    from runtime.foundation.verification.semantics.blast_radius import (  # noqa: PLC0415
+                        _FinancialBlastRadius,
+                    )
+
+                    source_file = sf.get("source_file", "")
+                    affected = (
+                        _FinancialBlastRadius.compute_affected_concepts(
+                            [source_file] if source_file else []
+                        )
+                    )
+                    at_risk = (
+                        _FinancialBlastRadius.compute_at_risk_invariants(affected)
+                    )
+                    return {
+                        "invariant_violated": sf.get("invariant_id", "unknown"),
+                        "invariant_description": sf.get(
+                            "description", "unknown"
+                        ),
+                        "affected_concepts": affected,
+                        "at_risk_invariants": list(at_risk),
+                        "remediation": sf.get("remediation", ""),
+                        "minimal_fix": sf.get("remediation", ""),
+                        "component": comp,
+                    }
+                except Exception:
+                    return {
+                        "invariant_violated": sf.get("invariant_id", "unknown"),
+                        "affected_concepts": [],
+                        "at_risk_invariants": [],
+                        "remediation": sf.get("remediation", ""),
+                        "minimal_fix": sf.get("remediation", ""),
+                        "component": comp,
+                    }
+
+        return {"financial_diagnosis": "none"}
+
+    # -- Q11 — Minimal fix suggestion --------------------------------------
+
+    def _answer_q11(self, record: dict[str, Any], *, q10: dict[str, Any]) -> dict[str, Any]:
+        """Suggest the minimal fix based on Q10 financial diagnosis."""
+        if q10.get("financial_diagnosis") == "none":
+            return {"minimal_fix": "none_required"}
+
+        remediation = q10.get("remediation", "")
+        invariant_id = q10.get("invariant_violated", "unknown")
+        affected = q10.get("affected_concepts", [])
+
+        fix_hints: list[str] = []
+        if remediation:
+            fix_hints.append(f"Remediation: {remediation}")
+        if affected:
+            fix_hints.append(f"Affected concepts: {', '.join(affected)}")
+        fix_hints.append(
+            f"Invariant to restore: {invariant_id}"
+        )
+
+        return {
+            "minimal_fix": "; ".join(fix_hints),
+            "invariant_id": invariant_id,
+            "remediation": remediation,
+            "affected_concepts": affected,
+        }
+
 
 __all__ = [
     "CAUSAL_CHAIN_STAGES",
     "DEFAULT_EMPTY_REASONS",
     "DIAGNOSTIC_REPORT_SCHEMA",
+    "DiagnosticAgent",
     "DiagnosticForensicAgent",
     "DiagnosticReport",
     "Explainability",
@@ -966,3 +1065,6 @@ __all__ = [
     "canonicalize_forensic_record",
     "validate_forensic_record",
 ]
+
+# Alias for convenience — DiagnosticAgent == DiagnosticForensicAgent
+DiagnosticAgent = DiagnosticForensicAgent

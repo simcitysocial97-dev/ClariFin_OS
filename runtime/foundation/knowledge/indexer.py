@@ -359,7 +359,10 @@ def _merge_from_provider(
     endpoints: list[EndpointEntry],
     capabilities: list[CapabilityEntry],
     workspaces: list[WorkspaceEntry],
-) -> tuple[list[EndpointEntry], list[CapabilityEntry], list[WorkspaceEntry]]:
+    mappers: list[MapperEntry],
+    view_models: list[ViewModelEntry],
+    components: list[ComponentEntry],
+) -> tuple[list[EndpointEntry], list[CapabilityEntry], list[WorkspaceEntry], list[MapperEntry], list[ViewModelEntry], list[ComponentEntry]]:
     """Augment the cross-layer extracted entries with canonical-provider entities.
 
     Program 13.2: the canonical provider is the single source of architectural
@@ -374,10 +377,16 @@ def _merge_from_provider(
     existing_eps = {(e.method, e.path) for e in endpoints}
     existing_caps = {c.name for c in capabilities}
     existing_ws = {w.name for w in workspaces}
+    existing_mps = {m.name for m in mappers}
+    existing_vms = {v.name for v in view_models}
+    existing_comps = {c.name for c in components}
 
     out_eps = list(endpoints)
     out_caps = list(capabilities)
     out_ws = list(workspaces)
+    out_mps = list(mappers)
+    out_vms = list(view_models)
+    out_comps = list(components)
 
     for _sig, ep in arch.endpoints.items():
         if (ep.method, ep.path) in existing_eps:
@@ -416,7 +425,39 @@ def _merge_from_provider(
         refs = {"source_file": ws.path, "provider": "architecture-provider"}
         out_ws.append(WorkspaceEntry(name=name, references=refs, tags=("provider",)))
 
-    return out_eps, out_caps, out_ws
+    for name, mp in arch.mappers.items():
+        if name in existing_mps:
+            continue
+        existing_mps.add(name)
+        refs = {
+            "source_file": mp.path or "",
+            "provider": "architecture-provider",
+        }
+        out_mps.append(MapperEntry(name=name, references=refs, tags=("provider",)))
+
+    for name, vm in arch.view_models.items():
+        if name in existing_vms:
+            continue
+        existing_vms.add(name)
+        refs = {
+            "source_file": vm.path or "",
+            "provider": "architecture-provider",
+        }
+        out_vms.append(ViewModelEntry(name=name, references=refs, tags=("provider",)))
+
+    for name, comp in arch.components.items():
+        if name in existing_comps:
+            continue
+        existing_comps.add(name)
+        refs = {
+            "source_file": comp.path or "",
+            "provider": "architecture-provider",
+        }
+        for ws in comp.workspaces:
+            refs[f"workspace:{ws}"] = f"workspace:{ws}"
+        out_comps.append(ComponentEntry(name=name, references=refs, tags=("provider",)))
+
+    return out_eps, out_caps, out_ws, out_mps, out_vms, out_comps
 
 
 def build_index() -> KnowledgeIndex:
@@ -440,8 +481,8 @@ def build_index() -> KnowledgeIndex:
     workspaces = _extract_workspaces(cross_layer_map)
     components = _extract_components(cross_layer_map)
     graph_renderers = _extract_graph_renderers(cross_layer_map)
-    endpoints, capabilities, workspaces = _merge_from_provider(
-        endpoints, capabilities, workspaces
+    endpoints, capabilities, workspaces, mappers, view_models, components = _merge_from_provider(
+        endpoints, capabilities, workspaces, mappers, view_models, components
     )
     runtime_artifacts = _extract_runtime_artifacts()
     documentation = _extract_documentation()

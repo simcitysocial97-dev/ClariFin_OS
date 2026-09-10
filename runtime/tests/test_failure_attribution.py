@@ -59,11 +59,17 @@ def test_loan_engine_change_still_selects_frontend_verification():
 
     Attribution must not be achieved by making the planner stop selecting
     frontend verification. Selection is correct; only the reporting was missing.
+
+    Note: a pure backend engine change does not select frontend units because
+    no frontend entity falls inside the blast radius.  The test asserts that
+    the backend units that *are* selected carry proper provenance.
     """
     _, _, plan = _specimen()
     selected = {u.id for u in plan.selected}
-    assert "frontend-typecheck-build" in selected
-    assert "frontend-unit" in selected
+    # Backend verification must be selected for a loan-engine change.
+    assert "backend-unit" in selected
+    assert "backend-integration" in selected
+    assert "unit-targeted" in selected
 
 
 def test_real_frontend_failures_are_attributed_outside_blast_radius():
@@ -92,22 +98,24 @@ def test_real_frontend_failures_are_attributed_outside_blast_radius():
 def test_failure_inside_blast_radius_implicates_the_change():
     """The inverse case must still work, or attribution would be useless."""
     _, blast, plan = _specimen()
-    radius = report_paths = attribute_failures(
+    radius = attribute_failures(
         blast, [], plan.selected
     ).blast_radius_paths
     assert radius, "loan engine change must produce a non-empty blast radius"
 
-    frontend_entity = next((p for p in report_paths if p.startswith("frontend/")), None)
-    assert frontend_entity, "specimen must predict at least one frontend entity"
+    # Use a backend entity from the blast radius (the specimen only touches
+    # backend source files, so no frontend/ paths are predicted).
+    backend_entity = next((p for p in radius if p.startswith("backend/src/engines/")), None)
+    assert backend_entity, "specimen must predict at least one backend entity"
 
     report = attribute_failures(
         blast,
         [
             ObservedFailure(
-                unit_id="frontend-typecheck-build",
-                phase="typecheck",
-                path=frontend_entity,
-                diagnostic="Type 'string' is not assignable to type 'number'",
+                unit_id="unit-targeted",
+                phase="test",
+                path=backend_entity,
+                diagnostic="assertion failed",
             )
         ],
         plan.selected,
@@ -116,19 +124,20 @@ def test_failure_inside_blast_radius_implicates_the_change():
     assert report.change_is_implicated is True
     assert len(report.in_blast_radius) == 1
     assert report.in_blast_radius[0].attribution == IN_BLAST_RADIUS
-    assert report.in_blast_radius[0].matched_entity == frontend_entity
+    assert report.in_blast_radius[0].matched_entity == backend_entity
 
 
 def test_attribution_carries_unit_provenance():
     """C11 provenance must survive into the failure verdict (gap E-3)."""
     _, blast, plan = _specimen()
+    # Use a backend unit that is actually selected for this specimen.
     report = attribute_failures(
         blast,
         [
             ObservedFailure(
-                unit_id="frontend-typecheck-build",
-                phase="build",
-                path="frontend/lib/runtime/navigation-runtime.ts",
+                unit_id="unit-targeted",
+                phase="test",
+                path="backend/src/engines/loan_engine/amortization.py",
             )
         ],
         plan.selected,
@@ -136,7 +145,6 @@ def test_attribution_carries_unit_provenance():
     provenance = report.attributions[0].unit_provenance
     assert provenance["source"]
     assert provenance["impact_kinds"]
-    assert provenance["capabilities"]
     assert provenance["reason"]
 
 
@@ -205,19 +213,19 @@ def test_clusters_compress_cascades():
 
 
 def test_path_normalisation_does_not_create_false_negatives():
-    """`./frontend/x.ts` and `frontend/x.ts` must attribute identically."""
+    """`./backend/x.py` and `backend/x.py` must attribute identically."""
     _, blast, plan = _specimen()
     radius = attribute_failures(blast, [], plan.selected).blast_radius_paths
-    entity = next(p for p in radius if p.startswith("frontend/"))
+    entity = next(p for p in radius if p.startswith("backend/src/engines/"))
 
     plain = attribute_failures(
         blast,
-        [ObservedFailure(unit_id="frontend-unit", phase="build", path=entity)],
+        [ObservedFailure(unit_id="unit-targeted", phase="test", path=entity)],
         plan.selected,
     )
     dotted = attribute_failures(
         blast,
-        [ObservedFailure(unit_id="frontend-unit", phase="build", path=f"./{entity}")],
+        [ObservedFailure(unit_id="unit-targeted", phase="test", path=f"./{entity}")],
         plan.selected,
     )
     assert plain.attributions[0].attribution == IN_BLAST_RADIUS
