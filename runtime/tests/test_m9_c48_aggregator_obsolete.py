@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 
-from runtime.system.evidence.aggregator_obsolete_disposition import (
+from runtime.archive.aggregator_obsolete_disposition import (
     build_disposition,
     write_report,
 )

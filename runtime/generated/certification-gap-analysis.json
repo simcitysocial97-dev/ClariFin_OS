@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-06T16:33:17.707392",
+  "generated_at": "2026-09-10T08:45:58.265171",
   "phase": "Phase 8 \u2014 Certification Gap Analysis (constitutional, no suppression)",
   "old_certification": {
     "overall_status": "NOT_CERTIFIED",
@@ -44,27 +44,25 @@
   },
   "new_model": {
     "principle": "An Engine is an architectural UNIT identified by a package directory (__init__.py public API) or, for small cohesive engines, a single file. Implementation modules inside an engine package are NOT ownership roots.",
-    "engine_count": 13,
+    "engine_count": 12,
     "engine_style": {
       "package": 8,
-      "single_file": 5
+      "single_file": 4
     },
-    "engines_with_capability": [
+    "engines_with_capability": [],
+    "engines_without_capability_INTERNAL": [
       "account_engine",
       "behaviour_engine",
       "credit_card_engine",
-      "loan_engine",
-      "recommendation_engine",
-      "reconciliation_engine"
-    ],
-    "engines_without_capability_INTERNAL": [
       "financial_events",
       "financial_intelligence",
+      "loan_engine",
+      "recommendation_engine",
       "transaction_intelligence",
       "balance_engine",
-      "insight_generator",
+      "cashflow_engine",
       "ledger_audit_engine",
-      "nudge_engine"
+      "reconciliation_engine"
     ],
     "engines_with_router": [
       "account_engine",
@@ -80,8 +78,7 @@
     ],
     "engines_without_router": [
       "transaction_intelligence",
-      "insight_generator",
-      "nudge_engine"
+      "cashflow_engine"
     ],
     "engines_with_tests": [
       "account_engine",
@@ -93,13 +90,11 @@
       "recommendation_engine",
       "transaction_intelligence",
       "balance_engine",
+      "cashflow_engine",
       "ledger_audit_engine",
-      "nudge_engine",
       "reconciliation_engine"
     ],
-    "engines_without_tests": [
-      "insight_generator"
-    ]
+    "engines_without_tests": []
   },
   "comparison": {
     "disappeared_findings": [

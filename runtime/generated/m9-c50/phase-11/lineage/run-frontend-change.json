@@ -1,13 +1,13 @@
 {
-  "run_id": "frontend_change-a309c41e",
-  "timestamp": "2026-09-08T08:39:00.292202+00:00",
-  "repository_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+  "run_id": "frontend_change-8f96eadd",
+  "timestamp": "2026-09-10T06:07:13.647235+00:00",
+  "repository_sha": "f46cac53202531c4c24e2c7abe5138b58b5aea68",
   "scenario": "frontend_change",
   "changed_files": [
     "frontend/lib/test_r4_probe.ts"
   ],
-  "plan_identity": "plan::frontend_change-1e7757f0",
-  "execution_identity": "exec::frontend_change-a1e3d22f",
+  "plan_identity": "plan::frontend_change-f0d81be6",
+  "execution_identity": "exec::frontend_change-332868fa",
   "task_ids": [],
   "task_count": 0,
   "evidence_identities": [],

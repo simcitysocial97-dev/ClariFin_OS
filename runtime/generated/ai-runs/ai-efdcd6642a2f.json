@@ -1,0 +1,25 @@
+{
+  "id": "ai-efdcd6642a2f",
+  "symptom": "test",
+  "mode": "MANUAL",
+  "capability_id": null,
+  "status": "CANCELLED",
+  "steps": [],
+  "created_at": "2026-09-10T04:34:00.930955Z",
+  "updated_at": "2026-09-10T04:34:00.931394Z",
+  "completed_at": "2026-09-10T04:34:00.931394Z",
+  "error": null,
+  "audit_trail": [
+    {
+      "event_id": "audit-cfa40a86113a",
+      "event_type": "run_created",
+      "run_id": "ai-efdcd6642a2f",
+      "timestamp": "2026-09-10T04:34:00.931373Z",
+      "payload": {
+        "symptom": "test",
+        "mode": "MANUAL",
+        "capability_id": null
+      }
+    }
+  ]
+}

@@ -35,6 +35,7 @@ from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 RUNTIME_DIR = REPO_ROOT / "runtime"
+ARCHIVE_DIR = REPO_ROOT / "runtime" / "archive" / "analysis_scripts"
 GENERATED_DIR = RUNTIME_DIR / "generated"
 
 
@@ -132,6 +133,8 @@ CANONICAL_OUTPUTS: tuple[str, ...] = tuple(p.output for p in PHASES)
 
 def _load_phase_callable(phase: DiscoveryPhase) -> Callable[[], Any]:
     source = RUNTIME_DIR / f"{phase.module}.py"
+    if not source.exists():
+        source = ARCHIVE_DIR / f"{phase.module}.py"
     if not source.exists():  # pragma: no cover - defensive
         raise FileNotFoundError(f"Discovery phase module missing: {source}")
     spec = importlib.util.spec_from_file_location(

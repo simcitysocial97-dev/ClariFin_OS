@@ -1,6 +1,6 @@
 {
   "schema": "m9-c48/frontend-financial-arithmetic-lint@1",
-  "generated_at": "2026-09-08T08:43:33+00:00",
+  "generated_at": "2026-09-10T06:10:35+00:00",
   "scanned_files": [
     "frontend/__tests__/api-contracts/analytics.contract.test.ts",
     "frontend/__tests__/api-contracts/banks.contract.test.ts",
@@ -668,6 +668,7 @@
     "frontend/lib/sort/__tests__/sort-logic.test.ts",
     "frontend/lib/sort/types.ts",
     "frontend/lib/store/use-app-store.ts",
+    "frontend/lib/test_cross_f.ts",
     "frontend/lib/timeline/__tests__/timeline-experience.test.ts",
     "frontend/lib/timeline/segments.ts",
     "frontend/lib/utils.ts",

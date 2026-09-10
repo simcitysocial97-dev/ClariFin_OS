@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-08-08T18:38:20.239100",
+  "generated_at": "2026-09-10T08:45:57.389277",
   "engine_count": 12,
   "canonical_architecture": "package-preferred; single-file only for small cohesive engines",
   "engines": {
     "account_engine": {
       "canonical_style": "package",
       "legacy_style": false,
-      "migration_status": "CANONICAL_PACKAGE",
+      "migration_status": "CANONICAL_PACKAGE_INTERNAL",
       "entry_point": "engines/account_engine/__init__.py",
       "implementation_module_count": 6,
       "services": [
@@ -22,9 +22,7 @@
         "account_repository",
         "institution_repository"
       ],
-      "capabilities": [
-        "useAccountsCapability"
-      ],
+      "capabilities": [],
       "tests": [
         "backend/tests/properties/behaviour/test_engine_properties.py",
         "backend/tests/unit/engines/account/test_account_engine.py"
@@ -39,7 +37,7 @@
     "behaviour_engine": {
       "canonical_style": "package",
       "legacy_style": false,
-      "migration_status": "CANONICAL_PACKAGE",
+      "migration_status": "CANONICAL_PACKAGE_INTERNAL",
       "entry_point": "engines/behaviour_engine/__init__.py",
       "implementation_module_count": 17,
       "services": [
@@ -61,18 +59,32 @@
         "reconciliation_repository",
         "transaction_repository"
       ],
-      "capabilities": [
-        "useBehaviourCapability"
-      ],
+      "capabilities": [],
       "tests": [
         "backend/tests/capability/pattern_analysis/test_capability.py",
         "backend/tests/properties/behaviour/test_engine_properties.py",
         "backend/tests/properties/recommendations/test_engine_properties.py",
         "backend/tests/unit/engines/behavior/test_behavior_engine.py",
+        "backend/tests/unit/engines/behavior/test_stress.py",
         "backend/tests/unit/engines/behaviour/test_core.py",
+        "backend/tests/unit/engines/behaviour/test_core_risk_structure.py",
+        "backend/tests/unit/engines/behaviour/test_core_strengthening.py",
+        "backend/tests/unit/engines/behaviour/test_core_structure.py",
+        "backend/tests/unit/engines/behaviour/test_credit_dependency.py",
+        "backend/tests/unit/engines/behaviour/test_credit_dependency_strengthening.py",
+        "backend/tests/unit/engines/behaviour/test_insights_nudges_coverage.py",
+        "backend/tests/unit/engines/behaviour/test_insights_nudges_structure.py",
         "backend/tests/unit/engines/behaviour/test_integration.py",
         "backend/tests/unit/engines/behaviour/test_metrics.py",
-        "backend/tests/unit/engines/behaviour/test_patterns.py"
+        "backend/tests/unit/engines/behaviour/test_mutation_golden.py",
+        "backend/tests/unit/engines/behaviour/test_mutation_golden_groups.py",
+        "backend/tests/unit/engines/behaviour/test_mutation_strengthening.py",
+        "backend/tests/unit/engines/behaviour/test_mutation_strengthening_remaining.py",
+        "backend/tests/unit/engines/behaviour/test_patterns.py",
+        "backend/tests/unit/engines/behaviour/test_remaining_structure.py",
+        "backend/tests/unit/engines/behaviour/test_stress_scores.py",
+        "backend/tests/unit/engines/behaviour/test_stress_scores_structure.py",
+        "backend/tests/unit/engines/behaviour/test_temporal.py"
       ],
       "evidence": {
         "import_references": 3,
@@ -86,7 +98,7 @@
     "credit_card_engine": {
       "canonical_style": "package",
       "legacy_style": false,
-      "migration_status": "CANONICAL_PACKAGE",
+      "migration_status": "CANONICAL_PACKAGE_INTERNAL",
       "entry_point": "engines/credit_card_engine/__init__.py",
       "implementation_module_count": 7,
       "services": [
@@ -99,9 +111,7 @@
         "credit_card_repository",
         "credit_card_statement_repository"
       ],
-      "capabilities": [
-        "useCreditCardsCapability"
-      ],
+      "capabilities": [],
       "tests": [
         "backend/tests/properties/credit_card_engine/__init__.py",
         "backend/tests/properties/credit_card_engine/test_billing_properties.py",
@@ -109,7 +119,14 @@
         "backend/tests/properties/credit_card_engine/test_interest_properties.py",
         "backend/tests/properties/credit_cards/test_engine_properties.py",
         "backend/tests/properties/lending/test_engine_properties.py",
-        "backend/tests/unit/engines/credit_card/test_credit_card_engine.py"
+        "backend/tests/test_m9_c56_scenarios.py",
+        "backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
+        "backend/tests/unit/engines/credit_card/test_interest_strengthening.py",
+        "backend/tests/unit/engines/credit_card/test_mutation_gap_repairs.py",
+        "backend/tests/unit/engines/credit_card_engine/test_m9_c56_additional_gaps.py",
+        "backend/tests/unit/engines/credit_card_engine/test_m9_c56_boolean_flips.py",
+        "backend/tests/unit/engines/credit_card_engine/test_m9_c56_mutation_gaps.py",
+        "backend/tests/unit/engines/financial_events/test_financial_events.py"
       ],
       "evidence": {
         "import_references": 1,
@@ -143,8 +160,12 @@
         "backend/tests/properties/financial_events/__init__.py",
         "backend/tests/properties/financial_events/test_engine_properties.py",
         "backend/tests/properties/financial_events/test_lineage_properties.py",
+        "backend/tests/test_m9_c56_scenarios.py",
         "backend/tests/unit/engines/financial_events/__init__.py",
-        "backend/tests/unit/engines/financial_events/test_financial_events.py"
+        "backend/tests/unit/engines/financial_events/test_financial_events.py",
+        "backend/tests/unit/engines/financial_events/test_m9_c56_behavioral_gaps.py",
+        "backend/tests/unit/engines/financial_events/test_m9_c56_lineage_gaps.py",
+        "backend/tests/unit/engines/financial_events/test_m9_c56_missing_keys.py"
       ],
       "evidence": {
         "import_references": 1,
@@ -171,7 +192,20 @@
       ],
       "capabilities": [],
       "tests": [
-        "backend/tests/properties/forecasting/test_engine_properties.py"
+        "backend/tests/capability/financial_intelligence/__init__.py",
+        "backend/tests/capability/financial_intelligence/test_capability.py",
+        "backend/tests/properties/financial_intelligence/__init__.py",
+        "backend/tests/properties/financial_intelligence/test_optimization_properties.py",
+        "backend/tests/properties/financial_intelligence/test_scenario_intelligence_properties.py",
+        "backend/tests/properties/forecasting/test_engine_properties.py",
+        "backend/tests/unit/engines/financial_intelligence/__init__.py",
+        "backend/tests/unit/engines/financial_intelligence/test_forecasting.py",
+        "backend/tests/unit/engines/financial_intelligence/test_goal_planner.py",
+        "backend/tests/unit/engines/financial_intelligence/test_intelligence.py",
+        "backend/tests/unit/engines/financial_intelligence/test_mutation_golden.py",
+        "backend/tests/unit/engines/financial_intelligence/test_optimization.py",
+        "backend/tests/unit/engines/financial_intelligence/test_scenario.py",
+        "backend/tests/unit/engines/financial_intelligence/test_utils.py"
       ],
       "evidence": {
         "import_references": 1,
@@ -183,7 +217,7 @@
     "loan_engine": {
       "canonical_style": "package",
       "legacy_style": false,
-      "migration_status": "CANONICAL_PACKAGE",
+      "migration_status": "CANONICAL_PACKAGE_INTERNAL",
       "entry_point": "engines/loan_engine/__init__.py",
       "implementation_module_count": 8,
       "services": [
@@ -206,9 +240,7 @@
         "transaction_classification_repository",
         "transaction_repository"
       ],
-      "capabilities": [
-        "useLoansCapability"
-      ],
+      "capabilities": [],
       "tests": [
         "backend/tests/properties/lending/test_engine_properties.py",
         "backend/tests/properties/loan_engine/__init__.py",
@@ -219,6 +251,7 @@
         "backend/tests/properties/loan_engine/test_metrics_properties.py",
         "backend/tests/properties/loan_engine/test_prepayment_properties.py",
         "backend/tests/unit/engines/loan/test_amortization.py",
+        "backend/tests/unit/engines/loan/test_c39_regression.py",
         "backend/tests/unit/engines/loan/test_loan_engine.py"
       ],
       "evidence": {
@@ -238,7 +271,7 @@
     "recommendation_engine": {
       "canonical_style": "package",
       "legacy_style": false,
-      "migration_status": "CANONICAL_PACKAGE",
+      "migration_status": "CANONICAL_PACKAGE_INTERNAL",
       "entry_point": "engines/recommendation_engine/__init__.py",
       "implementation_module_count": 1,
       "services": [
@@ -257,12 +290,11 @@
         "pattern_repository",
         "transaction_repository"
       ],
-      "capabilities": [
-        "useBehaviourCapability"
-      ],
+      "capabilities": [],
       "tests": [
         "backend/tests/unit/engines/behaviour/test_integration.py",
-        "backend/tests/unit/engines/recommendation/test_recommendation_engine.py"
+        "backend/tests/unit/engines/recommendation/test_recommendation_engine.py",
+        "backend/tests/unit/engines/recommendation/test_recommendation_strengthening.py"
       ],
       "evidence": {
         "import_references": 2,
@@ -298,8 +330,14 @@
         "backend/tests/capability/transaction_intelligence/test_capability.py",
         "backend/tests/properties/credit_cards/test_engine_properties.py",
         "backend/tests/properties/transaction_intelligence/__init__.py",
+        "backend/tests/properties/transaction_intelligence/test_detector_properties.py",
         "backend/tests/properties/transaction_intelligence/test_engine_properties.py",
-        "backend/tests/unit/engines/transaction_intelligence/__init__.py"
+        "backend/tests/unit/engines/transaction_intelligence/__init__.py",
+        "backend/tests/unit/engines/transaction_intelligence/test_cash_conversion_detector.py",
+        "backend/tests/unit/engines/transaction_intelligence/test_cc_payment_detector.py",
+        "backend/tests/unit/engines/transaction_intelligence/test_detector_result.py",
+        "backend/tests/unit/engines/transaction_intelligence/test_loan_emi_detector.py",
+        "backend/tests/unit/engines/transaction_intelligence/test_mutation_golden.py"
       ],
       "evidence": {
         "import_references": 1,
@@ -325,7 +363,9 @@
       ],
       "capabilities": [],
       "tests": [
-        "backend/tests/invariants/test_determinism.py"
+        "backend/tests/invariants/test_determinism.py",
+        "backend/tests/unit/engines/balance_engine.py",
+        "backend/tests/unit/engines/balance_engine/test_balance_engine_helpers.py"
       ],
       "evidence": {
         "import_references": 2,
@@ -347,6 +387,7 @@
       "capabilities": [],
       "tests": [
         "backend/tests/capability/household_cashflow/test_capability.py",
+        "backend/tests/properties/cashflow/test_behavioral_strengthening.py",
         "backend/tests/properties/cashflow/test_engine_properties.py"
       ],
       "evidence": {
@@ -369,7 +410,9 @@
       "repositories": [],
       "capabilities": [],
       "tests": [
-        "backend/tests/audits/test_audit_minimal.py"
+        "backend/tests/audits/test_audit_minimal.py",
+        "backend/tests/unit/engines/ledger/test_ledger_engine.py",
+        "backend/tests/unit/engines/ledger_audit_engine.py"
       ],
       "evidence": {
         "import_references": 1,
@@ -381,7 +424,7 @@
     "reconciliation_engine": {
       "canonical_style": "single_file",
       "legacy_style": true,
-      "migration_status": "CANONICAL_SINGLE_FILE",
+      "migration_status": "CANONICAL_SINGLE_FILE_INTERNAL",
       "entry_point": "engines/reconciliation_engine.py",
       "implementation_module_count": 0,
       "services": [
@@ -393,14 +436,13 @@
       "repositories": [
         "reconciliation_repository"
       ],
-      "capabilities": [
-        "useReconciliationCapability"
-      ],
+      "capabilities": [],
       "tests": [
         "backend/tests/invariants/test_reconciliation_determinism.py",
         "backend/tests/invariants/test_reconciliation_properties.py",
         "backend/tests/properties/reconciliation/test_engine_properties.py",
-        "backend/tests/unit/engines/reconciliation/test_reconciliation.py"
+        "backend/tests/unit/engines/reconciliation/test_reconciliation.py",
+        "backend/tests/unit/engines/reconciliation/test_reconciliation_strengthening.py"
       ],
       "evidence": {
         "import_references": 2,

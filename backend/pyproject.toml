@@ -163,43 +163,22 @@ ignore_missing_imports = true
 # Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
 # Scope: full (all engines)
 # Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: credit_card_engine
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: credit_card_engine
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: credit_card_engine
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
 [tool.mutmut]
-source_paths = ["src/common/calculations.py", "src/core/domain", "src/engines/account_engine", "src/engines/balance_engine.py", "src/engines/behaviour_engine", "src/engines/cashflow_engine.py", "src/engines/credit_card_engine", "src/engines/financial_events", "src/engines/financial_intelligence", "src/engines/ledger_audit_engine.py", "src/engines/loan_engine", "src/engines/recommendation_engine", "src/engines/reconciliation_engine.py", "src/engines/transaction_intelligence"]
+source_paths = ["src/engines/credit_card_engine"]
 also_copy = ["src"]
 runner = "python3 -m pytest"
 pytest_add_cli_args_test_selection = [
-    "tests/capability/account_management",
-    "tests/capability/credit_cards",
-    "tests/capability/financial_events",
-    "tests/capability/financial_intelligence",
-    "tests/capability/pattern_analysis",
-    "tests/capability/recommendations",
-    "tests/capability/reconciliation",
-    "tests/capability/transaction_intelligence",
-    "tests/invariants/test_money.py",
-    "tests/properties/behaviour",
-    "tests/properties/cashflow",
-    "tests/properties/credit_card_engine",
-    "tests/properties/financial_events",
-    "tests/properties/financial_intelligence",
-    "tests/properties/loan_engine",
-    "tests/properties/reconciliation",
-    "tests/properties/test_money_invariants.py",
-    "tests/properties/transaction_intelligence",
-    "tests/unit/engines/account",
-    "tests/unit/engines/balance_engine.py",
-    "tests/unit/engines/behaviour",
-    "tests/unit/engines/behaviour/test_integration.py",
-    "tests/unit/engines/behaviour/test_metrics.py",
     "tests/unit/engines/credit_card",
-    "tests/unit/engines/financial_events",
-    "tests/unit/engines/financial_intelligence",
-    "tests/unit/engines/ledger_audit_engine.py",
-    "tests/unit/engines/loan",
-    "tests/unit/engines/recommendation",
-    "tests/unit/engines/reconciliation",
-    "tests/unit/engines/transaction_intelligence",
-    "tests/unit/test_calculations.py",
-    "tests/unit/test_money.py"
+    "tests/properties/credit_card_engine",
+    "tests/capability/credit_cards"
 ]
 no_progress = true

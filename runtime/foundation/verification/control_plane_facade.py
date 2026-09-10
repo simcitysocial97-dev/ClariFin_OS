@@ -39,11 +39,13 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
+import os
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
 # Canonical imports — these are the ONLY internal modules the facade consumes.
+
 from runtime.foundation.intelligence import (
     analyze,
     format_diagnostic,
@@ -513,6 +515,12 @@ class ControlPlane:
             health_report = EngineeringHealthReport()
             print(health_report.generate())
             return 0
+        elif q == "evidence-cleanup":
+            from runtime.foundation.verification.evidence_retention import (
+                cmd_evidence_cleanup,
+            )
+
+            return cmd_evidence_cleanup(sys.argv[2:] if len(sys.argv) > 2 else [])
         else:
             print(f"Unknown inspect subquery: {query}", file=sys.stderr)
             return 1

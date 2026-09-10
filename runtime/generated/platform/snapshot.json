@@ -776,9 +776,9 @@
       }
     },
     "change": {
-      "_c": 391666.345538582,
-      "_ts": "2026-09-08T09:02:53Z",
-      "hash": "12e18cf7fc09a257f664972521231f3f318fd39372b39b0d47a362448bc874c3",
+      "_c": 459836.227169563,
+      "_ts": "2026-09-10T04:33:49Z",
+      "hash": "463ef6448ed85465313e20e60324b1e81d1e190aff6f366fe57a8219aeeb3ef4",
       "payload": {
         "data": {
           "affected_capabilities": [
@@ -790,7 +790,99 @@
           "changed_files": [
             {
               "change_type": "modified",
+              "path": "backend/pyproject.toml"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/analyze_architecture.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/analyze_artifacts.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/analyze_engine_normalization.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/analyze_engine_topology.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/analyze_execution.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/analyze_gap.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/analyze_knowledge.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/analyze_ownership.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/architecture/discovery.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/architecture/sources.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/canonical_control_plane.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/control_plane_facade.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/diagnostic_agent.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/mutation_contract.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/verification.yaml"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/architecture-inventory-summary.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/architecture-inventory.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/artifact-ownership-v2.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/certification-gap-analysis.json"
+            },
+            {
+              "change_type": "modified",
               "path": "runtime/generated/diagnostic-signatures.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/engine-normalization.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/engine-topology.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/execution-graph.json"
             },
             {
               "change_type": "modified",
@@ -799,6 +891,10 @@
             {
               "change_type": "modified",
               "path": "runtime/generated/knowledge-index.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/knowledge-reconstruction.json"
             },
             {
               "change_type": "modified",
@@ -902,11 +998,23 @@
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/platform/snapshot.json"
+              "path": "runtime/generated/ownership-graph.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/vea5-reconciliation.pr.json"
+              "path": "runtime/generated/verification-cache.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/ai/agents.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/platform/ai/tools/handlers.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/program16_analysis.py"
             },
             {
               "change_type": "modified",
@@ -914,252 +1022,988 @@
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-16decbfaf22d.json"
+              "path": "runtime/system/evidence/aggregator_obsolete_disposition.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-1fa0a2056bad.json"
+              "path": "runtime/system/evidence/models/evidence.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-2c781a5cbb78.json"
+              "path": "runtime/tests/test_backend_evidence.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-2e1665bb710a.json"
+              "path": "runtime/tests/test_m9_c48_aggregator_obsolete.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-2e7b421e6a41.json"
+              "path": "runtime/tests/test_vea5_m8_merge_enforcement.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-531c38ddae33.json"
+              "path": "runtime/verify.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-53575664c396.json"
+              "path": ".github/workflows/mutation-pr.yml"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-97ddb3a41474.json"
+              "path": ".kilo/plans/1788885145550-remaining-refactor-plan.md"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-b3952fcea5e3.json"
+              "path": "docs/audits/m9-c57-runtime-framework/RUNTIME_FRAMEWORK_DEEP_DIVE_AUDIT.md"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-c641a1ed31b0.json"
+              "path": "docs/audits/m9-c57-runtime-framework/runtime_largest_files.txt"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-c876bf7de66b.json"
+              "path": "docs/audits/m9-c57-runtime-framework/runtime_loc_breakdown.txt"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/ai-runs/ai-d8d1445eb7d4.json"
+              "path": "runtime/archive/README.md"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-20599fd9eb8a/exec-0001-stderr.log"
+              "path": "runtime/archive/aggregator_obsolete_disposition.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-20599fd9eb8a/exec-0001-stdout.log"
+              "path": "runtime/archive/analysis_scripts/analyze_architecture.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-20599fd9eb8a/exec-0002-stderr.log"
+              "path": "runtime/archive/analysis_scripts/analyze_artifacts.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-20599fd9eb8a/exec-0002-stdout.log"
+              "path": "runtime/archive/analysis_scripts/analyze_engine_normalization.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-20599fd9eb8a/exec-0003-stderr.log"
+              "path": "runtime/archive/analysis_scripts/analyze_engine_topology.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-20599fd9eb8a/exec-0003-stdout.log"
+              "path": "runtime/archive/analysis_scripts/analyze_execution.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-20599fd9eb8a/exec-0004-stderr.log"
+              "path": "runtime/archive/analysis_scripts/analyze_gap.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-20599fd9eb8a/exec-0004-stdout.log"
+              "path": "runtime/archive/analysis_scripts/analyze_knowledge.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-20599fd9eb8a/exec-0005-stderr.log"
+              "path": "runtime/archive/analysis_scripts/analyze_ownership.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-20599fd9eb8a/exec-0005-stdout.log"
+              "path": "runtime/archive/program16_analysis.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-20599fd9eb8a/exec-0006-stderr.log"
+              "path": "runtime/foundation/verification/config_loader.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-20599fd9eb8a/exec-0006-stdout.log"
+              "path": "runtime/foundation/verification/diagnostics/__init__.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-20599fd9eb8a/exec-0007-stderr.log"
+              "path": "runtime/foundation/verification/diagnostics/formatter.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-20599fd9eb8a/exec-0007-stdout.log"
+              "path": "runtime/foundation/verification/e2e_route_mapper.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-20599fd9eb8a/exec-0008-stderr.log"
+              "path": "runtime/foundation/verification/evidence_retention.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-20599fd9eb8a/exec-0008-stdout.log"
+              "path": "runtime/foundation/verification/evidence_schema.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-04dd9e0b011e0267.json"
+              "path": "runtime/foundation/verification/execution/__init__.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-0ecd7c9286241720.json"
+              "path": "runtime/foundation/verification/execution/adapters/__init__.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-0f67847d7f6e0a68.json"
+              "path": "runtime/foundation/verification/execution/adapters/mutation.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-16827c0f0018d6e7.json"
+              "path": "runtime/foundation/verification/execution/adapters/pytest_adapters.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-23974ea176d0a265.json"
+              "path": "runtime/foundation/verification/execution/adapters/unit.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-25e766cc6d61a76f.json"
+              "path": "runtime/foundation/verification/execution/classification.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-2d2d33394f5ddfa2.json"
+              "path": "runtime/foundation/verification/execution/decisions.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-35b80715b64cc0f3.json"
+              "path": "runtime/foundation/verification/execution/dispatcher.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-46d460236afb8a05.json"
+              "path": "runtime/foundation/verification/execution/evidence.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-4ef02dc3e2071f89.json"
+              "path": "runtime/foundation/verification/execution/forensic.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-5354926df008149e.json"
+              "path": "runtime/foundation/verification/execution/identity.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-54dde65954eab78a.json"
+              "path": "runtime/foundation/verification/execution/reconciliation.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-5809e32dd24ae695.json"
+              "path": "runtime/foundation/verification/execution/scope.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-66dbbfda78ff3d7e.json"
+              "path": "runtime/foundation/verification/execution/smoke.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-6d671b564591321e.json"
+              "path": "runtime/foundation/verification/execution/task.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-7f35f235c0b97380.json"
+              "path": "runtime/foundation/verification/frontend_backend_gate.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-91bebab33e34d0f2.json"
+              "path": "runtime/foundation/verification/frontend_backend_map.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-9b62e6b73c9766a1.json"
+              "path": "runtime/foundation/verification/mutation/__init__.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-9e6d4ea16049c1e0.json"
+              "path": "runtime/foundation/verification/mutation/survivor_enricher.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-9e983faebeecca0c.json"
+              "path": "runtime/foundation/verification/orchestration/__init__.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-9f5bc79d229d8110.json"
+              "path": "runtime/foundation/verification/orchestration/models.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-a03d4129f1031f8a.json"
+              "path": "runtime/foundation/verification/orchestration/orchestrator.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-ac14ae05c4feb56b.json"
+              "path": "runtime/foundation/verification/parallel_executor.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-b2961bdd46a49376.json"
+              "path": "runtime/foundation/verification/regression_detector.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-baa7d1b9bd5daee1.json"
+              "path": "runtime/foundation/verification/semantics/__init__.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-c550322f912ddea9.json"
+              "path": "runtime/foundation/verification/semantics/assertions.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-d60d6fefe1e8ddb7.json"
+              "path": "runtime/foundation/verification/semantics/blast_radius.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-d7e501ef2c5143aa.json"
+              "path": "runtime/foundation/verification/semantics/concepts.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-efa861b83c5973f8.json"
+              "path": "runtime/foundation/verification/semantics/parser.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-f18bc7cc51c0889f.json"
+              "path": "runtime/foundation/verification/structured_logging.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-f94d3259d42ff534.json"
+              "path": "runtime/foundation/verification/symbol_resolver.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-fbaea7280c1c0300.json"
+              "path": "runtime/foundation/verification/symbol_test_selector.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/__init__.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/artifacts.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/bypass.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/c53_integration.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/certification_gates.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/core.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/coverage.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/duplication.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/efficiency.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/emission.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/environment.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/equivalence.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/evidence_contract.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/failure_injection.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/failure_semantics.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/greenness.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/inventory.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/mapping.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/measurement_integrity.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/workflow_convergence/scenarios.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/e2e-route-map.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/frontend-backend-map.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/logs/verification-20260910.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0001-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0001-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0002-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0002-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0003-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0003-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0004-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0004-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0005-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0005-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0006-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0006-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0008-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0008-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0001-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0001-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0002-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0002-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0003-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0003-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0004-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0004-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0005-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0005-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0006-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0006-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0007-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0007-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0008-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0008-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0001-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0001-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0002-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0002-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0003-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0003-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0004-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0004-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0005-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0005-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0006-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0006-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0008-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0008-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0001-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0001-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0002-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0002-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0003-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0003-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0004-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0004-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0005-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0005-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0006-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0006-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0007-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0007-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0008-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0008-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0001-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0001-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0002-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0002-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0003-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0003-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0004-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0004-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0005-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0005-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0006-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0006-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0007-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0007-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0008-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0008-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0001-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0001-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0002-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0002-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0003-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0003-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0004-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0004-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0005-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0005-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0006-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0006-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0007-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0007-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0008-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0008-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-087518208c3842fa.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-09ede4567f297541.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-0ed50281a9633121.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-101020ea3c8cddac.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-1727a6bd2e88b146.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-1fb863b1df772e77.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-2303561cef9a6714.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-2a8f4cede0c88e12.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-2ae92e251b3cd9ef.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-2d1decba6b754d98.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-2f6751e440b8f5c9.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-343522ba8d35be9e.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-37a1ccdf8c720d31.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-37d35dc55a7e5054.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-3da703f3a5c88109.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-4099675f1d599d63.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-53129cd1ad354c70.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-55a52341876acd47.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-5a9b504414c4a04a.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-5e7e3ca9e2c48a4f.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-5f3d3baecdefbcd8.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-615e253a826f5dfd.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-65f9e382ce2f4975.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-678e2a774fbebf36.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-7849666866fe7dc8.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-7b24ab552a0251af.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-7b5e4841da577764.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-7c933baadf60083e.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-7fe80f5a26ec928a.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-88fe2a87c19a05e3.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-8d93551d34a99456.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-8fe1affe35b3cbf1.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-994e9a6e4349853a.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-9f8fe9e44915ad88.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-a1c92b86ddf28f4b.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-a4e979fcb85a1df0.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-bf9b0b80971bded5.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-c3b250e93ca11b80.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-d17d94923c452444.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-d64babdc94a6d389.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-db20322b1b1a3e4b.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-db43dab22328a7bd.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-deb6e0265f2fb64b.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-df4b92b673eff0dd.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-e23e8e75506e9339.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-e836f9d591ee09b8.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-f917b5d298835c76.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-fd6faee274978363.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c57/product-commercial-evolution-audit/progress.md"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/metrics/main/.index.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/metrics/main/final-test.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/metrics/smoke-test/.index.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/metrics/smoke-test/smoke-1789012170.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/metrics/smoke-test/smoke-1789012203.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/metrics/smoke-test/smoke-1789012249.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/metrics/smoke-test/smoke-1789012408.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/metrics/smoke-test/smoke-1789012563.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/metrics/smoke-test/smoke-1789013278.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/metrics/smoke-test/smoke-1789013288.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/metrics/smoke-test/smoke-1789013414.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/metrics/smoke-test/smoke-1789013655.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/symbol-cache.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/symbol-test-map.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/system/command/__init__.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/system/financial/__init__.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/system/graph/__init__.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/system/timeline/__init__.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_e2e_smoke.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_frontend_backend_map.py"
             }
           ],
-          "generated_from": "2026-09-08T09:02:51.501621+00:00",
+          "generated_from": "2026-09-10T04:33:48.631307+00:00",
           "recommended_verification": [],
           "risk": "HIGH",
           "stale_evidence": []
         },
-        "generated_at": "2026-09-08T09:02:53Z",
-        "id": "sha256:8ca635e03f9102b593b0553201f475d1d6ebf393d59c67cf5c1c9af34984c1bd",
+        "generated_at": "2026-09-10T04:33:49Z",
+        "id": "sha256:49ad1d28c416765d4b4220797b61fda3d690f8ffaa341030c26ee66685ae74d1",
         "kind": "platform.change_intelligence",
         "version": "1.0.0"
       }
@@ -1410,6 +2254,6 @@
       }
     }
   },
-  "generated_at": "2026-09-08T09:02:53Z",
+  "generated_at": "2026-09-10T04:33:49Z",
   "version": "1"
 }

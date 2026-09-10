@@ -64,6 +64,7 @@ class InspectQuery(str, Enum):
     MUTATION = "mutation"
     WORKFLOWS = "workflows"
     HEALTH = "health"
+    EVIDENCE_CLEANUP = "evidence-cleanup"
 
 
 @dataclass(frozen=True)
@@ -384,6 +385,7 @@ def canonical_help() -> str:
     lines.append("  mutation")
     lines.append("  workflows")
     lines.append("  health")
+    lines.append("  evidence-cleanup")
     lines.append("")
     lines.append("Examples:")
     lines.append(

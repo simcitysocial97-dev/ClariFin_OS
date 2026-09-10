@@ -1,27 +1,27 @@
 {
   "runs": [
     {
-      "run_id": "16827c0f0018d6e7",
-      "timestamp": "2026-09-08T08:50:39.608376+00:00",
-      "repository_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
-      "scenario": "self_verification",
-      "changed_files": [
-        "runtime/foundation/verification/control_plane_facade.py"
-      ],
+      "run_id": "a1be0162885e0f33",
+      "timestamp": "2026-09-10T05:04:06.518908+00:00",
+      "repository_sha": "f46cac53202531c4c24e2c7abe5138b58b5aea68",
+      "scenario": "ci_equivalent_execution",
+      "changed_files": [],
       "resolved_capabilities": [
-        "verification-runtime",
-        "control-plane"
+        "money"
       ],
       "obligations": [
-        "unit",
-        "property",
-        "invariant"
+        "exec::ci::scenario15::invariant::money"
       ],
-      "plan_identity": null,
-      "execution_identity": null,
-      "evidence_identities": [],
-      "reconciliation": {},
-      "final_decision": "self_verified",
+      "plan_identity": "ci::scenario15::exec::ci::scenario15::invariant::money",
+      "execution_identity": "runtime.verification::exec::360acfe2a694817a",
+      "evidence_identities": [
+        "evidence_id=runtime.verification::ev::04ffb7e5fd9044f2"
+      ],
+      "reconciliation": {
+        "exit_code": 0,
+        "failure_kind": null
+      },
+      "final_decision": "ci_verified",
       "failures": [],
       "reused_evidence": [],
       "invalidated_evidence": []

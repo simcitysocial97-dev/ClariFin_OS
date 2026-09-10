@@ -1,156 +1,28 @@
-"""Evidence Models — Structured dataclasses for verification evidence."""
+"""Evidence Models — Structured dataclasses for verification evidence.
 
+DEPRECATED: This module now re-exports all evidence types from the canonical
+location ``runtime.foundation.verification.evidence_schema``. The original
+definitions have been consolidated there to eliminate duplication.
+
+All original import paths continue to work unchanged.
+"""
 from __future__ import annotations
 
-import json
-from dataclasses import asdict, dataclass, field
-from pathlib import Path
-from typing import Any
+# Re-export all evidence types from the unified schema for backward compatibility.
+from runtime.foundation.verification.evidence_schema import (  # noqa: F401,F403
+    ContractEvidence,
+    CoverageEvidence,
+    EvidenceCollectionResult,
+    MutationEvidence,
+    TestResultEvidence,
+    VerificationEvidence,
+)
 
-
-@dataclass(frozen=True, slots=True)
-class CoverageEvidence:
-    """Coverage evidence from test runs."""
-
-    percentage: float
-    covered_lines: int
-    total_lines: int
-    gaps: list[str] = field(default_factory=list)
-    source: str = "backend"
-    artifact_path: str = ""
-
-    def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
-
-    def to_json(self) -> str:
-        return json.dumps(self.to_dict(), indent=2)
-
-
-@dataclass(frozen=True, slots=True)
-class MutationEvidence:
-    """Mutation testing evidence."""
-
-    score: float
-    killed: int
-    survived: int
-    timeout: int = 0
-    error: int = 0
-    skipped: int = 0
-    survivor_details: list[dict[str, Any]] = field(default_factory=list)
-    source: str = "backend"
-    artifact_path: str = ""
-
-    def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
-
-    def to_json(self) -> str:
-        return json.dumps(self.to_dict(), indent=2)
-
-
-@dataclass(frozen=True, slots=True)
-class TestResultEvidence:
-    """Test result evidence from JUnit XML."""
-
-    passed: int = 0
-    failed: int = 0
-    errors: int = 0
-    skipped: int = 0
-    failed_test_names: list[str] = field(default_factory=list)
-    duration_seconds: float = 0.0
-    source: str = "backend"
-
-    def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
-
-    def to_json(self) -> str:
-        return json.dumps(self.to_dict(), indent=2)
-
-
-@dataclass(frozen=True, slots=True)
-class ContractEvidence:
-    """Contract test evidence from Schemathesis."""
-
-    endpoints_tested: int = 0
-    failures: list[dict[str, Any]] = field(default_factory=list)
-    schema_violations: int = 0
-    status: str = "not_run"
-    source: str = "backend"
-
-    def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
-
-    def to_json(self) -> str:
-        return json.dumps(self.to_dict(), indent=2)
-
-
-@dataclass(frozen=True, slots=True)
-class VerificationEvidence:
-    """Complete verification evidence for a commit/branch."""
-
-    commit_sha: str
-    branch: str
-    timestamp: str
-    status: str  # "pass", "fail", "partial"
-    coverage: CoverageEvidence | None = None
-    mutation: MutationEvidence | None = None
-    property_tests: dict[str, Any] = field(default_factory=dict)
-    contract_tests: dict[str, Any] = field(default_factory=dict)
-    artifacts: list[dict[str, Any]] = field(default_factory=list)
-
-    def to_dict(self) -> dict[str, Any]:
-        data = asdict(self)
-        if self.coverage:
-            data["coverage"] = self.coverage.to_dict()
-        if self.mutation:
-            data["mutation"] = self.mutation.to_dict()
-        return data
-
-    def to_json(self) -> str:
-        return json.dumps(self.to_dict(), indent=2)
-
-    @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> VerificationEvidence:
-        coverage_data = data.get("coverage")
-        mutation_data = data.get("mutation")
-        coverage = CoverageEvidence(**coverage_data) if coverage_data else None
-        mutation = MutationEvidence(**mutation_data) if mutation_data else None
-        return cls(
-            commit_sha=data["commit_sha"],
-            branch=data["branch"],
-            timestamp=data["timestamp"],
-            status=data["status"],
-            coverage=coverage,
-            mutation=mutation,
-            property_tests=data.get("property_tests", {}),
-            contract_tests=data.get("contract_tests", {}),
-            artifacts=data.get("artifacts", []),
-        )
-
-    @classmethod
-    def from_json(cls, json_str: str) -> VerificationEvidence:
-        return cls.from_dict(json.loads(json_str))
-
-    def write(self, path: Path) -> None:
-        """Write verification evidence to a JSON file."""
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(self.to_json())
-
-
-@dataclass(frozen=True, slots=True)
-class EvidenceCollectionResult:
-    """Result of collecting all evidence from a workspace."""
-
-    workspace_root: str
-    collected_at: str
-    artifacts: list[dict[str, Any]]
-    collectors: dict[str, dict[str, Any]]
-
-    def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
-
-    def to_json(self) -> str:
-        return json.dumps(self.to_dict(), indent=2)
-
-    def write(self, path: Path) -> None:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(self.to_json())
+__all__ = [
+    "CoverageEvidence",
+    "MutationEvidence",
+    "TestResultEvidence",
+    "ContractEvidence",
+    "VerificationEvidence",
+    "EvidenceCollectionResult",
+]

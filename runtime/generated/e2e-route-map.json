@@ -1,0 +1,80 @@
+{
+  "schema": "e2e-route-map/v1",
+  "routes": [
+    "/",
+    "/accounts",
+    "/behaviour",
+    "/cards",
+    "/cashflow",
+    "/command-center",
+    "/dashboard",
+    "/forecast",
+    "/investments",
+    "/loans",
+    "/net-worth",
+    "/platform",
+    "/platform/architecture",
+    "/platform/capabilities",
+    "/platform/capabilities/[capabilityId]",
+    "/platform/diagnostics",
+    "/platform/diagnostics/change",
+    "/platform/errors",
+    "/platform/history",
+    "/platform/history/compare",
+    "/platform/verification",
+    "/platform/verification/[capability]",
+    "/platform/verification/history/[runId]",
+    "/platform/verification/run/[capability]",
+    "/reconciliation",
+    "/settings",
+    "/transactions"
+  ],
+  "mapping": {
+    "/": [],
+    "/accounts": [],
+    "/behaviour": [
+      "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/behavior-scoring.spec.ts",
+      "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/behavior.spec.ts",
+      "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/e2e-financial-logic.spec.ts",
+      "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/edge-cases.spec.ts"
+    ],
+    "/cards": [],
+    "/cashflow": [],
+    "/command-center": [],
+    "/dashboard": [
+      "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/e2e-financial-logic.spec.ts",
+      "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/edge-cases.spec.ts",
+      "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/performance.spec.ts",
+      "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/visual-regression.spec.ts"
+    ],
+    "/forecast": [],
+    "/investments": [],
+    "/loans": [],
+    "/net-worth": [],
+    "/platform": [],
+    "/platform/architecture": [],
+    "/platform/capabilities": [],
+    "/platform/capabilities/[capabilityId]": [],
+    "/platform/diagnostics": [],
+    "/platform/diagnostics/change": [],
+    "/platform/errors": [],
+    "/platform/history": [],
+    "/platform/history/compare": [],
+    "/platform/verification": [],
+    "/platform/verification/[capability]": [],
+    "/platform/verification/history/[runId]": [],
+    "/platform/verification/run/[capability]": [],
+    "/reconciliation": [
+      "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/reconciliation.spec.ts"
+    ],
+    "/settings": [],
+    "/transactions": [
+      "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/css-integrity.spec.ts",
+      "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/e2e-financial-logic.spec.ts",
+      "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/navigation.spec.ts",
+      "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/performance.spec.ts",
+      "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/transactions.spec.ts"
+    ]
+  },
+  "generated_at": "2026-09-10T07:19:36.341468+00:00"
+}

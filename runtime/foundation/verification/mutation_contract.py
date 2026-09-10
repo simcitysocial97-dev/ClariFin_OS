@@ -17,6 +17,8 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from runtime.foundation.verification.config_loader import get_threshold
+
 # Canonical mutmut 3.7.0 status vocabulary -> our bucket.
 _STATUS_MAP = {
     "killed": "killed",
@@ -395,6 +397,23 @@ def compute_score(counts: MutationCounts) -> float | None:
     return round(counts.killed * 100.0 / denominator, 1)
 
 
+def _resolve_mutation_threshold(mode: str, fallback: int) -> int:
+    """Return the effective mutation score threshold for the given mode.
+
+    Reads from verification.yaml under ``mutation_thresholds.<mode>``;
+    falls back to *fallback* (the dataclass default of 80) when the key is
+    missing or the yaml is unavailable.
+    """
+    _MODE_KEY_MAP: dict[str, str] = {
+        "full": "full_campaign",
+        "incremental": "incremental",
+        "target": "incremental",
+        "smoke": "smoke",
+    }
+    key = _MODE_KEY_MAP.get(mode, "full_campaign")
+    return get_threshold("mutation_thresholds", key, fallback)
+
+
 def classify_gates(
     result: MutationResult,
 ) -> tuple[bool, bool, bool | None, str]:
@@ -422,7 +441,7 @@ def classify_gates(
     if score is None:
         return True, True, None, "NOT EVALUABLE (no scored mutants)"
 
-    gate_c = score >= result.threshold_percent
+    gate_c = score >= _resolve_mutation_threshold(result.mode, result.threshold_percent)
     verdict = "PASS" if gate_c else "QUALITY FAIL"
     return True, True, gate_c, verdict
 

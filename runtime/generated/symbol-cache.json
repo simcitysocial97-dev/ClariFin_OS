@@ -1,0 +1,678 @@
+{
+  "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/emi.py": {
+    "mtime": 1789024837.941147,
+    "symbols": [
+      {
+        "name": "compute_emi_fixed",
+        "kind": "function",
+        "file": "backend/src/engines/loan_engine/emi.py",
+        "start_line": 17,
+        "end_line": 55,
+        "parent_class": null
+      },
+      {
+        "name": "compute_emi_floating",
+        "kind": "function",
+        "file": "backend/src/engines/loan_engine/emi.py",
+        "start_line": 58,
+        "end_line": 64,
+        "parent_class": null
+      },
+      {
+        "name": "compute_monthly_interest",
+        "kind": "function",
+        "file": "backend/src/engines/loan_engine/emi.py",
+        "start_line": 67,
+        "end_line": 80,
+        "parent_class": null
+      },
+      {
+        "name": "compute_principal_component",
+        "kind": "function",
+        "file": "backend/src/engines/loan_engine/emi.py",
+        "start_line": 83,
+        "end_line": 88,
+        "parent_class": null
+      },
+      {
+        "name": "compute_principal_from_emi",
+        "kind": "function",
+        "file": "backend/src/engines/loan_engine/emi.py",
+        "start_line": 91,
+        "end_line": 142,
+        "parent_class": null
+      },
+      {
+        "name": "compute_tenure_from_emi",
+        "kind": "function",
+        "file": "backend/src/engines/loan_engine/emi.py",
+        "start_line": 145,
+        "end_line": 173,
+        "parent_class": null
+      }
+    ]
+  },
+  "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/metrics.py": {
+    "mtime": 1786259075.4091237,
+    "symbols": [
+      {
+        "name": "compute_loan_metrics",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/metrics.py",
+        "start_line": 9,
+        "end_line": 52,
+        "parent_class": null
+      },
+      {
+        "name": "calculate_interest_saved",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/metrics.py",
+        "start_line": 55,
+        "end_line": 63,
+        "parent_class": null
+      },
+      {
+        "name": "calculate_tenure_saved",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/metrics.py",
+        "start_line": 66,
+        "end_line": 70,
+        "parent_class": null
+      },
+      {
+        "name": "get_interest_component",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/metrics.py",
+        "start_line": 73,
+        "end_line": 86,
+        "parent_class": null
+      },
+      {
+        "name": "get_emi_component",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/metrics.py",
+        "start_line": 89,
+        "end_line": 96,
+        "parent_class": null
+      }
+    ]
+  },
+  "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/amortization.py": {
+    "mtime": 1786846216.2407372,
+    "symbols": [
+      {
+        "name": "_add_months",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/amortization.py",
+        "start_line": 16,
+        "end_line": 38,
+        "parent_class": null
+      },
+      {
+        "name": "_required_emi",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/amortization.py",
+        "start_line": 41,
+        "end_line": 62,
+        "parent_class": null
+      },
+      {
+        "name": "generate_schedule",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/amortization.py",
+        "start_line": 65,
+        "end_line": 194,
+        "parent_class": null
+      },
+      {
+        "name": "find_schedule_row",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/amortization.py",
+        "start_line": 197,
+        "end_line": 205,
+        "parent_class": null
+      },
+      {
+        "name": "total_interest_paise",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/amortization.py",
+        "start_line": 208,
+        "end_line": 212,
+        "parent_class": null
+      },
+      {
+        "name": "total_payment_paise",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/amortization.py",
+        "start_line": 215,
+        "end_line": 219,
+        "parent_class": null
+      },
+      {
+        "name": "total_principal_paise",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/amortization.py",
+        "start_line": 222,
+        "end_line": 226,
+        "parent_class": null
+      },
+      {
+        "name": "validate_schedule_invariants",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/amortization.py",
+        "start_line": 234,
+        "end_line": 261,
+        "parent_class": null
+      },
+      {
+        "name": "validate_schedule",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/amortization.py",
+        "start_line": 264,
+        "end_line": 356,
+        "parent_class": null
+      }
+    ]
+  },
+  "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/prepayment.py": {
+    "mtime": 1787225072.3109808,
+    "symbols": [
+      {
+        "name": "_compute_tenure_from_emi",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/prepayment.py",
+        "start_line": 16,
+        "end_line": 35,
+        "parent_class": null
+      },
+      {
+        "name": "compute_remaining_months",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/prepayment.py",
+        "start_line": 38,
+        "end_line": 41,
+        "parent_class": null
+      },
+      {
+        "name": "apply_prepayment",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/prepayment.py",
+        "start_line": 44,
+        "end_line": 73,
+        "parent_class": null
+      },
+      {
+        "name": "apply_prepayment_at_month",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/prepayment.py",
+        "start_line": 76,
+        "end_line": 240,
+        "parent_class": null
+      },
+      {
+        "name": "apply_multiple_prepayments",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/prepayment.py",
+        "start_line": 243,
+        "end_line": 273,
+        "parent_class": null
+      },
+      {
+        "name": "regenerate_schedule",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/prepayment.py",
+        "start_line": 276,
+        "end_line": 347,
+        "parent_class": null
+      }
+    ]
+  },
+  "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/foreclosure.py": {
+    "mtime": 1786716195.0558436,
+    "symbols": [
+      {
+        "name": "compute_foreclosure_amount",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/foreclosure.py",
+        "start_line": 11,
+        "end_line": 54,
+        "parent_class": null
+      },
+      {
+        "name": "compute_prepayment_breakup",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/foreclosure.py",
+        "start_line": 57,
+        "end_line": 102,
+        "parent_class": null
+      }
+    ]
+  },
+  "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/__init__.py": {
+    "mtime": 1786259075.4091237,
+    "symbols": []
+  },
+  "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/utils.py": {
+    "mtime": 1786259075.4131234,
+    "symbols": [
+      {
+        "name": "bps_to_decimal_rate",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/utils.py",
+        "start_line": 8,
+        "end_line": 14,
+        "parent_class": null
+      },
+      {
+        "name": "bps_to_monthly_rate",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/utils.py",
+        "start_line": 17,
+        "end_line": 23,
+        "parent_class": null
+      }
+    ]
+  },
+  "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/models.py": {
+    "mtime": 1786259075.4121234,
+    "symbols": [
+      {
+        "name": "InterestType",
+        "kind": "class",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/models.py",
+        "start_line": 13,
+        "end_line": 18,
+        "parent_class": null
+      },
+      {
+        "name": "PrepaymentMode",
+        "kind": "class",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/models.py",
+        "start_line": 21,
+        "end_line": 25,
+        "parent_class": null
+      },
+      {
+        "name": "AmortizationRow",
+        "kind": "class",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/models.py",
+        "start_line": 28,
+        "end_line": 37,
+        "parent_class": null
+      },
+      {
+        "name": "PrepaymentResult",
+        "kind": "class",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/models.py",
+        "start_line": 40,
+        "end_line": 53,
+        "parent_class": null
+      },
+      {
+        "name": "FloatingRateChange",
+        "kind": "class",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/models.py",
+        "start_line": 56,
+        "end_line": 61,
+        "parent_class": null
+      },
+      {
+        "name": "ForeclosureResult",
+        "kind": "class",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/models.py",
+        "start_line": 64,
+        "end_line": 71,
+        "parent_class": null
+      },
+      {
+        "name": "LoanMetrics",
+        "kind": "class",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/models.py",
+        "start_line": 74,
+        "end_line": 84,
+        "parent_class": null
+      }
+    ]
+  },
+  "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/floating_rate.py": {
+    "mtime": 1786846216.2407372,
+    "symbols": [
+      {
+        "name": "apply_floating_rate_change",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/floating_rate.py",
+        "start_line": 11,
+        "end_line": 63,
+        "parent_class": null
+      },
+      {
+        "name": "simulate_floating_rate_schedule",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/floating_rate.py",
+        "start_line": 66,
+        "end_line": 116,
+        "parent_class": null
+      },
+      {
+        "name": "get_change_month",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/floating_rate.py",
+        "start_line": 83,
+        "end_line": 86,
+        "parent_class": null
+      },
+      {
+        "name": "get_new_rate",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/floating_rate.py",
+        "start_line": 88,
+        "end_line": 91,
+        "parent_class": null
+      },
+      {
+        "name": "get_mode",
+        "kind": "function",
+        "file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/loan_engine/floating_rate.py",
+        "start_line": 93,
+        "end_line": 99,
+        "parent_class": null
+      }
+    ]
+  },
+  "/tmp/tmp8cgtkg7z.py": {
+    "mtime": 1789023944.1443477,
+    "symbols": [
+      {
+        "name": "TestClass",
+        "kind": "class",
+        "file": "/tmp/tmp8cgtkg7z.py",
+        "start_line": 1,
+        "end_line": 6,
+        "parent_class": null
+      },
+      {
+        "name": "top_level_function",
+        "kind": "function",
+        "file": "/tmp/tmp8cgtkg7z.py",
+        "start_line": 8,
+        "end_line": 9,
+        "parent_class": null
+      },
+      {
+        "name": "method_one",
+        "kind": "method",
+        "file": "/tmp/tmp8cgtkg7z.py",
+        "start_line": 2,
+        "end_line": 3,
+        "parent_class": "TestClass"
+      },
+      {
+        "name": "method_two",
+        "kind": "method",
+        "file": "/tmp/tmp8cgtkg7z.py",
+        "start_line": 5,
+        "end_line": 6,
+        "parent_class": "TestClass"
+      }
+    ]
+  },
+  "/tmp/tmpjw04qb6l.py": {
+    "mtime": 1789024194.89118,
+    "symbols": [
+      {
+        "name": "TestClass",
+        "kind": "class",
+        "file": "/tmp/tmpjw04qb6l.py",
+        "start_line": 1,
+        "end_line": 6,
+        "parent_class": null
+      },
+      {
+        "name": "top_level_function",
+        "kind": "function",
+        "file": "/tmp/tmpjw04qb6l.py",
+        "start_line": 8,
+        "end_line": 9,
+        "parent_class": null
+      },
+      {
+        "name": "method_one",
+        "kind": "method",
+        "file": "/tmp/tmpjw04qb6l.py",
+        "start_line": 2,
+        "end_line": 3,
+        "parent_class": "TestClass"
+      },
+      {
+        "name": "method_two",
+        "kind": "method",
+        "file": "/tmp/tmpjw04qb6l.py",
+        "start_line": 5,
+        "end_line": 6,
+        "parent_class": "TestClass"
+      }
+    ]
+  },
+  "/tmp/tmpql0h_gof.py": {
+    "mtime": 1789024261.968278,
+    "symbols": [
+      {
+        "name": "TestClass",
+        "kind": "class",
+        "file": "/tmp/tmpql0h_gof.py",
+        "start_line": 1,
+        "end_line": 6,
+        "parent_class": null
+      },
+      {
+        "name": "top_level_function",
+        "kind": "function",
+        "file": "/tmp/tmpql0h_gof.py",
+        "start_line": 8,
+        "end_line": 9,
+        "parent_class": null
+      },
+      {
+        "name": "method_one",
+        "kind": "method",
+        "file": "/tmp/tmpql0h_gof.py",
+        "start_line": 2,
+        "end_line": 3,
+        "parent_class": "TestClass"
+      },
+      {
+        "name": "method_two",
+        "kind": "method",
+        "file": "/tmp/tmpql0h_gof.py",
+        "start_line": 5,
+        "end_line": 6,
+        "parent_class": "TestClass"
+      }
+    ]
+  },
+  "/tmp/tmpnlm37bsa.py": {
+    "mtime": 1789024390.8359616,
+    "symbols": [
+      {
+        "name": "TestClass",
+        "kind": "class",
+        "file": "/tmp/tmpnlm37bsa.py",
+        "start_line": 1,
+        "end_line": 6,
+        "parent_class": null
+      },
+      {
+        "name": "top_level_function",
+        "kind": "function",
+        "file": "/tmp/tmpnlm37bsa.py",
+        "start_line": 8,
+        "end_line": 9,
+        "parent_class": null
+      },
+      {
+        "name": "method_one",
+        "kind": "method",
+        "file": "/tmp/tmpnlm37bsa.py",
+        "start_line": 2,
+        "end_line": 3,
+        "parent_class": "TestClass"
+      },
+      {
+        "name": "method_two",
+        "kind": "method",
+        "file": "/tmp/tmpnlm37bsa.py",
+        "start_line": 5,
+        "end_line": 6,
+        "parent_class": "TestClass"
+      }
+    ]
+  },
+  "/tmp/tmp4qaxtd5z.py": {
+    "mtime": 1789024476.5226586,
+    "symbols": [
+      {
+        "name": "TestClass",
+        "kind": "class",
+        "file": "/tmp/tmp4qaxtd5z.py",
+        "start_line": 1,
+        "end_line": 6,
+        "parent_class": null
+      },
+      {
+        "name": "top_level_function",
+        "kind": "function",
+        "file": "/tmp/tmp4qaxtd5z.py",
+        "start_line": 8,
+        "end_line": 9,
+        "parent_class": null
+      },
+      {
+        "name": "method_one",
+        "kind": "method",
+        "file": "/tmp/tmp4qaxtd5z.py",
+        "start_line": 2,
+        "end_line": 3,
+        "parent_class": "TestClass"
+      },
+      {
+        "name": "method_two",
+        "kind": "method",
+        "file": "/tmp/tmp4qaxtd5z.py",
+        "start_line": 5,
+        "end_line": 6,
+        "parent_class": "TestClass"
+      }
+    ]
+  },
+  "/tmp/tmp12aa3v3e.py": {
+    "mtime": 1789024550.7076414,
+    "symbols": [
+      {
+        "name": "TestClass",
+        "kind": "class",
+        "file": "/tmp/tmp12aa3v3e.py",
+        "start_line": 1,
+        "end_line": 6,
+        "parent_class": null
+      },
+      {
+        "name": "top_level_function",
+        "kind": "function",
+        "file": "/tmp/tmp12aa3v3e.py",
+        "start_line": 8,
+        "end_line": 9,
+        "parent_class": null
+      },
+      {
+        "name": "method_one",
+        "kind": "method",
+        "file": "/tmp/tmp12aa3v3e.py",
+        "start_line": 2,
+        "end_line": 3,
+        "parent_class": "TestClass"
+      },
+      {
+        "name": "method_two",
+        "kind": "method",
+        "file": "/tmp/tmp12aa3v3e.py",
+        "start_line": 5,
+        "end_line": 6,
+        "parent_class": "TestClass"
+      }
+    ]
+  },
+  "/tmp/tmpwrzxwbxa.py": {
+    "mtime": 1789024809.939879,
+    "symbols": [
+      {
+        "name": "TestClass",
+        "kind": "class",
+        "file": "/tmp/tmpwrzxwbxa.py",
+        "start_line": 1,
+        "end_line": 6,
+        "parent_class": null
+      },
+      {
+        "name": "top_level_function",
+        "kind": "function",
+        "file": "/tmp/tmpwrzxwbxa.py",
+        "start_line": 8,
+        "end_line": 9,
+        "parent_class": null
+      },
+      {
+        "name": "method_one",
+        "kind": "method",
+        "file": "/tmp/tmpwrzxwbxa.py",
+        "start_line": 2,
+        "end_line": 3,
+        "parent_class": "TestClass"
+      },
+      {
+        "name": "method_two",
+        "kind": "method",
+        "file": "/tmp/tmpwrzxwbxa.py",
+        "start_line": 5,
+        "end_line": 6,
+        "parent_class": "TestClass"
+      }
+    ]
+  },
+  "/tmp/tmprh4irnmn.py": {
+    "mtime": 1789024949.2523007,
+    "symbols": [
+      {
+        "name": "TestClass",
+        "kind": "class",
+        "file": "/tmp/tmprh4irnmn.py",
+        "start_line": 1,
+        "end_line": 6,
+        "parent_class": null
+      },
+      {
+        "name": "top_level_function",
+        "kind": "function",
+        "file": "/tmp/tmprh4irnmn.py",
+        "start_line": 8,
+        "end_line": 9,
+        "parent_class": null
+      },
+      {
+        "name": "method_one",
+        "kind": "method",
+        "file": "/tmp/tmprh4irnmn.py",
+        "start_line": 2,
+        "end_line": 3,
+        "parent_class": "TestClass"
+      },
+      {
+        "name": "method_two",
+        "kind": "method",
+        "file": "/tmp/tmprh4irnmn.py",
+        "start_line": 5,
+        "end_line": 6,
+        "parent_class": "TestClass"
+      }
+    ]
+  }
+}

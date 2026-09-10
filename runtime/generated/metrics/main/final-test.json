@@ -1,0 +1,12 @@
+{
+  "run_id": "final-test",
+  "timestamp": "2024-01-01",
+  "branch": "main",
+  "commit_sha": "abc123",
+  "coverage_pct": 80.0,
+  "mutation_score": 85.0,
+  "test_count": 500,
+  "passed": 495,
+  "failed": 5,
+  "duration_seconds": 100.0
+}

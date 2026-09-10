@@ -80,7 +80,7 @@ NONE = ()
 CATALOGUE: tuple[DiscoverySource, ...] = (
     # ---------------------------------------------------------------- pipeline
     DiscoverySource(
-        "runtime/analyze_architecture.py",
+        "runtime/archive/analysis_scripts/analyze_architecture.py",
         "Phase 1 of the single discovery pipeline: classify every module into one canonical node type.",
         ("engine_discovery", "package_discovery"),
         NONE,
@@ -89,7 +89,7 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "Pipeline stage. Registered in runtime.foundation.architecture.discovery.PHASES.",
     ),
     DiscoverySource(
-        "runtime/analyze_engine_topology.py",
+        "runtime/archive/analysis_scripts/analyze_engine_topology.py",
         "Phase 2: discover canonical engines (package roots + designated single files).",
         (
             "engine_discovery",
@@ -103,7 +103,7 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "Pipeline stage.",
     ),
     DiscoverySource(
-        "runtime/analyze_ownership.py",
+        "runtime/archive/analysis_scripts/analyze_ownership.py",
         "Phase 3: build the evidence-backed ownership graph.",
         ("ownership_discovery",),
         NONE,
@@ -112,7 +112,7 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "Pipeline stage.",
     ),
     DiscoverySource(
-        "runtime/analyze_execution.py",
+        "runtime/archive/analysis_scripts/analyze_execution.py",
         "Phase 4: build the runtime execution graph.",
         ("execution_graph_generation",),
         NONE,
@@ -121,7 +121,7 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "Pipeline stage.",
     ),
     DiscoverySource(
-        "runtime/analyze_engine_normalization.py",
+        "runtime/archive/analysis_scripts/analyze_engine_normalization.py",
         "Phase 5: classify engine migration status.",
         ("engine_discovery",),
         NONE,
@@ -130,7 +130,7 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "Pipeline stage.",
     ),
     DiscoverySource(
-        "runtime/analyze_knowledge.py",
+        "runtime/archive/analysis_scripts/analyze_knowledge.py",
         "Phase 6: reconstruct knowledge entities from the ownership graph.",
         ("knowledge_reconstruction",),
         NONE,
@@ -139,7 +139,7 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "Pipeline stage.",
     ),
     DiscoverySource(
-        "runtime/analyze_artifacts.py",
+        "runtime/archive/analysis_scripts/analyze_artifacts.py",
         "Phase 7: assign full ownership metadata to every generated artifact.",
         ("artifact_ownership",),
         NONE,
@@ -148,7 +148,7 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "Pipeline stage.",
     ),
     DiscoverySource(
-        "runtime/analyze_gap.py",
+        "runtime/archive/analysis_scripts/analyze_gap.py",
         "Phase 8: certification gap analysis (old model vs canonical model).",
         ("certification_graph",),
         NONE,
@@ -596,14 +596,14 @@ SIGNAL_ALLOWLIST = {
     "runtime/foundation/architecture/cross_layer.py",
     "runtime/foundation/architecture/artifacts.py",
     "runtime/foundation/architecture/knowledge_migration.py",
-    "runtime/analyze_architecture.py",
-    "runtime/analyze_engine_topology.py",
-    "runtime/analyze_engine_normalization.py",
-    "runtime/analyze_ownership.py",
-    "runtime/analyze_execution.py",
-    "runtime/analyze_knowledge.py",
-    "runtime/analyze_artifacts.py",
-    "runtime/analyze_gap.py",
+    "runtime/archive/analysis_scripts/analyze_architecture.py",
+    "runtime/archive/analysis_scripts/analyze_engine_topology.py",
+    "runtime/archive/analysis_scripts/analyze_engine_normalization.py",
+    "runtime/archive/analysis_scripts/analyze_ownership.py",
+    "runtime/archive/analysis_scripts/analyze_execution.py",
+    "runtime/archive/analysis_scripts/analyze_knowledge.py",
+    "runtime/archive/analysis_scripts/analyze_artifacts.py",
+    "runtime/archive/analysis_scripts/analyze_gap.py",
 }
 
 

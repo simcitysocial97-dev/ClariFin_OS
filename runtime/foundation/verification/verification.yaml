@@ -57,6 +57,20 @@ frontend:
     source: "frontend/src"
     tests: "frontend/tests"
 
+# Mutation testing thresholds (C42.7 / M9-C55)
+mutation_thresholds:
+  full_campaign: 80   # minimum mutation score % for full campaign pass
+  incremental: 75     # minimum mutation score % for incremental/targeted runs
+  smoke: 0            # smoke runs are not gated (score reported only)
+
+# Regression detection thresholds (M9-C55)
+regression_thresholds:
+  coverage_drop_warning: 5      # coverage drop > this % → WARNING
+  coverage_drop_critical: 10    # coverage drop > this % → CRITICAL
+  mutation_drop_warning: 10     # mutation score drop > this % → WARNING
+  mutation_drop_critical: 15    # mutation score drop > this % → CRITICAL
+  test_count_drop_warning: 20   # test count drop > this % → WARNING
+
 # Verification workflows (authoritative). Every command is invoked through the
 # bash interpreter so scripts need not carry the executable bit in git.
 workflows:

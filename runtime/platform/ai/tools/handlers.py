@@ -7,9 +7,9 @@ No direct AI → executor / DB / shell / filesystem mutation.
 
 from __future__ import annotations
 
-import logging
 from typing import Any
 
+from runtime.foundation.verification.structured_logging import get_logger
 from runtime.platform.api.services import (
     architecture,
     capabilities,
@@ -22,7 +22,7 @@ from runtime.platform.api.services import (
     errors as errors_service,
 )
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 __all__ = [
     "LEVEL_0_HANDLERS",

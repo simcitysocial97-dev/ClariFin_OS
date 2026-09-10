@@ -6,10 +6,11 @@ Phase 13 establishes framework; Phases 17-20 implement governed agents.
 
 from __future__ import annotations
 
-import logging
 from typing import Any
 
-logger = logging.getLogger(__name__)
+from runtime.foundation.verification.structured_logging import get_logger
+
+logger = get_logger(__name__)
 
 __all__ = ["Agent", "AGENT_REGISTRY", "get_agent", "list_agents"]
 
