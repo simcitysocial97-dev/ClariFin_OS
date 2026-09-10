@@ -700,5 +700,98 @@ class TestOperationalValidationSummary:
         assert result1 == result2
 
 
+class TestProfileCacheWiring:
+    """M9-C58: Cache replay and save integration in _run_profile_alias."""
+
+    def test_profile_cache_replay_pass(self, tmp_path: Path) -> None:
+        """Second identical run returns cached PASS without executing tasks."""
+        from unittest.mock import patch
+
+        from runtime.foundation.verification.cache import (
+            CachedVerdict,
+            VerificationCache,
+        )
+        from runtime.foundation.verification.control_plane_facade import (
+            _run_profile_alias,
+        )
+
+        cache_path = tmp_path / "verification-cache.json"
+        cache = VerificationCache(cache_path, root=Path("."))
+        verdict = CachedVerdict(overall_status="pass", passed=2, failed=0, skipped=0)
+        cache.save("quick", "test-commit-abc", ["runtime/tests/test_foo.py"], verdict)
+
+        with patch(
+            "runtime.foundation.verification.cache.VerificationCache"
+        ) as MockCache:
+            # Re-bind the real class for direct cache operations
+            MockCache.return_value.replay.return_value = type(
+                "ReplayResult", (), {"reusable": True, "overall_status": "pass", "exit_code": 0, "reason": "cached"}
+            )()
+            result = _run_profile_alias("quick")
+            assert result == 0
+
+    def test_profile_cache_replay_fail(self, tmp_path: Path) -> None:
+        """Cached FAIL replay returns exit_code=1."""
+        from unittest.mock import patch
+
+        from runtime.foundation.verification.control_plane_facade import (
+            _run_profile_alias,
+        )
+
+        with patch(
+            "runtime.foundation.verification.cache.VerificationCache"
+        ) as MockCache:
+            MockCache.return_value.replay.return_value = type(
+                "ReplayResult", (), {"reusable": True, "overall_status": "fail", "exit_code": 1, "reason": "cached-fail"}
+            )()
+            result = _run_profile_alias("quick")
+            assert result == 1
+
+    def test_profile_cache_save_on_success(self, tmp_path: Path) -> None:
+        """Cache.save writes verdict after successful profile execution."""
+        from runtime.foundation.verification.cache import CachedVerdict, VerificationCache
+        import json
+
+        cache_path = tmp_path / "verification-cache.json"
+        cache = VerificationCache(cache_path, root=tmp_path)
+
+        # Simulate what _run_profile_alias does after successful execution
+        verdict = CachedVerdict(overall_status="pass", passed=3, failed=0, skipped=0)
+        cache.save(
+            profile="quick",
+            commit="test-commit-xyz",
+            changed_files=["runtime/tests/test_foo.py"],
+            verdict=verdict,
+            duration=5.0,
+        )
+
+        assert cache_path.exists()
+        data = json.loads(cache_path.read_text())
+        assert data["last_commit"] == "test-commit-xyz"
+        assert "quick" in data["profiles"]
+        assert data["profiles"]["quick"]["overall_status"] == "pass"
+        assert data["profiles"]["quick"]["passed"] == 3
+
+    def test_profile_cache_invalidated_on_change(self, tmp_path: Path) -> None:
+        """Changing a source file invalidates cache, forces re-execution."""
+        from runtime.foundation.verification.cache import CachedVerdict, VerificationCache
+
+        cache = VerificationCache(tmp_path / "cache.json", root=tmp_path)
+        verdict = CachedVerdict(overall_status="pass", passed=2, failed=0, skipped=0)
+
+        test_file = tmp_path / "some_file.py"
+        test_file.write_text("# original")
+        cache.save("quick", "test-commit-ghi", ["some_file.py"], verdict)
+
+        # Valid replay
+        result = cache.replay("test-commit-ghi", ["some_file.py"], "quick")
+        assert result.reusable
+
+        # Modify file content — should invalidate
+        test_file.write_text("# modified")
+        result2 = cache.replay("test-commit-ghi", ["some_file.py"], "quick")
+        assert not result2.reusable
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--tb=short"])

@@ -119,6 +119,11 @@ class AnalyticsEngine:
         for event in events:
             if event.event_type == "VerificationCompleted":
                 payload = event.payload
+                # Skip plan-only stubs that never executed verification.
+                # These are emitted by verification_write.py with
+                # executed=false and must not pollute any metric.
+                if payload.get("executed") is False:
+                    continue
                 ctx = event.execution_context
                 records.append(
                     RunRecord(
@@ -223,6 +228,9 @@ class AnalyticsEngine:
         total = 0
         for event in events:
             if event.event_type == "VerificationCompleted":
+                # Exclude plan-only stubs that were filtered from run records.
+                if event.payload.get("executed") is False:
+                    continue
                 total += 1
                 if event.payload.get("cache_hit"):
                     hits += 1

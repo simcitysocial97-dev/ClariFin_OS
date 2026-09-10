@@ -1,13 +1,16 @@
 {
   "local": {
     "verification": {
-      "total_runs": 2,
-      "passed_runs": 0,
-      "failed_runs": 2,
-      "success_rate": 0.0,
-      "avg_duration_seconds": 0.06,
+      "total_runs": 128,
+      "passed_runs": 45,
+      "failed_runs": 83,
+      "blocked_runs": 0,
+      "interrupted_runs": 0,
+      "legacy_completed": 0,
+      "success_rate": 0.3516,
+      "avg_duration_seconds": 278.86,
       "min_duration_seconds": 0.05,
-      "max_duration_seconds": 0.07
+      "max_duration_seconds": 1284.37
     },
     "planner": {
       "avg_duration_seconds": 0.0,
@@ -22,61 +25,28 @@
       "runs": 0
     },
     "cache": {
-      "hit_rate": 0.0,
-      "hits": 0,
-      "total": 2
+      "hit_rate": 0.0469,
+      "hits": 6,
+      "total": 128
     },
     "intent_frequency": {
-      "developer-feedback": 3
+      "unknown": 4,
+      "developer-feedback": 134
     },
     "environment_frequency": {
-      "local": 3
+      "local": 138
     },
     "profile_usage": {
-      "quick": 1,
-      "backend": 1
+      "unknown": 2,
+      "quick": 53,
+      "backend": 27,
+      "runtime": 7,
+      "frontend": 9,
+      "contracts": 3,
+      "golden": 8,
+      "playwright": 18,
+      "integration": 3
     },
-    "blast_radius": {
-      "avg_engines": 0.0,
-      "avg_services": 0.0,
-      "avg_endpoints": 0.0,
-      "avg_components": 0.0
-    },
-    "rolling_averages": {
-      "rolling_avg_30": 0.06,
-      "window": 2
-    },
-    "trends": {
-      "duration_trend": "increasing",
-      "success_rate_trend": "stable",
-      "data_points": 2
-    }
-  },
-  "ci": {
-    "verification": {
-      "total_runs": 0,
-      "success_rate": 0.0
-    },
-    "planner": {
-      "avg_duration_seconds": 0.0,
-      "runs": 0
-    },
-    "execution": {
-      "avg_duration_seconds": 0.0,
-      "runs": 0
-    },
-    "aggregation": {
-      "avg_duration_seconds": 0.0,
-      "runs": 0
-    },
-    "cache": {
-      "hit_rate": 0.0,
-      "hits": 0,
-      "total": 0
-    },
-    "intent_frequency": {},
-    "environment_frequency": {},
-    "profile_usage": {},
     "blast_radius": {
       "avg_engines": 0,
       "avg_services": 0,
@@ -84,24 +54,27 @@
       "avg_components": 0
     },
     "rolling_averages": {
-      "rolling_avg_30": 0.0,
+      "rolling_avg_30": 208.54,
       "window": 30
     },
     "trends": {
-      "duration_trend": "stable",
-      "success_rate_trend": "stable",
-      "data_points": 0
+      "duration_trend": "increasing",
+      "success_rate_trend": "improving",
+      "data_points": 128
     }
   },
-  "combined": {
+  "ci": {
     "verification": {
       "total_runs": 2,
-      "passed_runs": 0,
-      "failed_runs": 2,
-      "success_rate": 0.0,
-      "avg_duration_seconds": 0.06,
-      "min_duration_seconds": 0.05,
-      "max_duration_seconds": 0.07
+      "passed_runs": 2,
+      "failed_runs": 0,
+      "blocked_runs": 0,
+      "interrupted_runs": 0,
+      "legacy_completed": 0,
+      "success_rate": 1.0,
+      "avg_duration_seconds": 397.9,
+      "min_duration_seconds": 120.5,
+      "max_duration_seconds": 675.3
     },
     "planner": {
       "avg_duration_seconds": 0.0,
@@ -121,23 +94,23 @@
       "total": 2
     },
     "intent_frequency": {
-      "developer-feedback": 3
+      "engineering-validation": 2
     },
     "environment_frequency": {
-      "local": 3
+      "ci": 2
     },
     "profile_usage": {
-      "quick": 1,
-      "backend": 1
+      "full": 1,
+      "playwright": 1
     },
     "blast_radius": {
-      "avg_engines": 0.0,
-      "avg_services": 0.0,
-      "avg_endpoints": 0.0,
-      "avg_components": 0.0
+      "avg_engines": 0,
+      "avg_services": 0,
+      "avg_endpoints": 0,
+      "avg_components": 0
     },
     "rolling_averages": {
-      "rolling_avg_30": 0.06,
+      "rolling_avg_30": 397.9,
       "window": 2
     },
     "trends": {
@@ -146,5 +119,72 @@
       "data_points": 2
     }
   },
-  "generated_at": "2026-08-05T00:36:47.284843+00:00"
+  "combined": {
+    "verification": {
+      "total_runs": 130,
+      "passed_runs": 47,
+      "failed_runs": 83,
+      "blocked_runs": 0,
+      "interrupted_runs": 0,
+      "legacy_completed": 0,
+      "success_rate": 0.3615,
+      "avg_duration_seconds": 280.78,
+      "min_duration_seconds": 0.05,
+      "max_duration_seconds": 1284.37
+    },
+    "planner": {
+      "avg_duration_seconds": 0.0,
+      "runs": 0
+    },
+    "execution": {
+      "avg_duration_seconds": 0.0,
+      "runs": 0
+    },
+    "aggregation": {
+      "avg_duration_seconds": 0.0,
+      "runs": 0
+    },
+    "cache": {
+      "hit_rate": 0.0462,
+      "hits": 6,
+      "total": 130
+    },
+    "intent_frequency": {
+      "unknown": 4,
+      "developer-feedback": 134,
+      "engineering-validation": 2
+    },
+    "environment_frequency": {
+      "local": 138,
+      "ci": 2
+    },
+    "profile_usage": {
+      "unknown": 2,
+      "quick": 53,
+      "backend": 27,
+      "runtime": 7,
+      "frontend": 9,
+      "contracts": 3,
+      "golden": 8,
+      "playwright": 19,
+      "integration": 3,
+      "full": 1
+    },
+    "blast_radius": {
+      "avg_engines": 0,
+      "avg_services": 0,
+      "avg_endpoints": 0,
+      "avg_components": 0
+    },
+    "rolling_averages": {
+      "rolling_avg_30": 207.1,
+      "window": 30
+    },
+    "trends": {
+      "duration_trend": "increasing",
+      "success_rate_trend": "improving",
+      "data_points": 130
+    }
+  },
+  "generated_at": "2026-09-10T08:32:54.729520+00:00"
 }

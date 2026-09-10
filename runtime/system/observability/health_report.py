@@ -170,6 +170,37 @@ class EngineeringHealthReport:
             lines.append(f"- Hit rate: {cache.get('hit_rate', 0.0):.1%}")
             lines.append(f"- Hits: {cache.get('hits', 0)} / {cache.get('total', 0)}")
         lines.append("")
+        # Stale cache detection — compare live cache file against current tree.
+        self._append_stale_cache_detection(lines)
+
+    def _append_stale_cache_detection(self, lines: list[str]) -> None:
+        """Detect stale cache entries whose tree_digest no longer matches."""
+        from runtime.foundation.verification.cache import VerificationCache
+
+        cache_file = REPO_ROOT / "runtime" / "generated" / "verification-cache.json"
+        stale_count = 0
+        valid_count = 0
+        if cache_file.exists():
+            try:
+                cache = VerificationCache(cache_file, root=REPO_ROOT)
+                data = cache._load()
+                profiles = data.get("profiles", {})
+                for profile_name, profile_data in profiles.items():
+                    tree_digest = profile_data.get("tree_digest")
+                    changed_files = profile_data.get("changed_files", [])
+                    if tree_digest is None or not changed_files:
+                        continue
+                    # Recompute digest against current working tree
+                    current_digest = cache._compute_tree_digest(changed_files)
+                    if current_digest != tree_digest:
+                        stale_count += 1
+                    else:
+                        valid_count += 1
+            except Exception:
+                pass
+        lines.append(f"- Stale entries: {stale_count}")
+        lines.append(f"- Valid entries: {valid_count}")
+        lines.append("")
 
     def _append_dependency_growth(self, lines: list[str]) -> None:
         growth = self._growth.compute()

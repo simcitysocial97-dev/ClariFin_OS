@@ -1016,6 +1016,17 @@ def _run_profile_alias(operation: str) -> int:
     from runtime.foundation.verification.profiles import get_profile
     from runtime.verify import _record_verification_event
 
+    # Cache replay path — check before executing tasks.
+    from runtime.foundation.verification.cache import VerificationCache
+
+    cache = VerificationCache(
+        REPO_ROOT / "runtime" / "generated" / "verification-cache.json",
+        root=REPO_ROOT,
+    )
+    commit_sha = _get_current_commit()
+    cf_result = _collect_changed_files_result()
+    changed_files = sorted(getattr(cf_result, "files", []))
+
     try:
         profile = get_profile(operation)
     except ValueError as e:
@@ -1032,6 +1043,23 @@ def _run_profile_alias(operation: str) -> int:
     # Override is applied uniformly if the env-var is set (useful for tests /
     # bounded CI jobs); otherwise each task uses its declared estimate.
     timeout_override = _profile_task_timeout_seconds()
+
+    # CACHE REPLAY: skip execution if a valid cached verdict exists.
+    cache_result = cache.replay(commit_sha, changed_files, operation)
+    if cache_result.reusable:
+        print(
+            f"[profile:{operation}] cache hit — replaying {cache_result.overall_status}",
+            file=sys.stderr,
+        )
+        _record_verification_event(
+            None,
+            profile_name=operation,
+            elapsed=0.0,
+            cache_hit=True,
+            status="passed" if cache_result.overall_status == "pass" else "failed",
+            final_decision="cache_replay",
+        )
+        return cache_result.exit_code or 0
 
     for task in profile.tasks:
         task_timeout = timeout_override
@@ -1119,6 +1147,22 @@ def _run_profile_alias(operation: str) -> int:
             extra_metadata={"tasks_executed": task_ids_executed},
         )
         return 130
+
+    # CACHE SAVE: persist verdict only on full successful completion.
+    from runtime.foundation.verification.cache import CachedVerdict
+
+    cache.save(
+        profile=operation,
+        commit=commit_sha,
+        changed_files=changed_files,
+        verdict=CachedVerdict(
+            overall_status="pass" if failed == 0 else "fail",
+            passed=passed,
+            failed=failed,
+            skipped=0,
+        ),
+        duration=elapsed,
+    )
 
     _record_verification_event(
         None,
