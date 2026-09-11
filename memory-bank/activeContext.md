@@ -93,3 +93,20 @@ Program C — Financial OS Shell Architecture (Complete)
 - **Restored:** `required_approving_review_count: 0 → 1` via `PUT`; ruleset verified identical to pre-change state
 - **Final state:** PR #5 merged into main; 6 certified checks required; Playwright/M9 non-required and still active; no application/verification/test/workflow files modified; only `progress.md` updated
 - **Next step:** M9-C8 PR is now merged. Next objective: dedicated Playwright CI reliability investigation.
+
+---
+
+## Verification & Commit Summary (2026-09-11)
+
+- **Verified and committed** 233 files (11,386 insertions, 2,109 deletions) on commit `112cc7fd`
+  - Backend DTOs: migrated 14 files from pydantic v1 `class Config` → v2 `model_config = ConfigDict(...)`
+  - Runtime: added 5 verification capabilities (balance-engine, behaviour-engine, cashflow-engine,
+    credit-card-engine, financial-intelligence) to registry + verification.yaml
+  - Runtime: improved greenness audit with legitimate `if: always()` pattern detection; deterministic
+    context pack IDs; event store deduplication; fixed frontend/src → frontend/lib module paths
+  - Dependencies: httpx→httpx2, hypothesis 6.167.1→6.168.0, added deprecation-error filterwarnings
+  - Tests: 7 new runtime test files; fixed hypothesis Decimal bounds in existing tests
+  - Generated artifacts: updated maps, inventory, events, snapshots, smoke tests
+- **Validation gates passed:** `verify-fast.sh` — ruff ✓, black ✓, mypy ✓ (290 files, 0 errors)
+- **Next steps:** monitor httpx2 dependency (abandoned fork per .clinerules); review CI E2E test reliability
+
