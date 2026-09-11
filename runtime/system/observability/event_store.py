@@ -59,6 +59,19 @@ class EngineeringEventStore:
         self._path.parent.mkdir(parents=True, exist_ok=True)
 
     def append(self, event: EngineeringEvent) -> None:
+        if self._path.exists():
+            existing_ids: set[str] = set()
+            with open(self._path, encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        existing_ids.add(json.loads(line).get("event_id"))
+                    except (json.JSONDecodeError, KeyError):
+                        continue
+            if event.event_id in existing_ids:
+                return
         with open(self._path, "a", encoding="utf-8") as f:
             f.write(json.dumps(event.to_dict(), default=str) + "\n")
 

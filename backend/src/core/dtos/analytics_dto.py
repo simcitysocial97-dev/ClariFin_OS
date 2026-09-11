@@ -8,7 +8,7 @@ All monetary fields use _paise suffix for explicit units.
 
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class SpendingTrendPoint(BaseModel):
@@ -78,8 +78,8 @@ class AnalyticsResponse(BaseModel):
         description="Largest transactions"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "highest_month": "Jun 25",
                 "highest_month_amount_paise": 5000000,
@@ -93,3 +93,4 @@ class AnalyticsResponse(BaseModel):
                 "largest_transactions": [],
             }
         }
+    )

@@ -34,8 +34,12 @@ def module_to_repo_path(dotted: str) -> str | None:
     imports are out of scope for backend capability resolution. Returns the
     path whether the module is a file or a package.
     """
-    if not dotted or not dotted.startswith("backend."):
+    if not dotted or not (dotted.startswith("backend.") or dotted.startswith("src.")):
         return None
+    # Normalise bare ``src.*`` to ``backend.src.*`` so the path logic below
+    # works unchanged — all backend source lives under the ``backend/`` root.
+    if dotted.startswith("src."):
+        dotted = "backend." + dotted
     rel = dotted.replace(".", "/")
     candidate = f"{rel}.py"
     if (REPO_ROOT / candidate).exists():
@@ -81,7 +85,7 @@ def _extract_imports(source: str, file_rel: str) -> set[str]:
         )
 
     def _add(name: str) -> None:
-        if name.startswith("backend."):
+        if name.startswith("backend.") or name.startswith("src."):
             imported.add(name)
 
     for node in ast.walk(tree):
@@ -189,6 +193,20 @@ class SharedDependencyIndex:
                 # imported (transitively)
                 for target in transitive.get(f, ()):
                     idx.module_dependents.setdefault(target, set()).add(cap)
+
+        # 5. Reverse-lookup index: for every backend file, record which
+        #    capabilities it transitively depends on (needed so that a
+        #    change to a service like loan_service.py surfaces the
+        #    downstream capability it invokes).
+        all_files = set(file_edges.keys())
+        for cap_files in idx.capability_modules.values():
+            all_files |= cap_files
+        for cap, cap_files in idx.capability_modules.items():
+            for f in all_files:
+                if f in cap_files:
+                    continue  # already recorded as ownership above
+                if any(cf in transitive.get(f, set()) for cf in cap_files):
+                    idx.module_dependents.setdefault(f, set()).add(cap)
 
         return idx
 

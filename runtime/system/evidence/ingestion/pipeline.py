@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -203,7 +203,7 @@ class EvidenceIngestionPipeline:
         evidence = {
             "commit": self.config.commit_sha,
             "branch": self.config.branch,
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
             "coverage": coverage.get("combined", coverage.get("backend", {})),
             "mutation": mutation,
             "contracts": contracts,

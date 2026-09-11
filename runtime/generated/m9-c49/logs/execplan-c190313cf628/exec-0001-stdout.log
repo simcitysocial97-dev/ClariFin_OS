@@ -1,0 +1,9 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/vasantha/AI-Projects/ClariFin_OS
+configfile: pyproject.toml
+plugins: asyncio-1.4.0, schemathesis-4.25.2, hypothesis-6.167.1, cov-7.1.0, anyio-4.14.2, xdist-3.8.0, timeout-2.4.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 0 items
+
+============================ no tests ran in 0.36s =============================

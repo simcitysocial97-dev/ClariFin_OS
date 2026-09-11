@@ -1,9 +1,9 @@
 {
   "domains": {
     "capabilities": {
-      "_c": 292075.698566002,
-      "_ts": "2026-09-06T14:39:21Z",
-      "hash": "da4dc2f05de6c6073067c02b51065ac0e048d35243c34cf0ec25f35fdce956a1",
+      "_c": 513306.711755561,
+      "_ts": "2026-09-11T13:59:10Z",
+      "hash": "79af68556a8d6cc22fe68046823c699adb91ce798611171633105b9f11cbec7f",
       "payload": {
         "data": {
           "categories": [
@@ -769,84 +769,202 @@
             }
           ]
         },
-        "generated_at": "2026-09-06T14:39:21Z",
+        "generated_at": "2026-09-11T13:59:10Z",
         "id": "sha256:5316987b8b1d0518a089806afeaca29464fda75fd1d9c48bfc66eb68396c465c",
         "kind": "platform.capability_list",
         "version": "1.0.0"
       }
     },
     "change": {
-      "_c": 459836.227169563,
-      "_ts": "2026-09-10T04:33:49Z",
-      "hash": "463ef6448ed85465313e20e60324b1e81d1e190aff6f366fe57a8219aeeb3ef4",
+      "_c": 513306.683159211,
+      "_ts": "2026-09-11T13:59:10Z",
+      "hash": "41cb8a1a76c98040775f199a5afc25238b3f0ab96c583b425687c89600a9992a",
       "payload": {
         "data": {
           "affected_capabilities": [
             "api-contracts",
-            "loan-engine"
+            "behaviour-engine",
+            "financial-intelligence",
+            "loan-engine",
+            "reconciliation"
           ],
-          "affected_tests": [],
-          "affected_workflows": [],
+          "affected_tests": [
+            "backend/tests/unit/engines/credit_card_engine",
+            "backend/tests/unit/engines/financial_intelligence",
+            "backend/tests/unit/engines/loan_engine",
+            "frontend/tests/lib"
+          ],
+          "affected_workflows": [
+            "backend",
+            "contracts",
+            "frontend",
+            "property",
+            "run_backend_verification",
+            "run_contract_tests",
+            "run_fast_checks",
+            "run_frontend_verification",
+            "run_property_tests"
+          ],
           "changed_files": [
+            {
+              "change_type": "modified",
+              "path": ".github/workflows/api-contracts.yml"
+            },
+            {
+              "change_type": "modified",
+              "path": ".github/workflows/backend-verify.yml"
+            },
+            {
+              "change_type": "modified",
+              "path": ".github/workflows/frontend-verify.yml"
+            },
+            {
+              "change_type": "modified",
+              "path": ".github/workflows/golden.yml"
+            },
+            {
+              "change_type": "modified",
+              "path": ".github/workflows/mutation.yml"
+            },
+            {
+              "change_type": "modified",
+              "path": ".github/workflows/playwright.yml"
+            },
+            {
+              "change_type": "modified",
+              "path": ".github/workflows/quality.yml"
+            },
+            {
+              "change_type": "modified",
+              "path": ".github/workflows/verification-reconcile.yml"
+            },
+            {
+              "change_type": "modified",
+              "path": ".github/workflows/verification-runtime.yml"
+            },
             {
               "change_type": "modified",
               "path": "backend/pyproject.toml"
             },
             {
               "change_type": "modified",
-              "path": "runtime/analyze_architecture.py"
+              "path": "backend/src/core/dtos/account_dto.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/analyze_artifacts.py"
+              "path": "backend/src/core/dtos/accounts_dto.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/analyze_engine_normalization.py"
+              "path": "backend/src/core/dtos/analytics_dto.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/analyze_engine_topology.py"
+              "path": "backend/src/core/dtos/behaviour_dto.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/analyze_execution.py"
+              "path": "backend/src/core/dtos/cashflow_dto.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/analyze_gap.py"
+              "path": "backend/src/core/dtos/credit_cards_dto.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/analyze_knowledge.py"
+              "path": "backend/src/core/dtos/dashboard_dto.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/analyze_ownership.py"
+              "path": "backend/src/core/dtos/forecast_dto.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/foundation/architecture/discovery.py"
+              "path": "backend/src/core/dtos/investments_dto.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/foundation/architecture/sources.py"
+              "path": "backend/src/core/dtos/loans_dto.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/foundation/verification/canonical_control_plane.py"
+              "path": "backend/src/core/dtos/net_worth_dto.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/foundation/verification/control_plane_facade.py"
+              "path": "backend/src/core/dtos/reconciliation_dto.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/foundation/verification/diagnostic_agent.py"
+              "path": "backend/src/core/dtos/statement_dto.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation_contract.py"
+              "path": "backend/src/core/dtos/transaction_dto.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/src/engines/loan_engine/emi.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/mutation_infra/mutants/mutmut-stats.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "backend/tests/properties/forecasting/test_engine_properties.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "pyproject.toml"
+            },
+            {
+              "change_type": "modified",
+              "path": "requirements.lock"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/capability_resolver.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/ci_evidence.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/graph_model.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/models/model.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/models/scope.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/planner/planner.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/registry/registry.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/shared_impact.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/test_generator.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/test_quality.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/test_strengthening_pipeline.py"
             },
             {
               "change_type": "modified",
@@ -854,35 +972,23 @@
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/architecture-inventory-summary.json"
+              "path": "runtime/foundation/verification/workflow_convergence/certification_gates.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/architecture-inventory.json"
+              "path": "runtime/foundation/verification/workflow_convergence/greenness.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/artifact-ownership-v2.json"
+              "path": "runtime/generated/e2e-route-map.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/certification-gap-analysis.json"
+              "path": "runtime/generated/engineering-events.jsonl"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/diagnostic-signatures.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/engine-normalization.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/engine-topology.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/execution-graph.json"
+              "path": "runtime/generated/frontend-backend-map.json"
             },
             {
               "change_type": "modified",
@@ -894,99 +1000,7 @@
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/knowledge-reconstruction.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c48/aggregator-obsolete-disposition.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c48/api-schema-governance.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c48/cli-classification.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c48/frontend-arithmetic-lint.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c48/function-audit.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c48/test-quality-classification.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50.13/junit-invariant-money.xml"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-backend-unit-change.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-cache-reuse-1.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-cache-reuse-2.json"
-            },
-            {
-              "change_type": "modified",
               "path": "runtime/generated/m9-c50/phase-11/lineage/run-capability-change.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-ci-equivalent.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-contract-change.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-cross-layer.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-deletion.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-failed-verification.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-frontend-change.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-mutation-sensitive.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-no-change.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-rename.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-self-verification.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-unmapped-change.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations-summary.json"
             },
             {
               "change_type": "modified",
@@ -994,935 +1008,15 @@
             },
             {
               "change_type": "modified",
+              "path": "runtime/generated/m9-c54/m9-c54-baseline.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c54/workflow-inventory.json"
+            },
+            {
+              "change_type": "modified",
               "path": "runtime/generated/m9-c55/c56-readiness.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/ownership-graph.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/verification-cache.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/ai/agents.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/platform/ai/tools/handlers.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/program16_analysis.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/runtime/generated/m9-c44/cache/index.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/system/evidence/aggregator_obsolete_disposition.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/system/evidence/models/evidence.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_backend_evidence.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_m9_c48_aggregator_obsolete.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/tests/test_vea5_m8_merge_enforcement.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/verify.py"
-            },
-            {
-              "change_type": "modified",
-              "path": ".github/workflows/mutation-pr.yml"
-            },
-            {
-              "change_type": "modified",
-              "path": ".kilo/plans/1788885145550-remaining-refactor-plan.md"
-            },
-            {
-              "change_type": "modified",
-              "path": "docs/audits/m9-c57-runtime-framework/RUNTIME_FRAMEWORK_DEEP_DIVE_AUDIT.md"
-            },
-            {
-              "change_type": "modified",
-              "path": "docs/audits/m9-c57-runtime-framework/runtime_largest_files.txt"
-            },
-            {
-              "change_type": "modified",
-              "path": "docs/audits/m9-c57-runtime-framework/runtime_loc_breakdown.txt"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/archive/README.md"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/archive/aggregator_obsolete_disposition.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/archive/analysis_scripts/analyze_architecture.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/archive/analysis_scripts/analyze_artifacts.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/archive/analysis_scripts/analyze_engine_normalization.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/archive/analysis_scripts/analyze_engine_topology.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/archive/analysis_scripts/analyze_execution.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/archive/analysis_scripts/analyze_gap.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/archive/analysis_scripts/analyze_knowledge.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/archive/analysis_scripts/analyze_ownership.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/archive/program16_analysis.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/config_loader.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/diagnostics/__init__.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/diagnostics/formatter.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/e2e_route_mapper.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/evidence_retention.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/evidence_schema.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/execution/__init__.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/execution/adapters/__init__.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/execution/adapters/mutation.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/execution/adapters/pytest_adapters.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/execution/adapters/unit.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/execution/classification.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/execution/decisions.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/execution/dispatcher.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/execution/evidence.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/execution/forensic.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/execution/identity.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/execution/reconciliation.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/execution/scope.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/execution/smoke.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/execution/task.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/frontend_backend_gate.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/frontend_backend_map.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation/__init__.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/mutation/survivor_enricher.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/orchestration/__init__.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/orchestration/models.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/orchestration/orchestrator.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/parallel_executor.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/regression_detector.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/semantics/__init__.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/semantics/assertions.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/semantics/blast_radius.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/semantics/concepts.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/semantics/parser.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/structured_logging.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/symbol_resolver.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/symbol_test_selector.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/__init__.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/artifacts.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/bypass.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/c53_integration.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/certification_gates.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/core.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/coverage.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/duplication.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/efficiency.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/emission.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/environment.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/equivalence.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/evidence_contract.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/failure_injection.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/failure_semantics.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/greenness.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/inventory.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/mapping.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/measurement_integrity.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/foundation/verification/workflow_convergence/scenarios.py"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/e2e-route-map.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/frontend-backend-map.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/logs/verification-20260910.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0001-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0001-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0002-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0002-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0003-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0003-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0004-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0004-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0005-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0005-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0006-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0006-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0008-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-437d9d05bbe0/exec-0008-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0001-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0001-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0002-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0002-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0003-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0003-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0004-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0004-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0005-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0005-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0006-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0006-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0007-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0007-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0008-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5cdda7b4f85b/exec-0008-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0001-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0001-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0002-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0002-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0003-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0003-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0004-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0004-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0005-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0005-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0006-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0006-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0008-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-5ceb4b54caad/exec-0008-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0001-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0001-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0002-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0002-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0003-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0003-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0004-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0004-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0005-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0005-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0006-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0006-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0007-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0007-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0008-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-935c359470a8/exec-0008-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0001-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0001-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0002-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0002-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0003-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0003-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0004-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0004-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0005-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0005-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0006-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0006-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0007-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0007-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0008-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-d528098f6521/exec-0008-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0001-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0001-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0002-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0002-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0003-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0003-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0004-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0004-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0005-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0005-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0006-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0006-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0007-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0007-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0008-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-ec9f271b467d/exec-0008-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-087518208c3842fa.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-09ede4567f297541.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-0ed50281a9633121.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-101020ea3c8cddac.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-1727a6bd2e88b146.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-1fb863b1df772e77.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-2303561cef9a6714.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-2a8f4cede0c88e12.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-2ae92e251b3cd9ef.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-2d1decba6b754d98.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-2f6751e440b8f5c9.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-343522ba8d35be9e.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-37a1ccdf8c720d31.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-37d35dc55a7e5054.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-3da703f3a5c88109.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-4099675f1d599d63.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-53129cd1ad354c70.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-55a52341876acd47.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-5a9b504414c4a04a.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-5e7e3ca9e2c48a4f.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-5f3d3baecdefbcd8.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-615e253a826f5dfd.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-65f9e382ce2f4975.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-678e2a774fbebf36.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-7849666866fe7dc8.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-7b24ab552a0251af.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-7b5e4841da577764.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-7c933baadf60083e.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-7fe80f5a26ec928a.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-88fe2a87c19a05e3.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-8d93551d34a99456.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-8fe1affe35b3cbf1.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-994e9a6e4349853a.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-9f8fe9e44915ad88.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-a1c92b86ddf28f4b.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-a4e979fcb85a1df0.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-bf9b0b80971bded5.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-c3b250e93ca11b80.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-d17d94923c452444.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-d64babdc94a6d389.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-db20322b1b1a3e4b.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-db43dab22328a7bd.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-deb6e0265f2fb64b.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-df4b92b673eff0dd.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-e23e8e75506e9339.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-e836f9d591ee09b8.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-f917b5d298835c76.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-fd6faee274978363.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c57/product-commercial-evolution-audit/progress.md"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/metrics/main/.index.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/metrics/main/final-test.json"
             },
             {
               "change_type": "modified",
@@ -1930,105 +1024,770 @@
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/metrics/smoke-test/smoke-1789012170.json"
+              "path": "runtime/generated/platform/snapshot.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/metrics/smoke-test/smoke-1789012203.json"
+              "path": "runtime/platform/ai/context/builder.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/metrics/smoke-test/smoke-1789012249.json"
+              "path": "runtime/platform/ai/context/serializer.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/metrics/smoke-test/smoke-1789012408.json"
+              "path": "runtime/system/evidence/api.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/metrics/smoke-test/smoke-1789012563.json"
+              "path": "runtime/system/evidence/api/__init__.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/metrics/smoke-test/smoke-1789013278.json"
+              "path": "runtime/system/evidence/collectors/base.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/metrics/smoke-test/smoke-1789013288.json"
+              "path": "runtime/system/evidence/ingestion/pipeline.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/metrics/smoke-test/smoke-1789013414.json"
+              "path": "runtime/system/observability/event_store.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/metrics/smoke-test/smoke-1789013655.json"
+              "path": "runtime/tests/test_backend_evidence.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/symbol-cache.json"
+              "path": "runtime/tests/test_m9_c54.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/symbol-test-map.json"
+              "path": "runtime/tests/test_m9_c55.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/system/command/__init__.py"
+              "path": "scripts/bootstrap.sh"
             },
             {
               "change_type": "modified",
-              "path": "runtime/system/financial/__init__.py"
+              "path": "docs/dependency-audit-2026-09-11.md"
             },
             {
               "change_type": "modified",
-              "path": "runtime/system/graph/__init__.py"
+              "path": "runtime/generated/ai-runs/ai-01c0828f5e43.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/system/timeline/__init__.py"
+              "path": "runtime/generated/ai-runs/ai-059eaed67877.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/tests/test_e2e_smoke.py"
+              "path": "runtime/generated/ai-runs/ai-1e40096b86cb.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/tests/test_frontend_backend_map.py"
+              "path": "runtime/generated/ai-runs/ai-2659b1d760b3.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-3b624c82379a.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-4a1b5389b094.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-5ab26ed65db8.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-bdd646fa9981.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-c2a4fb20fdd7.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-d3868c7e39c7.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-facb2080c572.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-fd4f63f5e3c8.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/ai-runs/ai-fe6f4f6818ec.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-0ddf5bf9285c/exec-0001-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-0ddf5bf9285c/exec-0001-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-0ddf5bf9285c/exec-0002-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-0ddf5bf9285c/exec-0002-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-0ddf5bf9285c/exec-0003-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-0ddf5bf9285c/exec-0003-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-0ddf5bf9285c/exec-0004-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-0ddf5bf9285c/exec-0004-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-0ddf5bf9285c/exec-0005-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-0ddf5bf9285c/exec-0005-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-0ddf5bf9285c/exec-0006-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-0ddf5bf9285c/exec-0006-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-0ddf5bf9285c/exec-0007-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-0ddf5bf9285c/exec-0007-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-0ddf5bf9285c/exec-0008-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-0ddf5bf9285c/exec-0008-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-2de0ff21b4bc/exec-0001-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-2de0ff21b4bc/exec-0001-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-3366853663fa/exec-0001-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-3366853663fa/exec-0001-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-3366853663fa/exec-0002-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-3366853663fa/exec-0002-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-3366853663fa/exec-0003-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-3366853663fa/exec-0003-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-3366853663fa/exec-0004-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-3366853663fa/exec-0004-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-3366853663fa/exec-0005-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-3366853663fa/exec-0005-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-3366853663fa/exec-0006-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-3366853663fa/exec-0006-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-3366853663fa/exec-0008-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-3366853663fa/exec-0008-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-53ef769a4a7f/exec-0001-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-53ef769a4a7f/exec-0001-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-53ef769a4a7f/exec-0002-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-53ef769a4a7f/exec-0002-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-53ef769a4a7f/exec-0003-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-53ef769a4a7f/exec-0003-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-53ef769a4a7f/exec-0004-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-53ef769a4a7f/exec-0004-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-53ef769a4a7f/exec-0005-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-53ef769a4a7f/exec-0005-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-53ef769a4a7f/exec-0006-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-53ef769a4a7f/exec-0006-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-53ef769a4a7f/exec-0007-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-53ef769a4a7f/exec-0007-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-53ef769a4a7f/exec-0008-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-53ef769a4a7f/exec-0008-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-83193f0509ae/exec-0001-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-83193f0509ae/exec-0001-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-83193f0509ae/exec-0002-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-83193f0509ae/exec-0002-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-83193f0509ae/exec-0003-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-83193f0509ae/exec-0003-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-83193f0509ae/exec-0004-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-83193f0509ae/exec-0004-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-83193f0509ae/exec-0005-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-83193f0509ae/exec-0005-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-83193f0509ae/exec-0006-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-83193f0509ae/exec-0006-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-83193f0509ae/exec-0008-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-83193f0509ae/exec-0008-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-b3b910700746/exec-0001-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-b3b910700746/exec-0001-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-b3b910700746/exec-0002-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-b3b910700746/exec-0002-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-c190313cf628/exec-0001-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-c190313cf628/exec-0001-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-c190313cf628/exec-0002-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-c190313cf628/exec-0002-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-c190313cf628/exec-0003-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-c190313cf628/exec-0003-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-c190313cf628/exec-0004-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-c190313cf628/exec-0004-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-c190313cf628/exec-0005-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-c190313cf628/exec-0005-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-c190313cf628/exec-0006-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-c190313cf628/exec-0006-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-c190313cf628/exec-0008-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-c190313cf628/exec-0008-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d3273bc989b3/exec-0001-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d3273bc989b3/exec-0001-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d3273bc989b3/exec-0002-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d3273bc989b3/exec-0002-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d3273bc989b3/exec-0003-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d3273bc989b3/exec-0003-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d3273bc989b3/exec-0004-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d3273bc989b3/exec-0004-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d3273bc989b3/exec-0005-stderr.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c49/logs/execplan-d3273bc989b3/exec-0005-stdout.log"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-0bafdca5b5b87549.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-0ce056c77d26aedc.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-1f5f9b633e58e58b.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-23ddf1774ffb6ef6.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-34f619122b3e2184.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-3e85c31fb933e2b7.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-3efaf577cdddbacc.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-5e181550f00bca74.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-6d01b58e36357bee.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-7a78d545abcb4941.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-96bf20cd987413fb.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-b55ff8c596518c0d.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-c08fb103e16831e6.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-e5826b5a3ddc3385.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-eff809ff905f38a3.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-f2caaddaef6c8609.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c50/phase-11/operations/run-f95ecccb8d0b3965.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c54/bypass-analysis.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c54/c53-integration.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c54/capability-matrix.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c54/certification-gates.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c54/ci-emission.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c54/coverage-matrix.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c54/duplication-analysis.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c54/efficiency-metrics.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c54/environment-contract.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c54/evidence-contract.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c54/failure-injection-matrix.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c54/failure-semantics.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c54/greenness-audit.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c54/measurement-integrity.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c54/scenarios.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/metrics/smoke-test/smoke-1789094252.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/metrics/smoke-test/smoke-1789098039.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/metrics/smoke-test/smoke-1789099232.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/metrics/smoke-test/smoke-1789099326.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/old_0.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/old_1.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/old_2.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/old_3.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/old_4.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/old_5.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/old_6.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/old_7.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/old_8.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/old_9.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/recent_0.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/recent_1.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/recent_2.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/recent_3.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/recent_4.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/recent_5.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/recent_6.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/recent_7.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/recent_8.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/test_milestone/recent_9.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_concurrent_stress.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_e2e_real_workflow.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_evidence_cleanup_stress.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_frontend_backend_sync_deep.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_large_changeset.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_mutation_edge_cases.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/tests/test_symbol_resolution_edge_cases.py"
             }
           ],
-          "generated_from": "2026-09-10T04:33:48.631307+00:00",
-          "recommended_verification": [],
+          "generated_from": "2026-09-11T13:59:08.694440+00:00",
+          "recommended_verification": [
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='loan-engine', command='bash .github/scripts/run_backend_verification.sh', profile='backend', estimated_duration_seconds=300, is_mandatory=True, is_escalation=False, authorization_required=False, reason='capability loan-engine requires backend via workflow backend (impact: directly_affected)', has_executable_command=True)"
+          ],
           "risk": "HIGH",
-          "stale_evidence": []
+          "stale_evidence": [
+            "EvidenceInvalidation(evidence_id='loan-engine::mutation', capability_id='loan-engine', disposition='missing_fresh_measurement_required', invalidation_rules=[], reason='no mutation evidence found for loan-engine', repository_sha_match=False, record_path='backend/tests/generated/mutation/measurement-truth-loan-engine.json')"
+          ]
         },
-        "generated_at": "2026-09-10T04:33:49Z",
-        "id": "sha256:49ad1d28c416765d4b4220797b61fda3d690f8ffaa341030c26ee66685ae74d1",
+        "generated_at": "2026-09-11T13:59:10Z",
+        "id": "sha256:e29b8ac9d837623728f0b44cb342de745e1f1f58859ae85ca2598b9485ac76e8",
         "kind": "platform.change_intelligence",
         "version": "1.0.0"
       }
     },
     "events": {
-      "_c": 290976.795844824,
-      "_ts": "2026-09-06T14:21:02Z",
-      "hash": "124385f302c20b66bd35bff67a463027057d2d29e9b318af06ab17470402bd5a",
+      "_c": 513298.061243761,
+      "_ts": "2026-09-11T13:59:02Z",
+      "hash": "1b0c3cd085dd02b1a8f118841409d113789d00a1a5c364bf0b2dd4833e312adf",
       "payload": {
         "data": {
-          "count": 4,
+          "count": 3,
           "items": [
             {
+              "capability_id": "api-contracts",
+              "emitted_at": "2026-09-11 06:38:47.148105+00:00",
+              "event_type": "task.cancelled",
+              "execution_id": null,
+              "id": "cancel-obl-39f58677f4ad-0",
+              "payload": {
+                "reason": "cancelled via platform API at 2026-09-11T06:38:47Z",
+                "task_id": "obl-39f58677f4ad-0"
+              },
+              "task_id": "obl-39f58677f4ad-0"
+            },
+            {
               "capability_id": "discover.blast-radius",
-              "emitted_at": "2026-09-06 04:22:08.408528+00:00",
+              "emitted_at": "2026-09-11 06:38:35.617014+00:00",
               "event_type": "VerificationCompleted",
-              "execution_id": "ver-brc-1d39",
-              "id": "vc-ver-brc-1d39",
+              "execution_id": "ver-brc-9f7d",
+              "id": "vc-ver-brc-9f7d",
               "payload": {
                 "capability_id": "discover.blast-radius",
                 "duration_seconds": 0.0,
-                "execution_id": "ver-brc-1d39",
-                "final_decision": "stale",
+                "executed": false,
+                "execution_id": "ver-brc-9f7d",
+                "final_decision": "planned_not_executed",
                 "record_count": 1,
-                "status": "completed",
+                "status": "unknown",
                 "task_ids": [
                   "task-0001"
                 ]
@@ -2037,48 +1796,13 @@
             },
             {
               "capability_id": "discover.blast-radius",
-              "emitted_at": "2026-09-06 04:22:08.408364+00:00",
+              "emitted_at": "2026-09-11 06:38:35.616848+00:00",
               "event_type": "VerificationStarted",
-              "execution_id": "ver-brc-1d39",
-              "id": "vs-ver-brc-1d39",
+              "execution_id": "ver-brc-9f7d",
+              "id": "vs-ver-brc-9f7d",
               "payload": {
                 "capability_id": "discover.blast-radius",
-                "execution_id": "ver-brc-1d39",
-                "mode": "platform-api",
-                "task_ids": [
-                  "task-0001"
-                ]
-              },
-              "task_id": "task-0001"
-            },
-            {
-              "capability_id": "discover.blast-radius",
-              "emitted_at": "2026-09-06 04:22:06.423033+00:00",
-              "event_type": "VerificationCompleted",
-              "execution_id": "ver-brc-1d39",
-              "id": "vc-ver-brc-1d39",
-              "payload": {
-                "capability_id": "discover.blast-radius",
-                "duration_seconds": 0.0,
-                "execution_id": "ver-brc-1d39",
-                "final_decision": "stale",
-                "record_count": 1,
-                "status": "completed",
-                "task_ids": [
-                  "task-0001"
-                ]
-              },
-              "task_id": "task-0001"
-            },
-            {
-              "capability_id": "discover.blast-radius",
-              "emitted_at": "2026-09-06 04:22:06.422731+00:00",
-              "event_type": "VerificationStarted",
-              "execution_id": "ver-brc-1d39",
-              "id": "vs-ver-brc-1d39",
-              "payload": {
-                "capability_id": "discover.blast-radius",
-                "execution_id": "ver-brc-1d39",
+                "execution_id": "ver-brc-9f7d",
                 "mode": "platform-api",
                 "task_ids": [
                   "task-0001"
@@ -2089,16 +1813,16 @@
           ],
           "window": "recent"
         },
-        "generated_at": "2026-09-06T14:21:02Z",
-        "id": "sha256:b6c240e225c34ab520902f5a97bfd2c6ff4a0a8fef2d5a22b0b0261b6ed29cbd",
+        "generated_at": "2026-09-11T13:59:02Z",
+        "id": "sha256:dbb700d11e398656e3cfefab5957aa634383922c8cc6b37eb8720f00c0b480e7",
         "kind": "platform.events_list",
         "version": "1.0.0"
       }
     },
     "health": {
-      "_c": 292075.648663107,
-      "_ts": "2026-09-06T14:39:21Z",
-      "hash": "552ab78d995aa344b01b1b1e52f3c5dc7ab9d97419c5400226dfc899485cd261",
+      "_c": 513306.692079537,
+      "_ts": "2026-09-11T13:59:10Z",
+      "hash": "d3971f7f59f8f76e3f73df726bb28932799fcc03b8b82fcc7db653440b245452",
       "payload": {
         "data": {
           "ai": "READY",
@@ -2107,15 +1831,15 @@
           "database": "HEALTHY",
           "domains": [
             {
-              "detail": "runs=2 passed=0 failed=0",
-              "last_check": "2026-09-06T14:39:21Z",
+              "detail": "runs=0 passed=0 failed=0",
+              "last_check": "2026-09-11T13:59:10Z",
               "name": "Verification",
               "source": "/platform/v1/verification",
-              "status": "UNHEALTHY"
+              "status": "UNKNOWN"
             },
             {
-              "detail": "events=4",
-              "last_check": "2026-09-06T14:39:21Z",
+              "detail": "events=3",
+              "last_check": "2026-09-11T13:59:10Z",
               "name": "EventStore",
               "source": "EngineeringEventStore",
               "status": "HEALTHY"
@@ -2123,19 +1847,19 @@
           ],
           "evidence": "VALID",
           "frontend": "HEALTHY",
-          "platform": "UNHEALTHY",
+          "platform": "UNKNOWN",
           "verification": "CURRENT"
         },
-        "generated_at": "2026-09-06T14:39:21Z",
-        "id": "sha256:3110a02078bea3a357fc40815b72a4d86340a506fe46511d64b22ca3265d19b6",
+        "generated_at": "2026-09-11T13:59:10Z",
+        "id": "sha256:020abfe7998b0c23bcff9a114ce6ff97a684e9a0ca22ba4024b9fea1c444615b",
         "kind": "platform.health_snapshot",
         "version": "1.0.0"
       }
     },
     "tasks": {
-      "_c": 292080.105745489,
-      "_ts": "2026-09-06T14:39:25Z",
-      "hash": "9461e6e1bf27405a86ad7442883051dcd9d1749bb7012b2d7cd51279f05d1286",
+      "_c": 513309.110752094,
+      "_ts": "2026-09-11T13:59:13Z",
+      "hash": "a38fe47782a88de5699ae674c5aa9558c162e0dfe803684992ada27519810ede",
       "payload": {
         "data": {
           "closed_count": 0,
@@ -2143,117 +1867,285 @@
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-06T14:39:25.681102Z",
-              "id": "obl-fa254c421a76-0",
+              "created_at": "2026-09-11T13:59:13.334768Z",
+              "id": "obl-8c8a3377edc7-0",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-06T14:39:25.681118Z",
-              "id": "obl-fa254c421a76-1",
+              "created_at": "2026-09-11T13:59:13.334787Z",
+              "id": "obl-8c8a3377edc7-1",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-06T14:39:25.681130Z",
-              "id": "obl-fa254c421a76-2",
+              "created_at": "2026-09-11T13:59:13.334801Z",
+              "id": "obl-8c8a3377edc7-2",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-06T14:39:25.681138Z",
-              "id": "obl-fa254c421a76-3",
+              "created_at": "2026-09-11T13:59:13.334815Z",
+              "id": "obl-8c8a3377edc7-3",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-06T14:39:25.681148Z",
-              "id": "obl-fa254c421a76-4",
+              "created_at": "2026-09-11T13:59:13.334828Z",
+              "id": "obl-8c8a3377edc7-4",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-06T14:39:25.681156Z",
-              "id": "obl-fa254c421a76-5",
+              "created_at": "2026-09-11T13:59:13.334842Z",
+              "id": "obl-8c8a3377edc7-5",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "financial-intelligence",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.334865Z",
+              "id": "obl-8c8a3377edc7-6",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "financial-intelligence",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.334887Z",
+              "id": "obl-8c8a3377edc7-7",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "financial-intelligence",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.334911Z",
+              "id": "obl-8c8a3377edc7-8",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "financial-intelligence",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.334937Z",
+              "id": "obl-8c8a3377edc7-9",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "financial-intelligence",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.334957Z",
+              "id": "obl-8c8a3377edc7-10",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "financial-intelligence",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.334972Z",
+              "id": "obl-8c8a3377edc7-11",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "financial-intelligence",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.334985Z",
+              "id": "obl-8c8a3377edc7-12",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-06T14:39:25.681165Z",
-              "id": "obl-fa254c421a76-6",
+              "created_at": "2026-09-11T13:59:13.334999Z",
+              "id": "obl-8c8a3377edc7-13",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-06T14:39:25.681174Z",
-              "id": "obl-fa254c421a76-7",
+              "created_at": "2026-09-11T13:59:13.335013Z",
+              "id": "obl-8c8a3377edc7-14",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-06T14:39:25.681183Z",
-              "id": "obl-fa254c421a76-8",
+              "created_at": "2026-09-11T13:59:13.335026Z",
+              "id": "obl-8c8a3377edc7-15",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-06T14:39:25.681191Z",
-              "id": "obl-fa254c421a76-9",
+              "created_at": "2026-09-11T13:59:13.335039Z",
+              "id": "obl-8c8a3377edc7-16",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-06T14:39:25.681199Z",
-              "id": "obl-fa254c421a76-10",
+              "created_at": "2026-09-11T13:59:13.335052Z",
+              "id": "obl-8c8a3377edc7-17",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-06T14:39:25.681208Z",
-              "id": "obl-fa254c421a76-11",
+              "created_at": "2026-09-11T13:59:13.335065Z",
+              "id": "obl-8c8a3377edc7-18",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-06T14:39:25.681216Z",
-              "id": "obl-fa254c421a76-12",
+              "created_at": "2026-09-11T13:59:13.335079Z",
+              "id": "obl-8c8a3377edc7-19",
               "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "behaviour-engine",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.335091Z",
+              "id": "obl-8c8a3377edc7-20",
+              "name": "Transitively affected (escalation)",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "behaviour-engine",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.335105Z",
+              "id": "obl-8c8a3377edc7-21",
+              "name": "Transitively affected (escalation)",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "behaviour-engine",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.335118Z",
+              "id": "obl-8c8a3377edc7-22",
+              "name": "Transitively affected (escalation)",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "behaviour-engine",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.335131Z",
+              "id": "obl-8c8a3377edc7-23",
+              "name": "Transitively affected (escalation)",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "behaviour-engine",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.335145Z",
+              "id": "obl-8c8a3377edc7-24",
+              "name": "Transitively affected (escalation)",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "behaviour-engine",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.335158Z",
+              "id": "obl-8c8a3377edc7-25",
+              "name": "Transitively affected (escalation)",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "behaviour-engine",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.335171Z",
+              "id": "obl-8c8a3377edc7-26",
+              "name": "Transitively affected (escalation)",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "reconciliation",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.335186Z",
+              "id": "obl-8c8a3377edc7-27",
+              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "reconciliation",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.335200Z",
+              "id": "obl-8c8a3377edc7-28",
+              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "reconciliation",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.335213Z",
+              "id": "obl-8c8a3377edc7-29",
+              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "reconciliation",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.335227Z",
+              "id": "obl-8c8a3377edc7-30",
+              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "reconciliation",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.335240Z",
+              "id": "obl-8c8a3377edc7-31",
+              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "reconciliation",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.335253Z",
+              "id": "obl-8c8a3377edc7-32",
+              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "reconciliation",
+              "closed_at": null,
+              "created_at": "2026-09-11T13:59:13.335267Z",
+              "id": "obl-8c8a3377edc7-33",
+              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
               "status": "OPEN"
             }
           ],
-          "open_count": 13
+          "open_count": 34
         },
-        "generated_at": "2026-09-06T14:39:25Z",
-        "id": "sha256:788081d70a61f450e7765b96b117957fdfeb37fafd2546f65bccafc20b50c6e2",
+        "generated_at": "2026-09-11T13:59:13Z",
+        "id": "sha256:c6a3ca14aa2c4fd83c157a34bcc2a729acbfd86b2b5fd0559d777ff0810f2b3a",
         "kind": "platform.task_list",
         "version": "1.0.0"
       }
     }
   },
-  "generated_at": "2026-09-10T04:33:49Z",
+  "generated_at": "2026-09-11T13:59:13Z",
   "version": "1"
 }

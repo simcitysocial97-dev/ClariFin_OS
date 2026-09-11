@@ -1,8 +1,8 @@
 {
     "tests_by_mangled_function_name": {
         "probe.x_mutation_probe": [
-            "test_probe.py::test_survive",
-            "test_probe.py::test_killed"
+            "test_probe.py::test_killed",
+            "test_probe.py::test_survive"
         ]
     },
     "duration_by_test": {

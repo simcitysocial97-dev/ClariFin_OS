@@ -4,6 +4,7 @@
 # RESPONSIBILITY: Run `python -m runtime.verify quick` — the ONLY verification command.
 # BLOCKS:  Merging if it fails.
 #
+# Canonical entrypoint: runtime/verify.py (python -m runtime.verify <profile>)
 # Rule 1: No engineering logic duplicated here. Rule 2: exactly one command.
 # Rule 3: shared artifacts generated once by bootstrap-runtime. Rule 8: delegate
 # to python -m runtime.verify. Rule 9: append `runtime.verify status` to the job summary.

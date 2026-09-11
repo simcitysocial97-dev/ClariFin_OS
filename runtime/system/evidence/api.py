@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -170,7 +170,7 @@ def build_verification_evidence(
     return VerificationEvidence(
         commit_sha=commit_sha,
         branch=branch,
-        timestamp=datetime.utcnow().isoformat() + "Z",
+        timestamp=datetime.now(UTC).isoformat().replace("+00:00", "Z"),
         status=status,
         coverage=coverage,
         mutation=mutation,

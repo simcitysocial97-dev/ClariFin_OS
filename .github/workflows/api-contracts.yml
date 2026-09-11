@@ -4,6 +4,7 @@
 # RESPONSIBILITY: Run the canonical api-contracts capability.
 #   A contract break fails here (cheaply, ~seconds) instead of after
 #   1,392 Playwright instances. This is a precondition for E2E.
+# Canonical entrypoint: runtime/verify.py (python -m runtime.verify <profile>)
 # Rule 1: no engineering logic in YAML. Rule 8: delegate to python -m runtime.verify.
 # Rule 9: append runtime.verify status summary.
 

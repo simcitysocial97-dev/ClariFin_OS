@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -60,7 +60,7 @@ def collect_all_evidence(workspace_root: Path) -> EvidenceCollectionResult:
 
     return EvidenceCollectionResult(
         workspace_root=str(workspace_root),
-        collected_at=datetime.utcnow().isoformat() + "Z",
+        collected_at=datetime.now(UTC).isoformat().replace("+00:00", "Z"),
         artifacts=artifacts,
         collectors=collectors_metadata,
     )
@@ -143,7 +143,7 @@ def build_verification_evidence(
     return VerificationEvidence(
         commit_sha=commit_sha,
         branch=branch,
-        timestamp=datetime.utcnow().isoformat() + "Z",
+        timestamp=datetime.now(UTC).isoformat().replace("+00:00", "Z"),
         status=status,
         coverage=coverage,
         mutation=mutation,

@@ -35,6 +35,13 @@ def serialize_context_pack(pack: dict[str, Any]) -> str:
     return json.dumps(normalized, sort_keys=True, separators=(",", ":"))
 
 
+def _compute_pack_id(symptom: str, capability_id: str | None, run_id: str | None) -> str:
+    """Generate deterministic pack ID from inputs."""
+    content = f"{symptom}|{capability_id or ''}|{run_id or ''}"
+    fingerprint = hashlib.sha256(content.encode()).hexdigest()[:16]
+    return f"ctx-{fingerprint}"
+
+
 def compute_pack_id(pack: dict[str, Any]) -> str:
     """Compute SHA-256 identity for a context pack.
 

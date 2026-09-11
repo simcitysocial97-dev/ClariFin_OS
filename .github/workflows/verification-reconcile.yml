@@ -4,6 +4,7 @@
 # RESPONSIBILITY: Make CI consume and enforce the verification framework's
 #   plan/reconciliation semantics WITHOUT redesigning the existing 9-workflow
 #   topology. This workflow does NOT replace backend-verify / frontend-verify /
+# Canonical entrypoint: runtime/verify.py (python -m runtime.verify <profile>)
 #   quality / verification-runtime / golden / mutation / dependency-update /
 #   playwright / release. It runs the runtime verification through the same
 #   `python -m runtime.verify` contract and adds the M5 reconciliation gate on top.

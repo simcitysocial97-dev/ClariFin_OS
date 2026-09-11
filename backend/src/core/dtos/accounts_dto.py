@@ -8,7 +8,7 @@ All monetary fields use _paise suffix for explicit units.
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 # ===== Account Types =====
 
@@ -176,8 +176,8 @@ class AccountsDTO(BaseModel):
         default=None, description="Evidence chain for explainability"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "accounts": [],
                 "total_balance_paise": 15000000,  # ₹1,50,000.00
@@ -187,6 +187,7 @@ class AccountsDTO(BaseModel):
                 "evidence_chain": None,
             }
         }
+    )
 
 
 class InstitutionDTO(BaseModel):

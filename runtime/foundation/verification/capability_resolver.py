@@ -241,6 +241,51 @@ class CapabilityResolver:
                     f"shared-import:{norm_path}"
                 )
 
+        # 4b. Financial domain blast-radius: map changed-file concepts to
+        #     verification capabilities via their domain, enabling cross-domain
+        #     impact detection (e.g. transaction_matching in reconciliation_engine
+        #     transitively affects balance_engine, cashflow_engine, behaviour_engine).
+        try:
+            from runtime.foundation.verification.semantics.blast_radius import (
+                compute_financial_blast_radius,
+            )
+            from runtime.foundation.verification.semantics.concepts import (
+                FINANCIAL_CONCEPTS,
+            )
+
+            financial = compute_financial_blast_radius(changed_files)
+            # Build path → domain reverse lookup from contract registry
+            _path_to_domain: dict[str, str] = {}
+            for concept in FINANCIAL_CONCEPTS.values():
+                if concept.implemented_in:
+                    _path_to_domain[concept.implemented_in] = concept.domain
+            # Domain → verification capability IDs from the registry
+            _domain_to_caps: dict[str, list[str]] = {}
+            for contract in self._contract_registry.get_all_contracts():
+                for mod_path in contract.affected_by_paths:
+                    # Extract engine domain from path like backend/src/engines/<domain>
+                    parts = Path(mod_path).parts
+                    if "engines" in parts:
+                        eng_idx = parts.index("engines")
+                        if eng_idx + 1 < len(parts):
+                            domain = parts[eng_idx + 1]
+                            _domain_to_caps.setdefault(domain, []).append(
+                                contract.id
+                            )
+            for concept_id in financial.affected_concepts:
+                concept = FINANCIAL_CONCEPTS.get(concept_id)
+                if concept is None:
+                    continue
+                domain = concept.domain
+                for cap_id in _domain_to_caps.get(domain, []):
+                    if cap_id not in direct_caps and cap_id not in transitive_caps:
+                        transitive_caps.add(cap_id)
+                        capability_sources.setdefault(
+                            cap_id, []
+                        ).append(f"financial:{concept_id}({domain})")
+        except Exception:
+            pass  # financial semantics unavailable — fall through gracefully
+
         # 5. Determine all registered capabilities
         all_caps = [c.id for c in self._contract_registry.get_all_contracts()]
 
@@ -303,7 +348,7 @@ class CapabilityResolver:
             classification = ChangeClassification.DOCUMENTATION_CHANGE
         elif (
             norm_path.startswith("backend/src/")
-            or norm_path.startswith("frontend/src/")
+            or norm_path.startswith("frontend/lib/")
             or norm_path.startswith("runtime/")
         ):
             classification = ChangeClassification.SOURCE_CHANGE

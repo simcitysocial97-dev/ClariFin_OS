@@ -9,7 +9,7 @@ All interest rates use _bps suffix (basis points, 1% = 100 bps).
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 # ===== Credit Card Types =====
 
@@ -209,8 +209,8 @@ class CreditCardsDTO(BaseModel):
         default=None, description="Evidence chain for explainability"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "cards": [],
                 "total_balance_paise": 15000000,  # ₹1,50,000.00
@@ -221,6 +221,7 @@ class CreditCardsDTO(BaseModel):
                 "evidence_chain": None,
             }
         }
+    )
 
 
 # ===== Credit Cards Response Types =====

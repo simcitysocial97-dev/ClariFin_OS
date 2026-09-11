@@ -18,7 +18,7 @@ from runtime.platform.ai.context.provenance import (
 )
 from runtime.platform.ai.context.ranker import RankedComponent
 from runtime.platform.ai.context.serializer import (
-    compute_pack_id,
+    _compute_pack_id,
     estimate_tokens,
 )
 from runtime.platform.ai.context.trimmer import TRIMMER_INSTANCE, Trimmer
@@ -123,8 +123,8 @@ class ContextBuilder:
             "pack_id": None,  # computed after serialization
         }
 
-        # Compute deterministic ID
-        pack_data["pack_id"] = compute_pack_id(pack_data)
+        # Compute deterministic ID from inputs only (not sources/provenance)
+        pack_data["pack_id"] = _compute_pack_id(symptom, capability_id, run_id)
 
         return pack_data
 

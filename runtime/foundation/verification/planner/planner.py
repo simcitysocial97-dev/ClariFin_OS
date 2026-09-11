@@ -215,7 +215,7 @@ class VerificationPlanner:
                     scopes.add(VerificationScope.INTEGRATION)
 
             # Frontend paths
-            elif norm_path.startswith("frontend/src/"):
+            elif norm_path.startswith("frontend/lib/"):
                 scopes.add(VerificationScope.FRONTEND)
                 scopes.add(VerificationScope.CONTRACTS)
 

@@ -157,6 +157,8 @@ class TestStrengtheningPipeline:
     trail is preserved.
     """
 
+    __test__ = False  # Not a pytest test class; pytest collection sees "Test" prefix.
+
     def __init__(
         self,
         *,

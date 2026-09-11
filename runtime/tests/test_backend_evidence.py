@@ -203,16 +203,17 @@ class TestBackendPhaseDecomposition:
         assert "codes+=($?)" in source
 
 
-class TestBackendEvidenceSchema:
-    @pytest.fixture(scope="class")
-    def summary(self) -> dict:
-        path = BACKEND_EVIDENCE / "backend-verification.json"
-        if not path.exists():
-            pytest.skip(
-                "backend evidence not present; run run_backend_verification.sh first"
-            )
-        return json.loads(path.read_text())
+@pytest.fixture(scope="class")
+def summary() -> dict:
+    path = BACKEND_EVIDENCE / "backend-verification.json"
+    if not path.exists():
+        pytest.skip(
+            "backend evidence not present; run run_backend_verification.sh first"
+        )
+    return json.loads(path.read_text())
 
+
+class TestBackendEvidenceSchema:
     def test_schema_key_is_versioned(self, summary):
         assert summary["schema"] == "backend-verification/v1"
 

@@ -8,7 +8,7 @@ No execution logic. Data models only.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
@@ -183,7 +183,7 @@ class VerificationEvidence:
     target_id: str
     type: str
     content: dict[str, Any]
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     status: VerificationStatus = VerificationStatus.UNKNOWN
     metadata: dict[str, Any] = field(default_factory=dict)
 
@@ -294,7 +294,7 @@ class VerificationPlan:
     id: str
     name: str
     scope: VerificationScope
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     targets: list[VerificationTarget] = field(default_factory=list)
     steps: list[VerificationStep] = field(default_factory=list)
     required_workflows: list[str] = field(default_factory=list)

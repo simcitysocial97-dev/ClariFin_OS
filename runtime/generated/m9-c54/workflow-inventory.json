@@ -1,8 +1,8 @@
 {
   "schema": "m9-c54/workflow-convergence/v1",
-  "generated_at": "2026-09-01T13:31:33.299302+00:00",
-  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
-  "workflow_count": 13,
+  "generated_at": "2026-09-11T04:18:27.335967+00:00",
+  "repository_sha": "543917c3529012c7a3148a3fea3a25f0ec9d0bba",
+  "workflow_count": 14,
   "workflows": [
     {
       "filename": "api-contracts.yml",
@@ -96,7 +96,7 @@
               "index": 3,
               "name": "Run API contract integrity gate",
               "uses": "",
-              "run": "python runtime/verify.py api-contracts",
+              "run": "python -m runtime.verify api-contracts",
               "is_verification": true,
               "semantics": {
                 "task_kind": "contract",
@@ -128,7 +128,7 @@
               "index": 5,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -150,7 +150,7 @@
               "index": 3,
               "name": "Run API contract integrity gate",
               "uses": "",
-              "run": "python runtime/verify.py api-contracts",
+              "run": "python -m runtime.verify api-contracts",
               "is_verification": true,
               "semantics": {
                 "task_kind": "contract",
@@ -170,7 +170,7 @@
               "index": 5,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -290,7 +290,7 @@
               "index": 3,
               "name": "Run API contract integrity gate",
               "uses": "",
-              "run": "python runtime/verify.py api-contracts",
+              "run": "python -m runtime.verify api-contracts",
               "is_verification": true,
               "semantics": {
                 "task_kind": "contract",
@@ -322,7 +322,7 @@
               "index": 5,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -344,7 +344,7 @@
               "index": 3,
               "name": "Run API contract integrity gate",
               "uses": "",
-              "run": "python runtime/verify.py api-contracts",
+              "run": "python -m runtime.verify api-contracts",
               "is_verification": true,
               "semantics": {
                 "task_kind": "contract",
@@ -364,7 +364,7 @@
               "index": 5,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -524,7 +524,7 @@
               "index": 3,
               "name": "Run backend verification",
               "uses": "",
-              "run": "python runtime/verify.py backend",
+              "run": "python -m runtime.verify backend",
               "is_verification": true,
               "semantics": {
                 "task_kind": "unit",
@@ -616,7 +616,7 @@
               "index": 10,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -638,7 +638,7 @@
               "index": 3,
               "name": "Run backend verification",
               "uses": "",
-              "run": "python runtime/verify.py backend",
+              "run": "python -m runtime.verify backend",
               "is_verification": true,
               "semantics": {
                 "task_kind": "unit",
@@ -658,7 +658,7 @@
               "index": 10,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -838,7 +838,7 @@
               "index": 3,
               "name": "Run backend verification",
               "uses": "",
-              "run": "python runtime/verify.py backend",
+              "run": "python -m runtime.verify backend",
               "is_verification": true,
               "semantics": {
                 "task_kind": "unit",
@@ -930,7 +930,7 @@
               "index": 10,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -952,7 +952,7 @@
               "index": 3,
               "name": "Run backend verification",
               "uses": "",
-              "run": "python runtime/verify.py backend",
+              "run": "python -m runtime.verify backend",
               "is_verification": true,
               "semantics": {
                 "task_kind": "unit",
@@ -972,7 +972,7 @@
               "index": 10,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -1226,7 +1226,7 @@
               "index": 7,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -1248,7 +1248,7 @@
               "index": 7,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -1452,7 +1452,7 @@
               "index": 7,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -1474,7 +1474,7 @@
               "index": 7,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -1674,7 +1674,7 @@
               "index": 3,
               "name": "Run frontend verification",
               "uses": "",
-              "run": "python runtime/verify.py frontend",
+              "run": "python -m runtime.verify frontend",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -1766,7 +1766,7 @@
               "index": 10,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -1788,7 +1788,7 @@
               "index": 3,
               "name": "Run frontend verification",
               "uses": "",
-              "run": "python runtime/verify.py frontend",
+              "run": "python -m runtime.verify frontend",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -1808,7 +1808,7 @@
               "index": 10,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -1988,7 +1988,7 @@
               "index": 3,
               "name": "Run frontend verification",
               "uses": "",
-              "run": "python runtime/verify.py frontend",
+              "run": "python -m runtime.verify frontend",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -2080,7 +2080,7 @@
               "index": 10,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -2102,7 +2102,7 @@
               "index": 3,
               "name": "Run frontend verification",
               "uses": "",
-              "run": "python runtime/verify.py frontend",
+              "run": "python -m runtime.verify frontend",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -2122,7 +2122,7 @@
               "index": 10,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -2323,7 +2323,7 @@
               "index": 2,
               "name": "Run golden verification",
               "uses": "",
-              "run": "python runtime/verify.py golden",
+              "run": "python -m runtime.verify golden",
               "is_verification": true,
               "semantics": {
                 "task_kind": "golden",
@@ -2415,7 +2415,7 @@
               "index": 9,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -2437,7 +2437,7 @@
               "index": 2,
               "name": "Run golden verification",
               "uses": "",
-              "run": "python runtime/verify.py golden",
+              "run": "python -m runtime.verify golden",
               "is_verification": true,
               "semantics": {
                 "task_kind": "golden",
@@ -2457,7 +2457,7 @@
               "index": 9,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -2613,7 +2613,7 @@
               "index": 2,
               "name": "Run golden verification",
               "uses": "",
-              "run": "python runtime/verify.py golden",
+              "run": "python -m runtime.verify golden",
               "is_verification": true,
               "semantics": {
                 "task_kind": "golden",
@@ -2705,7 +2705,7 @@
               "index": 9,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -2727,7 +2727,7 @@
               "index": 2,
               "name": "Run golden verification",
               "uses": "",
-              "run": "python runtime/verify.py golden",
+              "run": "python -m runtime.verify golden",
               "is_verification": true,
               "semantics": {
                 "task_kind": "golden",
@@ -2747,7 +2747,7 @@
               "index": 9,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -2952,7 +2952,7 @@
               "index": 4,
               "name": "Capture verify.py source and configuration",
               "uses": "",
-              "run": "{\n  echo \"=== verify.py identity ===\"\n  sha256sum runtime/verify.py\n  git status --short runtime/verify.py\n\n  echo\n  echo \"=== orchestrator.py identity ===\"\n  sha256sum runtime/foundation/verification/orchestrator.py\n  git status --short runtime/foundation/verification/orchestrator.py\n\n  echo\n  echo \"=== executor.py identity ===\"\n  sha256sum runtime/foundation/verification/executor.py\n  git status --short runtime/foundation/verification/executor.py\n\n  echo\n  echo \"=== Relevant orchestrator functions ===\"\n  grep -nE \\\n    '_resolve_base_ref|_collect_changed_files|changed_files|timeout|execute|VerificationReport|to_markdown' \\\n    runtime/foundation/verification/orchestrator.py || true\n\n  echo\n  echo \"=== verify.py relevant functions ===\"\n  grep -nE \\\n    'changed_files|base_ref|GITHUB_BASE_REF|GITHUB_SHA|VerificationReport|profile|timeout' \\\n    runtime/verify.py || true\n} > runtime/generated/evidence/verification-source.txt\n",
+              "run": "{\n  echo \"=== verify.py identity ===\"\n  sha256sum python -m runtime.verify\n  git status --short python -m runtime.verify\n\n  echo\n  echo \"=== orchestrator.py identity ===\"\n  sha256sum runtime/foundation/verification/orchestrator.py\n  git status --short runtime/foundation/verification/orchestrator.py\n\n  echo\n  echo \"=== executor.py identity ===\"\n  sha256sum runtime/foundation/verification/executor.py\n  git status --short runtime/foundation/verification/executor.py\n\n  echo\n  echo \"=== Relevant orchestrator functions ===\"\n  grep -nE \\\n    '_resolve_base_ref|_collect_changed_files|changed_files|timeout|execute|VerificationReport|to_markdown' \\\n    runtime/foundation/verification/orchestrator.py || true\n\n  echo\n  echo \"=== verify.py relevant functions ===\"\n  grep -nE \\\n    'changed_files|base_ref|GITHUB_BASE_REF|GITHUB_SHA|VerificationReport|profile|timeout' \\\n    python -m runtime.verify || true\n} > runtime/generated/evidence/verification-source.txt\n",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -3070,11 +3070,19 @@
             },
             {
               "index": 14,
-              "name": "Run verify.py quick with complete capture",
+              "name": "Run runtime.verify quick with complete capture",
               "uses": "",
-              "run": "set +e\n\nSTART=$(date +%s)\n\npython runtime/verify.py quick \\\n  > runtime/generated/evidence/verify-quick.stdout.log 2>&1\n\nEXIT_CODE=$?\n\nEND=$(date +%s)\n\n{\n  echo \"profile=quick\"\n  echo \"exit_code=$EXIT_CODE\"\n  echo \"duration_seconds=$((END-START))\"\n} > runtime/generated/evidence/verify-quick.result\n\nexit 0\n",
-              "is_verification": false,
-              "semantics": null,
+              "run": "set +e\n\nSTART=$(date +%s)\n\npython -m runtime.verify quick \\\n  > runtime/generated/evidence/verify-quick.stdout.log 2>&1\n\nEXIT_CODE=$?\n\nEND=$(date +%s)\n\n{\n  echo \"profile=quick\"\n  echo \"exit_code=$EXIT_CODE\"\n  echo \"duration_seconds=$((END-START))\"\n} > runtime/generated/evidence/verify-quick.result\n\nexit 0\n",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "quality",
+                "verification_task": "task::quality::quick",
+                "evidence_kind": "quality-report",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "quick quality gate check"
+              },
               "continue_on_error": true,
               "if_condition": null,
               "env": {},
@@ -3082,9 +3090,9 @@
             },
             {
               "index": 15,
-              "name": "Run verify.py backend with complete capture",
+              "name": "Run runtime.verify backend with complete capture",
               "uses": "",
-              "run": "set +e\n\nSTART=$(date +%s)\n\npython runtime/verify.py backend \\\n  > runtime/generated/evidence/verify-backend.stdout.log 2>&1\n\nEXIT_CODE=$?\n\nEND=$(date +%s)\n\n{\n  echo \"profile=backend\"\n  echo \"exit_code=$EXIT_CODE\"\n  echo \"duration_seconds=$((END-START))\"\n} > runtime/generated/evidence/verify-backend.result\n\nexit 0\n",
+              "run": "set +e\n\nSTART=$(date +%s)\n\npython -m runtime.verify backend \\\n  > runtime/generated/evidence/verify-backend.stdout.log 2>&1\n\nEXIT_CODE=$?\n\nEND=$(date +%s)\n\n{\n  echo \"profile=backend\"\n  echo \"exit_code=$EXIT_CODE\"\n  echo \"duration_seconds=$((END-START))\"\n} > runtime/generated/evidence/verify-backend.result\n\nexit 0\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "unit",
@@ -3151,10 +3159,30 @@
           ],
           "verification_steps": [
             {
-              "index": 15,
-              "name": "Run verify.py backend with complete capture",
+              "index": 14,
+              "name": "Run runtime.verify quick with complete capture",
               "uses": "",
-              "run": "set +e\n\nSTART=$(date +%s)\n\npython runtime/verify.py backend \\\n  > runtime/generated/evidence/verify-backend.stdout.log 2>&1\n\nEXIT_CODE=$?\n\nEND=$(date +%s)\n\n{\n  echo \"profile=backend\"\n  echo \"exit_code=$EXIT_CODE\"\n  echo \"duration_seconds=$((END-START))\"\n} > runtime/generated/evidence/verify-backend.result\n\nexit 0\n",
+              "run": "set +e\n\nSTART=$(date +%s)\n\npython -m runtime.verify quick \\\n  > runtime/generated/evidence/verify-quick.stdout.log 2>&1\n\nEXIT_CODE=$?\n\nEND=$(date +%s)\n\n{\n  echo \"profile=quick\"\n  echo \"exit_code=$EXIT_CODE\"\n  echo \"duration_seconds=$((END-START))\"\n} > runtime/generated/evidence/verify-quick.result\n\nexit 0\n",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "quality",
+                "verification_task": "task::quality::quick",
+                "evidence_kind": "quality-report",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "quick quality gate check"
+              },
+              "continue_on_error": true,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 15,
+              "name": "Run runtime.verify backend with complete capture",
+              "uses": "",
+              "run": "set +e\n\nSTART=$(date +%s)\n\npython -m runtime.verify backend \\\n  > runtime/generated/evidence/verify-backend.stdout.log 2>&1\n\nEXIT_CODE=$?\n\nEND=$(date +%s)\n\n{\n  echo \"profile=backend\"\n  echo \"exit_code=$EXIT_CODE\"\n  echo \"duration_seconds=$((END-START))\"\n} > runtime/generated/evidence/verify-backend.result\n\nexit 0\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "unit",
@@ -3224,7 +3252,7 @@
               "index": 4,
               "name": "Capture verify.py source and configuration",
               "uses": "",
-              "run": "{\n  echo \"=== verify.py identity ===\"\n  sha256sum runtime/verify.py\n  git status --short runtime/verify.py\n\n  echo\n  echo \"=== orchestrator.py identity ===\"\n  sha256sum runtime/foundation/verification/orchestrator.py\n  git status --short runtime/foundation/verification/orchestrator.py\n\n  echo\n  echo \"=== executor.py identity ===\"\n  sha256sum runtime/foundation/verification/executor.py\n  git status --short runtime/foundation/verification/executor.py\n\n  echo\n  echo \"=== Relevant orchestrator functions ===\"\n  grep -nE \\\n    '_resolve_base_ref|_collect_changed_files|changed_files|timeout|execute|VerificationReport|to_markdown' \\\n    runtime/foundation/verification/orchestrator.py || true\n\n  echo\n  echo \"=== verify.py relevant functions ===\"\n  grep -nE \\\n    'changed_files|base_ref|GITHUB_BASE_REF|GITHUB_SHA|VerificationReport|profile|timeout' \\\n    runtime/verify.py || true\n} > runtime/generated/evidence/verification-source.txt\n",
+              "run": "{\n  echo \"=== verify.py identity ===\"\n  sha256sum python -m runtime.verify\n  git status --short python -m runtime.verify\n\n  echo\n  echo \"=== orchestrator.py identity ===\"\n  sha256sum runtime/foundation/verification/orchestrator.py\n  git status --short runtime/foundation/verification/orchestrator.py\n\n  echo\n  echo \"=== executor.py identity ===\"\n  sha256sum runtime/foundation/verification/executor.py\n  git status --short runtime/foundation/verification/executor.py\n\n  echo\n  echo \"=== Relevant orchestrator functions ===\"\n  grep -nE \\\n    '_resolve_base_ref|_collect_changed_files|changed_files|timeout|execute|VerificationReport|to_markdown' \\\n    runtime/foundation/verification/orchestrator.py || true\n\n  echo\n  echo \"=== verify.py relevant functions ===\"\n  grep -nE \\\n    'changed_files|base_ref|GITHUB_BASE_REF|GITHUB_SHA|VerificationReport|profile|timeout' \\\n    python -m runtime.verify || true\n} > runtime/generated/evidence/verification-source.txt\n",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -3336,18 +3364,6 @@
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
-              "if_condition": null,
-              "env": {},
-              "timeout_minutes": null
-            },
-            {
-              "index": 14,
-              "name": "Run verify.py quick with complete capture",
-              "uses": "",
-              "run": "set +e\n\nSTART=$(date +%s)\n\npython runtime/verify.py quick \\\n  > runtime/generated/evidence/verify-quick.stdout.log 2>&1\n\nEXIT_CODE=$?\n\nEND=$(date +%s)\n\n{\n  echo \"profile=quick\"\n  echo \"exit_code=$EXIT_CODE\"\n  echo \"duration_seconds=$((END-START))\"\n} > runtime/generated/evidence/verify-quick.result\n\nexit 0\n",
-              "is_verification": false,
-              "semantics": null,
-              "continue_on_error": true,
               "if_condition": null,
               "env": {},
               "timeout_minutes": null
@@ -3466,7 +3482,7 @@
               "index": 4,
               "name": "Capture verify.py source and configuration",
               "uses": "",
-              "run": "{\n  echo \"=== verify.py identity ===\"\n  sha256sum runtime/verify.py\n  git status --short runtime/verify.py\n\n  echo\n  echo \"=== orchestrator.py identity ===\"\n  sha256sum runtime/foundation/verification/orchestrator.py\n  git status --short runtime/foundation/verification/orchestrator.py\n\n  echo\n  echo \"=== executor.py identity ===\"\n  sha256sum runtime/foundation/verification/executor.py\n  git status --short runtime/foundation/verification/executor.py\n\n  echo\n  echo \"=== Relevant orchestrator functions ===\"\n  grep -nE \\\n    '_resolve_base_ref|_collect_changed_files|changed_files|timeout|execute|VerificationReport|to_markdown' \\\n    runtime/foundation/verification/orchestrator.py || true\n\n  echo\n  echo \"=== verify.py relevant functions ===\"\n  grep -nE \\\n    'changed_files|base_ref|GITHUB_BASE_REF|GITHUB_SHA|VerificationReport|profile|timeout' \\\n    runtime/verify.py || true\n} > runtime/generated/evidence/verification-source.txt\n",
+              "run": "{\n  echo \"=== verify.py identity ===\"\n  sha256sum python -m runtime.verify\n  git status --short python -m runtime.verify\n\n  echo\n  echo \"=== orchestrator.py identity ===\"\n  sha256sum runtime/foundation/verification/orchestrator.py\n  git status --short runtime/foundation/verification/orchestrator.py\n\n  echo\n  echo \"=== executor.py identity ===\"\n  sha256sum runtime/foundation/verification/executor.py\n  git status --short runtime/foundation/verification/executor.py\n\n  echo\n  echo \"=== Relevant orchestrator functions ===\"\n  grep -nE \\\n    '_resolve_base_ref|_collect_changed_files|changed_files|timeout|execute|VerificationReport|to_markdown' \\\n    runtime/foundation/verification/orchestrator.py || true\n\n  echo\n  echo \"=== verify.py relevant functions ===\"\n  grep -nE \\\n    'changed_files|base_ref|GITHUB_BASE_REF|GITHUB_SHA|VerificationReport|profile|timeout' \\\n    python -m runtime.verify || true\n} > runtime/generated/evidence/verification-source.txt\n",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -3584,11 +3600,19 @@
             },
             {
               "index": 14,
-              "name": "Run verify.py quick with complete capture",
+              "name": "Run runtime.verify quick with complete capture",
               "uses": "",
-              "run": "set +e\n\nSTART=$(date +%s)\n\npython runtime/verify.py quick \\\n  > runtime/generated/evidence/verify-quick.stdout.log 2>&1\n\nEXIT_CODE=$?\n\nEND=$(date +%s)\n\n{\n  echo \"profile=quick\"\n  echo \"exit_code=$EXIT_CODE\"\n  echo \"duration_seconds=$((END-START))\"\n} > runtime/generated/evidence/verify-quick.result\n\nexit 0\n",
-              "is_verification": false,
-              "semantics": null,
+              "run": "set +e\n\nSTART=$(date +%s)\n\npython -m runtime.verify quick \\\n  > runtime/generated/evidence/verify-quick.stdout.log 2>&1\n\nEXIT_CODE=$?\n\nEND=$(date +%s)\n\n{\n  echo \"profile=quick\"\n  echo \"exit_code=$EXIT_CODE\"\n  echo \"duration_seconds=$((END-START))\"\n} > runtime/generated/evidence/verify-quick.result\n\nexit 0\n",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "quality",
+                "verification_task": "task::quality::quick",
+                "evidence_kind": "quality-report",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "quick quality gate check"
+              },
               "continue_on_error": true,
               "if_condition": null,
               "env": {},
@@ -3596,9 +3620,9 @@
             },
             {
               "index": 15,
-              "name": "Run verify.py backend with complete capture",
+              "name": "Run runtime.verify backend with complete capture",
               "uses": "",
-              "run": "set +e\n\nSTART=$(date +%s)\n\npython runtime/verify.py backend \\\n  > runtime/generated/evidence/verify-backend.stdout.log 2>&1\n\nEXIT_CODE=$?\n\nEND=$(date +%s)\n\n{\n  echo \"profile=backend\"\n  echo \"exit_code=$EXIT_CODE\"\n  echo \"duration_seconds=$((END-START))\"\n} > runtime/generated/evidence/verify-backend.result\n\nexit 0\n",
+              "run": "set +e\n\nSTART=$(date +%s)\n\npython -m runtime.verify backend \\\n  > runtime/generated/evidence/verify-backend.stdout.log 2>&1\n\nEXIT_CODE=$?\n\nEND=$(date +%s)\n\n{\n  echo \"profile=backend\"\n  echo \"exit_code=$EXIT_CODE\"\n  echo \"duration_seconds=$((END-START))\"\n} > runtime/generated/evidence/verify-backend.result\n\nexit 0\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "unit",
@@ -3665,10 +3689,30 @@
           ],
           "verification_steps": [
             {
-              "index": 15,
-              "name": "Run verify.py backend with complete capture",
+              "index": 14,
+              "name": "Run runtime.verify quick with complete capture",
               "uses": "",
-              "run": "set +e\n\nSTART=$(date +%s)\n\npython runtime/verify.py backend \\\n  > runtime/generated/evidence/verify-backend.stdout.log 2>&1\n\nEXIT_CODE=$?\n\nEND=$(date +%s)\n\n{\n  echo \"profile=backend\"\n  echo \"exit_code=$EXIT_CODE\"\n  echo \"duration_seconds=$((END-START))\"\n} > runtime/generated/evidence/verify-backend.result\n\nexit 0\n",
+              "run": "set +e\n\nSTART=$(date +%s)\n\npython -m runtime.verify quick \\\n  > runtime/generated/evidence/verify-quick.stdout.log 2>&1\n\nEXIT_CODE=$?\n\nEND=$(date +%s)\n\n{\n  echo \"profile=quick\"\n  echo \"exit_code=$EXIT_CODE\"\n  echo \"duration_seconds=$((END-START))\"\n} > runtime/generated/evidence/verify-quick.result\n\nexit 0\n",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "quality",
+                "verification_task": "task::quality::quick",
+                "evidence_kind": "quality-report",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "quick quality gate check"
+              },
+              "continue_on_error": true,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 15,
+              "name": "Run runtime.verify backend with complete capture",
+              "uses": "",
+              "run": "set +e\n\nSTART=$(date +%s)\n\npython -m runtime.verify backend \\\n  > runtime/generated/evidence/verify-backend.stdout.log 2>&1\n\nEXIT_CODE=$?\n\nEND=$(date +%s)\n\n{\n  echo \"profile=backend\"\n  echo \"exit_code=$EXIT_CODE\"\n  echo \"duration_seconds=$((END-START))\"\n} > runtime/generated/evidence/verify-backend.result\n\nexit 0\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "unit",
@@ -3738,7 +3782,7 @@
               "index": 4,
               "name": "Capture verify.py source and configuration",
               "uses": "",
-              "run": "{\n  echo \"=== verify.py identity ===\"\n  sha256sum runtime/verify.py\n  git status --short runtime/verify.py\n\n  echo\n  echo \"=== orchestrator.py identity ===\"\n  sha256sum runtime/foundation/verification/orchestrator.py\n  git status --short runtime/foundation/verification/orchestrator.py\n\n  echo\n  echo \"=== executor.py identity ===\"\n  sha256sum runtime/foundation/verification/executor.py\n  git status --short runtime/foundation/verification/executor.py\n\n  echo\n  echo \"=== Relevant orchestrator functions ===\"\n  grep -nE \\\n    '_resolve_base_ref|_collect_changed_files|changed_files|timeout|execute|VerificationReport|to_markdown' \\\n    runtime/foundation/verification/orchestrator.py || true\n\n  echo\n  echo \"=== verify.py relevant functions ===\"\n  grep -nE \\\n    'changed_files|base_ref|GITHUB_BASE_REF|GITHUB_SHA|VerificationReport|profile|timeout' \\\n    runtime/verify.py || true\n} > runtime/generated/evidence/verification-source.txt\n",
+              "run": "{\n  echo \"=== verify.py identity ===\"\n  sha256sum python -m runtime.verify\n  git status --short python -m runtime.verify\n\n  echo\n  echo \"=== orchestrator.py identity ===\"\n  sha256sum runtime/foundation/verification/orchestrator.py\n  git status --short runtime/foundation/verification/orchestrator.py\n\n  echo\n  echo \"=== executor.py identity ===\"\n  sha256sum runtime/foundation/verification/executor.py\n  git status --short runtime/foundation/verification/executor.py\n\n  echo\n  echo \"=== Relevant orchestrator functions ===\"\n  grep -nE \\\n    '_resolve_base_ref|_collect_changed_files|changed_files|timeout|execute|VerificationReport|to_markdown' \\\n    runtime/foundation/verification/orchestrator.py || true\n\n  echo\n  echo \"=== verify.py relevant functions ===\"\n  grep -nE \\\n    'changed_files|base_ref|GITHUB_BASE_REF|GITHUB_SHA|VerificationReport|profile|timeout' \\\n    python -m runtime.verify || true\n} > runtime/generated/evidence/verification-source.txt\n",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -3855,18 +3899,6 @@
               "timeout_minutes": null
             },
             {
-              "index": 14,
-              "name": "Run verify.py quick with complete capture",
-              "uses": "",
-              "run": "set +e\n\nSTART=$(date +%s)\n\npython runtime/verify.py quick \\\n  > runtime/generated/evidence/verify-quick.stdout.log 2>&1\n\nEXIT_CODE=$?\n\nEND=$(date +%s)\n\n{\n  echo \"profile=quick\"\n  echo \"exit_code=$EXIT_CODE\"\n  echo \"duration_seconds=$((END-START))\"\n} > runtime/generated/evidence/verify-quick.result\n\nexit 0\n",
-              "is_verification": false,
-              "semantics": null,
-              "continue_on_error": true,
-              "if_condition": null,
-              "env": {},
-              "timeout_minutes": null
-            },
-            {
               "index": 16,
               "name": "Git working-tree cleanliness after diagnostics",
               "uses": "",
@@ -3921,9 +3953,520 @@
       ],
       "non_verification_jobs": [],
       "total_steps": 20,
-      "verification_steps": 1,
+      "verification_steps": 2,
       "has_upload_steps": true,
       "has_continue_on_error": true,
+      "has_if_always": true
+    },
+    {
+      "filename": "mutation-pr.yml",
+      "name": "Mutation Testing (PR Incremental)",
+      "triggers": {
+        "pull_request": {
+          "paths": [
+            "backend/src/engines/**",
+            "backend/src/services/**",
+            "backend/tests/**"
+          ]
+        }
+      },
+      "concurrency": {
+        "group": "${{ github.workflow }}-${{ github.head_ref }}",
+        "cancel_in_progress": true
+      },
+      "permissions": {
+        "contents": "read",
+        "pull-requests": "write"
+      },
+      "jobs": [
+        {
+          "job_id": "incremental-mutation",
+          "name": "Incremental Mutation (PR)",
+          "runs_on": "ubuntu-latest",
+          "timeout_minutes": 15,
+          "needs": [],
+          "strategy": null,
+          "steps": [
+            {
+              "index": 0,
+              "name": "Checkout code",
+              "uses": "actions/checkout@v7.0.1",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 1,
+              "name": "Bootstrap Engineering Runtime",
+              "uses": "./.github/actions/bootstrap-runtime",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 2,
+              "name": "Verify canonical environment",
+              "uses": "",
+              "run": "python -m runtime.verify env-check",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "static",
+                "verification_task": "task::static::env-check",
+                "evidence_kind": "environment-fingerprint",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "canonical environment fingerprint check"
+              },
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 3,
+              "name": "Get changed files",
+              "uses": "",
+              "run": "# Fetch base ref if not already fetched\ngit fetch origin ${{ github.base_ref }} --depth=1 2>/dev/null || true\n\n# Get changed Python files in backend/src/engines or backend/src/services\nCHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '^backend/src/(engines|services)/' || echo \"\")\n\nif [ -z \"$CHANGED\" ]; then\n  echo \"no_changes=true\" >> $GITHUB_OUTPUT\n  echo \"No engine/service files changed, skipping mutation\"\nelse\n  echo \"no_changes=false\" >> $GITHUB_OUTPUT\n  echo \"files=$CHANGED\" >> $GITHUB_OUTPUT\n  echo \"Changed files:\"\n  echo \"$CHANGED\"\nfi\n",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 4,
+              "name": "Run incremental mutation",
+              "uses": "",
+              "run": "FILES=\"${{ steps.changed.outputs.files }}\"\n\npython -m runtime.verify mutation --incremental --changed-files $FILES --allow-dirty \\\n  2>&1 | tee mutation_output.txt\n\nEXIT_CODE=${PIPESTATUS[0]}\necho \"exit_code=$EXIT_CODE\" >> $GITHUB_OUTPUT\n\n# Extract metrics from output\nENGINES=$(grep \"Affected engines:\" mutation_output.txt | sed 's/.*Affected engines: //' || echo \"unknown\")\nSCORE=$(grep \"Mutation score:\" mutation_output.txt | awk '{print $NF}' || echo \"N/A\")\nKILLED=$(grep \"Killed:\" mutation_output.txt | awk '{print $2}' || echo \"0\")\nSURVIVED=$(grep \"Survived:\" mutation_output.txt | awk '{print $2}' || echo \"0\")\n\necho \"engines=$ENGINES\" >> $GITHUB_OUTPUT\necho \"score=$SCORE\" >> $GITHUB_OUTPUT\necho \"killed=$KILLED\" >> $GITHUB_OUTPUT\necho \"survived=$SURVIVED\" >> $GITHUB_OUTPUT\n",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "mutation",
+                "verification_task": "task::mutation::full",
+                "evidence_kind": "mutation-summary",
+                "execution_mode": "authoritative",
+                "reusable_evidence": true,
+                "scope": "population",
+                "description": "authoritative full mutation campaign"
+              },
+              "continue_on_error": false,
+              "if_condition": "steps.changed.outputs.no_changes == 'false'",
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 5,
+              "name": "Upload mutation report",
+              "uses": "actions/upload-artifact@v7",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": "always() && steps.changed.outputs.no_changes == 'false'",
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 6,
+              "name": "Comment on PR",
+              "uses": "actions/github-script@v7",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": "always() && steps.changed.outputs.no_changes == 'false'",
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 7,
+              "name": "Fail if below threshold",
+              "uses": "",
+              "run": "echo \"\u274c Mutation score below 80% threshold for affected engines: ${{ steps.mutation.outputs.engines }}\"\nexit 1\n",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": "steps.mutation.outputs.exit_code == '2'",
+              "env": {},
+              "timeout_minutes": null
+            }
+          ],
+          "verification_steps": [
+            {
+              "index": 2,
+              "name": "Verify canonical environment",
+              "uses": "",
+              "run": "python -m runtime.verify env-check",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "static",
+                "verification_task": "task::static::env-check",
+                "evidence_kind": "environment-fingerprint",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "canonical environment fingerprint check"
+              },
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 4,
+              "name": "Run incremental mutation",
+              "uses": "",
+              "run": "FILES=\"${{ steps.changed.outputs.files }}\"\n\npython -m runtime.verify mutation --incremental --changed-files $FILES --allow-dirty \\\n  2>&1 | tee mutation_output.txt\n\nEXIT_CODE=${PIPESTATUS[0]}\necho \"exit_code=$EXIT_CODE\" >> $GITHUB_OUTPUT\n\n# Extract metrics from output\nENGINES=$(grep \"Affected engines:\" mutation_output.txt | sed 's/.*Affected engines: //' || echo \"unknown\")\nSCORE=$(grep \"Mutation score:\" mutation_output.txt | awk '{print $NF}' || echo \"N/A\")\nKILLED=$(grep \"Killed:\" mutation_output.txt | awk '{print $2}' || echo \"0\")\nSURVIVED=$(grep \"Survived:\" mutation_output.txt | awk '{print $2}' || echo \"0\")\n\necho \"engines=$ENGINES\" >> $GITHUB_OUTPUT\necho \"score=$SCORE\" >> $GITHUB_OUTPUT\necho \"killed=$KILLED\" >> $GITHUB_OUTPUT\necho \"survived=$SURVIVED\" >> $GITHUB_OUTPUT\n",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "mutation",
+                "verification_task": "task::mutation::full",
+                "evidence_kind": "mutation-summary",
+                "execution_mode": "authoritative",
+                "reusable_evidence": true,
+                "scope": "population",
+                "description": "authoritative full mutation campaign"
+              },
+              "continue_on_error": false,
+              "if_condition": "steps.changed.outputs.no_changes == 'false'",
+              "env": {},
+              "timeout_minutes": null
+            }
+          ],
+          "non_verification_steps": [
+            {
+              "index": 0,
+              "name": "Checkout code",
+              "uses": "actions/checkout@v7.0.1",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 1,
+              "name": "Bootstrap Engineering Runtime",
+              "uses": "./.github/actions/bootstrap-runtime",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 3,
+              "name": "Get changed files",
+              "uses": "",
+              "run": "# Fetch base ref if not already fetched\ngit fetch origin ${{ github.base_ref }} --depth=1 2>/dev/null || true\n\n# Get changed Python files in backend/src/engines or backend/src/services\nCHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '^backend/src/(engines|services)/' || echo \"\")\n\nif [ -z \"$CHANGED\" ]; then\n  echo \"no_changes=true\" >> $GITHUB_OUTPUT\n  echo \"No engine/service files changed, skipping mutation\"\nelse\n  echo \"no_changes=false\" >> $GITHUB_OUTPUT\n  echo \"files=$CHANGED\" >> $GITHUB_OUTPUT\n  echo \"Changed files:\"\n  echo \"$CHANGED\"\nfi\n",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 5,
+              "name": "Upload mutation report",
+              "uses": "actions/upload-artifact@v7",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": "always() && steps.changed.outputs.no_changes == 'false'",
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 6,
+              "name": "Comment on PR",
+              "uses": "actions/github-script@v7",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": "always() && steps.changed.outputs.no_changes == 'false'",
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 7,
+              "name": "Fail if below threshold",
+              "uses": "",
+              "run": "echo \"\u274c Mutation score below 80% threshold for affected engines: ${{ steps.mutation.outputs.engines }}\"\nexit 1\n",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": "steps.mutation.outputs.exit_code == '2'",
+              "env": {},
+              "timeout_minutes": null
+            }
+          ],
+          "has_continue_on_error": false,
+          "has_verification_upload": true
+        }
+      ],
+      "verification_jobs": [
+        {
+          "job_id": "incremental-mutation",
+          "name": "Incremental Mutation (PR)",
+          "runs_on": "ubuntu-latest",
+          "timeout_minutes": 15,
+          "needs": [],
+          "strategy": null,
+          "steps": [
+            {
+              "index": 0,
+              "name": "Checkout code",
+              "uses": "actions/checkout@v7.0.1",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 1,
+              "name": "Bootstrap Engineering Runtime",
+              "uses": "./.github/actions/bootstrap-runtime",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 2,
+              "name": "Verify canonical environment",
+              "uses": "",
+              "run": "python -m runtime.verify env-check",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "static",
+                "verification_task": "task::static::env-check",
+                "evidence_kind": "environment-fingerprint",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "canonical environment fingerprint check"
+              },
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 3,
+              "name": "Get changed files",
+              "uses": "",
+              "run": "# Fetch base ref if not already fetched\ngit fetch origin ${{ github.base_ref }} --depth=1 2>/dev/null || true\n\n# Get changed Python files in backend/src/engines or backend/src/services\nCHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '^backend/src/(engines|services)/' || echo \"\")\n\nif [ -z \"$CHANGED\" ]; then\n  echo \"no_changes=true\" >> $GITHUB_OUTPUT\n  echo \"No engine/service files changed, skipping mutation\"\nelse\n  echo \"no_changes=false\" >> $GITHUB_OUTPUT\n  echo \"files=$CHANGED\" >> $GITHUB_OUTPUT\n  echo \"Changed files:\"\n  echo \"$CHANGED\"\nfi\n",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 4,
+              "name": "Run incremental mutation",
+              "uses": "",
+              "run": "FILES=\"${{ steps.changed.outputs.files }}\"\n\npython -m runtime.verify mutation --incremental --changed-files $FILES --allow-dirty \\\n  2>&1 | tee mutation_output.txt\n\nEXIT_CODE=${PIPESTATUS[0]}\necho \"exit_code=$EXIT_CODE\" >> $GITHUB_OUTPUT\n\n# Extract metrics from output\nENGINES=$(grep \"Affected engines:\" mutation_output.txt | sed 's/.*Affected engines: //' || echo \"unknown\")\nSCORE=$(grep \"Mutation score:\" mutation_output.txt | awk '{print $NF}' || echo \"N/A\")\nKILLED=$(grep \"Killed:\" mutation_output.txt | awk '{print $2}' || echo \"0\")\nSURVIVED=$(grep \"Survived:\" mutation_output.txt | awk '{print $2}' || echo \"0\")\n\necho \"engines=$ENGINES\" >> $GITHUB_OUTPUT\necho \"score=$SCORE\" >> $GITHUB_OUTPUT\necho \"killed=$KILLED\" >> $GITHUB_OUTPUT\necho \"survived=$SURVIVED\" >> $GITHUB_OUTPUT\n",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "mutation",
+                "verification_task": "task::mutation::full",
+                "evidence_kind": "mutation-summary",
+                "execution_mode": "authoritative",
+                "reusable_evidence": true,
+                "scope": "population",
+                "description": "authoritative full mutation campaign"
+              },
+              "continue_on_error": false,
+              "if_condition": "steps.changed.outputs.no_changes == 'false'",
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 5,
+              "name": "Upload mutation report",
+              "uses": "actions/upload-artifact@v7",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": "always() && steps.changed.outputs.no_changes == 'false'",
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 6,
+              "name": "Comment on PR",
+              "uses": "actions/github-script@v7",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": "always() && steps.changed.outputs.no_changes == 'false'",
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 7,
+              "name": "Fail if below threshold",
+              "uses": "",
+              "run": "echo \"\u274c Mutation score below 80% threshold for affected engines: ${{ steps.mutation.outputs.engines }}\"\nexit 1\n",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": "steps.mutation.outputs.exit_code == '2'",
+              "env": {},
+              "timeout_minutes": null
+            }
+          ],
+          "verification_steps": [
+            {
+              "index": 2,
+              "name": "Verify canonical environment",
+              "uses": "",
+              "run": "python -m runtime.verify env-check",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "static",
+                "verification_task": "task::static::env-check",
+                "evidence_kind": "environment-fingerprint",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "canonical environment fingerprint check"
+              },
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 4,
+              "name": "Run incremental mutation",
+              "uses": "",
+              "run": "FILES=\"${{ steps.changed.outputs.files }}\"\n\npython -m runtime.verify mutation --incremental --changed-files $FILES --allow-dirty \\\n  2>&1 | tee mutation_output.txt\n\nEXIT_CODE=${PIPESTATUS[0]}\necho \"exit_code=$EXIT_CODE\" >> $GITHUB_OUTPUT\n\n# Extract metrics from output\nENGINES=$(grep \"Affected engines:\" mutation_output.txt | sed 's/.*Affected engines: //' || echo \"unknown\")\nSCORE=$(grep \"Mutation score:\" mutation_output.txt | awk '{print $NF}' || echo \"N/A\")\nKILLED=$(grep \"Killed:\" mutation_output.txt | awk '{print $2}' || echo \"0\")\nSURVIVED=$(grep \"Survived:\" mutation_output.txt | awk '{print $2}' || echo \"0\")\n\necho \"engines=$ENGINES\" >> $GITHUB_OUTPUT\necho \"score=$SCORE\" >> $GITHUB_OUTPUT\necho \"killed=$KILLED\" >> $GITHUB_OUTPUT\necho \"survived=$SURVIVED\" >> $GITHUB_OUTPUT\n",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "mutation",
+                "verification_task": "task::mutation::full",
+                "evidence_kind": "mutation-summary",
+                "execution_mode": "authoritative",
+                "reusable_evidence": true,
+                "scope": "population",
+                "description": "authoritative full mutation campaign"
+              },
+              "continue_on_error": false,
+              "if_condition": "steps.changed.outputs.no_changes == 'false'",
+              "env": {},
+              "timeout_minutes": null
+            }
+          ],
+          "non_verification_steps": [
+            {
+              "index": 0,
+              "name": "Checkout code",
+              "uses": "actions/checkout@v7.0.1",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 1,
+              "name": "Bootstrap Engineering Runtime",
+              "uses": "./.github/actions/bootstrap-runtime",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 3,
+              "name": "Get changed files",
+              "uses": "",
+              "run": "# Fetch base ref if not already fetched\ngit fetch origin ${{ github.base_ref }} --depth=1 2>/dev/null || true\n\n# Get changed Python files in backend/src/engines or backend/src/services\nCHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '^backend/src/(engines|services)/' || echo \"\")\n\nif [ -z \"$CHANGED\" ]; then\n  echo \"no_changes=true\" >> $GITHUB_OUTPUT\n  echo \"No engine/service files changed, skipping mutation\"\nelse\n  echo \"no_changes=false\" >> $GITHUB_OUTPUT\n  echo \"files=$CHANGED\" >> $GITHUB_OUTPUT\n  echo \"Changed files:\"\n  echo \"$CHANGED\"\nfi\n",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 5,
+              "name": "Upload mutation report",
+              "uses": "actions/upload-artifact@v7",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": "always() && steps.changed.outputs.no_changes == 'false'",
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 6,
+              "name": "Comment on PR",
+              "uses": "actions/github-script@v7",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": "always() && steps.changed.outputs.no_changes == 'false'",
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 7,
+              "name": "Fail if below threshold",
+              "uses": "",
+              "run": "echo \"\u274c Mutation score below 80% threshold for affected engines: ${{ steps.mutation.outputs.engines }}\"\nexit 1\n",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": "steps.mutation.outputs.exit_code == '2'",
+              "env": {},
+              "timeout_minutes": null
+            }
+          ],
+          "has_continue_on_error": false,
+          "has_verification_upload": true
+        }
+      ],
+      "non_verification_jobs": [],
+      "total_steps": 8,
+      "verification_steps": 2,
+      "has_upload_steps": true,
+      "has_continue_on_error": false,
       "has_if_always": true
     },
     {
@@ -3996,7 +4539,7 @@
               "index": 2,
               "name": "Verify canonical environment",
               "uses": "",
-              "run": "python runtime/verify.py env-check",
+              "run": "python -m runtime.verify env-check",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -4016,7 +4559,7 @@
               "index": 3,
               "name": "Run mutation testing",
               "uses": "",
-              "run": "python runtime/verify.py mutation",
+              "run": "python -m runtime.verify mutation",
               "is_verification": true,
               "semantics": {
                 "task_kind": "mutation",
@@ -4106,6 +4649,18 @@
             },
             {
               "index": 10,
+              "name": "Upload coverage evidence (C55)",
+              "uses": "./.github/actions/upload-runtime",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 11,
               "name": "Classify mutation result",
               "uses": "",
               "run": "SUMMARY=\"backend/tests/generated/mutation/mutation-summary.json\"\nif [ ! -f \"$SUMMARY\" ]; then\n  echo \"mutation_execution_status=INFRASTRUCTURE_FAILURE\" >> $GITHUB_OUTPUT\n  echo \"mutation_evaluated=false\" >> $GITHUB_OUTPUT\n  echo \"mutation_score=N/A\" >> $GITHUB_OUTPUT\n  echo \"mutation_killed=0\" >> $GITHUB_OUTPUT\n  echo \"mutation_survived=0\" >> $GITHUB_OUTPUT\n  echo \"mutation_threshold=80\" >> $GITHUB_OUTPUT\n  echo \"mutation_exit_code=1\" >> $GITHUB_OUTPUT\n  echo \"mutation_reason=mutation-summary.json was not produced (execution did not complete)\" >> $GITHUB_OUTPUT\n  exit 0\nfi\nEXEC=$(jq -r '.execution_status' \"$SUMMARY\")\nCLSS=$(jq -r '.classification_status' \"$SUMMARY\")\nEVID=$(jq -r '.evidence_complete' \"$SUMMARY\")\nSCORE=$(jq -r '.mutation_score' \"$SUMMARY\")\nKILLED=$(jq -r '.killed' \"$SUMMARY\")\nSURVIVED=$(jq -r '.survived' \"$SUMMARY\")\nTHRESH=$(jq -r '.threshold_percent' \"$SUMMARY\")\necho \"mutation_execution_status=$EXEC\" >> $GITHUB_OUTPUT\necho \"mutation_killed=$KILLED\" >> $GITHUB_OUTPUT\necho \"mutation_survived=$SURVIVED\" >> $GITHUB_OUTPUT\necho \"mutation_threshold=$THRESH\" >> $GITHUB_OUTPUT\nif [ \"$EXEC\" = \"PASS\" ] && [ \"$CLSS\" = \"PASS\" ] && [ \"$EVID\" = \"true\" ]; then\n  echo \"mutation_evaluated=true\" >> $GITHUB_OUTPUT\n  echo \"mutation_score=$SCORE\" >> $GITHUB_OUTPUT\n  if [ \"$SCORE\" != \"null\" ] && [ \"$(echo \"$SCORE >= $THRESH\" | bc)\" -eq 1 ]; then\n    echo \"mutation_exit_code=0\" >> $GITHUB_OUTPUT\n    echo \"mutation_reason=Mutation score meets threshold\" >> $GITHUB_OUTPUT\n  else\n    echo \"mutation_exit_code=2\" >> $GITHUB_OUTPUT\n    echo \"mutation_reason=Mutation score below threshold\" >> $GITHUB_OUTPUT\n  fi\nelse\n  # Gate A or B failed: mutation was NOT evaluated. Never a 0% score.\n  echo \"mutation_evaluated=false\" >> $GITHUB_OUTPUT\n  echo \"mutation_score=N/A\" >> $GITHUB_OUTPUT\n  echo \"mutation_exit_code=1\" >> $GITHUB_OUTPUT\n  echo \"mutation_reason=Mutation testing was not evaluated \u2014 execution/evidence integrity failed (no score computed)\" >> $GITHUB_OUTPUT\nfi\n",
@@ -4117,10 +4672,10 @@
               "timeout_minutes": null
             },
             {
-              "index": 11,
+              "index": 12,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\necho \"### Mutation Testing Results\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\necho \"| Metric       | Value |\" >> $GITHUB_STEP_SUMMARY\necho \"|--------------|-------|\" >> $GITHUB_STEP_SUMMARY\necho \"| Score        | ${{ steps.mutation.outputs.mutation_score }}% |\" >> $GITHUB_STEP_SUMMARY\necho \"| Evaluated    | ${{ steps.mutation.outputs.mutation_evaluated }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Killed       | ${{ steps.mutation.outputs.mutation_killed }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Survived     | ${{ steps.mutation.outputs.mutation_survived }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Threshold    | ${{ steps.mutation.outputs.mutation_threshold }}% |\" >> $GITHUB_STEP_SUMMARY\necho \"| Exec status  | ${{ steps.mutation.outputs.mutation_execution_status }} |\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\n\nif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ] && [ \"${{ steps.mutation.outputs.mutation_exit_code }}\" = \"0\" ]; then\n  echo \"\u2705 Mutation score meets threshold\" >> $GITHUB_STEP_SUMMARY\nelif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ]; then\n  echo \"\u274c Mutation score below threshold\" >> $GITHUB_STEP_SUMMARY\nelse\n  echo \"\u26a0\ufe0f MUTATION NOT EVALUATED \u2014 ${{ steps.mutation.outputs.mutation_reason }}\" >> $GITHUB_STEP_SUMMARY\n  echo \"\" >> $GITHUB_STEP_SUMMARY\n  echo \"No mutation score was computed. This is an infrastructure/evidence\" >> $GITHUB_STEP_SUMMARY\n  echo \"failure, NOT a 0% quality result.\" >> $GITHUB_STEP_SUMMARY\nfi\necho \"\" >> $GITHUB_STEP_SUMMARY\n\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\necho \"### Mutation Testing Results\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\necho \"| Metric       | Value |\" >> $GITHUB_STEP_SUMMARY\necho \"|--------------|-------|\" >> $GITHUB_STEP_SUMMARY\necho \"| Score        | ${{ steps.mutation.outputs.mutation_score }}% |\" >> $GITHUB_STEP_SUMMARY\necho \"| Evaluated    | ${{ steps.mutation.outputs.mutation_evaluated }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Killed       | ${{ steps.mutation.outputs.mutation_killed }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Survived     | ${{ steps.mutation.outputs.mutation_survived }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Threshold    | ${{ steps.mutation.outputs.mutation_threshold }}% |\" >> $GITHUB_STEP_SUMMARY\necho \"| Exec status  | ${{ steps.mutation.outputs.mutation_execution_status }} |\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\n\nif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ] && [ \"${{ steps.mutation.outputs.mutation_exit_code }}\" = \"0\" ]; then\n  echo \"\u2705 Mutation score meets threshold\" >> $GITHUB_STEP_SUMMARY\nelif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ]; then\n  echo \"\u274c Mutation score below threshold\" >> $GITHUB_STEP_SUMMARY\nelse\n  echo \"\u26a0\ufe0f MUTATION NOT EVALUATED \u2014 ${{ steps.mutation.outputs.mutation_reason }}\" >> $GITHUB_STEP_SUMMARY\n  echo \"\" >> $GITHUB_STEP_SUMMARY\n  echo \"No mutation score was computed. This is an infrastructure/evidence\" >> $GITHUB_STEP_SUMMARY\n  echo \"failure, NOT a 0% quality result.\" >> $GITHUB_STEP_SUMMARY\nfi\necho \"\" >> $GITHUB_STEP_SUMMARY\n\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -4137,7 +4692,7 @@
               "timeout_minutes": null
             },
             {
-              "index": 12,
+              "index": 13,
               "name": "Fail if mutation gate not satisfied",
               "uses": "",
               "run": "CODE=\"${{ steps.mutation.outputs.mutation_exit_code }}\"\nif [ \"$CODE\" = \"0\" ]; then\n  echo \"\u2705 Mutation quality gate passed\"\n  exit 0\nelif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ]; then\n  echo \"\u274c Mutation score below threshold (${{ steps.mutation.outputs.mutation_score }}% < ${{ steps.mutation.outputs.mutation_threshold }}%)\"\n  exit 2\nelse\n  echo \"\u274c ${{ steps.mutation.outputs.mutation_reason }}\"\n  exit 1\nfi\n",
@@ -4154,7 +4709,7 @@
               "index": 2,
               "name": "Verify canonical environment",
               "uses": "",
-              "run": "python runtime/verify.py env-check",
+              "run": "python -m runtime.verify env-check",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -4174,7 +4729,7 @@
               "index": 3,
               "name": "Run mutation testing",
               "uses": "",
-              "run": "python runtime/verify.py mutation",
+              "run": "python -m runtime.verify mutation",
               "is_verification": true,
               "semantics": {
                 "task_kind": "mutation",
@@ -4191,10 +4746,10 @@
               "timeout_minutes": null
             },
             {
-              "index": 11,
+              "index": 12,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\necho \"### Mutation Testing Results\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\necho \"| Metric       | Value |\" >> $GITHUB_STEP_SUMMARY\necho \"|--------------|-------|\" >> $GITHUB_STEP_SUMMARY\necho \"| Score        | ${{ steps.mutation.outputs.mutation_score }}% |\" >> $GITHUB_STEP_SUMMARY\necho \"| Evaluated    | ${{ steps.mutation.outputs.mutation_evaluated }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Killed       | ${{ steps.mutation.outputs.mutation_killed }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Survived     | ${{ steps.mutation.outputs.mutation_survived }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Threshold    | ${{ steps.mutation.outputs.mutation_threshold }}% |\" >> $GITHUB_STEP_SUMMARY\necho \"| Exec status  | ${{ steps.mutation.outputs.mutation_execution_status }} |\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\n\nif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ] && [ \"${{ steps.mutation.outputs.mutation_exit_code }}\" = \"0\" ]; then\n  echo \"\u2705 Mutation score meets threshold\" >> $GITHUB_STEP_SUMMARY\nelif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ]; then\n  echo \"\u274c Mutation score below threshold\" >> $GITHUB_STEP_SUMMARY\nelse\n  echo \"\u26a0\ufe0f MUTATION NOT EVALUATED \u2014 ${{ steps.mutation.outputs.mutation_reason }}\" >> $GITHUB_STEP_SUMMARY\n  echo \"\" >> $GITHUB_STEP_SUMMARY\n  echo \"No mutation score was computed. This is an infrastructure/evidence\" >> $GITHUB_STEP_SUMMARY\n  echo \"failure, NOT a 0% quality result.\" >> $GITHUB_STEP_SUMMARY\nfi\necho \"\" >> $GITHUB_STEP_SUMMARY\n\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\necho \"### Mutation Testing Results\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\necho \"| Metric       | Value |\" >> $GITHUB_STEP_SUMMARY\necho \"|--------------|-------|\" >> $GITHUB_STEP_SUMMARY\necho \"| Score        | ${{ steps.mutation.outputs.mutation_score }}% |\" >> $GITHUB_STEP_SUMMARY\necho \"| Evaluated    | ${{ steps.mutation.outputs.mutation_evaluated }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Killed       | ${{ steps.mutation.outputs.mutation_killed }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Survived     | ${{ steps.mutation.outputs.mutation_survived }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Threshold    | ${{ steps.mutation.outputs.mutation_threshold }}% |\" >> $GITHUB_STEP_SUMMARY\necho \"| Exec status  | ${{ steps.mutation.outputs.mutation_execution_status }} |\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\n\nif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ] && [ \"${{ steps.mutation.outputs.mutation_exit_code }}\" = \"0\" ]; then\n  echo \"\u2705 Mutation score meets threshold\" >> $GITHUB_STEP_SUMMARY\nelif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ]; then\n  echo \"\u274c Mutation score below threshold\" >> $GITHUB_STEP_SUMMARY\nelse\n  echo \"\u26a0\ufe0f MUTATION NOT EVALUATED \u2014 ${{ steps.mutation.outputs.mutation_reason }}\" >> $GITHUB_STEP_SUMMARY\n  echo \"\" >> $GITHUB_STEP_SUMMARY\n  echo \"No mutation score was computed. This is an infrastructure/evidence\" >> $GITHUB_STEP_SUMMARY\n  echo \"failure, NOT a 0% quality result.\" >> $GITHUB_STEP_SUMMARY\nfi\necho \"\" >> $GITHUB_STEP_SUMMARY\n\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -4310,6 +4865,18 @@
             },
             {
               "index": 10,
+              "name": "Upload coverage evidence (C55)",
+              "uses": "./.github/actions/upload-runtime",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 11,
               "name": "Classify mutation result",
               "uses": "",
               "run": "SUMMARY=\"backend/tests/generated/mutation/mutation-summary.json\"\nif [ ! -f \"$SUMMARY\" ]; then\n  echo \"mutation_execution_status=INFRASTRUCTURE_FAILURE\" >> $GITHUB_OUTPUT\n  echo \"mutation_evaluated=false\" >> $GITHUB_OUTPUT\n  echo \"mutation_score=N/A\" >> $GITHUB_OUTPUT\n  echo \"mutation_killed=0\" >> $GITHUB_OUTPUT\n  echo \"mutation_survived=0\" >> $GITHUB_OUTPUT\n  echo \"mutation_threshold=80\" >> $GITHUB_OUTPUT\n  echo \"mutation_exit_code=1\" >> $GITHUB_OUTPUT\n  echo \"mutation_reason=mutation-summary.json was not produced (execution did not complete)\" >> $GITHUB_OUTPUT\n  exit 0\nfi\nEXEC=$(jq -r '.execution_status' \"$SUMMARY\")\nCLSS=$(jq -r '.classification_status' \"$SUMMARY\")\nEVID=$(jq -r '.evidence_complete' \"$SUMMARY\")\nSCORE=$(jq -r '.mutation_score' \"$SUMMARY\")\nKILLED=$(jq -r '.killed' \"$SUMMARY\")\nSURVIVED=$(jq -r '.survived' \"$SUMMARY\")\nTHRESH=$(jq -r '.threshold_percent' \"$SUMMARY\")\necho \"mutation_execution_status=$EXEC\" >> $GITHUB_OUTPUT\necho \"mutation_killed=$KILLED\" >> $GITHUB_OUTPUT\necho \"mutation_survived=$SURVIVED\" >> $GITHUB_OUTPUT\necho \"mutation_threshold=$THRESH\" >> $GITHUB_OUTPUT\nif [ \"$EXEC\" = \"PASS\" ] && [ \"$CLSS\" = \"PASS\" ] && [ \"$EVID\" = \"true\" ]; then\n  echo \"mutation_evaluated=true\" >> $GITHUB_OUTPUT\n  echo \"mutation_score=$SCORE\" >> $GITHUB_OUTPUT\n  if [ \"$SCORE\" != \"null\" ] && [ \"$(echo \"$SCORE >= $THRESH\" | bc)\" -eq 1 ]; then\n    echo \"mutation_exit_code=0\" >> $GITHUB_OUTPUT\n    echo \"mutation_reason=Mutation score meets threshold\" >> $GITHUB_OUTPUT\n  else\n    echo \"mutation_exit_code=2\" >> $GITHUB_OUTPUT\n    echo \"mutation_reason=Mutation score below threshold\" >> $GITHUB_OUTPUT\n  fi\nelse\n  # Gate A or B failed: mutation was NOT evaluated. Never a 0% score.\n  echo \"mutation_evaluated=false\" >> $GITHUB_OUTPUT\n  echo \"mutation_score=N/A\" >> $GITHUB_OUTPUT\n  echo \"mutation_exit_code=1\" >> $GITHUB_OUTPUT\n  echo \"mutation_reason=Mutation testing was not evaluated \u2014 execution/evidence integrity failed (no score computed)\" >> $GITHUB_OUTPUT\nfi\n",
@@ -4321,7 +4888,7 @@
               "timeout_minutes": null
             },
             {
-              "index": 12,
+              "index": 13,
               "name": "Fail if mutation gate not satisfied",
               "uses": "",
               "run": "CODE=\"${{ steps.mutation.outputs.mutation_exit_code }}\"\nif [ \"$CODE\" = \"0\" ]; then\n  echo \"\u2705 Mutation quality gate passed\"\n  exit 0\nelif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ]; then\n  echo \"\u274c Mutation score below threshold (${{ steps.mutation.outputs.mutation_score }}% < ${{ steps.mutation.outputs.mutation_threshold }}%)\"\n  exit 2\nelse\n  echo \"\u274c ${{ steps.mutation.outputs.mutation_reason }}\"\n  exit 1\nfi\n",
@@ -4372,7 +4939,7 @@
               "index": 2,
               "name": "Verify canonical environment",
               "uses": "",
-              "run": "python runtime/verify.py env-check",
+              "run": "python -m runtime.verify env-check",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -4392,7 +4959,7 @@
               "index": 3,
               "name": "Run bounded mutation smoke",
               "uses": "",
-              "run": "python runtime/verify.py mutation --smoke",
+              "run": "python -m runtime.verify mutation --smoke",
               "is_verification": true,
               "semantics": {
                 "task_kind": "mutation",
@@ -4414,7 +4981,7 @@
               "index": 2,
               "name": "Verify canonical environment",
               "uses": "",
-              "run": "python runtime/verify.py env-check",
+              "run": "python -m runtime.verify env-check",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -4434,7 +5001,7 @@
               "index": 3,
               "name": "Run bounded mutation smoke",
               "uses": "",
-              "run": "python runtime/verify.py mutation --smoke",
+              "run": "python -m runtime.verify mutation --smoke",
               "is_verification": true,
               "semantics": {
                 "task_kind": "mutation",
@@ -4520,7 +5087,7 @@
               "index": 2,
               "name": "Verify canonical environment",
               "uses": "",
-              "run": "python runtime/verify.py env-check",
+              "run": "python -m runtime.verify env-check",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -4540,7 +5107,7 @@
               "index": 3,
               "name": "Run mutation testing",
               "uses": "",
-              "run": "python runtime/verify.py mutation",
+              "run": "python -m runtime.verify mutation",
               "is_verification": true,
               "semantics": {
                 "task_kind": "mutation",
@@ -4630,6 +5197,18 @@
             },
             {
               "index": 10,
+              "name": "Upload coverage evidence (C55)",
+              "uses": "./.github/actions/upload-runtime",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 11,
               "name": "Classify mutation result",
               "uses": "",
               "run": "SUMMARY=\"backend/tests/generated/mutation/mutation-summary.json\"\nif [ ! -f \"$SUMMARY\" ]; then\n  echo \"mutation_execution_status=INFRASTRUCTURE_FAILURE\" >> $GITHUB_OUTPUT\n  echo \"mutation_evaluated=false\" >> $GITHUB_OUTPUT\n  echo \"mutation_score=N/A\" >> $GITHUB_OUTPUT\n  echo \"mutation_killed=0\" >> $GITHUB_OUTPUT\n  echo \"mutation_survived=0\" >> $GITHUB_OUTPUT\n  echo \"mutation_threshold=80\" >> $GITHUB_OUTPUT\n  echo \"mutation_exit_code=1\" >> $GITHUB_OUTPUT\n  echo \"mutation_reason=mutation-summary.json was not produced (execution did not complete)\" >> $GITHUB_OUTPUT\n  exit 0\nfi\nEXEC=$(jq -r '.execution_status' \"$SUMMARY\")\nCLSS=$(jq -r '.classification_status' \"$SUMMARY\")\nEVID=$(jq -r '.evidence_complete' \"$SUMMARY\")\nSCORE=$(jq -r '.mutation_score' \"$SUMMARY\")\nKILLED=$(jq -r '.killed' \"$SUMMARY\")\nSURVIVED=$(jq -r '.survived' \"$SUMMARY\")\nTHRESH=$(jq -r '.threshold_percent' \"$SUMMARY\")\necho \"mutation_execution_status=$EXEC\" >> $GITHUB_OUTPUT\necho \"mutation_killed=$KILLED\" >> $GITHUB_OUTPUT\necho \"mutation_survived=$SURVIVED\" >> $GITHUB_OUTPUT\necho \"mutation_threshold=$THRESH\" >> $GITHUB_OUTPUT\nif [ \"$EXEC\" = \"PASS\" ] && [ \"$CLSS\" = \"PASS\" ] && [ \"$EVID\" = \"true\" ]; then\n  echo \"mutation_evaluated=true\" >> $GITHUB_OUTPUT\n  echo \"mutation_score=$SCORE\" >> $GITHUB_OUTPUT\n  if [ \"$SCORE\" != \"null\" ] && [ \"$(echo \"$SCORE >= $THRESH\" | bc)\" -eq 1 ]; then\n    echo \"mutation_exit_code=0\" >> $GITHUB_OUTPUT\n    echo \"mutation_reason=Mutation score meets threshold\" >> $GITHUB_OUTPUT\n  else\n    echo \"mutation_exit_code=2\" >> $GITHUB_OUTPUT\n    echo \"mutation_reason=Mutation score below threshold\" >> $GITHUB_OUTPUT\n  fi\nelse\n  # Gate A or B failed: mutation was NOT evaluated. Never a 0% score.\n  echo \"mutation_evaluated=false\" >> $GITHUB_OUTPUT\n  echo \"mutation_score=N/A\" >> $GITHUB_OUTPUT\n  echo \"mutation_exit_code=1\" >> $GITHUB_OUTPUT\n  echo \"mutation_reason=Mutation testing was not evaluated \u2014 execution/evidence integrity failed (no score computed)\" >> $GITHUB_OUTPUT\nfi\n",
@@ -4641,10 +5220,10 @@
               "timeout_minutes": null
             },
             {
-              "index": 11,
+              "index": 12,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\necho \"### Mutation Testing Results\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\necho \"| Metric       | Value |\" >> $GITHUB_STEP_SUMMARY\necho \"|--------------|-------|\" >> $GITHUB_STEP_SUMMARY\necho \"| Score        | ${{ steps.mutation.outputs.mutation_score }}% |\" >> $GITHUB_STEP_SUMMARY\necho \"| Evaluated    | ${{ steps.mutation.outputs.mutation_evaluated }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Killed       | ${{ steps.mutation.outputs.mutation_killed }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Survived     | ${{ steps.mutation.outputs.mutation_survived }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Threshold    | ${{ steps.mutation.outputs.mutation_threshold }}% |\" >> $GITHUB_STEP_SUMMARY\necho \"| Exec status  | ${{ steps.mutation.outputs.mutation_execution_status }} |\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\n\nif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ] && [ \"${{ steps.mutation.outputs.mutation_exit_code }}\" = \"0\" ]; then\n  echo \"\u2705 Mutation score meets threshold\" >> $GITHUB_STEP_SUMMARY\nelif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ]; then\n  echo \"\u274c Mutation score below threshold\" >> $GITHUB_STEP_SUMMARY\nelse\n  echo \"\u26a0\ufe0f MUTATION NOT EVALUATED \u2014 ${{ steps.mutation.outputs.mutation_reason }}\" >> $GITHUB_STEP_SUMMARY\n  echo \"\" >> $GITHUB_STEP_SUMMARY\n  echo \"No mutation score was computed. This is an infrastructure/evidence\" >> $GITHUB_STEP_SUMMARY\n  echo \"failure, NOT a 0% quality result.\" >> $GITHUB_STEP_SUMMARY\nfi\necho \"\" >> $GITHUB_STEP_SUMMARY\n\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\necho \"### Mutation Testing Results\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\necho \"| Metric       | Value |\" >> $GITHUB_STEP_SUMMARY\necho \"|--------------|-------|\" >> $GITHUB_STEP_SUMMARY\necho \"| Score        | ${{ steps.mutation.outputs.mutation_score }}% |\" >> $GITHUB_STEP_SUMMARY\necho \"| Evaluated    | ${{ steps.mutation.outputs.mutation_evaluated }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Killed       | ${{ steps.mutation.outputs.mutation_killed }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Survived     | ${{ steps.mutation.outputs.mutation_survived }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Threshold    | ${{ steps.mutation.outputs.mutation_threshold }}% |\" >> $GITHUB_STEP_SUMMARY\necho \"| Exec status  | ${{ steps.mutation.outputs.mutation_execution_status }} |\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\n\nif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ] && [ \"${{ steps.mutation.outputs.mutation_exit_code }}\" = \"0\" ]; then\n  echo \"\u2705 Mutation score meets threshold\" >> $GITHUB_STEP_SUMMARY\nelif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ]; then\n  echo \"\u274c Mutation score below threshold\" >> $GITHUB_STEP_SUMMARY\nelse\n  echo \"\u26a0\ufe0f MUTATION NOT EVALUATED \u2014 ${{ steps.mutation.outputs.mutation_reason }}\" >> $GITHUB_STEP_SUMMARY\n  echo \"\" >> $GITHUB_STEP_SUMMARY\n  echo \"No mutation score was computed. This is an infrastructure/evidence\" >> $GITHUB_STEP_SUMMARY\n  echo \"failure, NOT a 0% quality result.\" >> $GITHUB_STEP_SUMMARY\nfi\necho \"\" >> $GITHUB_STEP_SUMMARY\n\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -4661,7 +5240,7 @@
               "timeout_minutes": null
             },
             {
-              "index": 12,
+              "index": 13,
               "name": "Fail if mutation gate not satisfied",
               "uses": "",
               "run": "CODE=\"${{ steps.mutation.outputs.mutation_exit_code }}\"\nif [ \"$CODE\" = \"0\" ]; then\n  echo \"\u2705 Mutation quality gate passed\"\n  exit 0\nelif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ]; then\n  echo \"\u274c Mutation score below threshold (${{ steps.mutation.outputs.mutation_score }}% < ${{ steps.mutation.outputs.mutation_threshold }}%)\"\n  exit 2\nelse\n  echo \"\u274c ${{ steps.mutation.outputs.mutation_reason }}\"\n  exit 1\nfi\n",
@@ -4678,7 +5257,7 @@
               "index": 2,
               "name": "Verify canonical environment",
               "uses": "",
-              "run": "python runtime/verify.py env-check",
+              "run": "python -m runtime.verify env-check",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -4698,7 +5277,7 @@
               "index": 3,
               "name": "Run mutation testing",
               "uses": "",
-              "run": "python runtime/verify.py mutation",
+              "run": "python -m runtime.verify mutation",
               "is_verification": true,
               "semantics": {
                 "task_kind": "mutation",
@@ -4715,10 +5294,10 @@
               "timeout_minutes": null
             },
             {
-              "index": 11,
+              "index": 12,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\necho \"### Mutation Testing Results\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\necho \"| Metric       | Value |\" >> $GITHUB_STEP_SUMMARY\necho \"|--------------|-------|\" >> $GITHUB_STEP_SUMMARY\necho \"| Score        | ${{ steps.mutation.outputs.mutation_score }}% |\" >> $GITHUB_STEP_SUMMARY\necho \"| Evaluated    | ${{ steps.mutation.outputs.mutation_evaluated }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Killed       | ${{ steps.mutation.outputs.mutation_killed }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Survived     | ${{ steps.mutation.outputs.mutation_survived }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Threshold    | ${{ steps.mutation.outputs.mutation_threshold }}% |\" >> $GITHUB_STEP_SUMMARY\necho \"| Exec status  | ${{ steps.mutation.outputs.mutation_execution_status }} |\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\n\nif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ] && [ \"${{ steps.mutation.outputs.mutation_exit_code }}\" = \"0\" ]; then\n  echo \"\u2705 Mutation score meets threshold\" >> $GITHUB_STEP_SUMMARY\nelif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ]; then\n  echo \"\u274c Mutation score below threshold\" >> $GITHUB_STEP_SUMMARY\nelse\n  echo \"\u26a0\ufe0f MUTATION NOT EVALUATED \u2014 ${{ steps.mutation.outputs.mutation_reason }}\" >> $GITHUB_STEP_SUMMARY\n  echo \"\" >> $GITHUB_STEP_SUMMARY\n  echo \"No mutation score was computed. This is an infrastructure/evidence\" >> $GITHUB_STEP_SUMMARY\n  echo \"failure, NOT a 0% quality result.\" >> $GITHUB_STEP_SUMMARY\nfi\necho \"\" >> $GITHUB_STEP_SUMMARY\n\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\necho \"### Mutation Testing Results\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\necho \"| Metric       | Value |\" >> $GITHUB_STEP_SUMMARY\necho \"|--------------|-------|\" >> $GITHUB_STEP_SUMMARY\necho \"| Score        | ${{ steps.mutation.outputs.mutation_score }}% |\" >> $GITHUB_STEP_SUMMARY\necho \"| Evaluated    | ${{ steps.mutation.outputs.mutation_evaluated }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Killed       | ${{ steps.mutation.outputs.mutation_killed }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Survived     | ${{ steps.mutation.outputs.mutation_survived }} |\" >> $GITHUB_STEP_SUMMARY\necho \"| Threshold    | ${{ steps.mutation.outputs.mutation_threshold }}% |\" >> $GITHUB_STEP_SUMMARY\necho \"| Exec status  | ${{ steps.mutation.outputs.mutation_execution_status }} |\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\n\nif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ] && [ \"${{ steps.mutation.outputs.mutation_exit_code }}\" = \"0\" ]; then\n  echo \"\u2705 Mutation score meets threshold\" >> $GITHUB_STEP_SUMMARY\nelif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ]; then\n  echo \"\u274c Mutation score below threshold\" >> $GITHUB_STEP_SUMMARY\nelse\n  echo \"\u26a0\ufe0f MUTATION NOT EVALUATED \u2014 ${{ steps.mutation.outputs.mutation_reason }}\" >> $GITHUB_STEP_SUMMARY\n  echo \"\" >> $GITHUB_STEP_SUMMARY\n  echo \"No mutation score was computed. This is an infrastructure/evidence\" >> $GITHUB_STEP_SUMMARY\n  echo \"failure, NOT a 0% quality result.\" >> $GITHUB_STEP_SUMMARY\nfi\necho \"\" >> $GITHUB_STEP_SUMMARY\n\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -4834,6 +5413,18 @@
             },
             {
               "index": 10,
+              "name": "Upload coverage evidence (C55)",
+              "uses": "./.github/actions/upload-runtime",
+              "run": "",
+              "is_verification": false,
+              "semantics": null,
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
+              "index": 11,
               "name": "Classify mutation result",
               "uses": "",
               "run": "SUMMARY=\"backend/tests/generated/mutation/mutation-summary.json\"\nif [ ! -f \"$SUMMARY\" ]; then\n  echo \"mutation_execution_status=INFRASTRUCTURE_FAILURE\" >> $GITHUB_OUTPUT\n  echo \"mutation_evaluated=false\" >> $GITHUB_OUTPUT\n  echo \"mutation_score=N/A\" >> $GITHUB_OUTPUT\n  echo \"mutation_killed=0\" >> $GITHUB_OUTPUT\n  echo \"mutation_survived=0\" >> $GITHUB_OUTPUT\n  echo \"mutation_threshold=80\" >> $GITHUB_OUTPUT\n  echo \"mutation_exit_code=1\" >> $GITHUB_OUTPUT\n  echo \"mutation_reason=mutation-summary.json was not produced (execution did not complete)\" >> $GITHUB_OUTPUT\n  exit 0\nfi\nEXEC=$(jq -r '.execution_status' \"$SUMMARY\")\nCLSS=$(jq -r '.classification_status' \"$SUMMARY\")\nEVID=$(jq -r '.evidence_complete' \"$SUMMARY\")\nSCORE=$(jq -r '.mutation_score' \"$SUMMARY\")\nKILLED=$(jq -r '.killed' \"$SUMMARY\")\nSURVIVED=$(jq -r '.survived' \"$SUMMARY\")\nTHRESH=$(jq -r '.threshold_percent' \"$SUMMARY\")\necho \"mutation_execution_status=$EXEC\" >> $GITHUB_OUTPUT\necho \"mutation_killed=$KILLED\" >> $GITHUB_OUTPUT\necho \"mutation_survived=$SURVIVED\" >> $GITHUB_OUTPUT\necho \"mutation_threshold=$THRESH\" >> $GITHUB_OUTPUT\nif [ \"$EXEC\" = \"PASS\" ] && [ \"$CLSS\" = \"PASS\" ] && [ \"$EVID\" = \"true\" ]; then\n  echo \"mutation_evaluated=true\" >> $GITHUB_OUTPUT\n  echo \"mutation_score=$SCORE\" >> $GITHUB_OUTPUT\n  if [ \"$SCORE\" != \"null\" ] && [ \"$(echo \"$SCORE >= $THRESH\" | bc)\" -eq 1 ]; then\n    echo \"mutation_exit_code=0\" >> $GITHUB_OUTPUT\n    echo \"mutation_reason=Mutation score meets threshold\" >> $GITHUB_OUTPUT\n  else\n    echo \"mutation_exit_code=2\" >> $GITHUB_OUTPUT\n    echo \"mutation_reason=Mutation score below threshold\" >> $GITHUB_OUTPUT\n  fi\nelse\n  # Gate A or B failed: mutation was NOT evaluated. Never a 0% score.\n  echo \"mutation_evaluated=false\" >> $GITHUB_OUTPUT\n  echo \"mutation_score=N/A\" >> $GITHUB_OUTPUT\n  echo \"mutation_exit_code=1\" >> $GITHUB_OUTPUT\n  echo \"mutation_reason=Mutation testing was not evaluated \u2014 execution/evidence integrity failed (no score computed)\" >> $GITHUB_OUTPUT\nfi\n",
@@ -4845,7 +5436,7 @@
               "timeout_minutes": null
             },
             {
-              "index": 12,
+              "index": 13,
               "name": "Fail if mutation gate not satisfied",
               "uses": "",
               "run": "CODE=\"${{ steps.mutation.outputs.mutation_exit_code }}\"\nif [ \"$CODE\" = \"0\" ]; then\n  echo \"\u2705 Mutation quality gate passed\"\n  exit 0\nelif [ \"${{ steps.mutation.outputs.mutation_evaluated }}\" = \"true\" ]; then\n  echo \"\u274c Mutation score below threshold (${{ steps.mutation.outputs.mutation_score }}% < ${{ steps.mutation.outputs.mutation_threshold }}%)\"\n  exit 2\nelse\n  echo \"\u274c ${{ steps.mutation.outputs.mutation_reason }}\"\n  exit 1\nfi\n",
@@ -4896,7 +5487,7 @@
               "index": 2,
               "name": "Verify canonical environment",
               "uses": "",
-              "run": "python runtime/verify.py env-check",
+              "run": "python -m runtime.verify env-check",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -4916,7 +5507,7 @@
               "index": 3,
               "name": "Run bounded mutation smoke",
               "uses": "",
-              "run": "python runtime/verify.py mutation --smoke",
+              "run": "python -m runtime.verify mutation --smoke",
               "is_verification": true,
               "semantics": {
                 "task_kind": "mutation",
@@ -4938,7 +5529,7 @@
               "index": 2,
               "name": "Verify canonical environment",
               "uses": "",
-              "run": "python runtime/verify.py env-check",
+              "run": "python -m runtime.verify env-check",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -4958,7 +5549,7 @@
               "index": 3,
               "name": "Run bounded mutation smoke",
               "uses": "",
-              "run": "python runtime/verify.py mutation --smoke",
+              "run": "python -m runtime.verify mutation --smoke",
               "is_verification": true,
               "semantics": {
                 "task_kind": "mutation",
@@ -5006,7 +5597,7 @@
         }
       ],
       "non_verification_jobs": [],
-      "total_steps": 17,
+      "total_steps": 18,
       "verification_steps": 5,
       "has_upload_steps": true,
       "has_continue_on_error": false,
@@ -5119,9 +5710,17 @@
               "index": 4,
               "name": "Run playwright verification",
               "uses": "",
-              "run": "python runtime/verify.py playwright",
-              "is_verification": false,
-              "semantics": null,
+              "run": "python -m runtime.verify playwright",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "e2e",
+                "verification_task": "task::e2e::playwright",
+                "evidence_kind": "test-report",
+                "execution_mode": "observational",
+                "reusable_evidence": true,
+                "scope": "surface_only",
+                "description": "Playwright E2E interaction verification"
+              },
               "continue_on_error": false,
               "if_condition": null,
               "env": {
@@ -5206,7 +5805,7 @@
               "index": 11,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }} \u2014 ${{ matrix.project }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }} \u2014 ${{ matrix.project }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -5225,10 +5824,33 @@
           ],
           "verification_steps": [
             {
+              "index": 4,
+              "name": "Run playwright verification",
+              "uses": "",
+              "run": "python -m runtime.verify playwright",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "e2e",
+                "verification_task": "task::e2e::playwright",
+                "evidence_kind": "test-report",
+                "execution_mode": "observational",
+                "reusable_evidence": true,
+                "scope": "surface_only",
+                "description": "Playwright E2E interaction verification"
+              },
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {
+                "PLAYWRIGHT_PROJECT": "${{ matrix.project }}",
+                "CLARIFIN_PYTHON": "python3"
+              },
+              "timeout_minutes": null
+            },
+            {
               "index": 11,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }} \u2014 ${{ matrix.project }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }} \u2014 ${{ matrix.project }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -5292,21 +5914,6 @@
               "continue_on_error": false,
               "if_condition": null,
               "env": {},
-              "timeout_minutes": null
-            },
-            {
-              "index": 4,
-              "name": "Run playwright verification",
-              "uses": "",
-              "run": "python runtime/verify.py playwright",
-              "is_verification": false,
-              "semantics": null,
-              "continue_on_error": false,
-              "if_condition": null,
-              "env": {
-                "PLAYWRIGHT_PROJECT": "${{ matrix.project }}",
-                "CLARIFIN_PYTHON": "python3"
-              },
               "timeout_minutes": null
             },
             {
@@ -5455,9 +6062,17 @@
               "index": 4,
               "name": "Run playwright verification",
               "uses": "",
-              "run": "python runtime/verify.py playwright",
-              "is_verification": false,
-              "semantics": null,
+              "run": "python -m runtime.verify playwright",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "e2e",
+                "verification_task": "task::e2e::playwright",
+                "evidence_kind": "test-report",
+                "execution_mode": "observational",
+                "reusable_evidence": true,
+                "scope": "surface_only",
+                "description": "Playwright E2E interaction verification"
+              },
               "continue_on_error": false,
               "if_condition": null,
               "env": {
@@ -5542,7 +6157,7 @@
               "index": 11,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }} \u2014 ${{ matrix.project }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }} \u2014 ${{ matrix.project }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -5561,10 +6176,33 @@
           ],
           "verification_steps": [
             {
+              "index": 4,
+              "name": "Run playwright verification",
+              "uses": "",
+              "run": "python -m runtime.verify playwright",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "e2e",
+                "verification_task": "task::e2e::playwright",
+                "evidence_kind": "test-report",
+                "execution_mode": "observational",
+                "reusable_evidence": true,
+                "scope": "surface_only",
+                "description": "Playwright E2E interaction verification"
+              },
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {
+                "PLAYWRIGHT_PROJECT": "${{ matrix.project }}",
+                "CLARIFIN_PYTHON": "python3"
+              },
+              "timeout_minutes": null
+            },
+            {
               "index": 11,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }} \u2014 ${{ matrix.project }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }} \u2014 ${{ matrix.project }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -5628,21 +6266,6 @@
               "continue_on_error": false,
               "if_condition": null,
               "env": {},
-              "timeout_minutes": null
-            },
-            {
-              "index": 4,
-              "name": "Run playwright verification",
-              "uses": "",
-              "run": "python runtime/verify.py playwright",
-              "is_verification": false,
-              "semantics": null,
-              "continue_on_error": false,
-              "if_condition": null,
-              "env": {
-                "PLAYWRIGHT_PROJECT": "${{ matrix.project }}",
-                "CLARIFIN_PYTHON": "python3"
-              },
               "timeout_minutes": null
             },
             {
@@ -5724,7 +6347,7 @@
       ],
       "non_verification_jobs": [],
       "total_steps": 12,
-      "verification_steps": 1,
+      "verification_steps": 2,
       "has_upload_steps": true,
       "has_continue_on_error": false,
       "has_if_always": true
@@ -5802,9 +6425,17 @@
               "index": 3,
               "name": "Run quick verification",
               "uses": "",
-              "run": "python runtime/verify.py quick",
-              "is_verification": false,
-              "semantics": null,
+              "run": "python -m runtime.verify quick",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "quality",
+                "verification_task": "task::quality::quick",
+                "evidence_kind": "quality-report",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "quick quality gate check"
+              },
               "continue_on_error": false,
               "if_condition": null,
               "env": {},
@@ -5886,7 +6517,7 @@
               "index": 10,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -5905,10 +6536,30 @@
           ],
           "verification_steps": [
             {
+              "index": 3,
+              "name": "Run quick verification",
+              "uses": "",
+              "run": "python -m runtime.verify quick",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "quality",
+                "verification_task": "task::quality::quick",
+                "evidence_kind": "quality-report",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "quick quality gate check"
+              },
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
               "index": 10,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -5955,18 +6606,6 @@
               "name": "Setup Node.js runtime",
               "uses": "./.github/actions/setup-node-runtime",
               "run": "",
-              "is_verification": false,
-              "semantics": null,
-              "continue_on_error": false,
-              "if_condition": null,
-              "env": {},
-              "timeout_minutes": null
-            },
-            {
-              "index": 3,
-              "name": "Run quick verification",
-              "uses": "",
-              "run": "python runtime/verify.py quick",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -6100,9 +6739,17 @@
               "index": 3,
               "name": "Run quick verification",
               "uses": "",
-              "run": "python runtime/verify.py quick",
-              "is_verification": false,
-              "semantics": null,
+              "run": "python -m runtime.verify quick",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "quality",
+                "verification_task": "task::quality::quick",
+                "evidence_kind": "quality-report",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "quick quality gate check"
+              },
               "continue_on_error": false,
               "if_condition": null,
               "env": {},
@@ -6184,7 +6831,7 @@
               "index": 10,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -6203,10 +6850,30 @@
           ],
           "verification_steps": [
             {
+              "index": 3,
+              "name": "Run quick verification",
+              "uses": "",
+              "run": "python -m runtime.verify quick",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "quality",
+                "verification_task": "task::quality::quick",
+                "evidence_kind": "quality-report",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "quick quality gate check"
+              },
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
               "index": 10,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -6253,18 +6920,6 @@
               "name": "Setup Node.js runtime",
               "uses": "./.github/actions/setup-node-runtime",
               "run": "",
-              "is_verification": false,
-              "semantics": null,
-              "continue_on_error": false,
-              "if_condition": null,
-              "env": {},
-              "timeout_minutes": null
-            },
-            {
-              "index": 3,
-              "name": "Run quick verification",
-              "uses": "",
-              "run": "python runtime/verify.py quick",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -6351,7 +7006,7 @@
       ],
       "non_verification_jobs": [],
       "total_steps": 11,
-      "verification_steps": 1,
+      "verification_steps": 2,
       "has_upload_steps": true,
       "has_continue_on_error": false,
       "has_if_always": true
@@ -7286,7 +7941,7 @@
               "index": 2,
               "name": "Emit PR TierPlan manifest (M5-B)",
               "uses": "",
-              "run": "python runtime/verify.py plan \\\n  --tier pr \\\n  --base \"${GITHUB_BASE_REF:-main}\" \\\n  --head \"$GITHUB_SHA\" \\\n  --no-write \\\n  > runtime/generated/vea5-tier-plan.pr.json\n",
+              "run": "python -m runtime.verify plan \\\n  --tier pr \\\n  --base \"${GITHUB_BASE_REF:-main}\" \\\n  --head \"$GITHUB_SHA\" \\\n  --no-write \\\n  > runtime/generated/vea5-tier-plan.pr.json\n",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -7298,9 +7953,17 @@
               "index": 3,
               "name": "Run runtime verification (profile)",
               "uses": "",
-              "run": "python runtime/verify.py runtime\n",
-              "is_verification": false,
-              "semantics": null,
+              "run": "python -m runtime.verify runtime\n",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "static",
+                "verification_task": "task::static::runtime-check",
+                "evidence_kind": "runtime-fingerprint",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "engineering runtime health verification"
+              },
               "continue_on_error": true,
               "if_condition": null,
               "env": {},
@@ -7310,7 +7973,7 @@
               "index": 4,
               "name": "Emit execution-evidence artifact (M5-C / M6-A)",
               "uses": "",
-              "run": "python runtime/verify.py exec-evidence \\\n  --plan runtime/generated/vea5-tier-plan.pr.json \\\n  --profile runtime \\\n  --report runtime/generated/verification-report.md \\\n  --status \"${{ steps.verify.outcome == 'success' && 'pass' || 'fail' }}\" \\\n  --exit \"${{ steps.verify.outcome == 'success' && '0' || '1' }}\" \\\n  --duration 0.0 \\\n  --commit \"$GITHUB_SHA\" \\\n  --out runtime/generated/vea5-execution.pr.json\n",
+              "run": "python -m runtime.verify exec-evidence \\\n  --plan runtime/generated/vea5-tier-plan.pr.json \\\n  --profile runtime \\\n  --report runtime/generated/verification-report.md \\\n  --status \"${{ steps.verify.outcome == 'success' && 'pass' || 'fail' }}\" \\\n  --exit \"${{ steps.verify.outcome == 'success' && '0' || '1' }}\" \\\n  --duration 0.0 \\\n  --commit \"$GITHUB_SHA\" \\\n  --out runtime/generated/vea5-execution.pr.json\n",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -7322,7 +7985,7 @@
               "index": 5,
               "name": "Reconcile (M5-D / M5-E)",
               "uses": "",
-              "run": "python runtime/verify.py reconcile \\\n  --plan runtime/generated/vea5-tier-plan.pr.json \\\n  --evidence runtime/generated/vea5-execution.pr.json \\\n  --report runtime/generated/vea5-reconciliation.pr.json \\\n  --commit \"$GITHUB_SHA\"\n",
+              "run": "python -m runtime.verify reconcile \\\n  --plan runtime/generated/vea5-tier-plan.pr.json \\\n  --evidence runtime/generated/vea5-execution.pr.json \\\n  --report runtime/generated/vea5-reconciliation.pr.json \\\n  --commit \"$GITHUB_SHA\"\n",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -7346,7 +8009,7 @@
               "index": 7,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -7365,10 +8028,30 @@
           ],
           "verification_steps": [
             {
+              "index": 3,
+              "name": "Run runtime verification (profile)",
+              "uses": "",
+              "run": "python -m runtime.verify runtime\n",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "static",
+                "verification_task": "task::static::runtime-check",
+                "evidence_kind": "runtime-fingerprint",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "engineering runtime health verification"
+              },
+              "continue_on_error": true,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
               "index": 7,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -7414,7 +8097,7 @@
               "index": 2,
               "name": "Emit PR TierPlan manifest (M5-B)",
               "uses": "",
-              "run": "python runtime/verify.py plan \\\n  --tier pr \\\n  --base \"${GITHUB_BASE_REF:-main}\" \\\n  --head \"$GITHUB_SHA\" \\\n  --no-write \\\n  > runtime/generated/vea5-tier-plan.pr.json\n",
+              "run": "python -m runtime.verify plan \\\n  --tier pr \\\n  --base \"${GITHUB_BASE_REF:-main}\" \\\n  --head \"$GITHUB_SHA\" \\\n  --no-write \\\n  > runtime/generated/vea5-tier-plan.pr.json\n",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -7423,22 +8106,10 @@
               "timeout_minutes": null
             },
             {
-              "index": 3,
-              "name": "Run runtime verification (profile)",
-              "uses": "",
-              "run": "python runtime/verify.py runtime\n",
-              "is_verification": false,
-              "semantics": null,
-              "continue_on_error": true,
-              "if_condition": null,
-              "env": {},
-              "timeout_minutes": null
-            },
-            {
               "index": 4,
               "name": "Emit execution-evidence artifact (M5-C / M6-A)",
               "uses": "",
-              "run": "python runtime/verify.py exec-evidence \\\n  --plan runtime/generated/vea5-tier-plan.pr.json \\\n  --profile runtime \\\n  --report runtime/generated/verification-report.md \\\n  --status \"${{ steps.verify.outcome == 'success' && 'pass' || 'fail' }}\" \\\n  --exit \"${{ steps.verify.outcome == 'success' && '0' || '1' }}\" \\\n  --duration 0.0 \\\n  --commit \"$GITHUB_SHA\" \\\n  --out runtime/generated/vea5-execution.pr.json\n",
+              "run": "python -m runtime.verify exec-evidence \\\n  --plan runtime/generated/vea5-tier-plan.pr.json \\\n  --profile runtime \\\n  --report runtime/generated/verification-report.md \\\n  --status \"${{ steps.verify.outcome == 'success' && 'pass' || 'fail' }}\" \\\n  --exit \"${{ steps.verify.outcome == 'success' && '0' || '1' }}\" \\\n  --duration 0.0 \\\n  --commit \"$GITHUB_SHA\" \\\n  --out runtime/generated/vea5-execution.pr.json\n",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -7450,7 +8121,7 @@
               "index": 5,
               "name": "Reconcile (M5-D / M5-E)",
               "uses": "",
-              "run": "python runtime/verify.py reconcile \\\n  --plan runtime/generated/vea5-tier-plan.pr.json \\\n  --evidence runtime/generated/vea5-execution.pr.json \\\n  --report runtime/generated/vea5-reconciliation.pr.json \\\n  --commit \"$GITHUB_SHA\"\n",
+              "run": "python -m runtime.verify reconcile \\\n  --plan runtime/generated/vea5-tier-plan.pr.json \\\n  --evidence runtime/generated/vea5-execution.pr.json \\\n  --report runtime/generated/vea5-reconciliation.pr.json \\\n  --commit \"$GITHUB_SHA\"\n",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -7512,7 +8183,7 @@
               "index": 2,
               "name": "Emit PR TierPlan manifest (M5-B)",
               "uses": "",
-              "run": "python runtime/verify.py plan \\\n  --tier pr \\\n  --base \"${GITHUB_BASE_REF:-main}\" \\\n  --head \"$GITHUB_SHA\" \\\n  --no-write \\\n  > runtime/generated/vea5-tier-plan.pr.json\n",
+              "run": "python -m runtime.verify plan \\\n  --tier pr \\\n  --base \"${GITHUB_BASE_REF:-main}\" \\\n  --head \"$GITHUB_SHA\" \\\n  --no-write \\\n  > runtime/generated/vea5-tier-plan.pr.json\n",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -7524,9 +8195,17 @@
               "index": 3,
               "name": "Run runtime verification (profile)",
               "uses": "",
-              "run": "python runtime/verify.py runtime\n",
-              "is_verification": false,
-              "semantics": null,
+              "run": "python -m runtime.verify runtime\n",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "static",
+                "verification_task": "task::static::runtime-check",
+                "evidence_kind": "runtime-fingerprint",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "engineering runtime health verification"
+              },
               "continue_on_error": true,
               "if_condition": null,
               "env": {},
@@ -7536,7 +8215,7 @@
               "index": 4,
               "name": "Emit execution-evidence artifact (M5-C / M6-A)",
               "uses": "",
-              "run": "python runtime/verify.py exec-evidence \\\n  --plan runtime/generated/vea5-tier-plan.pr.json \\\n  --profile runtime \\\n  --report runtime/generated/verification-report.md \\\n  --status \"${{ steps.verify.outcome == 'success' && 'pass' || 'fail' }}\" \\\n  --exit \"${{ steps.verify.outcome == 'success' && '0' || '1' }}\" \\\n  --duration 0.0 \\\n  --commit \"$GITHUB_SHA\" \\\n  --out runtime/generated/vea5-execution.pr.json\n",
+              "run": "python -m runtime.verify exec-evidence \\\n  --plan runtime/generated/vea5-tier-plan.pr.json \\\n  --profile runtime \\\n  --report runtime/generated/verification-report.md \\\n  --status \"${{ steps.verify.outcome == 'success' && 'pass' || 'fail' }}\" \\\n  --exit \"${{ steps.verify.outcome == 'success' && '0' || '1' }}\" \\\n  --duration 0.0 \\\n  --commit \"$GITHUB_SHA\" \\\n  --out runtime/generated/vea5-execution.pr.json\n",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -7548,7 +8227,7 @@
               "index": 5,
               "name": "Reconcile (M5-D / M5-E)",
               "uses": "",
-              "run": "python runtime/verify.py reconcile \\\n  --plan runtime/generated/vea5-tier-plan.pr.json \\\n  --evidence runtime/generated/vea5-execution.pr.json \\\n  --report runtime/generated/vea5-reconciliation.pr.json \\\n  --commit \"$GITHUB_SHA\"\n",
+              "run": "python -m runtime.verify reconcile \\\n  --plan runtime/generated/vea5-tier-plan.pr.json \\\n  --evidence runtime/generated/vea5-execution.pr.json \\\n  --report runtime/generated/vea5-reconciliation.pr.json \\\n  --commit \"$GITHUB_SHA\"\n",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -7572,7 +8251,7 @@
               "index": 7,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -7591,10 +8270,30 @@
           ],
           "verification_steps": [
             {
+              "index": 3,
+              "name": "Run runtime verification (profile)",
+              "uses": "",
+              "run": "python -m runtime.verify runtime\n",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "static",
+                "verification_task": "task::static::runtime-check",
+                "evidence_kind": "runtime-fingerprint",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "engineering runtime health verification"
+              },
+              "continue_on_error": true,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
               "index": 7,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -7640,7 +8339,7 @@
               "index": 2,
               "name": "Emit PR TierPlan manifest (M5-B)",
               "uses": "",
-              "run": "python runtime/verify.py plan \\\n  --tier pr \\\n  --base \"${GITHUB_BASE_REF:-main}\" \\\n  --head \"$GITHUB_SHA\" \\\n  --no-write \\\n  > runtime/generated/vea5-tier-plan.pr.json\n",
+              "run": "python -m runtime.verify plan \\\n  --tier pr \\\n  --base \"${GITHUB_BASE_REF:-main}\" \\\n  --head \"$GITHUB_SHA\" \\\n  --no-write \\\n  > runtime/generated/vea5-tier-plan.pr.json\n",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -7649,22 +8348,10 @@
               "timeout_minutes": null
             },
             {
-              "index": 3,
-              "name": "Run runtime verification (profile)",
-              "uses": "",
-              "run": "python runtime/verify.py runtime\n",
-              "is_verification": false,
-              "semantics": null,
-              "continue_on_error": true,
-              "if_condition": null,
-              "env": {},
-              "timeout_minutes": null
-            },
-            {
               "index": 4,
               "name": "Emit execution-evidence artifact (M5-C / M6-A)",
               "uses": "",
-              "run": "python runtime/verify.py exec-evidence \\\n  --plan runtime/generated/vea5-tier-plan.pr.json \\\n  --profile runtime \\\n  --report runtime/generated/verification-report.md \\\n  --status \"${{ steps.verify.outcome == 'success' && 'pass' || 'fail' }}\" \\\n  --exit \"${{ steps.verify.outcome == 'success' && '0' || '1' }}\" \\\n  --duration 0.0 \\\n  --commit \"$GITHUB_SHA\" \\\n  --out runtime/generated/vea5-execution.pr.json\n",
+              "run": "python -m runtime.verify exec-evidence \\\n  --plan runtime/generated/vea5-tier-plan.pr.json \\\n  --profile runtime \\\n  --report runtime/generated/verification-report.md \\\n  --status \"${{ steps.verify.outcome == 'success' && 'pass' || 'fail' }}\" \\\n  --exit \"${{ steps.verify.outcome == 'success' && '0' || '1' }}\" \\\n  --duration 0.0 \\\n  --commit \"$GITHUB_SHA\" \\\n  --out runtime/generated/vea5-execution.pr.json\n",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -7676,7 +8363,7 @@
               "index": 5,
               "name": "Reconcile (M5-D / M5-E)",
               "uses": "",
-              "run": "python runtime/verify.py reconcile \\\n  --plan runtime/generated/vea5-tier-plan.pr.json \\\n  --evidence runtime/generated/vea5-execution.pr.json \\\n  --report runtime/generated/vea5-reconciliation.pr.json \\\n  --commit \"$GITHUB_SHA\"\n",
+              "run": "python -m runtime.verify reconcile \\\n  --plan runtime/generated/vea5-tier-plan.pr.json \\\n  --evidence runtime/generated/vea5-execution.pr.json \\\n  --report runtime/generated/vea5-reconciliation.pr.json \\\n  --commit \"$GITHUB_SHA\"\n",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -7703,7 +8390,7 @@
       ],
       "non_verification_jobs": [],
       "total_steps": 8,
-      "verification_steps": 1,
+      "verification_steps": 2,
       "has_upload_steps": true,
       "has_continue_on_error": true,
       "has_if_always": true
@@ -7793,9 +8480,17 @@
               "index": 3,
               "name": "Run runtime verification",
               "uses": "",
-              "run": "python runtime/verify.py runtime",
-              "is_verification": false,
-              "semantics": null,
+              "run": "python -m runtime.verify runtime",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "static",
+                "verification_task": "task::static::runtime-check",
+                "evidence_kind": "runtime-fingerprint",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "engineering runtime health verification"
+              },
               "continue_on_error": false,
               "if_condition": null,
               "env": {},
@@ -7877,7 +8572,7 @@
               "index": 10,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -7896,10 +8591,30 @@
           ],
           "verification_steps": [
             {
+              "index": 3,
+              "name": "Run runtime verification",
+              "uses": "",
+              "run": "python -m runtime.verify runtime",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "static",
+                "verification_task": "task::static::runtime-check",
+                "evidence_kind": "runtime-fingerprint",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "engineering runtime health verification"
+              },
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
               "index": 10,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -7946,18 +8661,6 @@
               "name": "Setup Node.js runtime",
               "uses": "./.github/actions/setup-node-runtime",
               "run": "",
-              "is_verification": false,
-              "semantics": null,
-              "continue_on_error": false,
-              "if_condition": null,
-              "env": {},
-              "timeout_minutes": null
-            },
-            {
-              "index": 3,
-              "name": "Run runtime verification",
-              "uses": "",
-              "run": "python runtime/verify.py runtime",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -8091,9 +8794,17 @@
               "index": 3,
               "name": "Run runtime verification",
               "uses": "",
-              "run": "python runtime/verify.py runtime",
-              "is_verification": false,
-              "semantics": null,
+              "run": "python -m runtime.verify runtime",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "static",
+                "verification_task": "task::static::runtime-check",
+                "evidence_kind": "runtime-fingerprint",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "engineering runtime health verification"
+              },
               "continue_on_error": false,
               "if_condition": null,
               "env": {},
@@ -8175,7 +8886,7 @@
               "index": 10,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -8194,10 +8905,30 @@
           ],
           "verification_steps": [
             {
+              "index": 3,
+              "name": "Run runtime verification",
+              "uses": "",
+              "run": "python -m runtime.verify runtime",
+              "is_verification": true,
+              "semantics": {
+                "task_kind": "static",
+                "verification_task": "task::static::runtime-check",
+                "evidence_kind": "runtime-fingerprint",
+                "execution_mode": "observational",
+                "reusable_evidence": false,
+                "scope": "infra_health",
+                "description": "engineering runtime health verification"
+              },
+              "continue_on_error": false,
+              "if_condition": null,
+              "env": {},
+              "timeout_minutes": null
+            },
+            {
               "index": 10,
               "name": "Job Summary",
               "uses": "",
-              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython runtime/verify.py status >> $GITHUB_STEP_SUMMARY\n",
+              "run": "echo \"## ${{ github.workflow }} \u2014 Run #${{ github.run_number }}\" >> $GITHUB_STEP_SUMMARY\necho \"\" >> $GITHUB_STEP_SUMMARY\npython -m runtime.verify status >> $GITHUB_STEP_SUMMARY\n",
               "is_verification": true,
               "semantics": {
                 "task_kind": "static",
@@ -8244,18 +8975,6 @@
               "name": "Setup Node.js runtime",
               "uses": "./.github/actions/setup-node-runtime",
               "run": "",
-              "is_verification": false,
-              "semantics": null,
-              "continue_on_error": false,
-              "if_condition": null,
-              "env": {},
-              "timeout_minutes": null
-            },
-            {
-              "index": 3,
-              "name": "Run runtime verification",
-              "uses": "",
-              "run": "python runtime/verify.py runtime",
               "is_verification": false,
               "semantics": null,
               "continue_on_error": false,
@@ -8342,7 +9061,7 @@
       ],
       "non_verification_jobs": [],
       "total_steps": 11,
-      "verification_steps": 1,
+      "verification_steps": 2,
       "has_upload_steps": true,
       "has_continue_on_error": false,
       "has_if_always": true

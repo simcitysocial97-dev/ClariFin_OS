@@ -121,6 +121,8 @@ TestSurfaceKind = Literal[
 class TestSurfaceNode:
     """A surface that can exercise a source/capability."""
 
+    __test__ = False  # Not a pytest test class; pytest collection sees "Test" prefix.
+
     id: str
     path: str
     kind: TestSurfaceKind

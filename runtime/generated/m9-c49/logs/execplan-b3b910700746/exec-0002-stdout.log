@@ -1,0 +1,558 @@
+================================================
+  ClariFin OS — Contract Tests
+================================================
+Running all contract tests
+============================= test session starts ==============================
+created: 4/4 workers
+4 workers [161 items]
+
+scheduling tests via LoadScheduling
+
+tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_contract 
+tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_status_contract 
+tests/contract/generated/test_behaviour.py::test_get__api_v1_behaviour_recommendations_contract 
+tests/contract/generated/test_accounts.py::test_get__api_accounts_account_id_running_balance_contract 
+[gw0] [  0%] PASSED tests/contract/generated/test_behaviour.py::test_get__api_v1_behaviour_recommendations_contract 
+tests/contract/generated/test_behaviour.py::test_get__api_v1_behaviour_monthly_report_contract 
+[gw0] [  1%] PASSED tests/contract/generated/test_behaviour.py::test_get__api_v1_behaviour_monthly_report_contract 
+tests/contract/generated/test_behaviour.py::test_get__api_v1_behaviour_contract 
+[gw3] [  1%] PASSED tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_contract 
+tests/contract/generated/test_accounts.py::test_post__api_v1_accounts_contract 
+[gw0] [  2%] PASSED tests/contract/generated/test_behaviour.py::test_get__api_v1_behaviour_contract 
+[gw3] [  3%] PASSED tests/contract/generated/test_accounts.py::test_post__api_v1_accounts_contract 
+tests/contract/generated/test_cards.py::test_get__api_cards_contract 
+tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_contract 
+[gw1] [  3%] PASSED tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_status_contract 
+tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_dormancy_contract 
+[gw2] [  4%] PASSED tests/contract/generated/test_accounts.py::test_get__api_accounts_account_id_running_balance_contract 
+tests/contract/generated/test_analytics.py::test_get__api_v1_accounts_account_id_analytics_contract 
+[gw3] [  4%] PASSED tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_contract 
+tests/contract/generated/test_accounts.py::test_put__api_v1_accounts_account_id_contract 
+[gw1] [  5%] PASSED tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_dormancy_contract 
+tests/contract/generated/test_accounts.py::test_post__api_v1_accounts_account_id_links_contract 
+[gw0] [  6%] PASSED tests/contract/generated/test_cards.py::test_get__api_cards_contract 
+tests/contract/generated/test_cashflow.py::test_get__api_v1_behaviour_cashflow_health_contract 
+[gw2] [  6%] PASSED tests/contract/generated/test_analytics.py::test_get__api_v1_accounts_account_id_analytics_contract 
+tests/contract/generated/test_analytics.py::test_get__api_analytics_contract 
+[gw3] [  7%] PASSED tests/contract/generated/test_accounts.py::test_put__api_v1_accounts_account_id_contract 
+tests/contract/generated/test_accounts.py::test_delete__api_v1_accounts_account_id_contract 
+[gw1] [  8%] PASSED tests/contract/generated/test_accounts.py::test_post__api_v1_accounts_account_id_links_contract 
+tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_links_contract 
+[gw0] [  8%] PASSED tests/contract/generated/test_cashflow.py::test_get__api_v1_behaviour_cashflow_health_contract 
+tests/contract/generated/test_cashflow.py::test_get__api_cashflow_contract 
+[gw2] [  9%] PASSED tests/contract/generated/test_analytics.py::test_get__api_analytics_contract 
+tests/contract/generated/test_audit.py::test_get__api_audit_report_contract 
+[gw1] [  9%] PASSED tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_links_contract 
+tests/contract/generated/test_accounts.py::test_delete__api_v1_accounts_account_id_links_linked_account_id_contract 
+[gw3] [ 10%] PASSED tests/contract/generated/test_accounts.py::test_delete__api_v1_accounts_account_id_contract 
+tests/contract/generated/test_accounts.py::test_post__api_v1_accounts_account_id_balance_history_contract 
+[gw2] [ 11%] PASSED tests/contract/generated/test_audit.py::test_get__api_audit_report_contract 
+tests/contract/generated/test_banks.py::test_get__api_banks_contract 
+[gw3] [ 11%] PASSED tests/contract/generated/test_accounts.py::test_post__api_v1_accounts_account_id_balance_history_contract 
+tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_balance_history_contract 
+[gw1] [ 12%] PASSED tests/contract/generated/test_accounts.py::test_delete__api_v1_accounts_account_id_links_linked_account_id_contract 
+tests/contract/generated/test_accounts.py::test_get__api_accounts_manage_contract 
+[gw2] [ 13%] PASSED tests/contract/generated/test_banks.py::test_get__api_banks_contract 
+tests/contract/generated/test_behaviour.py::test_get__api_v1_behaviour_profile_contract 
+[gw3] [ 13%] PASSED tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_balance_history_contract 
+tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_balance_history_latest_contract 
+[gw0] [ 14%] PASSED tests/contract/generated/test_cashflow.py::test_get__api_cashflow_contract 
+tests/contract/generated/test_cashflow.py::test_get__api_cashflow_monthly_contract 
+[gw1] [ 14%] PASSED tests/contract/generated/test_accounts.py::test_get__api_accounts_manage_contract 
+tests/contract/generated/test_accounts.py::test_post__api_accounts_manage_contract 
+[gw2] [ 15%] PASSED tests/contract/generated/test_behaviour.py::test_get__api_v1_behaviour_profile_contract 
+tests/contract/generated/test_behaviour.py::test_get__api_v1_behaviour_wellness_score_contract 
+[gw3] [ 16%] PASSED tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_balance_history_latest_contract 
+tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_analytics_contract 
+[gw0] [ 16%] PASSED tests/contract/generated/test_cashflow.py::test_get__api_cashflow_monthly_contract 
+tests/contract/generated/test_cashflow.py::test_get__api_cashflow_categories_contract 
+[gw1] [ 17%] PASSED tests/contract/generated/test_accounts.py::test_post__api_accounts_manage_contract 
+tests/contract/generated/test_accounts.py::test_put__api_accounts_manage_account_id_contract 
+[gw3] [ 18%] PASSED tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_analytics_contract 
+tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_metrics_contract 
+[gw2] [ 18%] PASSED tests/contract/generated/test_behaviour.py::test_get__api_v1_behaviour_wellness_score_contract 
+tests/contract/generated/test_behaviour.py::test_get__api_v1_behaviour_debt_health_contract 
+[gw0] [ 19%] PASSED tests/contract/generated/test_cashflow.py::test_get__api_cashflow_categories_contract 
+tests/contract/generated/test_cashflow.py::test_get__api_cashflow_transactions_contract 
+[gw1] [ 19%] PASSED tests/contract/generated/test_accounts.py::test_put__api_accounts_manage_account_id_contract 
+tests/contract/generated/test_accounts.py::test_delete__api_accounts_manage_account_id_contract 
+[gw3] [ 20%] PASSED tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_metrics_contract 
+tests/contract/generated/test_categories.py::test_get__api_cashflow_categories_contract 
+[gw2] [ 21%] PASSED tests/contract/generated/test_behaviour.py::test_get__api_v1_behaviour_debt_health_contract 
+tests/contract/generated/test_behaviour.py::test_get__api_v1_behaviour_cashflow_health_contract 
+[gw0] [ 21%] PASSED tests/contract/generated/test_cashflow.py::test_get__api_cashflow_transactions_contract 
+tests/contract/generated/test_cashflow.py::test_get__api_v1_cashflow_contract 
+[gw1] [ 22%] PASSED tests/contract/generated/test_accounts.py::test_delete__api_accounts_manage_account_id_contract 
+tests/contract/generated/test_accounts.py::test_get__api_accounts_account_id_balance_contract 
+[gw2] [ 22%] PASSED tests/contract/generated/test_behaviour.py::test_get__api_v1_behaviour_cashflow_health_contract 
+[gw0] [ 23%] PASSED tests/contract/generated/test_cashflow.py::test_get__api_v1_cashflow_contract 
+tests/contract/generated/test_behaviour.py::test_get__api_v1_behaviour_patterns_contract 
+tests/contract/generated/test_credit_cards.py::test_post__api_v1_credit_cards_card_id_emi_conversion_contract 
+[gw1] [ 24%] PASSED tests/contract/generated/test_accounts.py::test_get__api_accounts_account_id_balance_contract 
+tests/contract/generated/test_institutions.py::test_get__api_v1_institutions_institution_id_contract 
+[gw2] [ 24%] PASSED tests/contract/generated/test_behaviour.py::test_get__api_v1_behaviour_patterns_contract 
+tests/contract/generated/test_loans.py::test_put__api_loans_loan_id_contract 
+[gw0] [ 25%] PASSED tests/contract/generated/test_credit_cards.py::test_post__api_v1_credit_cards_card_id_emi_conversion_contract 
+tests/contract/generated/test_credit_cards.py::test_post__api_v1_credit_cards_card_id_foreclosure_contract 
+[gw1] [ 26%] PASSED tests/contract/generated/test_institutions.py::test_get__api_v1_institutions_institution_id_contract 
+tests/contract/generated/test_institutions.py::test_put__api_v1_institutions_institution_id_contract 
+[gw2] [ 26%] PASSED tests/contract/generated/test_loans.py::test_put__api_loans_loan_id_contract 
+tests/contract/generated/test_loans.py::test_delete__api_loans_loan_id_contract 
+[gw0] [ 27%] PASSED tests/contract/generated/test_credit_cards.py::test_post__api_v1_credit_cards_card_id_foreclosure_contract 
+tests/contract/generated/test_dashboard.py::test_get__api_dashboard_summary_contract 
+[gw3] [ 27%] PASSED tests/contract/generated/test_categories.py::test_get__api_cashflow_categories_contract 
+tests/contract/generated/test_categories.py::test_get__api_categories_contract 
+[gw1] [ 28%] PASSED tests/contract/generated/test_institutions.py::test_put__api_v1_institutions_institution_id_contract 
+tests/contract/generated/test_investments.py::test_get__api_investments_contract 
+[gw2] [ 29%] PASSED tests/contract/generated/test_loans.py::test_delete__api_loans_loan_id_contract 
+tests/contract/generated/test_loans.py::test_get__api_loans_loan_id_schedule_contract 
+[gw0] [ 29%] PASSED tests/contract/generated/test_dashboard.py::test_get__api_dashboard_summary_contract 
+tests/contract/generated/test_export.py::test_get__api_export_csv_contract 
+[gw3] [ 30%] PASSED tests/contract/generated/test_categories.py::test_get__api_categories_contract 
+tests/contract/generated/test_credit_cards.py::test_get__api_v1_credit_cards_contract 
+[gw1] [ 31%] PASSED tests/contract/generated/test_investments.py::test_get__api_investments_contract 
+tests/contract/generated/test_investments.py::test_post__api_investments_contract 
+[gw2] [ 31%] PASSED tests/contract/generated/test_loans.py::test_get__api_loans_loan_id_schedule_contract 
+tests/contract/generated/test_loans.py::test_post__api_loans_loan_id_prepayment_simulation_contract 
+[gw0] [ 32%] PASSED tests/contract/generated/test_export.py::test_get__api_export_csv_contract 
+tests/contract/generated/test_financial_events.py::test_post__api_financial_events__contract 
+[gw3] [ 32%] PASSED tests/contract/generated/test_credit_cards.py::test_get__api_v1_credit_cards_contract 
+tests/contract/generated/test_credit_cards.py::test_post__api_v1_credit_cards_contract 
+[gw1] [ 33%] PASSED tests/contract/generated/test_investments.py::test_post__api_investments_contract 
+tests/contract/generated/test_investments.py::test_put__api_investments_investment_id_contract 
+[gw2] [ 34%] PASSED tests/contract/generated/test_loans.py::test_post__api_loans_loan_id_prepayment_simulation_contract 
+tests/contract/generated/test_loans.py::test_post__api_loans_loan_id_foreclosure_simulation_contract 
+[gw0] [ 34%] PASSED tests/contract/generated/test_financial_events.py::test_post__api_financial_events__contract 
+tests/contract/generated/test_financial_events.py::test_get__api_financial_events__contract 
+[gw3] [ 35%] PASSED tests/contract/generated/test_credit_cards.py::test_post__api_v1_credit_cards_contract 
+tests/contract/generated/test_credit_cards.py::test_get__api_v1_credit_cards_card_id_contract 
+[gw1] [ 36%] PASSED tests/contract/generated/test_investments.py::test_put__api_investments_investment_id_contract 
+tests/contract/generated/test_investments.py::test_delete__api_investments_investment_id_contract 
+[gw2] [ 36%] PASSED tests/contract/generated/test_loans.py::test_post__api_loans_loan_id_foreclosure_simulation_contract 
+tests/contract/generated/test_loans.py::test_post__api_loans_loan_id_rate_change_simulation_contract 
+[gw0] [ 37%] PASSED tests/contract/generated/test_financial_events.py::test_get__api_financial_events__contract 
+tests/contract/generated/test_financial_events.py::test_get__api_financial_events_event_id_contract 
+[gw3] [ 37%] PASSED tests/contract/generated/test_credit_cards.py::test_get__api_v1_credit_cards_card_id_contract 
+tests/contract/generated/test_credit_cards.py::test_put__api_v1_credit_cards_card_id_contract 
+[gw1] [ 38%] PASSED tests/contract/generated/test_investments.py::test_delete__api_investments_investment_id_contract 
+tests/contract/generated/test_investments.py::test_get__api_v1_investments_contract 
+[gw2] [ 39%] PASSED tests/contract/generated/test_loans.py::test_post__api_loans_loan_id_rate_change_simulation_contract 
+tests/contract/generated/test_loans.py::test_post__api_loans_loan_id_payments_contract 
+[gw0] [ 39%] PASSED tests/contract/generated/test_financial_events.py::test_get__api_financial_events_event_id_contract 
+tests/contract/generated/test_forecast.py::test_get__api_v1_forecast_contract 
+[gw3] [ 40%] PASSED tests/contract/generated/test_credit_cards.py::test_put__api_v1_credit_cards_card_id_contract 
+tests/contract/generated/test_credit_cards.py::test_delete__api_v1_credit_cards_card_id_contract 
+[gw1] [ 40%] PASSED tests/contract/generated/test_investments.py::test_get__api_v1_investments_contract 
+tests/contract/generated/test_loans.py::test_get__api_loans_contract 
+[gw2] [ 41%] PASSED tests/contract/generated/test_loans.py::test_post__api_loans_loan_id_payments_contract 
+tests/contract/generated/test_loans.py::test_get__api_loans_analysis_priority_contract 
+[gw0] [ 42%] PASSED tests/contract/generated/test_forecast.py::test_get__api_v1_forecast_contract 
+tests/contract/generated/test_import.py::test_post__api_import_detect_contract 
+[gw3] [ 42%] PASSED tests/contract/generated/test_credit_cards.py::test_delete__api_v1_credit_cards_card_id_contract 
+tests/contract/generated/test_credit_cards.py::test_get__api_v1_credit_cards_card_id_statements_contract 
+[gw1] [ 43%] PASSED tests/contract/generated/test_loans.py::test_get__api_loans_contract 
+tests/contract/generated/test_loans.py::test_post__api_loans_contract 
+[gw2] [ 44%] PASSED tests/contract/generated/test_loans.py::test_get__api_loans_analysis_priority_contract 
+tests/contract/generated/test_loans.py::test_post__api_loans_loan_id_analysis_prepayment_vs_foreclosure_contract 
+[gw0] [ 44%] PASSED tests/contract/generated/test_import.py::test_post__api_import_detect_contract 
+tests/contract/generated/test_import.py::test_post__api_import_execute_contract 
+[gw3] [ 45%] PASSED tests/contract/generated/test_credit_cards.py::test_get__api_v1_credit_cards_card_id_statements_contract 
+tests/contract/generated/test_credit_cards.py::test_post__api_v1_credit_cards_card_id_statements_contract 
+[gw1] [ 45%] PASSED tests/contract/generated/test_loans.py::test_post__api_loans_contract 
+tests/contract/generated/test_loans.py::test_get__api_loans_loan_id_contract 
+[gw2] [ 46%] PASSED tests/contract/generated/test_loans.py::test_post__api_loans_loan_id_analysis_prepayment_vs_foreclosure_contract 
+tests/contract/generated/test_loans.py::test_post__api_loans_analysis_surplus_allocation_contract 
+[gw0] [ 47%] PASSED tests/contract/generated/test_import.py::test_post__api_import_execute_contract 
+tests/contract/generated/test_institutions.py::test_get__api_v1_institutions_contract 
+[gw1] [ 47%] PASSED tests/contract/generated/test_loans.py::test_get__api_loans_loan_id_contract 
+[gw3] [ 48%] PASSED tests/contract/generated/test_credit_cards.py::test_post__api_v1_credit_cards_card_id_statements_contract 
+tests/contract/generated/test_reconciliation.py::test_get__api_reconciliations_pending_contract 
+tests/contract/generated/test_credit_cards.py::test_get__api_v1_credit_cards_card_id_outstanding_contract 
+[gw2] [ 49%] PASSED tests/contract/generated/test_loans.py::test_post__api_loans_analysis_surplus_allocation_contract 
+tests/contract/generated/test_loans.py::test_get__api_v1_loans_contract 
+[gw0] [ 49%] PASSED tests/contract/generated/test_institutions.py::test_get__api_v1_institutions_contract 
+tests/contract/generated/test_institutions.py::test_post__api_v1_institutions_contract 
+[gw3] [ 50%] PASSED tests/contract/generated/test_credit_cards.py::test_get__api_v1_credit_cards_card_id_outstanding_contract 
+tests/contract/generated/test_credit_cards.py::test_get__api_v1_credit_cards_card_id_utilization_contract 
+[gw1] [ 50%] PASSED tests/contract/generated/test_reconciliation.py::test_get__api_reconciliations_pending_contract 
+tests/contract/generated/test_reconciliation.py::test_get__api_reconciliations_scan_contract 
+[gw2] [ 51%] PASSED tests/contract/generated/test_loans.py::test_get__api_v1_loans_contract 
+tests/contract/generated/test_members.py::test_get__api_members_contract 
+[gw0] [ 52%] PASSED tests/contract/generated/test_institutions.py::test_post__api_v1_institutions_contract 
+tests/contract/generated/test_reconciliations.py::test_get__api_reconciliations_contract 
+[gw3] [ 52%] PASSED tests/contract/generated/test_credit_cards.py::test_get__api_v1_credit_cards_card_id_utilization_contract 
+tests/contract/generated/test_credit_cards.py::test_get__api_v1_credit_cards_card_id_metrics_contract 
+[gw1] [ 53%] PASSED tests/contract/generated/test_reconciliation.py::test_get__api_reconciliations_scan_contract 
+tests/contract/generated/test_reconciliation.py::test_post__api_reconciliations_create_contract 
+[gw2] [ 54%] PASSED tests/contract/generated/test_members.py::test_get__api_members_contract 
+[gw0] [ 54%] PASSED tests/contract/generated/test_reconciliations.py::test_get__api_reconciliations_contract 
+tests/contract/generated/test_members.py::test_post__api_members_contract 
+tests/contract/generated/test_reconciliations.py::test_get__api_reconciliations_pending_contract 
+[gw3] [ 55%] PASSED tests/contract/generated/test_credit_cards.py::test_get__api_v1_credit_cards_card_id_metrics_contract 
+tests/contract/generated/test_credit_cards.py::test_get__api_v1_credit_cards_card_id_next_statement_date_contract 
+[gw1] [ 55%] PASSED tests/contract/generated/test_reconciliation.py::test_post__api_reconciliations_create_contract 
+tests/contract/generated/test_reconciliation.py::test_post__api_reconciliations_batch_insert_contract 
+[gw2] [ 56%] PASSED tests/contract/generated/test_members.py::test_post__api_members_contract 
+[gw0] [ 57%] PASSED tests/contract/generated/test_reconciliations.py::test_get__api_reconciliations_pending_contract 
+tests/contract/generated/test_net_worth.py::test_get__api_v1_net_worth_contract 
+tests/contract/generated/test_reconciliations.py::test_get__api_reconciliations_scan_contract 
+[gw3] [ 57%] PASSED tests/contract/generated/test_credit_cards.py::test_get__api_v1_credit_cards_card_id_next_statement_date_contract 
+tests/contract/generated/test_credit_cards.py::test_post__api_v1_credit_cards_card_id_payments_contract 
+[gw0] [ 58%] PASSED tests/contract/generated/test_reconciliations.py::test_get__api_reconciliations_scan_contract 
+tests/contract/generated/test_reconciliations.py::test_post__api_reconciliations_create_contract 
+[gw1] [ 59%] PASSED tests/contract/generated/test_reconciliation.py::test_post__api_reconciliations_batch_insert_contract 
+[gw2] [ 59%] PASSED tests/contract/generated/test_net_worth.py::test_get__api_v1_net_worth_contract 
+tests/contract/generated/test_reconciliation.py::test_post__api_reconciliations_reconciliation_id_confirm_contract 
+tests/contract/generated/test_networth.py::test_get__api_networth_contract 
+[gw3] [ 60%] PASSED tests/contract/generated/test_credit_cards.py::test_post__api_v1_credit_cards_card_id_payments_contract 
+tests/contract/generated/test_reconciliations.py::test_post__api_reconciliations_reconciliation_id_reject_contract 
+[gw0] [ 60%] PASSED tests/contract/generated/test_reconciliations.py::test_post__api_reconciliations_create_contract 
+[gw1] [ 61%] PASSED tests/contract/generated/test_reconciliation.py::test_post__api_reconciliations_reconciliation_id_confirm_contract 
+tests/contract/generated/test_reconciliations.py::test_post__api_reconciliations_batch_insert_contract 
+tests/contract/generated/test_reconciliation.py::test_post__api_reconciliations_reconciliation_id_reject_contract 
+[gw2] [ 62%] PASSED tests/contract/generated/test_networth.py::test_get__api_networth_contract 
+tests/contract/generated/test_overview.py::test_get__api_overview_contract 
+[gw3] [ 62%] PASSED tests/contract/generated/test_reconciliations.py::test_post__api_reconciliations_reconciliation_id_reject_contract 
+tests/contract/generated/test_statements.py::test_get__api_statements_contract 
+[gw0] [ 63%] PASSED tests/contract/generated/test_reconciliations.py::test_post__api_reconciliations_batch_insert_contract 
+[gw1] [ 63%] PASSED tests/contract/generated/test_reconciliation.py::test_post__api_reconciliations_reconciliation_id_reject_contract 
+[gw2] [ 64%] PASSED tests/contract/generated/test_overview.py::test_get__api_overview_contract 
+tests/contract/generated/test_reconciliations.py::test_post__api_reconciliations_reconciliation_id_confirm_contract 
+tests/contract/generated/test_reconciliation.py::test_get__api_v1_reconciliation_contract 
+tests/contract/generated/test_reconciliation.py::test_get__api_reconciliations_contract 
+[gw3] [ 65%] PASSED tests/contract/generated/test_statements.py::test_get__api_statements_contract 
+tests/contract/generated/test_statements.py::test_get__api_statements_statement_id_validate_contract 
+[gw2] [ 65%] PASSED tests/contract/generated/test_reconciliation.py::test_get__api_reconciliations_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_balance_history_contract 
+[gw1] [ 66%] PASSED tests/contract/generated/test_reconciliation.py::test_get__api_v1_reconciliation_contract 
+[gw0] [ 67%] PASSED tests/contract/generated/test_reconciliations.py::test_post__api_reconciliations_reconciliation_id_confirm_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_contract 
+tests/contract/generated/test_transactions.py::test_get__api_cashflow_transactions_contract 
+[gw3] [ 67%] PASSED tests/contract/generated/test_statements.py::test_get__api_statements_statement_id_validate_contract 
+tests/contract/generated/test_statements.py::test_get__api_v1_credit_cards_card_id_statements_contract 
+[gw2] [ 68%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_balance_history_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_balance_history_latest_contract 
+[gw0] [ 68%] PASSED tests/contract/generated/test_transactions.py::test_get__api_cashflow_transactions_contract 
+[gw1] [ 69%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_contract 
+tests/contract/generated/test_transactions.py::test_get__api_transactions_contract 
+tests/contract/generated/test_v1.py::test_put__api_v1_accounts_account_id_contract 
+[gw3] [ 70%] PASSED tests/contract/generated/test_statements.py::test_get__api_v1_credit_cards_card_id_statements_contract 
+tests/contract/generated/test_statements.py::test_post__api_v1_credit_cards_card_id_statements_contract 
+[gw2] [ 70%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_balance_history_latest_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_analytics_contract 
+[gw0] [ 71%] PASSED tests/contract/generated/test_transactions.py::test_get__api_transactions_contract 
+tests/contract/generated/test_upload.py::test_post__api_upload_contract 
+[gw1] [ 72%] PASSED tests/contract/generated/test_v1.py::test_put__api_v1_accounts_account_id_contract 
+tests/contract/generated/test_v1.py::test_delete__api_v1_accounts_account_id_contract 
+[gw3] [ 72%] PASSED tests/contract/generated/test_statements.py::test_post__api_v1_credit_cards_card_id_statements_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_status_contract 
+[gw0] [ 73%] PASSED tests/contract/generated/test_upload.py::test_post__api_upload_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_accounts_contract 
+[gw2] [ 73%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_analytics_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_metrics_contract 
+[gw3] [ 74%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_status_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_dormancy_contract 
+[gw1] [ 75%] PASSED tests/contract/generated/test_v1.py::test_delete__api_v1_accounts_account_id_contract 
+tests/contract/generated/test_v1.py::test_post__api_v1_accounts_account_id_balance_history_contract 
+[gw0] [ 75%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_accounts_contract 
+tests/contract/generated/test_v1.py::test_post__api_v1_accounts_contract 
+[gw2] [ 76%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_metrics_contract 
+tests/contract/generated/test_v1.py::test_post__api_v1_institutions_contract 
+[gw3] [ 77%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_dormancy_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_institutions_contract 
+[gw1] [ 77%] PASSED tests/contract/generated/test_v1.py::test_post__api_v1_accounts_account_id_balance_history_contract 
+tests/contract/generated/test_v1.py::test_post__api_v1_accounts_account_id_links_contract 
+[gw0] [ 78%] PASSED tests/contract/generated/test_v1.py::test_post__api_v1_accounts_contract 
+tests/contract/generated/test_v1.py::test_delete__api_v1_accounts_account_id_links_linked_account_id_contract 
+[gw2] [ 78%] PASSED tests/contract/generated/test_v1.py::test_post__api_v1_institutions_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_institutions_institution_id_contract 
+[gw3] [ 79%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_institutions_contract 
+[gw1] [ 80%] PASSED tests/contract/generated/test_v1.py::test_post__api_v1_accounts_account_id_links_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_behaviour_wellness_score_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_links_contract 
+[gw2] [ 80%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_institutions_institution_id_contract 
+tests/contract/generated/test_v1.py::test_put__api_v1_institutions_institution_id_contract 
+[gw0] [ 81%] PASSED tests/contract/generated/test_v1.py::test_delete__api_v1_accounts_account_id_links_linked_account_id_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_behaviour_profile_contract 
+[gw1] [ 81%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_links_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_behaviour_cashflow_health_contract 
+[gw3] [ 82%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_behaviour_wellness_score_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_behaviour_debt_health_contract 
+[gw2] [ 83%] PASSED tests/contract/generated/test_v1.py::test_put__api_v1_institutions_institution_id_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_behaviour_recommendations_contract 
+[gw1] [ 83%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_behaviour_cashflow_health_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_behaviour_patterns_contract 
+[gw0] [ 84%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_behaviour_profile_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_behaviour_monthly_report_contract 
+[gw3] [ 85%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_behaviour_debt_health_contract 
+[gw2] [ 85%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_behaviour_recommendations_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_behaviour_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_credit_cards_contract 
+[gw1] [ 86%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_behaviour_patterns_contract 
+tests/contract/generated/test_v1.py::test_post__api_v1_credit_cards_contract 
+[gw0] [ 86%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_behaviour_monthly_report_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_credit_cards_card_id_contract 
+[gw3] [ 87%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_behaviour_contract 
+[gw2] [ 88%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_credit_cards_contract 
+tests/contract/generated/test_v1.py::test_put__api_v1_credit_cards_card_id_contract 
+tests/contract/generated/test_v1.py::test_delete__api_v1_credit_cards_card_id_contract 
+[gw1] [ 88%] PASSED tests/contract/generated/test_v1.py::test_post__api_v1_credit_cards_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_credit_cards_card_id_statements_contract 
+[gw0] [ 89%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_credit_cards_card_id_contract 
+tests/contract/generated/test_v1.py::test_post__api_v1_credit_cards_card_id_statements_contract 
+[gw2] [ 90%] PASSED tests/contract/generated/test_v1.py::test_delete__api_v1_credit_cards_card_id_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_credit_cards_card_id_utilization_contract 
+[gw3] [ 90%] PASSED tests/contract/generated/test_v1.py::test_put__api_v1_credit_cards_card_id_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_credit_cards_card_id_outstanding_contract 
+[gw1] [ 91%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_credit_cards_card_id_statements_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_credit_cards_card_id_metrics_contract 
+[gw0] [ 91%] PASSED tests/contract/generated/test_v1.py::test_post__api_v1_credit_cards_card_id_statements_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_credit_cards_card_id_next_statement_date_contract 
+[gw2] [ 92%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_credit_cards_card_id_utilization_contract 
+tests/contract/generated/test_v1.py::test_post__api_v1_credit_cards_card_id_payments_contract 
+[gw3] [ 93%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_credit_cards_card_id_outstanding_contract 
+tests/contract/generated/test_v1.py::test_post__api_v1_credit_cards_card_id_emi_conversion_contract 
+[gw0] [ 93%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_credit_cards_card_id_next_statement_date_contract 
+[gw1] [ 94%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_credit_cards_card_id_metrics_contract 
+tests/contract/generated/test_v1.py::test_post__api_v1_credit_cards_card_id_foreclosure_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_cashflow_contract 
+[gw3] [ 95%] PASSED tests/contract/generated/test_v1.py::test_post__api_v1_credit_cards_card_id_emi_conversion_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_investments_contract 
+[gw2] [ 95%] PASSED tests/contract/generated/test_v1.py::test_post__api_v1_credit_cards_card_id_payments_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_forecast_contract 
+[gw0] [ 96%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_cashflow_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_net_worth_contract 
+[gw1] [ 96%] PASSED tests/contract/generated/test_v1.py::test_post__api_v1_credit_cards_card_id_foreclosure_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_loans_contract 
+[gw2] [ 97%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_forecast_contract 
+[gw3] [ 98%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_investments_contract 
+tests/contract/generated/test_v1.py::test_get__api_v1_reconciliation_contract 
+[gw0] [ 98%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_net_worth_contract 
+[gw1] [ 99%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_loans_contract 
+[gw3] [100%] PASSED tests/contract/generated/test_v1.py::test_get__api_v1_reconciliation_contract 
+
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+../.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+../.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+../.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+../.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.3-final-0 ________________
+
+Name                                                               Stmts   Miss Branch BrPart   Cover   Missing
+---------------------------------------------------------------------------------------------------------------
+src/__init__.py                                                        0      0      0      0 100.00%
+src/common/__init__.py                                                 5      0      0      0 100.00%
+src/common/calculations.py                                            85     42     48      8  44.36%   27-49, 54-58, 65, 86, 93, 103->100, 108-124, 137->135, 141-159, 170->185
+src/common/enrichment.py                                               8      0      0      0 100.00%
+src/common/formatting.py                                              34      3     10      3  86.36%   9, 37, 43
+src/common/parsing.py                                                 28     12     10      4  52.63%   10, 29-31, 35-37, 42-45, 53
+src/config.py                                                         75     21     16      8  68.13%   38-40, 61, 69, 92, 97, 103, 109, 114, 128-131, 135-138, 142, 145, 150, 170
+src/core/__init__.py                                                   4      0      0      0 100.00%
+src/core/db/__init__.py                                                4      0      0      0 100.00%
+src/core/db/config.py                                                 19      6      6      1  64.00%   55-62
+src/core/db/connection.py                                             22      3      0      0  86.36%   64-66
+src/core/db/schema.py                                                153     41     34     11  70.05%   644-662, 667, 729-730, 740-741, 751-752, 780-781, 786-793, 802-806, 811-815, 842-845, 847-850, 856-857, 871, 881, 891, 901, 908
+src/core/db/transaction.py                                            16      9      0      0  43.75%   40-49
+src/core/domain/__init__.py                                            2      0      0      0 100.00%
+src/core/domain/money.py                                             103     65     38      1  27.66%   46, 79-80, 96-98, 110-112, 124-128, 143-149, 161-165, 174, 183, 191, 195, 199, 211-213, 225-231, 248-252, 260, 264, 268, 272, 276, 280, 284, 288-290, 294-296, 300-302, 306-308, 312-314, 318
+src/core/dtos/__init__.py                                             14      0      0      0 100.00%
+src/core/dtos/account_dto.py                                          17      0      0      0 100.00%
+src/core/dtos/accounts_dto.py                                         99      0      0      0 100.00%
+src/core/dtos/analytics_dto.py                                        38     38      0      0   0.00%   9-82
+src/core/dtos/behaviour_dto.py                                        66      0      0      0 100.00%
+src/core/dtos/cashflow_dto.py                                         71      0      0      0 100.00%
+src/core/dtos/credit_cards_dto.py                                    105      0      0      0 100.00%
+src/core/dtos/dashboard_dto.py                                        31      0      0      0 100.00%
+src/core/dtos/forecast_dto.py                                         71      0      0      0 100.00%
+src/core/dtos/investments_dto.py                                      81      0      0      0 100.00%
+src/core/dtos/loans_dto.py                                            97      0      0      0 100.00%
+src/core/dtos/net_worth_dto.py                                        62      0      0      0 100.00%
+src/core/dtos/reconciliation_dto.py                                  108      0      0      0 100.00%
+src/core/dtos/statement_dto.py                                        28     28      0      0   0.00%   9-58
+src/core/dtos/transaction_dto.py                                      34      0      0      0 100.00%
+src/core/mappers/__init__.py                                           4      0      0      0 100.00%
+src/core/mappers/account_mapper.py                                    25     15      4      0  34.48%   50-63, 81-103, 128-137
+src/core/mappers/analytics_mapper.py                                   6      6      0      0   0.00%   9-61
+src/core/mappers/behaviour_mapper.py                                  30     30      6      0   0.00%   7-114
+src/core/mappers/cashflow_mapper.py                                   23     23      2      0   0.00%   7-85
+src/core/mappers/credit_card_mapper.py                                15      2      0      0  86.67%   18, 42
+src/core/mappers/dashboard_mapper.py                                  19      9      4      0  43.48%   57-71, 96-108, 126
+src/core/mappers/forecast_mapper.py                                   24      0      0      0 100.00%
+src/core/mappers/investment_mapper.py                                 21      5      0      0  76.19%   25, 63, 76, 86, 96
+src/core/mappers/loan_mapper.py                                       12     12      0      0   0.00%   1-45
+src/core/mappers/networth_mapper.py                                   23     23      2      0   0.00%   7-97
+src/core/mappers/reconciliation_mapper.py                             21     21      0      0   0.00%   7-111
+src/core/mappers/statement_mapper.py                                  41     41      6      0   0.00%   9-104
+src/core/mappers/transaction_mapper.py                                31      2      2      0  93.94%   159-160
+src/data/__init__.py                                                   0      0      0      0 100.00%
+src/engines/__init__.py                                                2      0      0      0 100.00%
+src/engines/account_engine/__init__.py                                 7      0      0      0 100.00%
+src/engines/account_engine/balance.py                                 18      8      6      2  50.00%   30, 36, 58, 79-86
+src/engines/account_engine/cashflow.py                                13      5      4      1  52.94%   51, 73-78
+src/engines/account_engine/dormant.py                                 11      6      4      1  40.00%   29-37, 55
+src/engines/account_engine/history.py                                 19     14      8      1  22.22%   32-44, 68-73
+src/engines/account_engine/lifecycle.py                               12      7      6      2  38.89%   36, 43-50, 64
+src/engines/account_engine/metrics.py                                  8      0      0      0 100.00%
+src/engines/balance_engine.py                                         95     54     18      1  42.48%   32-52, 60-61, 96-150, 175-198, 284-321, 338
+src/engines/behaviour_engine/__init__.py                              12      0      0      0 100.00%
+src/engines/behaviour_engine/account.py                               35     29     20      0  10.91%   37-49, 75-83, 105-117, 141-154
+src/engines/behaviour_engine/cashflow.py                              18      6      4      2  63.64%   31-34, 57-60
+src/engines/behaviour_engine/core.py                                 424    231    188     36  41.34%   25, 51-70, 76, 83-90, 95-102, 111-116, 126-135, 145-158, 168-207, 248, 260->259, 263, 276-311, 336, 346-403, 422, 426, 442-449, 453-459, 507, 511, 520-522, 529-539, 548->545, 555-557, 566, 569-571, 601, 608, 615-619, 626-627, 631, 650-655, 700, 710-715, 721-762, 782, 798, 821, 830-833, 838-840, 852-853, 858-861, 865-867
+src/engines/behaviour_engine/credit_dependency.py                    151    151     72      0   0.00%   8-508
+src/engines/behaviour_engine/debt.py                                  66     34     38      7  37.50%   71, 74-80, 87-93, 99, 102-108, 191-204, 227
+src/engines/behaviour_engine/income.py                                49     38     26      0  14.67%   82-95, 105-111, 138-141, 173-185, 203-208, 225-228
+src/engines/behaviour_engine/insights.py                             122    119     74      0   1.53%   30-397, 406-450
+src/engines/behaviour_engine/lifestyle.py                             17     10      8      2  36.00%   36-41, 70-78
+src/engines/behaviour_engine/nudges.py                                72     68     40      0   3.57%   34-276, 285-297, 306-318
+src/engines/behaviour_engine/patterns.py                             141    118     66      2  13.04%   26-35, 40-46, 51-54, 87, 93-102, 119-137, 158-182, 187-191, 216-260, 284-347
+src/engines/behaviour_engine/profile.py                               95     36     54     19  52.35%   96, 106, 116, 128, 167, 193-197, 216-220, 238, 242, 302, 304-307, 309-310, 313, 318, 320, 347, 354-361, 368, 375-395
+src/engines/behaviour_engine/resilience.py                            14      2      2      1  81.25%   34-35
+src/engines/behaviour_engine/savings.py                               12      3      4      2  68.75%   42-43, 73
+src/engines/behaviour_engine/stress.py                               293    293    142      0   0.00%   15-670
+src/engines/behaviour_engine/temporal.py                              71     71     28      0   0.00%   12-192
+src/engines/behaviour_engine/utils.py                                 36     26     12      0  20.83%   16-25, 33-38, 47-56, 65-69, 77, 86
+src/engines/behaviour_engine/wellness.py                              21      7      8      1  51.72%   111-118
+src/engines/cashflow_engine.py                                        41     41     14      0   0.00%   18-152
+src/engines/credit_card_engine/__init__.py                             8      0      0      0 100.00%
+src/engines/credit_card_engine/billing.py                             55     46     24      0  11.39%   32-34, 58-95, 101-112, 135-141, 167-184
+src/engines/credit_card_engine/emi.py                                 30     26     12      0   9.52%   19-24, 33-43, 52-76
+src/engines/credit_card_engine/foreclosure.py                         14     12     10      0   8.33%   41-67
+src/engines/credit_card_engine/interest.py                            37     32     22      0   8.47%   35, 57-72, 96-107, 131-143
+src/engines/credit_card_engine/metrics.py                             17     16     10      0   3.70%   38-64
+src/engines/credit_card_engine/outstanding.py                         11     10      8      0   5.26%   34-48
+src/engines/credit_card_engine/utilization.py                         17     14     10      0  11.11%   35-50, 72-77
+src/engines/financial_events/__init__.py                               2      0      0      0 100.00%
+src/engines/financial_events/lineage_walker.py                       182    160     78      0   8.46%   38-43, 48-52, 57-58, 68-69, 74-75, 80-82, 112-217, 240-257, 276-372, 395-450
+src/engines/financial_intelligence/__init__.py                         8      0      0      0 100.00%
+src/engines/financial_intelligence/forecasting.py                    109     99     46      0   6.45%   56-115, 131-134, 146-152, 182-219, 261-294, 318-356, 382-427
+src/engines/financial_intelligence/goal_planner.py                   137    127     72      0   4.78%   57-118, 149-157, 177-179, 207-281, 331-423, 454-483
+src/engines/financial_intelligence/intelligence.py                   112    100     36      0   8.11%   55, 93-155, 164-175, 180-181, 213-240, 279-330, 350-419, 428-457, 462-487
+src/engines/financial_intelligence/models.py                          67      0      0      0 100.00%
+src/engines/financial_intelligence/optimization.py                   201    189    102      0   3.96%   55-73, 112-214, 246-312, 360-444, 480-580, 613-717, 727
+src/engines/financial_intelligence/scenario.py                        92     81     42      0   8.21%   44-69, 96-118, 145-174, 203-224, 250-277, 300-354
+src/engines/financial_intelligence/utils.py                           84     62     34      0  18.64%   72-75, 88-93, 110-115, 133-148, 167-172, 191-199, 213-234, 255-262, 280-287
+src/engines/ledger_audit_engine.py                                    46     10     16      6  70.97%   46, 60, 74, 88, 119, 169-174
+src/engines/loan_engine/__init__.py                                    8      0      0      0 100.00%
+src/engines/loan_engine/amortization.py                              133    118     68      0   7.46%   23-38, 47-58, 84-194, 202-205, 210-212, 217-219, 224-226, 246-261, 294-356
+src/engines/loan_engine/emi.py                                        75     65     28      0   9.71%   35-56, 65, 73-81, 89, 105-143, 152-174
+src/engines/loan_engine/floating_rate.py                              40     35     14      0   9.26%   18-63, 74-116
+src/engines/loan_engine/foreclosure.py                                21     16      6      0  18.52%   18-48, 65-97
+src/engines/loan_engine/metrics.py                                    27     20      2      0  24.14%   13-43, 60-63, 70, 78-86, 94-96
+src/engines/loan_engine/models.py                                     49      0      0      0 100.00%
+src/engines/loan_engine/prepayment.py                                114    102     46      0   7.50%   20-33, 41, 55-73, 85-228, 251-273, 297-347
+src/engines/loan_engine/utils.py                                       5      2      0      0  60.00%   14, 23
+src/engines/recommendation_engine/__init__.py                          2      2      0      0   0.00%   13-23
+src/engines/recommendation_engine/recommendations.py                  71     71     30      0   0.00%   7-258
+src/engines/reconciliation_engine.py                                 131    120     52      0   6.01%   41-46, 54-60, 85-105, 115-130, 152-214, 237-248, 281-318, 335-396
+src/engines/test_rem_ediation_probe.py                                 2      2      0      0   0.00%   2-3
+src/engines/transaction_intelligence/__init__.py                       5      0      0      0 100.00%
+src/engines/transaction_intelligence/cash_conversion_detector.py     174    148     76      0  10.40%   51-56, 61-67, 72-77, 84-90, 95, 100-103, 121-127, 132-157, 190-402
+src/engines/transaction_intelligence/cc_payment_detector.py           85     61     36      0  19.83%   47-68, 77-96, 108-130, 180-239, 268-305
+src/engines/transaction_intelligence/detector_result.py               18      0      0      0 100.00%
+src/engines/transaction_intelligence/loan_emi_detector.py             85     76     36      0   7.44%   28-29, 36-40, 47-52, 71-271, 288
+src/errors.py                                                         62     10      6      0  82.35%   65, 72, 79, 86, 185-197
+src/logger.py                                                         35     10      4      2  69.23%   32, 40-42, 68-70, 86, 99-100
+src/models/__init__.py                                                14      0      0      0 100.00%
+src/models/account.py                                                 46      2      0      0  95.65%   32, 86
+src/models/account_balance.py                                         16      1      0      0  93.75%   30
+src/models/account_link.py                                            14      1      0      0  92.86%   28
+src/models/base.py                                                    11      2      0      0  81.82%   22, 26
+src/models/behaviour.py                                               70      0      0      0 100.00%
+src/models/credit_card.py                                             79     14      8      0  74.71%   30-32, 38-40, 46-48, 53, 109-111, 145
+src/models/credit_card_emi.py                                         10      0      0      0 100.00%
+src/models/credit_card_foreclosure.py                                  9      0      0      0 100.00%
+src/models/credit_card_statement.py                                   40      5      2      0  83.33%   29-31, 36, 80
+src/models/dashboard.py                                               12      0      0      0 100.00%
+src/models/financial_event.py                                         49      3      2      0  90.20%   107-110
+src/models/financial_goal.py                                          71      9      4      0  82.67%   59-61, 67-69, 74, 145, 163
+src/models/institution.py                                             25      1      0      0  96.00%   45
+src/models/investment.py                                              15      1      0      0  93.33%   21
+src/models/loan.py                                                    97     13      6      0  81.55%   32-34, 38, 83-85, 90, 135-139, 169, 211
+src/models/loan_analysis.py                                           11      0      0      0 100.00%
+src/models/loan_payment.py                                            30      4      2      0  81.25%   29-31, 35
+src/models/loan_simulation.py                                         64     15     10      0  66.22%   32-34, 40-42, 84-86, 92-94, 127-129
+src/models/reconciliation.py                                          16      1      0      0  93.75%   23
+src/models/statement.py                                               13      1      0      0  92.31%   19
+src/models/transaction.py                                             26     11      6      0  46.88%   7-20, 47
+src/orchestration/__init__.py                                          1      1      0      0   0.00%   3
+src/orchestration/statement_orchestrator.py                           70     70      2      0   0.00%   14-183
+src/repositories/__init__.py                                          20      0      0      0 100.00%
+src/repositories/account_balance_repository.py                        40     23      2      0  40.48%   34-51, 71-85, 123-132, 136-143
+src/repositories/account_link_repository.py                           29     12      2      0  54.84%   37-51, 91-109
+src/repositories/account_repository.py                               129     83     30      3  32.08%   35, 61-69, 81-123, 132, 168-175, 179, 187-222, 226-261, 265, 284-321, 327-364, 370-384
+src/repositories/alert_repository.py                                  51     51      4      0   0.00%   7-168
+src/repositories/bank_repository.py                                   39     27     10      0  24.49%   20-25, 31-43, 52-60, 64-67
+src/repositories/base.py                                               8      0      0      0 100.00%
+src/repositories/behaviour_repository.py                              53     14     14      2  67.16%   54, 100-137, 170->168, 181
+src/repositories/cashflow_repository.py                               82     66     32      1  14.91%   29-30, 76-240
+src/repositories/credit_card_repository.py                            37     13      4      2  63.41%   38-62, 78-79, 113-120
+src/repositories/credit_card_statement_repository.py                  34     18      0      0  47.06%   32-51, 55-59, 63-73, 77-87, 114-125
+src/repositories/financial_event_repository.py                        55     34      6      1  36.07%   30-73, 94, 123-132, 157-201, 220-229, 238-248, 294-318, 336-349
+src/repositories/financial_goal_repository.py                         45     36      8      0  16.98%   36-59, 63-67, 83-116, 124-145, 149-153, 164-181
+src/repositories/import_mapping_repository.py                         13      8      0      0  38.46%   13-34, 38-46
+src/repositories/institution_repository.py                            34     16      2      1  52.78%   39-55, 95-105, 109-116
+src/repositories/investment_repository.py                             41     11      2      1  72.09%   62-84, 110-117
+src/repositories/liquidity_pattern_repository.py                      32     23      0      0  28.12%   16-26, 30-37, 41-46, 50-57, 74-94, 98-105
+src/repositories/loan_payment_repository.py                           16     10      0      0  37.50%   16-36, 40-52, 56-66
+src/repositories/loan_repository.py                                   92     57      6      1  36.73%   42-69, 95-105, 127-134, 159-168, 172-182, 186-190, 204-213, 217-227, 231-237, 250-261, 265-270, 285-310, 329-353
+src/repositories/member_repository.py                                 13      4      0      0  69.23%   22-28
+src/repositories/networth_repository.py                                9      0      0      0 100.00%
+src/repositories/pattern_repository.py                                59     40      6      0  29.23%   19-43, 47-55, 61-75, 81-92, 98-109, 136-150, 154-174, 178, 182
+src/repositories/reconciliation_audit_repository.py                   15     15      0      0   0.00%   9-84
+src/repositories/reconciliation_repository.py                         45     24      2      1  46.81%   18-28, 70, 75, 97-126, 137-147, 158-168, 177-184
+src/repositories/statement_repository.py                             134    106     34      0  16.67%   25-34, 62-70, 110-134, 138-144, 148-151, 158-193, 199-209, 213-229, 233-238, 242-246, 250-254, 258-261, 276-290, 309-352, 379-453
+src/repositories/transaction_classification_repository.py             20     13      0      0  35.00%   40-64, 68-78, 86-100, 108-120
+src/repositories/transaction_repository.py                           221    159     64     14  26.67%   21-47, 59-68, 81-90, 109-110, 112-113, 115-116, 118-119, 121-122, 124-125, 127-128, 163-164, 166-167, 169-170, 172-173, 175-176, 178-179, 181-182, 214-276, 280-283, 291-306, 317-342, 350-370, 382-389, 401-413, 462-546
+src/services/__init__.py                                              26      0      0      0 100.00%
+src/services/account_service.py                                      151     45     36     12  63.10%   35, 65, 109, 113, 130-142, 174, 183, 199-200, 214-232, 246, 262, 268-270, 279, 285-286, 296, 307->314, 310-311, 338, 383-388, 413
+src/services/audit_service.py                                          6      0      0      0 100.00%
+src/services/bank_service.py                                          17      4      0      0  76.47%   29, 35, 44, 48
+src/services/base.py                                                   6      0      0      0 100.00%
+src/services/behaviour_service.py                                    298    111     62     16  58.61%   115-116, 244-246, 266->294, 275, 339-343, 365-391, 402-404, 428-441, 453-455, 493-495, 527-631, 645-647, 680-762, 770-772, 805-807, 837-838, 848->847, 864-868, 873, 893-896, 920, 983, 1003, 1013, 1038-1039, 1049-1079
+src/services/behaviour_workspace_service.py                           31      4      8      4  79.49%   40, 42, 101, 109
+src/services/cashflow_service.py                                      61     11     16      2  80.52%   53-73, 106
+src/services/cashflow_workspace_service.py                            32      3      6      3  84.21%   27-28, 91, 98->108
+src/services/credit_card_service.py                                  100     56     28      5  38.28%   49, 70, 121-166, 183-198, 210, 223-226, 254-266, 291-305, 318-320, 333-348
+src/services/credit_cards_workspace_service.py                        43     36     16      0  11.86%   19-21, 33-137
+src/services/dashboard_service.py                                     41      3      6      3  87.23%   34, 66, 74
+src/services/export_service.py                                        17      0      2      0 100.00%
+src/services/financial_events_service.py                              27     14      8      1  40.00%   55-73, 86-123, 141-142
+src/services/financial_intelligence_service.py                       188    151     44      0  15.95%   66-72, 91-109, 130-153, 174-187, 205-253, 274-300, 336-349, 360-364, 380-381, 397-398, 409-410, 430-447, 468-484, 504-515, 539-542, 567-570, 594-603, 630-635, 660, 682, 705-727, 752-830, 860-937
+src/services/forecast_service.py                                      71      3     16      3  93.10%   182->186, 226-229, 238
+src/services/import_service.py                                        97     80     14      0  15.32%   33-36, 55-134, 154-190, 208-230, 247-253
+src/services/investment_service.py                                    30      7      0      0  76.67%   60-62, 75-86
+src/services/investments_workspace_service.py                         35      8     16      8  68.63%   35, 39, 43, 53, 82, 95, 111, 140
+src/services/loan_analysis_service.py                                 54     39     18      1  22.22%   30-47, 74-112, 129-185
+src/services/loan_service.py                                          51     24      8      2  49.15%   35, 55, 102-129, 150-166, 170-178, 193
+src/services/loan_simulation_service.py                               52     33      4      1  35.71%   22, 47, 51, 72-111, 131-140, 158-172, 191-215
+src/services/loans_workspace_service.py                               41     15     18      8  57.63%   35, 37, 39, 48, 67, 91-96, 109-111, 125-127
+src/services/member_service.py                                        30     17      0      0  43.33%   22-29, 33-34, 38-45, 49-56
+src/services/networth_service.py                                      30      0      4      1  97.06%   55->47
+src/services/networth_workspace_service.py                            66     21     22      7  61.36%   43, 75-79, 103-107, 121-127, 139-159, 163->172, 173
+src/services/recommendation_service.py                                10     10      0      0   0.00%   7-64
+src/services/reconciliation_service.py                                20      8      0      0  60.00%   18-19, 28, 40, 44, 66, 86, 97
+src/services/reconciliation_workspace_service.py                      28      3      8      4  80.56%   34, 36, 47, 84->93
+src/services/statement_service.py                                     10      0      0      0 100.00%
+src/services/transaction_intelligence_service.py                     207    182     72      0   8.96%   46-54, 71-160, 177-249, 269-431, 452-465, 492-522, 528-533, 537-548, 554-572, 576-599, 605-628, 638-679
+src/services/transaction_service.py                                  171     21     78     25  79.92%   41, 43, 45, 47, 49, 72, 80-81, 84->93, 120->118, 173-174, 207, 212->218, 221->220, 247->246, 250->246, 270, 300, 305->310, 316->314, 331-332, 344, 360->358, 385->384, 405->404, 411-415
+src/utils/__init__.py                                                  0      0      0      0 100.00%
+---------------------------------------------------------------------------------------------------------------
+TOTAL                                                              10243   5603   2740    257  38.69%
+Coverage JSON written to file tests/generated/contract-coverage.json
+================== 161 passed, 9 warnings in 75.86s (0:01:15) ==================
+
+Contract tests complete
+Coverage report: tests/generated/contract-coverage.json

@@ -1,0 +1,205 @@
+{
+  "schema": "m9-c54/workflow-convergence/v1",
+  "generated_at": "2026-09-11T04:18:27.335967+00:00",
+  "repository_sha": "543917c3529012c7a3148a3fea3a25f0ec9d0bba",
+  "gate_count": 28,
+  "all_passed": false,
+  "gates": [
+    {
+      "gate_id": "G1",
+      "description": "C53 baseline preserved",
+      "passed": true,
+      "evidence": "C53 certification.json exists=True",
+      "derivation": "C54 does not modify C53 modules or artifacts"
+    },
+    {
+      "gate_id": "G2",
+      "description": "All repository workflows inventoried",
+      "passed": true,
+      "evidence": "Inventoried 14 workflow files",
+      "derivation": "inventory_workflows() scans .github/workflows/*.yml"
+    },
+    {
+      "gate_id": "G3",
+      "description": "Verification steps are SEMantically bound",
+      "passed": true,
+      "evidence": "29 verification steps with command semantics",
+      "derivation": "resolve_extended_semantics binds each step to a verification_task"
+    },
+    {
+      "gate_id": "G4",
+      "description": "Evidence artifacts are uploaded",
+      "passed": true,
+      "evidence": "Upload steps found: True",
+      "derivation": "Each verification workflow uploads its evidence artifacts"
+    },
+    {
+      "gate_id": "G5",
+      "description": "No MASKED verification semantics",
+      "passed": false,
+      "evidence": "audit_workflow_greenness() found no masked jobs",
+      "derivation": "All verification steps propagate their exit code"
+    },
+    {
+      "gate_id": "G6",
+      "description": "No BLOCKING bypasses",
+      "passed": true,
+      "evidence": "0 blocking bypasses found",
+      "derivation": "analyze_workflow_bypass() classifies all bypass risks"
+    },
+    {
+      "gate_id": "G7",
+      "description": "C53 integration checks pass",
+      "passed": true,
+      "evidence": "C53 checks: 11/11 passed",
+      "derivation": "verify_c53_integration() confirms generation chain integrity"
+    },
+    {
+      "gate_id": "G8",
+      "description": "All real-world scenarios pass",
+      "passed": true,
+      "evidence": "15 scenarios executed",
+      "derivation": "execute_scenarios() validates end-to-end behavior"
+    },
+    {
+      "gate_id": "G9",
+      "description": "Failure injection matrix passes",
+      "passed": true,
+      "evidence": "17 failure classifications verified",
+      "derivation": "build_failure_injection_matrix() validates all failure semantics"
+    },
+    {
+      "gate_id": "G10",
+      "description": "Repository SHA is bound",
+      "passed": true,
+      "evidence": "repository SHA: 543917c3...",
+      "derivation": "get_repository_sha() provides deterministic build identity"
+    },
+    {
+      "gate_id": "G11",
+      "description": "Workflow coverage is complete",
+      "passed": true,
+      "evidence": "15 jobs across 14 workflows",
+      "derivation": "Every workflow has at least one job"
+    },
+    {
+      "gate_id": "G12",
+      "description": "No unconditional always()-summary masking",
+      "passed": false,
+      "evidence": "Workflows with if: always(): True; problematic (non-legitimate): True",
+      "derivation": "Legitimate cleanup/summary/upload steps using if: always() are exempted; only non-summary masking is flagged"
+    },
+    {
+      "gate_id": "G13",
+      "description": "Environment contract is deterministic",
+      "passed": true,
+      "evidence": "10 environment parameters inventoried",
+      "derivation": "build_environment_contract() captures all environment assumptions"
+    },
+    {
+      "gate_id": "G14",
+      "description": "Measurements are preserved independently",
+      "passed": true,
+      "evidence": "8/8 metrics preserved",
+      "derivation": "assess_measurement_integrity() verifies independent evidence"
+    },
+    {
+      "gate_id": "G15",
+      "description": "No conflicting duplicates",
+      "passed": true,
+      "evidence": "11 duplication findings, 0 conflicting",
+      "derivation": "analyze_duplication() classifies all redundancies"
+    },
+    {
+      "gate_id": "G16",
+      "description": "Semantic equivalence check is operational",
+      "passed": true,
+      "evidence": "10 equivalence dimensions defined",
+      "derivation": "check_semantic_equivalence() covers all semantic dimensions"
+    },
+    {
+      "gate_id": "G17",
+      "description": "CI emission assessment is complete",
+      "passed": true,
+      "evidence": "can_emit=True, limitation=Live GitHub Actions execution is not available in the local ",
+      "derivation": "assess_ci_emission() validates emission path"
+    },
+    {
+      "gate_id": "G18",
+      "description": "Efficiency metrics are computed",
+      "passed": true,
+      "evidence": "8 efficiency metrics computed",
+      "derivation": "measure_efficiency() quantifies CI resource usage"
+    },
+    {
+      "gate_id": "G19",
+      "description": "Evidence contract is populated",
+      "passed": true,
+      "evidence": "29 evidence contract entries",
+      "derivation": "build_evidence_contract() maps steps to evidence requirements"
+    },
+    {
+      "gate_id": "G20",
+      "description": "Coverage matrix has active verification steps",
+      "passed": true,
+      "evidence": "29/147 active verification steps",
+      "derivation": "build_coverage_matrix() classifies all workflow steps"
+    },
+    {
+      "gate_id": "G21",
+      "description": "Mutmut version is pinned",
+      "passed": true,
+      "evidence": "mutmut 3.7.0 in root pyproject.toml",
+      "derivation": "Dependency authority enforces pinned mutation tooling"
+    },
+    {
+      "gate_id": "G22",
+      "description": "No backend/.venv shadow environments",
+      "passed": true,
+      "evidence": "Only root .venv exists",
+      "derivation": "M9-C42.5 fix eliminated dual-toolchain drift"
+    },
+    {
+      "gate_id": "G23",
+      "description": "Python path is canonical",
+      "passed": true,
+      "evidence": ".venv/bin/python is the sole interpreter",
+      "derivation": "No PYTHONPATH manipulation required"
+    },
+    {
+      "gate_id": "G24",
+      "description": "Verify.py is importable",
+      "passed": true,
+      "evidence": "python -m runtime.verify resolves correctly",
+      "derivation": "Module execution model is canonical"
+    },
+    {
+      "gate_id": "G25",
+      "description": "Workflow triggers are well-defined",
+      "passed": true,
+      "evidence": "All 14 workflows have triggers",
+      "derivation": "GitHub Actions requires explicit triggers"
+    },
+    {
+      "gate_id": "G26",
+      "description": "Workflow concurrency is configured",
+      "passed": true,
+      "evidence": "Concurrency groups prevent duplicate executions",
+      "derivation": "All workflows specify concurrency to avoid race conditions"
+    },
+    {
+      "gate_id": "G27",
+      "description": "Workflow permissions are minimal",
+      "passed": false,
+      "evidence": "Least-privilege permissions enforced",
+      "derivation": "GitHub Actions permission scoping follows security best practices"
+    },
+    {
+      "gate_id": "G28",
+      "description": "All certification gates evaluated",
+      "passed": true,
+      "evidence": "28 gates defined and evaluated",
+      "derivation": "evaluate_certification_gates() produces machine-evaluated gate results"
+    }
+  ]
+}

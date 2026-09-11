@@ -220,6 +220,8 @@ def _render_candidate_code(
 class TestGenerator:
     """Evidence-driven candidate generator over the C42 proposal contract."""
 
+    __test__ = False  # Not a pytest test class; pytest collection sees "Test" prefix.
+
     def __init__(self) -> None:
         self._ledger: list[dict[str, Any]] = []
 

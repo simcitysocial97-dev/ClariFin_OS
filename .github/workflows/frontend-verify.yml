@@ -4,6 +4,7 @@
 # RESPONSIBILITY: Run `python -m runtime.verify frontend` — the ONLY verification command.
 # Rule 1: no engineering logic in YAML. Rule 2: single responsibility. Rule 8:
 # delegate to python -m runtime.verify. Rule 9: append `runtime.verify status` summary.
+# Canonical entrypoint: runtime/verify.py (python -m runtime.verify <profile>)
 
 name: Frontend Verification
 

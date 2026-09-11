@@ -55,6 +55,9 @@ QUALITY_CATEGORIES: tuple[str, ...] = (
 
 @dataclass(frozen=True, slots=True)
 class TestClassification:
+    """Classification metadata for a single test file."""
+
+    __test__ = False  # Not a pytest test class; pytest collection sees "Test" prefix.
     file: str
     primary_category: str
     secondary_categories: tuple[str, ...]

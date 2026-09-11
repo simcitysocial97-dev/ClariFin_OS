@@ -385,3 +385,48 @@ capabilities:
     workflows: ["playwright"]
     scripts: ["run_playwright_tests"]
     modules: []
+
+  balance-engine:
+    name: "Balance Engine"
+    description: "Running balance computation from transaction streams"
+    category: "capability"
+    scopes: ["backend", "property", "contracts", "integration", "repository"]
+    workflows: ["property", "contracts", "backend"]
+    scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
+    modules: ["backend/src/engines/balance_engine.py"]
+
+  behaviour-engine:
+    name: "Behaviour Engine"
+    description: "Financial behaviour scoring and risk assessment"
+    category: "capability"
+    scopes: ["backend", "property", "contracts", "integration", "repository"]
+    workflows: ["property", "contracts", "backend"]
+    scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
+    modules: ["backend/src/engines/behaviour_engine"]
+
+  cashflow-engine:
+    name: "Cashflow Engine"
+    description: "Cashflow classification and net-worth computation"
+    category: "capability"
+    scopes: ["backend", "property", "contracts", "integration", "repository"]
+    workflows: ["property", "contracts", "backend"]
+    scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
+    modules: ["backend/src/engines/cashflow_engine.py"]
+
+  credit-card-engine:
+    name: "Credit Card Engine"
+    description: "Credit card billing, utilization and foreclosure"
+    category: "capability"
+    scopes: ["backend", "property", "contracts", "integration", "repository"]
+    workflows: ["property", "contracts", "backend"]
+    scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
+    modules: ["backend/src/engines/credit_card_engine"]
+
+  financial-intelligence:
+    name: "Financial Intelligence"
+    description: "Forecasting, goal planning and scenario analysis"
+    category: "capability"
+    scopes: ["backend", "property", "contracts", "integration", "repository"]
+    workflows: ["property", "contracts", "backend"]
+    scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
+    modules: ["backend/src/engines/financial_intelligence"]

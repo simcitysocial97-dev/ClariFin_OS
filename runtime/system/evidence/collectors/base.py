@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -94,6 +94,6 @@ class EvidenceCollector(ABC):
             artifact_type=self.artifact_type,
             name=name,
             path=str(rel_path),
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=datetime.now(UTC).isoformat().replace("+00:00", "Z"),
             metadata=metadata or {},
         )

@@ -1,5 +1,5 @@
 {
-  "indexed_at": "2026-09-10T07:20:47.178798+00:00",
+  "indexed_at": "2026-09-11T04:02:47.106497+00:00",
   "source_artifacts": [
     "runtime.foundation.architecture (canonical provider)",
     "runtime/generated/dashboard.json",
@@ -4104,6 +4104,16 @@
         ]
       },
       {
+        "title": "runtime-framework-audit-2026-09-10",
+        "path": "docs/audits/runtime-framework-audit-2026-09-10.md",
+        "references": {
+          "path": "docs/audits/runtime-framework-audit-2026-09-10.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
         "title": "INTEGRATION_DECISION_DOCUMENT",
         "path": "docs/decisions/INTEGRATION_DECISION_DOCUMENT.md",
         "references": {
@@ -4816,6 +4826,6 @@
     "verification_profiles": 11,
     "integrity_rules": 28,
     "runtime_artifacts": 9,
-    "documentation": 187
+    "documentation": 188
   }
 }

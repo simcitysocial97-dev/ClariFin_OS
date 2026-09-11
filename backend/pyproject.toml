@@ -49,7 +49,7 @@ exclude = [
 # Test configuration
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-norecursedirs = ["probes", "mutants", "invariants/_m4_exit_probe"]
+norecursedirs = ["probes", "mutants", "invariants/_m4_exit_probe", ".hypothesis"]
 pythonpath = ["src", "tests"]
 asyncio_default_fixture_loop_scope = "function"
 python_files = ["test_*.py", "*_test.py"]
@@ -69,7 +69,6 @@ markers = [
     "performance: marks performance tests",
 ]
 filterwarnings = [
-    "ignore::DeprecationWarning:src.core.dtos.*",
     "ignore::pytest.PytestDeprecationWarning",
     "ignore::_pytest.warning_types.PytestAssertRewriteWarning",
     "ignore:Please use `import python_multipart` instead:PendingDeprecationWarning",

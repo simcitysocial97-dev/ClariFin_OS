@@ -8,19 +8,39 @@ requirements. Depends on all prior analysis modules.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
-from runtime.foundation.verification.workflow_convergence.inventory import REPO_ROOT, WorkflowInventory
-from runtime.foundation.verification.workflow_convergence.greenness import audit_workflow_greenness
-from runtime.foundation.verification.workflow_convergence.environment import build_environment_contract
-from runtime.foundation.verification.workflow_convergence.measurement_integrity import assess_measurement_integrity
-from runtime.foundation.verification.workflow_convergence.duplication import analyze_duplication
-from runtime.foundation.verification.workflow_convergence.equivalence import check_semantic_equivalence
-from runtime.foundation.verification.workflow_convergence.emission import assess_ci_emission
-from runtime.foundation.verification.workflow_convergence.efficiency import measure_efficiency
-from runtime.foundation.verification.workflow_convergence.evidence_contract import build_evidence_contract
-from runtime.foundation.verification.workflow_convergence.coverage import build_coverage_matrix
+from runtime.foundation.verification.workflow_convergence.coverage import (
+    build_coverage_matrix,
+)
+from runtime.foundation.verification.workflow_convergence.duplication import (
+    analyze_duplication,
+)
+from runtime.foundation.verification.workflow_convergence.efficiency import (
+    measure_efficiency,
+)
+from runtime.foundation.verification.workflow_convergence.emission import (
+    assess_ci_emission,
+)
+from runtime.foundation.verification.workflow_convergence.environment import (
+    build_environment_contract,
+)
+from runtime.foundation.verification.workflow_convergence.equivalence import (
+    check_semantic_equivalence,
+)
+from runtime.foundation.verification.workflow_convergence.evidence_contract import (
+    build_evidence_contract,
+)
+from runtime.foundation.verification.workflow_convergence.greenness import (
+    audit_workflow_greenness,
+)
+from runtime.foundation.verification.workflow_convergence.inventory import (
+    REPO_ROOT,
+    WorkflowInventory,
+)
+from runtime.foundation.verification.workflow_convergence.measurement_integrity import (
+    assess_measurement_integrity,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -179,14 +199,17 @@ def evaluate_certification_gates(
         )
     )
 
-    has_if_always = any(inv.has_if_always for inv in inventories)
+    audits = audit_workflow_greenness(inventories)
+    has_problematic_always = any(
+        "if: always() on non-summary step" in a.notes for a in audits
+    )
     gates.append(
         CertificationGate(
             gate_id="G12",
             description="No unconditional always()-summary masking",
-            passed=not has_if_always,
-            evidence=f"Workflows with if: always(): {has_if_always}",
-            derivation="if: always() on summary steps can mask verification failures",
+            passed=not has_problematic_always,
+            evidence=f"Workflows with if: always(): {any(inv.has_if_always for inv in inventories)}; problematic (non-legitimate): {has_problematic_always}",
+            derivation="Legitimate cleanup/summary/upload steps using if: always() are exempted; only non-summary masking is flagged",
         )
     )
 

@@ -1,0 +1,127 @@
+{
+  "schema": "m9-c54/workflow-convergence/v1",
+  "generated_at": "2026-09-11T04:18:27.335967+00:00",
+  "repository_sha": "543917c3529012c7a3148a3fea3a25f0ec9d0bba",
+  "semantics_count": 17,
+  "semantics": [
+    {
+      "failure_type": "unit_test_failure",
+      "expected_classification": "TEST_FAILURE",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    },
+    {
+      "failure_type": "integration_test_failure",
+      "expected_classification": "TEST_FAILURE",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    },
+    {
+      "failure_type": "coverage_failure",
+      "expected_classification": "COMMAND_FAILURE",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    },
+    {
+      "failure_type": "mutation_failure",
+      "expected_classification": "COMMAND_FAILURE",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    },
+    {
+      "failure_type": "mutation_timeout",
+      "expected_classification": "TIMEOUT",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    },
+    {
+      "failure_type": "lint_failure",
+      "expected_classification": "COMMAND_FAILURE",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    },
+    {
+      "failure_type": "typecheck_failure",
+      "expected_classification": "COMMAND_FAILURE",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    },
+    {
+      "failure_type": "missing_artifact",
+      "expected_classification": "ARTIFACT_FAILURE",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    },
+    {
+      "failure_type": "malformed_artifact",
+      "expected_classification": "ARTIFACT_FAILURE",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    },
+    {
+      "failure_type": "stale_artifact",
+      "expected_classification": "ARTIFACT_FAILURE",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    },
+    {
+      "failure_type": "sha_mismatch",
+      "expected_classification": "RECONCILIATION_FAILURE",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    },
+    {
+      "failure_type": "config_mismatch",
+      "expected_classification": "RECONCILIATION_FAILURE",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    },
+    {
+      "failure_type": "toolchain_mismatch",
+      "expected_classification": "RECONCILIATION_FAILURE",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    },
+    {
+      "failure_type": "workflow_step_skip",
+      "expected_classification": "UNKNOWN_FAILURE",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    },
+    {
+      "failure_type": "continue_on_error_failure",
+      "expected_classification": "UNKNOWN_FAILURE",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    },
+    {
+      "failure_type": "missing_ci_evidence",
+      "expected_classification": "ARTIFACT_FAILURE",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    },
+    {
+      "failure_type": "contradictory_evidence",
+      "expected_classification": "RECONCILIATION_FAILURE",
+      "expected_certification_effect": "BLOCKED",
+      "evidence_required": true,
+      "fail_closed": true
+    }
+  ]
+}

@@ -6,7 +6,7 @@ Data Transfer Objects for transaction-related API responses.
 All monetary fields use _paise suffix for explicit units.
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class MoneyDTO(BaseModel):
@@ -20,8 +20,9 @@ class MoneyDTO(BaseModel):
     paise: int = Field(description="Amount in paise (canonical integer representation)")
     rupees: float = Field(description="Amount in rupees (for display purposes)")
 
-    class Config:
-        json_schema_extra = {"example": {"paise": 123456, "rupees": 1234.56}}
+    model_config = ConfigDict(
+        json_schema_extra={"example": {"paise": 123456, "rupees": 1234.56}}
+    )
 
 
 class TransactionDTO(BaseModel):
@@ -49,8 +50,8 @@ class TransactionDTO(BaseModel):
         default=None, description="Statement file name for import tracking"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "id": 1,
                 "date": "2026-07-05",
@@ -65,6 +66,7 @@ class TransactionDTO(BaseModel):
                 "statement_file": "statement_july.pdf",
             }
         }
+    )
 
 
 class TransactionListResponse(BaseModel):
@@ -75,10 +77,11 @@ class TransactionListResponse(BaseModel):
     limit: int = Field(description="Number of transactions per page")
     offset: int = Field(description="Offset for pagination")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {"transactions": [], "total": 0, "limit": 50, "offset": 0}
         }
+    )
 
 
 class CategorySummaryDTO(BaseModel):
@@ -89,8 +92,8 @@ class CategorySummaryDTO(BaseModel):
     count: int = Field(description="Number of transactions")
     percentage: float = Field(description="Percentage of total (0-100)")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "category": "Shopping",
                 "amount": {"paise": 500000, "rupees": 5000.0},
@@ -98,3 +101,4 @@ class CategorySummaryDTO(BaseModel):
                 "percentage": 25.5,
             }
         }
+    )

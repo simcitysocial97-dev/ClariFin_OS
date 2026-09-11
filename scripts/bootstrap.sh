@@ -99,14 +99,6 @@ say "Upgrading pip ..."
 say "Installing canonical dependencies (pip install -e '.[all]') ..."
 "$VENV_PY" -m pip install --timeout 300 --retries 10 -e ".[all]"
 
-# Reconcile any poisoned duplicate packages left by earlier environments.
-# The root pyproject.toml declares httpx/httpcore/truststore; duplicates
-# such as httpx2/httpcore2 (abandoned forks that install conflicting modules)
-# are junk and must not coexist in .venv.
-say "Reconciling deprecated poison entries (httpx2/httpcore2/truststore) ..."
-"$VENV_PY" -m pip uninstall -q -y httpx2 httpcore2 truststore 2>/dev/null || true
-bash "$ROOT_DIR/scripts/freeze-env.sh"
-
 say "Resolving frontend dependencies (npm ci) ..."
 if [ -f frontend/package-lock.json ]; then
   ( cd frontend && npm ci )

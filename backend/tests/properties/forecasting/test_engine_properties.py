@@ -242,7 +242,7 @@ class TestForecastEngineProperties:
             min_size=1,
             max_size=12,
         ),
-        allocation_ratio=st.decimals(min_value=0.1, max_value=1.0),
+        allocation_ratio=st.decimals(min_value=Decimal("0.1"), max_value=Decimal("1.0")),
     )
     @settings(max_examples=50, suppress_health_check=[HealthCheck.differing_executors])
     def test_goal_achievability_deterministic(
@@ -287,8 +287,8 @@ class TestForecastEngineProperties:
             st.fixed_dictionaries(
                 {
                     "month": st.just("2025-01"),
-                    "utilization_ratio": st.decimals(min_value=0.0, max_value=1.0),
-                    "revolver_ratio": st.decimals(min_value=0.0, max_value=1.0),
+                    "utilization_ratio": st.decimals(min_value=Decimal("0.0"), max_value=Decimal("1.0")),
+                    "revolver_ratio": st.decimals(min_value=Decimal("0.0"), max_value=Decimal("1.0")),
                     "cash_advance_paise": st.integers(min_value=0, max_value=100000),
                 }
             ),

@@ -1,27 +1,25 @@
 {
   "runs": [
     {
-      "run_id": "a1be0162885e0f33",
-      "timestamp": "2026-09-10T05:04:06.518908+00:00",
-      "repository_sha": "f46cac53202531c4c24e2c7abe5138b58b5aea68",
-      "scenario": "ci_equivalent_execution",
-      "changed_files": [],
+      "run_id": "5e181550f00bca74",
+      "timestamp": "2026-09-11T04:05:06.318026+00:00",
+      "repository_sha": "543917c3529012c7a3148a3fea3a25f0ec9d0bba",
+      "scenario": "capability_change",
+      "changed_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/tmpmdbdmgq5.py"
+      ],
       "resolved_capabilities": [
-        "money"
+        "verification-runtime"
       ],
       "obligations": [
-        "exec::ci::scenario15::invariant::money"
+        "unit",
+        "property"
       ],
-      "plan_identity": "ci::scenario15::exec::ci::scenario15::invariant::money",
-      "execution_identity": "runtime.verification::exec::360acfe2a694817a",
-      "evidence_identities": [
-        "evidence_id=runtime.verification::ev::04ffb7e5fd9044f2"
-      ],
-      "reconciliation": {
-        "exit_code": 0,
-        "failure_kind": null
-      },
-      "final_decision": "ci_verified",
+      "plan_identity": null,
+      "execution_identity": null,
+      "evidence_identities": [],
+      "reconciliation": {},
+      "final_decision": "planned",
       "failures": [],
       "reused_evidence": [],
       "invalidated_evidence": []

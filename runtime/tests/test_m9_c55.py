@@ -880,7 +880,7 @@ class TestC55ScenarioHarness(unittest.TestCase):
         self.assertTrue(all(c.passed for c in c53_checks))
 
         invs = inventory_workflows()
-        self.assertEqual(len(invs), 13)
+        self.assertEqual(len(invs), 14)
 
         contract = build_evidence_contract(invs)
         self.assertGreater(len(contract), 0)
@@ -896,7 +896,7 @@ class TestC55CertificationGates(unittest.TestCase):
         )
 
         invs = inventory_workflows()
-        self.assertEqual(len(invs), 13)
+        self.assertEqual(len(invs), 14)
         mapping = map_workflows_to_capabilities(invs)
         self.assertGreater(len(mapping), 0)
 

@@ -8,7 +8,7 @@ All monetary fields use _paise suffix for explicit units.
 
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class DashboardSummaryDTO(BaseModel):
@@ -45,8 +45,8 @@ class DashboardSummaryDTO(BaseModel):
         description="Most recent transactions for display (up to 10)",
     )
 
-    class Config:
-        json_schema_extra: dict[str, Any] = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "net_cash_flow_paise": 2500000,  # ₹25,000.00
                 "net_cash_flow_rupees": None,  # DEPRECATED - always null post Phase 2
@@ -60,6 +60,7 @@ class DashboardSummaryDTO(BaseModel):
                 "recent_transactions": [],
             }
         }
+    )
 
 
 class OverviewDTO(BaseModel):
@@ -84,8 +85,8 @@ class OverviewDTO(BaseModel):
         description="Bank-wise spending distribution"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "total_spend_paise": 5000000,  # ₹50,000.00
                 "total_spend_rupees": 50000.0,  # TODO: Remove in Phase 2
@@ -95,6 +96,7 @@ class OverviewDTO(BaseModel):
                 "bank_wise_chart": [],
             }
         }
+    )
 
 
 class CategoryBreakdownDTO(BaseModel):
@@ -105,8 +107,8 @@ class CategoryBreakdownDTO(BaseModel):
     count: int = Field(description="Number of transactions")
     percentage: float = Field(description="Percentage of total")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "category": "Shopping",
                 "amount_paise": 500000,  # ₹5,000.00
@@ -114,3 +116,4 @@ class CategoryBreakdownDTO(BaseModel):
                 "percentage": 25.5,
             }
         }
+    )
