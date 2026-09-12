@@ -674,5 +674,473 @@
         "parent_class": "TestClass"
       }
     ]
+  },
+  "/tmp/tmpy_ypniwu.py": {
+    "mtime": 1789189859.9542904,
+    "symbols": [
+      {
+        "name": "new_function",
+        "kind": "function",
+        "file": "/tmp/tmpy_ypniwu.py",
+        "start_line": 1,
+        "end_line": 1,
+        "parent_class": null
+      }
+    ]
+  },
+  "/tmp/tmpvcza4bxc.py": {
+    "mtime": 1789189861.0163128,
+    "symbols": []
+  },
+  "/tmp/tmp5_6cq3n2.py": {
+    "mtime": 1789189861.0186517,
+    "symbols": [
+      {
+        "name": "level_1",
+        "kind": "function",
+        "file": "/tmp/tmp5_6cq3n2.py",
+        "start_line": 2,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_2",
+        "kind": "function",
+        "file": "/tmp/tmp5_6cq3n2.py",
+        "start_line": 3,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_3",
+        "kind": "function",
+        "file": "/tmp/tmp5_6cq3n2.py",
+        "start_line": 4,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_4",
+        "kind": "function",
+        "file": "/tmp/tmp5_6cq3n2.py",
+        "start_line": 5,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_5",
+        "kind": "function",
+        "file": "/tmp/tmp5_6cq3n2.py",
+        "start_line": 6,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_6",
+        "kind": "function",
+        "file": "/tmp/tmp5_6cq3n2.py",
+        "start_line": 7,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_7",
+        "kind": "function",
+        "file": "/tmp/tmp5_6cq3n2.py",
+        "start_line": 8,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_8",
+        "kind": "function",
+        "file": "/tmp/tmp5_6cq3n2.py",
+        "start_line": 9,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_9",
+        "kind": "function",
+        "file": "/tmp/tmp5_6cq3n2.py",
+        "start_line": 10,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_10",
+        "kind": "function",
+        "file": "/tmp/tmp5_6cq3n2.py",
+        "start_line": 11,
+        "end_line": 12,
+        "parent_class": null
+      }
+    ]
+  },
+  "/tmp/tmp71i6oeur.py": {
+    "mtime": 1789189861.0216155,
+    "symbols": [
+      {
+        "name": "decorated_function",
+        "kind": "function",
+        "file": "/tmp/tmp71i6oeur.py",
+        "start_line": 4,
+        "end_line": 5,
+        "parent_class": null
+      },
+      {
+        "name": "MyClass",
+        "kind": "class",
+        "file": "/tmp/tmp71i6oeur.py",
+        "start_line": 7,
+        "end_line": 18,
+        "parent_class": null
+      },
+      {
+        "name": "my_property",
+        "kind": "method",
+        "file": "/tmp/tmp71i6oeur.py",
+        "start_line": 9,
+        "end_line": 10,
+        "parent_class": "MyClass"
+      },
+      {
+        "name": "static_method",
+        "kind": "method",
+        "file": "/tmp/tmp71i6oeur.py",
+        "start_line": 13,
+        "end_line": 14,
+        "parent_class": "MyClass"
+      },
+      {
+        "name": "class_method",
+        "kind": "method",
+        "file": "/tmp/tmp71i6oeur.py",
+        "start_line": 17,
+        "end_line": 18,
+        "parent_class": "MyClass"
+      }
+    ]
+  },
+  "/tmp/tmpc7tst8qe.py": {
+    "mtime": 1789189861.025885,
+    "symbols": [
+      {
+        "name": "async_function",
+        "kind": "function",
+        "file": "/tmp/tmpc7tst8qe.py",
+        "start_line": 2,
+        "end_line": 3,
+        "parent_class": null
+      },
+      {
+        "name": "AsyncClass",
+        "kind": "class",
+        "file": "/tmp/tmpc7tst8qe.py",
+        "start_line": 5,
+        "end_line": 7,
+        "parent_class": null
+      },
+      {
+        "name": "async_method",
+        "kind": "method",
+        "file": "/tmp/tmpc7tst8qe.py",
+        "start_line": 6,
+        "end_line": 7,
+        "parent_class": "AsyncClass"
+      }
+    ]
+  },
+  "/tmp/tmpc898e0ww.py": {
+    "mtime": 1789189861.0289912,
+    "symbols": [
+      {
+        "name": "duplicate",
+        "kind": "function",
+        "file": "/tmp/tmpc898e0ww.py",
+        "start_line": 2,
+        "end_line": 3,
+        "parent_class": null
+      },
+      {
+        "name": "ClassA",
+        "kind": "class",
+        "file": "/tmp/tmpc898e0ww.py",
+        "start_line": 5,
+        "end_line": 7,
+        "parent_class": null
+      },
+      {
+        "name": "ClassB",
+        "kind": "class",
+        "file": "/tmp/tmpc898e0ww.py",
+        "start_line": 9,
+        "end_line": 11,
+        "parent_class": null
+      },
+      {
+        "name": "duplicate",
+        "kind": "method",
+        "file": "/tmp/tmpc898e0ww.py",
+        "start_line": 6,
+        "end_line": 7,
+        "parent_class": "ClassA"
+      },
+      {
+        "name": "duplicate",
+        "kind": "method",
+        "file": "/tmp/tmpc898e0ww.py",
+        "start_line": 10,
+        "end_line": 11,
+        "parent_class": "ClassB"
+      }
+    ]
+  },
+  "/tmp/tmpj7rh5vuc.py": {
+    "mtime": 1789189861.0321069,
+    "symbols": [
+      {
+        "name": "MyClass",
+        "kind": "class",
+        "file": "/tmp/tmpj7rh5vuc.py",
+        "start_line": 4,
+        "end_line": 5,
+        "parent_class": null
+      }
+    ]
+  },
+  "/tmp/tmpe6mxqeys.py": {
+    "mtime": 1789189908.7265544,
+    "symbols": [
+      {
+        "name": "new_function",
+        "kind": "function",
+        "file": "/tmp/tmpe6mxqeys.py",
+        "start_line": 1,
+        "end_line": 1,
+        "parent_class": null
+      }
+    ]
+  },
+  "/tmp/tmpv5bw7ym2.py": {
+    "mtime": 1789189909.5387602,
+    "symbols": []
+  },
+  "/tmp/tmpp_kssome.py": {
+    "mtime": 1789189909.5418146,
+    "symbols": [
+      {
+        "name": "level_1",
+        "kind": "function",
+        "file": "/tmp/tmpp_kssome.py",
+        "start_line": 2,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_2",
+        "kind": "function",
+        "file": "/tmp/tmpp_kssome.py",
+        "start_line": 3,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_3",
+        "kind": "function",
+        "file": "/tmp/tmpp_kssome.py",
+        "start_line": 4,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_4",
+        "kind": "function",
+        "file": "/tmp/tmpp_kssome.py",
+        "start_line": 5,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_5",
+        "kind": "function",
+        "file": "/tmp/tmpp_kssome.py",
+        "start_line": 6,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_6",
+        "kind": "function",
+        "file": "/tmp/tmpp_kssome.py",
+        "start_line": 7,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_7",
+        "kind": "function",
+        "file": "/tmp/tmpp_kssome.py",
+        "start_line": 8,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_8",
+        "kind": "function",
+        "file": "/tmp/tmpp_kssome.py",
+        "start_line": 9,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_9",
+        "kind": "function",
+        "file": "/tmp/tmpp_kssome.py",
+        "start_line": 10,
+        "end_line": 12,
+        "parent_class": null
+      },
+      {
+        "name": "level_10",
+        "kind": "function",
+        "file": "/tmp/tmpp_kssome.py",
+        "start_line": 11,
+        "end_line": 12,
+        "parent_class": null
+      }
+    ]
+  },
+  "/tmp/tmp9qjzk40o.py": {
+    "mtime": 1789189909.5461617,
+    "symbols": [
+      {
+        "name": "decorated_function",
+        "kind": "function",
+        "file": "/tmp/tmp9qjzk40o.py",
+        "start_line": 4,
+        "end_line": 5,
+        "parent_class": null
+      },
+      {
+        "name": "MyClass",
+        "kind": "class",
+        "file": "/tmp/tmp9qjzk40o.py",
+        "start_line": 7,
+        "end_line": 18,
+        "parent_class": null
+      },
+      {
+        "name": "my_property",
+        "kind": "method",
+        "file": "/tmp/tmp9qjzk40o.py",
+        "start_line": 9,
+        "end_line": 10,
+        "parent_class": "MyClass"
+      },
+      {
+        "name": "static_method",
+        "kind": "method",
+        "file": "/tmp/tmp9qjzk40o.py",
+        "start_line": 13,
+        "end_line": 14,
+        "parent_class": "MyClass"
+      },
+      {
+        "name": "class_method",
+        "kind": "method",
+        "file": "/tmp/tmp9qjzk40o.py",
+        "start_line": 17,
+        "end_line": 18,
+        "parent_class": "MyClass"
+      }
+    ]
+  },
+  "/tmp/tmpbpnasazm.py": {
+    "mtime": 1789189909.5661156,
+    "symbols": [
+      {
+        "name": "async_function",
+        "kind": "function",
+        "file": "/tmp/tmpbpnasazm.py",
+        "start_line": 2,
+        "end_line": 3,
+        "parent_class": null
+      },
+      {
+        "name": "AsyncClass",
+        "kind": "class",
+        "file": "/tmp/tmpbpnasazm.py",
+        "start_line": 5,
+        "end_line": 7,
+        "parent_class": null
+      },
+      {
+        "name": "async_method",
+        "kind": "method",
+        "file": "/tmp/tmpbpnasazm.py",
+        "start_line": 6,
+        "end_line": 7,
+        "parent_class": "AsyncClass"
+      }
+    ]
+  },
+  "/tmp/tmpuyqtap59.py": {
+    "mtime": 1789189909.5705745,
+    "symbols": [
+      {
+        "name": "duplicate",
+        "kind": "function",
+        "file": "/tmp/tmpuyqtap59.py",
+        "start_line": 2,
+        "end_line": 3,
+        "parent_class": null
+      },
+      {
+        "name": "ClassA",
+        "kind": "class",
+        "file": "/tmp/tmpuyqtap59.py",
+        "start_line": 5,
+        "end_line": 7,
+        "parent_class": null
+      },
+      {
+        "name": "ClassB",
+        "kind": "class",
+        "file": "/tmp/tmpuyqtap59.py",
+        "start_line": 9,
+        "end_line": 11,
+        "parent_class": null
+      },
+      {
+        "name": "duplicate",
+        "kind": "method",
+        "file": "/tmp/tmpuyqtap59.py",
+        "start_line": 6,
+        "end_line": 7,
+        "parent_class": "ClassA"
+      },
+      {
+        "name": "duplicate",
+        "kind": "method",
+        "file": "/tmp/tmpuyqtap59.py",
+        "start_line": 10,
+        "end_line": 11,
+        "parent_class": "ClassB"
+      }
+    ]
+  },
+  "/tmp/tmp2u13z008.py": {
+    "mtime": 1789189909.6012466,
+    "symbols": [
+      {
+        "name": "MyClass",
+        "kind": "class",
+        "file": "/tmp/tmp2u13z008.py",
+        "start_line": 4,
+        "end_line": 5,
+        "parent_class": null
+      }
+    ]
   }
 }
