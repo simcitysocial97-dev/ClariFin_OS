@@ -436,68 +436,23 @@
     "frontend/lib/hooks/use-verification-center.ts": 1788627587.5916374
   },
   "consumer_map": {
-    "/api/reconciliation/scan": {
-      "endpoint": "/api/reconciliation/scan",
-      "hook_files": [
-        "frontend/lib/hooks/use-reconciliation.ts"
+    "/platform/v1/history/compare": {
+      "endpoint": "/platform/v1/history/compare",
+      "hook_files": [],
+      "component_files": [
+        "frontend/app/platform/history/compare/page.tsx"
       ],
-      "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.5352852
+      "last_scanned": 1789190049.5477421
     },
-    "/api/export/csv": {
-      "endpoint": "/api/export/csv",
-      "hook_files": [
-        "frontend/lib/api/client.ts"
+    "/platform/v1/history/baselines": {
+      "endpoint": "/platform/v1/history/baselines",
+      "hook_files": [],
+      "component_files": [
+        "frontend/app/platform/history/page.tsx"
       ],
-      "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.5352912
-    },
-    "/api/v1/reconciliation": {
-      "endpoint": "/api/v1/reconciliation",
-      "hook_files": [
-        "frontend/lib/capabilities/use-reconciliation-capability.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5352929
-    },
-    "/api/statements": {
-      "endpoint": "/api/statements",
-      "hook_files": [
-        "frontend/lib/api/client.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5352943
-    },
-    "/api/v1/investments": {
-      "endpoint": "/api/v1/investments",
-      "hook_files": [
-        "frontend/lib/capabilities/use-investments-capability.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5352955
-    },
-    "/platform/v1/verification/run/full": {
-      "endpoint": "/platform/v1/verification/run/full",
-      "hook_files": [
-        "frontend/lib/hooks/use-verification-center.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5352967
-    },
-    "/api/investments/:param": {
-      "endpoint": "/api/investments/:param",
-      "hook_files": [
-        "frontend/lib/hooks/use-investments.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.535298
+      "last_scanned": 1789190049.5477517
     },
     "/platform/architecture": {
       "endpoint": "/platform/architecture",
@@ -508,7 +463,139 @@
         "frontend/components/platform/sidebar.tsx"
       ],
       "total_references": 3,
-      "last_scanned": 1789189909.5352998
+      "last_scanned": 1789190049.547755
+    },
+    "/api/v1/cashflow": {
+      "endpoint": "/api/v1/cashflow",
+      "hook_files": [
+        "frontend/lib/capabilities/use-cashflow-capability.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5477574
+    },
+    "/platform/v1/capabilities/:param": {
+      "endpoint": "/platform/v1/capabilities/:param",
+      "hook_files": [
+        "frontend/lib/hooks/use-platform-capabilities.ts",
+        "frontend/lib/hooks/use-verification-center.ts"
+      ],
+      "component_files": [],
+      "total_references": 2,
+      "last_scanned": 1789190049.5477605
+    },
+    "/api/reconciliation/:param/confirm": {
+      "endpoint": "/api/reconciliation/:param/confirm",
+      "hook_files": [
+        "frontend/lib/hooks/use-reconciliation.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5477626
+    },
+    "/platform/capabilities": {
+      "endpoint": "/platform/capabilities",
+      "hook_files": [],
+      "component_files": [
+        "frontend/app/platform/capabilities/[capabilityId]/page.tsx",
+        "frontend/components/platform/quick-actions.tsx",
+        "frontend/components/platform/sidebar.tsx"
+      ],
+      "total_references": 3,
+      "last_scanned": 1789190049.5477655
+    },
+    "/platform/v1/executions/:param/stream": {
+      "endpoint": "/platform/v1/executions/:param/stream",
+      "hook_files": [
+        "frontend/lib/hooks/use-live-execution.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5477676
+    },
+    "/api/v1/reconciliation": {
+      "endpoint": "/api/v1/reconciliation",
+      "hook_files": [
+        "frontend/lib/capabilities/use-reconciliation-capability.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5477698
+    },
+    "/platform/v1/verification/run/full": {
+      "endpoint": "/platform/v1/verification/run/full",
+      "hook_files": [
+        "frontend/lib/hooks/use-verification-center.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5477717
+    },
+    "/platform/diagnostics": {
+      "endpoint": "/platform/diagnostics",
+      "hook_files": [],
+      "component_files": [
+        "frontend/app/platform/diagnostics/change/page.tsx",
+        "frontend/components/platform/quick-actions.tsx",
+        "frontend/components/platform/sidebar.tsx"
+      ],
+      "total_references": 3,
+      "last_scanned": 1789190049.5477738
+    },
+    "/platform/events": {
+      "endpoint": "/platform/events",
+      "hook_files": [],
+      "component_files": [
+        "frontend/app/platform/diagnostics/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1789190049.5477765
+    },
+    "/api/export/csv": {
+      "endpoint": "/api/export/csv",
+      "hook_files": [
+        "frontend/lib/api/client.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5477784
+    },
+    "/api/import/detect": {
+      "endpoint": "/api/import/detect",
+      "hook_files": [
+        "frontend/lib/api/client.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5477798
+    },
+    "/api/networth": {
+      "endpoint": "/api/networth",
+      "hook_files": [
+        "frontend/lib/capabilities/use-net-worth-capability.ts",
+        "frontend/lib/hooks/use-networth.ts"
+      ],
+      "component_files": [],
+      "total_references": 2,
+      "last_scanned": 1789190049.547782
+    },
+    "/api/dashboard/summary": {
+      "endpoint": "/api/dashboard/summary",
+      "hook_files": [
+        "frontend/lib/hooks/use-dashboard-metrics.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5477839
+    },
+    "/api/loans/:param": {
+      "endpoint": "/api/loans/:param",
+      "hook_files": [
+        "frontend/lib/hooks/use-loans.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5477858
     },
     "/platform/capabilities/:param": {
       "endpoint": "/platform/capabilities/:param",
@@ -518,99 +605,7 @@
         "frontend/app/platform/diagnostics/change/page.tsx"
       ],
       "total_references": 2,
-      "last_scanned": 1789189909.5353012
-    },
-    "/platform/v1/errors/frequency": {
-      "endpoint": "/platform/v1/errors/frequency",
-      "hook_files": [],
-      "component_files": [
-        "frontend/app/platform/errors/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353022
-    },
-    "/api/analytics": {
-      "endpoint": "/api/analytics",
-      "hook_files": [
-        "frontend/lib/hooks/use-analytics.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353034
-    },
-    "/api/v1/accounts": {
-      "endpoint": "/api/v1/accounts",
-      "hook_files": [
-        "frontend/lib/capabilities/use-accounts-capability.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.535305
-    },
-    "/platform/v1/verification/run/group": {
-      "endpoint": "/platform/v1/verification/run/group",
-      "hook_files": [
-        "frontend/lib/hooks/use-verification-center.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353062
-    },
-    "/api/transactions": {
-      "endpoint": "/api/transactions",
-      "hook_files": [
-        "frontend/lib/api/client.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353074
-    },
-    "/api/categories": {
-      "endpoint": "/api/categories",
-      "hook_files": [
-        "frontend/lib/api/client.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353086
-    },
-    "/platform/v1/verification/run": {
-      "endpoint": "/platform/v1/verification/run",
-      "hook_files": [
-        "frontend/lib/hooks/use-verification-center.ts"
-      ],
-      "component_files": [
-        "frontend/app/platform/verification/run/[capability]/page.tsx"
-      ],
-      "total_references": 2,
-      "last_scanned": 1789189909.5353098
-    },
-    "/api/investments": {
-      "endpoint": "/api/investments",
-      "hook_files": [
-        "frontend/lib/hooks/use-investments.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353107
-    },
-    "/api/loans/:param": {
-      "endpoint": "/api/loans/:param",
-      "hook_files": [
-        "frontend/lib/hooks/use-loans.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353122
-    },
-    "/platform/v1/errors/:param": {
-      "endpoint": "/platform/v1/errors/:param",
-      "hook_files": [
-        "frontend/lib/hooks/use-platform-errors.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353134
+      "last_scanned": 1789190049.5477884
     },
     "/platform/v1/events": {
       "endpoint": "/platform/v1/events",
@@ -619,7 +614,63 @@
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.5353148
+      "last_scanned": 1789190049.5477903
+    },
+    "/api/loans/:param/schedule": {
+      "endpoint": "/api/loans/:param/schedule",
+      "hook_files": [
+        "frontend/lib/hooks/use-loans.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5477922
+    },
+    "/platform/v1/architecture/authority/:param": {
+      "endpoint": "/platform/v1/architecture/authority/:param",
+      "hook_files": [
+        "frontend/lib/hooks/use-platform-architecture.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5477936
+    },
+    "/platform/v1/verification/run/affected": {
+      "endpoint": "/platform/v1/verification/run/affected",
+      "hook_files": [
+        "frontend/lib/hooks/use-verification-center.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5477958
+    },
+    "/platform/v1/executions/:param": {
+      "endpoint": "/platform/v1/executions/:param",
+      "hook_files": [],
+      "component_files": [
+        "frontend/app/platform/verification/run/[capability]/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1789190049.5477986
+    },
+    "/platform/v1/health": {
+      "endpoint": "/platform/v1/health",
+      "hook_files": [
+        "frontend/lib/hooks/use-platform-health.ts"
+      ],
+      "component_files": [
+        "frontend/app/platform/page.tsx"
+      ],
+      "total_references": 2,
+      "last_scanned": 1789190049.547801
+    },
+    "/platform/v1/errors/frequency": {
+      "endpoint": "/platform/v1/errors/frequency",
+      "hook_files": [],
+      "component_files": [
+        "frontend/app/platform/errors/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1789190049.5478032
     },
     "/api/cashflow/monthly": {
       "endpoint": "/api/cashflow/monthly",
@@ -628,43 +679,108 @@
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.535316
+      "last_scanned": 1789190049.5478058
     },
-    "/platform/v1/verification/runs/recent": {
-      "endpoint": "/platform/v1/verification/runs/recent",
+    "/api/v1/investments": {
+      "endpoint": "/api/v1/investments",
+      "hook_files": [
+        "frontend/lib/capabilities/use-investments-capability.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5478077
+    },
+    "/api/investments/:param": {
+      "endpoint": "/api/investments/:param",
+      "hook_files": [
+        "frontend/lib/hooks/use-investments.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5478096
+    },
+    "/api/v1/credit-cards": {
+      "endpoint": "/api/v1/credit-cards",
+      "hook_files": [
+        "frontend/lib/api/gateway.ts",
+        "frontend/lib/capabilities/use-credit-cards-capability.ts"
+      ],
+      "component_files": [],
+      "total_references": 2,
+      "last_scanned": 1789190049.5478117
+    },
+    "/api/investments": {
+      "endpoint": "/api/investments",
+      "hook_files": [
+        "frontend/lib/hooks/use-investments.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5478141
+    },
+    "/platform/v1/errors/:param": {
+      "endpoint": "/platform/v1/errors/:param",
+      "hook_files": [
+        "frontend/lib/hooks/use-platform-errors.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.547816
+    },
+    "/platform/v1/history/runs": {
+      "endpoint": "/platform/v1/history/runs",
+      "hook_files": [],
+      "component_files": [
+        "frontend/app/platform/history/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1789190049.5478175
+    },
+    "/platform/v1/tasks/:param/cancel": {
+      "endpoint": "/platform/v1/tasks/:param/cancel",
       "hook_files": [
         "frontend/lib/hooks/use-verification-center.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.535317
+      "last_scanned": 1789190049.547819
     },
-    "/platform/v1/app/workflows": {
-      "endpoint": "/platform/v1/app/workflows",
+    "/platform/v1/history/runs/:param": {
+      "endpoint": "/platform/v1/history/runs/:param",
       "hook_files": [],
       "component_files": [
-        "frontend/app/platform/page.tsx"
+        "frontend/app/platform/verification/history/[runId]/page.tsx"
       ],
       "total_references": 1,
-      "last_scanned": 1789189909.5353189
+      "last_scanned": 1789190049.547821
     },
-    "/platform/v1/evidence": {
-      "endpoint": "/platform/v1/evidence",
+    "/platform/diagnostics/change": {
+      "endpoint": "/platform/diagnostics/change",
       "hook_files": [],
       "component_files": [
-        "frontend/app/platform/page.tsx"
+        "frontend/app/platform/diagnostics/page.tsx",
+        "frontend/components/platform/quick-actions.tsx"
       ],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353198
+      "total_references": 2,
+      "last_scanned": 1789190049.5478232
     },
-    "/api/loans/:param/prepayment-simulation": {
-      "endpoint": "/api/loans/:param/prepayment-simulation",
+    "/api/reconciliation/pending": {
+      "endpoint": "/api/reconciliation/pending",
       "hook_files": [
-        "frontend/lib/hooks/use-loans.ts"
+        "frontend/lib/hooks/use-reconciliation.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.535321
+      "last_scanned": 1789190049.5478246
+    },
+    "/api/analytics": {
+      "endpoint": "/api/analytics",
+      "hook_files": [
+        "frontend/lib/hooks/use-analytics.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.547827
     },
     "/platform/verification": {
       "endpoint": "/platform/verification",
@@ -679,7 +795,25 @@
         "frontend/components/platform/sidebar.tsx"
       ],
       "total_references": 7,
-      "last_scanned": 1789189909.535323
+      "last_scanned": 1789190049.5478299
+    },
+    "/api/v1/forecast": {
+      "endpoint": "/api/v1/forecast",
+      "hook_files": [
+        "frontend/lib/capabilities/use-forecast-capability.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.547832
+    },
+    "/api/cards": {
+      "endpoint": "/api/cards",
+      "hook_files": [
+        "frontend/lib/hooks/use-cards.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5478349
     },
     "/platform/v1/capabilities": {
       "endpoint": "/platform/v1/capabilities",
@@ -689,223 +823,63 @@
       ],
       "component_files": [],
       "total_references": 2,
-      "last_scanned": 1789189909.5353239
+      "last_scanned": 1789190049.547837
     },
-    "/platform/v1/executions/:param": {
-      "endpoint": "/platform/v1/executions/:param",
+    "/platform/v1/app/workflows": {
+      "endpoint": "/platform/v1/app/workflows",
       "hook_files": [],
       "component_files": [
-        "frontend/app/platform/verification/run/[capability]/page.tsx"
+        "frontend/app/platform/page.tsx"
       ],
       "total_references": 1,
-      "last_scanned": 1789189909.5353253
+      "last_scanned": 1789190049.5478387
     },
-    "/platform/v1/history/baselines": {
-      "endpoint": "/platform/v1/history/baselines",
-      "hook_files": [],
-      "component_files": [
-        "frontend/app/platform/history/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353262
-    },
-    "/platform/settings": {
-      "endpoint": "/platform/settings",
-      "hook_files": [],
-      "component_files": [
-        "frontend/components/platform/quick-actions.tsx",
-        "frontend/components/platform/sidebar.tsx"
-      ],
-      "total_references": 2,
-      "last_scanned": 1789189909.5353274
-    },
-    "/api/loans/:param/schedule": {
-      "endpoint": "/api/loans/:param/schedule",
+    "/api/v1/accounts": {
+      "endpoint": "/api/v1/accounts",
       "hook_files": [
-        "frontend/lib/hooks/use-loans.ts"
+        "frontend/lib/capabilities/use-accounts-capability.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.5353286
+      "last_scanned": 1789190049.5478415
     },
-    "/platform/v1/tasks/:param/cancel": {
-      "endpoint": "/platform/v1/tasks/:param/cancel",
+    "/api/transactions": {
+      "endpoint": "/api/transactions",
+      "hook_files": [
+        "frontend/lib/api/client.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5478454
+    },
+    "/platform/v1/verification/run": {
+      "endpoint": "/platform/v1/verification/run",
       "hook_files": [
         "frontend/lib/hooks/use-verification-center.ts"
       ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353296
+      "component_files": [
+        "frontend/app/platform/verification/run/[capability]/page.tsx"
+      ],
+      "total_references": 2,
+      "last_scanned": 1789190049.5478477
     },
-    "/api/upload": {
-      "endpoint": "/api/upload",
+    "/api/statements": {
+      "endpoint": "/api/statements",
       "hook_files": [
         "frontend/lib/api/client.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.5353305
+      "last_scanned": 1789190049.5478497
     },
-    "/api/accounts/manage/:param": {
-      "endpoint": "/api/accounts/manage/:param",
-      "hook_files": [
-        "frontend/lib/hooks/use-accounts.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353315
-    },
-    "/platform/v1/architecture/authorities": {
-      "endpoint": "/platform/v1/architecture/authorities",
-      "hook_files": [
-        "frontend/lib/hooks/use-platform-architecture.ts"
-      ],
-      "component_files": [
-        "frontend/app/platform/page.tsx"
-      ],
-      "total_references": 2,
-      "last_scanned": 1789189909.5353332
-    },
-    "/platform/v1/history/compare": {
-      "endpoint": "/platform/v1/history/compare",
-      "hook_files": [],
-      "component_files": [
-        "frontend/app/platform/history/compare/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353343
-    },
-    "/api/reconciliation": {
-      "endpoint": "/api/reconciliation",
-      "hook_files": [
-        "frontend/lib/hooks/use-reconciliation.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353355
-    },
-    "/api/reconciliation/pending": {
-      "endpoint": "/api/reconciliation/pending",
-      "hook_files": [
-        "frontend/lib/hooks/use-reconciliation.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353365
-    },
-    "/api/v1/loans": {
-      "endpoint": "/api/v1/loans",
-      "hook_files": [
-        "frontend/lib/capabilities/use-loans-capability.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353374
-    },
-    "/platform/v1/history/runs/:param": {
-      "endpoint": "/platform/v1/history/runs/:param",
-      "hook_files": [],
-      "component_files": [
-        "frontend/app/platform/verification/history/[runId]/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353386
-    },
-    "/platform/verification/history/:param": {
-      "endpoint": "/platform/verification/history/:param",
-      "hook_files": [],
-      "component_files": [
-        "frontend/app/platform/history/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1789189909.53534
-    },
-    "/platform/verification/run/:param": {
-      "endpoint": "/platform/verification/run/:param",
-      "hook_files": [],
-      "component_files": [
-        "frontend/app/platform/capabilities/[capabilityId]/page.tsx",
-        "frontend/app/platform/diagnostics/change/page.tsx",
-        "frontend/app/platform/verification/[capability]/page.tsx"
-      ],
-      "total_references": 3,
-      "last_scanned": 1789189909.5353413
-    },
-    "/api/import/detect": {
-      "endpoint": "/api/import/detect",
+    "/api/banks": {
+      "endpoint": "/api/banks",
       "hook_files": [
         "frontend/lib/api/client.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.535343
-    },
-    "/platform/v1/executions/:param/stream": {
-      "endpoint": "/platform/v1/executions/:param/stream",
-      "hook_files": [
-        "frontend/lib/hooks/use-live-execution.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.535345
-    },
-    "/platform/v1/architecture/:param": {
-      "endpoint": "/platform/v1/architecture/:param",
-      "hook_files": [
-        "frontend/lib/hooks/use-platform-architecture.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353463
-    },
-    "/platform/v1/health": {
-      "endpoint": "/platform/v1/health",
-      "hook_files": [
-        "frontend/lib/hooks/use-platform-health.ts"
-      ],
-      "component_files": [
-        "frontend/app/platform/page.tsx"
-      ],
-      "total_references": 2,
-      "last_scanned": 1789189909.5353477
-    },
-    "/platform/diagnostics": {
-      "endpoint": "/platform/diagnostics",
-      "hook_files": [],
-      "component_files": [
-        "frontend/app/platform/diagnostics/change/page.tsx",
-        "frontend/components/platform/quick-actions.tsx",
-        "frontend/components/platform/sidebar.tsx"
-      ],
-      "total_references": 3,
-      "last_scanned": 1789189909.535349
-    },
-    "/platform/v1/architecture/authority/:param": {
-      "endpoint": "/platform/v1/architecture/authority/:param",
-      "hook_files": [
-        "frontend/lib/hooks/use-platform-architecture.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.53535
-    },
-    "/platform/v1/capabilities/:param/graph": {
-      "endpoint": "/platform/v1/capabilities/:param/graph",
-      "hook_files": [
-        "frontend/lib/hooks/use-platform-capabilities.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.535351
-    },
-    "/platform/v1/errors/current": {
-      "endpoint": "/platform/v1/errors/current",
-      "hook_files": [],
-      "component_files": [
-        "frontend/app/platform/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353525
+      "last_scanned": 1789190049.5478516
     },
     "/platform/verification/:param": {
       "endpoint": "/platform/verification/:param",
@@ -914,45 +888,7 @@
         "frontend/app/platform/verification/page.tsx"
       ],
       "total_references": 1,
-      "last_scanned": 1789189909.535354
-    },
-    "/platform/history": {
-      "endpoint": "/platform/history",
-      "hook_files": [],
-      "component_files": [
-        "frontend/app/platform/history/compare/page.tsx",
-        "frontend/components/platform/quick-actions.tsx",
-        "frontend/components/platform/sidebar.tsx"
-      ],
-      "total_references": 3,
-      "last_scanned": 1789189909.535355
-    },
-    "/api/cards": {
-      "endpoint": "/api/cards",
-      "hook_files": [
-        "frontend/lib/hooks/use-cards.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353565
-    },
-    "/api/dashboard/summary": {
-      "endpoint": "/api/dashboard/summary",
-      "hook_files": [
-        "frontend/lib/hooks/use-dashboard-metrics.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.535358
-    },
-    "/platform/v1/history/runs": {
-      "endpoint": "/platform/v1/history/runs",
-      "hook_files": [],
-      "component_files": [
-        "frontend/app/platform/history/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1789189909.535359
+      "last_scanned": 1789190049.5478537
     },
     "/platform/errors": {
       "endpoint": "/platform/errors",
@@ -964,7 +900,65 @@
         "frontend/components/platform/sidebar.tsx"
       ],
       "total_references": 4,
-      "last_scanned": 1789189909.5353606
+      "last_scanned": 1789190049.5478704
+    },
+    "/platform/history": {
+      "endpoint": "/platform/history",
+      "hook_files": [],
+      "component_files": [
+        "frontend/app/platform/history/compare/page.tsx",
+        "frontend/components/platform/quick-actions.tsx",
+        "frontend/components/platform/sidebar.tsx"
+      ],
+      "total_references": 3,
+      "last_scanned": 1789190049.547873
+    },
+    "/platform/v1/verification/runs/recent": {
+      "endpoint": "/platform/v1/verification/runs/recent",
+      "hook_files": [
+        "frontend/lib/hooks/use-verification-center.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.547875
+    },
+    "/platform/history/compare": {
+      "endpoint": "/platform/history/compare",
+      "hook_files": [],
+      "component_files": [
+        "frontend/app/platform/history/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1789190049.5478766
+    },
+    "/platform/v1/architecture/authorities": {
+      "endpoint": "/platform/v1/architecture/authorities",
+      "hook_files": [
+        "frontend/lib/hooks/use-platform-architecture.ts"
+      ],
+      "component_files": [
+        "frontend/app/platform/page.tsx"
+      ],
+      "total_references": 2,
+      "last_scanned": 1789190049.547879
+    },
+    "/api/reconciliation": {
+      "endpoint": "/api/reconciliation",
+      "hook_files": [
+        "frontend/lib/hooks/use-reconciliation.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5478811
+    },
+    "/api/v1/loans": {
+      "endpoint": "/api/v1/loans",
+      "hook_files": [
+        "frontend/lib/capabilities/use-loans-capability.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.547883
     },
     "/api/members": {
       "endpoint": "/api/members",
@@ -973,121 +967,125 @@
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.5353618
+      "last_scanned": 1789190049.5478854
     },
-    "/api/banks": {
-      "endpoint": "/api/banks",
+    "/api/upload": {
+      "endpoint": "/api/upload",
       "hook_files": [
         "frontend/lib/api/client.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.5353625
+      "last_scanned": 1789190049.547887
     },
-    "/platform/diagnostics/change": {
-      "endpoint": "/platform/diagnostics/change",
-      "hook_files": [],
-      "component_files": [
-        "frontend/app/platform/diagnostics/page.tsx",
-        "frontend/components/platform/quick-actions.tsx"
-      ],
-      "total_references": 2,
-      "last_scanned": 1789189909.535364
-    },
-    "/api/v1/cashflow": {
-      "endpoint": "/api/v1/cashflow",
+    "/api/categories": {
+      "endpoint": "/api/categories",
       "hook_files": [
-        "frontend/lib/capabilities/use-cashflow-capability.ts"
+        "frontend/lib/api/client.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.535365
+      "last_scanned": 1789190049.547889
     },
-    "/api/accounts/manage": {
-      "endpoint": "/api/accounts/manage",
+    "/api/reconciliation/scan": {
+      "endpoint": "/api/reconciliation/scan",
+      "hook_files": [
+        "frontend/lib/hooks/use-reconciliation.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5478907
+    },
+    "/platform/v1/evidence": {
+      "endpoint": "/platform/v1/evidence",
+      "hook_files": [],
+      "component_files": [
+        "frontend/app/platform/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1789190049.5478926
+    },
+    "/platform/v1/change/intelligence": {
+      "endpoint": "/platform/v1/change/intelligence",
+      "hook_files": [],
+      "component_files": [
+        "frontend/app/platform/diagnostics/change/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1789190049.5478942
+    },
+    "/platform/v1/verification/run/group": {
+      "endpoint": "/platform/v1/verification/run/group",
+      "hook_files": [
+        "frontend/lib/hooks/use-verification-center.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5478964
+    },
+    "/platform/settings": {
+      "endpoint": "/platform/settings",
+      "hook_files": [],
+      "component_files": [
+        "frontend/components/platform/quick-actions.tsx",
+        "frontend/components/platform/sidebar.tsx"
+      ],
+      "total_references": 2,
+      "last_scanned": 1789190049.547898
+    },
+    "/api/accounts/manage/:param": {
+      "endpoint": "/api/accounts/manage/:param",
       "hook_files": [
         "frontend/lib/hooks/use-accounts.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.535366
+      "last_scanned": 1789190049.5479
     },
-    "/api/v1/forecast": {
-      "endpoint": "/api/v1/forecast",
-      "hook_files": [
-        "frontend/lib/capabilities/use-forecast-capability.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353677
-    },
-    "/api/import/execute": {
-      "endpoint": "/api/import/execute",
-      "hook_files": [
-        "frontend/lib/api/client.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353687
-    },
-    "/platform/events": {
-      "endpoint": "/platform/events",
+    "/platform/verification/history/:param": {
+      "endpoint": "/platform/verification/history/:param",
       "hook_files": [],
       "component_files": [
-        "frontend/app/platform/diagnostics/page.tsx"
+        "frontend/app/platform/history/page.tsx"
       ],
       "total_references": 1,
-      "last_scanned": 1789189909.5353699
+      "last_scanned": 1789190049.5479019
     },
-    "/api/networth": {
-      "endpoint": "/api/networth",
+    "/platform/v1/architecture/:param": {
+      "endpoint": "/platform/v1/architecture/:param",
       "hook_files": [
-        "frontend/lib/capabilities/use-net-worth-capability.ts",
-        "frontend/lib/hooks/use-networth.ts"
+        "frontend/lib/hooks/use-platform-architecture.ts"
       ],
       "component_files": [],
-      "total_references": 2,
-      "last_scanned": 1789189909.5353713
+      "total_references": 1,
+      "last_scanned": 1789190049.5479035
     },
-    "/platform/capabilities": {
-      "endpoint": "/platform/capabilities",
+    "/platform/v1/errors/current": {
+      "endpoint": "/platform/v1/errors/current",
       "hook_files": [],
       "component_files": [
-        "frontend/app/platform/capabilities/[capabilityId]/page.tsx",
-        "frontend/components/platform/quick-actions.tsx",
-        "frontend/components/platform/sidebar.tsx"
+        "frontend/app/platform/page.tsx"
       ],
-      "total_references": 3,
-      "last_scanned": 1789189909.5353725
+      "total_references": 1,
+      "last_scanned": 1789190049.5479054
     },
-    "/platform/v1/capabilities/:param": {
-      "endpoint": "/platform/v1/capabilities/:param",
-      "hook_files": [
-        "frontend/lib/hooks/use-platform-capabilities.ts",
-        "frontend/lib/hooks/use-verification-center.ts"
+    "/platform/v1/app/frontend": {
+      "endpoint": "/platform/v1/app/frontend",
+      "hook_files": [],
+      "component_files": [
+        "frontend/app/platform/page.tsx"
       ],
-      "component_files": [],
-      "total_references": 2,
-      "last_scanned": 1789189909.5353734
+      "total_references": 1,
+      "last_scanned": 1789190049.5479076
     },
-    "/api/v1/behaviour/wellness-score": {
-      "endpoint": "/api/v1/behaviour/wellness-score",
-      "hook_files": [
-        "frontend/lib/capabilities/use-behaviour-capability.ts",
-        "frontend/lib/hooks/use-behavior-score.ts"
-      ],
-      "component_files": [],
-      "total_references": 2,
-      "last_scanned": 1789189909.5353749
-    },
-    "/api/loans": {
-      "endpoint": "/api/loans",
+    "/api/loans/:param/prepayment-simulation": {
+      "endpoint": "/api/loans/:param/prepayment-simulation",
       "hook_files": [
         "frontend/lib/hooks/use-loans.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.5353758
+      "last_scanned": 1789190049.54791
     },
     "/api/overview": {
       "endpoint": "/api/overview",
@@ -1097,7 +1095,25 @@
       ],
       "component_files": [],
       "total_references": 2,
-      "last_scanned": 1789189909.5353773
+      "last_scanned": 1789190049.5479121
+    },
+    "/api/import/execute": {
+      "endpoint": "/api/import/execute",
+      "hook_files": [
+        "frontend/lib/api/client.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5479138
+    },
+    "/platform/v1/capabilities/:param/graph": {
+      "endpoint": "/platform/v1/capabilities/:param/graph",
+      "hook_files": [
+        "frontend/lib/hooks/use-platform-capabilities.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1789190049.5479157
     },
     "/api/reconciliation/:param/reject": {
       "endpoint": "/api/reconciliation/:param/reject",
@@ -1106,62 +1122,46 @@
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.5353785
+      "last_scanned": 1789190049.5479174
     },
-    "/platform/v1/app/frontend": {
-      "endpoint": "/platform/v1/app/frontend",
-      "hook_files": [],
-      "component_files": [
-        "frontend/app/platform/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353796
-    },
-    "/api/reconciliation/:param/confirm": {
-      "endpoint": "/api/reconciliation/:param/confirm",
+    "/api/accounts/manage": {
+      "endpoint": "/api/accounts/manage",
       "hook_files": [
-        "frontend/lib/hooks/use-reconciliation.ts"
+        "frontend/lib/hooks/use-accounts.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.5353808
+      "last_scanned": 1789190049.547919
     },
-    "/platform/v1/change/intelligence": {
-      "endpoint": "/platform/v1/change/intelligence",
-      "hook_files": [],
-      "component_files": [
-        "frontend/app/platform/diagnostics/change/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353818
-    },
-    "/platform/v1/verification/run/affected": {
-      "endpoint": "/platform/v1/verification/run/affected",
+    "/api/loans": {
+      "endpoint": "/api/loans",
       "hook_files": [
-        "frontend/lib/hooks/use-verification-center.ts"
+        "frontend/lib/hooks/use-loans.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1789189909.5353825
+      "last_scanned": 1789190049.547921
     },
-    "/platform/history/compare": {
-      "endpoint": "/platform/history/compare",
+    "/platform/verification/run/:param": {
+      "endpoint": "/platform/verification/run/:param",
       "hook_files": [],
       "component_files": [
-        "frontend/app/platform/history/page.tsx"
+        "frontend/app/platform/capabilities/[capabilityId]/page.tsx",
+        "frontend/app/platform/diagnostics/change/page.tsx",
+        "frontend/app/platform/verification/[capability]/page.tsx"
       ],
-      "total_references": 1,
-      "last_scanned": 1789189909.5353837
+      "total_references": 3,
+      "last_scanned": 1789190049.5479226
     },
-    "/api/v1/credit-cards": {
-      "endpoint": "/api/v1/credit-cards",
+    "/api/v1/behaviour/wellness-score": {
+      "endpoint": "/api/v1/behaviour/wellness-score",
       "hook_files": [
-        "frontend/lib/api/gateway.ts",
-        "frontend/lib/capabilities/use-credit-cards-capability.ts"
+        "frontend/lib/capabilities/use-behaviour-capability.ts",
+        "frontend/lib/hooks/use-behavior-score.ts"
       ],
       "component_files": [],
       "total_references": 2,
-      "last_scanned": 1789189909.5353851
+      "last_scanned": 1789190049.5479255
     }
   }
 }
