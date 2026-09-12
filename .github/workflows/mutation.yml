@@ -13,6 +13,17 @@
 #                    pipeline can distinguish killed/survived/no-test.
 #   mutation       — authoritative full campaign (80% gate). needs: mutation-smoke.
 # Both delegate to python -m runtime.verify; no mutation logic lives in YAML.
+#
+# WORKFLOW RELATIONSHIP:
+#   - This workflow runs the FULL mutation testing campaign (all 14 engines, ~27 minutes).
+#   - Runs on schedule (nightly at 2 AM UTC) and manual dispatch.
+#   - For PR-scoped incremental mutation (faster feedback), see mutation-pr.yml.
+#   - Both workflows coexist:
+#     * mutation-pr.yml: incremental (affected engines only, <5 min target)
+#     * mutation.yml: comprehensive (all engines, ~27 min full campaign)
+#
+# IMPORTANT: This workflow does NOT use --incremental flag.
+# It always runs the full authoritative campaign per M9-C42.5 requirements.
 
 name: Mutation Testing
 

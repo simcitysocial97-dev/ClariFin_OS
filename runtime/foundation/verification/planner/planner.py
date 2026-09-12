@@ -891,7 +891,19 @@ class CrossLayerImpactPlanner:
     def __init__(self, map_path: Path | None = None):
         self.map_path = map_path
         self._map: dict[str, dict[str, Any]] = {}
+        self._cross_layer_graph: dict | None = None
         self._load_map()
+        self._load_cross_layer_graph()
+
+    def _load_cross_layer_graph(self) -> None:
+        """Load cross-layer graph for frontend capability resolution."""
+        try:
+            import json
+            graph_path = Path("runtime/generated/cross-layer-graph.json")
+            if graph_path.exists():
+                self._cross_layer_graph = json.loads(graph_path.read_text())
+        except Exception:
+            pass
 
     def _load_map(self) -> None:
         """Load chains from the architecture provider (or an injected fixture)."""

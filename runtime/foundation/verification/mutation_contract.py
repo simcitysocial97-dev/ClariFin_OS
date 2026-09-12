@@ -109,6 +109,9 @@ class MutationResult:
     # Distinguishes canonical vs legacy execution. Default is canonical.
     # Allowed values: "VERIFICATION_CONTROL_PLANE" (canonical), "LEGACY_DIRECT_BACKEND" (legacy shell wrappers).
     execution_path: str = "VERIFICATION_CONTROL_PLANE"
+    # ── Incremental mode provenance ──────────────────────────────────────────
+    # List of engines affected by incremental mutation run.
+    affected_engines: list[str] = field(default_factory=list)
 
     @property
     def mutants_generated(self) -> int:
@@ -152,6 +155,7 @@ class MutationResult:
             "source_scope": self.source_scope,
             "selection_method": self.selection_method,
             "execution_path": self.execution_path,
+            "affected_engines": self.affected_engines,
         }
 
 

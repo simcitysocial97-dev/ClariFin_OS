@@ -242,6 +242,7 @@ DEFAULT_RUNTIME = {
     "smoke": 600,
     "target": 1800,
     "full": 5400,
+    "incremental": 1800,
 }
 
 
@@ -951,11 +952,73 @@ def _print_report(result: MutationResult) -> None:
         print("  Mutation score was NOT evaluated (no fake 0% emitted).")
 
 
+def get_affected_engines_from_files(changed_files: list[Path]) -> set[str]:
+    """Map changed files to engine names for incremental mutation.
+
+    Uses ENGINE_SELECTION source_paths to determine which engine(s) each
+    changed file belongs to. Files outside known engine paths are ignored.
+    """
+    affected: set[str] = set()
+    for file_path in changed_files:
+        path_str = str(file_path)
+        # Normalize to relative backend path
+        rel_path = path_str
+        if rel_path.startswith(str(REPO_ROOT)):
+            rel_path = rel_path[len(str(REPO_ROOT)):]
+        if rel_path.startswith("/"):
+            rel_path = rel_path[1:]
+
+        # Match against each engine's source_paths
+        for engine_name, selection in ENGINE_SELECTION.items():
+            for source_path in selection.source_paths:
+                # Direct file match
+                if rel_path == source_path or rel_path.endswith(f"/{source_path}"):
+                    affected.add(engine_name)
+                    break
+                # Directory match (file is inside the engine directory)
+                if source_path.endswith("/") and rel_path.startswith(source_path):
+                    affected.add(engine_name)
+                    break
+                # Partial match for nested files
+                if source_path not in ("/", "") and f"/{source_path}" in rel_path:
+                    affected.add(engine_name)
+                    break
+
+    return affected
+
+
+def _collect_changed_files(base: str = "HEAD~1", head: str = "HEAD") -> list[Path]:
+    """Collect changed Python files between two git refs."""
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--name-only", base, head],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        if result.returncode != 0:
+            return []
+        return [
+            REPO_ROOT / f.strip()
+            for f in result.stdout.splitlines()
+            if f.strip().endswith(".py")
+        ]
+    except Exception:
+        return []
+
+
 def run_mutation_cli(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="verify.py mutation")
     parser.add_argument("--smoke", action="store_true", help="bounded infra smoke test")
     parser.add_argument(
         "--target", default=None, help="incremental target (engine/module)"
+    )
+    parser.add_argument(
+        "--incremental", action="store_true", help="run mutation only on changed engines"
+    )
+    parser.add_argument(
+        "--changed-files", nargs="*", default=[], help="list of changed files (for incremental mode)"
     )
     parser.add_argument(
         "--max-runtime", type=int, default=None, help="hard subprocess timeout (s)"
@@ -991,8 +1054,124 @@ def run_mutation_cli(argv: list[str]) -> int:
     )
     args = parser.parse_args(argv)
 
-    mode = "smoke" if args.smoke else ("target" if args.target else "full")
+    # Determine mode
+    if args.incremental:
+        mode = "incremental"
+    elif args.smoke:
+        mode = "smoke"
+    elif args.target:
+        mode = "target"
+    else:
+        mode = "full"
 
+    # Handle incremental mode: run mutation for each affected engine
+    if mode == "incremental":
+        # Collect changed files
+        if args.changed_files:
+            changed_files = [Path(f) for f in args.changed_files]
+        else:
+            changed_files = _collect_changed_files()
+
+        if not changed_files:
+            print("No changed Python files detected, skipping incremental mutation")
+            return 0
+
+        affected_engines = get_affected_engines_from_files(changed_files)
+
+        if not affected_engines:
+            print("No engines affected by changes, skipping mutation")
+            return 0
+
+        print(f"\n{'=' * 72}")
+        print(f"  🎯 INCREMENTAL MUTATION MODE")
+        print(f"{'=' * 72}")
+        print(f"  Changed files    : {len(changed_files)}")
+        print(f"  Affected engines : {', '.join(sorted(affected_engines))}")
+        print(f"{'=' * 72}\n")
+
+        # Run mutation for each affected engine
+        all_results = []
+        for engine in sorted(affected_engines):
+            print(f"  Running mutation on: {engine}")
+            result = execute_mutation(
+                mode="target",
+                target=engine,
+                max_runtime=args.max_runtime,
+                max_children=args.max_children,
+                no_cache=args.no_cache,
+                restore_only=args.restore,
+                allow_dirty=args.allow_dirty,
+            )
+            all_results.append(result)
+
+        # Aggregate results
+        total_killed = sum(r.killed for r in all_results)
+        total_survived = sum(r.survived for r in all_results)
+        total_no_tests = sum(r.no_tests for r in all_results)
+        total_timeout = sum(r.timeout for r in all_results)
+        total_suspicious = sum(r.suspicious for r in all_results)
+        total_not_checked = sum(r.not_checked for r in all_results)
+
+        aggregated = MutationResult(
+            run_id=f"mut-incr-{uuid.uuid4().hex[:12]}",
+            repository_sha=all_results[0].repository_sha if all_results else "unknown",
+            tree_sha=all_results[0].tree_sha if all_results else "unknown",
+            python_version=all_results[0].python_version if all_results else "unknown",
+            pytest_version=all_results[0].pytest_version if all_results else "unknown",
+            mutmut_version=all_results[0].mutmut_version if all_results else "unknown",
+            config_hash=all_results[0].config_hash if all_results else "unknown",
+            killed=total_killed,
+            survived=total_survived,
+            no_tests=total_no_tests,
+            timeout=total_timeout,
+            suspicious=total_suspicious,
+            not_checked=total_not_checked,
+            execution_status=(
+                "PASS"
+                if all(r.execution_status == "PASS" for r in all_results)
+                else "FAIL"
+            ),
+            classification_status=(
+                "PASS"
+                if all(r.classification_status == "PASS" for r in all_results)
+                else "FAIL"
+            ),
+            evidence_complete=all(r.evidence_complete for r in all_results),
+            mode="incremental",
+            target=None,
+            affected_engines=list(sorted(affected_engines)),
+            note=f"Aggregated from {len(all_results)} engine(s)",
+            threshold_percent=80,
+            source_scope=",".join(
+                ENGINE_SELECTION[e].source_paths[0]
+                for e in affected_engines
+            ),
+            selected_test_scope=" ".join(
+                p
+                for e in affected_engines
+                for p in ENGINE_SELECTION[e].test_selection
+            ),
+            selection_method=SELECTION_METHOD,
+            error=None,
+        )
+
+        if not args.json:
+            _print_report(aggregated)
+
+        out_path = GENERATED_DIR / "mutation-summary-incremental.json"
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps(aggregated.to_dict(), indent=2) + "\n")
+
+        if args.json:
+            print(str(out_path))
+
+        # Gate logic: incremental runs validate infrastructure, quality gate applies only for full
+        gate_a, gate_b, gate_c, verdict = classify_gates(aggregated)
+        if not gate_a or not gate_b:
+            return 1
+        return 0
+
+    # Existing mode handling
     result = execute_mutation(
         mode=mode,
         target=args.target,

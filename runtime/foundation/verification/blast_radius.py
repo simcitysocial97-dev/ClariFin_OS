@@ -32,9 +32,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
+import subprocess
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
+from pathlib import Path
 
 from runtime.foundation.verification.capability_contract import (
     CapabilityContractRegistry,
@@ -262,6 +265,9 @@ class BlastRadiusContract:
     is_fail_closed: bool
     fail_closed_reasons: list[str]
 
+    # Symbol-level change detection (M9-C50 extended)
+    changed_symbols: dict[str, list[str]] = field(default_factory=dict)
+
     def to_dict(self) -> dict:
         return {
             "schema": "m9-c50-blast-radius-contract/v1",
@@ -306,6 +312,7 @@ class BlastRadiusContract:
             "decision_provenance": dict(self.decision_provenance),
             "is_fail_closed": self.is_fail_closed,
             "fail_closed_reasons": list(self.fail_closed_reasons),
+            "changed_symbols": dict(self.changed_symbols),
         }
 
     def to_json(self) -> str:
@@ -474,7 +481,80 @@ class BlastRadiusEngine:
 
         # Compute deterministic contract ID
         contract.contract_id = f"brc-{contract.compute_fingerprint()[:12]}"
+
+        # Symbol-level change detection
+        changed_symbols = self.compute_changed_symbols(
+            [Path(f) for f in change_surface.changed_files]
+        )
+        contract.changed_symbols = {
+            str(file): [s.name for s in symbols]
+            for file, symbols in changed_symbols.items()
+        }
+
         return contract
+
+    def compute_changed_symbols(
+        self, changed_files: list[Path]
+    ) -> dict[Path, set]:
+        """Determine which symbols (functions/methods/classes) changed.
+
+        Uses git diff to get changed line ranges per file, then maps
+        those lines to extracted symbols via SymbolExtractor.
+        """
+        from .symbol_resolver import SymbolExtractor
+
+        extractor = SymbolExtractor()
+        file_to_changed_symbols: dict[Path, set] = {}
+
+        for file_path in changed_files:
+            file_path = Path(file_path)
+            if not str(file_path).endswith(".py"):
+                continue
+
+            # Get changed line ranges from git diff
+            try:
+                diff_output = subprocess.check_output(
+                    ["git", "diff", "-U0", "HEAD", str(file_path)],
+                    text=True,
+                    stderr=subprocess.DEVNULL,
+                )
+            except subprocess.CalledProcessError:
+                # File might be new or git not available — treat as fully changed
+                all_symbols = extractor.extract_from_file(file_path)
+                file_to_changed_symbols[file_path] = set(all_symbols)
+                continue
+            except Exception:
+                all_symbols = extractor.extract_from_file(file_path)
+                file_to_changed_symbols[file_path] = set(all_symbols)
+                continue
+
+            # Parse diff hunk headers for changed line numbers
+            changed_lines: set[int] = set()
+            for line in diff_output.splitlines():
+                match = re.match(r"^@@\s+-\d+(?:,\d+)?\s+\+(\d+)(?:,(\d+))?\s+@@", line)
+                if match:
+                    start = int(match.group(1))
+                    count = int(match.group(2)) if match.group(2) else 1
+                    changed_lines.update(range(start, start + count))
+
+            if not changed_lines:
+                continue
+
+            # Find symbols containing changed lines
+            symbols = extractor.extract_from_file(file_path)
+            changed_symbols: set = set()
+
+            for symbol in symbols:
+                if any(
+                    symbol.start_line <= line <= symbol.end_line
+                    for line in changed_lines
+                ):
+                    changed_symbols.add(symbol)
+
+            if changed_symbols:
+                file_to_changed_symbols[file_path] = changed_symbols
+
+        return file_to_changed_symbols
 
     def _build_surface_impacts(
         self,
@@ -1024,6 +1104,68 @@ class BlastRadiusEngine:
             if v.profile:
                 workflows.add(v.profile)
         return sorted(workflows)
+
+    def compute_e2e_impact(
+        self, changed_files: list[Path]
+    ) -> dict[str, Any]:
+        """Compute E2E test impact from changed frontend route files.
+
+        Detects when frontend route files (app/**/page.tsx, layout.tsx)
+        change and uses E2ERouteMapper to find affected E2E tests.
+
+        Args:
+            changed_files: List of changed file paths.
+
+        Returns:
+            Dict with affected_routes, affected_e2e_tests, has_e2e_impact.
+        """
+        from .e2e_route_mapper import E2ERouteMapper
+
+        mapper = E2ERouteMapper()
+        all_routes = mapper.scan_frontend_routes()
+
+        # Filter to frontend route files that actually changed
+        affected_routes: set[str] = set()
+        for f in changed_files:
+            fstr = str(f)
+            # Match frontend/app/**/page.tsx or layout.tsx patterns
+            if "frontend/app/" in fstr and fstr.endswith((".tsx",)):
+                # Extract route from path
+                rel = fstr.replace("frontend/app/", "").replace("/page.tsx", "").replace("/layout.tsx", "")
+                route = "/" + rel if rel else "/"
+                route = route.rstrip("/") or "/"
+                affected_routes.add(route)
+
+        if not affected_routes:
+            return {
+                "affected_routes": [],
+                "affected_e2e_tests": [],
+                "has_e2e_impact": False,
+                "route_count": 0,
+                "test_count": 0,
+            }
+
+        # Find all E2E tests that exercise affected routes
+        affected_tests: set[str] = set()
+        for route in affected_routes:
+            tests = mapper.get_tests_for_route(route)
+            affected_tests.update(tests)
+
+        # Also check parent routes
+        for route in list(affected_routes):
+            parts = route.strip("/").split("/")
+            for i in range(len(parts)):
+                parent = "/" + "/".join(parts[:i + 1]) if i > 0 else "/"
+                tests = mapper.get_tests_for_route(parent)
+                affected_tests.update(tests)
+
+        return {
+            "affected_routes": sorted(affected_routes),
+            "affected_e2e_tests": sorted(affected_tests),
+            "has_e2e_impact": len(affected_tests) > 0,
+            "route_count": len(affected_routes),
+            "test_count": len(affected_tests),
+        }
 
 
 # ---------------------------------------------------------------------------

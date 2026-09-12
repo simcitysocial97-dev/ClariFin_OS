@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -61,6 +62,7 @@ from runtime.foundation.verification.measurement_truth import (
 from runtime.foundation.verification.planner import (
     VerificationPlanner,
 )
+from runtime.foundation.verification.symbol_test_selector import SymbolTestSelector
 
 # ---------------------------------------------------------------------------
 # Control Plane Plan Model
@@ -198,6 +200,65 @@ class ControlPlanePlanner:
 
         # 8. Build rationale
         rationale = self._build_rationale(resolution, tasks, evidence_plan)
+
+        # Symbol-level test selection (M9-C57 extended)
+        changed_path_objects = [Path(f) for f in changed_files]
+        symbol_selector = SymbolTestSelector()
+        selection = symbol_selector.select_tests_for_symbols(
+            {p: set() for p in changed_path_objects}  # Simplified: just flag files
+        )
+        if selection.coverage_available and selection.selected_tests:
+            logger.info(
+                f"Symbol-level test selection: {len(selection.selected_tests)} "
+                f"test(s) for {len(selection.changed_symbols)} changed symbol(s)"
+            )
+
+        # E2E impact analysis (M9-C57 extended)
+        from runtime.foundation.verification.blast_radius import BlastRadiusEngine
+        from runtime.foundation.verification.e2e_route_mapper import E2ERouteMapper
+
+        blast_engine = BlastRadiusEngine()
+        e2e_impact = blast_engine.compute_e2e_impact(changed_path_objects)
+        if e2e_impact.get("has_e2e_impact"):
+            print(f"\n🎭 E2E IMPACT:", file=sys.stderr)
+            print(
+                f"   {e2e_impact['route_count']} route(s) changed",
+                file=sys.stderr,
+            )
+            print(
+                f"   {e2e_impact['test_count']} E2E test(s) required",
+                file=sys.stderr,
+            )
+            # Add E2E tasks for affected routes
+            e2e_test_files = e2e_impact.get("affected_e2e_tests", [])
+            if e2e_test_files:
+                # Ensure tasks list exists and add e2e verification
+                has_e2e_task = any(t.verification_kind == "e2e" for t in tasks)
+                if not has_e2e_task:
+                    e2e_command = (
+                        "cd frontend && npx playwright test --reporter=list"
+                    )
+                    tasks.append(
+                        VerificationTask(
+                            task_id=f"task-e2e-{len(tasks) + 1:04d}",
+                            capability_id="frontend-e2e",
+                            verification_kind="e2e",
+                            command=e2e_command,
+                            profile="playwright",
+                            is_mandatory=True,
+                            is_escalation=False,
+                            reason=(
+                                f"E2E route change detected: {', '.join(e2e_impact['affected_routes'])}. "
+                                f"Requires {len(e2e_test_files)} E2E test(s)."
+                            ),
+                            estimated_duration_seconds=300,
+                        )
+                    )
+                    print(
+                        f"   Added E2E verification task for routes: "
+                        f"{', '.join(e2e_impact['affected_routes'])}",
+                        file=sys.stderr,
+                    )
 
         plan_id = hashlib.sha256("\n".join(sorted(changed_files)).encode()).hexdigest()[
             :12

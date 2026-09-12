@@ -49,7 +49,7 @@ exclude = [
 # Test configuration
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-norecursedirs = ["probes", "mutants", "invariants/_m4_exit_probe", ".hypothesis"]
+norecursedirs = ["probes", "mutants", "invariants/_m4_exit_probe"]
 pythonpath = ["src", "tests"]
 asyncio_default_fixture_loop_scope = "function"
 python_files = ["test_*.py", "*_test.py"]
@@ -69,6 +69,7 @@ markers = [
     "performance: marks performance tests",
 ]
 filterwarnings = [
+    "ignore::DeprecationWarning:src.core.dtos.*",
     "ignore::pytest.PytestDeprecationWarning",
     "ignore::_pytest.warning_types.PytestAssertRewriteWarning",
     "ignore:Please use `import python_multipart` instead:PendingDeprecationWarning",
@@ -163,21 +164,14 @@ ignore_missing_imports = true
 # Scope: full (all engines)
 # Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
 # Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
-# Scope: credit_card_engine
-# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
-# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
-# Scope: credit_card_engine
-# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
-# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
-# Scope: credit_card_engine
+# Scope: loan_engine
 # Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
 [tool.mutmut]
-source_paths = ["src/engines/credit_card_engine"]
+source_paths = ["src/engines/loan_engine"]
 also_copy = ["src"]
 runner = "python3 -m pytest"
 pytest_add_cli_args_test_selection = [
-    "tests/unit/engines/credit_card",
-    "tests/properties/credit_card_engine",
-    "tests/capability/credit_cards"
+    "tests/unit/engines/loan",
+    "tests/properties/loan_engine"
 ]
 no_progress = true
