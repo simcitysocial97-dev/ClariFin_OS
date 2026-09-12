@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Set
+from typing import Dict, List
 
 from runtime.foundation.verification.typescript_symbol_resolver import TypeScriptSymbol, TypeScriptSymbolExtractor
 

@@ -7,12 +7,10 @@ with frontend capabilities, cross-layer impact, and unmapped handling.
 from __future__ import annotations
 
 import json
-import pytest
 from pathlib import Path
 
 from runtime.foundation.verification.planner.planner import (
     CrossLayerImpactPlanner,
-    ImpactReport,
 )
 
 

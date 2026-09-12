@@ -12,19 +12,16 @@ import logging
 import re
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional
 
 from runtime.foundation.verification.frontend_backend_map import (
-    ConsumerInfo,
     FrontendBackendMapper,
 )
 from runtime.foundation.verification.frontend_capability_discovery import (
     FrontendCapability,
     FrontendCapabilityDiscoverer,
-    FrontendCapabilityKind,
 )
 from runtime.foundation.verification.typescript_symbol_resolver import (
-    TypeScriptSymbol,
     TypeScriptSymbolExtractor,
 )
 

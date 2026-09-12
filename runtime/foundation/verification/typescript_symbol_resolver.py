@@ -354,7 +354,6 @@ class TypeScriptCoverageSymbolMapper:
         file_to_symbols = {}
 
         for file_path, lines in covered_lines.items():
-            symbols = self.extractor.extract_from_file(file_path)
             covered_symbols = set()
 
             for line in lines:
@@ -385,7 +384,7 @@ class TypeScriptCoverageSymbolMapper:
             ]
 
             try:
-                result = subprocess.run(
+                subprocess.run(
                     cmd,
                     cwd=Path.cwd(),
                     capture_output=True,
