@@ -190,12 +190,16 @@ def _scan_file_for_module(file_path: Path, module_prefix: str) -> list[tuple[str
         return []
     results: list[tuple[str, str, int]] = []
     for node in ast.walk(tree):
-        if isinstance(node, ast.ImportFrom) and node.module:
-            if node.module.startswith(module_prefix):
-                for alias in node.names:
-                    full = f"{node.module}.{alias.name}"
-                    results.append((full, alias.asname or alias.name, node.lineno))
+        if isinstance(node, ast.ImportFrom) and node.module and node.module.startswith(module_prefix):
+            for alias in node.names:
+                full = f"{node.module}.{alias.name}"
+                results.append((full, alias.asname or alias.name, node.lineno))
     return results
+
+
+def _find_python_files(root: Path, pattern: str = "*.py") -> list[Path]:
+    """Find Python files under root."""
+    return sorted(root.rglob(pattern))
 
 
 # ---------------------------------------------------------------------------
