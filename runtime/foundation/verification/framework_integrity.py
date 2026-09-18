@@ -162,22 +162,38 @@ class ArtifactFreshnessDetector:
 
         now = datetime.now(UTC).timestamp()
         stale_artifacts: list[str] = []
-        missing_ownership: list[str] = []
+        identity_issues: list[str] = []
+        generator_issues: list[str] = []
 
-        for py_file in sorted(generated_root.rglob("*")):
-            if not py_file.is_file():
+        for artifact in sorted(generated_root.rglob("*")):
+            if not artifact.is_file():
                 continue
-            rel = str(py_file.relative_to(REPO_ROOT))
+            rel = str(artifact.relative_to(REPO_ROOT))
             if any(x in rel for x in ["__pycache__", ".git", "node_modules"]):
                 continue
 
             try:
-                stat = py_file.stat()
+                stat = artifact.stat()
                 age = now - stat.st_mtime
                 if age > self.MAX_AGE_SECONDS:
                     stale_artifacts.append(f"{rel} ({age:.0f}s old)")
             except OSError:
                 stale_artifacts.append(f"{rel} (stat failed)")
+
+            if artifact.suffix == ".json":
+                try:
+                    data = json.loads(artifact.read_text(encoding="utf-8"))
+                    if isinstance(data, dict):
+                        if "run_id" not in data:
+                            identity_issues.append(f"{rel}: missing run_id")
+                        if "timestamp" not in data and "generated_at" not in data:
+                            identity_issues.append(f"{rel}: missing timestamp")
+                except (json.JSONDecodeError, UnicodeDecodeError, OSError):
+                    pass
+
+            path_parts = Path(rel).parts
+            if not any(p.startswith("m9-") or p.startswith("vea-") or p.startswith("ai-") for p in path_parts):
+                generator_issues.append(f"{rel}: not in m9-/vea-/ai- generator path")
 
         if stale_artifacts:
             findings.append(DriftFinding(
@@ -189,6 +205,30 @@ class ArtifactFreshnessDetector:
                 source_evidence=f"Stale artifacts: {', '.join(stale_artifacts[:5])}"
                 + (f" (+{len(stale_artifacts)-5} more)" if len(stale_artifacts) > 5 else ""),
                 severity="MEDIUM",
+            ))
+
+        if identity_issues:
+            findings.append(DriftFinding(
+                check_name="artifact_identity",
+                detected_component=str(generated_root),
+                expected_authority="All JSON artifacts have run_id and timestamp",
+                actual_authority=f"{len(identity_issues)} identity issues",
+                classification="ARTIFACT_INTEGRITY_DEFECT",
+                source_evidence=f"Identity issues: {', '.join(identity_issues[:5])}"
+                + (f" (+{len(identity_issues)-5} more)" if len(identity_issues) > 5 else ""),
+                severity="MEDIUM",
+            ))
+
+        if generator_issues:
+            findings.append(DriftFinding(
+                check_name="artifact_generator",
+                detected_component=str(generated_root),
+                expected_authority="Artifacts in m9-/vea-/ai- generator paths",
+                actual_authority=f"{len(generator_issues)} generator mismatches",
+                classification="ARTIFACT_INTEGRITY_DEFECT",
+                source_evidence=f"Generator issues: {', '.join(generator_issues[:5])}"
+                + (f" (+{len(generator_issues)-5} more)" if len(generator_issues) > 5 else ""),
+                severity="LOW",
             ))
 
         return findings
