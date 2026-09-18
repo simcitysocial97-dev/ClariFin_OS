@@ -819,19 +819,66 @@ class ControlPlane:
             return 1
         return 0
 
+    def diagnose(self) -> Any:
+        """Return FrameworkIntegrityResult for the verification framework."""
+        from runtime.foundation.verification.framework_integrity import (
+            FrameworkIntegrityResult,
+            FrameworkSelfTests,
+        )
+        from runtime.foundation.verification.authority_drift_detector import (
+            run_authority_drift_detection,
+        )
+
+        drift = run_authority_drift_detection()
+        integrity = FrameworkIntegrityResult.from_drift_report(
+            drift,
+            artifact_summary={"detector": "authority_drift_detector"},
+        )
+        self_tests = FrameworkSelfTests()
+        test_result = self_tests.run_all()
+        all_findings = list(integrity.findings) + list(test_result.findings)
+        return FrameworkIntegrityResult(
+            health=integrity.health,
+            critical_count=integrity.critical_count + test_result.critical_count,
+            high_count=integrity.high_count + test_result.high_count,
+            medium_count=integrity.medium_count + test_result.medium_count,
+            low_count=integrity.low_count + test_result.low_count,
+            info_count=integrity.info_count + test_result.info_count,
+            total_findings=len(all_findings),
+            findings=all_findings,
+            artifact_summary={"detector": "authority_drift_detector"},
+            diagnostic={
+                "self_tests": test_result.diagnostic.get("self_tests", {}),
+                "passed": test_result.diagnostic.get("passed", 0),
+                "total": test_result.diagnostic.get("total", 0),
+            },
+        )
+
     def doctor(self) -> int:
         """
         Framework health/integrity diagnostics.
 
         This is for the verification framework itself rather than application verification.
+        Includes authority drift detection from the authority_drift_detector module.
+        Returns FrameworkIntegrityResult via diagnose(); int for CLI compatibility.
         """
-        # Delegates to health module which already exists
         from runtime.system.observability.health_report import EngineeringHealthReport
 
         report = EngineeringHealthReport()
         output = report.generate()
         print(output)
-        return 0 if "FAIL" not in output else 1
+
+        integrity = self.diagnose()
+        if integrity.healthy:
+            print("\nFramework authority integrity: HEALTHY")
+        else:
+            print("\nFramework authority integrity: DEGRADED")
+            for f in integrity.findings:
+                print(f"  [{f.severity.upper()}] {f.check_name}: {f.detected_component}")
+                print(f"    Expected: {f.expected_authority}")
+                print(f"    Actual:   {f.actual_authority}")
+
+        return 0 if "FAIL" not in output and integrity.healthy else 1
 
     # ── INTERNAL HELPERS ────────────────────────────────────────────────────
 
