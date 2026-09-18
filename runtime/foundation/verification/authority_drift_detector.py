@@ -529,6 +529,13 @@ class CLIDriftDetector:
 class CIDriftDetector:
     """Detect CI workflow bypasses and unauthorized verification paths."""
 
+    # Workflows where continue-on-error is intentional (diagnostic/reconciliation
+    # need to capture evidence regardless of pass/fail).
+    INTENTIONAL_CONTINUE_ON_ERROR_WORKFLOWS = {
+        "m9-forensic-diagnostic-lab",
+        "verification-reconcile",
+    }
+
     def check(self) -> list[DriftFinding]:
         findings: list[DriftFinding] = []
 
@@ -539,15 +546,14 @@ class CIDriftDetector:
         for wf_file in sorted(workflows_dir.glob("*.yml")):
             source = wf_file.read_text(encoding="utf-8")
             rel = str(wf_file.relative_to(REPO_ROOT))
+            wf_name = wf_file.stem
 
             # Check for direct tool invocations (not via python -m runtime.verify)
             for line in source.splitlines():
                 stripped = line.strip()
-                # Look for run: lines that invoke verification tools directly
                 if stripped.startswith("run:") or stripped.startswith("- run:"):
                     run_content = stripped.lstrip("- ").replace("run:", "").strip()
                     if ("pytest" in run_content or "mutmut" in run_content or "ruff" in run_content) and "runtime.verify" not in run_content and "mutmut" not in run_content.split()[-1:]:
-                        # Allow CodeQL and other specialized tools
                         if any(tool in run_content for tool in ["codeql", "dependabot", "release"]):
                             continue
                         findings.append(DriftFinding(
@@ -560,19 +566,30 @@ class CIDriftDetector:
                             check_name="ci_direct_tool_invocation",
                         ))
 
-            # Check for continue-on-error: true
+            # Check for continue-on-error: true — classify based on workflow intent
             if "continue-on-error" in source and "true" in source:
                 for i, line in enumerate(source.splitlines(), 1):
                     if "continue-on-error" in line and "true" in line:
-                        findings.append(DriftFinding(
-                            detected_component=rel,
-                            expected_authority="No continue-on-error: true",
-                            actual_authority="continue-on-error: true",
-                            classification=DriftClassification.CI_BYPASS,
-                            source_evidence=f"Workflow {wf_file.name} line {i}: continue-on-error may suppress verification failures",
-                            severity=Severity.MEDIUM,
-                            check_name="ci_suppress_failure",
-                        ))
+                        if wf_name in self.INTENTIONAL_CONTINUE_ON_ERROR_WORKFLOWS:
+                            findings.append(DriftFinding(
+                                detected_component=rel,
+                                expected_authority="continue-on-error: true allowed for diagnostic/reconciliation",
+                                actual_authority="continue-on-error: true",
+                                classification=DriftClassification.FALSE_POSITIVE,
+                                source_evidence=f"Workflow {wf_file.name} line {i}: continue-on-error is intentional — {wf_name} workflow requires evidence capture regardless of pass/fail",
+                                severity=Severity.LOW,
+                                check_name="ci_continue_on_error_intentional",
+                            ))
+                        else:
+                            findings.append(DriftFinding(
+                                detected_component=rel,
+                                expected_authority="No continue-on-error: true",
+                                actual_authority="continue-on-error: true",
+                                classification=DriftClassification.CI_BYPASS,
+                                source_evidence=f"Workflow {wf_file.name} line {i}: continue-on-error may suppress verification failures",
+                                severity=Severity.MEDIUM,
+                                check_name="ci_suppress_failure",
+                            ))
 
         return findings
 
