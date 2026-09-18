@@ -189,11 +189,11 @@ class TestCommandDocumentation:
             cwd=REPO_ROOT,
         )
         output = result.stdout + result.stderr
-        assert "Profiles:" in output, "Should list profiles in help"
-        assert "Commands:" in output, "Should list commands in help"
+        assert "Canonical operations:" in output, "Should list canonical operations"
+        assert "check" in output and "doctor" in output, "Should list core commands"
 
     def test_verify_py_status_works(self) -> None:
-        """verify.py status command works."""
+        """verify.py status command routes through canonical path."""
         result = subprocess.run(
             ["python", "runtime/verify.py", "status"],
             capture_output=True,
@@ -201,8 +201,8 @@ class TestCommandDocumentation:
             timeout=10,
             cwd=REPO_ROOT,
         )
-        output = result.stdout
-        assert "Repository Status" in output, "Status command should show repo status"
+        output = result.stdout + result.stderr
+        assert "doctor" in output.lower() or "health" in output.lower(), "Status should route to doctor/health"
 
     def test_verify_py_env_check_works(self) -> None:
         """verify.py env-check command works."""
