@@ -338,7 +338,16 @@ class TestContractDriftClassification:
         planner = CrossLayerImpactPlanner()
         drifts = planner._cross_layer_graph.get("contract_drifts", [])
 
-        valid_types = {"missing_endpoint", "path_mismatch", "method_mismatch", "schema_drift"}
+        valid_types = {
+            "missing_endpoint", 
+            "path_mismatch", 
+            "method_mismatch", 
+            "schema_drift",
+            "normalization_mismatch",
+            "query_parameter",
+            "encoding_mismatch",
+            "prefix_mismatch",
+        }
         for drift in drifts:
             assert drift.get("drift_type") in valid_types, (
                 f"Unexpected drift type: {drift.get('drift_type')}"

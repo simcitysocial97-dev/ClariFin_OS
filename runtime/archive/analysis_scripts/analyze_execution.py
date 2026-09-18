@@ -26,19 +26,29 @@ def load_topology():
     )
 
 
+def load_inventory():
+    return json.loads(
+        (REPO / "runtime" / "generated" / "architecture-inventory.json").read_text()
+    )
+
+
 def router_endpoints(router_rel):
     f = REPO / router_rel
     if not f.exists():
         return []
     text = f.read_text(encoding="utf-8", errors="ignore")
+    # Extract router prefix
+    prefix_match = re.search(r'APIRouter\([^)]*prefix\s*=\s*["\']([^"\']+)["\']', text)
+    prefix = prefix_match.group(1) if prefix_match else ""
     eps = re.findall(
         r'@router\.(get|post|put|delete|patch)\(\s*["\']([^"\']+)["\']', text
     )
-    return [f"{m.upper()} {p}" for m, p in eps]
+    return [f"{m.upper()} {prefix}{p}" for m, p in eps]
 
 
 def build():
     topo = load_topology()
+    inventory = load_inventory()
     nodes = {}
     edges = []
 
@@ -56,8 +66,12 @@ def build():
             }
         )
 
-    # endpoint -> router map (for all routers seen in topology)
+    # endpoint -> router map (all routers from inventory, not just engine-owned)
     all_routers = set()
+    for mod in inventory.get("modules", []):
+        if mod.get("node_type") == "Router":
+            all_routers.add(mod["path"])
+    # Also include routers from topology for completeness
     for e in topo["engines"].values():
         all_routers.update(e["routers"])
     endpoint_to_router = {}
@@ -170,6 +184,60 @@ def build():
                     repid, dbid, f"{repo} opens connection to finance.db", "persistence"
                 )
 
+    # Platform routers: endpoints and services not tied to any capability/engine
+    platform_routers = sorted(
+        r for r in all_routers if r not in {rr for e in topo["engines"].values() for rr in e["routers"]}
+    )
+    for router_rel in platform_routers:
+        rid = f"router:{router_rel}"
+        node(rid, "Router", router_rel)
+        for ep in sorted(router_ep_map.get(router_rel, [])):
+            ep_id = f"endpoint:{ep}"
+            node(ep_id, "Endpoint", ep)
+            edge(
+                ep_id,
+                rid,
+                f"{ep} is defined by @router decorator in {router_rel}",
+                "dispatch",
+            )
+        for svc in sorted(service_imports_in_router(router_rel)):
+            sid = f"service:{svc}"
+            # Only create service node if service file exists
+            svc_path = REPO / svc
+            if svc_path.exists():
+                node(sid, "Service", svc)
+                edge(rid, sid, f"{router_rel} instantiates/calls {svc} service", "business")
+
+    # Engine-owned routers without capabilities (account_engine, balance_engine, etc.)
+    # These routers belong to engines but their engines have no capabilities,
+    # so they aren't covered by the capability loop above.
+    capability_routers = set()
+    for _cap, engines in cap_to_engines.items():
+        for ename in engines:
+            capability_routers.update(topo["engines"][ename]["routers"])
+    engine_only_routers = sorted(
+        r for r in all_routers
+        if r not in platform_routers and r not in capability_routers
+    )
+    for router_rel in engine_only_routers:
+        rid = f"router:{router_rel}"
+        node(rid, "Router", router_rel)
+        for ep in sorted(router_ep_map.get(router_rel, [])):
+            ep_id = f"endpoint:{ep}"
+            node(ep_id, "Endpoint", ep)
+            edge(
+                ep_id,
+                rid,
+                f"{ep} is defined by @router decorator in {router_rel}",
+                "dispatch",
+            )
+        for svc in sorted(service_imports_in_router(router_rel)):
+            sid = f"service:{svc}"
+            svc_path = REPO / svc
+            if svc_path.exists():
+                node(sid, "Service", svc)
+                edge(rid, sid, f"{router_rel} instantiates/calls {svc} service", "business")
+
     out = {
         "generated_at": datetime.now().isoformat(),
         "description": "Execution graph: runtime call path. Traverses implementation modules. "
@@ -208,6 +276,16 @@ def service_imports_in_router(router_rel):
             s1 = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", cls)
             base = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s1).lower().replace(".py", "")
             found.append(f"backend/src/services/{base}.py")
+    # Platform service imports: runtime.platform.api.services.*
+    for m in re.finditer(
+        r"from\s+runtime\.platform\.api\.services\s+import\s+\(([^\)]+)\)", text
+    ):
+        for cls in re.findall(r"(\w+)", m.group(1)):
+            found.append(f"runtime/platform/api/services/{cls.lower()}.py")
+    for m in re.finditer(
+        r"from\s+runtime\.platform\.api\.services\.(\w+)\s+import", text
+    ):
+        found.append(f"runtime/platform/api/services/{m.group(1)}.py")
     # dedupe preserving order
     seen, out = set(), []
     for x in found:

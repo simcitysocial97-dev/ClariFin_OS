@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-09-10T08:45:54.847417",
-  "total_modules": 1464,
+  "generated_at": "2026-09-18T07:36:47.383873",
+  "total_modules": 1472,
   "type_counts": {
-    "Utility": 1036,
-    "Artifact Producer": 93,
+    "Utility": 1041,
+    "Artifact Producer": 96,
     "Service": 49,
     "Engine Module": 48,
     "Router": 37,
@@ -5642,6 +5642,7 @@
         "typing.Any",
         "typing.Literal",
         "pydantic.BaseModel",
+        "pydantic.ConfigDict",
         "pydantic.Field"
       ],
       "classes": [
@@ -5658,10 +5659,7 @@
         "ReconciliationsListResponse",
         "ReconciliationScanResponse",
         "ReconciliationDiscrepancyResponse",
-        "ReconciliationAuditResponse",
-        "Config",
-        "Config",
-        "Config"
+        "ReconciliationAuditResponse"
       ],
       "functions": [],
       "decorators": [],
@@ -5674,11 +5672,11 @@
       "node_type": "DTO",
       "imports": [
         "pydantic.BaseModel",
+        "pydantic.ConfigDict",
         "pydantic.Field"
       ],
       "classes": [
-        "StatementDTO",
-        "Config"
+        "StatementDTO"
       ],
       "functions": [],
       "decorators": [],
@@ -5793,6 +5791,7 @@
         "typing.Any",
         "typing.Literal",
         "pydantic.BaseModel",
+        "pydantic.ConfigDict",
         "pydantic.Field"
       ],
       "classes": [
@@ -5808,8 +5807,7 @@
         "ForecastDTO",
         "ForecastNetWorthResponse",
         "ForecastCashflowResponse",
-        "ForecastScenariosResponse",
-        "Config"
+        "ForecastScenariosResponse"
       ],
       "functions": [],
       "decorators": [],
@@ -5822,13 +5820,12 @@
       "node_type": "DTO",
       "imports": [
         "pydantic.BaseModel",
+        "pydantic.ConfigDict",
         "pydantic.Field"
       ],
       "classes": [
         "AccountDTO",
-        "AccountListResponse",
-        "Config",
-        "Config"
+        "AccountListResponse"
       ],
       "functions": [],
       "decorators": [],
@@ -5843,6 +5840,7 @@
         "typing.Any",
         "typing.Literal",
         "pydantic.BaseModel",
+        "pydantic.ConfigDict",
         "pydantic.Field"
       ],
       "classes": [
@@ -5861,8 +5859,7 @@
         "LoansDTO",
         "LoansAmortizationResponse",
         "LoansPaymentProgressResponse",
-        "LoansInterestAnalysisResponse",
-        "Config"
+        "LoansInterestAnalysisResponse"
       ],
       "functions": [],
       "decorators": [],
@@ -5877,6 +5874,7 @@
         "typing.Any",
         "typing.Literal",
         "pydantic.BaseModel",
+        "pydantic.ConfigDict",
         "pydantic.Field"
       ],
       "classes": [
@@ -5892,8 +5890,7 @@
         "BehaviourDTO",
         "BehaviourPatternsResponse",
         "BehaviourSavingsResponse",
-        "BehaviourDebtResponse",
-        "Config"
+        "BehaviourDebtResponse"
       ],
       "functions": [],
       "decorators": [],
@@ -5908,6 +5905,7 @@
         "typing.Any",
         "typing.Literal",
         "pydantic.BaseModel",
+        "pydantic.ConfigDict",
         "pydantic.Field"
       ],
       "classes": [
@@ -5925,8 +5923,7 @@
         "AccountLinkDTO",
         "AccountAnalyticsDTO",
         "AccountsHistoryResponse",
-        "AccountsTransactionsResponse",
-        "Config"
+        "AccountsTransactionsResponse"
       ],
       "functions": [],
       "decorators": [],
@@ -5941,6 +5938,7 @@
         "typing.Any",
         "typing.Literal",
         "pydantic.BaseModel",
+        "pydantic.ConfigDict",
         "pydantic.Field"
       ],
       "classes": [
@@ -5955,8 +5953,7 @@
         "CashflowSummaryDTO",
         "CashflowMonthlyResponse",
         "CashflowCategoryResponse",
-        "CashflowTransactionResponse",
-        "Config"
+        "CashflowTransactionResponse"
       ],
       "functions": [],
       "decorators": [],
@@ -5970,15 +5967,13 @@
       "imports": [
         "typing.Any",
         "pydantic.BaseModel",
+        "pydantic.ConfigDict",
         "pydantic.Field"
       ],
       "classes": [
         "DashboardSummaryDTO",
         "OverviewDTO",
-        "CategoryBreakdownDTO",
-        "Config",
-        "Config",
-        "Config"
+        "CategoryBreakdownDTO"
       ],
       "functions": [],
       "decorators": [],
@@ -5993,6 +5988,7 @@
         "typing.Any",
         "typing.Literal",
         "pydantic.BaseModel",
+        "pydantic.ConfigDict",
         "pydantic.Field"
       ],
       "classes": [
@@ -6007,8 +6003,7 @@
         "InvestmentsDTO",
         "InvestmentsPerformanceResponse",
         "InvestmentsAllocationResponse",
-        "InvestmentsHoldingsResponse",
-        "Config"
+        "InvestmentsHoldingsResponse"
       ],
       "functions": [],
       "decorators": [],
@@ -6023,6 +6018,7 @@
         "typing.Any",
         "typing.Literal",
         "pydantic.BaseModel",
+        "pydantic.ConfigDict",
         "pydantic.Field"
       ],
       "classes": [
@@ -6040,8 +6036,7 @@
         "CreditCardsDTO",
         "CreditCardsStatementResponse",
         "CreditCardsUtilizationResponse",
-        "CreditCardsSpendingResponse",
-        "Config"
+        "CreditCardsSpendingResponse"
       ],
       "functions": [],
       "decorators": [],
@@ -6055,6 +6050,7 @@
       "imports": [
         "typing.Any",
         "pydantic.BaseModel",
+        "pydantic.ConfigDict",
         "pydantic.Field"
       ],
       "classes": [
@@ -6063,8 +6059,7 @@
         "MerchantData",
         "RecurringCharge",
         "LargestTransaction",
-        "AnalyticsResponse",
-        "Config"
+        "AnalyticsResponse"
       ],
       "functions": [],
       "decorators": [],
@@ -6079,6 +6074,7 @@
         "typing.Any",
         "typing.Literal",
         "pydantic.BaseModel",
+        "pydantic.ConfigDict",
         "pydantic.Field"
       ],
       "classes": [
@@ -6092,8 +6088,7 @@
         "NetWorthEvidenceChainDTO",
         "NetWorthDTO",
         "NetWorthHistoryResponse",
-        "NetWorthInsightsResponse",
-        "Config"
+        "NetWorthInsightsResponse"
       ],
       "functions": [],
       "decorators": [],
@@ -6106,17 +6101,14 @@
       "node_type": "DTO",
       "imports": [
         "pydantic.BaseModel",
+        "pydantic.ConfigDict",
         "pydantic.Field"
       ],
       "classes": [
         "MoneyDTO",
         "TransactionDTO",
         "TransactionListResponse",
-        "CategorySummaryDTO",
-        "Config",
-        "Config",
-        "Config",
-        "Config"
+        "CategorySummaryDTO"
       ],
       "functions": [],
       "decorators": [],
@@ -6732,12 +6724,13 @@
         "pathlib.Path",
         "typing.Any",
         "runtime.foundation.verification.control_plane_facade.main",
+        "sys",
         "runtime.system.observability.event_store.EngineeringEventStore",
         "runtime.system.observability.event_store.create_event",
         "runtime.system.observability.execution_context.create_context",
         "runtime.system.observability.repository.LocalMetricsRepository",
         "runtime.system.observability.repository.RunRecord",
-        "logging"
+        "runtime.foundation.verification.structured_logging.get_logger"
       ],
       "classes": [],
       "functions": [
@@ -6746,7 +6739,17 @@
         "_resolve_repository_identity",
         "_record_verification_event",
         "record_execution_report",
-        "main"
+        "main",
+        "cmd_plan",
+        "cmd_local_gate",
+        "cmd_deep_contract",
+        "cmd_exec_evidence",
+        "cmd_diagnose_failures",
+        "cmd_intelligence",
+        "execution_status",
+        "cmd_reconcile",
+        "cmd_audit",
+        "_delegate"
       ],
       "decorators": [],
       "docstring": "ClariFin OS \u2014 Autonomous Verification Runtime (Program 7B)\nM9-C49: Control Plane Consolidation\nM9-C57: Canonical Runtime & Reproducible Environment Convergence\n\nThis is the THIN COMPATIBILITY SHIM for the verification runtime.\nAll operator/AI commands flow through the SINGLE canonical control plane\ndefined in runtime/foundation/verification/canonical_control_plane.py.\n\nLegacy commands (~97 tokens) are routed through the canonical control plane\nwith explicit deprecation warnings \u2014 no second semantic authority exists.\n\nCanonical execution contract (M9-C57)\n-------------------------------------\nThis module MUST be executed as a module from the repository root, through\nthe repository-managed interpreter:\n\n    python -m runtime.verify <command>        # canonical\n\nDo NOT execute this file directly (`python runtime/verify.py`). Direct script\nexecution makes CPython place `runtime/` at sys.path[0], which shadows the\nstdlib `platform` module with the internal `runtime/platform` package \u2014 the\nexact failure class M9-C57 eliminates. Under module execution with cwd =\nrepo root, `import platform` resolves to the stdlib by architecture and\n`runtime.platform` resolves through its explicit package path; no sys.path\nmanipulation is required or performed in this entry point.",
@@ -7504,7 +7507,8 @@
         "analytics.AnalyticsReport",
         "cost_analysis.CostAnalysis",
         "dependency_growth.DependencyGrowthIntelligence",
-        "flaky_tests.FlakyTestIntelligence"
+        "flaky_tests.FlakyTestIntelligence",
+        "runtime.foundation.verification.cache.VerificationCache"
       ],
       "classes": [
         "EngineeringHealthReport"
@@ -7519,6 +7523,7 @@
         "_append_ci_metrics",
         "_append_planner_performance",
         "_append_cache_effectiveness",
+        "_append_stale_cache_detection",
         "_append_dependency_growth",
         "_append_verification_cost",
         "_append_frequently_changing_layers",
@@ -7758,6 +7763,7 @@
         "__future__.annotations",
         "dataclasses.dataclass",
         "dataclasses.field",
+        "datetime.UTC",
         "datetime.datetime",
         "pathlib.Path",
         "typing.Any",
@@ -7905,6 +7911,7 @@
       "imports": [
         "__future__.annotations",
         "dataclasses.asdict",
+        "datetime.UTC",
         "datetime.datetime",
         "pathlib.Path",
         "typing.Any",
@@ -7954,6 +7961,7 @@
         "json",
         "dataclasses.dataclass",
         "dataclasses.field",
+        "datetime.UTC",
         "datetime.datetime",
         "pathlib.Path",
         "typing.Any"
@@ -8095,6 +8103,7 @@
         "abc.abstractmethod",
         "dataclasses.asdict",
         "dataclasses.dataclass",
+        "datetime.UTC",
         "datetime.datetime",
         "pathlib.Path",
         "typing.Any"
@@ -8425,6 +8434,7 @@
       "classes": [],
       "functions": [
         "load_topology",
+        "load_inventory",
         "router_endpoints",
         "build",
         "service_imports_in_router",
@@ -9511,8 +9521,8 @@
       "node_type": "Utility",
       "imports": [
         "__future__.annotations",
-        "logging",
         "typing.Any",
+        "runtime.foundation.verification.structured_logging.get_logger",
         "runtime.platform.diagnostics.engine",
         "runtime.platform.api.services.change",
         "runtime.platform.api.services.history",
@@ -10614,8 +10624,8 @@
       "node_type": "Utility",
       "imports": [
         "__future__.annotations",
-        "logging",
         "typing.Any",
+        "runtime.foundation.verification.structured_logging.get_logger",
         "runtime.platform.api.services.architecture",
         "runtime.platform.api.services.capabilities",
         "runtime.platform.api.services.change",
@@ -10881,6 +10891,7 @@
       "functions": [
         "_canonical_value",
         "serialize_context_pack",
+        "_compute_pack_id",
         "compute_pack_id",
         "estimate_tokens",
         "compute_pack_checksum"
@@ -10937,7 +10948,7 @@
         "runtime.platform.ai.context.provenance.ProvenanceTracker",
         "runtime.platform.ai.context.provenance.build_provenance",
         "runtime.platform.ai.context.ranker.RankedComponent",
-        "runtime.platform.ai.context.serializer.compute_pack_id",
+        "runtime.platform.ai.context.serializer._compute_pack_id",
         "runtime.platform.ai.context.serializer.estimate_tokens",
         "runtime.platform.ai.context.trimmer.TRIMMER_INSTANCE",
         "runtime.platform.ai.context.trimmer.Trimmer",
@@ -11417,6 +11428,30 @@
       "engine_name": ""
     },
     {
+      "path": "runtime/foundation/verification/history_migration.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "hashlib",
+        "json",
+        "uuid",
+        "datetime.UTC",
+        "datetime.datetime",
+        "pathlib.Path",
+        "typing.Any"
+      ],
+      "classes": [],
+      "functions": [
+        "_normalize_status",
+        "_run_id_to_event_id",
+        "migrate"
+      ],
+      "decorators": [],
+      "docstring": "One-shot migration: engineering-history.json \u2192 engineering-events.jsonl.\n\nImports executed verification runs from the legacy history file into the\nJSONL event store so that ``AnalyticsEngine`` can see them. Only runs with\na canonical outcome (``passed`` or ``failed``, after normalising the\nlegacy ``pass``/``fail`` shorthand) are imported \u2014 plan-only stubs with\nzero duration and no evidence are skipped.\n\nIdempotency guard: if the event store already contains more than 100\nentries the migration is skipped entirely. This prevents duplicate\nimport on repeated runs without requiring an explicit migration manifest\ncheck.\n\nMigration manifest is written to\n``runtime/generated/migration-history-to-events.json`` for auditability.",
+      "engine_name": ""
+    },
+    {
       "path": "runtime/foundation/verification/catalog_certification.py",
       "language": "python",
       "node_type": "Artifact Producer",
@@ -11464,6 +11499,70 @@
       ],
       "decorators": [],
       "docstring": "",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "language": "python",
+      "node_type": "Artifact Producer",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "logging",
+        "os",
+        "subprocess",
+        "tempfile",
+        "pathlib.Path",
+        "typing.Dict",
+        "typing.List",
+        "typing.Optional",
+        "typing.Set",
+        "runtime.foundation.verification.symbol_resolver.Symbol",
+        "sys"
+      ],
+      "classes": [
+        "TypeScriptSymbol",
+        "TypeScriptSymbolExtractor",
+        "TypeScriptCoverageSymbolMapper"
+      ],
+      "functions": [
+        "__init__",
+        "__repr__",
+        "to_dict",
+        "from_dict",
+        "to_symbol",
+        "symbol_id",
+        "__init__",
+        "_load_cache",
+        "_save_cache",
+        "_run_ts_resolver",
+        "extract_from_file",
+        "extract_from_directory",
+        "get_symbol_at_line",
+        "get_react_components",
+        "get_hooks",
+        "get_api_client_calls",
+        "get_exported_symbols",
+        "invalidate_cache",
+        "find_symbol_by_name",
+        "__init__",
+        "_load_symbol_test_map",
+        "_save_symbol_test_map",
+        "load_coverage_data",
+        "map_coverage_to_symbols",
+        "get_symbols_for_test",
+        "build_symbol_to_test_map",
+        "_symbol_test_map_is_valid",
+        "_reconstruct_symbol_to_test_map",
+        "_save_symbol_test_map_from_result",
+        "get_coverage_for_symbol",
+        "list_all_covered_symbols"
+      ],
+      "decorators": [
+        "classmethod",
+        "property"
+      ],
+      "docstring": "TypeScript/TSX Symbol Resolver \u2014 Python wrapper for the ts-morph based extractor.\n\nExtends the existing symbol-resolution architecture so the framework can reason\nabout TypeScript/TSX. Uses the existing project dependency on ts-morph via a\nNode.js subprocess. Integrates with the existing SymbolExtractor caching model.",
       "engine_name": ""
     },
     {
@@ -11620,6 +11719,52 @@
       "engine_name": ""
     },
     {
+      "path": "runtime/foundation/verification/frontend_capability_discovery.py",
+      "language": "python",
+      "node_type": "Artifact Producer",
+      "imports": [
+        "__future__.annotations",
+        "dataclasses.dataclass",
+        "dataclasses.field",
+        "enum.Enum",
+        "pathlib.Path",
+        "typing.Dict",
+        "typing.List",
+        "runtime.foundation.verification.typescript_symbol_resolver.TypeScriptSymbol",
+        "runtime.foundation.verification.typescript_symbol_resolver.TypeScriptSymbolExtractor",
+        "pathlib.Path",
+        "re",
+        "runtime.foundation.verification.frontend_backend_map.FrontendBackendMapper",
+        "re",
+        "json",
+        "re"
+      ],
+      "classes": [
+        "FrontendCapabilityKind",
+        "FrontendCapability",
+        "FrontendCapabilityDiscoverer"
+      ],
+      "functions": [
+        "to_dict",
+        "__init__",
+        "frontend_backend_mapper",
+        "_classify_file",
+        "_extract_domain",
+        "_get_api_dependencies",
+        "_get_backend_capabilities",
+        "_build_endpoint_capability_map",
+        "_endpoints_match",
+        "_find_test_files",
+        "discover_capabilities",
+        "normalize"
+      ],
+      "decorators": [
+        "property"
+      ],
+      "docstring": "Frontend Capability Discovery \u2014 Maps frontend symbols to capability identifiers.\n\nThis module extends the existing capability model to represent frontend\nresponsibility without creating a parallel capability registry.",
+      "engine_name": ""
+    },
+    {
       "path": "runtime/foundation/verification/canonical_control_plane.py",
       "language": "python",
       "node_type": "Utility",
@@ -11755,7 +11900,9 @@
         "runtime.foundation.verification.shared_impact.get_shared_dependency_index",
         "runtime.foundation.verification.evidence_reuse.c42_24_b_measurements",
         "runtime.foundation.verification.evidence_reuse.c42_25_measurements",
-        "runtime.foundation.verification.evidence_reuse.c42_26_population"
+        "runtime.foundation.verification.evidence_reuse.c42_26_population",
+        "runtime.foundation.verification.semantics.blast_radius.compute_financial_blast_radius",
+        "runtime.foundation.verification.semantics.concepts.FINANCIAL_CONCEPTS"
       ],
       "classes": [
         "ChangeClassification",
@@ -11905,6 +12052,7 @@
         "__future__.annotations",
         "hashlib",
         "json",
+        "sys",
         "dataclasses.asdict",
         "dataclasses.dataclass",
         "dataclasses.field",
@@ -11930,9 +12078,12 @@
         "runtime.foundation.verification.graph_model.VerificationGraph",
         "runtime.foundation.verification.measurement_truth.MeasurementKind",
         "runtime.foundation.verification.planner.VerificationPlanner",
+        "runtime.foundation.verification.symbol_test_selector.SymbolTestSelector",
         "runtime.foundation.verification.evidence_reuse.c42_24_b_measurements",
         "runtime.foundation.verification.evidence_reuse.c42_25_measurements",
-        "runtime.foundation.verification.evidence_reuse.c42_26_population"
+        "runtime.foundation.verification.evidence_reuse.c42_26_population",
+        "runtime.foundation.verification.blast_radius.BlastRadiusEngine",
+        "runtime.foundation.verification.e2e_route_mapper.E2ERouteMapper"
       ],
       "classes": [
         "VerificationTask",
@@ -13337,6 +13488,8 @@
         "_write_summary",
         "_write_measurement_truth",
         "_print_report",
+        "get_affected_engines_from_files",
+        "_collect_changed_files",
         "run_mutation_cli",
         "__init__",
         "_hash_file",
@@ -13401,7 +13554,8 @@
         "pathlib.Path",
         "typing.Any",
         "typing.Literal",
-        "runtime.foundation.verification.evidence_reuse.C42_26_COMPONENTS"
+        "runtime.foundation.verification.evidence_reuse.C42_26_COMPONENTS",
+        "runtime.foundation.verification.semantics.blast_radius._FinancialBlastRadius"
       ],
       "classes": [
         "StageValidation",
@@ -13432,7 +13586,10 @@
         "_answer_q6",
         "_answer_q7",
         "_answer_q8",
-        "_answer_q9"
+        "_answer_q9",
+        "_answer_q10",
+        "_diagnose_financial_semantics",
+        "_answer_q11"
       ],
       "decorators": [
         "property",
@@ -13537,12 +13694,15 @@
         "__future__.annotations",
         "hashlib",
         "json",
+        "re",
+        "subprocess",
         "dataclasses.asdict",
         "dataclasses.dataclass",
         "dataclasses.field",
         "datetime.UTC",
         "datetime.datetime",
         "enum.Enum",
+        "pathlib.Path",
         "runtime.foundation.verification.capability_contract.CapabilityContractRegistry",
         "runtime.foundation.verification.capability_contract.get_capability_contract_registry",
         "runtime.foundation.verification.capability_resolver.CapabilityResolution",
@@ -13558,7 +13718,9 @@
         "runtime.foundation.verification.evidence_reuse.c42_25_measurements",
         "runtime.foundation.verification.evidence_reuse.c42_26_population",
         "runtime.foundation.verification.shared_impact.SharedDependencyIndex",
-        "runtime.foundation.verification.shared_impact.get_shared_dependency_index"
+        "runtime.foundation.verification.shared_impact.get_shared_dependency_index",
+        "symbol_resolver.SymbolExtractor",
+        "e2e_route_mapper.E2ERouteMapper"
       ],
       "classes": [
         "ImpactKind",
@@ -13585,6 +13747,7 @@
         "compute_fingerprint",
         "__init__",
         "compute",
+        "compute_changed_symbols",
         "_build_surface_impacts",
         "_surface_maps_to_capability",
         "_build_capability_impacts",
@@ -13600,7 +13763,8 @@
         "_collect_affected_components",
         "_collect_shared_expansions",
         "_collect_required_tests",
-        "_collect_affected_workflows"
+        "_collect_affected_workflows",
+        "compute_e2e_impact"
       ],
       "decorators": [],
       "docstring": "M9-C50 \u2014 Canonical Blast-Radius Contract.\n\nThe single canonical deterministic contract representing change impact.\nAnswers the 15 questions required by the C50 spec:\n\n1. what changed?\n2. which files/surfaces changed?\n3. which capabilities are affected?\n4. which components are affected?\n5. which shared dependencies caused expansion?\n6. which verification surfaces are affected?\n7. which tests are required?\n8. which workflows are affected?\n9. which evidence became stale?\n10. what can safely be reused?\n11. what must be revalidated?\n12. what cannot currently be mapped?\n13. why was each item included?\n14. what is the minimum safe verification scope?\n15. what is the escalation condition?\n\nEvery impact decision has machine-readable provenance/reasons.\n\nThis module is additive on top of the C42/C47/C48/C49 architecture.\nIt does not create a duplicate representation \u2014 it extends the existing\ncontracts (CapabilityResolution, ControlPlanePlan, ExecutionPlan) with\na unified blast-radius view.",
@@ -14126,6 +14290,54 @@
       "engine_name": ""
     },
     {
+      "path": "runtime/foundation/verification/parallel_executor.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "concurrent.futures",
+        "multiprocessing",
+        "os",
+        "dataclasses.dataclass",
+        "dataclasses.field",
+        "datetime.UTC",
+        "datetime.datetime",
+        "pathlib.Path",
+        "typing.Any",
+        "typing.Callable",
+        "subprocess"
+      ],
+      "classes": [
+        "TaskResult",
+        "TaskGroup",
+        "ExecutionReport",
+        "ParallelExecutor"
+      ],
+      "functions": [
+        "_run_task",
+        "execute_tasks_in_parallel",
+        "to_dict",
+        "to_dict",
+        "all_passed",
+        "exit_code",
+        "__init__",
+        "plan_parallel_groups",
+        "_topological_sort",
+        "execute_parallel",
+        "_execute_parallel_group",
+        "_execute_sequential_group",
+        "_can_use_pool",
+        "_visit"
+      ],
+      "decorators": [
+        "property",
+        "property",
+        "staticmethod"
+      ],
+      "docstring": "M9-C57 \u2014 Parallel execution support for independent verification tasks.\n\nGroups independent tasks into parallel bundles and executes them via\nProcessPoolExecutor while respecting dependency ordering.  Falls back\nto sequential execution when the parallel path is unavailable.\n\nDesign contract:\n  * Tasks with no inter-dependencies run in parallel.\n  * Tasks that depend on other tasks form a separate sequential group.\n  * max_workers defaults to min(cpu_count, 4).\n  * Timeout is enforced per-task, not per-group.\n  * Results are collected incrementally as each task completes.\n  * If parallel execution raises, the whole run falls back to sequential.",
+      "engine_name": ""
+    },
+    {
       "path": "runtime/foundation/verification/authorization_boundary.py",
       "language": "python",
       "node_type": "Artifact Producer",
@@ -14241,6 +14453,43 @@
       ],
       "decorators": [],
       "docstring": "",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/verification/structured_logging.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "logging",
+        "logging.handlers",
+        "sys",
+        "threading",
+        "datetime.UTC",
+        "datetime.datetime",
+        "pathlib.Path",
+        "typing.Any"
+      ],
+      "classes": [
+        "_CorrelationFilter",
+        "JSONFormatter",
+        "HumanFormatter"
+      ],
+      "functions": [
+        "_get_correlation_id",
+        "set_correlation_id",
+        "setup_logging",
+        "get_logger",
+        "add_correlation_id",
+        "get_config",
+        "reset_logging",
+        "filter",
+        "format",
+        "format"
+      ],
+      "decorators": [],
+      "docstring": "M9-C57 \u2014 Structured Logging Foundation.\n\nProvides JSON-structured logging for observability while preserving\nhuman-readable output for CLI via click.echo.\n\nDesign:\n  - File output (runtime/generated/logs/) \u2192 JSON lines for machine parsing\n  - Console output \u2192 Human-readable for operators (if console handler is used)\n  - Correlation IDs (run_id) threaded through all log entries for traceability\n  - Log levels: DEBUG (internal state), INFO (decisions), WARNING (regressions),\n               ERROR (failures), CRITICAL (system failures)\n\nUsage:\n    from runtime.foundation.verification.structured_logging import (\n        setup_logging, get_logger\n    )\n\n    setup_logging(level=\"INFO\", correlation_id=\"run-123\")\n    logger = get_logger(__name__)\n    logger.info(\"Verification started\", extra={\"profile\": \"backend\"})",
       "engine_name": ""
     },
     {
@@ -14690,6 +14939,59 @@
         "classmethod"
       ],
       "docstring": "AST-based Python symbol extractor with caching.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/verification/cross_layer_graph.py",
+      "language": "python",
+      "node_type": "Artifact Producer",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "logging",
+        "re",
+        "dataclasses.asdict",
+        "dataclasses.dataclass",
+        "dataclasses.field",
+        "pathlib.Path",
+        "typing.Dict",
+        "typing.List",
+        "typing.Optional",
+        "runtime.foundation.verification.frontend_backend_map.FrontendBackendMapper",
+        "runtime.foundation.verification.frontend_capability_discovery.FrontendCapability",
+        "runtime.foundation.verification.frontend_capability_discovery.FrontendCapabilityDiscoverer",
+        "runtime.foundation.verification.typescript_symbol_resolver.TypeScriptSymbolExtractor",
+        "pathlib.Path"
+      ],
+      "classes": [
+        "CrossLayerEdge",
+        "ContractDrift",
+        "CrossLayerGraph",
+        "CrossLayerGraphBuilder"
+      ],
+      "functions": [
+        "build_cross_layer_graph",
+        "add_edge",
+        "get_edges_from",
+        "get_edges_to",
+        "get_frontend_consumers_of_backend_endpoint",
+        "get_backend_dependencies_of_frontend_capability",
+        "to_dict",
+        "__init__",
+        "build",
+        "_load_backend_capabilities",
+        "_build_frontend_to_backend_edges",
+        "_build_backend_to_frontend_edges",
+        "_find_capability_for_file",
+        "_normalize_endpoint",
+        "_find_backend_endpoint",
+        "_detect_contract_drifts",
+        "_identify_unmapped_frontend",
+        "save_graph",
+        "load_graph"
+      ],
+      "decorators": [],
+      "docstring": "Cross-Layer Dependency Graph \u2014 Extends existing frontend/backend map with\ncapability-level relationships, confidence scoring, and evidence tracking.\n\nThis module builds upon the existing frontend_backend_map.py and\nfrontend_backend_gate.py without replacing them.",
       "engine_name": ""
     },
     {
@@ -15455,6 +15757,7 @@
       "imports": [
         "__future__.annotations",
         "json",
+        "os",
         "sys",
         "pathlib.Path",
         "typing.Any",
@@ -15526,7 +15829,8 @@
         "runtime.foundation.verification.measurement_truth_integration.get_measurement_truth_integrator",
         "runtime.foundation.verification.help_resolver.cmd_help_resolve",
         "runtime.system.observability.health_report.EngineeringHealthReport",
-        "runtime.foundation.verification.evidence_retention.cmd_evidence_cleanup"
+        "runtime.foundation.verification.evidence_retention.cmd_evidence_cleanup",
+        "runtime.foundation.verification.frontend_backend_gate.run_gate"
       ],
       "classes": [
         "ControlPlane"
@@ -18344,6 +18648,7 @@
         "__future__.annotations",
         "dataclasses.dataclass",
         "dataclasses.field",
+        "datetime.UTC",
         "datetime.datetime",
         "enum.Enum",
         "typing.Any"
@@ -18406,6 +18711,56 @@
       ],
       "decorators": [],
       "docstring": "Scope Resolution \u2014 Phase 5\n\nDeterministic scope resolution from file paths.\nGiven a file path, determine which scopes are affected and WHY.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/verification/mutation/__init__.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "runtime.foundation.verification.mutation.survivor_enricher.EnrichedSurvivor",
+        "runtime.foundation.verification.mutation.survivor_enricher.SurvivorEnricher",
+        "runtime.foundation.verification.mutation.survivor_enricher.run_enrich_cli"
+      ],
+      "classes": [],
+      "functions": [],
+      "decorators": [],
+      "docstring": "M9-C57 \u2014 Mutation survivor enrichment sub-package.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/verification/mutation/survivor_enricher.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "dataclasses.dataclass",
+        "dataclasses.field",
+        "pathlib.Path",
+        "typing.Any",
+        "argparse",
+        "runtime.foundation.verification.semantics.concepts.FINANCIAL_CONCEPTS",
+        "runtime.foundation.verification.semantics.assertions.FINANCIAL_INVARIANTS"
+      ],
+      "classes": [
+        "EnrichedSurvivor",
+        "SurvivorEnricher"
+      ],
+      "functions": [
+        "_suggest_test_from_operator",
+        "run_enrich_cli",
+        "to_dict",
+        "__init__",
+        "enrich",
+        "enrich_batch",
+        "_enrich_one",
+        "_find_concept",
+        "_find_at_risk_invariant",
+        "_suggest_test"
+      ],
+      "decorators": [],
+      "docstring": "M9-C57 \u2014 Survivor enrichment linking mutants to financial concepts.\n\nTakes a survivor catalog (JSON produced by a mutation run) and enriches\neach surviving mutant with:\n\n  * financial concept (from FINANCIAL_CONCEPTS)\n  * at-risk invariant (from the concept's invariant list)\n  * suggested test name (derived from mutation operator + invariant)\n  * suggested assertion (the FINANCIAL_INVARIANTS remediation pattern)\n\nOutput is a list of ``EnrichedSurvivor`` records suitable for downstream\ndiagnostic and test-generation tooling.",
       "engine_name": ""
     },
     {
@@ -18493,6 +18848,7 @@
         "runtime.foundation.verification.registry.units_for_workflow",
         "runtime.foundation.architecture.chains.get_chain_map",
         "runtime.foundation.architecture.get_architecture",
+        "json",
         "runtime.foundation.intelligence.platform.blast.compute_blast_radius",
         "runtime.foundation.intelligence.platform.change.analyze_changes"
       ],
@@ -18519,8 +18875,13 @@
         "_topological_sort",
         "to_dict",
         "__init__",
+        "_load_cross_layer_graph",
+        "_find_frontend_capability",
+        "_resolve_capability_edges",
         "_load_map",
         "analyze_cross_layer_impact",
+        "_is_frontend_path",
+        "_resolve_frontend_capabilities",
         "_enrich_from_intelligence",
         "_find_chain",
         "_resolve_via_provider",
@@ -18534,6 +18895,7 @@
         "chain_for_engines"
       ],
       "decorators": [
+        "staticmethod",
         "staticmethod"
       ],
       "docstring": "Verification Planner \u2014 Phase 4 + Program 7A Cross-Layer Intelligence\n\nProduces deterministic verification plans from:\n- Changed files\n- Changed capabilities\n- Changed endpoints\n- Requested scope\n\nNo execution logic. Pure planning.\n\nProgram 7A adds CrossLayerImpactPlanner for cross-layer dependency intelligence.",
@@ -19230,19 +19592,18 @@
       "imports": [
         "__future__.annotations",
         "dataclasses.dataclass",
-        "pathlib.Path",
         "typing.Any",
+        "runtime.foundation.verification.workflow_convergence.coverage.build_coverage_matrix",
+        "runtime.foundation.verification.workflow_convergence.duplication.analyze_duplication",
+        "runtime.foundation.verification.workflow_convergence.efficiency.measure_efficiency",
+        "runtime.foundation.verification.workflow_convergence.emission.assess_ci_emission",
+        "runtime.foundation.verification.workflow_convergence.environment.build_environment_contract",
+        "runtime.foundation.verification.workflow_convergence.equivalence.check_semantic_equivalence",
+        "runtime.foundation.verification.workflow_convergence.evidence_contract.build_evidence_contract",
+        "runtime.foundation.verification.workflow_convergence.greenness.audit_workflow_greenness",
         "runtime.foundation.verification.workflow_convergence.inventory.REPO_ROOT",
         "runtime.foundation.verification.workflow_convergence.inventory.WorkflowInventory",
-        "runtime.foundation.verification.workflow_convergence.greenness.audit_workflow_greenness",
-        "runtime.foundation.verification.workflow_convergence.environment.build_environment_contract",
-        "runtime.foundation.verification.workflow_convergence.measurement_integrity.assess_measurement_integrity",
-        "runtime.foundation.verification.workflow_convergence.duplication.analyze_duplication",
-        "runtime.foundation.verification.workflow_convergence.equivalence.check_semantic_equivalence",
-        "runtime.foundation.verification.workflow_convergence.emission.assess_ci_emission",
-        "runtime.foundation.verification.workflow_convergence.efficiency.measure_efficiency",
-        "runtime.foundation.verification.workflow_convergence.evidence_contract.build_evidence_contract",
-        "runtime.foundation.verification.workflow_convergence.coverage.build_coverage_matrix"
+        "runtime.foundation.verification.workflow_convergence.measurement_integrity.assess_measurement_integrity"
       ],
       "classes": [
         "CertificationGate"
@@ -19494,6 +19855,9 @@
         "GreennessAudit"
       ],
       "functions": [
+        "_is_legitimate_always",
+        "_has_problematic_always",
+        "_has_any_always",
         "audit_workflow_greenness",
         "to_dict"
       ],

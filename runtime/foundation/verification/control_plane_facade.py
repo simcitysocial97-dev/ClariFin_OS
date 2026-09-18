@@ -37,6 +37,7 @@ Internal implementation complexity is permitted; operator-facing complexity is n
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -513,6 +514,17 @@ class ControlPlane:
             health_report = EngineeringHealthReport()
             print(health_report.generate())
             return 0
+        elif q == "evidence-cleanup":
+            from runtime.foundation.verification.evidence_retention import (
+                cmd_evidence_cleanup,
+            )
+
+            old_argv = sys.argv
+            sys.argv = ["verify.py", "evidence-cleanup"] + sys.argv[2:]
+            try:
+                return cmd_evidence_cleanup(sys.argv[2:])
+            finally:
+                sys.argv = old_argv
         elif q == "frontend-backend-sync":
             from runtime.foundation.verification.frontend_backend_gate import (
                 run_gate as _run_frontend_backend_gate,

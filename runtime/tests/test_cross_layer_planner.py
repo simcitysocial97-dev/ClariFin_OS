@@ -503,9 +503,8 @@ class TestBlastRadiusPrecisionBL002:
 
         # The blast radius must be confined to the loan engine.
         assert data["affected_engines"] == ["backend/src/engines/loan_engine"]
-        # Chain map has no frontend-capability links for backend engines
-        # (pre-existing architecture provider data gap).
-        assert data["affected_capabilities"] == []
+        # Chain map now correctly links loan_engine to its capability.
+        assert data["affected_capabilities"] == ["useLoansCapability"]
 
         # No credit-card contamination (the BL-002 over-prediction signature).
         blob = json.dumps(data).lower()

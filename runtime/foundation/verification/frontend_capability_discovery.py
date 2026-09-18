@@ -90,7 +90,7 @@ class FrontendCapability:
     domain: str
     symbols: List[TypeScriptSymbol] = field(default_factory=list)
     files: List[Path] = field(default_factory=list)
-    api_dependencies: List[str] = field(default_factory=list)
+    api_dependencies: List[dict] = field(default_factory=list)
     backend_capabilities: List[str] = field(default_factory=list)
     test_files: List[Path] = field(default_factory=list)
     e2e_files: List[Path] = field(default_factory=list)
@@ -180,34 +180,63 @@ class FrontendCapabilityDiscoverer:
         
         return "frontend-shared"
     
-    def _get_api_dependencies(self, symbols: List[TypeScriptSymbol], file_path: Path) -> List[str]:
-        """Extract API dependencies from symbols and file content."""
-        endpoints = set()
+    def _get_api_dependencies(self, symbols: List[TypeScriptSymbol], file_path: Path) -> List[dict]:
+        """Extract API dependencies from symbols and file content.
+        
+        Returns a list of dicts with 'endpoint' and 'method' keys.
+        """
+        endpoints = []
         
         try:
             content = file_path.read_text(encoding="utf-8")
             import re
-            patterns = [
-                r"""apiFetch\s*\(\s*['"`]([^'"`]+)['"`]""",
-                r"""apiFetchJson\s*\(\s*['"`]([^'"`]+)['"`]""",
-                r"""fetch\s*\(\s*['"`]([^'"`]+)['"`]""",
-            ]
-            for pattern in patterns:
-                matches = re.findall(pattern, content)
-                for match in matches:
-                    if match.startswith("/api/") or match.startswith("/platform/"):
-                        endpoints.add(match)
+            # Pattern to match fetch calls with method option
+            # apiFetch('/path', { method: 'POST' }) or fetch('/path', { method: 'POST' })
+            fetch_with_method = re.compile(
+                r"""(?:apiFetch|apiFetchJson|fetch)\s*\(\s*['"`]([^'"`]+)['"`]\s*,\s*\{[^}]*method\s*:\s*['"]([A-Z]+)['"]""",
+                re.IGNORECASE
+            )
+            # Pattern for simple fetch calls (default GET)
+            fetch_simple = re.compile(
+                r"""(?:apiFetch|apiFetchJson|fetch)\s*\(\s*['"`]([^'"`]+)['"`]""",
+                re.IGNORECASE
+            )
+            
+            # First pass: find calls with explicit method
+            method_map = {}
+            for match in fetch_with_method.finditer(content):
+                url = match.group(1)
+                method = match.group(2).upper()
+                if url.startswith("/api/") or url.startswith("/platform/"):
+                    method_map[url] = method
+            
+            # Second pass: find all fetch calls, use explicit method or default GET
+            for match in fetch_simple.finditer(content):
+                url = match.group(1)
+                if url.startswith("/api/") or url.startswith("/platform/"):
+                    method = method_map.get(url, "GET")
+                    endpoints.append({"endpoint": url, "method": method})
         except Exception:
             pass
         
-        return list(endpoints)
+        # Deduplicate by endpoint+method
+        seen = set()
+        unique = []
+        for ep in endpoints:
+            key = (ep["endpoint"], ep["method"])
+            if key not in seen:
+                seen.add(key)
+                unique.append(ep)
+        
+        return unique
     
-    def _get_backend_capabilities(self, api_endpoints: List[str]) -> List[str]:
+    def _get_backend_capabilities(self, api_endpoints: List[dict]) -> List[str]:
         """Map API endpoints to backend capabilities."""
         endpoint_to_capability = self._build_endpoint_capability_map()
         
         backend_caps = set()
-        for endpoint in api_endpoints:
+        for ep in api_endpoints:
+            endpoint = ep["endpoint"]
             normalized = endpoint
             if "${" in endpoint:
                 import re
@@ -361,7 +390,15 @@ class FrontendCapabilityDiscoverer:
                     cap.api_dependencies.append(endpoint)
         
         for cap in capabilities.values():
-            cap.api_dependencies = list(set(cap.api_dependencies))
+            # Deduplicate by endpoint+method
+            seen = set()
+            unique = []
+            for ep in cap.api_dependencies:
+                key = (ep["endpoint"], ep["method"])
+                if key not in seen:
+                    seen.add(key)
+                    unique.append(ep)
+            cap.api_dependencies = unique
             cap.files = list(set(cap.files))
         
         if capabilities:

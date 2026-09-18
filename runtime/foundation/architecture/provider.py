@@ -514,6 +514,26 @@ class ArchitectureProvider:
         for tree_cap in ownership.get("ownership_trees_by_capability", {}):
             cap_engines.setdefault(canon_cap(tree_cap), set())
 
+        # Infer capability→engine links from naming convention where ownership
+        # graph lacks explicit edges. Frontend capabilities follow the pattern
+        # use{Name}Capability which maps to {name}_engine (with known aliases).
+        capability_to_engine = {
+            "useAccountsCapability": "account_engine",
+            "useBehaviourCapability": "behaviour_engine",
+            "useCashflowCapability": "cashflow_engine",
+            "useCreditCardsCapability": "credit_card_engine",
+            "useLoansCapability": "loan_engine",
+            "useReconciliationCapability": "reconciliation_engine",
+            "useForecastCapability": "financial_intelligence",
+            "useInvestmentsCapability": "recommendation_engine",
+            "useNetWorthCapability": "balance_engine",
+            "useNetworthCapability": "balance_engine",
+            "useTransactionCapability": "transaction_intelligence",
+        }
+        for cap_name, eng_name in capability_to_engine.items():
+            if eng_name in engines:
+                cap_engines.setdefault(canon_cap(cap_name), set()).add(eng_name)
+
         # workspaces: frontend workspace-page modules, linked by import evidence
         workspaces: dict[str, Workspace] = {}
         components: dict[str, Component] = {}

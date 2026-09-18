@@ -67,6 +67,8 @@ class ObligationKind(str, Enum):
     MUTATION = "mutation"
     GOLDEN = "golden"
     CAPABILITY = "capability"
+    INTEGRATION = "integration"
+    E2E = "e2e"
 
 
 @dataclass(frozen=True, slots=True)
