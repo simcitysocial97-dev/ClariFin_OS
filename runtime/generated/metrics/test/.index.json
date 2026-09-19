@@ -14,5 +14,9 @@
   {
     "run_id": "regression-test",
     "timestamp": "2024-01-01T00:00:00"
+  },
+  {
+    "run_id": "regression-test",
+    "timestamp": "2024-01-01T00:00:00"
   }
 ]

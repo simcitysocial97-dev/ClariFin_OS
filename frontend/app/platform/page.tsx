@@ -1,5 +1,5 @@
 /**
- * Platform Dashboard — M9-C57 Phase 5
+ * Platform Dashboard — M9-C57 Phase 5 / M9-C63
  *
  * Single-screen overview of ClariFin_OS platform state.
  * Answers: what is healthy, what is broken, what changed, what should I run?
@@ -9,6 +9,7 @@
  *   /platform/v1/events      → recent activity
  *   /platform/v1/errors/recent → error count
  *   /platform/v1/tasks       → open obligation count
+ *   /platform/v1/capabilities → capability count
  *
  * Performance budget: < 300ms initial render on Lenovo IdeaPad S145.
  * No repository scan, no full verification, no LLM call.
@@ -19,6 +20,8 @@
 import { usePlatformHealthSummary } from '@/lib/hooks/use-platform-health';
 import { usePlatformEvents } from '@/lib/hooks/use-platform-events';
 import { useCurrentErrorCount } from '@/lib/hooks/use-platform-errors';
+import { useOpenObligationsCount } from '@/lib/hooks/use-platform-tasks';
+import { useCapabilityList } from '@/lib/hooks/use-platform-capabilities';
 import { HealthBadge } from '@/components/platform/health-badge';
 import { MetricTile } from '@/components/platform/metric-tile';
 import { ActivityFeed } from '@/components/platform/activity-feed';
@@ -30,8 +33,8 @@ import { cn } from '@/lib/utils';
 // Sub-components
 // ============================================================
 
-function SystemStatusCard({ platform }: { platform: string }) {
-  const icon =
+function SystemStatusCard({ platform, frameworkIntegrity }: { platform: string; frameworkIntegrity: string }) {
+  const platformIcon =
     platform === 'HEALTHY' ? (
       <CheckCircle2 className="h-8 w-8 text-emerald-400" />
     ) : platform === 'UNHEALTHY' ? (
@@ -40,12 +43,29 @@ function SystemStatusCard({ platform }: { platform: string }) {
       <Clock className="h-8 w-8 text-amber-400" />
     );
 
+  const fiIcon =
+    frameworkIntegrity === 'HEALTHY' ? (
+      <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+    ) : frameworkIntegrity === 'UNHEALTHY' ? (
+      <AlertTriangle className="h-5 w-5 text-red-400" />
+    ) : frameworkIntegrity === 'DEGRAD' ? (
+      <AlertTriangle className="h-5 w-5 text-amber-400" />
+    ) : (
+      <Clock className="h-5 w-5 text-slate-400" />
+    );
+
   return (
     <div className="flex items-center gap-4">
-      {icon}
-      <div>
-        <div className="text-2xl font-bold text-[var(--text-primary)]">{platform}</div>
-        <div className="text-sm text-[var(--text-tertiary)]">System Status</div>
+      <div className="flex items-center gap-2">
+        {platformIcon}
+        <div>
+          <div className="text-2xl font-bold text-[var(--text-primary)]">{platform}</div>
+          <div className="text-sm text-[var(--text-tertiary)]">System Status</div>
+        </div>
+      </div>
+      <div className="flex items-center gap-1.5 ml-auto">
+        <span className="text-xs text-[var(--text-tertiary)]">Framework:</span>
+        <HealthBadge status={frameworkIntegrity} size="sm" showLabel={true} />
       </div>
     </div>
   );
@@ -54,29 +74,28 @@ function SystemStatusCard({ platform }: { platform: string }) {
 function DimensionsGrid({
   domains,
   platformStatus,
+  frameworkIntegrityStatus,
 }: {
-  domains: { name: string; status: string; last_check: string; source: string }[];
+  domains: { name: string; status: string; last_check: string; source: string; detail?: string }[];
   platformStatus: string;
+  frameworkIntegrityStatus: string;
 }) {
-  // Show top-level statuses first, then domain breakdown
-  const topLevel = [
-    { label: 'Backend', value: 'backend' },
-    { label: 'Frontend', value: 'frontend' },
-    { label: 'Database', value: 'database' },
-    { label: 'Architecture', value: 'architecture' },
-    { label: 'Verification', value: 'verification' },
-    { label: 'Evidence', value: 'evidence' },
-    { label: 'AI Runtime', value: 'ai' },
-  ];
+  // Show top-level statuses from actual health domains
+  const topLevelNames = ['Backend', 'Frontend', 'Database', 'Architecture', 'Verification', 'Evidence', 'AI Runtime', 'Framework Integrity'];
 
   return (
     <div className="flex flex-col gap-3">
       {/* Top-level summary row */}
-      <div className="grid grid-cols-7 gap-2">
-        {topLevel.map(({ label, value }) => {
-          const status = value === 'platform' ? platformStatus : domains.find((d) => d.name === label)?.status ?? 'UNKNOWN';
+      <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
+        {topLevelNames.map((label) => {
+          let status: string;
+          if (label === 'Framework Integrity') {
+            status = frameworkIntegrityStatus;
+          } else {
+            status = domains.find((d) => d.name === label)?.status ?? 'UNKNOWN';
+          }
           return (
-            <div key={value} className="flex flex-col items-center gap-1">
+            <div key={label} className="flex flex-col items-center gap-1">
               <HealthBadge status={status} size="sm" showLabel={false} />
               <span className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wide text-center">
                 {label}
@@ -99,7 +118,7 @@ function DimensionsGrid({
                 className="flex items-center gap-3 text-xs py-1"
               >
                 <HealthBadge status={d.status} size="sm" showLabel={false} />
-                <span className="text-[var(--text-primary)] font-medium w-32 truncate">
+                <span className="text-[var(--text-primary)] font-medium w-36 truncate">
                   {d.name}
                 </span>
                 <span className="text-[var(--text-tertiary)] truncate flex-1 font-mono">
@@ -108,6 +127,11 @@ function DimensionsGrid({
                 <span className="text-[var(--text-tertiary)] font-mono">
                   {d.last_check}
                 </span>
+                {d.detail && (
+                  <span className="text-[var(--text-tertiary)] font-mono text-[10px] max-w-xs truncate">
+                    {d.detail}
+                  </span>
+                )}
               </div>
             ))}
           </div>
@@ -185,12 +209,12 @@ function VerificationStatusCard() {
   );
 }
 
-function CapabilitiesSummary() {
+function CapabilitiesSummary({ count, stages }: { count: number; stages: number }) {
   return (
     <MetricTile
       label="Capabilities"
-      value="55"
-      subtitle="8 stages · 0 issues"
+      value={count}
+      subtitle={`${stages} stages · 0 issues`}
       accent="positive"
     />
   );
@@ -204,21 +228,25 @@ export default function PlatformDashboardPage() {
   const {
     isLoading: healthLoading,
     platformStatus,
+    frameworkIntegrityStatus,
     unhealthyDomains,
+    domainCount,
   } = usePlatformHealthSummary();
   const { data: eventsData, isLoading: eventsLoading } = usePlatformEvents(8);
   const errorCount = useCurrentErrorCount();
+  const openObligations = useOpenObligationsCount();
+  const { data: capsData, isLoading: capsLoading } = useCapabilityList();
 
-  // Derive open obligations from health domains (approximation — Phase 6 will wire real tasks)
-  const openObligations = 13; // From live data: 13 open obligations
-
-  if (healthLoading) {
+  if (healthLoading || capsLoading) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-sm text-[var(--text-tertiary)]">Loading platform state…</div>
       </div>
     );
   }
+
+  const capabilityCount = capsData?.data?.count ?? 0;
+  const capabilityStages = capsData?.data?.categories?.length ?? 0;
 
   return (
     <div className="flex flex-col gap-5 max-w-6xl mx-auto">
@@ -254,39 +282,19 @@ export default function PlatformDashboardPage() {
                 <Layers className="h-4 w-4 text-blue-400" />
                 System Status
               </span>
-              <SystemStatusCard platform={platformStatus} />
+              <SystemStatusCard platform={platformStatus} frameworkIntegrity={frameworkIntegrityStatus} />
             </div>
             <DimensionsGrid
-              domains={[
-                { name: 'Environment', status: 'HEALTHY', last_check: 'now', source: 'env-check' },
-                { name: 'Repository', status: 'HEALTHY', last_check: 'now', source: 'git-status' },
-                { name: 'Backend', status: 'HEALTHY', last_check: 'now', source: '/health' },
-                { name: 'Frontend', status: 'HEALTHY', last_check: 'now', source: '/platform/v1/app/frontend' },
-                { name: 'Database', status: 'HEALTHY', last_check: 'now', source: '/ready' },
-                { name: 'Domain Model', status: 'HEALTHY', last_check: 'now', source: 'invariants' },
-                { name: 'API Contracts', status: 'HEALTHY', last_check: 'now', source: 'contract-tests' },
-                { name: 'Architecture', status: 'SAFE', last_check: 'now', source: '/platform/v1/architecture/authorities' },
-                { name: 'Verification', status: platformStatus, last_check: 'now', source: '/platform/v1/health' },
-                { name: 'Evidence', status: 'VALID', last_check: 'now', source: '/platform/v1/evidence' },
-                { name: 'Cache', status: 'HEALTHY', last_check: 'now', source: 'snapshot.json' },
-                { name: 'CI', status: 'HEALTHY', last_check: 'now', source: 'github-actions' },
-                { name: 'Runtime Health', status: 'HEALTHY', last_check: 'now', source: '/platform/v1/health' },
-                { name: 'Error Framework', status: 'HEALTHY', last_check: 'now', source: '/platform/v1/errors/current' },
-                { name: 'Observability', status: 'HEALTHY', last_check: 'now', source: 'event-store' },
-                { name: 'AI Runtime', status: 'READY', last_check: 'now', source: '/platform/v1/app/frontend' },
-                { name: 'Security', status: 'HEALTHY', last_check: 'now', source: 'authorization-boundary' },
-                { name: 'Data Integrity', status: 'HEALTHY', last_check: 'now', source: 'ledger-invariants' },
-                { name: 'Application Workflows', status: 'HEALTHY', last_check: 'now', source: '/platform/v1/app/workflows' },
-                { name: 'Production Readiness', status: platformStatus === 'HEALTHY' ? 'HEALTHY' : 'DEGRAD', last_check: 'now', source: 'aggregate' },
-              ]}
+              domains={[]} // Will be populated from health data
               platformStatus={platformStatus}
+              frameworkIntegrityStatus={frameworkIntegrityStatus}
             />
           </div>
 
           {/* Verification + Capabilities */}
           <div className="grid grid-cols-2 gap-4">
             <VerificationStatusCard />
-            <CapabilitiesSummary />
+            <CapabilitiesSummary count={capabilityCount} stages={capabilityStages} />
           </div>
         </div>
 
@@ -323,7 +331,7 @@ export default function PlatformDashboardPage() {
 
       {/* Footer bar */}
       <div className="border-t border-[var(--border-subtle)] pt-3 flex items-center justify-between text-xs text-[var(--text-tertiary)] font-mono">
-        <span>Platform Console v1.0.0 · M9-C57 Band A · Generated from live C50 authorities</span>
+        <span>Platform Console v1.0.0 · M9-C63 · Generated from live C50 authorities</span>
         <span>No AI · No external providers · No second executor</span>
       </div>
     </div>

@@ -55,9 +55,11 @@ from runtime.platform.api.services import (
     architecture,
     capabilities,
     change,
+    cross_layer as cross_layer_svc,
     events,
     evidence,
     executions,
+    framework_integrity,
     health,
     history,
     tasks,
@@ -162,6 +164,25 @@ async def get_health(request: Request) -> JSONResponse:
         return _ok(cached)
     env = health.build_health_snapshot()
     snapshot.put("health", env)
+    return _ok(env)
+
+
+# ---------------------------------------------------------------------------
+# Framework Integrity (C62)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/framework/integrity")
+async def get_framework_integrity() -> JSONResponse:
+    """Expose C62 FrameworkIntegrityResult (authority drift + artifact freshness)."""
+    env = framework_integrity.build_framework_integrity()
+    return _ok(env)
+
+
+@router.get("/framework/self-tests")
+async def get_framework_self_tests() -> JSONResponse:
+    """Expose C62 K1-K9 self-test results."""
+    env = framework_integrity.build_framework_self_tests()
     return _ok(env)
 
 
@@ -693,6 +714,33 @@ async def get_architecture_deprecations() -> JSONResponse:
 @router.get("/architecture/unmapped")
 async def get_architecture_unmapped() -> JSONResponse:
     env = architecture.build_architecture_unmapped()
+    return _ok(env)
+
+
+# ---------------------------------------------------------------------------
+# Cross-Layer Impact (Phase J)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/cross-layer")
+async def get_cross_layer_graph() -> JSONResponse:
+    """Expose the canonical cross-layer graph (C60/C61).
+
+    Source: runtime/generated/cross-layer-graph.json
+    """
+    env = cross_layer_svc.build_cross_layer_graph()
+    return _ok(env)
+
+
+@router.get("/cross-layer/{capability_id}")
+async def get_cross_layer_capability(capability_id: str) -> JSONResponse:
+    """Expose cross-layer details for a specific capability."""
+    env = cross_layer_svc.build_cross_layer_capability(capability_id)
+    if env is None:
+        return _not_found(
+            f"Capability {capability_id!r} not found in cross-layer graph",
+            "platform.cross_layer",
+        )
     return _ok(env)
 
 

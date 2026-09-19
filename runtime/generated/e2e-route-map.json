@@ -18,7 +18,9 @@
     "/platform/capabilities/[capabilityId]",
     "/platform/diagnostics",
     "/platform/diagnostics/change",
+    "/platform/diagnostics/detail/[id]",
     "/platform/errors",
+    "/platform/framework",
     "/platform/history",
     "/platform/history/compare",
     "/platform/verification",
@@ -57,7 +59,9 @@
     "/platform/capabilities/[capabilityId]": [],
     "/platform/diagnostics": [],
     "/platform/diagnostics/change": [],
+    "/platform/diagnostics/detail/[id]": [],
     "/platform/errors": [],
+    "/platform/framework": [],
     "/platform/history": [],
     "/platform/history/compare": [],
     "/platform/verification": [],
@@ -76,5 +80,5 @@
       "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/transactions.spec.ts"
     ]
   },
-  "generated_at": "2026-09-11T04:02:06.268904+00:00"
+  "generated_at": "2026-09-19T08:05:43.697949+00:00"
 }

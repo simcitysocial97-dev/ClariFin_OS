@@ -84,6 +84,14 @@ export function useRecentVerificationRuns(limit = 20) {
   });
 }
 
+export function useVerificationRecommendation() {
+  return useQuery<ContractEnvelope<{ recommended: string[]; rationale: string }>, Error>({
+    queryKey: ['platform', 'verification:recommendation'],
+    queryFn: () => apiFetchJson('/platform/v1/verification/recommendation') as Promise<ContractEnvelope<{ recommended: string[]; rationale: string }>>,
+    staleTime: 30_000,
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Write hooks — every run enters the C50 path; no second executor
 // ---------------------------------------------------------------------------

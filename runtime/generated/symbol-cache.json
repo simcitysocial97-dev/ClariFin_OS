@@ -3573,5 +3573,689 @@
         "parent_class": null
       }
     ]
+  },
+  "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/routers/platform.py": {
+    "mtime": 1789794307.657654,
+    "symbols": [
+      {
+        "name": "PlatformCorrelationMiddleware",
+        "kind": "class",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 87,
+        "end_line": 94,
+        "parent_class": null
+      },
+      {
+        "name": "install_correlation_middleware",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 97,
+        "end_line": 104,
+        "parent_class": null
+      },
+      {
+        "name": "_to_platform_error",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 112,
+        "end_line": 125,
+        "parent_class": null
+      },
+      {
+        "name": "_ok",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 128,
+        "end_line": 129,
+        "parent_class": null
+      },
+      {
+        "name": "_not_found",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 132,
+        "end_line": 140,
+        "parent_class": null
+      },
+      {
+        "name": "_query_nocache",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 143,
+        "end_line": 150,
+        "parent_class": null
+      },
+      {
+        "name": "get_health",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 159,
+        "end_line": 166,
+        "parent_class": null
+      },
+      {
+        "name": "get_framework_integrity",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 175,
+        "end_line": 178,
+        "parent_class": null
+      },
+      {
+        "name": "get_framework_self_tests",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 182,
+        "end_line": 185,
+        "parent_class": null
+      },
+      {
+        "name": "list_capabilities",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 194,
+        "end_line": 201,
+        "parent_class": null
+      },
+      {
+        "name": "get_capability",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 205,
+        "end_line": 212,
+        "parent_class": null
+      },
+      {
+        "name": "get_capability_graph",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 216,
+        "end_line": 223,
+        "parent_class": null
+      },
+      {
+        "name": "list_tasks",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 232,
+        "end_line": 239,
+        "parent_class": null
+      },
+      {
+        "name": "get_task",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 243,
+        "end_line": 250,
+        "parent_class": null
+      },
+      {
+        "name": "post_task_cancel",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 254,
+        "end_line": 264,
+        "parent_class": null
+      },
+      {
+        "name": "get_verification_recommendation",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 273,
+        "end_line": 275,
+        "parent_class": null
+      },
+      {
+        "name": "post_verification_run",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 284,
+        "end_line": 299,
+        "parent_class": null
+      },
+      {
+        "name": "post_verification_run_group",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 303,
+        "end_line": 314,
+        "parent_class": null
+      },
+      {
+        "name": "post_verification_run_affected",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 318,
+        "end_line": 321,
+        "parent_class": null
+      },
+      {
+        "name": "post_verification_run_full",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 325,
+        "end_line": 328,
+        "parent_class": null
+      },
+      {
+        "name": "get_verification_runs_recent",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 332,
+        "end_line": 335,
+        "parent_class": null
+      },
+      {
+        "name": "get_execution",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 344,
+        "end_line": 351,
+        "parent_class": null
+      },
+      {
+        "name": "get_execution_stream",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 355,
+        "end_line": 436,
+        "parent_class": null
+      },
+      {
+        "name": "get_events_stream",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 440,
+        "end_line": 488,
+        "parent_class": null
+      },
+      {
+        "name": "list_evidence",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 497,
+        "end_line": 499,
+        "parent_class": null
+      },
+      {
+        "name": "get_evidence",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 503,
+        "end_line": 510,
+        "parent_class": null
+      },
+      {
+        "name": "get_evidence_by_execution",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 514,
+        "end_line": 521,
+        "parent_class": null
+      },
+      {
+        "name": "post_evidence_compare",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 525,
+        "end_line": 553,
+        "parent_class": null
+      },
+      {
+        "name": "list_history_runs",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 562,
+        "end_line": 567,
+        "parent_class": null
+      },
+      {
+        "name": "get_history_run",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 571,
+        "end_line": 578,
+        "parent_class": null
+      },
+      {
+        "name": "list_history_baselines",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 582,
+        "end_line": 584,
+        "parent_class": null
+      },
+      {
+        "name": "post_history_compare",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 588,
+        "end_line": 624,
+        "parent_class": null
+      },
+      {
+        "name": "get_errors_current",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 633,
+        "end_line": 635,
+        "parent_class": null
+      },
+      {
+        "name": "get_errors_recent",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 639,
+        "end_line": 641,
+        "parent_class": null
+      },
+      {
+        "name": "get_errors_recurring",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 645,
+        "end_line": 647,
+        "parent_class": null
+      },
+      {
+        "name": "get_errors_frequency",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 651,
+        "end_line": 653,
+        "parent_class": null
+      },
+      {
+        "name": "get_error",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 657,
+        "end_line": 664,
+        "parent_class": null
+      },
+      {
+        "name": "get_architecture_authorities",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 673,
+        "end_line": 675,
+        "parent_class": null
+      },
+      {
+        "name": "get_architecture_authority",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 679,
+        "end_line": 686,
+        "parent_class": null
+      },
+      {
+        "name": "get_architecture_boundaries",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 690,
+        "end_line": 692,
+        "parent_class": null
+      },
+      {
+        "name": "get_architecture_duplicates",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 696,
+        "end_line": 698,
+        "parent_class": null
+      },
+      {
+        "name": "get_architecture_bypasses",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 702,
+        "end_line": 704,
+        "parent_class": null
+      },
+      {
+        "name": "get_architecture_deprecations",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 708,
+        "end_line": 710,
+        "parent_class": null
+      },
+      {
+        "name": "get_architecture_unmapped",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 714,
+        "end_line": 716,
+        "parent_class": null
+      },
+      {
+        "name": "get_events",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 725,
+        "end_line": 734,
+        "parent_class": null
+      },
+      {
+        "name": "get_app_backend",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 746,
+        "end_line": 748,
+        "parent_class": null
+      },
+      {
+        "name": "get_app_frontend",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 752,
+        "end_line": 754,
+        "parent_class": null
+      },
+      {
+        "name": "get_app_domain",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 758,
+        "end_line": 760,
+        "parent_class": null
+      },
+      {
+        "name": "get_app_financial",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 764,
+        "end_line": 766,
+        "parent_class": null
+      },
+      {
+        "name": "get_app_workflows",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 770,
+        "end_line": 772,
+        "parent_class": null
+      },
+      {
+        "name": "get_change_intelligence",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 781,
+        "end_line": 788,
+        "parent_class": null
+      },
+      {
+        "name": "post_diagnose",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 797,
+        "end_line": 828,
+        "parent_class": null
+      },
+      {
+        "name": "post_diagnose_register",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 832,
+        "end_line": 863,
+        "parent_class": null
+      },
+      {
+        "name": "get_health_deep",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 872,
+        "end_line": 964,
+        "parent_class": null
+      },
+      {
+        "name": "get_ai_mode",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 973,
+        "end_line": 990,
+        "parent_class": null
+      },
+      {
+        "name": "post_ai_run",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 994,
+        "end_line": 1023,
+        "parent_class": null
+      },
+      {
+        "name": "get_ai_runs",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1027,
+        "end_line": 1034,
+        "parent_class": null
+      },
+      {
+        "name": "get_ai_run",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1038,
+        "end_line": 1043,
+        "parent_class": null
+      },
+      {
+        "name": "post_ai_run_cancel",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1047,
+        "end_line": 1055,
+        "parent_class": null
+      },
+      {
+        "name": "get_ai_tools",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1059,
+        "end_line": 1065,
+        "parent_class": null
+      },
+      {
+        "name": "get_ai_tool",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1069,
+        "end_line": 1074,
+        "parent_class": null
+      },
+      {
+        "name": "post_ai_step",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1078,
+        "end_line": 1213,
+        "parent_class": null
+      },
+      {
+        "name": "get_ai_providers",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1222,
+        "end_line": 1227,
+        "parent_class": null
+      },
+      {
+        "name": "get_ai_agents",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1231,
+        "end_line": 1240,
+        "parent_class": null
+      },
+      {
+        "name": "get_ai_agent",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1244,
+        "end_line": 1257,
+        "parent_class": null
+      },
+      {
+        "name": "post_ai_diagnose",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1261,
+        "end_line": 1314,
+        "parent_class": null
+      },
+      {
+        "name": "post_ai_financial_interpret",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1318,
+        "end_line": 1363,
+        "parent_class": null
+      },
+      {
+        "name": "post_ai_workflow_run",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1367,
+        "end_line": 1424,
+        "parent_class": null
+      },
+      {
+        "name": "post_ai_engineering_execute",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1428,
+        "end_line": 1489,
+        "parent_class": null
+      },
+      {
+        "name": "post_ai_run_finalize",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1493,
+        "end_line": 1501,
+        "parent_class": null
+      },
+      {
+        "name": "get_ai_run_trace",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1505,
+        "end_line": 1528,
+        "parent_class": null
+      },
+      {
+        "name": "get_context_pack",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1537,
+        "end_line": 1574,
+        "parent_class": null
+      },
+      {
+        "name": "register_platform_routes",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1577,
+        "end_line": 1595,
+        "parent_class": null
+      },
+      {
+        "name": "get_ai_config",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1604,
+        "end_line": 1623,
+        "parent_class": null
+      },
+      {
+        "name": "post_ai_config_provider",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 1627,
+        "end_line": 1670,
+        "parent_class": null
+      },
+      {
+        "name": "dispatch",
+        "kind": "method",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 90,
+        "end_line": 94,
+        "parent_class": "PlatformCorrelationMiddleware"
+      },
+      {
+        "name": "event_generator",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 377,
+        "end_line": 430,
+        "parent_class": null
+      },
+      {
+        "name": "event_generator",
+        "kind": "function",
+        "file": "backend/src/routers/platform.py",
+        "start_line": 455,
+        "end_line": 482,
+        "parent_class": null
+      }
+    ]
+  },
+  "/home/vasantha/AI-Projects/ClariFin_OS/runtime/platform/api/services/health.py": {
+    "mtime": 1789795465.3882148,
+    "symbols": [
+      {
+        "name": "_verif_block",
+        "kind": "function",
+        "file": "runtime/platform/api/services/health.py",
+        "start_line": 33,
+        "end_line": 44,
+        "parent_class": null
+      },
+      {
+        "name": "_framework_integrity_status",
+        "kind": "function",
+        "file": "runtime/platform/api/services/health.py",
+        "start_line": 47,
+        "end_line": 78,
+        "parent_class": null
+      },
+      {
+        "name": "build_health_snapshot",
+        "kind": "function",
+        "file": "runtime/platform/api/services/health.py",
+        "start_line": 81,
+        "end_line": 149,
+        "parent_class": null
+      }
+    ]
+  },
+  "/tmp/tmpv34c69w3.py": {
+    "mtime": 1789802946.6636302,
+    "symbols": [
+      {
+        "name": "new_function",
+        "kind": "function",
+        "file": "/tmp/tmpv34c69w3.py",
+        "start_line": 1,
+        "end_line": 1,
+        "parent_class": null
+      }
+    ]
+  },
+  "/tmp/tmpvvlg_el1.py": {
+    "mtime": 1789805085.707479,
+    "symbols": [
+      {
+        "name": "new_function",
+        "kind": "function",
+        "file": "/tmp/tmpvvlg_el1.py",
+        "start_line": 1,
+        "end_line": 1,
+        "parent_class": null
+      }
+    ]
   }
 }

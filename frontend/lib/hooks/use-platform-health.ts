@@ -25,6 +25,7 @@ export interface PlatformHealthData {
   verification: string;
   evidence: string;
   ai: string;
+  framework_integrity: string;
   domains: DomainHealth[];
 }
 
@@ -60,6 +61,7 @@ export function usePlatformHealthSummary() {
   return {
     isLoading,
     platformStatus: data?.data?.platform ?? 'UNKNOWN',
+    frameworkIntegrityStatus: data?.data?.framework_integrity ?? 'UNKNOWN',
     isHealthy: data?.data?.platform === 'HEALTHY',
     isUnhealthy: data?.data?.platform === 'UNHEALTHY',
     verificationStatus: data?.data?.verification ?? 'UNKNOWN',

@@ -26,7 +26,9 @@ import {
   Trash2,
   Map,
   RefreshCw,
+  ShieldCheck,
 } from 'lucide-react';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 type Tab = 'authorities' | 'boundaries' | 'duplicates' | 'bypasses' | 'deprecations' | 'unmapped';
@@ -115,8 +117,17 @@ export default function ArchitecturePage() {
       )}
 
       {/* Footer */}
-      <div className="text-xs text-[var(--text-tertiary)] border-t border-[var(--border-subtle)] pt-2">
-        Source: runtime/foundation/verification/{'configuration_authority.py, route_authority.py, capability_authority.py, control_plane_efficiency.py'}
+      <div className="text-xs text-[var(--text-tertiary)] border-t border-[var(--border-subtle)] pt-2 flex items-center justify-between">
+        <span>
+          Source: runtime/foundation/verification/{'configuration_authority.py, route_authority.py, capability_authority.py, control_plane_efficiency.py'}
+        </span>
+        <Link
+          href="/platform/framework"
+          className="text-xs text-violet-400 hover:underline flex items-center gap-1"
+        >
+          <ShieldCheck className="h-3 w-3" />
+          Full Framework Integrity Report
+        </Link>
       </div>
     </div>
   );

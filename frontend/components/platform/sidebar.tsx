@@ -18,14 +18,27 @@ import {
   Shield,
   Layers,
   Settings,
+  ShieldCheck,
+  Zap,
+  FileText,
 } from 'lucide-react';
 
-const NAV_ITEMS = [
+interface NavItem {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string | number;
+}
+
+const NAV_ITEMS: NavItem[] = [
   { href: '/platform', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/platform/verification', label: 'Verification', icon: TestTube },
-  { href: '/platform/diagnostics', label: 'Diagnostics', icon: Bug },
+  { href: '/platform/diagnostics', label: 'Diagnostics', icon: Bug, badge: '5' },
+  { href: '/platform/diagnostics/change', label: 'Change Intelligence', icon: Zap },
+  { href: '/platform/framework', label: 'Framework', icon: ShieldCheck },
   { href: '/platform/history', label: 'History', icon: History },
   { href: '/platform/errors', label: 'Errors', icon: Shield },
+  { href: '/platform/evidence', label: 'Evidence', icon: FileText },
   { href: '/platform/architecture', label: 'Architecture', icon: Shield },
   { href: '/platform/capabilities', label: 'Capabilities', icon: Layers },
   { href: '/platform/settings', label: 'Settings', icon: Settings },
@@ -59,7 +72,12 @@ export function PlatformSidebar() {
               )}
             >
               <Icon className="h-4 w-4 shrink-0" />
-              <span className="truncate">{item.label}</span>
+              <span className="truncate flex-1">{item.label}</span>
+              {item.badge && (
+                <span className="text-xs font-mono px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">
+                  {item.badge}
+                </span>
+              )}
             </Link>
           );
         })}

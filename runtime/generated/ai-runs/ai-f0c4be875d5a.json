@@ -1,0 +1,48 @@
+{
+  "id": "ai-f0c4be875d5a",
+  "symptom": "test",
+  "mode": "MANUAL",
+  "capability_id": null,
+  "status": "COMPLETED",
+  "steps": [
+    {
+      "step_number": 1,
+      "tool_name": "inspect_health",
+      "arguments": {},
+      "result": {},
+      "error": null,
+      "started_at": "2026-09-19T07:31:20.356657Z",
+      "completed_at": "2026-09-19T07:31:20.357435Z",
+      "evidence_id": "e1",
+      "duration_ms": 0
+    }
+  ],
+  "created_at": "2026-09-19T07:31:20.355960Z",
+  "updated_at": "2026-09-19T07:31:20.357435Z",
+  "completed_at": "2026-09-19T07:31:20.357435Z",
+  "error": null,
+  "audit_trail": [
+    {
+      "event_id": "audit-7a19841f200e",
+      "event_type": "run_created",
+      "run_id": "ai-f0c4be875d5a",
+      "timestamp": "2026-09-19T07:31:20.356635Z",
+      "payload": {
+        "symptom": "test",
+        "mode": "MANUAL",
+        "capability_id": null
+      }
+    },
+    {
+      "event_id": "audit-76beb7fe1567",
+      "event_type": "step_started",
+      "run_id": "ai-f0c4be875d5a",
+      "timestamp": "2026-09-19T07:31:20.357408Z",
+      "payload": {
+        "step": 1,
+        "tool": "inspect_health",
+        "arguments": {}
+      }
+    }
+  ]
+}
