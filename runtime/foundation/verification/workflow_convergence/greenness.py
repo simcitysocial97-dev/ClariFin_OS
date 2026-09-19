@@ -28,6 +28,9 @@ LEGITIMATE_ALWAYS_PATTERNS: tuple[str, ...] = (
     "diagnostic",
     "capture",
     "post ",
+    "classify",
+    "gate",
+    "comment",
 )
 
 

@@ -1008,9 +1008,7 @@ class CrossLayerImpactPlanner:
         )
 
         # Determine status
-        if edges:
-            status = "MAPPED"
-        elif backend_capabilities or backend_endpoints:
+        if edges or backend_capabilities or backend_endpoints:
             status = "MAPPED"
         else:
             status = "UNMAPPED"

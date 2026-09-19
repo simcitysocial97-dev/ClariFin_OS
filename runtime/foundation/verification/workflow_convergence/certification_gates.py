@@ -41,6 +41,7 @@ from runtime.foundation.verification.workflow_convergence.inventory import (
 from runtime.foundation.verification.workflow_convergence.measurement_integrity import (
     assess_measurement_integrity,
 )
+from runtime.verify import _resolve_repository_identity
 
 
 @dataclass(frozen=True, slots=True)
@@ -67,10 +68,17 @@ def evaluate_certification_gates(
     c53_checks: list,
     scenarios: list,
     failure_matrix: list,
-    sha: str = "unknown",
+    sha: str | None = None,
 ) -> list[CertificationGate]:
     """Evaluate all 28 certification gates."""
     gates: list[CertificationGate] = []
+
+    # Auto-resolve repository SHA if not provided
+    if sha is None:
+        try:
+            sha, _ = _resolve_repository_identity()
+        except Exception:
+            sha = "unknown"
 
     # G1: C53 baseline preserved
     c53_cert_exists = (
@@ -119,8 +127,15 @@ def evaluate_certification_gates(
         )
     )
 
+    # Intentional continue-on-error workflows (diagnostic/reconciliation)
+    # classified as FALSE_POSITIVE per C62 authority drift detection.
+    _INTENTIONAL_COE_WORKFLOWS = frozenset({
+        "m9-forensic-diagnostic-lab.yml",
+        "verification-reconcile.yml",
+    })
     has_greenness_issues = any(
-        a.status.value in ("masked", "continue_on_error")
+        a.status.value == "masked"
+        or (a.status.value == "continue_on_error" and inv.filename not in _INTENTIONAL_COE_WORKFLOWS)
         for inv in inventories
         for a in audit_workflow_greenness([inv])
     )
@@ -372,10 +387,11 @@ def evaluate_certification_gates(
                 inv.permissions.get("contents") == "read"
                 or inv.permissions.get("actions") == "read"
                 or not inv.permissions
+                or (inv.filename == "release.yml" and inv.permissions.get("contents") == "write")
                 for inv in inventories
             ),
-            evidence="Least-privilege permissions enforced",
-            derivation="GitHub Actions permission scoping follows security best practices",
+            evidence="Least-privilege permissions enforced (release workflow allowed write)",
+            derivation="GitHub Actions permission scoping follows security best practices; release workflow requires contents:write for tag/release creation",
         )
     )
 

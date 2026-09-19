@@ -6,7 +6,6 @@ import logging
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Dict, List, Set
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +76,7 @@ class SymbolExtractor:
         self.cache_path.parent.mkdir(parents=True, exist_ok=True)
         self.cache_path.write_text(json.dumps(self.cache, indent=2))
 
-    def extract_from_file(self, file_path: Path) -> List[Symbol]:
+    def extract_from_file(self, file_path: Path) -> list[Symbol]:
         """Extract all symbols from a single Python file.
 
         Uses mtime-based cache invalidation. Handles malformed files gracefully.
@@ -144,7 +143,7 @@ class SymbolExtractor:
         self._save_cache()
         return symbols
 
-    def extract_from_directory(self, directory: Path) -> Dict[Path, List[Symbol]]:
+    def extract_from_directory(self, directory: Path) -> dict[Path, list[Symbol]]:
         """Extract symbols from all Python files in a directory recursively."""
         result = {}
         directory = Path(directory)
@@ -181,7 +180,7 @@ class CoverageSymbolMapper:
         self.symbol_test_map_path = Path("runtime/generated/symbol-test-map.json")
         self.symbol_test_map = self._load_symbol_test_map()
 
-    def _load_symbol_test_map(self) -> Dict[str, List[str]]:
+    def _load_symbol_test_map(self) -> dict[str, list[str]]:
         if self.symbol_test_map_path.exists():
             try:
                 return json.loads(self.symbol_test_map_path.read_text())
@@ -193,7 +192,7 @@ class CoverageSymbolMapper:
         self.symbol_test_map_path.parent.mkdir(parents=True, exist_ok=True)
         self.symbol_test_map_path.write_text(json.dumps(self.symbol_test_map, indent=2))
 
-    def load_coverage_data(self) -> Dict[Path, Set[int]]:
+    def load_coverage_data(self) -> dict[Path, set[int]]:
         """Load coverage data: file → set of covered line numbers."""
         if not self.coverage_file.exists():
             return {}
@@ -220,8 +219,8 @@ class CoverageSymbolMapper:
             return {}
 
     def map_coverage_to_symbols(
-        self, covered_lines: Dict[Path, Set[int]]
-    ) -> Dict[Path, Set[str]]:
+        self, covered_lines: dict[Path, set[int]]
+    ) -> dict[Path, set[str]]:
         """Map covered lines to symbol names per source file."""
         file_to_symbols = {}
 
@@ -238,7 +237,7 @@ class CoverageSymbolMapper:
 
         return file_to_symbols
 
-    def get_symbols_for_test(self, test_file: str) -> Set[str]:
+    def get_symbols_for_test(self, test_file: str) -> set[str]:
         """Run pytest on a single test file and return covered symbol names."""
         test_path = Path(test_file)
         if not test_path.exists():
@@ -253,7 +252,7 @@ class CoverageSymbolMapper:
                 str(test_path),
                 "--cov=backend/src",
                 "--cov-report=",
-                f"--cov-config=.coveragerc",
+                "--cov-config=.coveragerc",
                 f"--cov-file={cov_file}",
                 "-q",
             ]
@@ -288,7 +287,7 @@ class CoverageSymbolMapper:
 
     def build_symbol_to_test_map(
         self, test_directory: Path, force_rebuild: bool = False
-    ) -> Dict[str, Set[Path]]:
+    ) -> dict[str, set[Path]]:
         """Build map: symbol_name → set of test files that cover it.
 
         Uses cached results unless force_rebuild=True or cache is stale.
@@ -303,7 +302,7 @@ class CoverageSymbolMapper:
             logger.warning(f"No test files found in {test_directory}")
             return {}
 
-        symbol_to_tests: Dict[str, Set[Path]] = {}
+        symbol_to_tests: dict[str, set[Path]] = {}
 
         for test_file in test_files:
             covered_symbols = self.get_symbols_for_test(str(test_file))
@@ -340,7 +339,7 @@ class CoverageSymbolMapper:
         except Exception:
             return False
 
-    def _reconstruct_symbol_to_test_map(self) -> Dict[str, Set[Path]]:
+    def _reconstruct_symbol_to_test_map(self) -> dict[str, set[Path]]:
         """Convert cached flat map back to sets."""
         result = {}
         for symbol_name, test_files in self.symbol_test_map.items():
@@ -348,7 +347,7 @@ class CoverageSymbolMapper:
         return result
 
     def _save_symbol_test_map_from_result(
-        self, symbol_to_tests: Dict[str, Set[Path]]
+        self, symbol_to_tests: dict[str, set[Path]]
     ):
         """Save symbol-to-test map as JSON-serializable dict."""
         flat_map = {}
@@ -359,11 +358,11 @@ class CoverageSymbolMapper:
 
     def get_coverage_for_symbol(
         self, symbol_name: str
-    ) -> Dict[str, Set[str]]:
+    ) -> dict[str, set[str]]:
         """Get which test files cover a specific symbol."""
         return self._reconstruct_symbol_to_test_map().get(symbol_name, set())
 
-    def list_all_covered_symbols(self, covered_lines: Dict[Path, Set[int]]) -> Set[str]:
+    def list_all_covered_symbols(self, covered_lines: dict[Path, set[int]]) -> set[str]:
         """Return flat set of all symbol names covered by given coverage data."""
         file_to_symbols = self.map_coverage_to_symbols(covered_lines)
         all_symbols = set()
@@ -373,7 +372,6 @@ class CoverageSymbolMapper:
 
 
 if __name__ == "__main__":
-    import json as _json
 
     extractor = SymbolExtractor()
     test_file = Path("backend/src/engines/loan_engine/emi.py")

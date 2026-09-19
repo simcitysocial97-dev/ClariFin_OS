@@ -39,18 +39,12 @@ introducing a parallel registry, evidence store, or capability system.
 
 from __future__ import annotations
 
-import contextlib
 import hashlib
 import json
-import re
 import subprocess
-import time
-from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
-from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 

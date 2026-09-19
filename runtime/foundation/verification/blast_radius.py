@@ -38,6 +38,7 @@ from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
+from typing import Any
 
 from runtime.foundation.verification.capability_contract import (
     CapabilityContractRegistry,

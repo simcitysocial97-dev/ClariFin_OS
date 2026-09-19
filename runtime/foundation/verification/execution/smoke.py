@@ -10,21 +10,26 @@ import importlib
 import json
 from pathlib import Path
 
-from runtime.foundation.verification.evidence_planner import PlannedTask, default_planner
+from runtime.foundation.verification.evidence_planner import (
+    PlannedTask,
+    default_planner,
+)
 from runtime.foundation.verification.evidence_reuse import (
     c42_24_b_measurements,
     c42_25_measurements,
     c42_26_population,
 )
-from runtime.foundation.verification.execution.classification import FailureKind
+from runtime.foundation.verification.execution.decisions import derive_decision
 from runtime.foundation.verification.execution.dispatcher import (
     LineageViolationError,
     execute_task,
 )
-from runtime.foundation.verification.execution.evidence import ExecutionEvidence, _git_sha
+from runtime.foundation.verification.execution.evidence import (
+    ExecutionEvidence,
+    _git_sha,
+)
 from runtime.foundation.verification.execution.forensic import build_forensic_record
 from runtime.foundation.verification.execution.reconciliation import reconcile
-from runtime.foundation.verification.execution.decisions import derive_decision
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 
@@ -116,7 +121,6 @@ def fault_injection_smoke() -> dict:
     detected, how, and what evidence was produced. Used by S11 runtime
     health to prove the negative-path detectors actually fire.
     """
-    import importlib
 
     ep = importlib.import_module("runtime.foundation.verification.executor_pipeline")
     results: list[dict] = []
@@ -254,7 +258,9 @@ def fault_injection_smoke() -> dict:
         artifact_paths=(str(REPO_ROOT / "runtime" / "generated" / "m9-c50.13" / "artifact-test.bin"),),
         notes="ev::test",
     )
-    from runtime.foundation.verification.execution.decisions import evaluate_cache  # noqa: PLC0415
+    from runtime.foundation.verification.execution.decisions import (
+        evaluate_cache,  # noqa: PLC0415
+    )
 
     stale = evaluate_cache(
         task_identity_str="task::stale",

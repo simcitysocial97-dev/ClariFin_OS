@@ -12,27 +12,57 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from runtime.foundation.verification.workflow_convergence.bypass import (
+    analyze_workflow_bypass,
+)
+from runtime.foundation.verification.workflow_convergence.c53_integration import (
+    verify_c53_integration,
+)
+from runtime.foundation.verification.workflow_convergence.certification_gates import (
+    evaluate_certification_gates,
+)
+from runtime.foundation.verification.workflow_convergence.coverage import (
+    build_coverage_matrix,
+)
+from runtime.foundation.verification.workflow_convergence.duplication import (
+    analyze_duplication,
+)
+from runtime.foundation.verification.workflow_convergence.efficiency import (
+    measure_efficiency,
+)
+from runtime.foundation.verification.workflow_convergence.emission import (
+    assess_ci_emission,
+)
+from runtime.foundation.verification.workflow_convergence.environment import (
+    build_environment_contract,
+)
+from runtime.foundation.verification.workflow_convergence.evidence_contract import (
+    build_evidence_contract,
+)
+from runtime.foundation.verification.workflow_convergence.failure_injection import (
+    build_failure_injection_matrix,
+)
+from runtime.foundation.verification.workflow_convergence.failure_semantics import (
+    build_failure_semantics,
+)
+from runtime.foundation.verification.workflow_convergence.greenness import (
+    audit_workflow_greenness,
+)
 from runtime.foundation.verification.workflow_convergence.inventory import (
-    REPO_ROOT,
-    C54_SCHEMA,
     C54_ARTIFACT_DIR,
+    C54_SCHEMA,
+    REPO_ROOT,
     inventory_workflows,
 )
-from runtime.foundation.verification.workflow_convergence.mapping import map_workflows_to_capabilities
-from runtime.foundation.verification.workflow_convergence.greenness import audit_workflow_greenness
-from runtime.foundation.verification.workflow_convergence.evidence_contract import build_evidence_contract
-from runtime.foundation.verification.workflow_convergence.emission import assess_ci_emission
-from runtime.foundation.verification.workflow_convergence.bypass import analyze_workflow_bypass
-from runtime.foundation.verification.workflow_convergence.failure_semantics import build_failure_semantics
-from runtime.foundation.verification.workflow_convergence.coverage import build_coverage_matrix
-from runtime.foundation.verification.workflow_convergence.measurement_integrity import assess_measurement_integrity
-from runtime.foundation.verification.workflow_convergence.duplication import analyze_duplication
-from runtime.foundation.verification.workflow_convergence.environment import build_environment_contract
-from runtime.foundation.verification.workflow_convergence.scenarios import execute_scenarios
-from runtime.foundation.verification.workflow_convergence.c53_integration import verify_c53_integration
-from runtime.foundation.verification.workflow_convergence.failure_injection import build_failure_injection_matrix
-from runtime.foundation.verification.workflow_convergence.efficiency import measure_efficiency
-from runtime.foundation.verification.workflow_convergence.certification_gates import evaluate_certification_gates
+from runtime.foundation.verification.workflow_convergence.mapping import (
+    map_workflows_to_capabilities,
+)
+from runtime.foundation.verification.workflow_convergence.measurement_integrity import (
+    assess_measurement_integrity,
+)
+from runtime.foundation.verification.workflow_convergence.scenarios import (
+    execute_scenarios,
+)
 
 
 def get_repository_sha() -> str:

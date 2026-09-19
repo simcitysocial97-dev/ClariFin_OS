@@ -9,7 +9,9 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 
-from runtime.foundation.verification.workflow_convergence.inventory import WorkflowInventory
+from runtime.foundation.verification.workflow_convergence.inventory import (
+    WorkflowInventory,
+)
 
 
 class BypassRisk(str, Enum):

@@ -12,7 +12,10 @@ import traceback
 from datetime import UTC, datetime
 
 from runtime.foundation.verification.execution.classification import FailureKind
-from runtime.foundation.verification.execution.evidence import ExecutionEvidence, _git_sha
+from runtime.foundation.verification.execution.evidence import (
+    ExecutionEvidence,
+    _git_sha,
+)
 from runtime.foundation.verification.execution.task import (
     DEFAULT_TASK_TIMEOUT,
     ExecutableVerificationTask,

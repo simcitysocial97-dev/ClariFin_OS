@@ -1,15 +1,36 @@
 {
   "schema": "m9-c48/function-audit@1",
-  "generated_at": "2026-09-10T06:10:53+00:00",
-  "total": 1842,
+  "generated_at": "2026-09-19T18:12:49+00:00",
+  "total": 1959,
   "by_disposition": {
-    "UNREACHABLE": 588,
-    "SUPPORTING": 1180,
-    "CANONICAL": 71,
+    "UNREACHABLE": 628,
+    "SUPPORTING": 1256,
+    "CANONICAL": 72,
     "DUPLICATE-AUTHORITY": 3
   },
   "coverage_percent": 100.0,
   "dispositions": [
+    {
+      "file": "runtime/foundation/verification/history_migration.py",
+      "line": 32,
+      "name": "_normalize_status",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/history_migration.py",
+      "line": 40,
+      "name": "_run_id_to_event_id",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/history_migration.py",
+      "line": 46,
+      "name": "migrate",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
     {
       "file": "runtime/foundation/verification/catalog_certification.py",
       "line": 30,
@@ -51,6 +72,195 @@
       "name": "run_measurement_truth_cli",
       "disposition": "CANONICAL",
       "rationale": "CLI dispatch / entry point"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 58,
+      "name": "to_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 77,
+      "name": "from_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 94,
+      "name": "to_symbol",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 106,
+      "name": "symbol_id",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 129,
+      "name": "_load_cache",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 137,
+      "name": "_save_cache",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 141,
+      "name": "_run_ts_resolver",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 189,
+      "name": "extract_from_file",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 220,
+      "name": "extract_from_directory",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 247,
+      "name": "get_symbol_at_line",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 255,
+      "name": "get_react_components",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 260,
+      "name": "get_hooks",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 265,
+      "name": "get_api_client_calls",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 270,
+      "name": "get_exported_symbols",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 275,
+      "name": "invalidate_cache",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 285,
+      "name": "find_symbol_by_name",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 309,
+      "name": "_load_symbol_test_map",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 317,
+      "name": "_save_symbol_test_map",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 321,
+      "name": "load_coverage_data",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 349,
+      "name": "map_coverage_to_symbols",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 367,
+      "name": "get_symbols_for_test",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 413,
+      "name": "build_symbol_to_test_map",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 440,
+      "name": "_symbol_test_map_is_valid",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 462,
+      "name": "_reconstruct_symbol_to_test_map",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 469,
+      "name": "_save_symbol_test_map_from_result",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 479,
+      "name": "get_coverage_for_symbol",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/typescript_symbol_resolver.py",
+      "line": 485,
+      "name": "list_all_covered_symbols",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/evidence_planner.py",
@@ -235,6 +445,83 @@
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
+      "file": "runtime/foundation/verification/frontend_capability_discovery.py",
+      "line": 102,
+      "name": "to_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/frontend_capability_discovery.py",
+      "line": 130,
+      "name": "frontend_backend_mapper",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/frontend_capability_discovery.py",
+      "line": 138,
+      "name": "_classify_file",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/frontend_capability_discovery.py",
+      "line": 158,
+      "name": "_extract_domain",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/frontend_capability_discovery.py",
+      "line": 187,
+      "name": "_get_api_dependencies",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/frontend_capability_discovery.py",
+      "line": 237,
+      "name": "_get_backend_capabilities",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/frontend_capability_discovery.py",
+      "line": 259,
+      "name": "_build_endpoint_capability_map",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/frontend_capability_discovery.py",
+      "line": 307,
+      "name": "_endpoints_match",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/frontend_capability_discovery.py",
+      "line": 317,
+      "name": "_find_test_files",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/frontend_capability_discovery.py",
+      "line": 338,
+      "name": "discover_capabilities",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/frontend_capability_discovery.py",
+      "line": 310,
+      "name": "normalize",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
       "file": "runtime/foundation/verification/canonical_control_plane.py",
       "line": 79,
       "name": "canonical_tree",
@@ -264,84 +551,84 @@
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 158,
+      "line": 162,
       "name": "parse_mutmut_results",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 306,
+      "line": 310,
       "name": "_extract_function_name",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 317,
+      "line": 321,
       "name": "collect_mutant_results",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 375,
+      "line": 379,
       "name": "reconcile_counts",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 385,
+      "line": 389,
       "name": "compute_score",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 400,
+      "line": 404,
       "name": "_resolve_mutation_threshold",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 417,
+      "line": 421,
       "name": "classify_gates",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 641,
+      "line": 645,
       "name": "engine_names",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 645,
+      "line": 649,
       "name": "is_valid_engine",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 649,
+      "line": 653,
       "name": "render_mutmut_config_block",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 688,
+      "line": 692,
       "name": "write_backend_mutmut_config",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 707,
+      "line": 711,
       "name": "build_infrastructure_failure",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -362,35 +649,35 @@
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 114,
+      "line": 117,
       "name": "mutants_generated",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 124,
+      "line": 127,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 242,
+      "line": 246,
       "name": "score",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 268,
+      "line": 272,
       "name": "score",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 274,
+      "line": 278,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -460,14 +747,14 @@
     },
     {
       "file": "runtime/foundation/verification/capability_resolver.py",
-      "line": 474,
+      "line": 519,
       "name": "resolve_capabilities",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/capability_resolver.py",
-      "line": 489,
+      "line": 534,
       "name": "format_resolution",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -502,21 +789,21 @@
     },
     {
       "file": "runtime/foundation/verification/capability_resolver.py",
-      "line": 279,
+      "line": 324,
       "name": "_classify_change",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/capability_resolver.py",
-      "line": 364,
+      "line": 409,
       "name": "_decide_evidence",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/capability_resolver.py",
-      "line": 424,
+      "line": 469,
       "name": "_determine_verification",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
@@ -873,98 +1160,98 @@
     },
     {
       "file": "runtime/foundation/verification/control_plane.py",
-      "line": 501,
+      "line": 564,
       "name": "format_control_plane_plan",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane.py",
-      "line": 602,
+      "line": 665,
       "name": "generate_control_plane_plan",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane.py",
-      "line": 652,
+      "line": 715,
       "name": "cap_id_match",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane.py",
-      "line": 98,
+      "line": 103,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane.py",
-      "line": 120,
+      "line": 125,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane.py",
-      "line": 127,
+      "line": 132,
       "name": "to_json",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane.py",
-      "line": 164,
+      "line": 169,
       "name": "plan",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane.py",
-      "line": 219,
+      "line": 282,
       "name": "_build_tasks",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane.py",
-      "line": 260,
+      "line": 323,
       "name": "_build_capability_tasks",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane.py",
-      "line": 334,
+      "line": 397,
       "name": "_workflow_to_verification_kind",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane.py",
-      "line": 353,
+      "line": 416,
       "name": "_determine_escalation_conditions",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane.py",
-      "line": 395,
+      "line": 458,
       "name": "_determine_measurement_requirements",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane.py",
-      "line": 440,
+      "line": 503,
       "name": "_determine_certification_requirements",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane.py",
-      "line": 472,
+      "line": 535,
       "name": "_build_rationale",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
@@ -1447,112 +1734,112 @@
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 444,
+      "line": 602,
       "name": "resolve_command_semantics",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 457,
+      "line": 615,
       "name": "normalize_component",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 516,
+      "line": 674,
       "name": "_extract_target_engine",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 526,
+      "line": 684,
       "name": "build_ci_bindings",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 595,
+      "line": 753,
       "name": "verification_bindings",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 604,
+      "line": 762,
       "name": "bind_into_graph",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 792,
+      "line": 950,
       "name": "classify_ci_failure",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 820,
+      "line": 978,
       "name": "validate_ci_evidence",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 1053,
+      "line": 1211,
       "name": "ci_reuse_decision",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 1149,
+      "line": 1307,
       "name": "_change_for_drift",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 1177,
+      "line": 1335,
       "name": "_drift_change_kind",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 1190,
+      "line": 1348,
       "name": "validate_and_decide",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 1209,
+      "line": 1367,
       "name": "ingest_ci_evidence",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 1276,
+      "line": 1434,
       "name": "ci_measurement",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 1313,
+      "line": 1471,
       "name": "_iso_diff_seconds",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 1369,
+      "line": 1527,
       "name": "semantic_equivalence",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -1587,56 +1874,56 @@
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 488,
+      "line": 646,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 699,
+      "line": 857,
       "name": "capture",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 757,
+      "line": 915,
       "name": "has_identity_drift",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 761,
+      "line": 919,
       "name": "artifact_ok",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 764,
+      "line": 922,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 1030,
+      "line": 1188,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 1350,
+      "line": 1508,
       "name": "semantically_equivalent",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/ci_evidence.py",
-      "line": 1353,
+      "line": 1511,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -1678,42 +1965,42 @@
     },
     {
       "file": "runtime/foundation/verification/profiles.py",
-      "line": 570,
+      "line": 568,
       "name": "get_profile",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/profiles.py",
-      "line": 580,
+      "line": 578,
       "name": "list_profiles",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/profiles.py",
-      "line": 585,
+      "line": 583,
       "name": "profile_names",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/profiles.py",
-      "line": 43,
+      "line": 41,
       "name": "expand_tasks",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/profiles.py",
-      "line": 47,
+      "line": 45,
       "name": "task_ids",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/profiles.py",
-      "line": 51,
+      "line": 49,
       "name": "command_count",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -1888,35 +2175,35 @@
     },
     {
       "file": "runtime/foundation/verification/symbol_test_selector.py",
-      "line": 34,
+      "line": 33,
       "name": "_load_map",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/symbol_test_selector.py",
-      "line": 53,
+      "line": 52,
       "name": "select_tests_for_symbols",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/symbol_test_selector.py",
-      "line": 104,
+      "line": 103,
       "name": "get_coverage_status",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/symbol_test_selector.py",
-      "line": 108,
+      "line": 107,
       "name": "rebuild_map",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/symbol_test_selector.py",
-      "line": 123,
+      "line": 122,
       "name": "_save_map",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
@@ -1951,56 +2238,56 @@
     },
     {
       "file": "runtime/foundation/verification/test_strengthening_pipeline.py",
-      "line": 174,
+      "line": 176,
       "name": "_record_step",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/test_strengthening_pipeline.py",
-      "line": 188,
+      "line": 190,
       "name": "_generate_candidate",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/test_strengthening_pipeline.py",
-      "line": 223,
+      "line": 225,
       "name": "_write_candidate",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/test_strengthening_pipeline.py",
-      "line": 230,
+      "line": 232,
       "name": "_evidence_artifact",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/test_strengthening_pipeline.py",
-      "line": 237,
+      "line": 239,
       "name": "_hash_artifact",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/test_strengthening_pipeline.py",
-      "line": 248,
+      "line": 250,
       "name": "_is_promotable",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/test_strengthening_pipeline.py",
-      "line": 265,
+      "line": 267,
       "name": "run",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/test_strengthening_pipeline.py",
-      "line": 421,
+      "line": 423,
       "name": "_reject",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
@@ -2191,6 +2478,90 @@
       "file": "runtime/foundation/verification/strengthening.py",
       "line": 562,
       "name": "to_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/endpoint_normalize.py",
+      "line": 65,
+      "name": "_extract_path_params",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/endpoint_normalize.py",
+      "line": 83,
+      "name": "_extract_query_params",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/endpoint_normalize.py",
+      "line": 99,
+      "name": "normalize_endpoint",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/endpoint_normalize.py",
+      "line": 223,
+      "name": "endpoints_match",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/endpoint_normalize.py",
+      "line": 235,
+      "name": "get_canonical_key",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/endpoint_normalize.py",
+      "line": 159,
+      "name": "protect_encode_uri",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/endpoint_normalize.py",
+      "line": 175,
+      "name": "replace_dollar_brace",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/endpoint_normalize.py",
+      "line": 182,
+      "name": "replace_brace_param",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/endpoint_normalize.py",
+      "line": 189,
+      "name": "replace_colon_param",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/endpoint_normalize.py",
+      "line": 246,
+      "name": "normalize",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/endpoint_normalize.py",
+      "line": 252,
+      "name": "match",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/endpoint_normalize.py",
+      "line": 263,
+      "name": "clear_cache",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
@@ -3330,119 +3701,119 @@
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 259,
+      "line": 261,
       "name": "serialize_obligation_set",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 264,
+      "line": 266,
       "name": "obligations_from_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 81,
+      "line": 83,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 99,
+      "line": 101,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 119,
+      "line": 121,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 142,
+      "line": 144,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 172,
+      "line": 174,
       "name": "is_closed",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 175,
+      "line": 177,
       "name": "fingerprint",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 185,
+      "line": 187,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 211,
+      "line": 213,
       "name": "closed",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 214,
+      "line": 216,
       "name": "open",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 217,
+      "line": 219,
       "name": "blocked",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 222,
+      "line": 224,
       "name": "failed",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 225,
+      "line": 227,
       "name": "reuse_count",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 228,
+      "line": 230,
       "name": "invalidate_count",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 233,
+      "line": 235,
       "name": "fingerprint",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/obligation.py",
-      "line": 239,
+      "line": 241,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -3687,112 +4058,126 @@
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 248,
+      "line": 249,
       "name": "_git_sha",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 264,
+      "line": 265,
       "name": "_git_tree",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 280,
+      "line": 281,
       "name": "_mutmut_bin",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 287,
+      "line": 288,
       "name": "_pytest_version",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 292,
+      "line": 293,
       "name": "_cache_provenance_path",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 296,
+      "line": 297,
       "name": "_validate_cache",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 327,
+      "line": 328,
       "name": "_write_cache_provenance",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 345,
+      "line": 346,
       "name": "_get_git_status",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 365,
+      "line": 366,
       "name": "_restore_source_tree",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 411,
+      "line": 412,
       "name": "_record_lifecycle_event",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 427,
+      "line": 428,
       "name": "_config_hash",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 433,
+      "line": 434,
       "name": "execute_mutation",
       "disposition": "CANONICAL",
       "rationale": "canonical authority (declared)"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 797,
+      "line": 798,
       "name": "_write_summary",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 812,
+      "line": 813,
       "name": "_write_measurement_truth",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 923,
+      "line": 924,
       "name": "_print_report",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 954,
+      "line": 955,
+      "name": "get_affected_engines_from_files",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_runner.py",
+      "line": 990,
+      "name": "_collect_changed_files",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_runner.py",
+      "line": 1011,
       "name": "run_mutation_cli",
       "disposition": "CANONICAL",
       "rationale": "canonical authority (declared)"
@@ -3862,7 +4247,7 @@
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 831,
+      "line": 832,
       "name": "_fp_value",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
@@ -4226,192 +4611,206 @@
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 1034,
+      "line": 1177,
       "name": "compute_blast_radius",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 1044,
+      "line": 1187,
       "name": "format_blast_radius",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 130,
+      "line": 134,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 150,
+      "line": 154,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 169,
+      "line": 173,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 185,
+      "line": 189,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 198,
+      "line": 202,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 265,
+      "line": 272,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 311,
+      "line": 319,
       "name": "to_json",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 314,
+      "line": 322,
       "name": "compute_fingerprint",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 369,
+      "line": 377,
       "name": "compute",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 479,
+      "line": 497,
+      "name": "compute_changed_symbols",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/blast_radius.py",
+      "line": 560,
       "name": "_build_surface_impacts",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 538,
+      "line": 619,
       "name": "_surface_maps_to_capability",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 552,
+      "line": 633,
       "name": "_build_capability_impacts",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 670,
+      "line": 751,
       "name": "_map_workflow_to_surface",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 689,
+      "line": 770,
       "name": "_classify_shared_infrastructure",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 698,
+      "line": 779,
       "name": "_classify_test_only",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 707,
+      "line": 788,
       "name": "_classify_config_tooling",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 714,
+      "line": 795,
       "name": "_classify_observable_only",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 723,
+      "line": 804,
       "name": "_build_verification_surfaces",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 768,
+      "line": 849,
       "name": "_build_evidence_decisions",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 824,
+      "line": 905,
       "name": "_determine_escalation_conditions",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 899,
+      "line": 980,
       "name": "_determine_fail_closed",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 987,
+      "line": 1068,
       "name": "_collect_affected_components",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 995,
+      "line": 1076,
       "name": "_collect_shared_expansions",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 1011,
+      "line": 1092,
       "name": "_collect_required_tests",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/blast_radius.py",
-      "line": 1019,
+      "line": 1100,
       "name": "_collect_affected_workflows",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/blast_radius.py",
+      "line": 1109,
+      "name": "compute_e2e_impact",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/c56_convergence.py",
@@ -4751,56 +5150,56 @@
     },
     {
       "file": "runtime/foundation/verification/shared_impact.py",
-      "line": 49,
+      "line": 53,
       "name": "path_to_module",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/shared_impact.py",
-      "line": 60,
+      "line": 64,
       "name": "_iter_py_files",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/shared_impact.py",
-      "line": 67,
+      "line": 71,
       "name": "_extract_imports",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/shared_impact.py",
-      "line": 216,
+      "line": 234,
       "name": "get_shared_dependency_index",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/shared_impact.py",
-      "line": 229,
+      "line": 247,
       "name": "reset_shared_dependency_index",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/shared_impact.py",
-      "line": 83,
+      "line": 87,
       "name": "_add",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/shared_impact.py",
-      "line": 130,
+      "line": 134,
       "name": "build",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/shared_impact.py",
-      "line": 195,
+      "line": 213,
       "name": "capabilities_for_module",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -4914,6 +5313,118 @@
       "file": "runtime/foundation/verification/measurement_truth_integration.py",
       "line": 525,
       "name": "evaluate_capability",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/authority_drift_detector.py",
+      "line": 147,
+      "name": "_scan_imports",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/authority_drift_detector.py",
+      "line": 180,
+      "name": "_scan_file_for_module",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/authority_drift_detector.py",
+      "line": 198,
+      "name": "_find_python_files",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/authority_drift_detector.py",
+      "line": 598,
+      "name": "run_authority_drift_detection",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/authority_drift_detector.py",
+      "line": 639,
+      "name": "main",
+      "disposition": "CANONICAL",
+      "rationale": "CLI dispatch / entry point"
+    },
+    {
+      "file": "runtime/foundation/verification/authority_drift_detector.py",
+      "line": 68,
+      "name": "to_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/authority_drift_detector.py",
+      "line": 88,
+      "name": "critical_count",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/authority_drift_detector.py",
+      "line": 92,
+      "name": "high_count",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/authority_drift_detector.py",
+      "line": 95,
+      "name": "to_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/authority_drift_detector.py",
+      "line": 210,
+      "name": "check",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/authority_drift_detector.py",
+      "line": 283,
+      "name": "check",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/authority_drift_detector.py",
+      "line": 336,
+      "name": "check",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/authority_drift_detector.py",
+      "line": 381,
+      "name": "check",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/authority_drift_detector.py",
+      "line": 415,
+      "name": "check",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/authority_drift_detector.py",
+      "line": 486,
+      "name": "check",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/authority_drift_detector.py",
+      "line": 536,
+      "name": "check",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
@@ -5513,6 +6024,125 @@
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 235,
+      "name": "_find_python_files",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 39,
+      "name": "to_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 74,
+      "name": "healthy",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 77,
+      "name": "to_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 94,
+      "name": "from_drift_report",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 145,
+      "name": "check",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 250,
+      "name": "results",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 253,
+      "name": "run_all",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 313,
+      "name": "test_k1_detector_healthy_on_clean_repo",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 321,
+      "name": "test_k2_no_critical_high_on_clean_repo",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 329,
+      "name": "test_k3_detector_produces_valid_json",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 339,
+      "name": "test_k4_artifact_freshness",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 345,
+      "name": "test_k5_authority_declarations_resolvable",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 361,
+      "name": "test_k6_canonical_commands_present",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 370,
+      "name": "test_k7_evidence_writer_resolvable",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 381,
+      "name": "test_k8_framework_integrity_result_serializable",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/framework_integrity.py",
+      "line": 396,
+      "name": "test_k9_failure_detection_and_recovery",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
       "file": "runtime/foundation/verification/authorization_boundary.py",
       "line": 109,
       "name": "_id",
@@ -5724,70 +6354,70 @@
     },
     {
       "file": "runtime/foundation/verification/structured_logging.py",
-      "line": 43,
+      "line": 42,
       "name": "_get_correlation_id",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/structured_logging.py",
-      "line": 48,
+      "line": 47,
       "name": "set_correlation_id",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/structured_logging.py",
-      "line": 156,
+      "line": 155,
       "name": "setup_logging",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/structured_logging.py",
-      "line": 217,
+      "line": 216,
       "name": "get_logger",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/structured_logging.py",
-      "line": 233,
+      "line": 232,
       "name": "add_correlation_id",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/structured_logging.py",
-      "line": 244,
+      "line": 243,
       "name": "get_config",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/structured_logging.py",
-      "line": 253,
+      "line": 252,
       "name": "reset_logging",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/structured_logging.py",
-      "line": 59,
+      "line": 58,
       "name": "filter",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/structured_logging.py",
-      "line": 86,
+      "line": 85,
       "name": "format",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/structured_logging.py",
-      "line": 133,
+      "line": 132,
       "name": "format",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -6655,169 +7285,295 @@
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 36,
+      "line": 35,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 47,
+      "line": 46,
       "name": "from_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 68,
+      "line": 67,
       "name": "_load_cache",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 76,
+      "line": 75,
       "name": "_save_cache",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 80,
+      "line": 79,
       "name": "extract_from_file",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 147,
+      "line": 146,
       "name": "extract_from_directory",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 156,
+      "line": 155,
       "name": "get_symbol_at_line",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 164,
+      "line": 163,
       "name": "invalidate_cache",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 184,
+      "line": 183,
       "name": "_load_symbol_test_map",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 192,
+      "line": 191,
       "name": "_save_symbol_test_map",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 196,
+      "line": 195,
       "name": "load_coverage_data",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 222,
+      "line": 221,
       "name": "map_coverage_to_symbols",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 241,
+      "line": 240,
       "name": "get_symbols_for_test",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 289,
+      "line": 288,
       "name": "build_symbol_to_test_map",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 319,
+      "line": 318,
       "name": "_symbol_test_map_is_valid",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 343,
+      "line": 342,
       "name": "_reconstruct_symbol_to_test_map",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 350,
+      "line": 349,
       "name": "_save_symbol_test_map_from_result",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 360,
+      "line": 359,
       "name": "get_coverage_for_symbol",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/symbol_resolver.py",
-      "line": 366,
+      "line": 365,
       "name": "list_all_covered_symbols",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/test_quality.py",
-      "line": 118,
+      "line": 121,
       "name": "classify_test_file",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/test_quality.py",
-      "line": 188,
+      "line": 191,
       "name": "sample_paths",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/test_quality.py",
-      "line": 207,
+      "line": 210,
       "name": "classify_tests",
       "disposition": "CANONICAL",
       "rationale": "canonical authority (declared)"
     },
     {
       "file": "runtime/foundation/verification/test_quality.py",
-      "line": 67,
+      "line": 70,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/test_quality.py",
-      "line": 87,
+      "line": 90,
       "name": "to_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 524,
+      "name": "build_cross_layer_graph",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 76,
+      "name": "add_edge",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 79,
+      "name": "get_edges_from",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 82,
+      "name": "get_edges_to",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 85,
+      "name": "get_frontend_consumers_of_backend_endpoint",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 88,
+      "name": "get_backend_dependencies_of_frontend_capability",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 91,
+      "name": "to_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 120,
+      "name": "build",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 142,
+      "name": "_load_backend_capabilities",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 197,
+      "name": "_scan_platform_router",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 242,
+      "name": "_build_frontend_to_backend_edges",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 317,
+      "name": "_build_backend_to_frontend_edges",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 361,
+      "name": "_find_capability_for_file",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 367,
+      "name": "_find_backend_endpoint",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 386,
+      "name": "_detect_contract_drifts",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 488,
+      "name": "_identify_unmapped_frontend",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 507,
+      "name": "save_graph",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/cross_layer_graph.py",
+      "line": 512,
+      "name": "load_graph",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
@@ -7348,42 +8104,42 @@
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_gate.py",
-      "line": 33,
+      "line": 32,
       "name": "_extract_endpoints_from_file",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_gate.py",
-      "line": 153,
+      "line": 152,
       "name": "run_gate",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_gate.py",
-      "line": 75,
+      "line": 74,
       "name": "get_backend_endpoints",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_gate.py",
-      "line": 88,
+      "line": 87,
       "name": "get_frontend_consumers",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_gate.py",
-      "line": 104,
+      "line": 103,
       "name": "check_orphaned_consumers",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_gate.py",
-      "line": 122,
+      "line": 121,
       "name": "validate",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -7432,21 +8188,21 @@
     },
     {
       "file": "runtime/foundation/verification/test_generator.py",
-      "line": 227,
+      "line": 229,
       "name": "generate_from_survivor_inventory",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/test_generator.py",
-      "line": 373,
+      "line": 375,
       "name": "generate_from_coverage_gaps",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/test_generator.py",
-      "line": 521,
+      "line": 523,
       "name": "emit_ledger",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -7817,49 +8573,49 @@
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 416,
+      "line": 418,
       "name": "source_id",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 420,
+      "line": 422,
       "name": "capability_id",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 424,
+      "line": 426,
       "name": "surface_id",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 428,
+      "line": 430,
       "name": "task_id",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 432,
+      "line": 434,
       "name": "evidence_id",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 436,
+      "line": 438,
       "name": "certification_id",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 440,
+      "line": 442,
       "name": "fingerprint_components",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -7880,147 +8636,147 @@
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 131,
+      "line": 133,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 174,
+      "line": 176,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 229,
+      "line": 231,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 273,
+      "line": 275,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 310,
+      "line": 312,
       "name": "capabilities_for_source",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 314,
+      "line": 316,
       "name": "surfaces_for_capability",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 320,
+      "line": 322,
       "name": "tasks_for_surface",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 324,
+      "line": 326,
       "name": "evidence_for_task",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 328,
+      "line": 330,
       "name": "evidence_for_component",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 333,
+      "line": 335,
       "name": "add_source",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 336,
+      "line": 338,
       "name": "add_capability",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 339,
+      "line": 341,
       "name": "add_test_surface",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 342,
+      "line": 344,
       "name": "add_task",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 345,
+      "line": 347,
       "name": "add_evidence",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 348,
+      "line": 350,
       "name": "add_certification",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 351,
+      "line": 353,
       "name": "link_source_capability",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 357,
+      "line": 359,
       "name": "link_capability_surface",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 363,
+      "line": 365,
       "name": "link_surface_task",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 369,
+      "line": 371,
       "name": "link_task_evidence",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 375,
+      "line": 377,
       "name": "link_evidence_certification",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/graph_model.py",
-      "line": 383,
+      "line": 385,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -8223,119 +8979,119 @@
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 74,
+      "line": 72,
       "name": "_strip_query",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 79,
+      "line": 77,
       "name": "_normalize_template_vars",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 84,
+      "line": 82,
       "name": "_normalize_path",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 93,
+      "line": 91,
       "name": "_is_import_line",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 97,
+      "line": 95,
       "name": "_is_comment_line",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 122,
+      "line": 120,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 160,
+      "line": 158,
       "name": "_load_cache_if_valid",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 178,
+      "line": 176,
       "name": "_persist_cache",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 188,
+      "line": 186,
       "name": "_compute_all_mtimes",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 201,
+      "line": 199,
       "name": "_iter_source_files",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 222,
+      "line": 220,
       "name": "_extract_paths_from_file",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 256,
+      "line": 254,
       "name": "_classify_file",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 269,
+      "line": 267,
       "name": "scan_frontend_hooks",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 279,
+      "line": 277,
       "name": "scan_frontend_components",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 289,
+      "line": 287,
       "name": "build_consumer_map",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 318,
+      "line": 316,
       "name": "get_consumers_for_endpoint",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/frontend_backend_map.py",
-      "line": 330,
+      "line": 328,
       "name": "get_endpoints_for_file",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -8496,189 +9252,196 @@
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 84,
+      "line": 85,
       "name": "_collect_changed_files",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 89,
+      "line": 90,
       "name": "_collect_changed_files_result",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 107,
+      "line": 108,
       "name": "_get_current_commit",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 113,
+      "line": 114,
       "name": "_is_git_available",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 913,
+      "line": 970,
       "name": "_find_arg",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 929,
+      "line": 986,
       "name": "main",
       "disposition": "CANONICAL",
       "rationale": "CLI dispatch / entry point"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 982,
+      "line": 1039,
       "name": "_profile_task_timeout_seconds",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 999,
+      "line": 1056,
       "name": "_run_profile_alias",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 1134,
+      "line": 1190,
       "name": "_format_task_summary",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 1151,
+      "line": 1207,
       "name": "_dispatch_canonical",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 136,
+      "line": 137,
       "name": "check",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 243,
+      "line": 244,
       "name": "plan",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 275,
+      "line": 276,
       "name": "run",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 350,
+      "line": 351,
       "name": "diagnose",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 371,
+      "line": 372,
       "name": "strengthen",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 428,
+      "line": 429,
       "name": "inspect",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 527,
+      "line": 539,
       "name": "certify",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 535,
+      "line": 547,
       "name": "ci",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 555,
+      "line": 566,
       "name": "_run_exec_evidence_cli",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 655,
+      "line": 665,
       "name": "_run_reconcile_cli_from_args",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 692,
+      "line": 702,
       "name": "_run_reconcile_cli",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 810,
+      "line": 820,
+      "name": "diagnose",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/control_plane_facade.py",
+      "line": 855,
       "name": "doctor",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 826,
+      "line": 883,
       "name": "_plan_to_obligations",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 876,
+      "line": 933,
       "name": "_print_plan_obligations",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 892,
+      "line": 949,
       "name": "_print_execution_report",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 190,
+      "line": 191,
       "name": "_capture_record",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 311,
+      "line": 312,
       "name": "_capture_record",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
@@ -8720,112 +9483,112 @@
     },
     {
       "file": "runtime/foundation/verification/evidence_schema.py",
-      "line": 46,
+      "line": 44,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/evidence_schema.py",
-      "line": 49,
+      "line": 47,
       "name": "to_json",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/evidence_schema.py",
-      "line": 72,
+      "line": 70,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/evidence_schema.py",
-      "line": 75,
+      "line": 73,
       "name": "to_json",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/evidence_schema.py",
-      "line": 96,
+      "line": 94,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/evidence_schema.py",
-      "line": 99,
+      "line": 97,
       "name": "to_json",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/evidence_schema.py",
-      "line": 118,
+      "line": 116,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/evidence_schema.py",
-      "line": 121,
+      "line": 119,
       "name": "to_json",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/evidence_schema.py",
-      "line": 144,
+      "line": 142,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/evidence_schema.py",
-      "line": 152,
+      "line": 150,
       "name": "to_json",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/evidence_schema.py",
-      "line": 156,
+      "line": 154,
       "name": "from_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/evidence_schema.py",
-      "line": 174,
+      "line": 172,
       "name": "from_json",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/evidence_schema.py",
-      "line": 177,
+      "line": 175,
       "name": "write",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/evidence_schema.py",
-      "line": 197,
+      "line": 195,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/evidence_schema.py",
-      "line": 200,
+      "line": 198,
       "name": "to_json",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/evidence_schema.py",
-      "line": 203,
+      "line": 201,
       "name": "write",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -9406,84 +10169,84 @@
     },
     {
       "file": "runtime/foundation/verification/semantics/assertions.py",
-      "line": 163,
+      "line": 162,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/semantics/assertions.py",
-      "line": 182,
+      "line": 181,
       "name": "emi_exceeds_interest",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/semantics/assertions.py",
-      "line": 196,
+      "line": 195,
       "name": "closure_zero_balance",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/semantics/assertions.py",
-      "line": 210,
+      "line": 209,
       "name": "total_payment_covers_principal",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/semantics/assertions.py",
-      "line": 224,
+      "line": 223,
       "name": "reconciliation_within_tolerance",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/semantics/assertions.py",
-      "line": 238,
+      "line": 237,
       "name": "balance_equals_transaction_sum",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/semantics/assertions.py",
-      "line": 252,
+      "line": 251,
       "name": "prepayment_reduces_outstanding",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/semantics/assertions.py",
-      "line": 266,
+      "line": 265,
       "name": "floating_rate_bounded",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/semantics/assertions.py",
-      "line": 280,
+      "line": 279,
       "name": "cashflow_category_valid",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/semantics/assertions.py",
-      "line": 294,
+      "line": 293,
       "name": "forecast_horizon_positive",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/semantics/assertions.py",
-      "line": 308,
+      "line": 307,
       "name": "net_worth_balanced",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/semantics/assertions.py",
-      "line": 323,
+      "line": 322,
       "name": "_get_inv",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
@@ -9952,14 +10715,14 @@
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1219,
+      "line": 1374,
       "name": "get_registry",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1227,
+      "line": 1382,
       "name": "reset_registry",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -10015,182 +10778,182 @@
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 995,
+      "line": 1150,
       "name": "get_workflow",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1000,
+      "line": 1155,
       "name": "resolve_unit",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1009,
+      "line": 1164,
       "name": "get_workflow_for_unit",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1021,
+      "line": 1176,
       "name": "get_workflows_by_scope",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1028,
+      "line": 1183,
       "name": "get_workflows_by_capability",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1037,
+      "line": 1192,
       "name": "get_workflows_by_category",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1044,
+      "line": 1199,
       "name": "get_script",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1049,
+      "line": 1204,
       "name": "get_scripts_by_scope",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1056,
+      "line": 1211,
       "name": "get_scripts_by_capability",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1061,
+      "line": 1216,
       "name": "get_scripts_by_category",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1068,
+      "line": 1223,
       "name": "get_capability",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1073,
+      "line": 1228,
       "name": "get_capabilities_by_scope",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1080,
+      "line": 1235,
       "name": "get_capabilities_by_category",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1087,
+      "line": 1242,
       "name": "get_capabilities_by_module",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1092,
+      "line": 1247,
       "name": "get_requirement",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1097,
+      "line": 1252,
       "name": "get_requirements_by_capability",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1107,
+      "line": 1262,
       "name": "get_requirements_by_scope",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1119,
+      "line": 1274,
       "name": "get_requirements_by_category",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1131,
+      "line": 1286,
       "name": "get_all_workflows",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1136,
+      "line": 1291,
       "name": "get_all_scripts",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1141,
+      "line": 1296,
       "name": "get_all_capabilities",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1146,
+      "line": 1301,
       "name": "get_all_categories",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1151,
+      "line": 1306,
       "name": "get_all_scopes",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1156,
+      "line": 1311,
       "name": "get_all_modules",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1161,
+      "line": 1316,
       "name": "validate",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/registry/registry.py",
-      "line": 1209,
+      "line": 1364,
       "name": "get_config",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -10512,70 +11275,105 @@
     },
     {
       "file": "runtime/foundation/verification/planner/planner.py",
-      "line": 896,
+      "line": 898,
+      "name": "_load_cross_layer_graph",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/planner/planner.py",
+      "line": 908,
+      "name": "_find_frontend_capability",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/planner/planner.py",
+      "line": 972,
+      "name": "_resolve_capability_edges",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/planner/planner.py",
+      "line": 1026,
       "name": "_load_map",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/planner/planner.py",
-      "line": 911,
+      "line": 1041,
       "name": "analyze_cross_layer_impact",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/planner/planner.py",
-      "line": 942,
+      "line": 1088,
+      "name": "_is_frontend_path",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/planner/planner.py",
+      "line": 1097,
+      "name": "_resolve_frontend_capabilities",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/planner/planner.py",
+      "line": 1151,
       "name": "_enrich_from_intelligence",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/planner/planner.py",
-      "line": 1012,
+      "line": 1221,
       "name": "_find_chain",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/planner/planner.py",
-      "line": 1062,
+      "line": 1271,
       "name": "_resolve_via_provider",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/planner/planner.py",
-      "line": 1128,
+      "line": 1337,
       "name": "_service_name_from_path",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/planner/planner.py",
-      "line": 1139,
+      "line": 1348,
       "name": "_add_chain_to_report",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/planner/planner.py",
-      "line": 1214,
+      "line": 1423,
       "name": "_build_minimal_plan",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/planner/planner.py",
-      "line": 1253,
+      "line": 1462,
       "name": "_append_uniq",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/planner/planner.py",
-      "line": 1257,
+      "line": 1466,
       "name": "_build_dependency_chains",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
@@ -10596,7 +11394,7 @@
     },
     {
       "file": "runtime/foundation/verification/planner/planner.py",
-      "line": 1077,
+      "line": 1286,
       "name": "chain_for_engines",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -10694,63 +11492,63 @@
     },
     {
       "file": "runtime/foundation/verification/execution/decisions.py",
-      "line": 45,
+      "line": 44,
       "name": "evaluate_cache",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/execution/decisions.py",
-      "line": 141,
+      "line": 140,
       "name": "derive_decision",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/execution/decisions.py",
-      "line": 35,
+      "line": 34,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/execution/decisions.py",
-      "line": 127,
+      "line": 126,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/execution/forensic.py",
-      "line": 66,
+      "line": 69,
       "name": "build_forensic_record",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/execution/forensic.py",
-      "line": 46,
+      "line": 49,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/execution/dispatcher.py",
-      "line": 46,
+      "line": 49,
       "name": "_evidence_path_for",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/execution/dispatcher.py",
-      "line": 59,
+      "line": 62,
       "name": "_artifact_sha256",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/execution/dispatcher.py",
-      "line": 68,
+      "line": 71,
       "name": "execute_task",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -10778,63 +11576,63 @@
     },
     {
       "file": "runtime/foundation/verification/execution/scope.py",
-      "line": 32,
+      "line": 35,
       "name": "_read_installed_mutmut_scope",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/execution/scope.py",
-      "line": 58,
+      "line": 61,
       "name": "_scope_violation_message",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/execution/scope.py",
-      "line": 65,
+      "line": 68,
       "name": "execute_mutation_task",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/execution/smoke.py",
-      "line": 32,
+      "line": 37,
       "name": "default_population",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/execution/smoke.py",
-      "line": 36,
+      "line": 41,
       "name": "default_prior_measurements",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/execution/smoke.py",
-      "line": 40,
+      "line": 45,
       "name": "main",
       "disposition": "CANONICAL",
       "rationale": "CLI dispatch / entry point"
     },
     {
       "file": "runtime/foundation/verification/execution/smoke.py",
-      "line": 112,
+      "line": 117,
       "name": "fault_injection_smoke",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/execution/evidence.py",
-      "line": 87,
+      "line": 84,
       "name": "_git_sha",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/execution/evidence.py",
-      "line": 53,
+      "line": 50,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -11023,14 +11821,14 @@
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/coverage.py",
-      "line": 50,
+      "line": 51,
       "name": "build_coverage_matrix",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/coverage.py",
-      "line": 34,
+      "line": 35,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -11065,14 +11863,14 @@
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/measurement_integrity.py",
-      "line": 33,
+      "line": 35,
       "name": "assess_measurement_integrity",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/measurement_integrity.py",
-      "line": 23,
+      "line": 25,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -11093,140 +11891,140 @@
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/inventory.py",
-      "line": 144,
+      "line": 137,
       "name": "_safe_parse_yaml",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/inventory.py",
-      "line": 155,
+      "line": 148,
       "name": "_extract_env",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/inventory.py",
-      "line": 160,
+      "line": 153,
       "name": "_extract_timeout",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/inventory.py",
-      "line": 170,
+      "line": 163,
       "name": "_is_upload_step",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/inventory.py",
-      "line": 175,
+      "line": 168,
       "name": "_is_verification_uses",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/inventory.py",
-      "line": 189,
+      "line": 182,
       "name": "_build_additional_patterns",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/inventory.py",
-      "line": 277,
+      "line": 270,
       "name": "resolve_extended_semantics",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/inventory.py",
-      "line": 290,
+      "line": 283,
       "name": "inventory_workflows",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/inventory.py",
-      "line": 51,
+      "line": 44,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/inventory.py",
-      "line": 92,
+      "line": 85,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/inventory.py",
-      "line": 126,
+      "line": 119,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/inventory.py",
-      "line": 194,
+      "line": 187,
       "name": "_sem",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/environment.py",
-      "line": 32,
+      "line": 34,
       "name": "build_environment_contract",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/environment.py",
-      "line": 23,
+      "line": 25,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/certification_gates.py",
-      "line": 44,
+      "line": 65,
       "name": "evaluate_certification_gates",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/certification_gates.py",
-      "line": 34,
+      "line": 55,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/c53_integration.py",
-      "line": 30,
+      "line": 29,
       "name": "verify_c53_integration",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/c53_integration.py",
-      "line": 22,
+      "line": 21,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/artifacts.py",
-      "line": 38,
+      "line": 68,
       "name": "get_repository_sha",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/artifacts.py",
-      "line": 53,
+      "line": 83,
       "name": "generate_all_artifacts",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -11247,35 +12045,35 @@
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/mapping.py",
-      "line": 43,
+      "line": 45,
       "name": "map_workflows_to_capabilities",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/mapping.py",
-      "line": 101,
+      "line": 103,
       "name": "_infer_capability",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/mapping.py",
-      "line": 29,
+      "line": 31,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/bypass.py",
-      "line": 43,
+      "line": 45,
       "name": "analyze_workflow_bypass",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/bypass.py",
-      "line": 32,
+      "line": 34,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -11296,63 +12094,84 @@
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/evidence_contract.py",
-      "line": 43,
+      "line": 45,
       "name": "build_evidence_contract",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/evidence_contract.py",
-      "line": 71,
+      "line": 73,
       "name": "_infer_evidence_path",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/evidence_contract.py",
-      "line": 29,
+      "line": 31,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/scenarios.py",
-      "line": 36,
+      "line": 40,
       "name": "execute_scenarios",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/scenarios.py",
-      "line": 25,
+      "line": 29,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/failure_injection.py",
-      "line": 37,
+      "line": 36,
       "name": "build_failure_injection_matrix",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/failure_injection.py",
-      "line": 27,
+      "line": 26,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/greenness.py",
-      "line": 42,
+      "line": 37,
+      "name": "_is_legitimate_always",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/workflow_convergence/greenness.py",
+      "line": 43,
+      "name": "_has_problematic_always",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/workflow_convergence/greenness.py",
+      "line": 55,
+      "name": "_has_any_always",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/workflow_convergence/greenness.py",
+      "line": 86,
       "name": "audit_workflow_greenness",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_convergence/greenness.py",
-      "line": 32,
+      "line": 76,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -12514,357 +13333,357 @@
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 145,
+      "line": 139,
       "name": "_git",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 159,
+      "line": 153,
       "name": "_hash_file",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 170,
+      "line": 164,
       "name": "_hash_tree",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 186,
+      "line": 180,
       "name": "_hash_toolchain",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 503,
+      "line": 497,
       "name": "_capability_components",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 513,
+      "line": 507,
       "name": "_measurement_kind_for_task",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 213,
+      "line": 207,
       "name": "capture",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 241,
+      "line": 235,
       "name": "matches",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 244,
+      "line": 238,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 254,
+      "line": 248,
       "name": "from_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 315,
+      "line": 309,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 369,
+      "line": 363,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 391,
+      "line": 385,
       "name": "to_json",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 394,
+      "line": 388,
       "name": "validate",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 449,
+      "line": 443,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 475,
+      "line": 469,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/models.py",
-      "line": 494,
+      "line": 488,
       "name": "to_json",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 1633,
+      "line": 1630,
       "name": "_profile_from_command",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 1646,
+      "line": 1643,
       "name": "build_plan",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 1653,
+      "line": 1650,
       "name": "format_plan",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 1694,
+      "line": 1691,
       "name": "format_report",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 86,
+      "line": 83,
       "name": "build_execution_plan",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 145,
+      "line": 142,
       "name": "_expand_control_plane_tasks",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 246,
+      "line": 243,
       "name": "_inject_revalidations",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 424,
+      "line": 421,
       "name": "_find_measurement_record",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 485,
+      "line": 482,
       "name": "_component_for_mapping",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 498,
+      "line": 495,
       "name": "_add_dependency_edges",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 508,
+      "line": 505,
       "name": "_compute_plan_fingerprint",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 538,
+      "line": 535,
       "name": "_build_rationale",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 563,
+      "line": 560,
       "name": "_collect_components",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 571,
+      "line": 568,
       "name": "_get_inventory_map",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 588,
+      "line": 585,
       "name": "_timeout_for",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 600,
+      "line": 597,
       "name": "validate_execution",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 615,
+      "line": 612,
       "name": "verify_prerequisites",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 641,
+      "line": 638,
       "name": "execute",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 837,
+      "line": 834,
       "name": "_detect_and_report_regressions",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 934,
+      "line": 931,
       "name": "_execute_task",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 957,
+      "line": 954,
       "name": "_execute_shell_task",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 1064,
+      "line": 1061,
       "name": "_execute_measurement_task",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 1198,
+      "line": 1195,
       "name": "_execute_coverage_task",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 1209,
+      "line": 1206,
       "name": "_check_reusable_measurement",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 1252,
+      "line": 1249,
       "name": "_diagnose",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 1310,
+      "line": 1307,
       "name": "_next_action",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 1347,
+      "line": 1344,
       "name": "_finalize",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 1439,
+      "line": 1436,
       "name": "_make_record",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 1490,
+      "line": 1487,
       "name": "_blocked_report",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 1514,
+      "line": 1511,
       "name": "_dry_run_report",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 1535,
+      "line": 1532,
       "name": "_compute_efficiency",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 1596,
+      "line": 1593,
       "name": "_blind_total_commands",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 1622,
+      "line": 1619,
       "name": "_resolve_command",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/orchestration/orchestrator.py",
-      "line": 687,
+      "line": 684,
       "name": "_push_record",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"

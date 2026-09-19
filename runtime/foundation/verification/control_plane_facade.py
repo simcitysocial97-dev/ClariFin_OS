@@ -553,7 +553,6 @@ class ControlPlane:
         honor the same argument contract. This is required because the
         legacy→canonical migration must preserve the operator-visible interface.
         """
-        import os
 
         raw = args or sys.argv[2:]
 
@@ -649,7 +648,6 @@ class ControlPlane:
 
         from runtime.foundation.verification.reconciliation import (
             _load_plan_from_manifest,
-            plan_fingerprint,
         )
 
         fp = plan_fingerprint(plan)
@@ -819,14 +817,14 @@ class ControlPlane:
             return 1
         return 0
 
-    def diagnose(self) -> Any:
+    def _diagnose_framework(self) -> Any:
         """Return FrameworkIntegrityResult for the verification framework."""
+        from runtime.foundation.verification.authority_drift_detector import (
+            run_authority_drift_detection,
+        )
         from runtime.foundation.verification.framework_integrity import (
             FrameworkIntegrityResult,
             FrameworkSelfTests,
-        )
-        from runtime.foundation.verification.authority_drift_detector import (
-            run_authority_drift_detection,
         )
 
         drift = run_authority_drift_detection()
@@ -868,7 +866,7 @@ class ControlPlane:
         output = report.generate()
         print(output)
 
-        integrity = self.diagnose()
+        integrity = self._diagnose_framework()
         if integrity.healthy:
             print("\nFramework authority integrity: HEALTHY")
         else:
@@ -1065,7 +1063,6 @@ def _run_profile_alias(operation: str) -> int:
     130/143 and an ``interrupted`` event is recorded. On per-task timeout a
     ``timeout_blocked`` event is recorded and the process exits 124.
     """
-    import os
     import subprocess
     import time
 

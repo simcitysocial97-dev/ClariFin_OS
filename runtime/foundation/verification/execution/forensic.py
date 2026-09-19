@@ -8,11 +8,14 @@ one immutable record.
 from __future__ import annotations
 
 import hashlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import UTC, datetime
 
 from runtime.foundation.verification.evidence_planner import EvidenceAwarePlan
-from runtime.foundation.verification.execution.evidence import _git_sha
+from runtime.foundation.verification.execution.evidence import (
+    ExecutionEvidence,
+    _git_sha,
+)
 from runtime.foundation.verification.execution.reconciliation import (
     ReconciledVerificationState,
 )
@@ -66,11 +69,10 @@ class ForensicExecutionRecord:
 def build_forensic_record(
     plan: EvidenceAwarePlan,
     executable: ExecutableVerificationPlan,
-    fresh: dict[str, "ExecutionEvidence"],
+    fresh: dict[str, ExecutionEvidence],
     reconciled: ReconciledVerificationState,
 ) -> ForensicExecutionRecord:
     """Build a forensic execution record from the full pipeline state."""
-    from runtime.foundation.verification.execution.evidence import ExecutionEvidence  # noqa: PLC0415
 
     rid = hashlib.sha256(
         "|".join([plan.plan_id, executable.plan_id, _git_sha()]).encode()

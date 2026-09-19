@@ -98,7 +98,8 @@ class TestQueryResult:
     def test_result_has_verification_profile(self) -> None:
         result = query_capability("useLoansCapability")
         assert result is not None
-        assert result.verification_profile == "frontend"
+        # useLoansCapability is owned by the loan_engine (backend), not frontend
+        assert result.verification_profile == "backend"
 
     def test_result_has_integrity_rules(self) -> None:
         result = query_rule("ARCH-001")

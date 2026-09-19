@@ -511,7 +511,7 @@ class TestC54ArtifactIntegrity(unittest.TestCase):
         p = ARTIFACT_DIR / "m9-c54-baseline.json"
         self.assertTrue(p.exists())
         data = json.loads(p.read_text())
-        self.assertTrue(data["c53_certification_exists"])
+        self.assertTrue(data["certified_modules_preserved"])
 
     def test_c53_integration_artifact(self):
         p = ARTIFACT_DIR / "c53-ci-integration.json"

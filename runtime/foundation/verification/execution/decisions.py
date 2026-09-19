@@ -7,12 +7,11 @@ lineage chain.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal
 
-from runtime.foundation.verification.execution.classification import FailureKind
 from runtime.foundation.verification.execution.dispatcher import LineageViolationError
 from runtime.foundation.verification.execution.evidence import ExecutionEvidence
 from runtime.foundation.verification.execution.identity import (

@@ -20,8 +20,6 @@ O-2 configuration authority (converged with verification.yaml):
 
 from __future__ import annotations
 
-from pathlib import Path
-
 from dataclasses import dataclass
 
 from runtime.foundation.verification.models import (

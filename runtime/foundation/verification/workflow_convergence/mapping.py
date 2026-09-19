@@ -11,7 +11,9 @@ from dataclasses import dataclass
 from typing import Any
 
 from runtime.foundation.verification.ci_evidence import CommandSemantics
-from runtime.foundation.verification.workflow_convergence.inventory import WorkflowInventory
+from runtime.foundation.verification.workflow_convergence.inventory import (
+    WorkflowInventory,
+)
 
 
 @dataclass(frozen=True, slots=True)

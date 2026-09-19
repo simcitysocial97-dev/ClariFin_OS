@@ -22,12 +22,15 @@ from pathlib import Path
 
 from runtime.foundation.verification.env import hash_file
 from runtime.foundation.verification.execution.classification import FailureKind
-from runtime.foundation.verification.execution.evidence import ExecutionEvidence, _git_sha
+from runtime.foundation.verification.execution.evidence import (
+    ExecutionEvidence,
+    _git_sha,
+)
 from runtime.foundation.verification.execution.identity import (
     IdentityKind,
     compute_identity,
-    evidence_identity,
     environment_identity,
+    evidence_identity,
 )
 from runtime.foundation.verification.execution.task import (
     DEFAULT_TASK_TIMEOUT,

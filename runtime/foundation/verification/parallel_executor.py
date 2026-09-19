@@ -22,7 +22,7 @@ import os
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
@@ -285,7 +285,7 @@ class ParallelExecutor:
                     final_groups.append(TaskGroup(
                         tasks=(dt,),
                         parallel=False,
-                        dependency_on=getattr(dt, "dependency_on"),
+                        dependency_on=dt.dependency_on,
                     ))
 
         return final_groups if final_groups else [TaskGroup(

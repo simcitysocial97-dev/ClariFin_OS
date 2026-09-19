@@ -11,7 +11,6 @@ from dataclasses import dataclass
 from typing import Any
 
 from runtime.foundation.verification.workflow_convergence.failure_semantics import (
-    FailureSemantics,
     build_failure_semantics,
 )
 

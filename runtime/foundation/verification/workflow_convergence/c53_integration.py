@@ -7,7 +7,6 @@ the C53 generation chain without depending on workflow inventory.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
 from runtime.foundation.verification.workflow_convergence.inventory import REPO_ROOT

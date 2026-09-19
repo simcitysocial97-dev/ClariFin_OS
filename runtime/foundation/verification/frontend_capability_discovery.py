@@ -9,14 +9,16 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List
 
-from runtime.foundation.verification.typescript_symbol_resolver import TypeScriptSymbol, TypeScriptSymbolExtractor
+from runtime.foundation.verification.typescript_symbol_resolver import (
+    TypeScriptSymbol,
+    TypeScriptSymbolExtractor,
+)
 
 
 class FrontendCapabilityKind(str, Enum):
     """Classification of frontend capabilities."""
-    
+
     ROUTE = "frontend_route"
     PAGE = "frontend_page"
     COMPONENT = "frontend_component"
@@ -83,20 +85,20 @@ DOMAIN_MAPPING = {
 @dataclass
 class FrontendCapability:
     """A frontend capability with evidence-backed attribution."""
-    
+
     capability_id: str
     name: str
     kind: FrontendCapabilityKind
     domain: str
-    symbols: List[TypeScriptSymbol] = field(default_factory=list)
-    files: List[Path] = field(default_factory=list)
-    api_dependencies: List[dict] = field(default_factory=list)
-    backend_capabilities: List[str] = field(default_factory=list)
-    test_files: List[Path] = field(default_factory=list)
-    e2e_files: List[Path] = field(default_factory=list)
+    symbols: list[TypeScriptSymbol] = field(default_factory=list)
+    files: list[Path] = field(default_factory=list)
+    api_dependencies: list[dict] = field(default_factory=list)
+    backend_capabilities: list[str] = field(default_factory=list)
+    test_files: list[Path] = field(default_factory=list)
+    e2e_files: list[Path] = field(default_factory=list)
     confidence: float = 1.0
     attribution_status: str = "mapped"
-    
+
     def to_dict(self) -> dict:
         return {
             "capability_id": self.capability_id,
@@ -117,76 +119,78 @@ class FrontendCapability:
 
 class FrontendCapabilityDiscoverer:
     """Discovers and attributes frontend capabilities from source code."""
-    
+
     def __init__(self, repo_root: Path = None):
         self.repo_root = repo_root or Path.cwd()
         self.frontend_root = self.repo_root / "frontend"
         self.ts_extractor = TypeScriptSymbolExtractor()
         self._frontend_backend_mapper = None
-    
+
     @property
     def frontend_backend_mapper(self):
         if self._frontend_backend_mapper is None:
-            from runtime.foundation.verification.frontend_backend_map import FrontendBackendMapper
+            from runtime.foundation.verification.frontend_backend_map import (
+                FrontendBackendMapper,
+            )
             self._frontend_backend_mapper = FrontendBackendMapper(self.repo_root)
         return self._frontend_backend_mapper
-    
+
     def _classify_file(self, file_path: Path) -> FrontendCapabilityKind:
         """Classify a file by its path."""
         try:
             rel_path = str(file_path.relative_to(self.repo_root))
         except ValueError:
             return FrontendCapabilityKind.UTILITY
-        
+
         for prefix, kind in PATH_TO_KIND.items():
             if rel_path.startswith(prefix):
                 return kind
-        
+
         if rel_path.endswith(".test.ts") or rel_path.endswith(".test.tsx") or "__tests__" in rel_path:
             return FrontendCapabilityKind.TEST
         if rel_path.startswith("frontend/tests/e2e/"):
             return FrontendCapabilityKind.E2E
         if "generated" in rel_path:
             return FrontendCapabilityKind.GENERATED
-            
+
         return FrontendCapabilityKind.UTILITY
-    
+
     def _extract_domain(self, file_path: Path) -> str:
         """Extract the domain from file path."""
         try:
             rel_path = str(file_path.relative_to(self.frontend_root))
         except ValueError:
             return "frontend-shared"
-        
+
         parts = rel_path.split("/")
-        
+
         if parts[0] == "app" and len(parts) > 1:
             domain = parts[1].replace("-page", "").replace("-workspace", "")
             return DOMAIN_MAPPING.get(domain, f"frontend-{domain}")
-        
+
         if parts[0] == "components" and len(parts) > 1:
             domain = parts[1]
             return DOMAIN_MAPPING.get(domain, f"frontend-{domain}")
-        
+
         if parts[0] == "lib" and parts[1] == "hooks" and len(parts) > 2:
             hook_name = parts[2].replace(".ts", "").replace("use-", "")
             for key, value in DOMAIN_MAPPING.items():
                 if key in hook_name:
                     return value
-        
+
         if parts[0] == "lib" and len(parts) > 1:
             domain = parts[1]
             return DOMAIN_MAPPING.get(domain, f"frontend-{domain}")
-        
+
         return "frontend-shared"
-    
-    def _get_api_dependencies(self, symbols: List[TypeScriptSymbol], file_path: Path) -> List[dict]:
+
+    def _get_api_dependencies(self, symbols: list[TypeScriptSymbol], file_path: Path) -> list[dict]:
         """Extract API dependencies from symbols and file content.
         
         Returns a list of dicts with 'endpoint' and 'method' keys.
         """
         endpoints = []
-        
+
         try:
             content = file_path.read_text(encoding="utf-8")
             import re
@@ -201,7 +205,7 @@ class FrontendCapabilityDiscoverer:
                 r"""(?:apiFetch|apiFetchJson|fetch)\s*\(\s*['"`]([^'"`]+)['"`]""",
                 re.IGNORECASE
             )
-            
+
             # First pass: find calls with explicit method
             method_map = {}
             for match in fetch_with_method.finditer(content):
@@ -209,7 +213,7 @@ class FrontendCapabilityDiscoverer:
                 method = match.group(2).upper()
                 if url.startswith("/api/") or url.startswith("/platform/"):
                     method_map[url] = method
-            
+
             # Second pass: find all fetch calls, use explicit method or default GET
             for match in fetch_simple.finditer(content):
                 url = match.group(1)
@@ -218,7 +222,7 @@ class FrontendCapabilityDiscoverer:
                     endpoints.append({"endpoint": url, "method": method})
         except Exception:
             pass
-        
+
         # Deduplicate by endpoint+method
         seen = set()
         unique = []
@@ -227,13 +231,13 @@ class FrontendCapabilityDiscoverer:
             if key not in seen:
                 seen.add(key)
                 unique.append(ep)
-        
+
         return unique
-    
-    def _get_backend_capabilities(self, api_endpoints: List[dict]) -> List[str]:
+
+    def _get_backend_capabilities(self, api_endpoints: list[dict]) -> list[str]:
         """Map API endpoints to backend capabilities."""
         endpoint_to_capability = self._build_endpoint_capability_map()
-        
+
         backend_caps = set()
         for ep in api_endpoints:
             endpoint = ep["endpoint"]
@@ -243,16 +247,16 @@ class FrontendCapabilityDiscoverer:
                 normalized = re.sub(r"\$\{[^}]+\}", ":param", endpoint)
             normalized = normalized.replace("{id}", ":param").replace("{", ":param").replace("}", "")
             normalized = normalized.split("?")[0]
-            
+
             for consumer_endpoint in endpoint_to_capability:
                 if self._endpoints_match(normalized, consumer_endpoint):
                     cap = endpoint_to_capability[consumer_endpoint]
                     if cap != "unknown":
                         backend_caps.add(cap)
-        
+
         return list(backend_caps)
-    
-    def _build_endpoint_capability_map(self) -> Dict[str, str]:
+
+    def _build_endpoint_capability_map(self) -> dict[str, str]:
         """Build mapping from endpoint to backend capability."""
         endpoint_map = {}
         try:
@@ -299,7 +303,7 @@ class FrontendCapabilityDiscoverer:
         except Exception:
             pass
         return endpoint_map
-    
+
     def _endpoints_match(self, endpoint1: str, endpoint2: str) -> bool:
         """Check if two endpoints match (handling :param wildcards and template vars)."""
         import re
@@ -309,43 +313,43 @@ class FrontendCapabilityDiscoverer:
             ep = ep.split("?")[0]
             return ep
         return normalize(endpoint1) == normalize(endpoint2)
-    
-    def _find_test_files(self, capabilities: Dict[str, FrontendCapability]) -> None:
+
+    def _find_test_files(self, capabilities: dict[str, FrontendCapability]) -> None:
         """Find test files for each capability."""
         test_dirs = [
             self.frontend_root / "__tests__",
             self.frontend_root / "tests" / "e2e",
         ]
-        
+
         for test_dir in test_dirs:
             if not test_dir.exists():
                 continue
-            
+
             for test_file in test_dir.rglob("*.test.ts*"):
                 rel_path = str(test_file.relative_to(self.frontend_root))
-                
+
                 for cap in capabilities.values():
                     if cap.domain.replace("frontend-", "") in rel_path:
                         if test_dir.name == "e2e":
                             cap.e2e_files.append(test_file)
                         else:
                             cap.test_files.append(test_file)
-    
-    def discover_capabilities(self, directory: Path = None) -> Dict[str, FrontendCapability]:
+
+    def discover_capabilities(self, directory: Path = None) -> dict[str, FrontendCapability]:
         """Discover all frontend capabilities in a directory."""
         target_dir = directory or self.frontend_root
-        
+
         symbols_by_file = self.ts_extractor.extract_from_directory(target_dir)
-        
-        capabilities: Dict[str, FrontendCapability] = {}
-        
+
+        capabilities: dict[str, FrontendCapability] = {}
+
         for file_path, symbols in symbols_by_file.items():
             if not symbols:
                 continue
-                
+
             kind = self._classify_file(file_path)
             domain = self._extract_domain(file_path)
-            
+
             if kind == FrontendCapabilityKind.ROUTE:
                 try:
                     rel_path = str(file_path.relative_to(self.frontend_root / "app"))
@@ -371,7 +375,7 @@ class FrontendCapabilityDiscoverer:
                 capability_id = f"frontend:api-client:{domain}"
             else:
                 capability_id = f"frontend:{kind.value}:{domain}:{file_path.stem}"
-            
+
             if capability_id not in capabilities:
                 capabilities[capability_id] = FrontendCapability(
                     capability_id=capability_id,
@@ -379,16 +383,16 @@ class FrontendCapabilityDiscoverer:
                     kind=kind,
                     domain=domain,
                 )
-            
+
             cap = capabilities[capability_id]
             cap.symbols.extend(symbols)
             cap.files.append(file_path)
-            
+
             if kind == FrontendCapabilityKind.HOOK:
                 endpoints = self._get_api_dependencies(symbols, file_path)
                 for endpoint in endpoints:
                     cap.api_dependencies.append(endpoint)
-        
+
         for cap in capabilities.values():
             # Deduplicate by endpoint+method
             seen = set()
@@ -400,22 +404,22 @@ class FrontendCapabilityDiscoverer:
                     unique.append(ep)
             cap.api_dependencies = unique
             cap.files = list(set(cap.files))
-        
+
         if capabilities:
             for cap in capabilities.values():
                 cap.backend_capabilities = self._get_backend_capabilities(cap.api_dependencies)
-        
+
         self._find_test_files(capabilities)
-        
+
         return capabilities
 
 
 if __name__ == "__main__":
     from pathlib import Path
-    
+
     discoverer = FrontendCapabilityDiscoverer()
     capabilities = discoverer.discover_capabilities(Path("frontend/lib/hooks"))
-    
+
     print(f"Discovered {len(capabilities)} frontend capabilities from hooks:")
     for cap_id, cap in sorted(capabilities.items()):
         if cap.api_dependencies:

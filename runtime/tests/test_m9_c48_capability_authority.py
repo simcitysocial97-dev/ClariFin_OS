@@ -85,12 +85,13 @@ def test_register_engine_capabilities_idempotent():
 def test_engine_records_are_engine_derived_metadata():
     reg = get_registry()
     register_engine_capabilities(reg)
-    # credit-card-engine is one of the 13 newly-registered records
-    cc = reg._capabilities.get("credit-card-engine")
+    # account-engine is one of the newly-registered records
+    # (credit-card-engine is a default capability and thus skipped by idempotency)
+    cc = reg._capabilities.get("account-engine")
     assert cc is not None
     md = cc.metadata
     assert md.get("engine_derived") is True
-    assert md.get("engine") == "credit_card_engine"
+    assert md.get("engine") == "account_engine"
     assert md.get("tier") in {"P0", "P1"}
     assert len(cc.requirements) > 0
 

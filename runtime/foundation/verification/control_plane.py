@@ -27,7 +27,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import sys
+
+logger = logging.getLogger(__name__)
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -215,12 +218,11 @@ class ControlPlanePlanner:
 
         # E2E impact analysis (M9-C57 extended)
         from runtime.foundation.verification.blast_radius import BlastRadiusEngine
-        from runtime.foundation.verification.e2e_route_mapper import E2ERouteMapper
 
         blast_engine = BlastRadiusEngine()
         e2e_impact = blast_engine.compute_e2e_impact(changed_path_objects)
         if e2e_impact.get("has_e2e_impact"):
-            print(f"\n🎭 E2E IMPACT:", file=sys.stderr)
+            print("\n🎭 E2E IMPACT:", file=sys.stderr)
             print(
                 f"   {e2e_impact['route_count']} route(s) changed",
                 file=sys.stderr,

@@ -1,14 +1,14 @@
 {
-  "run_id": "rename-d538fedd",
-  "timestamp": "2026-09-10T06:07:13.647235+00:00",
-  "repository_sha": "f46cac53202531c4c24e2c7abe5138b58b5aea68",
+  "run_id": "rename-b04ced5e",
+  "timestamp": "2026-09-19T15:27:01.128833+00:00",
+  "repository_sha": "56370d19e2f234cb4c2d0ed203642f550b84ec5e",
   "scenario": "rename",
   "changed_files": [
     "backend/src/engines/test_old_r4.py",
     "backend/src/engines/test_new_r4.py"
   ],
-  "plan_identity": "plan::rename-367a2fe6",
-  "execution_identity": "exec::rename-feb64781",
+  "plan_identity": "plan::rename-182331fd",
+  "execution_identity": "exec::rename-e0edef82",
   "task_ids": [
     "exec-0001",
     "exec-0002",

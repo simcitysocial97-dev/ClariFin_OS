@@ -13,7 +13,6 @@ import os
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Dict, List, Optional, Set
 
 from runtime.foundation.verification.symbol_resolver import Symbol
 
@@ -30,14 +29,14 @@ class TypeScriptSymbol:
         file: Path,
         start_line: int,
         end_line: int,
-        parent_class: Optional[str] = None,
+        parent_class: str | None = None,
         exported: bool = False,
         is_default_export: bool = False,
         is_react_component: bool = False,
         is_hook: bool = False,
         is_api_client_call: bool = False,
-        imported_symbols: Optional[List[str]] = None,
-        exported_symbols: Optional[List[str]] = None,
+        imported_symbols: list[str] | None = None,
+        exported_symbols: list[str] | None = None,
     ):
         self.name = name
         self.kind = kind
@@ -75,7 +74,7 @@ class TypeScriptSymbol:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "TypeScriptSymbol":
+    def from_dict(cls, data: dict) -> TypeScriptSymbol:
         return cls(
             name=data["name"],
             kind=data["kind"],
@@ -187,7 +186,7 @@ class TypeScriptSymbolExtractor:
             logger.error(f"Failed to parse TypeScript resolver output: {e}")
             return {"files": [], "totalFiles": 0, "totalSymbols": 0}
 
-    def extract_from_file(self, file_path: Path) -> List[TypeScriptSymbol]:
+    def extract_from_file(self, file_path: Path) -> list[TypeScriptSymbol]:
         """Extract all symbols from a single TypeScript/TSX file."""
         file_path = Path(file_path)
 
@@ -218,12 +217,12 @@ class TypeScriptSymbolExtractor:
         self._save_cache()
         return symbols
 
-    def extract_from_directory(self, directory: Path) -> Dict[Path, List[TypeScriptSymbol]]:
+    def extract_from_directory(self, directory: Path) -> dict[Path, list[TypeScriptSymbol]]:
         """Extract symbols from all TypeScript/TSX files in a directory recursively."""
         result = {}
         directory = Path(directory)
         repo_root = Path.cwd()
-        
+
         result_data = self._run_ts_resolver(directory)
 
         for file_data in result_data.get("files", []):
@@ -245,7 +244,7 @@ class TypeScriptSymbolExtractor:
         self._save_cache()
         return result
 
-    def get_symbol_at_line(self, file_path: Path, line_number: int) -> Optional[TypeScriptSymbol]:
+    def get_symbol_at_line(self, file_path: Path, line_number: int) -> TypeScriptSymbol | None:
         """Find which symbol contains the given line number."""
         symbols = self.extract_from_file(file_path)
         for symbol in symbols:
@@ -253,22 +252,22 @@ class TypeScriptSymbolExtractor:
                 return symbol
         return None
 
-    def get_react_components(self, file_path: Path) -> List[TypeScriptSymbol]:
+    def get_react_components(self, file_path: Path) -> list[TypeScriptSymbol]:
         """Get all React components in a file."""
         symbols = self.extract_from_file(file_path)
         return [s for s in symbols if s.is_react_component]
 
-    def get_hooks(self, file_path: Path) -> List[TypeScriptSymbol]:
+    def get_hooks(self, file_path: Path) -> list[TypeScriptSymbol]:
         """Get all hooks in a file."""
         symbols = self.extract_from_file(file_path)
         return [s for s in symbols if s.is_hook]
 
-    def get_api_client_calls(self, file_path: Path) -> List[TypeScriptSymbol]:
+    def get_api_client_calls(self, file_path: Path) -> list[TypeScriptSymbol]:
         """Get all API client calls in a file."""
         symbols = self.extract_from_file(file_path)
         return [s for s in symbols if s.is_api_client_call]
 
-    def get_exported_symbols(self, file_path: Path) -> List[TypeScriptSymbol]:
+    def get_exported_symbols(self, file_path: Path) -> list[TypeScriptSymbol]:
         """Get all exported symbols in a file."""
         symbols = self.extract_from_file(file_path)
         return [s for s in symbols if s.exported]
@@ -283,18 +282,18 @@ class TypeScriptSymbolExtractor:
             self.cache.clear()
             self._save_cache()
 
-    def find_symbol_by_name(self, name: str, directory: Path = None) -> List[TypeScriptSymbol]:
+    def find_symbol_by_name(self, name: str, directory: Path = None) -> list[TypeScriptSymbol]:
         """Find all symbols with a given name in a directory."""
         search_dir = directory or self.frontend_root
         all_symbols = []
-        
+
         result_data = self._run_ts_resolver(search_dir)
-        
+
         for file_data in result_data.get("files", []):
             for sym_data in file_data.get("symbols", []):
                 if sym_data["name"] == name:
                     all_symbols.append(TypeScriptSymbol.from_dict(sym_data))
-        
+
         return all_symbols
 
 
@@ -307,7 +306,7 @@ class TypeScriptCoverageSymbolMapper:
         self.symbol_test_map_path = Path("runtime/generated/typescript-symbol-test-map.json")
         self.symbol_test_map = self._load_symbol_test_map()
 
-    def _load_symbol_test_map(self) -> Dict[str, List[str]]:
+    def _load_symbol_test_map(self) -> dict[str, list[str]]:
         if self.symbol_test_map_path.exists():
             try:
                 return json.loads(self.symbol_test_map_path.read_text())
@@ -319,7 +318,7 @@ class TypeScriptCoverageSymbolMapper:
         self.symbol_test_map_path.parent.mkdir(parents=True, exist_ok=True)
         self.symbol_test_map_path.write_text(json.dumps(self.symbol_test_map, indent=2))
 
-    def load_coverage_data(self) -> Dict[Path, Set[int]]:
+    def load_coverage_data(self) -> dict[Path, set[int]]:
         """Load Vitest coverage data: file → set of covered line numbers."""
         if not self.coverage_file.exists():
             return {}
@@ -335,21 +334,21 @@ class TypeScriptCoverageSymbolMapper:
             file_path = Path(file_path_str)
             if "frontend" not in file_path_str:
                 continue
-            
+
             lines = set()
             if "s" in file_data:
                 for line_str, count in file_data["s"].items():
                     if count > 0:
                         lines.add(int(line_str))
-            
+
             if lines:
                 covered_lines[file_path] = lines
 
         return covered_lines
 
     def map_coverage_to_symbols(
-        self, covered_lines: Dict[Path, Set[int]]
-    ) -> Dict[Path, Set[str]]:
+        self, covered_lines: dict[Path, set[int]]
+    ) -> dict[Path, set[str]]:
         """Map covered lines to symbol names per source file."""
         file_to_symbols = {}
 
@@ -365,7 +364,7 @@ class TypeScriptCoverageSymbolMapper:
 
         return file_to_symbols
 
-    def get_symbols_for_test(self, test_file: str) -> Set[str]:
+    def get_symbols_for_test(self, test_file: str) -> set[str]:
         """Run vitest on a single test file and return covered symbol names."""
         test_path = Path(test_file)
         if not test_path.exists():
@@ -413,7 +412,7 @@ class TypeScriptCoverageSymbolMapper:
 
     def build_symbol_to_test_map(
         self, test_directory: Path, force_rebuild: bool = False
-    ) -> Dict[str, Set[Path]]:
+    ) -> dict[str, set[Path]]:
         """Build map: symbol_name → set of test files that cover it."""
         test_directory = Path(test_directory)
 
@@ -425,7 +424,7 @@ class TypeScriptCoverageSymbolMapper:
             logger.warning(f"No test files found in {test_directory}")
             return {}
 
-        symbol_to_tests: Dict[str, Set[Path]] = {}
+        symbol_to_tests: dict[str, set[Path]] = {}
 
         for test_file in test_files:
             covered_symbols = self.get_symbols_for_test(str(test_file))
@@ -460,7 +459,7 @@ class TypeScriptCoverageSymbolMapper:
         except Exception:
             return False
 
-    def _reconstruct_symbol_to_test_map(self) -> Dict[str, Set[Path]]:
+    def _reconstruct_symbol_to_test_map(self) -> dict[str, set[Path]]:
         """Convert cached flat map back to sets."""
         result = {}
         for symbol_name, test_files in self.symbol_test_map.items():
@@ -468,7 +467,7 @@ class TypeScriptCoverageSymbolMapper:
         return result
 
     def _save_symbol_test_map_from_result(
-        self, symbol_to_tests: Dict[str, Set[Path]]
+        self, symbol_to_tests: dict[str, set[Path]]
     ):
         """Save symbol-to-test map as JSON-serializable dict."""
         flat_map = {}
@@ -479,11 +478,11 @@ class TypeScriptCoverageSymbolMapper:
 
     def get_coverage_for_symbol(
         self, symbol_name: str
-    ) -> Dict[str, Set[str]]:
+    ) -> dict[str, set[str]]:
         """Get which test files cover a specific symbol."""
         return self._reconstruct_symbol_to_test_map().get(symbol_name, set())
 
-    def list_all_covered_symbols(self, covered_lines: Dict[Path, Set[int]]) -> Set[str]:
+    def list_all_covered_symbols(self, covered_lines: dict[Path, set[int]]) -> set[str]:
         """Return flat set of all symbol names covered by given coverage data."""
         file_to_symbols = self.map_coverage_to_symbols(covered_lines)
         all_symbols = set()
@@ -496,7 +495,7 @@ if __name__ == "__main__":
     import sys
 
     extractor = TypeScriptSymbolExtractor()
-    
+
     if len(sys.argv) > 1:
         test_file = Path(sys.argv[1])
     else:

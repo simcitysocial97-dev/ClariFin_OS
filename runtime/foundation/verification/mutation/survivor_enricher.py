@@ -16,7 +16,7 @@ diagnostic and test-generation tooling.
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -97,11 +97,11 @@ class SurvivorEnricher:
     """Enrich a survivor catalog with financial-concept context."""
 
     def __init__(self) -> None:
-        from runtime.foundation.verification.semantics.concepts import (  # noqa: PLC0415
-            FINANCIAL_CONCEPTS,
-        )
         from runtime.foundation.verification.semantics.assertions import (  # noqa: PLC0415
             FINANCIAL_INVARIANTS,
+        )
+        from runtime.foundation.verification.semantics.concepts import (  # noqa: PLC0415
+            FINANCIAL_CONCEPTS,
         )
 
         self._concepts = FINANCIAL_CONCEPTS

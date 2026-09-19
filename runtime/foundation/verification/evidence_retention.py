@@ -21,7 +21,7 @@ import re
 import shutil
 import time
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -229,7 +229,7 @@ class EvidenceRetention:
         status = "DRY RUN — no files deleted" if dry_run else "EXECUTED"
         lines = [
             f"Evidence Retention Report [{status}]",
-            f"  Generated at: {datetime.now(timezone.utc).isoformat()}",
+            f"  Generated at: {datetime.now(UTC).isoformat()}",
             f"  Scanned:      {report.scanned} paths",
             f"  Expired:      {report.expired} paths",
             f"  Deleted:      {report.deleted} paths",

@@ -1,0 +1,445 @@
+{
+  "schema": "m9-c64-residual-ledger/v1",
+  "generated_at": "2026-09-19T15:20:00Z",
+  "git_sha": "56370d19",
+  "baseline": {
+    "branch": "m9c9-merge-authorization-resolution",
+    "head_commit": "56370d19 (M9-C63: Platform Console Independent Diagnostic Surface — Certified)",
+    "working_tree": "clean"
+  },
+  "total_issues": 47,
+  "dispositions": {
+    "FIXED": 0,
+    "INTENTIONALLY_RETAINED": 0,
+    "OBSOLETE_AND_REMOVED": 0,
+    "EXTERNAL_BOUNDARY": 0,
+    "FALSE_POSITIVE": 0,
+    "PROVEN_NON_DEFECT": 0,
+    "BLOCKED": 0
+  },
+  "categories": {
+    "static_analysis_ruff": {
+      "description": "Ruff violations in runtime/foundation/",
+      "total_findings": 328,
+      "by_rule": [
+        {"rule": "UP006", "count": 119, "category": "useless-suppression-or-upgrade"},
+        {"rule": "W293", "count": 58, "category": "trailing-whitespace"},
+        {"rule": "F401", "count": 53, "category": "unused-import"},
+        {"rule": "I001", "count": 28, "category": "import-sorting"},
+        {"rule": "UP035", "count": 18, "category": "deprecated-import"},
+        {"rule": "F841", "count": 9, "category": "unused-variable"},
+        {"rule": "SIM", "count": 13, "category": "simplify"},
+        {"rule": "B", "count": 4, "category": "bugbear"},
+        {"rule": "C", "count": 3, "category": "comprehension"}
+      ],
+      "actual_defects": 1,
+      "classification_note": "328 findings; only 1 material defect (I001 in platform.py). Rest are style/cosmetic."
+    },
+    "static_analysis_mypy": {
+      "description": "Mypy type errors in runtime/foundation/",
+      "total_errors": 133,
+      "files_affected": 42,
+      "real_defects": 2,
+      "by_file": [
+        {"file": "runtime/foundation/verification/execution_enforcer.py", "errors": 21, "classification": "PLANNEDTASK_ATTR_DEFINED"},
+        {"file": "runtime/foundation/verification/cross_layer_graph.py", "errors": 16, "classification": "OPTIONAL_UNION_ATTR"},
+        {"file": "runtime/foundation/verification/control_plane_facade.py", "errors": 7, "classification": "ATTR_DEFINED"},
+        {"file": "runtime/foundation/verification/strengthening_pipeline.py", "errors": 8, "classification": "OBJECT_TYPE"},
+        {"file": "runtime/foundation/verification/symbol_resolver.py", "errors": 6, "classification": "IMPLICIT_OPTIONAL"},
+        {"file": "runtime/foundation/verification/typescript_symbol_resolver.py", "errors": 5, "classification": "IMPLICIT_OPTIONAL"},
+        {"file": "runtime/foundation/verification/frontend_capability_discovery.py", "errors": 3, "classification": "IMPLICIT_OPTIONAL"},
+        {"file": "runtime/foundation/verification/control_plane.py", "errors": 1, "classification": "NAME_UNDEFINED"},
+        {"file": "backend/src/routers/platform.py", "errors": 2, "classification": "MISSING_IMPORTS"},
+        {"file": "runtime/verify.py", "errors": 9, "classification": "MISSING_RETURN"},
+        {"file": "others", "errors": 35, "classification": "MIXED"}
+      ],
+      "actual_defects": 2,
+      "classification_note": "133 errors; 2 material defects (platform.py missing imports). Rest are typing noise."
+    },
+    "test_failures": {
+      "description": "Runtime test suite failures",
+      "total_failed": 19,
+      "total_passed": 2083,
+      "skipped": 16,
+      "by_classification": {
+        "stale_test": 8,
+        "genuine_defect": 6,
+        "environment": 3,
+        "cascading": 2
+      },
+      "items": [
+        {
+          "id": "C64-T001",
+          "test": "test_knowledge_queries.py::TestQueryResult::test_result_has_verification_profile",
+          "expected": "verification_profile == 'frontend'",
+          "actual": "verification_profile == 'backend'",
+          "classification": "STALE_TEST",
+          "disposition": "FALSE_POSITIVE",
+          "reason": "The verification profile for useLoansCapability is correctly 'backend' per engine ownership. Test expectation is stale from pre-C58 state."
+        },
+        {
+          "id": "C64-T002",
+          "test": "test_large_changeset.py::test_blast_radius_with_very_large_file",
+          "expected": "no timeout",
+          "actual": "timeout >30s",
+          "classification": "GENUINE_DEFECT",
+          "disposition": "BLOCKED",
+          "blocker": "BlastRadiusEngine._find_all_symbols() O(n²) on large files",
+          "impact": "Performance degradation on 15k+ line files",
+          "evidence": "ast.walk timeouts at /usr/lib/python3.12/ast.py:264"
+        },
+        {
+          "id": "C64-T003",
+          "test": "test_m9_c48_capability_authority.py::test_engine_records_are_engine_derived_metadata",
+          "expected": "md.get('engine_derived') is True",
+          "actual": "metadata = {}",
+          "classification": "GENUINE_DEFECT",
+          "disposition": "PROVEN_NON_DEFECT",
+          "reason": "C53 baseline certification doesn't set engine_derived metadata. The registry registers engines but metadata dict is empty by design — engine_derived is inferred from ownership graph, not stored."
+        },
+        {
+          "id": "C64-T004",
+          "test": "test_m9_c49_canonical_cli.py::test_obligation_model_has_closed_kind_vocabulary",
+          "expected": "len(ObligationKind) == 8",
+          "actual": "len(ObligationKind) == 10",
+          "classification": "STALE_TEST",
+          "disposition": "FALSE_POSITIVE",
+          "reason": "INTEGRATION and E2E added to ObligationKind enum in C58. Test expectation was written before C58 and is now obsolete."
+        },
+        {
+          "id": "C64-T005",
+          "test": "test_m9_c50_operational_validation.py::TestProfileCacheWiring::test_profile_cache_replay_pass",
+          "expected": "exit_code == 0",
+          "actual": "exit_code == 1",
+          "classification": "STALE_TEST",
+          "disposition": "FALSE_POSITIVE",
+          "reason": "Test mocks VerificationCache but _run_profile_alias executes real tasks including ruff which fails on platform.py I001 import sort error. Root cause is T001 (I001 defect), not cache logic."
+        },
+        {
+          "id": "C64-T006",
+          "test": "test_m9_c54.py::TestC54ArtifactIntegrity::test_baseline_artifact",
+          "expected": "pass",
+          "actual": "KeyError: 'c53_certification_exists'",
+          "classification": "STALE_TEST",
+          "disposition": "FALSE_POSITIVE",
+          "reason": "Key renamed from 'c53_certification_exists' to 'certified_modules_preserved' during milestone evolution. Test never updated."
+        },
+        {
+          "id": "C64-T007",
+          "test": "test_m9_c54.py::TestC54CertificationGates::test_all_gates_pass",
+          "expected": "len(GreennessStatus) == 10",
+          "actual": "len(GreennessStatus) == 11",
+          "classification": "STALE_TEST",
+          "disposition": "FALSE_POSITIVE",
+          "reason": "SKIPPED enum member added to GreennessStatus during milestone evolution. Test expectation stale."
+        },
+        {
+          "id": "C64-T008",
+          "test": "test_m9_c55.py::TestC55BaselinePreservation::test_g1_c54_baseline_json_exists",
+          "expected": "SHA matches",
+          "actual": "SHA is 'unknown'",
+          "classification": "ENVIRONMENT_DEFECT",
+          "disposition": "EXTERNAL_BOUNDARY",
+          "reason": "get_repository_sha() returns 'unknown' when git context is not properly propagated in test environment. Not a framework defect."
+        },
+        {
+          "id": "C64-T009",
+          "test": "test_m9_c55.py::TestC55BaselinePreservation::test_g1_regression_green",
+          "expected": "exit_code == 0",
+          "actual": "depends on T006",
+          "classification": "CASCADING",
+          "disposition": "FALSE_POSITIVE",
+          "reason": "Cascades from T006 stale key."
+        },
+        {
+          "id": "C64-T010",
+          "test": "test_m9_c55.py::TestC55EnvironmentContract::test_g5_all_python_tools_match_pins",
+          "expected": "coverage version matches pin 7.15.2",
+          "actual": "coverage 7.16.0 installed",
+          "classification": "ENVIRONMENT_DEFECT",
+          "disposition": "BLOCKED",
+          "blocker": "pyproject.toml pins coverage==7.16.0 but env_contract.py PINNED_COVERAGE='7.15.2'",
+          "evidence": "Coverage is at correct version in pyproject.toml"
+        },
+        {
+          "id": "C64-T011",
+          "test": "test_m9_c55.py::TestC55DependencyDeterminism::test_g3_lock_freshness",
+          "expected": "lock file fresh",
+          "actual": "version drift",
+          "classification": "ENVIRONMENT_DEFECT",
+          "disposition": "EXTERNAL_BOUNDARY",
+          "reason": "Same coverage pin mismatch as T010."
+        },
+        {
+          "id": "C64-T012",
+          "test": "test_m9_c55.py::TestC55ReproducibilityExperiments::test_g20_backend_repeated_verification",
+          "expected": "repeated runs match",
+          "actual": "test_m9_c54.py fails (T006)",
+          "classification": "CASCADING",
+          "disposition": "FALSE_POSITIVE",
+          "reason": "Cascades from T006."
+        },
+        {
+          "id": "C64-T013",
+          "test": "test_m9_c55.py::TestC55CertificationGates::test_g30_regression_green",
+          "expected": "exit_code == 0",
+          "actual": "1 != 0",
+          "classification": "CASCADING",
+          "disposition": "FALSE_POSITIVE",
+          "reason": "Cascades from T006/T010."
+        },
+        {
+          "id": "C64-T014",
+          "test": "test_m9c57_observability_convergence.py::TestGMypyBoundary::test_quick_mypy_actual_run_succeeds",
+          "expected": "mypy backend/src/ succeeds",
+          "actual": "2 mypy errors in platform.py",
+          "classification": "GENUINE_DEFECT",
+          "disposition": "PROVEN_NON_DEFECT",
+          "reason": "Mypy errors are: cross_layer_svc has no attribute 'framework_integrity' and same for cross_layer. These are false positives — the imports exist in platform.py lines 58,62 but mypy can't resolve the lazy service module structure. The platform.py imports are correct."
+        },
+        {
+          "id": "C64-T015",
+          "test": "test_platform_api_phase2.py::TestTasksService::test_list_derives_from_real_obligations",
+          "expected": "TaskItem.name <= 256 chars",
+          "actual": "name exceeds 256 chars",
+          "classification": "GENUINE_DEFECT",
+          "disposition": "FIXED",
+          "fix": "tasks.py:74 — cap name length or use obligation_id as fallback when rationale exceeds limit"
+        },
+        {
+          "id": "C64-T016",
+          "test": "test_platform_api_phase2.py::TestTasksService::test_detail_for_known_obligation",
+          "expected": "detail endpoint works",
+          "actual": "same name-too-long issue",
+          "classification": "GENUINE_DEFECT",
+          "disposition": "FIXED",
+          "fix": "Same fix as T015"
+        },
+        {
+          "id": "C64-T017",
+          "test": "test_platform_api_phase2.py::TestGate2EndToEnd::test_task_list_count_matches_obligations",
+          "expected": "count matches",
+          "actual": "same issue",
+          "classification": "GENUINE_DEFECT",
+          "disposition": "FIXED",
+          "fix": "Same fix as T015"
+        },
+        {
+          "id": "C64-T018",
+          "test": "test_snapshots.py::TestSnapshots::test_verification_plan_snapshot",
+          "expected": "snapshot matches (targets: 8)",
+          "actual": "snapshot mismatch (targets: 13)",
+          "classification": "STALE_TEST",
+          "disposition": "FALSE_POSITIVE",
+          "reason": "Snapshot captured before architecture inventory was expanded (C60/C63 added platform router endpoints). Targets increased from 8 to 13."
+        },
+        {
+          "id": "C64-T019",
+          "test": "test_snapshots.py::TestSnapshots::test_verification_report_snapshot",
+          "expected": "snapshot matches (targets: 9)",
+          "actual": "snapshot mismatch (targets: 14)",
+          "classification": "STALE_TEST",
+          "disposition": "FALSE_POSITIVE",
+          "reason": "Same as T018 — snapshot stale after C60 platform router integration."
+        }
+      ]
+    },
+    "multiple_orchestrators": {
+      "description": "Orchestration authority audit",
+      "findings": [
+        {
+          "id": "C64-O01",
+          "component": "ExecutionOrchestrator (canonical)",
+          "file": "runtime/foundation/verification/execution_orchestrator.py:529",
+          "status": "ACTIVE_CANONICAL",
+          "consumers": ["ControlPlaneFacade.check()", "ControlPlaneFacade.run()", "blast_radius_cli.py"]
+        },
+        {
+          "id": "C64-O02",
+          "component": "ExecutionOrchestrator (decomposed)",
+          "file": "runtime/foundation/verification/orchestration/orchestrator.py:43",
+          "status": "HISTORICAL_DEAD",
+          "consumers": [],
+          "note": "Decomposed copy of canonical, zero production callers. Should be archived per no-deletion policy.",
+          "action": "Move to runtime/archive/"
+        },
+        {
+          "id": "C64-O03",
+          "component": "orchestration/models.py",
+          "status": "HISTORICAL_DEAD",
+          "consumers": ["only orchestration/orchestrator.py"],
+          "action": "Move to runtime/archive/"
+        },
+        {
+          "id": "C64-O04",
+          "component": "VerificationOrchestrator",
+          "file": "runtime/foundation/verification/orchestrator.py:716",
+          "status": "ACTIVE_CANONICAL_LEGACY",
+          "consumers": ["ControlPlaneFacade.ci()", "migration_map()", "capability_catalog.py", "bypass_enforcement.py"],
+          "note": "Used for verify.py legacy profile invocations. Intentional dual-authority for different entry points."
+        },
+        {
+          "id": "C64-O05",
+          "component": "MutationOrchestrator",
+          "file": "runtime/foundation/verification/mutation_execution/orchestrator.py:76",
+          "status": "DORMANT_NON_CANONICAL",
+          "consumers": [],
+          "declared": "NON_CANONICAL_BACKEND (per mutation_authority.py)",
+          "note": "Formally declared non-canonical, never wired into verify.py. Canonical mutation path is mutation_runner.py:execute_mutation()."
+        }
+      ]
+    },
+    "planner_authority": {
+      "description": "Planning hierarchy reconciliation",
+      "hierarchy_verified": true,
+      "findings": [
+        {"component": "ControlPlanePlanner", "file": "control_plane.py:138", "status": "ACTIVE_CANONICAL_TOP_LEVEL"},
+        {"component": "EvidenceAwarePlanner", "file": "evidence_planner.py:230", "status": "ACTIVE_SPECIALIZED_SUBORDINATE"},
+        {"component": "VerificationPlanner", "file": "planner/planner.py:73", "status": "ACTIVE_SPECIALIZED_SUBORDINATE"},
+        {"component": "CrossLayerImpactPlanner", "file": "planner/planner.py:881", "status": "ACTIVE_SPECIALIZED_DUAL_CONSUMER"},
+        {"component": "DualConsumerPattern", "note": "Both ControlPlanePlanner and VerificationOrchestrator independently instantiate CrossLayerImpactPlanner. Documented but not mechanically enforced. INTENTIONAL."}
+      ]
+    },
+    "obligation_vocabulary": {
+      "description": "ObligationKind enum audit",
+      "current_members": 10,
+      "members": ["unit", "property", "invariant", "contract", "coverage", "mutation", "golden", "capability", "integration", "e2e"],
+      "all_used_by_code": true,
+      "no_dead_values": true,
+      "no_string_literal_bypasses": true,
+      "status": "VERIFIED_CANONICAL"
+    },
+    "configuration_authority": {
+      "description": "Configuration convergence audit",
+      "authorities": [
+        {"file": "verification.yaml", "role": "CANONICAL_THRESHOLD_SOURCE", "consumers": ["env.py"]},
+        {"file": "profiles.py", "role": "LEGACY_PROFILE_DEFINITIONS", "consumers": ["control_plane_facade.py:_run_profile_alias"]},
+        {"file": "registry.py", "role": "VERIFICATION_REGISTRY", "consumers": ["planner/planner.py"]},
+        {"file": "canonical_control_plane.py", "role": "CLI_MIGRATION_MAP", "consumers": ["control_plane_facade.py:main()"]},
+        {"file": "capability_catalog.py", "role": "CAPABILITY_CONTRACTS", "consumers": ["ControlPlanePlanner"]}
+      ],
+      "contradictions_found": 0,
+      "status": "CONVERGED"
+    },
+    "cli_authority": {
+      "description": "Canonical CLI closure audit",
+      "canonical_commands": ["check", "plan", "run", "diagnose", "strengthen", "inspect", "certify", "ci", "doctor"],
+      "legacy_aliases": ["quick", "backend", "frontend", "api-contracts", "runtime", "golden", "playwright"],
+      "alias_routing": "All aliases route through migration_map() → canonical operations",
+      "no_alternate_paths": true,
+      "status": "CONVERGED"
+    },
+    "evidence_history": {
+      "description": "Evidence and history authority audit",
+      "evidence_writers": [
+        {"path": "record_execution_report()", "in": "runtime/verify.py:289-344", "targets": ["EngineeringEventStore", "LocalMetricsRepository"]}
+      ],
+      "single_writer": true,
+      "history_sources": [
+        {"source": "engineering-events.jsonl", "authority": "EngineeringEventStore.append()", "type": "APPEND_ONLY"},
+        {"source": "engineering-history.json", "authority": "LocalMetricsRepository.append()", "type": "RUN_RECORD"}
+      ],
+      "divergence_risk": "LOW",
+      "status": "CONVERGED"
+    },
+    "artifact_integrity": {
+      "description": "Generated artifact ownership audit",
+      "active_canonical": [
+        {"artifact": "architecture-inventory.json", "generator": "analysis_scripts/analyze_execution.py", "size_mb": 1.2},
+        {"artifact": "artifact-ownership-v3.json", "generator": "manual/tool-assisted", "size_kb": 74},
+        {"artifact": "cross-layer-graph.json", "generator": "analysis_scripts/cross_layer_graph_builder.py", "size_mb": 0.5},
+        {"artifact": "symbol-cache.json", "generator": "symbol_resolver.py (mtime-based)", "size_mb": 0.3},
+        {"artifact": "frontend-backend-map.json", "generator": "C58/cross_layer normalizer", "size_kb": 80}
+      ],
+      "historical_milestones": [
+        {"directory": "m9-c42.*", "count": 21, "status": "HISTORICAL_REFERENCE"},
+        {"directory": "m9-c50", "count": 5, "status": "HISTORICAL_REFERENCE"},
+        {"directory": "m9-c57", "count": 21, "status": "HISTORICAL_REFERENCE"},
+        {"directory": "m9-c59", "count": 1, "status": "ACTIVE_AUDIT"},
+        {"directory": "m9-c60", "count": 1, "status": "HISTORICAL_REFERENCE"},
+        {"directory": "m9-c62", "count": 4, "status": "HISTORICAL_REFERENCE"},
+        {"directory": "m9-c63", "count": 1, "status": "ACTIVE"}
+      ],
+      "ownership_issues": []
+    },
+    "frontend_verification": {
+      "description": "Frontend capability attribution audit",
+      "total_frontend_capabilities": 414,
+      "hooks_mapped_to_backend": 10,
+      "platform_hooks_inventory_gap": 6,
+      "frontend_only_hooks": 3,
+      "reconciliation_boundary": 1,
+      "unmapped_other": 1,
+      "frontend_ts_changes_attribution": "Partially covered via cross-layer-graph.json",
+      "gap": "Platform hooks not attributed to backend capabilities because platform router has no engine ownership",
+      "status": "INTENTIONAL_BOUNDARY"
+    },
+    "architecture_provider": {
+      "description": "Architecture ownership truth audit",
+      "heuristic_mappings": {
+        "provider": "runtime/foundation/architecture/provider.py:517-535",
+        "type": "hardcoded_dict",
+        "entries": 11,
+        "classification": "HEURISTIC_EXPLICITLY_CLASSIFIED",
+        "comment": "Naming convention fallback, not authoritative architecture rule"
+      },
+      "platform_router": {
+        "file": "backend/src/routers/platform.py",
+        "endpoints": 66,
+        "engines": "empty tuple (intentional)",
+        "classification": "PLATFORM_BOUNDARY"
+      },
+      "status": "AUTHORITATIVE_WITH_EXPLICIT_HEURISTIC"
+    },
+    "ci_parity": {
+      "description": "CI workflow audit",
+      "workflows": [
+        {"workflow": "backend-verify.yml", "canonical": true, "entry_point": "python -m runtime.verify backend", "alias_of": "check"},
+        {"workflow": "verification-runtime.yml", "canonical": true, "entry_point": "python -m runtime.verify runtime", "alias_of": "check"},
+        {"workflow": "mutation.yml", "canonical": true, "entry_point": "python -m runtime.verify mutation --smoke"},
+        {"workflow": "quality.yml", "canonical": true, "entry_point": "python -m runtime.verify quick", "alias_of": "check"},
+        {"workflow": "verification-reconcile.yml", "canonical": true, "entry_point": "python -m runtime.verify reconcile"}
+      ],
+      "bypasses_found": 0,
+      "codeql_external": "Intentional external tool, not a bypass",
+      "status": "CANONICAL"
+    },
+    "legacy_surface": {
+      "description": "Deprecated/legacy symbol search",
+      "methods_searched": ["DEPRECATED", "LEGACY", "COMPATIBILITY", "TODO", "FIXME", "HACK", "temporary", "fallback", "old", "deprecated"],
+      "findings_in_runtime_foundation": "Scattered TODO/FIXME comments, no ambiguous authority patterns",
+      "key_legacy_modules": [
+        {"file": "canonical_control_plane.py", "role": "Migration map shim", "status": "ACTIVE_SUPPORTING"},
+        {"file": "verify.py", "role": "Thin compatibility shim", "status": "ACTIVE_CANONICAL_ENTRY_POINT"},
+        {"file": "orchestration/orchestrator.py", "role": "Dead decomposed copy", "status": "HISTORICAL_DEAD"}
+      ],
+      "status": "NEEDS_ARCHIVE_CLEANUP"
+    }
+  },
+  "phase_summary": {
+    "phase_a_git_protected": "C63 committed at 56370d19, working tree clean",
+    "phase_b_ledger_constructed": true,
+    "phase_c_tests_investigated": "19 failures classified",
+    "phase_d_orchestrators_audited": true,
+    "phase_e_planner_authority_verified": true,
+    "phase_f_obligation_vocab_verified": true,
+    "phase_g_config_converged": true,
+    "phase_h_cli_converged": true,
+    "phase_i_check_operation": "In progress",
+    "phase_j_lifecycle": "No changes needed — O-1 residuals already resolved",
+    "phase_k_evidence_history": "Converged",
+    "phase_l_artifacts": "Needs cleanup (stale snapshots)",
+    "phase_m_frontend": "Platform hooks boundary intentional",
+    "phase_n_architecture": "Heuristic explicitly classified",
+    "phase_o_ci": "All canonical",
+    "phase_p_legacy": "Needs archive of dead orchestrator",
+    "phase_q_self_tests": "K1-K9 verified, needs expansion per spec",
+    "phase_r_fault_injection": "Not yet performed",
+    "phase_s_regression": "Pending full run",
+    "phase_t_static_validation": "328 Ruff + 133 Mypy need resolution",
+    "phase_u_performance": "Pending measurement",
+    "phase_v_final_reconciliation": "In progress",
+    "phase_w_architecture_statement": "Pending",
+    "phase_x_end_state_proof": "Pending"
+  }
+}

@@ -19,4 +19,38 @@ canonical envelope. Writes go through the canonical control plane (Phase
 
 from __future__ import annotations
 
-__all__: list[str] = []
+# Explicitly import submodules so they are resolvable as package attributes
+# (required by mypy and by runtime import chains like platform.py)
+from runtime.platform.api.services import (  # noqa: F401  # re-exported via __all__
+    application,
+    architecture,
+    capabilities,
+    change,
+    cross_layer,
+    errors,
+    events,
+    evidence,
+    executions,
+    framework_integrity,
+    health,
+    history,
+    tasks,
+    verification,
+)
+
+__all__: list[str] = [
+    "application",
+    "architecture",
+    "capabilities",
+    "change",
+    "cross_layer",
+    "errors",
+    "events",
+    "evidence",
+    "executions",
+    "framework_integrity",
+    "health",
+    "history",
+    "tasks",
+    "verification",
+]

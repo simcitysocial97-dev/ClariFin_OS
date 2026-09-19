@@ -23,10 +23,8 @@ Output identifies:
 from __future__ import annotations
 
 import ast
-import importlib
-import json
 import logging
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
@@ -421,7 +419,6 @@ class ConfigurationDriftDetector:
         try:
             from runtime.foundation.verification.capability_authority import (
                 authority_audit,
-                assert_no_competing_authority,
             )
             audit = authority_audit()
             if not audit.canonical_resolvable:
@@ -641,8 +638,8 @@ def run_authority_drift_detection() -> DriftReport:
 
 def main() -> int:
     """CLI entry point: verify.py diagnose authority-drift."""
-    import sys
     import json as json_lib
+    import sys
 
     report = run_authority_drift_detection()
     output = json_lib.dumps(report.to_dict(), indent=2, default=str)

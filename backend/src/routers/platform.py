@@ -55,7 +55,6 @@ from runtime.platform.api.services import (
     architecture,
     capabilities,
     change,
-    cross_layer as cross_layer_svc,
     events,
     evidence,
     executions,
@@ -64,6 +63,9 @@ from runtime.platform.api.services import (
     history,
     tasks,
     verification,
+)
+from runtime.platform.api.services import (
+    cross_layer as cross_layer_svc,
 )
 from runtime.platform.api.services import (
     errors as errors_service,

@@ -1083,7 +1083,7 @@ def run_mutation_cli(argv: list[str]) -> int:
             return 0
 
         print(f"\n{'=' * 72}")
-        print(f"  🎯 INCREMENTAL MUTATION MODE")
+        print("  🎯 INCREMENTAL MUTATION MODE")
         print(f"{'=' * 72}")
         print(f"  Changed files    : {len(changed_files)}")
         print(f"  Affected engines : {', '.join(sorted(affected_engines))}")
@@ -1139,7 +1139,7 @@ def run_mutation_cli(argv: list[str]) -> int:
             evidence_complete=all(r.evidence_complete for r in all_results),
             mode="incremental",
             target=None,
-            affected_engines=list(sorted(affected_engines)),
+            affected_engines=sorted(affected_engines),
             note=f"Aggregated from {len(all_results)} engine(s)",
             threshold_percent=80,
             source_scope=",".join(

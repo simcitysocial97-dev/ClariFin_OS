@@ -9,8 +9,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from runtime.foundation.verification.workflow_convergence.bypass import analyze_workflow_bypass
-from runtime.foundation.verification.workflow_convergence.inventory import WorkflowInventory
+from runtime.foundation.verification.workflow_convergence.bypass import (
+    analyze_workflow_bypass,
+)
+from runtime.foundation.verification.workflow_convergence.inventory import (
+    WorkflowInventory,
+)
 
 
 @dataclass(frozen=True, slots=True)

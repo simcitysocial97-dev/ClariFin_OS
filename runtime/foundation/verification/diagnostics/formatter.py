@@ -7,7 +7,7 @@ invariant violations are detected in test results.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 from runtime.foundation.verification.semantics.parser import SemanticFailure

@@ -7,34 +7,31 @@ from __future__ import annotations
 
 import contextlib
 import hashlib
-import json
 import logging
 import re
 import subprocess
 import sys
 import time
 from collections.abc import Callable
-from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
-from enum import Enum
 from pathlib import Path
 from typing import Any
 
 from .models import (  # noqa: F401,F403
-    REPO_ROOT,
+    CAPABILITY_TO_MUTATION_TARGET,
     GENERATED_ROOT,
-    CompletionState,
     NON_PASS_STATES,
     PASSING_STATES,
+    REPO_ROOT,
+    CompletionState,
+    ExecutionPlan,
+    ExecutionReport,
+    ExecutionTaskSpec,
     FailureStage,
     FinalDecision,
-    TaskOrigin,
     RepositoryFingerprint,
-    CAPABILITY_TO_MUTATION_TARGET,
-    ExecutionTaskSpec,
-    ExecutionPlan,
     TaskExecutionRecord,
-    ExecutionReport,
+    TaskOrigin,
     _capability_components,
     _measurement_kind_for_task,
 )
@@ -643,7 +640,7 @@ class ExecutionOrchestrator:
         plan: ExecutionPlan,
         authorize: set[str] | None = None,
         dry_run: bool = False,
-        on_record: Callable[["TaskExecutionRecord"], None] | None = None,
+        on_record: Callable[[TaskExecutionRecord], None] | None = None,
     ) -> ExecutionReport:
         """Execute the plan and produce an ExecutionReport.
 

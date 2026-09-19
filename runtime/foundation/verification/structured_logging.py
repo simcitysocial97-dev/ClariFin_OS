@@ -31,7 +31,6 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-
 # ---------------------------------------------------------------------------
 # Correlation ID context (thread-local)
 # ---------------------------------------------------------------------------

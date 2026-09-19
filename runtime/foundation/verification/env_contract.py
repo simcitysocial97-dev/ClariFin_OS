@@ -45,11 +45,11 @@ from runtime.foundation.verification.env import (
 
 # ── Declared pin contract (single source of truth = root pyproject.toml) ──────
 PINNED_PYTEST = "9.1.1"
-PINNED_COVERAGE = "7.15.2"
-PINNED_RUFF = "0.15.20"
+PINNED_COVERAGE = "7.16.0"
+PINNED_RUFF = "0.16.6"
 PINNED_BLACK = "26.5.1"
-PINNED_MYPY = "2.1.0"
-PINNED_HYPOTHESIS = "6.161.4"
+PINNED_MYPY = "2.3.1"
+PINNED_HYPOTHESIS = "6.168.0"
 PINNED_NODE_MAJOR = 24  # frontend/package.json engines.node >=24 <25
 PINNED_NPM_VERSION = (
     "11.19.0"  # frontend/package.json packageManager (synced with Node 24 LTS)

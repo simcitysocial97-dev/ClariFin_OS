@@ -30,7 +30,6 @@ Module map::
 """
 from __future__ import annotations
 
-
 __all__: list[str] = [
     # Q1 — inventory
     "WorkflowStep",

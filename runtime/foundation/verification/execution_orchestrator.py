@@ -1129,7 +1129,7 @@ class ExecutionOrchestrator:
         plan: ExecutionPlan,
         authorize: set[str] | None = None,
         dry_run: bool = False,
-        on_record: Callable[["TaskExecutionRecord"], None] | None = None,
+        on_record: Callable[[TaskExecutionRecord], None] | None = None,
     ) -> ExecutionReport:
         """Execute the plan and produce an ExecutionReport.
 

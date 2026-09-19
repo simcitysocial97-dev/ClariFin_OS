@@ -327,10 +327,10 @@ def test_obligation_model_has_closed_disposition_vocabulary():
 
 
 def test_obligation_model_has_closed_kind_vocabulary():
-    """The obligation model has exactly 8 obligation kinds."""
+    """The obligation model has exactly 10 obligation kinds (C58 added integration+e2e)."""
     from runtime.foundation.verification.obligation import ObligationKind
 
-    assert len(ObligationKind) == 8
+    assert len(ObligationKind) == 10
     expected = {
         "unit",
         "property",
@@ -340,6 +340,8 @@ def test_obligation_model_has_closed_kind_vocabulary():
         "mutation",
         "golden",
         "capability",
+        "integration",
+        "e2e",
     }
     actual = {k.value for k in ObligationKind}
     assert actual == expected

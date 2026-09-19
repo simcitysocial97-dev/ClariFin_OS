@@ -27,8 +27,6 @@ import re
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Dict, List, Optional, Set
-
 
 # ---------------------------------------------------------------------------
 # Regex patterns for endpoint extraction
@@ -114,8 +112,8 @@ class ConsumerInfo:
     """Metadata about who consumes a given backend endpoint."""
 
     endpoint: str
-    hook_files: List[str] = field(default_factory=list)
-    component_files: List[str] = field(default_factory=list)
+    hook_files: list[str] = field(default_factory=list)
+    component_files: list[str] = field(default_factory=list)
     total_references: int = 0
     last_scanned: float = 0.0
 
@@ -146,11 +144,11 @@ _GENERATED_CACHE_PATH = Path("runtime/generated/frontend-backend-map.json")
 class FrontendBackendMapper:
     """Scans the frontend codebase and maps backend endpoints to consumers."""
 
-    def __init__(self, root: Optional[Path] = None) -> None:
+    def __init__(self, root: Path | None = None) -> None:
         self.root = Path(root) if root is not None else Path(".")
         self._cache_path = self.root / _GENERATED_CACHE_PATH
-        self._file_mtimes: Dict[str, float] = {}
-        self._consumer_map: Dict[str, ConsumerInfo] = {}
+        self._file_mtimes: dict[str, float] = {}
+        self._consumer_map: dict[str, ConsumerInfo] = {}
         self._load_cache_if_valid()
 
     # ------------------------------------------------------------------
@@ -165,12 +163,12 @@ class FrontendBackendMapper:
         except (json.JSONDecodeError, OSError):
             return
 
-        cached_mtimes: Dict[str, float] = data.get("_mtimes", {})
+        cached_mtimes: dict[str, float] = data.get("_mtimes", {})
         if cached_mtimes != self._compute_all_mtimes():
             return
 
         self._file_mtimes = cached_mtimes
-        raw_map: Dict[str, dict] = data.get("consumer_map", {})
+        raw_map: dict[str, dict] = data.get("consumer_map", {})
         self._consumer_map = {
             ep: ConsumerInfo(**info) for ep, info in raw_map.items()
         }
@@ -185,8 +183,8 @@ class FrontendBackendMapper:
         }
         self._cache_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
-    def _compute_all_mtimes(self) -> Dict[str, float]:
-        mtimes: Dict[str, float] = {}
+    def _compute_all_mtimes(self) -> dict[str, float]:
+        mtimes: dict[str, float] = {}
         for fp in self._iter_source_files():
             try:
                 mtimes[str(fp)] = fp.stat().st_mtime
@@ -198,9 +196,9 @@ class FrontendBackendMapper:
     # Source-file enumeration
     # ------------------------------------------------------------------
 
-    def _iter_source_files(self) -> List[Path]:
-        files: List[Path] = []
-        seen: Set[str] = set()
+    def _iter_source_files(self) -> list[Path]:
+        files: list[Path] = []
+        seen: set[str] = set()
         for d in _ALL_SCAN_DIRS:
             base = self.root / d
             if not base.exists():
@@ -219,14 +217,14 @@ class FrontendBackendMapper:
     # Line-level extraction
     # ------------------------------------------------------------------
 
-    def _extract_paths_from_file(self, filepath: Path) -> List[str]:
+    def _extract_paths_from_file(self, filepath: Path) -> list[str]:
         """Return a list of normalised endpoint keys found in *filepath*."""
         try:
             text = filepath.read_text(encoding="utf-8", errors="ignore")
         except OSError:
             return []
 
-        endpoints: List[str] = []
+        endpoints: list[str] = []
         for line in text.splitlines():
             if _is_import_line(line) or _is_comment_line(line):
                 continue
@@ -266,9 +264,9 @@ class FrontendBackendMapper:
     # Public scanning API
     # ------------------------------------------------------------------
 
-    def scan_frontend_hooks(self) -> Dict[str, List[Path]]:
+    def scan_frontend_hooks(self) -> dict[str, list[Path]]:
         """Return endpoint → list of hook-source files mapping."""
-        result: Dict[str, List[Path]] = {}
+        result: dict[str, list[Path]] = {}
         for fp in self._iter_source_files():
             if self._classify_file(fp) != "hook":
                 continue
@@ -276,9 +274,9 @@ class FrontendBackendMapper:
                 result.setdefault(ep, []).append(fp)
         return result
 
-    def scan_frontend_components(self) -> Dict[str, List[Path]]:
+    def scan_frontend_components(self) -> dict[str, list[Path]]:
         """Return endpoint → list of component/page-source files mapping."""
-        result: Dict[str, List[Path]] = {}
+        result: dict[str, list[Path]] = {}
         for fp in self._iter_source_files():
             if self._classify_file(fp) != "component":
                 continue
@@ -286,7 +284,7 @@ class FrontendBackendMapper:
                 result.setdefault(ep, []).append(fp)
         return result
 
-    def build_consumer_map(self) -> Dict[str, ConsumerInfo]:
+    def build_consumer_map(self) -> dict[str, ConsumerInfo]:
         """Build (or reload) the full endpoint→ConsumerInfo map."""
         need_rebuild = False
         current_mtimes = self._compute_all_mtimes()
@@ -297,9 +295,9 @@ class FrontendBackendMapper:
         if need_rebuild or not self._consumer_map:
             hook_map = self.scan_frontend_hooks()
             comp_map = self.scan_frontend_components()
-            all_endpoints: Set[str] = set(hook_map) | set(comp_map)
+            all_endpoints: set[str] = set(hook_map) | set(comp_map)
 
-            new_map: Dict[str, ConsumerInfo] = {}
+            new_map: dict[str, ConsumerInfo] = {}
             for ep in all_endpoints:
                 hooks = hook_map.get(ep, [])
                 comps = comp_map.get(ep, [])
@@ -315,19 +313,19 @@ class FrontendBackendMapper:
 
         return self._consumer_map
 
-    def get_consumers_for_endpoint(self, endpoint: str) -> List[Path]:
+    def get_consumers_for_endpoint(self, endpoint: str) -> list[Path]:
         """Return all frontend files consuming *endpoint*."""
         info = self.build_consumer_map().get(endpoint)
         if info is None:
             return []
-        files: List[Path] = []
+        files: list[Path] = []
         for p in info.hook_files:
             files.append(Path(p))
         for p in info.component_files:
             files.append(Path(p))
         return files
 
-    def get_endpoints_for_file(self, file_path: Path) -> List[str]:
+    def get_endpoints_for_file(self, file_path: Path) -> list[str]:
         """Return all normalised endpoints referenced by *file_path*."""
         if not file_path.is_absolute():
             file_path = self.root / file_path

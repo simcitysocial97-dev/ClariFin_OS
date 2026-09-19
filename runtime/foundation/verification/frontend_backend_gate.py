@@ -18,7 +18,6 @@ import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Set
 
 
 @dataclass
@@ -26,11 +25,11 @@ class OrphanedConsumer:
     """A frontend consumer referencing a non-existent backend endpoint."""
 
     endpoint: str
-    frontend_files: List[str] = field(default_factory=list)
+    frontend_files: list[str] = field(default_factory=list)
     reason: str = "endpoint_deleted"
 
 
-def _extract_endpoints_from_file(filepath: Path) -> List[str]:
+def _extract_endpoints_from_file(filepath: Path) -> list[str]:
     """Extract FastAPI route endpoints from a Python router file."""
     endpoints = []
     try:
@@ -72,9 +71,9 @@ class FrontendBackendGate:
     def __init__(self, repo_root: Path) -> None:
         self.repo_root = repo_root
 
-    def get_backend_endpoints(self) -> Set[str]:
+    def get_backend_endpoints(self) -> set[str]:
         """Scan all backend routers to get current endpoint inventory."""
-        endpoints: Set[str] = set()
+        endpoints: set[str] = set()
         router_dir = self.repo_root / "backend" / "src" / "routers"
 
         if not router_dir.exists():
@@ -85,7 +84,7 @@ class FrontendBackendGate:
 
         return endpoints
 
-    def get_frontend_consumers(self) -> Dict[str, List[str]]:
+    def get_frontend_consumers(self) -> dict[str, list[str]]:
         """Build frontend consumer map from source files."""
         try:
             from .frontend_backend_map import FrontendBackendMapper
@@ -101,12 +100,12 @@ class FrontendBackendGate:
         except Exception:
             return {}
 
-    def check_orphaned_consumers(self) -> List[OrphanedConsumer]:
+    def check_orphaned_consumers(self) -> list[OrphanedConsumer]:
         """Find frontend consumers calling non-existent backend endpoints."""
         backend_endpoints = self.get_backend_endpoints()
         frontend_consumers = self.get_frontend_consumers()
 
-        orphaned: List[OrphanedConsumer] = []
+        orphaned: list[OrphanedConsumer] = []
         for endpoint, frontend_files in frontend_consumers.items():
             if endpoint not in backend_endpoints:
                 orphaned.append(
@@ -119,7 +118,7 @@ class FrontendBackendGate:
 
         return orphaned
 
-    def validate(self) -> Dict[str, object]:
+    def validate(self) -> dict[str, object]:
         """Run gate validation. Returns result dict."""
         orphaned = self.check_orphaned_consumers()
         passed = len(orphaned) == 0

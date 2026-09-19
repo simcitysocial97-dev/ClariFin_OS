@@ -69,9 +69,10 @@ def _obligation_to_task_item(o: Any) -> dict[str, Any]:
     )
     req = getattr(o, "requirement", None)
     cap = getattr(o, "capability", None)
+    rationale = req.rationale if req else o.obligation_id
     return {
         "id": o.obligation_id,
-        "name": (req.rationale if req else o.obligation_id),
+        "name": (rationale[:256] if len(rationale) > 256 else rationale),
         "capability_id": (cap.capability_id if cap else "unknown"),
         "status": status_value,
         "created_at": _iso(o.created_at),

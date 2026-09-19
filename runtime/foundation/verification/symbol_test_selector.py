@@ -6,7 +6,6 @@ import json
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Set
 
 logger = logging.getLogger(__name__)
 
@@ -15,9 +14,9 @@ logger = logging.getLogger(__name__)
 class SymbolTestSelection:
     """Result of symbol-based test selection."""
 
-    selected_tests: Set[Path] = field(default_factory=set)
+    selected_tests: set[Path] = field(default_factory=set)
     reason: str = "unknown"
-    changed_symbols: List[str] = field(default_factory=list)
+    changed_symbols: list[str] = field(default_factory=list)
     coverage_available: bool = False
 
 
@@ -31,7 +30,7 @@ class SymbolTestSelector:
         )
         self.symbol_to_tests = self._load_map()
 
-    def _load_map(self) -> Dict[str, Set[Path]]:
+    def _load_map(self) -> dict[str, set[Path]]:
         """Load cached symbol-to-test mapping from JSON file."""
         if not self.map_path.exists():
             logger.warning(
@@ -42,7 +41,7 @@ class SymbolTestSelector:
 
         try:
             data = json.loads(self.map_path.read_text())
-            result: Dict[str, Set[Path]] = {}
+            result: dict[str, set[Path]] = {}
             for symbol, test_files in data.items():
                 result[symbol] = {Path(t) for t in test_files}
             return result
@@ -51,7 +50,7 @@ class SymbolTestSelector:
             return {}
 
     def select_tests_for_symbols(
-        self, changed_symbols: Dict[Path, Set]
+        self, changed_symbols: dict[Path, set]
     ) -> SymbolTestSelection:
         """Select tests that cover the given changed symbols.
 
@@ -68,7 +67,7 @@ class SymbolTestSelector:
                 coverage_available=bool(self.symbol_to_tests),
             )
 
-        all_changed_symbol_names: Set[str] = set()
+        all_changed_symbol_names: set[str] = set()
         for symbols in changed_symbols.values():
             for sym in symbols:
                 all_changed_symbol_names.add(sym.name)
@@ -81,7 +80,7 @@ class SymbolTestSelector:
                 coverage_available=False,
             )
 
-        selected_tests: Set[Path] = set()
+        selected_tests: set[Path] = set()
         for symbol_name in all_changed_symbol_names:
             if symbol_name in self.symbol_to_tests:
                 selected_tests.update(self.symbol_to_tests[symbol_name])
@@ -105,7 +104,7 @@ class SymbolTestSelector:
         """Check if coverage mapping is available."""
         return bool(self.symbol_to_tests)
 
-    def rebuild_map(self, test_directory: Path) -> Dict[str, Set[Path]]:
+    def rebuild_map(self, test_directory: Path) -> dict[str, set[Path]]:
         """Rebuild the symbol-to-test mapping by running tests with coverage.
 
         This is expensive — call only when map is stale or missing.

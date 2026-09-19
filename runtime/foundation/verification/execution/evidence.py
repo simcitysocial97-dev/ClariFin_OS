@@ -6,13 +6,10 @@ full fingerprint set, kill/survive counts, and artifact paths.
 
 from __future__ import annotations
 
-import hashlib
 import subprocess
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
 from pathlib import Path
 
-from runtime.foundation.verification.env import hash_file
 from runtime.foundation.verification.execution.classification import FailureKind
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
