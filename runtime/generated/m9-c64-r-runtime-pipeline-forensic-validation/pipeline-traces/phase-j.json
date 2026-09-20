@@ -1,0 +1,16 @@
+{
+  "phase": "J",
+  "frontend_file": "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-accounts-capability.ts",
+  "backend_file": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/account_engine/lifecycle.py",
+  "plan_id": "aa15b25b4044",
+  "set_id": "set-aa15b25b4044",
+  "obligation_count": 6,
+  "capabilities": [
+    "api-contracts"
+  ],
+  "duplicates": 0,
+  "dedup_collapsed": false,
+  "result": "PASS",
+  "elapsed_seconds": 0.72,
+  "status": "COMPLETED"
+}

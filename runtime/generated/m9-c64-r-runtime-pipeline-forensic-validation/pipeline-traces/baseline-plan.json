@@ -1,0 +1,1842 @@
+{
+  "set_id": "set-bdc2d05ad782",
+  "obligations": [
+    {
+      "obligation_id": "obl-bdc2d05ad782-0",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "api-contracts",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-0",
+        "capability_id": "api-contracts",
+        "obligation_kind": "contract",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "contracts"
+      },
+      "disposition": "open",
+      "task_id": "task-0001",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.480709+00:00",
+      "closed_at": null,
+      "fingerprint": "d9fe87d21a4cd22b6f60db1845fd3a3e0a99a61cd02b056662304181492bc949"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-1",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "api-contracts",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-1",
+        "capability_id": "api-contracts",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "frontend"
+      },
+      "disposition": "open",
+      "task_id": "task-0002",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.480750+00:00",
+      "closed_at": null,
+      "fingerprint": "5a48aa85d090fac8644b1bc63e9afa3f40c97d004faa2a428f077e102a6a88d1"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-2",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "api-contracts",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-2",
+        "capability_id": "api-contracts",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "backend"
+      },
+      "disposition": "open",
+      "task_id": "task-0003",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.480795+00:00",
+      "closed_at": null,
+      "fingerprint": "a1bead6382d97ad3e41194e69af4b153ba2ae9998e45c7f42ef01952957121e9"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-3",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "api-contracts",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-3",
+        "capability_id": "api-contracts",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "run_contract_tests"
+      },
+      "disposition": "open",
+      "task_id": "task-0004",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.480820+00:00",
+      "closed_at": null,
+      "fingerprint": "9424f37288bcb8b1ede0ea5d941e9160f417ad8d393d8aeb4db0f56d953d0884"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-4",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "api-contracts",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-4",
+        "capability_id": "api-contracts",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "run_frontend_verification"
+      },
+      "disposition": "open",
+      "task_id": "task-0005",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.480841+00:00",
+      "closed_at": null,
+      "fingerprint": "5f01fd1e391db1982f93e9a5e7a5854b04015ac6f0390e13cb4ecbcdfdc22b9b"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-5",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "api-contracts",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-5",
+        "capability_id": "api-contracts",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "run_backend_verification"
+      },
+      "disposition": "open",
+      "task_id": "task-0006",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.480862+00:00",
+      "closed_at": null,
+      "fingerprint": "29a12fd659d7adc828ab2a47a7c24ffdae9d3ad8d0c89c6b04ef08e4f93f8f9f"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-6",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "financial-intelligence",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-6",
+        "capability_id": "financial-intelligence",
+        "obligation_kind": "property",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "property"
+      },
+      "disposition": "open",
+      "task_id": "task-0001",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.480882+00:00",
+      "closed_at": null,
+      "fingerprint": "dbb935b58e7ea68c54686af6d971bb646bc5142237419eabdb79f27db03ac4e0"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-7",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "financial-intelligence",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-7",
+        "capability_id": "financial-intelligence",
+        "obligation_kind": "contract",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "contracts"
+      },
+      "disposition": "open",
+      "task_id": "task-0002",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.480902+00:00",
+      "closed_at": null,
+      "fingerprint": "284c828c399852eeb35392172a5008e6bc3acc01391e6066316e8be131f063c3"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-8",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "financial-intelligence",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-8",
+        "capability_id": "financial-intelligence",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "backend"
+      },
+      "disposition": "open",
+      "task_id": "task-0003",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.480922+00:00",
+      "closed_at": null,
+      "fingerprint": "a46c20364927b4c5c12a77dce0bbc268ab6e81fade5f056af2eccb72f4cf1834"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-9",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "financial-intelligence",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-9",
+        "capability_id": "financial-intelligence",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "run_property_tests"
+      },
+      "disposition": "open",
+      "task_id": "task-0004",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.480943+00:00",
+      "closed_at": null,
+      "fingerprint": "2366bbd641e11f76028119bba3f83b4b87e752ed31b1257aec48631ac594e6cf"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-10",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "financial-intelligence",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-10",
+        "capability_id": "financial-intelligence",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "run_contract_tests"
+      },
+      "disposition": "open",
+      "task_id": "task-0005",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.480966+00:00",
+      "closed_at": null,
+      "fingerprint": "f7432fd6ec2c1fa46a0720fb0cee726d032462b35ff0d408317a1d7f1a086d7b"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-11",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "financial-intelligence",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-11",
+        "capability_id": "financial-intelligence",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "run_backend_verification"
+      },
+      "disposition": "open",
+      "task_id": "task-0006",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.480991+00:00",
+      "closed_at": null,
+      "fingerprint": "4523fa0de79ddaba86e7de98c976288fd32f323bb4706ef37e7a4604e91996a9"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-12",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "financial-intelligence",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-12",
+        "capability_id": "financial-intelligence",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "run_fast_checks"
+      },
+      "disposition": "open",
+      "task_id": "task-0007",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.481015+00:00",
+      "closed_at": null,
+      "fingerprint": "f72737d84b8fe1fd956728945de71df09ea8c16044be86c4d999c05941ba0759"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-13",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "loan-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-13",
+        "capability_id": "loan-engine",
+        "obligation_kind": "property",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "property"
+      },
+      "disposition": "open",
+      "task_id": "task-0001",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.481040+00:00",
+      "closed_at": null,
+      "fingerprint": "0f95e82b90e9cf32f27b0dfe5049e16cfafd3d25482d7682ee5069cb8344eb74"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-14",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "loan-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-14",
+        "capability_id": "loan-engine",
+        "obligation_kind": "contract",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "contracts"
+      },
+      "disposition": "open",
+      "task_id": "task-0002",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.481064+00:00",
+      "closed_at": null,
+      "fingerprint": "1af049e97939507d1c67845570caf4588c1fbe7838d6d2de947b6d4f5cc2d905"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-15",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "loan-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-15",
+        "capability_id": "loan-engine",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "backend"
+      },
+      "disposition": "open",
+      "task_id": "task-0003",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.481085+00:00",
+      "closed_at": null,
+      "fingerprint": "477bf6ad857084f2c8d73c3c1d7fb54ac8bf5900f92de8cdeb47338cb1589fe0"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-16",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "loan-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-16",
+        "capability_id": "loan-engine",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "run_property_tests"
+      },
+      "disposition": "open",
+      "task_id": "task-0004",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.481107+00:00",
+      "closed_at": null,
+      "fingerprint": "a022791ee96a2007da1b86b355b020b256ff8116f4bdb3b70465460df3113106"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-17",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "loan-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-17",
+        "capability_id": "loan-engine",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "run_contract_tests"
+      },
+      "disposition": "open",
+      "task_id": "task-0005",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.481128+00:00",
+      "closed_at": null,
+      "fingerprint": "ec2e0cdc0e8fc9ccbb12237a9aac6e73cd5bba841587598f140bb812cfa60b50"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-18",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "loan-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-18",
+        "capability_id": "loan-engine",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "run_backend_verification"
+      },
+      "disposition": "open",
+      "task_id": "task-0006",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.481149+00:00",
+      "closed_at": null,
+      "fingerprint": "f6f943ee1cdae458542311782c259b444bc7c87a8655353cd7182c62478fbfae"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-19",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "loan-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-19",
+        "capability_id": "loan-engine",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "run_fast_checks"
+      },
+      "disposition": "open",
+      "task_id": "task-0007",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:18:02.481169+00:00",
+      "closed_at": null,
+      "fingerprint": "5fb26b3c704e40c6c8016b9cd6322c3289ca96efdcd37d03b711f0abdb7a1096"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-20",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "behaviour-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-20",
+        "capability_id": "behaviour-engine",
+        "obligation_kind": "property",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "property"
+      },
+      "disposition": "open",
+      "task_id": "task-0001",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481189+00:00",
+      "closed_at": null,
+      "fingerprint": "b7a4e9dbaf0fdd52ab8239d297fbdb26bd086c9e92019edaebd455f68707b26e"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-21",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "behaviour-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-21",
+        "capability_id": "behaviour-engine",
+        "obligation_kind": "contract",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "contracts"
+      },
+      "disposition": "open",
+      "task_id": "task-0002",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481210+00:00",
+      "closed_at": null,
+      "fingerprint": "8c51ddd21d8bc8084a8094801c17c982dcb632947c4210ca23e3597a9c5d3294"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-22",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "behaviour-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-22",
+        "capability_id": "behaviour-engine",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "backend"
+      },
+      "disposition": "open",
+      "task_id": "task-0003",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481231+00:00",
+      "closed_at": null,
+      "fingerprint": "057a9062149b4497c7e1780144198fe5121a3f476ec9f8dd61974dd5038db0ca"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-23",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "behaviour-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-23",
+        "capability_id": "behaviour-engine",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "run_property_tests"
+      },
+      "disposition": "open",
+      "task_id": "task-0004",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481252+00:00",
+      "closed_at": null,
+      "fingerprint": "ec60e4d3ac6375637613594013e034e1689d19697c9a3ac248c9ff0a81deab2b"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-24",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "behaviour-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-24",
+        "capability_id": "behaviour-engine",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "run_contract_tests"
+      },
+      "disposition": "open",
+      "task_id": "task-0005",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481273+00:00",
+      "closed_at": null,
+      "fingerprint": "f46715ec558edb80ec5e4bcabd0897904c60804b8a0efb16b5199a664a3e9aa3"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-25",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "behaviour-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-25",
+        "capability_id": "behaviour-engine",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "run_backend_verification"
+      },
+      "disposition": "open",
+      "task_id": "task-0006",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481297+00:00",
+      "closed_at": null,
+      "fingerprint": "6a7f6b335db0ba86cbb5c1bbd36b3d6676e7a58420ae34d432177c403141145e"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-26",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "behaviour-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-26",
+        "capability_id": "behaviour-engine",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "run_fast_checks"
+      },
+      "disposition": "open",
+      "task_id": "task-0007",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481322+00:00",
+      "closed_at": null,
+      "fingerprint": "167b90faef31f9d13e25e1fb3e589a2434358830094cbecc916f1fa062da73d1"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-27",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "cashflow-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-27",
+        "capability_id": "cashflow-engine",
+        "obligation_kind": "property",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "property"
+      },
+      "disposition": "open",
+      "task_id": "task-0001",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481346+00:00",
+      "closed_at": null,
+      "fingerprint": "2dfd43ecff5061c58a38847ba7353eb975468b75c639ba3924d5d257ee64515e"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-28",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "cashflow-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-28",
+        "capability_id": "cashflow-engine",
+        "obligation_kind": "contract",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "contracts"
+      },
+      "disposition": "open",
+      "task_id": "task-0002",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481371+00:00",
+      "closed_at": null,
+      "fingerprint": "e53afc23cdb0d974d16dbb24963e688edabad87d950aea8bbb4fa6e8ef57ac2c"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-29",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "cashflow-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-29",
+        "capability_id": "cashflow-engine",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "backend"
+      },
+      "disposition": "open",
+      "task_id": "task-0003",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481395+00:00",
+      "closed_at": null,
+      "fingerprint": "da445e305ed0730c8bc9e5a41a4b397397c60d92af2087059bd7aa4c152e3290"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-30",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "cashflow-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-30",
+        "capability_id": "cashflow-engine",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "run_property_tests"
+      },
+      "disposition": "open",
+      "task_id": "task-0004",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481421+00:00",
+      "closed_at": null,
+      "fingerprint": "392da43b36c3bfbad94d5aba4cdfa28e923f39be59d967e3cf77771cc1d04f38"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-31",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "cashflow-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-31",
+        "capability_id": "cashflow-engine",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "run_contract_tests"
+      },
+      "disposition": "open",
+      "task_id": "task-0005",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481446+00:00",
+      "closed_at": null,
+      "fingerprint": "7739327144c5e8112d56c1880acf3b47c278b2be7038438240b6a9eddb93ea65"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-32",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "cashflow-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-32",
+        "capability_id": "cashflow-engine",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "run_backend_verification"
+      },
+      "disposition": "open",
+      "task_id": "task-0006",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481470+00:00",
+      "closed_at": null,
+      "fingerprint": "39f7502f8648239420983b30187b4666fca667be47fd6d3ac20af777fd19a90d"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-33",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "cashflow-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-33",
+        "capability_id": "cashflow-engine",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "run_fast_checks"
+      },
+      "disposition": "open",
+      "task_id": "task-0007",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481490+00:00",
+      "closed_at": null,
+      "fingerprint": "55becd3ffc4af868ce64827f1f76f9d3affc5cd89498d888ed1d775667e88cbf"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-34",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "credit-card-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-34",
+        "capability_id": "credit-card-engine",
+        "obligation_kind": "property",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "property"
+      },
+      "disposition": "open",
+      "task_id": "task-0001",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481512+00:00",
+      "closed_at": null,
+      "fingerprint": "e52079524241da2d0cb4098f21a6091581a93d56f879aec702318e570c8b231b"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-35",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "credit-card-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-35",
+        "capability_id": "credit-card-engine",
+        "obligation_kind": "contract",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "contracts"
+      },
+      "disposition": "open",
+      "task_id": "task-0002",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481535+00:00",
+      "closed_at": null,
+      "fingerprint": "8fefcf88b3bf3fece8609e304c68947ea3bc6e4f53f2c33f0cb8027f731dd9c1"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-36",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "credit-card-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-36",
+        "capability_id": "credit-card-engine",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "backend"
+      },
+      "disposition": "open",
+      "task_id": "task-0003",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481558+00:00",
+      "closed_at": null,
+      "fingerprint": "5a56db200b9a4b97d730eebbcd6f0a50ab852a022a66b95fa65edfdff8f50e45"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-37",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "credit-card-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-37",
+        "capability_id": "credit-card-engine",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "run_property_tests"
+      },
+      "disposition": "open",
+      "task_id": "task-0004",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481582+00:00",
+      "closed_at": null,
+      "fingerprint": "85be843476cdfbab65f8c431e6f72cce803fbfbf2629784105ff8468aa64f868"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-38",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "credit-card-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-38",
+        "capability_id": "credit-card-engine",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "run_contract_tests"
+      },
+      "disposition": "open",
+      "task_id": "task-0005",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481606+00:00",
+      "closed_at": null,
+      "fingerprint": "23e2cd679b47d7e8f1444fe920b83769bfbac64c5e89572e31987f2c503a74fe"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-39",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "credit-card-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-39",
+        "capability_id": "credit-card-engine",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "run_backend_verification"
+      },
+      "disposition": "open",
+      "task_id": "task-0006",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481631+00:00",
+      "closed_at": null,
+      "fingerprint": "af289db81cc20450ac60be5426d40f7a0a2c5eb3f8451f2d9f0dccd3b82f983f"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-40",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "credit-card-engine",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-40",
+        "capability_id": "credit-card-engine",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "run_fast_checks"
+      },
+      "disposition": "open",
+      "task_id": "task-0007",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.481656+00:00",
+      "closed_at": null,
+      "fingerprint": "eeea81fd6b376988902f95e39dbf5b88ca2efba90bdd561e77a99f3176eab5cc"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-41",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "ledger",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-41",
+        "capability_id": "ledger",
+        "obligation_kind": "contract",
+        "rationale": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+        "severity": "required",
+        "target": "contracts"
+      },
+      "disposition": "open",
+      "task_id": "task-0001",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation); Reusing 1 evidence artifacts"
+      ],
+      "created_at": "2026-09-20T02:18:02.481681+00:00",
+      "closed_at": null,
+      "fingerprint": "d78a2ec945432b4d240f8c8b9e9fd05b3a2e49e548bb74dd555b601ce235bdc0"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-42",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "ledger",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-42",
+        "capability_id": "ledger",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+        "severity": "required",
+        "target": "backend"
+      },
+      "disposition": "open",
+      "task_id": "task-0002",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation); Reusing 1 evidence artifacts"
+      ],
+      "created_at": "2026-09-20T02:18:02.481704+00:00",
+      "closed_at": null,
+      "fingerprint": "e735db4212533f0f2005ce50919d920c0e3924a3786c8928bb0319c20244e1f1"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-43",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "ledger",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-43",
+        "capability_id": "ledger",
+        "obligation_kind": "integration",
+        "rationale": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+        "severity": "required",
+        "target": "integration"
+      },
+      "disposition": "open",
+      "task_id": "task-0003",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation); Reusing 1 evidence artifacts"
+      ],
+      "created_at": "2026-09-20T02:18:02.481729+00:00",
+      "closed_at": null,
+      "fingerprint": "3faa671bf620d1cbb5abd2ecaac59d4cccc3174212b9c7dd4b22ab5270532cd3"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-44",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "ledger",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-44",
+        "capability_id": "ledger",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+        "severity": "required",
+        "target": "run_contract_tests"
+      },
+      "disposition": "open",
+      "task_id": "task-0004",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation); Reusing 1 evidence artifacts"
+      ],
+      "created_at": "2026-09-20T02:18:02.481753+00:00",
+      "closed_at": null,
+      "fingerprint": "d1433a280548bc24a1b7659fa2cbee1af5cb22902094646ba3c43b45933f0600"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-45",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "ledger",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-45",
+        "capability_id": "ledger",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+        "severity": "required",
+        "target": "run_backend_verification"
+      },
+      "disposition": "open",
+      "task_id": "task-0005",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation); Reusing 1 evidence artifacts"
+      ],
+      "created_at": "2026-09-20T02:18:02.481791+00:00",
+      "closed_at": null,
+      "fingerprint": "29485f6d36866744cab741b256db12b27da684c167d8e7a2535888dc4bf5f7ac"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-46",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "ledger",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-46",
+        "capability_id": "ledger",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+        "severity": "required",
+        "target": "run_fast_checks"
+      },
+      "disposition": "open",
+      "task_id": "task-0006",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation); Reusing 1 evidence artifacts"
+      ],
+      "created_at": "2026-09-20T02:18:02.481819+00:00",
+      "closed_at": null,
+      "fingerprint": "9081dd3c1ba852389a90ba3785e133202f3dc9c99526be9ad0d23c123e0a193e"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-47",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "reconciliation",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-47",
+        "capability_id": "reconciliation",
+        "obligation_kind": "property",
+        "rationale": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+        "severity": "required",
+        "target": "property"
+      },
+      "disposition": "open",
+      "task_id": "task-0001",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation); Reusing 1 evidence artifacts"
+      ],
+      "created_at": "2026-09-20T02:18:02.481843+00:00",
+      "closed_at": null,
+      "fingerprint": "79a388aba0a846051db40b54314e7307e144ff2eada21226be1afc32db9875db"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-48",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "reconciliation",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-48",
+        "capability_id": "reconciliation",
+        "obligation_kind": "contract",
+        "rationale": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+        "severity": "required",
+        "target": "contracts"
+      },
+      "disposition": "open",
+      "task_id": "task-0002",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation); Reusing 1 evidence artifacts"
+      ],
+      "created_at": "2026-09-20T02:18:02.481869+00:00",
+      "closed_at": null,
+      "fingerprint": "32c0538257f65cab64de3c259b381283dc8c8d9faf746741cdcb5eaab64d2158"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-49",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "reconciliation",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-49",
+        "capability_id": "reconciliation",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+        "severity": "required",
+        "target": "backend"
+      },
+      "disposition": "open",
+      "task_id": "task-0003",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation); Reusing 1 evidence artifacts"
+      ],
+      "created_at": "2026-09-20T02:18:02.481894+00:00",
+      "closed_at": null,
+      "fingerprint": "25c4c923eac42b0aa0da34e1c8626e89679b4b0175dd36535f3d69e3d26b9e1b"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-50",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "reconciliation",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-50",
+        "capability_id": "reconciliation",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+        "severity": "required",
+        "target": "run_property_tests"
+      },
+      "disposition": "open",
+      "task_id": "task-0004",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation); Reusing 1 evidence artifacts"
+      ],
+      "created_at": "2026-09-20T02:18:02.481920+00:00",
+      "closed_at": null,
+      "fingerprint": "94f8292e29d1b84cb7cb7099fd75e15284ecd79108077c032b33ab152980f9a0"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-51",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "reconciliation",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-51",
+        "capability_id": "reconciliation",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+        "severity": "required",
+        "target": "run_contract_tests"
+      },
+      "disposition": "open",
+      "task_id": "task-0005",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation); Reusing 1 evidence artifacts"
+      ],
+      "created_at": "2026-09-20T02:18:02.481945+00:00",
+      "closed_at": null,
+      "fingerprint": "1b06e1ed4e752d8117e8de5381e40efb2f8e8ec60d4f754e092fe06b21e82602"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-52",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "reconciliation",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-52",
+        "capability_id": "reconciliation",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+        "severity": "required",
+        "target": "run_backend_verification"
+      },
+      "disposition": "open",
+      "task_id": "task-0006",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation); Reusing 1 evidence artifacts"
+      ],
+      "created_at": "2026-09-20T02:18:02.481968+00:00",
+      "closed_at": null,
+      "fingerprint": "79a00fd544f267a0cb64dc4e9a463f0a4fe0edba484acba1e877c3cc73c9f4c1"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-53",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "reconciliation",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-53",
+        "capability_id": "reconciliation",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+        "severity": "required",
+        "target": "run_fast_checks"
+      },
+      "disposition": "open",
+      "task_id": "task-0007",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation); Reusing 1 evidence artifacts"
+      ],
+      "created_at": "2026-09-20T02:18:02.481990+00:00",
+      "closed_at": null,
+      "fingerprint": "15473dd2a137776373c4e2ac7f5ed79c5059ac1a217a5367d30b7753ae7e49cf"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-54",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "runtime-verification",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-54",
+        "capability_id": "runtime-verification",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "runtime"
+      },
+      "disposition": "open",
+      "task_id": "task-0001",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.482012+00:00",
+      "closed_at": null,
+      "fingerprint": "d0f668683c55835fc512e294c72033227ae2b711e54da497fcd5470cafeaa9a8"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-55",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "runtime-verification",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-55",
+        "capability_id": "runtime-verification",
+        "obligation_kind": "unit",
+        "rationale": "Transitively affected (escalation)",
+        "severity": "required",
+        "target": "run_runtime_verification"
+      },
+      "disposition": "open",
+      "task_id": "task-0002",
+      "evidence": [],
+      "reasons": [
+        "Transitively affected (escalation)"
+      ],
+      "created_at": "2026-09-20T02:18:02.482035+00:00",
+      "closed_at": null,
+      "fingerprint": "7c98a831291ffad6eb484b7880d2d80e0c11355e044070dc4dd1b58bb25de6dc"
+    },
+    {
+      "obligation_id": "obl-bdc2d05ad782-56",
+      "change": {
+        "path": ".github/actions/setup-node-runtime/action.yml",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "frontend-e2e",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-bdc2d05ad782-56",
+        "capability_id": "frontend-e2e",
+        "obligation_kind": "e2e",
+        "rationale": "E2E route change detected: /dashboard, /layout.tsx, /platform, /platform/architecture, /platform/capabilities, /platform/capabilities/[capabilityId], /platform/diagnostics, /platform/diagnostics/change, /platform/diagnostics/detail/[id], /platform/errors, /platform/evidence, /platform/framework, /platform/history, /platform/history/compare, /platform/platform-providers.tsx, /platform/verification, /platform/verification/[capability], /platform/verification/history/[runId], /platform/verification/run/[capability]. Requires 4 E2E test(s).",
+        "severity": "required",
+        "target": "playwright"
+      },
+      "disposition": "open",
+      "task_id": "task-e2e-0057",
+      "evidence": [],
+      "reasons": [
+        "E2E route change detected: /dashboard, /layout.tsx, /platform, /platform/architecture, /platform/capabilities, /platform/capabilities/[capabilityId], /platform/diagnostics, /platform/diagnostics/change, /platform/diagnostics/detail/[id], /platform/errors, /platform/evidence, /platform/framework, /platform/history, /platform/history/compare, /platform/platform-providers.tsx, /platform/verification, /platform/verification/[capability], /platform/verification/history/[runId], /platform/verification/run/[capability]. Requires 4 E2E test(s)."
+      ],
+      "created_at": "2026-09-20T02:18:02.482058+00:00",
+      "closed_at": null,
+      "fingerprint": "035b0548d2859b1cb721462275d86deb8ef3a681f0f6cc634664dfeccf5185b1"
+    }
+  ],
+  "generated_at": "2026-09-20T02:18:02.485140+00:00",
+  "repository_sha": "8990f3ae16e664d9b0f58737bd4f556bc82f52c9",
+  "plan_fingerprint": "bdc2d05ad782",
+  "set_fingerprint": "0a2d60a0a797108104ea45b96b2b909fdf3c4d7c69e34b9c040217d2968e69b3",
+  "summary": {
+    "total": 57,
+    "closed": 0,
+    "open": 57,
+    "blocked": 0,
+    "failed": 0,
+    "reused": 0,
+    "invalidated": 0
+  }
+}

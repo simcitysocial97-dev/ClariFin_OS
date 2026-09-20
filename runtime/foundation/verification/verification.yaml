@@ -430,3 +430,12 @@ capabilities:
     workflows: ["property", "contracts", "backend"]
     scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
     modules: ["backend/src/engines/financial_intelligence"]
+
+  account-engine:
+    name: "Account Engine"
+    description: "Account lifecycle, balance, cashflow and dormancy management"
+    category: "capability"
+    scopes: ["backend", "property", "contracts", "integration", "repository"]
+    workflows: ["property", "contracts", "backend"]
+    scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
+    modules: ["backend/src/engines/account_engine"]

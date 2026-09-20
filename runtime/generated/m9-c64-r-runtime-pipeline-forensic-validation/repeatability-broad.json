@@ -1,0 +1,54 @@
+{
+  "audit_date": "2026-09-20T03:29:42.116388+00:00",
+  "checks": [
+    {
+      "command": "verify doctor",
+      "consistent": true,
+      "exit1": 0,
+      "exit2": 0,
+      "discrepancies": [],
+      "result": "PASS"
+    },
+    {
+      "command": "verify plan --json",
+      "consistent": false,
+      "exit1": 0,
+      "exit2": 0,
+      "discrepancies": [
+        "Structure differs after timestamp removal"
+      ],
+      "result": "FAIL"
+    },
+    {
+      "command": "verify inspect capabilities --json",
+      "consistent": true,
+      "exit1": 0,
+      "exit2": 0,
+      "discrepancies": [],
+      "result": "PASS"
+    },
+    {
+      "command": "verify inspect evidence --json",
+      "consistent": false,
+      "exit1": 0,
+      "exit2": 0,
+      "discrepancies": [
+        "Structure differs after timestamp removal"
+      ],
+      "result": "FAIL"
+    },
+    {
+      "command": "verify inspect health --json",
+      "consistent": true,
+      "exit1": 0,
+      "exit2": 0,
+      "discrepancies": [],
+      "result": "PASS"
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "passed": 3,
+    "failed": 2
+  }
+}

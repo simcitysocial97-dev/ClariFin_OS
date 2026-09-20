@@ -1,0 +1,10 @@
+{
+  "set_id": "set-d5c82369932d",
+  "count": 27,
+  "capabilities": [
+    "api-contracts",
+    "credit-card-engine",
+    "financial-intelligence",
+    "loan-engine"
+  ]
+}

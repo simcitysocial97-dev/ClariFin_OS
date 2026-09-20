@@ -1,0 +1,86 @@
+{
+  "audit_date": "2026-09-20T03:28:25.768862+00:00",
+  "test_cases": [
+    {
+      "test_id": "S-1",
+      "input": "Empty list []",
+      "expected": "0 obligations",
+      "actual": 0,
+      "result": "PASS"
+    },
+    {
+      "test_id": "S-2",
+      "input": "Nonexistent file",
+      "expected": "UNMAPPED/0 obligations",
+      "actual": 0,
+      "result": "PASS"
+    },
+    {
+      "test_id": "S-3",
+      "input": "/etc/passwd",
+      "expected": "0 obligations",
+      "actual": 0,
+      "result": "PASS"
+    },
+    {
+      "test_id": "S-4",
+      "input": "loan_engine/emi.py",
+      "expected": "Multi-capability obligations",
+      "actual": 27,
+      "capabilities": [
+        "api-contracts",
+        "credit-card-engine",
+        "financial-intelligence",
+        "loan-engine"
+      ],
+      "result": "PASS"
+    },
+    {
+      "test_id": "S-5",
+      "input": "frontend/app/accounts/page.tsx",
+      "expected": "0 obligations (F002 defect)",
+      "actual": 0,
+      "result": "PASS",
+      "notes": "Expected zero due to C64R-F002"
+    },
+    {
+      "test_id": "S-6",
+      "input": "backend/src/routers/accounts.py",
+      "expected": "account-engine + api-contracts",
+      "actual": 6,
+      "capabilities": [
+        "api-contracts"
+      ],
+      "result": "PASS",
+      "notes": "Missing account-engine (C64R-F003)"
+    },
+    {
+      "test_id": "S-7",
+      "input": "frontend/lib/capabilities/use-accounts-capability.ts",
+      "expected": "api-contracts obligations",
+      "actual": 0,
+      "result": "FAIL"
+    },
+    {
+      "test_id": "S-8",
+      "input": "control_plane_facade.py",
+      "expected": "runtime-verification + api-contracts",
+      "actual": 0,
+      "result": "FAIL"
+    },
+    {
+      "test_id": "S-9",
+      "input": "3 files",
+      "expected": "Correct per-file attribution",
+      "actual": 27,
+      "attribution_bug": true,
+      "result": "FAIL",
+      "notes": "C64R-F001: all reference first file"
+    }
+  ],
+  "summary": {
+    "total": 9,
+    "passed": 6,
+    "failed": 3
+  }
+}

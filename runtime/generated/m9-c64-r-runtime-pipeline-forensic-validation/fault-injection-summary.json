@@ -1,0 +1,46 @@
+{
+  "audit_date": "2026-09-20T02:55:00Z",
+  "fault_scenarios_tested": [
+    {
+      "phase": "L",
+      "name": "Controlled Verification Failure",
+      "method": "Create failing test, run pytest",
+      "result": "PASS - Test failure detected with exit code 1",
+      "framework_behavior": "Correctly classifies as FAILED"
+    },
+    {
+      "phase": "M", 
+      "name": "Controlled Timeout",
+      "method": "Create slow test with 120s sleep, pytest-timeout=5s",
+      "result": "PASS - Timeout detected, exit code 1",
+      "framework_behavior": "Correctly classifies as TIMEOUT"
+    },
+    {
+      "phase": "N",
+      "name": "Interruption (SIGINT)",
+      "method": "Send SIGINT to running pytest via Popen",
+      "result": "PARTIAL - Exit code -2 (expected 130)",
+      "framework_behavior": "Popen signal handling differs from subprocess.run"
+    },
+    {
+      "phase": "O",
+      "name": "Authority Fault",
+      "method": "Run authority_drift_detector",
+      "result": "PASS - 3 LOW severity findings (intentional CI continue-on-error)",
+      "framework_behavior": "Correctly identifies intentional vs drift"
+    },
+    {
+      "phase": "P",
+      "name": "Evidence Fault",
+      "method": "Run framework integrity self-tests",
+      "result": "PASS - healthy=True, 0 findings",
+      "framework_behavior": "No evidence path divergence detected"
+    }
+  ],
+  "summary": {
+    "total_scenarios": 5,
+    "passed": 4,
+    "partial": 1,
+    "failed": 0
+  }
+}

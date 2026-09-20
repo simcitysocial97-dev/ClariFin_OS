@@ -101,18 +101,25 @@ class SymbolExtractor:
             source = file_path.read_text(encoding="utf-8")
             tree = ast.parse(source, filename=str(file_path))
 
-            for node in ast.walk(tree):
-                if isinstance(node, ast.FunctionDef) or isinstance(node, ast.AsyncFunctionDef):
-                    parent = None
-                    # Check if this function is a method inside a class
-                    for parent_node in ast.walk(tree):
-                        if isinstance(parent_node, ast.ClassDef):
-                            if any(
-                                item is node for item in parent_node.body
-                            ):
-                                parent = parent_node.name
-                                break
+            # Single-pass O(n) AST traversal to extract symbols
+            # Track parent class context as we walk
+            class_stack: list[str] = []
 
+            for node in ast.walk(tree):
+                if isinstance(node, ast.ClassDef):
+                    # Push class onto stack
+                    class_stack.append(node.name)
+                    symbols.append(Symbol(
+                        name=node.name,
+                        kind="class",
+                        file=file_path,
+                        start_line=node.lineno,
+                        end_line=node.end_lineno or node.lineno,
+                    ))
+
+                elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    # Use current class context if any
+                    parent = class_stack[-1] if class_stack else None
                     symbols.append(Symbol(
                         name=node.name,
                         kind="method" if parent else "function",
@@ -120,15 +127,6 @@ class SymbolExtractor:
                         start_line=node.lineno,
                         end_line=node.end_lineno or node.lineno,
                         parent_class=parent,
-                    ))
-
-                elif isinstance(node, ast.ClassDef):
-                    symbols.append(Symbol(
-                        name=node.name,
-                        kind="class",
-                        file=file_path,
-                        start_line=node.lineno,
-                        end_line=node.end_lineno or node.lineno,
                     ))
 
         except SyntaxError as e:

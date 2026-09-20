@@ -1,0 +1,41 @@
+{
+  "phase": "Q",
+  "artifact": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/symbol-cache.json",
+  "original_sha": "39b8f68629b70bb3",
+  "tampered_sha": "6d690661294f9c1b",
+  "tamper_description": "Added spurious symbol entry to symbol-cache.json",
+  "freshness_findings_count": 3,
+  "freshness_findings": [
+    {
+      "check_name": "stale_artifacts",
+      "detected_component": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated",
+      "expected_authority": "All artifacts < 2592000s old",
+      "actual_authority": "324 stale artifacts",
+      "classification": "ARTIFACT_INTEGRITY_DEFECT",
+      "source_evidence": "Stale artifacts: runtime/generated/api-canonicalization.json (3156890s old), runtime/generated/api-convergence.json (3156890s old), runtime/generated/api-wave1.json (3156890s old), runtime/generated/architectural-drift.json (3156890s old), runtime/generated/architecture-provider.json (3027987s old) (+319 more)",
+      "severity": "MEDIUM"
+    },
+    {
+      "check_name": "artifact_identity",
+      "detected_component": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated",
+      "expected_authority": "All JSON artifacts have run_id and timestamp",
+      "actual_authority": "1515 identity issues",
+      "classification": "ARTIFACT_INTEGRITY_DEFECT",
+      "source_evidence": "Identity issues: runtime/generated/ai-context-packs/ctx-c1.json: missing run_id, runtime/generated/ai-context-packs/ctx-c1.json: missing timestamp, runtime/generated/ai-context-packs/ctx-c2.json: missing run_id, runtime/generated/ai-context-packs/ctx-c2.json: missing timestamp, runtime/generated/ai-context-packs/ctx-test123.json: missing run_id (+1510 more)",
+      "severity": "MEDIUM"
+    },
+    {
+      "check_name": "artifact_generator",
+      "detected_component": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated",
+      "expected_authority": "Artifacts in m9-/vea-/ai- generator paths",
+      "actual_authority": "532 generator mismatches",
+      "classification": "ARTIFACT_INTEGRITY_DEFECT",
+      "source_evidence": "Generator issues: runtime/generated/M9-C42.12-enterprise-execution-forensic-report.md: not in m9-/vea-/ai- generator path, runtime/generated/api-canonicalization.json: not in m9-/vea-/ai- generator path, runtime/generated/api-contract-evidence.json: not in m9-/vea-/ai- generator path, runtime/generated/api-convergence.json: not in m9-/vea-/ai- generator path, runtime/generated/api-wave1.json: not in m9-/vea-/ai- generator path (+527 more)",
+      "severity": "LOW"
+    }
+  ],
+  "detector_caught_tamper": true,
+  "result": "PASS",
+  "elapsed_seconds": 1.179,
+  "status": "COMPLETED"
+}

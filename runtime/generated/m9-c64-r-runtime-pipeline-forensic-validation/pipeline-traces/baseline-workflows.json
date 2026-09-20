@@ -1,0 +1,41 @@
+
+======================================================================
+  M9-C56 CAPABILITY RESOLVER
+  Problem: help-resolve workflows inspect workflows --json
+======================================================================
+
+  Resolution 1: CAPABILITY_DISCOVERY
+  ────────────────────────────────────────────────────────────
+  Discover available verification capabilities and how to use them.
+
+  Primary capability: discover.capability-inventory
+
+  ┌─ SINGLE COMMAND (recommended):
+  │  verify.py capability-inventory
+  └─
+
+  Supporting commands:
+    • verify.py capabilities
+    • verify.py capability-for --problem help-resolve workflows inspect workflows --json
+    • verify.py what-should-i-run help-resolve workflows inspect workflows --json
+
+  Resolution 2: WORKFLOW_EVIDENCE
+  ────────────────────────────────────────────────────────────
+  Run the evidence pipeline for CI/workflow integration.
+
+  Primary capability: certify.evidence-pipeline
+
+  ┌─ SINGLE COMMAND (recommended):
+  │  verify.py evidence-plan
+  └─
+
+  Supporting commands:
+    • verify.py evidence-execute
+    • verify.py evidence-reconcile
+    • verify.py evidence-certify
+
+  ────────────────────────────────────────────────────────────
+  TIP: Run the SINGLE COMMAND above to automatically solve this problem.
+  The converge pipeline handles everything end-to-end.
+======================================================================
+

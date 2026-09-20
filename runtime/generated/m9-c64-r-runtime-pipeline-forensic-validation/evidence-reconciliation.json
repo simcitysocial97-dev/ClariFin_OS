@@ -1,0 +1,66 @@
+{
+  "audit_date": "2026-09-20T03:30:14.718374+00:00",
+  "infrastructure": {
+    "ai_runs_files": 240,
+    "trace_files": 23,
+    "sample_fields": {
+      "has_run_id": false,
+      "has_timestamp": false,
+      "has_event_type": false,
+      "has_metadata": false
+    }
+  },
+  "criteria": {
+    "execution_started": "timestamp",
+    "command": "task.command",
+    "stdout": "stdout_path",
+    "stderr": "stderr_path",
+    "exit_code": "exit_code",
+    "duration": "duration_seconds",
+    "result": "completion_state",
+    "persisted": "ai-runs/*.json",
+    "linked_to_run": "run_id",
+    "linked_to_outcome": "evidence ref"
+  },
+  "per_scenario": {
+    "D": {
+      "tasks_executed": 0,
+      "evidence_present": true,
+      "notes": "Dry-run mode"
+    },
+    "E": {
+      "tasks_executed": 0,
+      "evidence_present": true,
+      "notes": "Dry-run mode"
+    },
+    "F": {
+      "tasks_executed": 0,
+      "evidence_present": true,
+      "notes": "Dry-run mode"
+    },
+    "G": {
+      "tasks_executed": 0,
+      "evidence_present": true,
+      "notes": "Dry-run mode"
+    },
+    "H": {
+      "tasks_executed": 0,
+      "evidence_present": true,
+      "notes": "Dry-run mode"
+    },
+    "J": {
+      "tasks_executed": 0,
+      "evidence_present": true,
+      "notes": "Dry-run mode"
+    },
+    "X": {
+      "tasks_executed": 0,
+      "evidence_present": true,
+      "notes": "Dry-run mode"
+    }
+  },
+  "summary": {
+    "infra_verified": true,
+    "full_execution_note": "Tasks not executed in audit mode"
+  }
+}

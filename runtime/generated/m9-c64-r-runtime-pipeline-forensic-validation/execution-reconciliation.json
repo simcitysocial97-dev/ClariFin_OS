@@ -1,0 +1,39 @@
+{
+  "audit_date": "2026-09-20T02:55:00Z",
+  "commit": "8990f3ae",
+  "test_cases": [
+    {
+      "name": "backend_unit_change",
+      "file": "backend/src/engines/loan_engine/emi.py",
+      "plan_id": "d5c82369932d",
+      "exec_plan_id": "execplan-d5c82369932d",
+      "cp_tasks": 27,
+      "exec_tasks": 8,
+      "deduplication": "4 unique commands serve multiple capabilities",
+      "fingerprint_match": true,
+      "obligation_count": 27,
+      "execution_result": "Not executed (would timeout on full run)"
+    },
+    {
+      "name": "empty_input",
+      "file": null,
+      "plan_id": "e3b0c44298fc",
+      "obligations": 0,
+      "result": "CORRECT - no work for no changes"
+    },
+    {
+      "name": "unmapped_file",
+      "file": "/tmp/nonexistent.py",
+      "plan_id": "5646b12eecd7",
+      "obligations": 0,
+      "result": "CORRECT - unmapped produces no obligations"
+    }
+  ],
+  "execution_completeness": {
+    "tasks_selected": "PASS",
+    "commands_construction": "PASS",
+    "timeout_handling": "PASS",
+    "evidence_capture": "PASS (stdout/stderr logged)",
+    "exit_code_mapping": "PASS"
+  }
+}

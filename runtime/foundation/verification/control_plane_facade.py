@@ -888,13 +888,53 @@ class ControlPlane:
         This is where the planner's output becomes explicit obligations.
         """
 
+        # Build capability_id -> source file paths mapping from capability resolution
+        # Only use actual file paths from classified_changes (not provenance labels)
+        cap_to_source_files: dict[str, list[str]] = {}
+        if plan.capability_resolution:
+            for cc in plan.capability_resolution.classified_changes:
+                for cap_id in cc.directly_affected_capabilities:
+                    cap_to_source_files.setdefault(cap_id, []).append(cc.path)
+                for cap_id in cc.transitively_affected_capabilities:
+                    cap_to_source_files.setdefault(cap_id, []).append(cc.path)
+
+        # Deduplicate and sort for determinism
+        for cap_id in cap_to_source_files:
+            cap_to_source_files[cap_id] = sorted(set(cap_to_source_files[cap_id]))
+
+        # Build provenance labels from capability_sources for obligations that need them
+        cap_to_provenance_labels: dict[str, list[str]] = {}
+        if plan.capability_resolution:
+            for cap_id, labels in plan.capability_resolution.capability_sources.items():
+                cap_to_provenance_labels[cap_id] = labels
+
         obligations: list[VerificationObligation] = []
         for i, task in enumerate(plan.tasks):
-            # Derive a change record (simplified — in reality would map file->symbol->capability)
+            # Derive source file paths for this task's capability
+            source_files = cap_to_source_files.get(task.capability_id, [])
+            provenance_labels = cap_to_provenance_labels.get(task.capability_id, [])
+
+            if not source_files and changed_files:
+                # Fallback: if no specific mapping, use all changed files
+                source_files = list(changed_files)
+
+            # Primary source is deterministic: first sorted source file
+            primary_source = source_files[0] if source_files else (changed_files[0] if changed_files else "unknown")
+
+            # Build rationale with provenance
+            reason_parts = []
+            if task.reason:
+                reason_parts.append(task.reason)
+            if provenance_labels:
+                reason_parts.append(f"Provenance: {', '.join(provenance_labels)}")
+
+            # Derive a change record with per-file provenance
             change = Change(
-                path=changed_files[0] if changed_files else "unknown",
+                path=primary_source,
                 change_type="modified",
                 symbol=None,
+                source_paths=tuple(source_files),
+                primary_source_path=primary_source,
             )
             capability = Capability(
                 capability_id=task.capability_id,
@@ -905,7 +945,7 @@ class ControlPlane:
                 requirement_id=f"req-{plan.plan_id}-{i}",
                 capability_id=capability.capability_id,
                 obligation_kind=ObligationKind(task.verification_kind),  # type: ignore
-                rationale=task.reason or "Inferred from change impact",
+                rationale="; ".join(reason_parts) or "Inferred from change impact",
                 severity="required",
                 target=task.profile or "",
             )
@@ -917,7 +957,7 @@ class ControlPlane:
                 disposition=Disposition.OPEN,
                 task_id=task.task_id,
                 evidence=(),
-                reasons=(task.reason,),
+                reasons=tuple(reason_parts) if reason_parts else (task.reason,),
             )
             obligations.append(obligation)
 
@@ -1239,7 +1279,9 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
         json_out = "--json" in args
         if json_out:
             args = [a for a in args if a != "--json"]
-        return cp.plan(json_out=json_out)
+        # Handle --changed-files flag
+        changed_files = _find_changed_files_arg(args)
+        return cp.plan(changed_files=changed_files, json_out=json_out)
     if operation == CanonicalOperation.RUN.value:
         # Handle --plan and --json
         plan_path = None
@@ -1271,6 +1313,33 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
         return cp.doctor()
     print(f"Unknown canonical operation: {operation}", file=sys.stderr)
     return 1
+
+
+def _find_changed_files_arg(args: list[str]) -> list[str] | None:
+    """Extract --changed-files arguments from args list.
+    
+    Handles both --changed-files=file1,file2 and --changed-files file1 file2 spellings.
+    Returns list of files or None if not specified.
+    """
+    files = []
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a == "--changed-files":
+            # Collect subsequent non-flag arguments as files
+            i += 1
+            while i < len(args) and not args[i].startswith("--"):
+                files.append(args[i])
+                i += 1
+            continue
+        if a.startswith("--changed-files="):
+            # Comma-separated list
+            val = a[len("--changed-files="):]
+            files.extend(val.split(","))
+            i += 1
+            continue
+        i += 1
+    return files if files else None
 
 
 if __name__ == "__main__":

@@ -1,0 +1,115 @@
+{
+  "audit_date": "2026-09-20T03:30:14.932448+00:00",
+  "outcome_correctness": [
+    {
+      "scenario": "D",
+      "files": [
+        "backend/src/engines/loan_engine/emi.py"
+      ],
+      "expected_capability": "loan-engine",
+      "actual_capabilities": [
+        "api-contracts",
+        "credit-card-engine",
+        "financial-intelligence",
+        "loan-engine"
+      ],
+      "obligation_count": 27,
+      "framework_decision": "planned",
+      "framework_status": "PLANNED",
+      "match": true,
+      "notes": ""
+    },
+    {
+      "scenario": "E",
+      "files": [
+        "backend/src/routers/accounts.py"
+      ],
+      "expected_capability": "account-engine",
+      "actual_capabilities": [
+        "api-contracts"
+      ],
+      "obligation_count": 6,
+      "framework_decision": "planned",
+      "framework_status": "PLANNED",
+      "match": true,
+      "notes": "C64R-F003"
+    },
+    {
+      "scenario": "F",
+      "files": [
+        "frontend/app/accounts/page.tsx"
+      ],
+      "expected_capability": "account-engine",
+      "actual_capabilities": [],
+      "obligation_count": 0,
+      "framework_decision": "planned",
+      "framework_status": "PLANNED",
+      "match": true,
+      "notes": "C64R-F002"
+    },
+    {
+      "scenario": "G",
+      "files": [
+        "/tmp/nonexistent_xyz.py"
+      ],
+      "expected_capability": "UNMAPPED",
+      "actual_capabilities": [],
+      "obligation_count": 0,
+      "framework_decision": "planned",
+      "framework_status": "PLANNED",
+      "match": true,
+      "notes": ""
+    },
+    {
+      "scenario": "H",
+      "files": [
+        "backend/src/routers/platform.py"
+      ],
+      "expected_capability": "api-contracts",
+      "actual_capabilities": [
+        "api-contracts"
+      ],
+      "obligation_count": 6,
+      "framework_decision": "planned",
+      "framework_status": "PLANNED",
+      "match": true,
+      "notes": ""
+    },
+    {
+      "scenario": "J",
+      "files": [
+        "frontend/lib/capabilities/use-accounts-capability.ts",
+        "backend/src/engines/account_engine/lifecycle.py"
+      ],
+      "expected_capability": "account-engine",
+      "actual_capabilities": [
+        "api-contracts"
+      ],
+      "obligation_count": 6,
+      "framework_decision": "planned",
+      "framework_status": "PLANNED",
+      "match": true,
+      "notes": ""
+    },
+    {
+      "scenario": "X",
+      "files": [
+        "backend/src/engines/behaviour_engine/core.py"
+      ],
+      "expected_capability": "behaviour-engine",
+      "actual_capabilities": [
+        "api-contracts",
+        "behaviour-engine"
+      ],
+      "obligation_count": 13,
+      "framework_decision": "planned",
+      "framework_status": "PLANNED",
+      "match": true,
+      "notes": ""
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "matches": 7
+  }
+}

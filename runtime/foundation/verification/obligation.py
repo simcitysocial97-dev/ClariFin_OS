@@ -79,6 +79,9 @@ class Change:
     change_type: str  # "added" | "modified" | "deleted" | "renamed"
     symbol: str | None = None
     old_path: str | None = None
+    # M9-C64-R2: Per-file obligation provenance
+    source_paths: tuple[str, ...] = ()
+    primary_source_path: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -86,6 +89,8 @@ class Change:
             "change_type": self.change_type,
             "symbol": self.symbol,
             "old_path": self.old_path,
+            "source_paths": list(self.source_paths),
+            "primary_source_path": self.primary_source_path,
         }
 
 

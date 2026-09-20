@@ -1,0 +1,1589 @@
+Developer Diagnostic
+
+Changed files
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__format____mutmut_2.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__format____mutmut_3.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__format____mutmut_7.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__format____mutmut_8.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__gt____mutmut_2.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__init____mutmut_3.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__lt____mutmut_2.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__str____mutmut_2.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__str____mutmut_3.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201add__mutmut_3.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201compare__mutmut_3.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201divide__mutmut_3.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201divide__mutmut_7.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201is_positive__mutmut_2.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201multiply__mutmut_3.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201percentage__mutmut_3.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201percentage__mutmut_8.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201subtract__mutmut_3.diff" (modified)
+  "runtime/generated/m9-c42.21/survivors/recommendation_engine/engines.recommendation_engine.recommendations.x\307\201Recommendation\307\201__init____mutmut_5.diff" (modified)
+  .github/actions/setup-node-runtime/action.yml (modified)
+  .github/actions/setup-playwright/action.yml (modified)
+  .github/actions/setup-python-runtime/action.yml (modified)
+  .github/actions/upload-runtime/action.yml (modified)
+  .github/backend/tests/generated/mutation/mutation-run.log (modified)
+  .github/backend/tests/generated/mutation/mutation-summary.json (modified)
+  .github/scripts/aggregate_evidence.py (modified)
+  .github/scripts/check_coverage_threshold.py (modified)
+  .github/scripts/generate_mutation_report.py (modified)
+  .github/scripts/generate_plan.py (modified)
+  .github/scripts/generate_release_notes.sh (modified)
+  .github/scripts/run_api_contracts.sh (modified)
+  .github/scripts/run_backend_verification.sh (modified)
+  .github/scripts/run_contract_tests.sh (modified)
+  .github/scripts/run_dependency_checks.sh (modified)
+  .github/scripts/run_fast_checks.sh (modified)
+  .github/scripts/run_frontend_verification.sh (modified)
+  .github/scripts/run_full_verification.sh (modified)
+  .github/scripts/run_golden_tests.sh (modified)
+  .github/scripts/run_integration_tests.sh (modified)
+  .github/scripts/run_migration_verification.sh (modified)
+  .github/scripts/run_mutation_local_smoke.sh (modified)
+  .github/scripts/run_mutation_selective.sh (modified)
+  .github/scripts/run_playwright_tests.sh (modified)
+  .github/scripts/run_property_tests.sh (modified)
+  .github/scripts/run_runtime_verification.sh (modified)
+  .github/scripts/validate_actions.py (modified)
+  .github/workflows/api-contracts.yml (modified)
+  .github/workflows/backend-verify.yml (modified)
+  .github/workflows/dependency-update.yml (modified)
+  .github/workflows/frontend-verify.yml (modified)
+  .github/workflows/golden.yml (modified)
+  .github/workflows/m9-forensic-diagnostic-lab.yml (modified)
+  .github/workflows/mutation-pr.yml (modified)
+  .github/workflows/mutation.yml (modified)
+  .github/workflows/playwright.yml (modified)
+  .github/workflows/quality.yml (modified)
+  .github/workflows/release.yml (modified)
+  .github/workflows/security-codeql.yml (modified)
+  .github/workflows/verification-reconcile.yml (modified)
+  .github/workflows/verification-runtime.yml (modified)
+  .gitignore (modified)
+  .kilo/plans/1787137122047-health-check-timeout-fix.md (modified)
+  .kilo/plans/1787286911071-c43-remaining-issues-plan.md (modified)
+  .kilo/plans/1787318429130-mutation-testing-green-plan.md (modified)
+  .kilo/plans/1788396201282-m9-c45-balance-work.md (modified)
+  .kilo/plans/1788707018223-m9-c57-verification-integrity.md (modified)
+  .kilo/plans/1788779517173-m9-c57-verification.md (modified)
+  .kilo/plans/1788885145550-remaining-refactor-plan.md (modified)
+  .kilo/plans/1789023840094-cache-success-rate-fix.md (modified)
+  .kilo/plans/1789187366423-m9-c58-test-repair-plan.md (modified)
+  AGENTS.md (modified)
+  _probe_emi_up.py (modified)
+  activeContext.md (modified)
+  backend/.coveragerc (modified)
+  backend/conftest.py (modified)
+  backend/pyproject.toml (modified)
+  backend/ruff.toml (modified)
+  backend/scripts/scan_test_anti_patterns.py (modified)
+  backend/src/api.py (modified)
+  backend/src/core/dtos/account_dto.py (modified)
+  backend/src/core/dtos/accounts_dto.py (modified)
+  backend/src/core/dtos/analytics_dto.py (modified)
+  backend/src/core/dtos/behaviour_dto.py (modified)
+  backend/src/core/dtos/cashflow_dto.py (modified)
+  backend/src/core/dtos/credit_cards_dto.py (modified)
+  backend/src/core/dtos/dashboard_dto.py (modified)
+  backend/src/core/dtos/forecast_dto.py (modified)
+  backend/src/core/dtos/investments_dto.py (modified)
+  backend/src/core/dtos/loans_dto.py (modified)
+  backend/src/core/dtos/net_worth_dto.py (modified)
+  backend/src/core/dtos/reconciliation_dto.py (modified)
+  backend/src/core/dtos/statement_dto.py (modified)
+  backend/src/core/dtos/transaction_dto.py (modified)
+  backend/src/core/mappers/transaction_mapper.py (modified)
+  backend/src/engines/financial_intelligence/goal_planner.py (modified)
+  backend/src/engines/financial_intelligence/intelligence.py (modified)
+  backend/src/engines/financial_intelligence/optimization.py (modified)
+  backend/src/engines/loan_engine/emi.py (modified)
+  backend/src/engines/loan_engine/prepayment.py (modified)
+  backend/src/engines/test_rem_ediation_probe.py (modified)
+  backend/src/engines/transaction_intelligence/cash_conversion_detector.py (modified)
+  backend/src/extraction/camelot_extractor.py (modified)
+  backend/src/extraction/hybrid_extractor.py (modified)
+  backend/src/extraction/statement_extractor.py (modified)
+  backend/src/routers/platform.py (modified)
+  backend/src/routers/reconciliation.py (modified)
+  backend/src/routers/transactions.py (modified)
+  backend/src/services/behaviour_service.py (modified)
+  backend/src/services/dashboard_service.py (modified)
+  backend/src/services/transaction_service.py (modified)
+  backend/src/startup.py (modified)
+  backend/src/stubs/camelot/__init__.pyi (modified)
+  backend/src/stubs/camelot/core.pyi (modified)
+  backend/src/stubs/py.typed (modified)
+  backend/src/stubs/runtime/__init__.pyi (modified)
+  backend/src/stubs/runtime/platform/__init__.pyi (modified)
+  backend/src/stubs/runtime/platform/ai/__init__.pyi (modified)
+  backend/src/stubs/runtime/platform/ai/agents.pyi (modified)
+  backend/src/stubs/runtime/platform/ai/config.pyi (modified)
+  backend/src/stubs/runtime/platform/ai/context.pyi (modified)
+  backend/src/stubs/runtime/platform/ai/intent.pyi (modified)
+  backend/src/stubs/runtime/platform/ai/memory.pyi (modified)
+  backend/src/stubs/runtime/platform/ai/orchestrator.pyi (modified)
+  backend/src/stubs/runtime/platform/ai/planner.pyi (modified)
+  backend/src/stubs/runtime/platform/ai/policy.pyi (modified)
+  backend/src/stubs/runtime/platform/ai/providers.pyi (modified)
+  backend/src/stubs/runtime/platform/ai/runs.pyi (modified)
+  backend/src/stubs/runtime/platform/ai/tools.pyi (modified)
+  backend/src/stubs/runtime/platform/api/__init__.pyi (modified)
+  backend/src/stubs/runtime/platform/api/contracts/__init__.pyi (modified)
+  backend/src/stubs/runtime/platform/api/contracts/ai.pyi (modified)
+  backend/src/stubs/runtime/platform/api/contracts/context.pyi (modified)
+  backend/src/stubs/runtime/platform/api/contracts/diagnostics.pyi (modified)
+  backend/src/stubs/runtime/platform/api/contracts/health.pyi (modified)
+  backend/src/stubs/runtime/platform/api/envelope.pyi (modified)
+  backend/src/stubs/runtime/platform/api/errors.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/__init__.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/_helpers.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/application.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/architecture.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/capabilities.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/change.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/cross_layer.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/errors.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/events.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/evidence.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/executions.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/framework_integrity.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/health.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/history.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/tasks.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/tasks_write.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/verification.pyi (modified)
+  backend/src/stubs/runtime/platform/api/services/verification_write.pyi (modified)
+  backend/src/stubs/runtime/platform/cache.pyi (modified)
+  backend/src/stubs/runtime/platform/diagnostics/__init__.pyi (modified)
+  backend/src/stubs/runtime/platform/diagnostics/engine.pyi (modified)
+  backend/src/stubs/runtime/system/__init__.pyi (modified)
+  backend/src/stubs/runtime/system/observability/__init__.pyi (modified)
+  backend/src/stubs/runtime/system/observability/event_store.pyi (modified)
+  backend/tests/architecture/test_boundary.py (modified)
+  backend/tests/audits/test_audit_minimal.py (modified)
+  backend/tests/capability/financial_events/test_revocation.py (modified)
+  backend/tests/capability/financial_intelligence/__init__.py (modified)
+  backend/tests/capability/financial_intelligence/test_capability.py (modified)
+  backend/tests/capability/transaction_intelligence/test_capability.py (modified)
+  backend/tests/conftest.py (modified)
+  backend/tests/contract/generated/test_cashflow.py (modified)
+  backend/tests/contract/generated/test_categories.py (modified)
+  backend/tests/contract/generated/test_dashboard.py (modified)
+  backend/tests/contract/generated/test_transactions.py (modified)
+  backend/tests/fixtures/database.py (modified)
+  backend/tests/fixtures/seed.py (modified)
+  backend/tests/generated/coverage.json (modified)
+  backend/tests/generated/mutation/mutation-summary.json (modified)
+  backend/tests/generated/openapi-current.json (modified)
+  backend/tests/generated/raw-coverage.json (modified)
+  backend/tests/golden/test_regression.py (modified)
+  backend/tests/integration/acceptance/test_acceptance_matrix.py (modified)
+  backend/tests/integration/cross_layer/__init__.py (modified)
+  backend/tests/integration/cross_layer/test_journey_account_crud.py (modified)
+  backend/tests/integration/cross_layer/test_journey_dashboard_metrics.py (modified)
+  backend/tests/integration/cross_layer/test_journey_loan_management.py (modified)
+  backend/tests/integration/performance/test_performance.py (modified)
+  backend/tests/integration/test_platform_api_phase3.py (modified)
+  backend/tests/integration/test_platform_api_phase4.py (modified)
+  backend/tests/integration/test_platform_api_phase6.py (modified)
+  backend/tests/invariants/test_determinism.py (modified)
+  backend/tests/invariants/test_reconciliation_determinism.py (modified)
+  backend/tests/invariants/test_reconciliation_properties.py (modified)
+  backend/tests/mutation/mutation_config.toml (modified)
+  backend/tests/mutation/run_mutation_baseline.sh (modified)
+  backend/tests/mutation_infra/mutants/mutmut-stats.json (modified)
+  backend/tests/mutation_infra/mutants/probe.py (modified)
+  backend/tests/mutation_infra/mutants/probe.py.meta (modified)
+  backend/tests/mutation_infra/mutants/probe.py.spans (modified)
+  backend/tests/mutation_infra/mutants/pyproject.toml (modified)
+  backend/tests/mutation_infra/mutants/test_probe.py (modified)
+  backend/tests/mutation_infra/probe.py (modified)
+  backend/tests/mutation_infra/pyproject.toml (modified)
+  backend/tests/mutation_infra/python_312_probes/control_probe.py (modified)
+  backend/tests/mutation_infra/python_312_probes/pep604_union.py (modified)
+  backend/tests/mutation_infra/python_312_probes/pep634_match.py (modified)
+  backend/tests/mutation_infra/python_312_probes/pep654_exception_groups.py (modified)
+  backend/tests/mutation_infra/python_312_probes/pep695_type_params.py (modified)
+  backend/tests/mutation_infra/python_312_probes/pyproject.toml (modified)
+  backend/tests/mutation_infra/python_312_probes/test_control_probe.py (modified)
+  backend/tests/mutation_infra/python_312_probes/test_pep604_union.py (modified)
+  backend/tests/mutation_infra/python_312_probes/test_pep634_match.py (modified)
+  backend/tests/mutation_infra/python_312_probes/test_pep654_exception_groups.py (modified)
+  backend/tests/mutation_infra/python_312_probes/test_pep695_type_params.py (modified)
+  backend/tests/mutation_infra/test_probe.py (modified)
+  backend/tests/probes/test_m4_exit_probe.py (modified)
+  backend/tests/properties/behaviour/test_engine_properties.py (modified)
+  backend/tests/properties/cashflow/test_behavioral_strengthening.py (modified)
+  backend/tests/properties/cashflow/test_engine_properties.py (modified)
+  backend/tests/properties/credit_card_engine/test_billing_properties.py (modified)
+  backend/tests/properties/credit_card_engine/test_emi_properties.py (modified)
+  backend/tests/properties/credit_card_engine/test_interest_properties.py (modified)
+  backend/tests/properties/credit_cards/test_engine_properties.py (modified)
+  backend/tests/properties/financial_events/test_engine_properties.py (modified)
+  backend/tests/properties/financial_events/test_lineage_properties.py (modified)
+  backend/tests/properties/financial_intelligence/__init__.py (modified)
+  backend/tests/properties/financial_intelligence/test_optimization_properties.py (modified)
+  backend/tests/properties/financial_intelligence/test_scenario_intelligence_properties.py (modified)
+  backend/tests/properties/forecasting/test_engine_properties.py (modified)
+  backend/tests/properties/investment/test_engine_properties.py (modified)
+  backend/tests/properties/lending/test_engine_properties.py (modified)
+  backend/tests/properties/loan_engine/test_amortization_properties.py (modified)
+  backend/tests/properties/loan_engine/test_emi_properties.py (modified)
+  backend/tests/properties/loan_engine/test_floating_rate_properties.py (modified)
+  backend/tests/properties/loan_engine/test_foreclosure_properties.py (modified)
+  backend/tests/properties/loan_engine/test_metrics_properties.py (modified)
+  backend/tests/properties/loan_engine/test_prepayment_properties.py (modified)
+  backend/tests/properties/recommendations/test_engine_properties.py (modified)
+  backend/tests/properties/reconciliation/test_engine_properties.py (modified)
+  backend/tests/properties/transaction_intelligence/test_detector_properties.py (modified)
+  backend/tests/properties/transaction_intelligence/test_engine_properties.py (modified)
+  backend/tests/test_m9_c56_scenarios.py (modified)
+  backend/tests/unit/core/mappers/test_behaviour_mapper.py (modified)
+  backend/tests/unit/engines/account/test_account_engine.py (modified)
+  backend/tests/unit/engines/balance_engine.py (modified)
+  backend/tests/unit/engines/balance_engine/test_balance_engine_helpers.py (modified)
+  backend/tests/unit/engines/behavior/test_behavior_engine.py (modified)
+  backend/tests/unit/engines/behavior/test_stress.py (modified)
+  backend/tests/unit/engines/behaviour/test_core.py (modified)
+  backend/tests/unit/engines/behaviour/test_core_risk_structure.py (modified)
+  backend/tests/unit/engines/behaviour/test_core_strengthening.py (modified)
+  backend/tests/unit/engines/behaviour/test_core_structure.py (modified)
+  backend/tests/unit/engines/behaviour/test_credit_dependency.py (modified)
+  backend/tests/unit/engines/behaviour/test_credit_dependency_strengthening.py (modified)
+  backend/tests/unit/engines/behaviour/test_insights_nudges_coverage.py (modified)
+  backend/tests/unit/engines/behaviour/test_insights_nudges_structure.py (modified)
+  backend/tests/unit/engines/behaviour/test_integration.py (modified)
+  backend/tests/unit/engines/behaviour/test_metrics.py (modified)
+  backend/tests/unit/engines/behaviour/test_mutation_golden.py (modified)
+  backend/tests/unit/engines/behaviour/test_mutation_golden_groups.py (modified)
+  backend/tests/unit/engines/behaviour/test_mutation_strengthening.py (modified)
+  backend/tests/unit/engines/behaviour/test_mutation_strengthening_remaining.py (modified)
+  backend/tests/unit/engines/behaviour/test_patterns.py (modified)
+  backend/tests/unit/engines/behaviour/test_remaining_structure.py (modified)
+  backend/tests/unit/engines/behaviour/test_stress_scores.py (modified)
+  backend/tests/unit/engines/behaviour/test_stress_scores_structure.py (modified)
+  backend/tests/unit/engines/behaviour/test_temporal.py (modified)
+  backend/tests/unit/engines/credit_card/test_credit_card_engine.py (modified)
+  backend/tests/unit/engines/credit_card/test_interest_strengthening.py (modified)
+  backend/tests/unit/engines/credit_card/test_mutation_gap_repairs.py (modified)
+  backend/tests/unit/engines/credit_card_engine/test_m9_c56_additional_gaps.py (modified)
+  backend/tests/unit/engines/credit_card_engine/test_m9_c56_boolean_flips.py (modified)
+  backend/tests/unit/engines/credit_card_engine/test_m9_c56_mutation_gaps.py (modified)
+  backend/tests/unit/engines/financial_events/test_financial_events.py (modified)
+  backend/tests/unit/engines/financial_events/test_m9_c56_behavioral_gaps.py (modified)
+  backend/tests/unit/engines/financial_events/test_m9_c56_lineage_gaps.py (modified)
+  backend/tests/unit/engines/financial_events/test_m9_c56_missing_keys.py (modified)
+  backend/tests/unit/engines/financial_intelligence/__init__.py (modified)
+  backend/tests/unit/engines/financial_intelligence/test_forecasting.py (modified)
+  backend/tests/unit/engines/financial_intelligence/test_goal_planner.py (modified)
+  backend/tests/unit/engines/financial_intelligence/test_intelligence.py (modified)
+  backend/tests/unit/engines/financial_intelligence/test_mutation_golden.py (modified)
+  backend/tests/unit/engines/financial_intelligence/test_optimization.py (modified)
+  backend/tests/unit/engines/financial_intelligence/test_scenario.py (modified)
+  backend/tests/unit/engines/financial_intelligence/test_utils.py (modified)
+  backend/tests/unit/engines/ledger/test_ledger_engine.py (modified)
+  backend/tests/unit/engines/ledger_audit_engine.py (modified)
+  backend/tests/unit/engines/loan/test_amortization.py (modified)
+  backend/tests/unit/engines/loan/test_c39_regression.py (modified)
+  backend/tests/unit/engines/loan/test_loan_engine.py (modified)
+  backend/tests/unit/engines/recommendation/test_recommendation_strengthening.py (modified)
+  backend/tests/unit/engines/reconciliation/test_reconciliation.py (modified)
+  backend/tests/unit/engines/reconciliation/test_reconciliation_strengthening.py (modified)
+  backend/tests/unit/engines/transaction_intelligence/test_cash_conversion_detector.py (modified)
+  backend/tests/unit/engines/transaction_intelligence/test_cc_payment_detector.py (modified)
+  backend/tests/unit/engines/transaction_intelligence/test_detector_result.py (modified)
+  backend/tests/unit/engines/transaction_intelligence/test_loan_emi_detector.py (modified)
+  backend/tests/unit/engines/transaction_intelligence/test_mutation_golden.py (modified)
+  backend/tests/unit/repositories/test_account_balance_repository.py (modified)
+  backend/tests/unit/repositories/test_account_link_repository.py (modified)
+  backend/tests/unit/repositories/test_account_repository.py (modified)
+  backend/tests/unit/repositories/test_audit_repository.py (modified)
+  backend/tests/unit/repositories/test_behaviour_repository.py (modified)
+  backend/tests/unit/repositories/test_db.py (modified)
+  backend/tests/unit/repositories/test_household_repository.py (modified)
+  backend/tests/unit/repositories/test_institution_repository.py (modified)
+  backend/tests/unit/repositories/test_pattern_repository.py (modified)
+  backend/tests/unit/services/test_behaviour_service.py (modified)
+  backend/tests/unit/services/test_recommendation_networth_services.py (modified)
+  backend/tests/unit/services/test_services.py (modified)
+  backend/tests/unit/test_calculations.py (modified)
+  backend/tests/unit/test_calculations_strengthening.py (modified)
+  backend/tests/unit/test_money.py (modified)
+  backend/tests/unit/test_mutation_golden_calculations.py (modified)
+  conftest.py (modified)
+  dependency-reports/dependency-health.md (modified)
+  dependency-reports/npm-audit.txt (modified)
+  dependency-reports/npm-outdated.json (modified)
+  dependency-reports/python-audit.txt (modified)
+  docs/M9-C10-forensic-report.md (modified)
+  docs/architecture/FRONTEND_BACKEND_RUNTIME_INTEGRATION.md (modified)
+  docs/audits/m9-c57-runtime-framework/RUNTIME_FRAMEWORK_DEEP_DIVE_AUDIT.md (modified)
+  docs/audits/m9-c57-runtime-framework/runtime_largest_files.txt (modified)
+  docs/audits/m9-c57-runtime-framework/runtime_loc_breakdown.txt (modified)
+  docs/audits/runtime-framework-audit-2026-09-10.md (modified)
+  docs/decisions/M10_ENVIRONMENT_DEPENDENCIES.md (modified)
+  docs/dependency-audit-2026-09-11.md (modified)
+  docs/evidence/m9-c32-preflight/api-contract-evidence-committed.json (modified)
+  docs/evidence/m9-c32-preflight/api-contract-evidence-pre-c32.json (modified)
+  docs/evidence/m9-c32-preflight/openapi-committed.json (modified)
+  docs/evidence/m9-c32-preflight/openapi-corrupted.json (modified)
+  docs/progress.md (modified)
+  frontend/.nvmrc (modified)
+  frontend/__tests__/api-contracts/behavior.contract.test.ts (modified)
+  frontend/__tests__/api-contracts/reconciliation.contract.test.ts (modified)
+  frontend/__tests__/api-contracts/transactions.contract.test.ts (modified)
+  frontend/__tests__/use-accounts.test.ts (modified)
+  frontend/__tests__/use-cards.test.ts (modified)
+  frontend/__tests__/use-cashflow.test.ts (modified)
+  frontend/__tests__/use-dashboard-metrics.test.ts (modified)
+  frontend/__tests__/use-investments.test.ts (modified)
+  frontend/__tests__/use-loans.test.ts (modified)
+  frontend/__tests__/use-overview.test.ts (modified)
+  frontend/__tests__/use-reconciliation.test.ts (modified)
+  frontend/app/dashboard/page.tsx (modified)
+  frontend/app/layout.tsx (modified)
+  frontend/app/platform/architecture/page.tsx (modified)
+  frontend/app/platform/capabilities/[capabilityId]/page.tsx (modified)
+  frontend/app/platform/capabilities/page.tsx (modified)
+  frontend/app/platform/diagnostics/change/page.tsx (modified)
+  frontend/app/platform/diagnostics/detail/[id]/page.tsx (modified)
+  frontend/app/platform/diagnostics/page.tsx (modified)
+  frontend/app/platform/errors/page.tsx (modified)
+  frontend/app/platform/evidence/page.tsx (modified)
+  frontend/app/platform/framework/page.tsx (modified)
+  frontend/app/platform/history/compare/page.tsx (modified)
+  frontend/app/platform/history/page.tsx (modified)
+  frontend/app/platform/layout.tsx (modified)
+  frontend/app/platform/page.tsx (modified)
+  frontend/app/platform/platform-providers.tsx (modified)
+  frontend/app/platform/verification/[capability]/page.tsx (modified)
+  frontend/app/platform/verification/history/[runId]/page.tsx (modified)
+  frontend/app/platform/verification/page.tsx (modified)
+  frontend/app/platform/verification/run/[capability]/page.tsx (modified)
+  frontend/components/dashboard/behavior-score-card.tsx (modified)
+  frontend/components/os-shell/left-rail.tsx (modified)
+  frontend/components/os-shell/right-inspector.tsx (modified)
+  frontend/components/os-shell/top-command-bar.tsx (modified)
+  frontend/components/os-shell/workspace-container.tsx (modified)
+  frontend/components/platform/activity-feed.tsx (modified)
+  frontend/components/platform/health-badge.test.tsx (modified)
+  frontend/components/platform/health-badge.tsx (modified)
+  frontend/components/platform/metric-tile.tsx (modified)
+  frontend/components/platform/quick-actions.tsx (modified)
+  frontend/components/platform/sidebar.tsx (modified)
+  frontend/components/primitives/panel/panel.tsx (modified)
+  frontend/components/query-provider.tsx (modified)
+  frontend/generated/openapi-current.json (modified)
+  frontend/generated/toolchain-lock.json (modified)
+  frontend/lib/__tests__/gateway-invariance.test.ts (modified)
+  frontend/lib/api/client.ts (modified)
+  frontend/lib/api/gateway.ts (modified)
+  frontend/lib/capabilities/use-accounts-capability.ts (modified)
+  frontend/lib/capabilities/use-behaviour-capability.ts (modified)
+  frontend/lib/capabilities/use-cashflow-capability.ts (modified)
+  frontend/lib/capabilities/use-credit-cards-capability.ts (modified)
+  frontend/lib/capabilities/use-forecast-capability.ts (modified)
+  frontend/lib/capabilities/use-investments-capability.ts (modified)
+  frontend/lib/capabilities/use-loans-capability.ts (modified)
+  frontend/lib/capabilities/use-net-worth-capability.ts (modified)
+  frontend/lib/capabilities/use-reconciliation-capability.ts (modified)
+  frontend/lib/capabilities/use-transaction-capability.ts (modified)
+  frontend/lib/config/navigation.ts (modified)
+  frontend/lib/hooks/use-accounts.ts (modified)
+  frontend/lib/hooks/use-analytics.ts (modified)
+  frontend/lib/hooks/use-behavior-score.ts (modified)
+  frontend/lib/hooks/use-cards.ts (modified)
+  frontend/lib/hooks/use-cashflow.ts (modified)
+  frontend/lib/hooks/use-dashboard-metrics.ts (modified)
+  frontend/lib/hooks/use-investments.ts (modified)
+  frontend/lib/hooks/use-live-execution.ts (modified)
+  frontend/lib/hooks/use-loans.ts (modified)
+  frontend/lib/hooks/use-networth.ts (modified)
+  frontend/lib/hooks/use-overview.ts (modified)
+  frontend/lib/hooks/use-platform-architecture.ts (modified)
+  frontend/lib/hooks/use-platform-capabilities.ts (modified)
+  frontend/lib/hooks/use-platform-diagnostics.ts (modified)
+  frontend/lib/hooks/use-platform-errors.ts (modified)
+  frontend/lib/hooks/use-platform-events.ts (modified)
+  frontend/lib/hooks/use-platform-health.ts (modified)
+  frontend/lib/hooks/use-platform-tasks.ts (modified)
+  frontend/lib/hooks/use-query-finance.ts (modified)
+  frontend/lib/hooks/use-reconciliation.ts (modified)
+  frontend/lib/hooks/use-verification-center.ts (modified)
+  frontend/lib/mappers/behaviour-mapper.ts (modified)
+  frontend/lib/mappers/transaction-mapper.ts (modified)
+  frontend/lib/schemas/behavior-score.ts (modified)
+  frontend/lib/schemas/cashflow.ts (modified)
+  frontend/lib/schemas/dashboard-metrics.ts (modified)
+  frontend/lib/schemas/overview.ts (modified)
+  frontend/lib/schemas/transaction.ts (modified)
+  frontend/middleware.ts (modified)
+  frontend/mocks/fixtures/behavior.ts (modified)
+  frontend/mocks/fixtures/dashboard.ts (modified)
+  frontend/mocks/fixtures/transactions.ts (modified)
+  frontend/mocks/handlers/behavior.ts (modified)
+  frontend/mocks/handlers/reconciliation.ts (modified)
+  frontend/next.config.ts (modified)
+  frontend/package-lock.json (modified)
+  frontend/package.json (modified)
+  frontend/playwright.config.ts (modified)
+  frontend/proxy.ts (modified)
+  frontend/runtime/generated/typescript-symbol-cache/symbol-cache.json (modified)
+  frontend/tests/e2e/fixtures/css-helpers.ts (modified)
+  frontend/tests/e2e/fixtures/test-fixtures.ts (modified)
+  frontend/tests/e2e/snapshots/historical/analytics-mobile-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/analytics-mobile-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/analytics-page-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/analytics-page-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/behavior-page-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/behavior-page-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/cards-page-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/cards-page-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/categories-mobile-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/categories-mobile-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/categories-page-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/categories-page-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/dark-mode-dashboard-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/dark-mode-dashboard-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/dashboard-mobile-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/dashboard-mobile-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/dashboard-page-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/dashboard-page-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/family-mode-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/family-mode-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/header-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/header-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/home-mobile-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/home-mobile-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/home-page-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/home-page-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/import-page-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/import-page-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/mode-toggle-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/mode-toggle-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/personal-mode-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/personal-mode-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/reconciliation-page-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/reconciliation-page-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/settings-page-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/settings-page-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/sidebar-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/sidebar-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/transactions-mobile-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/transactions-mobile-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/transactions-page-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/transactions-page-tablet-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/upload-button-firefox-linux.png (modified)
+  frontend/tests/e2e/snapshots/historical/upload-button-tablet-linux.png (modified)
+  frontend/tests/e2e/specs/behavior-scoring.spec.ts (modified)
+  frontend/tests/e2e/specs/behavior.spec.ts (modified)
+  frontend/tests/e2e/specs/dashboard.spec.ts (modified)
+  frontend/tests/e2e/specs/e2e-financial-logic.spec.ts (modified)
+  frontend/tests/e2e/specs/edge-cases.spec.ts (modified)
+  frontend/tests/e2e/specs/health-check.spec.ts (modified)
+  frontend/tests/e2e/specs/navigation.spec.ts (modified)
+  frontend/tests/e2e/specs/performance.spec.ts (modified)
+  frontend/tests/e2e/specs/platform-dashboard.spec.ts (modified)
+  frontend/tests/e2e/specs/reconciliation.spec.ts (modified)
+  frontend/tests/e2e/specs/transactions.spec.ts (modified)
+  frontend/tests/e2e/specs/verification-center.spec.ts (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-mobile-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-mobile-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-page-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-page-firefox-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-page-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/behavior-page-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/behavior-page-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/cards-page-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/cards-page-firefox-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/cards-page-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-mobile-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-mobile-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-page-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-page-firefox-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-page-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dark-mode-dashboard-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dark-mode-dashboard-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-mobile-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-mobile-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-page-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-page-firefox-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-page-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/family-mode-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/family-mode-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/header-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/header-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-mobile-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-mobile-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-page-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-page-firefox-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-page-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/import-page-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/import-page-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/personal-mode-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/personal-mode-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/reconciliation-page-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/reconciliation-page-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/settings-page-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/settings-page-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/sidebar-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/sidebar-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-mobile-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-mobile-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-page-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-page-firefox-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-page-mobile-chrome-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/upload-button-chromium-linux.png (modified)
+  frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/upload-button-mobile-chrome-linux.png (modified)
+  frontend/tests/global-setup.ts (modified)
+  frontend/types/api-generated.ts (modified)
+  frontend/types/transaction.ts (modified)
+  frontend/vitest.config.ts (modified)
+  memory-bank/activeContext.md (modified)
+  progress.md (modified)
+  pyproject.toml (modified)
+  requirements.lock (modified)
+  runtime/ARCHITECTURE-mutation.md (modified)
+  runtime/__init__.py (modified)
+  runtime/analyze_artifacts.py (modified)
+  runtime/archive/README.md (modified)
+  runtime/archive/_tmp_validation/test_c53_candidate_6bc2761eb77c.py (modified)
+  runtime/archive/aggregator_obsolete_disposition.py (modified)
+  runtime/archive/analysis_scripts/analyze_architecture.py (modified)
+  runtime/archive/analysis_scripts/analyze_artifacts.py (modified)
+  runtime/archive/analysis_scripts/analyze_engine_normalization.py (modified)
+  runtime/archive/analysis_scripts/analyze_engine_topology.py (modified)
+  runtime/archive/analysis_scripts/analyze_execution.py (modified)
+  runtime/archive/analysis_scripts/analyze_gap.py (modified)
+  runtime/archive/analysis_scripts/analyze_knowledge.py (modified)
+  runtime/archive/analysis_scripts/analyze_ownership.py (modified)
+  runtime/archive/execplan-1218b76aa610/exec-0001-stderr.log (modified)
+  runtime/archive/execplan-1218b76aa610/exec-0001-stdout.log (modified)
+  runtime/archive/execplan-1218b76aa610/exec-0002-stderr.log (modified)
+  runtime/archive/execplan-1218b76aa610/exec-0002-stdout.log (modified)
+  runtime/archive/execplan-1218b76aa610/exec-0003-stderr.log (modified)
+  runtime/archive/execplan-1218b76aa610/exec-0003-stdout.log (modified)
+  runtime/archive/execplan-1218b76aa610/exec-0004-stderr.log (modified)
+  runtime/archive/execplan-1218b76aa610/exec-0004-stdout.log (modified)
+  runtime/archive/execplan-1218b76aa610/exec-0005-stderr.log (modified)
+  runtime/archive/execplan-1218b76aa610/exec-0005-stdout.log (modified)
+  runtime/archive/execplan-1218b76aa610/exec-0006-stderr.log (modified)
+  runtime/archive/execplan-1218b76aa610/exec-0006-stdout.log (modified)
+  runtime/archive/execplan-1218b76aa610/exec-0008-stderr.log (modified)
+  runtime/archive/execplan-1218b76aa610/exec-0008-stdout.log (modified)
+  runtime/archive/orchestration/models.py (modified)
+  runtime/archive/orchestration/orchestrator.py (modified)
+  runtime/archive/program16_analysis.py (modified)
+  runtime/archive/smoke-1789187935.json (modified)
+  runtime/archive/smoke-1789189287.json (modified)
+  runtime/foundation/architecture/__init__.py (modified)
+  runtime/foundation/architecture/chains.py (modified)
+  runtime/foundation/architecture/cross_layer.py (modified)
+  runtime/foundation/architecture/discovery.py (modified)
+  runtime/foundation/architecture/migration_reports.py (modified)
+  runtime/foundation/architecture/models.py (modified)
+  runtime/foundation/architecture/provider.py (modified)
+  runtime/foundation/architecture/sources.py (modified)
+  runtime/foundation/audit/artifact_ownership.py (modified)
+  runtime/foundation/audit/certification.py (modified)
+  runtime/foundation/audit/cluster.py (modified)
+  runtime/foundation/audit/cross_layer.py (modified)
+  runtime/foundation/audit/dependency_graph.py (modified)
+  runtime/foundation/audit/evidence.py (modified)
+  runtime/foundation/audit/executor.py (modified)
+  runtime/foundation/audit/failure_injection.py (modified)
+  runtime/foundation/audit/github_actions.py (modified)
+  runtime/foundation/audit/github_runtime.py (modified)
+  runtime/foundation/audit/integrity.py (modified)
+  runtime/foundation/audit/knowledge.py (modified)
+  runtime/foundation/audit/normalize.py (modified)
+  runtime/foundation/audit/observability.py (modified)
+  runtime/foundation/audit/performance.py (modified)
+  runtime/foundation/audit/pipeline.py (modified)
+  runtime/foundation/audit/planner.py (modified)
+  runtime/foundation/audit/remediation.py (modified)
+  runtime/foundation/audit/repair_order.py (modified)
+  runtime/foundation/audit/reporter.py (modified)
+  runtime/foundation/audit/repository.py (modified)
+  runtime/foundation/audit/roi.py (modified)
+  runtime/foundation/audit/runner.py (modified)
+  runtime/foundation/audit/runtime_cli.py (modified)
+  runtime/foundation/audit/verification_profiles.py (modified)
+  runtime/foundation/audit/workspace.py (modified)
+  runtime/foundation/integrity/__init__.py (modified)
+  runtime/foundation/integrity/engine.py (modified)
+  runtime/foundation/integrity/formatter.py (modified)
+  runtime/foundation/integrity/registry.py (modified)
+  runtime/foundation/integrity/rules.py (modified)
+  runtime/foundation/integrity/scanner.py (modified)
+  runtime/foundation/intelligence/__init__.py (modified)
+  runtime/foundation/intelligence/platform/api.py (modified)
+  runtime/foundation/intelligence/platform/attribution.py (modified)
+  runtime/foundation/intelligence/platform/blast.py (modified)
+  runtime/foundation/intelligence/platform/certification.py (modified)
+  runtime/foundation/intelligence/platform/change.py (modified)
+  runtime/foundation/intelligence/platform/changeset.py (modified)
+  runtime/foundation/intelligence/platform/ci.py (modified)
+  runtime/foundation/intelligence/platform/cli_format.py (modified)
+  runtime/foundation/intelligence/platform/cost.py (modified)
+  runtime/foundation/intelligence/platform/memory.py (modified)
+  runtime/foundation/intelligence/platform/migration.py (modified)
+  runtime/foundation/intelligence/platform/optimizer.py (modified)
+  runtime/foundation/intelligence/platform/pipeline.py (modified)
+  runtime/foundation/intelligence/platform/repair.py (modified)
+  runtime/foundation/intelligence/platform/resolver.py (modified)
+  runtime/foundation/intelligence/platform/risk.py (modified)
+  runtime/foundation/intelligence/platform/state.py (modified)
+  runtime/foundation/knowledge/__init__.py (modified)
+  runtime/foundation/knowledge/catalog.py (modified)
+  runtime/foundation/knowledge/formatter.py (modified)
+  runtime/foundation/knowledge/indexer.py (modified)
+  runtime/foundation/knowledge/models.py (modified)
+  runtime/foundation/knowledge/query.py (modified)
+  runtime/foundation/knowledge/references.py (modified)
+  runtime/foundation/repository/__main__.py (modified)
+  runtime/foundation/repository/analysis/impact.py (modified)
+  runtime/foundation/repository/analysis/metrics.py (modified)
+  runtime/foundation/repository/builder/builder.py (modified)
+  runtime/foundation/repository/builder/index.py (modified)
+  runtime/foundation/repository/graph/graph_service.py (modified)
+  runtime/foundation/repository/query/query.py (modified)
+  runtime/foundation/repository/scanner/__init__.py (modified)
+  runtime/foundation/repository/scanner/api_scanner.py (modified)
+  runtime/foundation/repository/scanner/backend_scanner.py (modified)
+  runtime/foundation/repository/scanner/metadata_scanner.py (modified)
+  runtime/foundation/repository/scanner/script_scanner.py (modified)
+  runtime/foundation/repository/scanner/test_scanner.py (modified)
+  runtime/foundation/repository/scanner/workflow_scanner.py (modified)
+  runtime/foundation/repository/validation/validator.py (modified)
+  runtime/foundation/verification/__init__.py (modified)
+  runtime/foundation/verification/api_contracts/__init__.py (modified)
+  runtime/foundation/verification/api_contracts/c30_certification.py (modified)
+  runtime/foundation/verification/api_contracts/fixture.py (modified)
+  runtime/foundation/verification/api_contracts/gate.py (modified)
+  runtime/foundation/verification/api_contracts/inventory.py (modified)
+  runtime/foundation/verification/api_contracts/mutations.py (modified)
+  runtime/foundation/verification/api_contracts/normalize.py (modified)
+  runtime/foundation/verification/api_contracts/taxonomy.py (modified)
+  runtime/foundation/verification/api_schema_governance.py (modified)
+  runtime/foundation/verification/authority_drift_detector.py (modified)
+  runtime/foundation/verification/authorization_boundary.py (modified)
+  runtime/foundation/verification/blast_radius.py (modified)
+  runtime/foundation/verification/blast_radius_cli.py (modified)
+  runtime/foundation/verification/bypass_enforcement.py (modified)
+  runtime/foundation/verification/c53_certification.py (modified)
+  runtime/foundation/verification/c53_scenarios.py (modified)
+  runtime/foundation/verification/c56_convergence.py (modified)
+  runtime/foundation/verification/cache.py (modified)
+  runtime/foundation/verification/candidate_validation.py (modified)
+  runtime/foundation/verification/canonical_control_plane.py (modified)
+  runtime/foundation/verification/capability_authority.py (modified)
+  runtime/foundation/verification/capability_catalog.py (modified)
+  runtime/foundation/verification/capability_catalog_data.py (modified)
+  runtime/foundation/verification/capability_contract.py (modified)
+  runtime/foundation/verification/capability_discovery.py (modified)
+  runtime/foundation/verification/capability_graph.py (modified)
+  runtime/foundation/verification/capability_graph_resolver.py (modified)
+  runtime/foundation/verification/capability_latent_audit.py (modified)
+  runtime/foundation/verification/capability_resolver.py (modified)
+  runtime/foundation/verification/catalog_certification.py (modified)
+  runtime/foundation/verification/certification.py (modified)
+  runtime/foundation/verification/change_surface.py (modified)
+  runtime/foundation/verification/ci_evidence.py (modified)
+  runtime/foundation/verification/cli/cli.py (modified)
+  runtime/foundation/verification/cli_capability_matrix.py (modified)
+  runtime/foundation/verification/cli_governance.py (modified)
+  runtime/foundation/verification/cli_surface.py (modified)
+  runtime/foundation/verification/command_inventory.py (modified)
+  runtime/foundation/verification/config_loader.py (modified)
+  runtime/foundation/verification/configuration_authority.py (modified)
+  runtime/foundation/verification/configuration_authority_enforcement.py (modified)
+  runtime/foundation/verification/control_plane.py (modified)
+  runtime/foundation/verification/control_plane_efficiency.py (modified)
+  runtime/foundation/verification/control_plane_facade.py (modified)
+  runtime/foundation/verification/convergence_pipeline.py (modified)
+  runtime/foundation/verification/correlation.py (modified)
+  runtime/foundation/verification/coverage_measurement.py (modified)
+  runtime/foundation/verification/coverage_truth.py (modified)
+  runtime/foundation/verification/cross_capability_impact.py (modified)
+  runtime/foundation/verification/cross_layer_graph.py (modified)
+  runtime/foundation/verification/diagnostic_agent.py (modified)
+  runtime/foundation/verification/diagnostics/__init__.py (modified)
+  runtime/foundation/verification/diagnostics/formatter.py (modified)
+  runtime/foundation/verification/e2e_route_mapper.py (modified)
+  runtime/foundation/verification/endpoint_normalize.py (modified)
+  runtime/foundation/verification/endpoint_normalize.py.bak (modified)
+  runtime/foundation/verification/engine_capability_bridge.py (modified)
+  runtime/foundation/verification/env.py (modified)
+  runtime/foundation/verification/env_contract.py (modified)
+  runtime/foundation/verification/evidence_contract.py (modified)
+  runtime/foundation/verification/evidence_integrity.py (modified)
+  runtime/foundation/verification/evidence_planner.py (modified)
+  runtime/foundation/verification/evidence_retention.py (modified)
+  runtime/foundation/verification/evidence_reuse.py (modified)
+  runtime/foundation/verification/evidence_schema.py (modified)
+  runtime/foundation/verification/execution/__init__.py (modified)
+  runtime/foundation/verification/execution/adapters/__init__.py (modified)
+  runtime/foundation/verification/execution/adapters/mutation.py (modified)
+  runtime/foundation/verification/execution/adapters/pytest_adapters.py (modified)
+  runtime/foundation/verification/execution/adapters/unit.py (modified)
+  runtime/foundation/verification/execution/classification.py (modified)
+  runtime/foundation/verification/execution/decisions.py (modified)
+  runtime/foundation/verification/execution/dispatcher.py (modified)
+  runtime/foundation/verification/execution/evidence.py (modified)
+  runtime/foundation/verification/execution/forensic.py (modified)
+  runtime/foundation/verification/execution/identity.py (modified)
+  runtime/foundation/verification/execution/reconciliation.py (modified)
+  runtime/foundation/verification/execution/scope.py (modified)
+  runtime/foundation/verification/execution/smoke.py (modified)
+  runtime/foundation/verification/execution/task.py (modified)
+  runtime/foundation/verification/execution_enforcer.py (modified)
+  runtime/foundation/verification/execution_orchestrator.py (modified)
+  runtime/foundation/verification/executor.py (modified)
+  runtime/foundation/verification/executor_pipeline.py (modified)
+  runtime/foundation/verification/failure_report.py (modified)
+  runtime/foundation/verification/forensic_cli.py (modified)
+  runtime/foundation/verification/framework_integrity.py (modified)
+  runtime/foundation/verification/frontend_backend_gate.py (modified)
+  runtime/foundation/verification/frontend_backend_map.py (modified)
+  runtime/foundation/verification/frontend_capability_discovery.py (modified)
+  runtime/foundation/verification/frontend_financial_arithmetic_lint.py (modified)
+  runtime/foundation/verification/function_audit.py (modified)
+  runtime/foundation/verification/gap_classification.py (modified)
+  runtime/foundation/verification/generation_eligibility.py (modified)
+  runtime/foundation/verification/generation_engine.py (modified)
+  runtime/foundation/verification/graph_model.py (modified)
+  runtime/foundation/verification/help_resolver.py (modified)
+  runtime/foundation/verification/history_migration.py (modified)
+  runtime/foundation/verification/latent_capabilities.py (modified)
+  runtime/foundation/verification/measurement_truth.py (modified)
+  runtime/foundation/verification/measurement_truth_cli.py (modified)
+  runtime/foundation/verification/measurement_truth_integration.py (modified)
+  runtime/foundation/verification/milestone_state.py (modified)
+  runtime/foundation/verification/models/__init__.py (modified)
+  runtime/foundation/verification/models/model.py (modified)
+  runtime/foundation/verification/models/scope.py (modified)
+  runtime/foundation/verification/mutation/__init__.py (modified)
+  runtime/foundation/verification/mutation/survivor_enricher.py (modified)
+  runtime/foundation/verification/mutation_authority.py (modified)
+  runtime/foundation/verification/mutation_contract.py (modified)
+  runtime/foundation/verification/mutation_execution/__init__.py (modified)
+  runtime/foundation/verification/mutation_execution/adapter_report.py (modified)
+  runtime/foundation/verification/mutation_execution/backend_contract_report.py (modified)
+  runtime/foundation/verification/mutation_execution/backend_interface.py (modified)
+  runtime/foundation/verification/mutation_execution/cache.py (modified)
+  runtime/foundation/verification/mutation_execution/cache_report.py (modified)
+  runtime/foundation/verification/mutation_execution/config_fingerprint.py (modified)
+  runtime/foundation/verification/mutation_execution/domain_model.py (modified)
+  runtime/foundation/verification/mutation_execution/domain_model_report.py (modified)
+  runtime/foundation/verification/mutation_execution/evidence.py (modified)
+  runtime/foundation/verification/mutation_execution/final_certification.py (modified)
+  runtime/foundation/verification/mutation_execution/forensics.py (modified)
+  runtime/foundation/verification/mutation_execution/health.py (modified)
+  runtime/foundation/verification/mutation_execution/isolation_report.py (modified)
+  runtime/foundation/verification/mutation_execution/mutmut_adapter.py (modified)
+  runtime/foundation/verification/mutation_execution/orchestrator.py (modified)
+  runtime/foundation/verification/mutation_execution/reliability_report.py (modified)
+  runtime/foundation/verification/mutation_execution/verify_result.py (modified)
+  runtime/foundation/verification/mutation_execution/workspace.py (modified)
+  runtime/foundation/verification/mutation_execution/workspace_report.py (modified)
+  runtime/foundation/verification/mutation_inventory.py (modified)
+  runtime/foundation/verification/mutation_result_unified.py (modified)
+  runtime/foundation/verification/mutation_runner.py (modified)
+  runtime/foundation/verification/obligation.py (modified)
+  runtime/foundation/verification/obligation_reconciliation.py (modified)
+  runtime/foundation/verification/operational_cli.py (modified)
+  runtime/foundation/verification/orchestration/__init__.py (modified)
+  runtime/foundation/verification/orchestrator.py (modified)
+  runtime/foundation/verification/parallel_executor.py (modified)
+  runtime/foundation/verification/pipeline_enforcement.py (modified)
+  runtime/foundation/verification/planner/__init__.py (modified)
+  runtime/foundation/verification/planner/impact_rules.py (modified)
+  runtime/foundation/verification/planner/plan_models.py (modified)
+  runtime/foundation/verification/planner/planner.py (modified)
+  runtime/foundation/verification/product-support.md (modified)
+  runtime/foundation/verification/profiles.py (modified)
+  runtime/foundation/verification/reconciliation.py (modified)
+  runtime/foundation/verification/registry/__init__.py (modified)
+  runtime/foundation/verification/registry/registry.py (modified)
+  runtime/foundation/verification/regression.py (modified)
+  runtime/foundation/verification/regression_detector.py (modified)
+  runtime/foundation/verification/route_authority.py (modified)
+  runtime/foundation/verification/runtime.py (modified)
+  runtime/foundation/verification/scenario_harness.py (modified)
+  runtime/foundation/verification/semantics/__init__.py (modified)
+  runtime/foundation/verification/semantics/assertions.py (modified)
+  runtime/foundation/verification/semantics/blast_radius.py (modified)
+  runtime/foundation/verification/semantics/concepts.py (modified)
+  runtime/foundation/verification/semantics/parser.py (modified)
+  runtime/foundation/verification/shared_impact.py (modified)
+  runtime/foundation/verification/strengthening.py (modified)
+  runtime/foundation/verification/strengthening_integration.py (modified)
+  runtime/foundation/verification/strengthening_pipeline.py (modified)
+  runtime/foundation/verification/structured_logging.py (modified)
+  runtime/foundation/verification/survivor_catalog.py (modified)
+  runtime/foundation/verification/survivor_intel.py (modified)
+  runtime/foundation/verification/symbol_resolver.py (modified)
+  runtime/foundation/verification/symbol_test_selector.py (modified)
+  runtime/foundation/verification/test_cache_invalidation.py (modified)
+  runtime/foundation/verification/test_command_consolidation.py (modified)
+  runtime/foundation/verification/test_convergence_loop.py (modified)
+  runtime/foundation/verification/test_false_certification_audit.py (modified)
+  runtime/foundation/verification/test_generator.py (modified)
+  runtime/foundation/verification/test_quality.py (modified)
+  runtime/foundation/verification/test_strengthening_pipeline.py (modified)
+  runtime/foundation/verification/tier.py (modified)
+  runtime/foundation/verification/totals.py (modified)
+  runtime/foundation/verification/typescript_symbol_resolver.py (modified)
+  runtime/foundation/verification/typescript_symbol_resolver.ts (modified)
+  runtime/foundation/verification/validation/__init__.py (modified)
+  runtime/foundation/verification/validation/validator.py (modified)
+  runtime/foundation/verification/verification.yaml (modified)
+  runtime/foundation/verification/verification_contract.py (modified)
+  runtime/foundation/verification/workflow_convergence.py (modified)
+  runtime/foundation/verification/workflow_convergence/__init__.py (modified)
+  runtime/foundation/verification/workflow_convergence/artifacts.py (modified)
+  runtime/foundation/verification/workflow_convergence/bypass.py (modified)
+  runtime/foundation/verification/workflow_convergence/c53_integration.py (modified)
+  runtime/foundation/verification/workflow_convergence/certification_gates.py (modified)
+  runtime/foundation/verification/workflow_convergence/core.py (modified)
+  runtime/foundation/verification/workflow_convergence/coverage.py (modified)
+  runtime/foundation/verification/workflow_convergence/duplication.py (modified)
+  runtime/foundation/verification/workflow_convergence/efficiency.py (modified)
+  runtime/foundation/verification/workflow_convergence/emission.py (modified)
+  runtime/foundation/verification/workflow_convergence/environment.py (modified)
+  runtime/foundation/verification/workflow_convergence/equivalence.py (modified)
+  runtime/foundation/verification/workflow_convergence/evidence_contract.py (modified)
+  runtime/foundation/verification/workflow_convergence/failure_injection.py (modified)
+  runtime/foundation/verification/workflow_convergence/failure_semantics.py (modified)
+  runtime/foundation/verification/workflow_convergence/greenness.py (modified)
+  runtime/foundation/verification/workflow_convergence/inventory.py (modified)
+  runtime/foundation/verification/workflow_convergence/mapping.py (modified)
+  runtime/foundation/verification/workflow_convergence/measurement_integrity.py (modified)
+  runtime/foundation/verification/workflow_convergence/scenarios.py (modified)
+  runtime/foundation/workspace/dependencies.py (modified)
+  runtime/foundation/workspace/formatter.py (modified)
+  runtime/foundation/workspace/history.py (modified)
+  runtime/foundation/workspace/metrics.py (modified)
+  runtime/foundation/workspace/status.py (modified)
+  runtime/foundation/workspace/verification.py (modified)
+  runtime/foundation/workspace/workspace.py (modified)
+  runtime/platform/__init__.py (modified)
+  runtime/platform/ai/__init__.py (modified)
+  runtime/platform/ai/agents.py (modified)
+  runtime/platform/ai/config.py (modified)
+  runtime/platform/ai/context/__init__.py (modified)
+  runtime/platform/ai/context/builder.py (modified)
+  runtime/platform/ai/context/cache.py (modified)
+  runtime/platform/ai/context/provenance.py (modified)
+  runtime/platform/ai/context/ranker.py (modified)
+  runtime/platform/ai/context/serializer.py (modified)
+  runtime/platform/ai/context/trimmer.py (modified)
+  runtime/platform/ai/intent.py (modified)
+  runtime/platform/ai/memory.py (modified)
+  runtime/platform/ai/orchestrator.py (modified)
+  runtime/platform/ai/planner.py (modified)
+  runtime/platform/ai/policy.py (modified)
+  runtime/platform/ai/providers/__init__.py (modified)
+  runtime/platform/ai/providers/base.py (modified)
+  runtime/platform/ai/providers/local.py (modified)
+  runtime/platform/ai/providers/router.py (modified)
+  runtime/platform/ai/runs.py (modified)
+  runtime/platform/ai/tools/__init__.py (modified)
+  runtime/platform/ai/tools/handlers.py (modified)
+  runtime/platform/api/__init__.py (modified)
+  runtime/platform/api/contracts/__init__.py (modified)
+  runtime/platform/api/contracts/_primitives.py (modified)
+  runtime/platform/api/contracts/ai.py (modified)
+  runtime/platform/api/contracts/application.py (modified)
+  runtime/platform/api/contracts/architecture.py (modified)
+  runtime/platform/api/contracts/capabilities.py (modified)
+  runtime/platform/api/contracts/change.py (modified)
+  runtime/platform/api/contracts/context.py (modified)
+  runtime/platform/api/contracts/diagnostics.py (modified)
+  runtime/platform/api/contracts/errors.py (modified)
+  runtime/platform/api/contracts/events.py (modified)
+  runtime/platform/api/contracts/evidence.py (modified)
+  runtime/platform/api/contracts/executions.py (modified)
+  runtime/platform/api/contracts/framework_integrity.py (modified)
+  runtime/platform/api/contracts/health.py (modified)
+  runtime/platform/api/contracts/history.py (modified)
+  runtime/platform/api/contracts/tasks.py (modified)
+  runtime/platform/api/contracts/verification.py (modified)
+  runtime/platform/api/envelope.py (modified)
+  runtime/platform/api/errors.py (modified)
+  runtime/platform/api/identity.py (modified)
+  runtime/platform/api/services/__init__.py (modified)
+  runtime/platform/api/services/_comparison.py (modified)
+  runtime/platform/api/services/_helpers.py (modified)
+  runtime/platform/api/services/application.py (modified)
+  runtime/platform/api/services/architecture.py (modified)
+  runtime/platform/api/services/capabilities.py (modified)
+  runtime/platform/api/services/change.py (modified)
+  runtime/platform/api/services/cross_layer.py (modified)
+  runtime/platform/api/services/errors.py (modified)
+  runtime/platform/api/services/events.py (modified)
+  runtime/platform/api/services/evidence.py (modified)
+  runtime/platform/api/services/executions.py (modified)
+  runtime/platform/api/services/framework_integrity.py (modified)
+  runtime/platform/api/services/health.py (modified)
+  runtime/platform/api/services/history.py (modified)
+  runtime/platform/api/services/tasks.py (modified)
+  runtime/platform/api/services/tasks_write.py (modified)
+  runtime/platform/api/services/verification.py (modified)
+  runtime/platform/api/services/verification_write.py (modified)
+  runtime/platform/cache.py (modified)
+  runtime/platform/diagnostics/__init__.py (modified)
+  runtime/platform/diagnostics/engine.py (modified)
+  runtime/platform/diagnostics/rules.py (modified)
+  runtime/program16_analysis.py (modified)
+  runtime/runtime/generated/m9-c44/cache/index.json (modified)
+  runtime/system/command/__init__.py (modified)
+  runtime/system/evidence/aggregator.py (modified)
+  runtime/system/evidence/api.py (modified)
+  runtime/system/evidence/api/__init__.py (modified)
+  runtime/system/evidence/cli/cli.py (modified)
+  runtime/system/evidence/collectors/__init__.py (modified)
+  runtime/system/evidence/collectors/base.py (modified)
+  runtime/system/evidence/collectors/contract.py (modified)
+  runtime/system/evidence/collectors/contract_tests.py (modified)
+  runtime/system/evidence/collectors/coverage.py (modified)
+  runtime/system/evidence/collectors/mutation.py (modified)
+  runtime/system/evidence/collectors/property_tests.py (modified)
+  runtime/system/evidence/collectors/test_results.py (modified)
+  runtime/system/evidence/ingestion/pipeline.py (modified)
+  runtime/system/evidence/models/__init__.py (modified)
+  runtime/system/evidence/models/evidence.py (modified)
+  runtime/system/evidence/tests/test_evidence_unification.py (modified)
+  runtime/system/financial/__init__.py (modified)
+  runtime/system/graph/__init__.py (modified)
+  runtime/system/observability/__init__.py (modified)
+  runtime/system/observability/analytics.py (modified)
+  runtime/system/observability/cost_analysis.py (modified)
+  runtime/system/observability/dashboard.py (modified)
+  runtime/system/observability/dependency_growth.py (modified)
+  runtime/system/observability/event_store.py (modified)
+  runtime/system/observability/execution_context.py (modified)
+  runtime/system/observability/flaky_tests.py (modified)
+  runtime/system/observability/health_report.py (modified)
+  runtime/system/observability/outcome.py (modified)
+  runtime/system/observability/repository.py (modified)
+  runtime/system/timeline/__init__.py (modified)
+  runtime/tests/audit_final_freeze.py (modified)
+  runtime/tests/conftest.py (modified)
+  runtime/tests/snapshots/verification-plan.json (modified)
+  runtime/tests/snapshots/verification-report.json (modified)
+  runtime/tests/test_analytics_filtering.py (modified)
+  runtime/tests/test_backend_evidence.py (modified)
+  runtime/tests/test_blast_radius_integration.py (modified)
+  runtime/tests/test_c37_certification_arithmetic.py (modified)
+  runtime/tests/test_c43_test_generator.py (modified)
+  runtime/tests/test_cli_contract.py (modified)
+  runtime/tests/test_concurrent_stress.py (modified)
+  runtime/tests/test_config_consistency.py (modified)
+  runtime/tests/test_cross_layer_planner.py (modified)
+  runtime/tests/test_dead_code_detection.py (modified)
+  runtime/tests/test_dependencies.py (modified)
+  runtime/tests/test_diagnose_failures.py (modified)
+  runtime/tests/test_diagnostics.py (modified)
+  runtime/tests/test_e2e_real_workflow.py (modified)
+  runtime/tests/test_e2e_smoke.py (modified)
+  runtime/tests/test_e4_graph_attribution.py (modified)
+  runtime/tests/test_endpoint_normalization.py (modified)
+  runtime/tests/test_engineering_intelligence.py (modified)
+  runtime/tests/test_evidence_aggregator.py (modified)
+  runtime/tests/test_evidence_cleanup_stress.py (modified)
+  runtime/tests/test_evidence_frontend_units.py (modified)
+  runtime/tests/test_evidence_integrity.py (modified)
+  runtime/tests/test_executor_artifact_persistence.py (modified)
+  runtime/tests/test_failure_attribution.py (modified)
+  runtime/tests/test_false_negative_rate.py (modified)
+  runtime/tests/test_false_positive_rate.py (modified)
+  runtime/tests/test_frontend_backend_map.py (modified)
+  runtime/tests/test_frontend_backend_sync_deep.py (modified)
+  runtime/tests/test_full_pipeline_integration.py (modified)
+  runtime/tests/test_history.py (modified)
+  runtime/tests/test_history_migration.py (modified)
+  runtime/tests/test_import_integrity.py (modified)
+  runtime/tests/test_import_resolution_canonical.py (modified)
+  runtime/tests/test_integrity_engine.py (modified)
+  runtime/tests/test_integrity_formatter.py (modified)
+  runtime/tests/test_integrity_registry.py (modified)
+  runtime/tests/test_integrity_rules.py (modified)
+  runtime/tests/test_integrity_scanner.py (modified)
+  runtime/tests/test_knowledge_catalog.py (modified)
+  runtime/tests/test_knowledge_formatter.py (modified)
+  runtime/tests/test_knowledge_indexer.py (modified)
+  runtime/tests/test_knowledge_queries.py (modified)
+  runtime/tests/test_knowledge_references.py (modified)
+  runtime/tests/test_large_changeset.py (modified)
+  runtime/tests/test_m9_c42_27.py (modified)
+  runtime/tests/test_m9_c42_28.py (modified)
+  runtime/tests/test_m9_c42_29.py (modified)
+  runtime/tests/test_m9_c42_30.py (modified)
+  runtime/tests/test_m9_c42_31.py (modified)
+  runtime/tests/test_m9_c44_mutation_architecture.py (modified)
+  runtime/tests/test_m9_c48_aggregator_obsolete.py (modified)
+  runtime/tests/test_m9_c48_api_schema_governance.py (modified)
+  runtime/tests/test_m9_c48_capability_authority.py (modified)
+  runtime/tests/test_m9_c48_capability_graph.py (modified)
+  runtime/tests/test_m9_c48_cli_governance.py (modified)
+  runtime/tests/test_m9_c48_coverage_truth.py (modified)
+  runtime/tests/test_m9_c48_frontend_arithmetic.py (modified)
+  runtime/tests/test_m9_c48_function_audit.py (modified)
+  runtime/tests/test_m9_c48_milestone_state.py (modified)
+  runtime/tests/test_m9_c48_mutation_unified.py (modified)
+  runtime/tests/test_m9_c48_test_quality.py (modified)
+  runtime/tests/test_m9_c48_test_strengthening.py (modified)
+  runtime/tests/test_m9_c49.py (modified)
+  runtime/tests/test_m9_c49_canonical_cli.py (modified)
+  runtime/tests/test_m9_c50.py (modified)
+  runtime/tests/test_m9_c50_ci_convergence.py (modified)
+  runtime/tests/test_m9_c50_executor_adapters.py (modified)
+  runtime/tests/test_m9_c50_final_governance.py (modified)
+  runtime/tests/test_m9_c50_operational_lineage.py (modified)
+  runtime/tests/test_m9_c50_operational_validation.py (modified)
+  runtime/tests/test_m9_c50_self_verification.py (modified)
+  runtime/tests/test_m9_c50_stop_gate2_obligation_reconciliation.py (modified)
+  runtime/tests/test_m9_c50_stop_gate3_capability_resolution.py (modified)
+  runtime/tests/test_m9_c50_stop_gate4_execution_completeness.py (modified)
+  runtime/tests/test_m9_c50_stop_gate5_evidence_trust.py (modified)
+  runtime/tests/test_m9_c50_stop_gate6_strengthening_authority.py (modified)
+  runtime/tests/test_m9_c50_stop_gate9_failure_modes.py (modified)
+  runtime/tests/test_m9_c51.py (modified)
+  runtime/tests/test_m9_c52.py (modified)
+  runtime/tests/test_m9_c53.py (modified)
+  runtime/tests/test_m9_c54.py (modified)
+  runtime/tests/test_m9_c55.py (modified)
+  runtime/tests/test_m9c3_verification_gate.py (modified)
+  runtime/tests/test_m9c57_observability_convergence.py (modified)
+  runtime/tests/test_m9c57_outcome_semantic_contract.py (modified)
+  runtime/tests/test_m9c57_verification_self_contract.py (modified)
+  runtime/tests/test_m9c5_gate_topology.py (modified)
+  runtime/tests/test_measurement_truth.py (modified)
+  runtime/tests/test_metrics.py (modified)
+  runtime/tests/test_mutation_edge_cases.py (modified)
+  runtime/tests/test_mutation_infra.py (modified)
+  runtime/tests/test_mutation_inventory.py (modified)
+  runtime/tests/test_o5_frontend_backend_scenarios.py (modified)
+  runtime/tests/test_orchestrator.py (modified)
+  runtime/tests/test_platform_api_phase1.py (modified)
+  runtime/tests/test_platform_api_phase10_12.py (modified)
+  runtime/tests/test_platform_api_phase13.py (modified)
+  runtime/tests/test_platform_api_phase14.py (modified)
+  runtime/tests/test_platform_api_phase15_21.py (modified)
+  runtime/tests/test_platform_api_phase2.py (modified)
+  runtime/tests/test_platform_api_phase7.py (modified)
+  runtime/tests/test_platform_api_phase8.py (modified)
+  runtime/tests/test_platform_api_phase9.py (modified)
+  runtime/tests/test_regression_suite.py (modified)
+  runtime/tests/test_repair.py (modified)
+  runtime/tests/test_risk.py (modified)
+  runtime/tests/test_runtime_performance.py (modified)
+  runtime/tests/test_semantic_diagnostics_e2e.py (modified)
+  runtime/tests/test_snapshots.py (modified)
+  runtime/tests/test_status.py (modified)
+  runtime/tests/test_strengthen_cli.py (modified)
+  runtime/tests/test_survivor_intel.py (modified)
+  runtime/tests/test_symbol_resolution_accuracy.py (modified)
+  runtime/tests/test_symbol_resolution_edge_cases.py (modified)
+  runtime/tests/test_vea5_m5_ci_integration.py (modified)
+  runtime/tests/test_vea5_m6_evidence_contract.py (modified)
+  runtime/tests/test_vea5_m8_merge_enforcement.py (modified)
+  runtime/tests/test_vea5_m8r_cache_observability.py (modified)
+  runtime/tests/test_vea5_m8r_cli_reconcile.py (modified)
+  runtime/tests/test_vea5_m9_security_codeql.py (modified)
+  runtime/tests/test_vea5_plan_reconciliation.py (modified)
+  runtime/tests/test_vea5_tier_plan.py (modified)
+  runtime/tests/test_vea5_verification_cache.py (modified)
+  runtime/tests/test_verification_identity.py (modified)
+  runtime/tests/test_verification_identity_execution.py (modified)
+  runtime/tests/test_verification_module_paths.py (modified)
+  runtime/tests/test_verification_unit_mapping.py (modified)
+  runtime/tests/test_verify_status.py (modified)
+  runtime/tests/test_workspace.py (modified)
+  runtime/verify.py (modified)
+  scripts/bootstrap.sh (modified)
+  scripts/env-doctor.sh (modified)
+  scripts/launch.sh (modified)
+  scripts/verify-fast.sh (modified)
+  scripts/verify.sh (modified)
+  start.bat (modified)
+  start.sh (modified)
+  test-results/.last-run.json (modified)
+  testing/runtime/foundation/verification/test_aggregator.py (modified)
+  testing/runtime/foundation/verification/test_evidence_collectors.py (modified)
+  testing/runtime/foundation/verification/test_plan_models.py (modified)
+  tools/development/check_coverage.py (modified)
+  tools/development/selective_verify.py (modified)
+  tools/development/validation_orchestrator.py (modified)
+  tools/diagnostics/check_mutation_matrix.py (modified)
+  tools/diagnostics/check_paths.py (modified)
+  tools/diagnostics/generate_health_report.py (modified)
+  tools/e2e_seed.py (modified)
+  tools/generators/build_consumer_migration.py (modified)
+  tools/generators/build_cross_layer_map.py (modified)
+  tools/generators/generate_repository_index.py (modified)
+  tools/generators/generate_synthetic_data.py (modified)
+
+Ownership (provider-resolved)
+  engine:financial_intelligence
+  engine:loan_engine
+  engine:transaction_intelligence
+  Unmapped (no provider owner):
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__format____mutmut_2.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__format____mutmut_3.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__format____mutmut_7.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__format____mutmut_8.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__gt____mutmut_2.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__init____mutmut_3.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__lt____mutmut_2.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__str____mutmut_2.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201__str____mutmut_3.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201add__mutmut_3.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201compare__mutmut_3.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201divide__mutmut_3.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201divide__mutmut_7.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201is_positive__mutmut_2.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201multiply__mutmut_3.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201percentage__mutmut_3.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201percentage__mutmut_8.diff"
+    "runtime/generated/m9-c42.21/survivors/core_domain_money/core.domain.money.x\307\201Money\307\201subtract__mutmut_3.diff"
+    "runtime/generated/m9-c42.21/survivors/recommendation_engine/engines.recommendation_engine.recommendations.x\307\201Recommendation\307\201__init____mutmut_5.diff"
+    .github/actions/setup-node-runtime/action.yml
+    .github/actions/setup-playwright/action.yml
+    .github/actions/setup-python-runtime/action.yml
+    .github/actions/upload-runtime/action.yml
+    .github/backend/tests/generated/mutation/mutation-run.log
+    .github/backend/tests/generated/mutation/mutation-summary.json
+    .github/scripts/aggregate_evidence.py
+    .github/scripts/check_coverage_threshold.py
+    .github/scripts/generate_mutation_report.py
+    .github/scripts/generate_plan.py
+    .github/scripts/generate_release_notes.sh
+    .github/scripts/run_api_contracts.sh
+    .github/scripts/run_backend_verification.sh
+    .github/scripts/run_contract_tests.sh
+    .github/scripts/run_dependency_checks.sh
+    .github/scripts/run_fast_checks.sh
+    .github/scripts/run_frontend_verification.sh
+    .github/scripts/run_full_verification.sh
+    .github/scripts/run_golden_tests.sh
+    .github/scripts/run_integration_tests.sh
+    .github/scripts/run_migration_verification.sh
+    .github/scripts/run_mutation_local_smoke.sh
+    .github/scripts/run_mutation_selective.sh
+    .github/scripts/run_playwright_tests.sh
+    .github/scripts/run_property_tests.sh
+    .github/scripts/run_runtime_verification.sh
+    .github/scripts/validate_actions.py
+    .github/workflows/api-contracts.yml
+    .github/workflows/backend-verify.yml
+    .github/workflows/dependency-update.yml
+    .github/workflows/frontend-verify.yml
+    .github/workflows/golden.yml
+    .github/workflows/m9-forensic-diagnostic-lab.yml
+    .github/workflows/mutation-pr.yml
+    .github/workflows/mutation.yml
+    .github/workflows/playwright.yml
+    .github/workflows/quality.yml
+    .github/workflows/release.yml
+    .github/workflows/security-codeql.yml
+    .github/workflows/verification-reconcile.yml
+    .github/workflows/verification-runtime.yml
+    .gitignore
+    .kilo/plans/1787137122047-health-check-timeout-fix.md
+    .kilo/plans/1787286911071-c43-remaining-issues-plan.md
+    .kilo/plans/1787318429130-mutation-testing-green-plan.md
+    .kilo/plans/1788396201282-m9-c45-balance-work.md
+    .kilo/plans/1788707018223-m9-c57-verification-integrity.md
+    .kilo/plans/1788779517173-m9-c57-verification.md
+    .kilo/plans/1788885145550-remaining-refactor-plan.md
+    .kilo/plans/1789023840094-cache-success-rate-fix.md
+    .kilo/plans/1789187366423-m9-c58-test-repair-plan.md
+    AGENTS.md
+    _probe_emi_up.py
+    activeContext.md
+    backend/.coveragerc
+    backend/conftest.py
+    backend/pyproject.toml
+    backend/ruff.toml
+    backend/scripts/scan_test_anti_patterns.py
+    backend/src/api.py
+    backend/src/engines/test_rem_ediation_probe.py
+    backend/src/extraction/camelot_extractor.py
+    backend/src/extraction/hybrid_extractor.py
+    backend/src/extraction/statement_extractor.py
+    backend/src/startup.py
+    backend/src/stubs/camelot/__init__.pyi
+    backend/src/stubs/camelot/core.pyi
+    backend/src/stubs/py.typed
+    backend/src/stubs/runtime/__init__.pyi
+    backend/src/stubs/runtime/platform/__init__.pyi
+    backend/src/stubs/runtime/platform/ai/__init__.pyi
+    backend/src/stubs/runtime/platform/ai/agents.pyi
+    backend/src/stubs/runtime/platform/ai/config.pyi
+    backend/src/stubs/runtime/platform/ai/context.pyi
+    backend/src/stubs/runtime/platform/ai/intent.pyi
+    backend/src/stubs/runtime/platform/ai/memory.pyi
+    backend/src/stubs/runtime/platform/ai/orchestrator.pyi
+    backend/src/stubs/runtime/platform/ai/planner.pyi
+    backend/src/stubs/runtime/platform/ai/policy.pyi
+    backend/src/stubs/runtime/platform/ai/providers.pyi
+    backend/src/stubs/runtime/platform/ai/runs.pyi
+    backend/src/stubs/runtime/platform/ai/tools.pyi
+    backend/src/stubs/runtime/platform/api/__init__.pyi
+    backend/src/stubs/runtime/platform/api/contracts/__init__.pyi
+    backend/src/stubs/runtime/platform/api/contracts/ai.pyi
+    backend/src/stubs/runtime/platform/api/contracts/context.pyi
+    backend/src/stubs/runtime/platform/api/contracts/diagnostics.pyi
+    backend/src/stubs/runtime/platform/api/contracts/health.pyi
+    backend/src/stubs/runtime/platform/api/envelope.pyi
+    backend/src/stubs/runtime/platform/api/errors.pyi
+    backend/src/stubs/runtime/platform/api/services/__init__.pyi
+    backend/src/stubs/runtime/platform/api/services/_helpers.pyi
+    backend/src/stubs/runtime/platform/api/services/application.pyi
+    backend/src/stubs/runtime/platform/api/services/architecture.pyi
+    backend/src/stubs/runtime/platform/api/services/capabilities.pyi
+    backend/src/stubs/runtime/platform/api/services/change.pyi
+    backend/src/stubs/runtime/platform/api/services/cross_layer.pyi
+    backend/src/stubs/runtime/platform/api/services/errors.pyi
+    backend/src/stubs/runtime/platform/api/services/events.pyi
+    backend/src/stubs/runtime/platform/api/services/evidence.pyi
+    backend/src/stubs/runtime/platform/api/services/executions.pyi
+    backend/src/stubs/runtime/platform/api/services/framework_integrity.pyi
+    backend/src/stubs/runtime/platform/api/services/health.pyi
+    backend/src/stubs/runtime/platform/api/services/history.pyi
+    backend/src/stubs/runtime/platform/api/services/tasks.pyi
+    backend/src/stubs/runtime/platform/api/services/tasks_write.pyi
+    backend/src/stubs/runtime/platform/api/services/verification.pyi
+    backend/src/stubs/runtime/platform/api/services/verification_write.pyi
+    backend/src/stubs/runtime/platform/cache.pyi
+    backend/src/stubs/runtime/platform/diagnostics/__init__.pyi
+    backend/src/stubs/runtime/platform/diagnostics/engine.pyi
+    backend/src/stubs/runtime/system/__init__.pyi
+    backend/src/stubs/runtime/system/observability/__init__.pyi
+    backend/src/stubs/runtime/system/observability/event_store.pyi
+    backend/tests/architecture/test_boundary.py
+    backend/tests/conftest.py
+    backend/tests/contract/generated/test_cashflow.py
+    backend/tests/contract/generated/test_categories.py
+    backend/tests/contract/generated/test_dashboard.py
+    backend/tests/contract/generated/test_transactions.py
+    backend/tests/fixtures/database.py
+    backend/tests/fixtures/seed.py
+    backend/tests/golden/test_regression.py
+    backend/tests/integration/acceptance/test_acceptance_matrix.py
+    backend/tests/integration/cross_layer/__init__.py
+    backend/tests/integration/cross_layer/test_journey_account_crud.py
+    backend/tests/integration/cross_layer/test_journey_dashboard_metrics.py
+    backend/tests/integration/cross_layer/test_journey_loan_management.py
+    backend/tests/integration/performance/test_performance.py
+    backend/tests/integration/test_platform_api_phase3.py
+    backend/tests/integration/test_platform_api_phase4.py
+    backend/tests/integration/test_platform_api_phase6.py
+    backend/tests/mutation/mutation_config.toml
+    backend/tests/mutation/run_mutation_baseline.sh
+    backend/tests/mutation_infra/mutants/mutmut-stats.json
+    backend/tests/mutation_infra/mutants/probe.py
+    backend/tests/mutation_infra/mutants/probe.py.meta
+    backend/tests/mutation_infra/mutants/probe.py.spans
+    backend/tests/mutation_infra/mutants/pyproject.toml
+    backend/tests/mutation_infra/mutants/test_probe.py
+    backend/tests/mutation_infra/probe.py
+    backend/tests/mutation_infra/pyproject.toml
+    backend/tests/mutation_infra/python_312_probes/control_probe.py
+    backend/tests/mutation_infra/python_312_probes/pep604_union.py
+    backend/tests/mutation_infra/python_312_probes/pep634_match.py
+    backend/tests/mutation_infra/python_312_probes/pep654_exception_groups.py
+    backend/tests/mutation_infra/python_312_probes/pep695_type_params.py
+    backend/tests/mutation_infra/python_312_probes/pyproject.toml
+    backend/tests/mutation_infra/python_312_probes/test_control_probe.py
+    backend/tests/mutation_infra/python_312_probes/test_pep604_union.py
+    backend/tests/mutation_infra/python_312_probes/test_pep634_match.py
+    backend/tests/mutation_infra/python_312_probes/test_pep654_exception_groups.py
+    backend/tests/mutation_infra/python_312_probes/test_pep695_type_params.py
+    backend/tests/mutation_infra/test_probe.py
+    backend/tests/probes/test_m4_exit_probe.py
+    backend/tests/properties/investment/test_engine_properties.py
+    backend/tests/unit/core/mappers/test_behaviour_mapper.py
+    backend/tests/unit/repositories/test_account_balance_repository.py
+    backend/tests/unit/repositories/test_account_link_repository.py
+    backend/tests/unit/repositories/test_account_repository.py
+    backend/tests/unit/repositories/test_audit_repository.py
+    backend/tests/unit/repositories/test_behaviour_repository.py
+    backend/tests/unit/repositories/test_db.py
+    backend/tests/unit/repositories/test_household_repository.py
+    backend/tests/unit/repositories/test_institution_repository.py
+    backend/tests/unit/repositories/test_pattern_repository.py
+    backend/tests/unit/services/test_behaviour_service.py
+    backend/tests/unit/services/test_recommendation_networth_services.py
+    backend/tests/unit/services/test_services.py
+    backend/tests/unit/test_calculations.py
+    backend/tests/unit/test_calculations_strengthening.py
+    backend/tests/unit/test_money.py
+    backend/tests/unit/test_mutation_golden_calculations.py
+    conftest.py
+    dependency-reports/dependency-health.md
+    dependency-reports/npm-audit.txt
+    dependency-reports/npm-outdated.json
+    dependency-reports/python-audit.txt
+    docs/M9-C10-forensic-report.md
+    docs/architecture/FRONTEND_BACKEND_RUNTIME_INTEGRATION.md
+    docs/audits/m9-c57-runtime-framework/RUNTIME_FRAMEWORK_DEEP_DIVE_AUDIT.md
+    docs/audits/m9-c57-runtime-framework/runtime_largest_files.txt
+    docs/audits/m9-c57-runtime-framework/runtime_loc_breakdown.txt
+    docs/audits/runtime-framework-audit-2026-09-10.md
+    docs/decisions/M10_ENVIRONMENT_DEPENDENCIES.md
+    docs/dependency-audit-2026-09-11.md
+    docs/evidence/m9-c32-preflight/api-contract-evidence-committed.json
+    docs/evidence/m9-c32-preflight/api-contract-evidence-pre-c32.json
+    docs/evidence/m9-c32-preflight/openapi-committed.json
+    docs/evidence/m9-c32-preflight/openapi-corrupted.json
+    docs/progress.md
+    frontend/.nvmrc
+    frontend/__tests__/api-contracts/behavior.contract.test.ts
+    frontend/__tests__/api-contracts/reconciliation.contract.test.ts
+    frontend/__tests__/api-contracts/transactions.contract.test.ts
+    frontend/__tests__/use-accounts.test.ts
+    frontend/__tests__/use-cards.test.ts
+    frontend/__tests__/use-cashflow.test.ts
+    frontend/__tests__/use-dashboard-metrics.test.ts
+    frontend/__tests__/use-investments.test.ts
+    frontend/__tests__/use-loans.test.ts
+    frontend/__tests__/use-overview.test.ts
+    frontend/__tests__/use-reconciliation.test.ts
+    frontend/app/dashboard/page.tsx
+    frontend/app/layout.tsx
+    frontend/app/platform/architecture/page.tsx
+    frontend/app/platform/capabilities/[capabilityId]/page.tsx
+    frontend/app/platform/capabilities/page.tsx
+    frontend/app/platform/diagnostics/change/page.tsx
+    frontend/app/platform/diagnostics/detail/[id]/page.tsx
+    frontend/app/platform/diagnostics/page.tsx
+    frontend/app/platform/errors/page.tsx
+    frontend/app/platform/evidence/page.tsx
+    frontend/app/platform/framework/page.tsx
+    frontend/app/platform/history/compare/page.tsx
+    frontend/app/platform/history/page.tsx
+    frontend/app/platform/layout.tsx
+    frontend/app/platform/page.tsx
+    frontend/app/platform/platform-providers.tsx
+    frontend/app/platform/verification/[capability]/page.tsx
+    frontend/app/platform/verification/history/[runId]/page.tsx
+    frontend/app/platform/verification/page.tsx
+    frontend/app/platform/verification/run/[capability]/page.tsx
+    frontend/components/dashboard/behavior-score-card.tsx
+    frontend/components/os-shell/left-rail.tsx
+    frontend/components/os-shell/right-inspector.tsx
+    frontend/components/os-shell/top-command-bar.tsx
+    frontend/components/os-shell/workspace-container.tsx
+    frontend/components/platform/activity-feed.tsx
+    frontend/components/platform/health-badge.test.tsx
+    frontend/components/platform/health-badge.tsx
+    frontend/components/platform/metric-tile.tsx
+    frontend/components/platform/quick-actions.tsx
+    frontend/components/platform/sidebar.tsx
+    frontend/components/query-provider.tsx
+    frontend/generated/openapi-current.json
+    frontend/generated/toolchain-lock.json
+    frontend/lib/__tests__/gateway-invariance.test.ts
+    frontend/lib/api/client.ts
+    frontend/lib/api/gateway.ts
+    frontend/lib/config/navigation.ts
+    frontend/lib/hooks/use-accounts.ts
+    frontend/lib/hooks/use-analytics.ts
+    frontend/lib/hooks/use-behavior-score.ts
+    frontend/lib/hooks/use-cards.ts
+    frontend/lib/hooks/use-cashflow.ts
+    frontend/lib/hooks/use-dashboard-metrics.ts
+    frontend/lib/hooks/use-investments.ts
+    frontend/lib/hooks/use-live-execution.ts
+    frontend/lib/hooks/use-loans.ts
+    frontend/lib/hooks/use-networth.ts
+    frontend/lib/hooks/use-overview.ts
+    frontend/lib/hooks/use-platform-architecture.ts
+    frontend/lib/hooks/use-platform-capabilities.ts
+    frontend/lib/hooks/use-platform-diagnostics.ts
+    frontend/lib/hooks/use-platform-errors.ts
+    frontend/lib/hooks/use-platform-events.ts
+    frontend/lib/hooks/use-platform-health.ts
+    frontend/lib/hooks/use-platform-tasks.ts
+    frontend/lib/hooks/use-query-finance.ts
+    frontend/lib/hooks/use-reconciliation.ts
+    frontend/lib/hooks/use-verification-center.ts
+    frontend/lib/schemas/behavior-score.ts
+    frontend/lib/schemas/cashflow.ts
+    frontend/lib/schemas/dashboard-metrics.ts
+    frontend/lib/schemas/overview.ts
+    frontend/lib/schemas/transaction.ts
+    frontend/middleware.ts
+    frontend/mocks/fixtures/behavior.ts
+    frontend/mocks/fixtures/dashboard.ts
+    frontend/mocks/fixtures/transactions.ts
+    frontend/mocks/handlers/behavior.ts
+    frontend/mocks/handlers/reconciliation.ts
+    frontend/next.config.ts
+    frontend/package-lock.json
+    frontend/package.json
+    frontend/playwright.config.ts
+    frontend/proxy.ts
+    frontend/runtime/generated/typescript-symbol-cache/symbol-cache.json
+    frontend/tests/e2e/fixtures/css-helpers.ts
+    frontend/tests/e2e/fixtures/test-fixtures.ts
+    frontend/tests/e2e/snapshots/historical/analytics-mobile-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/analytics-mobile-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/analytics-page-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/analytics-page-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/behavior-page-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/behavior-page-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/cards-page-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/cards-page-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/categories-mobile-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/categories-mobile-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/categories-page-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/categories-page-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/dark-mode-dashboard-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/dark-mode-dashboard-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/dashboard-mobile-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/dashboard-mobile-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/dashboard-page-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/dashboard-page-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/family-mode-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/family-mode-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/header-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/header-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/home-mobile-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/home-mobile-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/home-page-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/home-page-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/import-page-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/import-page-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/mode-toggle-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/mode-toggle-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/personal-mode-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/personal-mode-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/reconciliation-page-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/reconciliation-page-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/settings-page-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/settings-page-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/sidebar-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/sidebar-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/transactions-mobile-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/transactions-mobile-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/transactions-page-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/transactions-page-tablet-linux.png
+    frontend/tests/e2e/snapshots/historical/upload-button-firefox-linux.png
+    frontend/tests/e2e/snapshots/historical/upload-button-tablet-linux.png
+    frontend/tests/e2e/specs/behavior-scoring.spec.ts
+    frontend/tests/e2e/specs/behavior.spec.ts
+    frontend/tests/e2e/specs/dashboard.spec.ts
+    frontend/tests/e2e/specs/e2e-financial-logic.spec.ts
+    frontend/tests/e2e/specs/edge-cases.spec.ts
+    frontend/tests/e2e/specs/health-check.spec.ts
+    frontend/tests/e2e/specs/navigation.spec.ts
+    frontend/tests/e2e/specs/performance.spec.ts
+    frontend/tests/e2e/specs/platform-dashboard.spec.ts
+    frontend/tests/e2e/specs/reconciliation.spec.ts
+    frontend/tests/e2e/specs/transactions.spec.ts
+    frontend/tests/e2e/specs/verification-center.spec.ts
+    frontend/tests/e2e/specs/visual-regression.spec.ts
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-mobile-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-mobile-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-page-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-page-firefox-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-page-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/behavior-page-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/behavior-page-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/cards-page-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/cards-page-firefox-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/cards-page-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-mobile-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-mobile-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-page-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-page-firefox-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-page-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dark-mode-dashboard-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dark-mode-dashboard-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-mobile-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-mobile-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-page-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-page-firefox-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-page-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/family-mode-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/family-mode-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/header-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/header-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-mobile-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-mobile-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-page-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-page-firefox-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-page-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/import-page-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/import-page-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/personal-mode-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/personal-mode-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/reconciliation-page-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/reconciliation-page-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/settings-page-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/settings-page-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/sidebar-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/sidebar-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-mobile-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-mobile-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-page-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-page-firefox-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-page-mobile-chrome-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/upload-button-chromium-linux.png
+    frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/upload-button-mobile-chrome-linux.png
+    frontend/tests/global-setup.ts
+    frontend/types/api-generated.ts
+    frontend/types/transaction.ts
+    frontend/vitest.config.ts
+    memory-bank/activeContext.md
+    progress.md
+    pyproject.toml
+    requirements.lock
+    scripts/bootstrap.sh
+    scripts/env-doctor.sh
+    scripts/launch.sh
+    scripts/verify-fast.sh
+    scripts/verify.sh
+    start.bat
+    start.sh
+    test-results/.last-run.json
+    testing/runtime/foundation/verification/test_aggregator.py
+    testing/runtime/foundation/verification/test_evidence_collectors.py
+    testing/runtime/foundation/verification/test_plan_models.py
+
+Blast radius
+  artifact: 4
+  capability: 10
+  component: 1
+  detector: 1
+  dto: 15
+  endpoint: 165
+  engine: 12
+  engine_module: 5
+  mapper: 20
+  router: 19
+  service: 39
+  test: 92
+  view_model: 7
+  workspace: 8
+  direct: 233  indirect: 165
+
+Risk
+  Level: High  Score: 45
+  Confidence: 0.261
+
+Repair backlog (25 defect(s))
+  normalized-issue-308 -> artifact:backend/tests/generated/coverage.json
+  normalized-issue-309 -> artifact:backend/tests/generated/coverage.json
+  normalized-issue-310 -> artifact:backend/tests/generated/coverage.json
+  normalized-issue-18 -> artifact:backend/tests/generated/coverage.json
+  normalized-issue-343 -> artifact:backend/tests/generated/coverage.json
+

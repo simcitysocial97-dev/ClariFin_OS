@@ -97,3 +97,79 @@ def get_config(*keys: str) -> Any:
 def reload_config() -> None:
     """Clear the YAML cache — useful in tests that patch the yaml file."""
     _load_yaml.cache_clear()
+
+
+class ConfigDivergenceState:
+    """State of configuration divergence detection."""
+    CONSISTENT = "CONSISTENT"
+    DIVERGED = "DIVERGED"
+    UNKNOWN = "UNKNOWN"
+
+
+def check_configuration_divergence() -> tuple[str, list[dict]]:
+    """Check if verification configuration has diverged thresholds.
+    
+    Returns:
+        Tuple of (state, findings). State is one of CONSISTENT, DIVERGED, UNKNOWN.
+        Findings is a list of dicts describing any divergences found.
+    """
+    findings = []
+    
+    try:
+        data = _load_yaml()
+        
+        # Check backend coverage_threshold consistency
+        coverage_threshold = _get_nested(data, "backend", "coverage_threshold")
+        if coverage_threshold is not None and isinstance(coverage_threshold, (int, float)):
+            if coverage_threshold < 0 or coverage_threshold > 100:
+                findings.append({
+                    "check": "backend.coverage_threshold",
+                    "value": coverage_threshold,
+                    "issue": f"Coverage threshold {coverage_threshold}% outside valid range [0, 100]"
+                })
+        
+        # Check mutation thresholds
+        mutation_full = _get_nested(data, "mutation_thresholds", "full_campaign")
+        mutation_incr = _get_nested(data, "mutation_thresholds", "incremental")
+        mutation_smoke = _get_nested(data, "mutation_thresholds", "smoke")
+        
+        if mutation_full is not None and isinstance(mutation_full, (int, float)):
+            if mutation_full < 0 or mutation_full > 100:
+                findings.append({
+                    "check": "mutation_thresholds.full_campaign",
+                    "value": mutation_full,
+                    "issue": f"Mutation threshold {mutation_full}% outside valid range [0, 100]"
+                })
+        
+        # Check regression thresholds
+        cov_drop_warn = _get_nested(data, "regression_thresholds", "coverage_drop_warning")
+        cov_drop_crit = _get_nested(data, "regression_thresholds", "coverage_drop_critical")
+        mut_drop_warn = _get_nested(data, "regression_thresholds", "mutation_drop_warning")
+        mut_drop_crit = _get_nested(data, "regression_thresholds", "mutation_drop_critical")
+        
+        if cov_drop_warn is not None and cov_drop_crit is not None:
+            if isinstance(cov_drop_warn, (int, float)) and isinstance(cov_drop_crit, (int, float)):
+                if cov_drop_warn >= cov_drop_crit:
+                    findings.append({
+                        "check": "regression_thresholds.coverage_drop_*",
+                        "value": f"warning={cov_drop_warn}, critical={cov_drop_crit}",
+                        "issue": "Coverage drop warning threshold should be less than critical threshold"
+                    })
+        
+        if mut_drop_warn is not None and mut_drop_crit is not None:
+            if isinstance(mut_drop_warn, (int, float)) and isinstance(mut_drop_crit, (int, float)):
+                if mut_drop_warn >= mut_drop_crit:
+                    findings.append({
+                        "check": "regression_thresholds.mutation_drop_*",
+                        "value": f"warning={mut_drop_warn}, critical={mut_drop_crit}",
+                        "issue": "Mutation drop warning threshold should be less than critical threshold"
+                    })
+        
+        # Determine state
+        if findings:
+            return ConfigDivergenceState.DIVERGED, findings
+        else:
+            return ConfigDivergenceState.CONSISTENT, findings
+            
+    except Exception as e:
+        return ConfigDivergenceState.UNKNOWN, [{"check": "all", "value": None, "issue": f"Configuration check failed: {e}"}]
