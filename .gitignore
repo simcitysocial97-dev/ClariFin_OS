@@ -1,120 +1,193 @@
-Dependencies
+# ClariFin_OS — Canonical .gitignore
+#
+# ONLY committed artifacts are C64 forensic evidence and provenance documents.
+# Everything else is either generated, cached, or IDE-local state.
+
+# ═══════════════════════════════════════════════════════════
+# DEPENDENCIES
+# ═══════════════════════════════════════════════════════════
 node_modules/
+.kilo/node_modules/
 .pnp
 .pnp.js
 
-Build outputs
+# ═══════════════════════════════════════════════════════════
+# BUILD OUTPUTS
+# ═══════════════════════════════════════════════════════════
 .next/
 out/
 dist/
 build/
 *.tsbuildinfo
+clarinfin_verification.egg-info/
 
-Cache
+# ═══════════════════════════════════════════════════════════
+# CACHE
+# ═══════════════════════════════════════════════════════════
 .turbo/
 .cache/
 .parcel-cache/
+.hypothesis/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+memory-bank/
+test-results/
+dependency-reports/
 
-Environment
+# ═══════════════════════════════════════════════════════════
+# ENVIRONMENT & SECRETS
+# ═══════════════════════════════════════════════════════════
 .env
 .env*.local
 .env.production
 
-Logs
-.log
+# ═══════════════════════════════════════════════════════════
+# LOGS
+# ═══════════════════════════════════════════════════════════
+*.log
 npm-debug.log
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-OS files
+# ═══════════════════════════════════════════════════════════
+# OS FILES
+# ═══════════════════════════════════════════════════════════
 .DS_Store
 Thumbs.db
 *.swp
 *.swo
 *~
 
-IDE
+# ═══════════════════════════════════════════════════════════
+# IDE (keep root-level configs, ignore IDE-specific)
+# ═══════════════════════════════════════════════════════════
 .vscode/
 .idea/
-.sublime-
+.sublime-*
 .cursor/
+.kilo/plans/
+.kilo/worktrees/
 
-Testing
-coverage/
-.nyc_output/
-backend/tests/generated/
-
-Python virtual environments
-# CANONICAL ENVIRONMENT: ONLY the repository-root .venv is allowed.
-# backend/venv and backend/.venv are forbidden — they caused a
-# mutmut/pytest path-inconsistency defect (M9-C42.5). Never recreate them.
+# ═══════════════════════════════════════════════════════════
+# PYTHON VIRTUAL ENVIRONMENTS
+# CANONICAL: Only repository-root .venv is allowed.
+# backend/venv and backend/.venv are FORBIDDEN (M9-C42.5).
+# ═══════════════════════════════════════════════════════════
+.venv/
 backend/venv/
 backend/.venv/
-.venv/
 venv/
 env/
 
-Python cache
+# ═══════════════════════════════════════════════════════════
+# PYTHON CACHE
+# ═══════════════════════════════════════════════════════════
 **/__pycache__/
 **/*.pyc
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.mutmut-cache
+**/*.pyo
 
-Database
+# ═══════════════════════════════════════════════════════════
+# DATABASE & DATA
+# ═══════════════════════════════════════════════════════════
 *.db
 *.sqlite
 *.sqlite3
 data/
 uploads/
-# "data/" above is unanchored and matched backend/src/data/, masking backend
-# source from clean checkouts. backend/src is source, never local data.
+# Exception: backend/src/data/ is source, never local data
 !backend/src/data/
 
-Misc
+# ═══════════════════════════════════════════════════════════
+# MISCELLANEOUS
+# ═══════════════════════════════════════════════════════════
 .vercel
 .expo/
 .temp/
 temp/
 tmp/
+unrelated/
+servers/
 
-# Generated artifacts
-runtime/generated/*/cache/
-runtime/generated/verification/
+# ═══════════════════════════════════════════════════════════
+# MUTATION TESTING
+# ═══════════════════════════════════════════════════════════
+backend/mutants/
+backend/run_mutmut_patched.sh
+.mutmut-cache/
+mutants/
+
+# ═══════════════════════════════════════════════════════════
+# VERIFICATION PIPELINE GENERATED
+# ═══════════════════════════════════════════════════════════
+evidence-download/
+target/
+.coverage
+.memory-cache/
+
+# ═══════════════════════════════════════════════════════════
+# RUNTIME GENERATED — THE BIG ONE
+# ONLY C64 FORENSIC EVIDENCE IS COMMITTED
+# ═══════════════════════════════════════════════════════════
+
+# Symbol caches (regenerated on demand, very large)
+runtime/generated/symbol-cache.json
+runtime/generated/typescript-symbol-cache/
+runtime/generated/symbol-cache/
+
+# Runtime metrics (generated during verification runs)
+runtime/generated/metrics/
+
+# Execution logs (m9-c49, m9-c50, etc. — too large, not evidence)
+runtime/generated/m9-c49/logs/
+runtime/generated/m9-c50/phase-*/operations/
+runtime/generated/m9-c*/logs/
+runtime/generated/m9-c*/phase-*/
+!runtime/generated/m9-c64-r-runtime-pipeline-forensic-validation/
+!runtime/generated/m9-c64-r2-runtime-pipeline-attribution-reconciliation/
+!runtime/generated/m9-c64-runtime-framework-final-convergence/
+
+# Evidence and execution archives (not needed in repo)
 runtime/generated/evidence/
+runtime/generated/execution/
+runtime/generated/launcher/
 runtime/generated/financial/
 runtime/generated/timeline/
 runtime/generated/graph/
 runtime/generated/command/
 runtime/generated/intelligence/
-runtime/generated/execution/
+runtime/generated/verification/
+runtime/generated/repository/
+runtime/generated/platform/
+runtime/generated/test_milestone/
 
-# Mutation testing build artifacts
-backend/mutants/
-backend/run_mutmut_patched.sh
+# AI runtime state (large, regenerated)
+runtime/generated/ai-runs/
+runtime/generated/ai-context-packs/
+runtime/generated/ai-memory/
 
-# Root-level stale directories
-/src/
+# ═══════════════════════════════════════════════════════════
+# GENERATED ARTIFACTS (keep only specific ones)
+# ═══════════════════════════════════════════════════════════
+# Large architecture inventories (regeneratable)
+runtime/generated/architecture-inventory.json
+runtime/generated/architecture-inventory-summary.json
+runtime/generated/artifact-ownership-v2.json
+runtime/generated/artifact-ownership-v3.json
+runtime/generated/knowledge-index.json
+runtime/generated/cross-layer-graph.json
+runtime/generated/engineering-platform-audit*.json
+runtime/generated/dependency-graph*.json
+runtime/generated/normalized-issues.json
+runtime/generated/workflow-validation.json
 
-# Python build artifacts
-*.egg-info/
+# Event logs (too verbose)
+runtime/generated/engineering-events.jsonl
+runtime/generated/git-fetch-events.jsonl
+runtime/generated/frontend-backend-map.json
+runtime/generated/e2e-route-map.json
 
-# Verification pipeline generated files
-evidence-download/
-target/
-
-# Coverage data
-.coverage
-.venv
-.memory-cache/
-
-# Mutation cache (mutmut working state)
-.mutmut-cache/
-mutants/
-runtime/generated/launcher/
-
-# Backend runtime-generated artifacts (events logs, platform snapshots)
-backend/runtime/generated/
+# Backend test generated artifacts
+backend/tests/generated/
