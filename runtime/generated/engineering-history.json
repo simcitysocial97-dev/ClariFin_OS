@@ -9272,6 +9272,32 @@
           "quick-black"
         ]
       }
+    },
+    {
+      "run_id": "c007deab-db7d-4378-b268-c2dc5372a30d",
+      "timestamp": "2026-09-20T02:50:52.555973+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "8990f3ae16e664d9b0f58737bd4f556bc82f52c9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "failed",
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 25.36590510799988,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black"
+        ]
+      }
     }
   ],
   "ci": [
@@ -18960,6 +18986,32 @@
       "failed": 1,
       "skipped": 0,
       "duration_seconds": 23.502866307972,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black"
+        ]
+      }
+    },
+    {
+      "run_id": "c007deab-db7d-4378-b268-c2dc5372a30d",
+      "timestamp": "2026-09-20T02:50:52.555973+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "8990f3ae16e664d9b0f58737bd4f556bc82f52c9",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "failed",
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 25.36590510799988,
       "blast_radius": {},
       "evidence_count": 0,
       "cache_hit": false,
