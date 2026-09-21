@@ -1,19 +1,16 @@
 /**
- * Unit tests for useManagedAccounts hook
-
+ * Unit tests for useManagedAccounts hook — M9-C68 migrated to /api/v1/accounts
  *
  * Tests cover:
  * - Initial load state
- * - Account retrieval
+ * - Account retrieval from v1 endpoint
  * - Error handling for API failures
  * - Schema validation
+ * - Response wrapping (v1 returns array, hook wraps to {accounts, total})
  */
 
-import {
 import React from 'react';
-
-import React from 'react';
- describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useManagedAccounts } from '../lib/hooks/use-accounts';
@@ -25,14 +22,29 @@ vi.mock('@/lib/api/gateway', () => ({
 
 const createWrapper = () => {
   const queryClient = new QueryClient();
-  const Wrapper = ({ children }: { children: React.ReactNode }) => React.createElement(
-    QueryClientProvider, { client: queryClient }, children
-  );
+  const Wrapper = ({ children }: { children: React.ReactNode }) =>
+    React.createElement(QueryClientProvider, { client: queryClient }, children);
   Wrapper.displayName = 'TestQueryClientWrapper';
   return Wrapper;
 };
 
-describe('useManagedAccounts', () => {
+const mockV1Response = [
+  {
+    id: 'acc-1',
+    name: 'Sample Account',
+    type: 'savings',
+    institution: 'Bank X',
+    balance_paise: 150000,
+    currency: 'INR',
+    status: 'active',
+    account_number_last4: '1234',
+    opened_date: '2026-01-15T10:00:00Z',
+    closed_date: null,
+    notes: 'Primary account',
+  },
+];
+
+describe('useManagedAccounts (v1)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -45,28 +57,10 @@ describe('useManagedAccounts', () => {
     expect(result.current.isError).toBe(false);
   });
 
-  it('should fetch accounts successfully', async () => {
-    const mockAccounts = {
-      accounts: [
-        {
-          id: 'acc-1',
-          name: 'Sample Account',
-          bank: 'Bank X',
-          account_type: 'Checking',
-          balance_paise: 150000,
-          account_number_last4: '1234',
-          is_active: 1,
-          notes: 'Primary account',
-          created_at: '2026-01-15T10:00:00Z',
-          updated_at: '2026-02-01T14:30:00Z',
-        },
-      ],
-      total: 1,
-    };
-
+  it('should fetch accounts from /api/v1/accounts and wrap response', async () => {
     mockApiFetch.mockResolvedValueOnce({
       ok: true,
-      json: () => Promise.resolve(mockAccounts),
+      json: () => Promise.resolve(mockV1Response),
     });
 
     const wrapper = createWrapper();
@@ -76,7 +70,11 @@ describe('useManagedAccounts', () => {
       await result.current.refetch();
     });
 
-    expect(result.current.data).toEqual(mockAccounts);
+    expect(mockApiFetch).toHaveBeenCalledWith('/api/v1/accounts');
+    expect(result.current.data).toEqual({
+      accounts: mockV1Response,
+      total: 1,
+    });
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isError).toBe(false);
   });
@@ -112,15 +110,13 @@ describe('useManagedAccounts', () => {
     expect(result.current.error).toBeDefined();
   });
 
-  it('should validate response schema', async () => {
-    const invalidResponse = {
-      accounts: [
-        {
-          id: 'acc-1',
-          name: 123,
-        },
-      ],
-    };
+  it('should validate v1 response schema and reject malformed data', async () => {
+    const invalidResponse = [
+      {
+        id: 'acc-1',
+        name: 123,
+      },
+    ];
 
     mockApiFetch.mockResolvedValueOnce({
       ok: true,
@@ -138,14 +134,9 @@ describe('useManagedAccounts', () => {
   });
 
   it('should fetch empty accounts list', async () => {
-    const emptyResponse = {
-      accounts: [],
-      total: 0,
-    };
-
     mockApiFetch.mockResolvedValueOnce({
       ok: true,
-      json: () => Promise.resolve(emptyResponse),
+      json: () => Promise.resolve([]),
     });
 
     const wrapper = createWrapper();
