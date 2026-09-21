@@ -1,0 +1,198 @@
+[
+  {
+    "capability": "audit",
+    "total_endpoints": 1,
+    "frontend_consumed": 0,
+    "coverage_ratio": 0.0,
+    "status": "FRONTEND_MISSING"
+  },
+  {
+    "capability": "banks",
+    "total_endpoints": 1,
+    "frontend_consumed": 0,
+    "coverage_ratio": 0.0,
+    "status": "FRONTEND_MISSING"
+  },
+  {
+    "capability": "behaviour-workspace",
+    "total_endpoints": 1,
+    "frontend_consumed": 0,
+    "coverage_ratio": 0.0,
+    "status": "FRONTEND_MISSING"
+  },
+  {
+    "capability": "cashflow-workspace",
+    "total_endpoints": 1,
+    "frontend_consumed": 0,
+    "coverage_ratio": 0.0,
+    "status": "FRONTEND_MISSING"
+  },
+  {
+    "capability": "credit-cards",
+    "total_endpoints": 13,
+    "frontend_consumed": 0,
+    "coverage_ratio": 0.0,
+    "status": "FRONTEND_MISSING"
+  },
+  {
+    "capability": "credit-cards-workspace",
+    "total_endpoints": 1,
+    "frontend_consumed": 0,
+    "coverage_ratio": 0.0,
+    "status": "FRONTEND_MISSING"
+  },
+  {
+    "capability": "export",
+    "total_endpoints": 1,
+    "frontend_consumed": 0,
+    "coverage_ratio": 0.0,
+    "status": "FRONTEND_MISSING"
+  },
+  {
+    "capability": "financial-events",
+    "total_endpoints": 3,
+    "frontend_consumed": 0,
+    "coverage_ratio": 0.0,
+    "status": "FRONTEND_MISSING"
+  },
+  {
+    "capability": "financial-intelligence",
+    "total_endpoints": 16,
+    "frontend_consumed": 0,
+    "coverage_ratio": 0.0,
+    "status": "FRONTEND_MISSING"
+  },
+  {
+    "capability": "forecast",
+    "total_endpoints": 1,
+    "frontend_consumed": 0,
+    "coverage_ratio": 0.0,
+    "status": "FRONTEND_MISSING"
+  },
+  {
+    "capability": "import",
+    "total_endpoints": 3,
+    "frontend_consumed": 0,
+    "coverage_ratio": 0.0,
+    "status": "FRONTEND_MISSING"
+  },
+  {
+    "capability": "investments-workspace",
+    "total_endpoints": 1,
+    "frontend_consumed": 0,
+    "coverage_ratio": 0.0,
+    "status": "FRONTEND_MISSING"
+  },
+  {
+    "capability": "loans-workspace",
+    "total_endpoints": 1,
+    "frontend_consumed": 0,
+    "coverage_ratio": 0.0,
+    "status": "FRONTEND_MISSING"
+  },
+  {
+    "capability": "members",
+    "total_endpoints": 5,
+    "frontend_consumed": 0,
+    "coverage_ratio": 0.0,
+    "status": "FRONTEND_MISSING"
+  },
+  {
+    "capability": "networth-workspace",
+    "total_endpoints": 1,
+    "frontend_consumed": 0,
+    "coverage_ratio": 0.0,
+    "status": "FRONTEND_MISSING"
+  },
+  {
+    "capability": "reconciliation-workspace",
+    "total_endpoints": 1,
+    "frontend_consumed": 0,
+    "coverage_ratio": 0.0,
+    "status": "FRONTEND_MISSING"
+  },
+  {
+    "capability": "platform",
+    "total_endpoints": 76,
+    "frontend_consumed": 2,
+    "coverage_ratio": 0.03,
+    "status": "PARTIAL"
+  },
+  {
+    "capability": "accounts",
+    "total_endpoints": 25,
+    "frontend_consumed": 2,
+    "coverage_ratio": 0.08,
+    "status": "PARTIAL"
+  },
+  {
+    "capability": "behaviour",
+    "total_endpoints": 7,
+    "frontend_consumed": 1,
+    "coverage_ratio": 0.14,
+    "status": "PARTIAL"
+  },
+  {
+    "capability": "loans",
+    "total_endpoints": 13,
+    "frontend_consumed": 2,
+    "coverage_ratio": 0.15,
+    "status": "PARTIAL"
+  },
+  {
+    "capability": "cashflow",
+    "total_endpoints": 4,
+    "frontend_consumed": 1,
+    "coverage_ratio": 0.25,
+    "status": "PARTIAL"
+  },
+  {
+    "capability": "cards",
+    "total_endpoints": 3,
+    "frontend_consumed": 1,
+    "coverage_ratio": 0.33,
+    "status": "PARTIAL"
+  },
+  {
+    "capability": "statements",
+    "total_endpoints": 3,
+    "frontend_consumed": 1,
+    "coverage_ratio": 0.33,
+    "status": "PARTIAL"
+  },
+  {
+    "capability": "reconciliation",
+    "total_endpoints": 7,
+    "frontend_consumed": 3,
+    "coverage_ratio": 0.43,
+    "status": "PARTIAL"
+  },
+  {
+    "capability": "investments",
+    "total_endpoints": 4,
+    "frontend_consumed": 2,
+    "coverage_ratio": 0.5,
+    "status": "PARTIAL"
+  },
+  {
+    "capability": "transactions",
+    "total_endpoints": 4,
+    "frontend_consumed": 2,
+    "coverage_ratio": 0.5,
+    "status": "PARTIAL"
+  },
+  {
+    "capability": "dashboard",
+    "total_endpoints": 1,
+    "frontend_consumed": 1,
+    "coverage_ratio": 1.0,
+    "status": "COMPLETE"
+  },
+  {
+    "capability": "networth",
+    "total_endpoints": 1,
+    "frontend_consumed": 1,
+    "coverage_ratio": 1.0,
+    "status": "COMPLETE"
+  }
+]

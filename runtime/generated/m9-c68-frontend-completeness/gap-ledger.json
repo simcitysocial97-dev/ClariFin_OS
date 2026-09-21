@@ -1,0 +1,2491 @@
+{
+  "generated_at": "2026-09-21T03:05:47.787586Z",
+  "backend_gaps": [
+    {
+      "backend_endpoint": "PUT /api/accounts/manage/{account_id}",
+      "normalized_path": "/api/accounts/manage/:param",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Update Managed Account",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "DELETE /api/accounts/manage/{account_id}",
+      "normalized_path": "/api/accounts/manage/:param",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Delete Managed Account",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/accounts/{account_id}/balance",
+      "normalized_path": "/api/accounts/:param/balance",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Get Account Balance",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy account balance endpoint superseded by /metrics",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /api/accounts/{account_id}/running-balance",
+      "normalized_path": "/api/accounts/:param/running-balance",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Get Account Running Balance",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy account balance endpoint superseded by /metrics",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /api/audit/report",
+      "normalized_path": "/api/audit/report",
+      "tags": [
+        "audit"
+      ],
+      "summary": "Api Audit Report",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/banks",
+      "normalized_path": "/api/banks",
+      "tags": [
+        "banks"
+      ],
+      "summary": "Get Banks",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/cashflow",
+      "normalized_path": "/api/cashflow",
+      "tags": [
+        "cashflow"
+      ],
+      "summary": "Get Cashflow",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/cashflow/categories",
+      "normalized_path": "/api/cashflow/categories",
+      "tags": [
+        "cashflow"
+      ],
+      "summary": "Get Cashflow Categories",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/cashflow/transactions",
+      "normalized_path": "/api/cashflow/transactions",
+      "tags": [
+        "cashflow"
+      ],
+      "summary": "Get Cashflow Transactions",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy transactions list - superseded by workspace endpoints",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /api/categories",
+      "normalized_path": "/api/categories",
+      "tags": [
+        "transactions"
+      ],
+      "summary": "Get Categories",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/export/csv",
+      "normalized_path": "/api/export/csv",
+      "tags": [
+        "export"
+      ],
+      "summary": "Export Csv",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/financial-events/",
+      "normalized_path": "/api/financial-events/",
+      "tags": [
+        "financial-events"
+      ],
+      "summary": "Create Event",
+      "classification": "INTERNAL",
+      "reason": "Internal financial event tracking - not user-facing UI",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /api/financial-events/",
+      "normalized_path": "/api/financial-events/",
+      "tags": [
+        "financial-events"
+      ],
+      "summary": "List Events",
+      "classification": "INTERNAL",
+      "reason": "Internal financial event tracking - not user-facing UI",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /api/financial-events/{event_id}",
+      "normalized_path": "/api/financial-events/:param",
+      "tags": [
+        "financial-events"
+      ],
+      "summary": "Get Event",
+      "classification": "INTERNAL",
+      "reason": "Internal financial event tracking - not user-facing UI",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /api/import/detect",
+      "normalized_path": "/api/import/detect",
+      "tags": [
+        "import"
+      ],
+      "summary": "Import Detect",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/import/execute",
+      "normalized_path": "/api/import/execute",
+      "tags": [
+        "import"
+      ],
+      "summary": "Import Execute",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "PUT /api/investments/{investment_id}",
+      "normalized_path": "/api/investments/:param",
+      "tags": [
+        "investments"
+      ],
+      "summary": "Update Investment",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "DELETE /api/investments/{investment_id}",
+      "normalized_path": "/api/investments/:param",
+      "tags": [
+        "investments"
+      ],
+      "summary": "Delete Investment",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/loans/analysis/priority",
+      "normalized_path": "/api/loans/analysis/priority",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Get Loan Priority",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/loans/analysis/surplus-allocation",
+      "normalized_path": "/api/loans/analysis/surplus-allocation",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Analyze Surplus Allocation",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/loans/{loan_id}",
+      "normalized_path": "/api/loans/:param",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Get Loan",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "PUT /api/loans/{loan_id}",
+      "normalized_path": "/api/loans/:param",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Update Loan",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "DELETE /api/loans/{loan_id}",
+      "normalized_path": "/api/loans/:param",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Delete Loan",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "normalized_path": "/api/loans/:param/analysis/prepayment-vs-foreclosure",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Analyze Prepayment Vs Foreclosure",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/loans/{loan_id}/foreclosure-simulation",
+      "normalized_path": "/api/loans/:param/foreclosure-simulation",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Simulate Foreclosure",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/loans/{loan_id}/payments",
+      "normalized_path": "/api/loans/:param/payments",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Record Loan Payment",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/loans/{loan_id}/prepayment-simulation",
+      "normalized_path": "/api/loans/:param/prepayment-simulation",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Simulate Prepayment",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/loans/{loan_id}/rate-change-simulation",
+      "normalized_path": "/api/loans/:param/rate-change-simulation",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Simulate Rate Change",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/loans/{loan_id}/schedule",
+      "normalized_path": "/api/loans/:param/schedule",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Get Loan Schedule",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/members",
+      "normalized_path": "/api/members",
+      "tags": [
+        "members"
+      ],
+      "summary": "Get Members",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/members",
+      "normalized_path": "/api/members",
+      "tags": [
+        "members"
+      ],
+      "summary": "Create Member",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/members/{member_id}",
+      "normalized_path": "/api/members/:param",
+      "tags": [
+        "members"
+      ],
+      "summary": "Get Member By Id",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "PUT /api/members/{member_id}",
+      "normalized_path": "/api/members/:param",
+      "tags": [
+        "members"
+      ],
+      "summary": "Update Member",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "DELETE /api/members/{member_id}",
+      "normalized_path": "/api/members/:param",
+      "tags": [
+        "members"
+      ],
+      "summary": "Delete Member",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/reconciliation/batch-insert",
+      "normalized_path": "/api/reconciliation/batch-insert",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Batch Insert Reconciliations",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/reconciliation/create",
+      "normalized_path": "/api/reconciliation/create",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Create Reconciliation",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/reconciliation/{reconciliation_id}/confirm",
+      "normalized_path": "/api/reconciliation/:param/confirm",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Confirm Reconciliation",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/reconciliation/{reconciliation_id}/reject",
+      "normalized_path": "/api/reconciliation/:param/reject",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Reject Reconciliation",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/statements",
+      "normalized_path": "/api/statements",
+      "tags": [
+        "cards",
+        "statements"
+      ],
+      "summary": "Get Statements",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/statements/{statement_id}/validate",
+      "normalized_path": "/api/statements/:param/validate",
+      "tags": [
+        "cards",
+        "statements"
+      ],
+      "summary": "Api Validate Statement",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/transactions",
+      "normalized_path": "/api/transactions",
+      "tags": [
+        "transactions"
+      ],
+      "summary": "Get Transactions",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy transactions list - superseded by workspace endpoints",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /api/upload",
+      "normalized_path": "/api/upload",
+      "tags": [
+        "import"
+      ],
+      "summary": "Upload Statement",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/accounts",
+      "normalized_path": "/api/v1/accounts",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "List Accounts",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/v1/accounts",
+      "normalized_path": "/api/v1/accounts",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Create Account",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/accounts/{account_id}",
+      "normalized_path": "/api/v1/accounts/:param",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "PUT /api/v1/accounts/{account_id}",
+      "normalized_path": "/api/v1/accounts/:param",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Update Account",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "DELETE /api/v1/accounts/{account_id}",
+      "normalized_path": "/api/v1/accounts/:param",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Deactivate Account",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/accounts/{account_id}/analytics",
+      "normalized_path": "/api/v1/accounts/:param/analytics",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account Analytics",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/v1/accounts/{account_id}/balance-history",
+      "normalized_path": "/api/v1/accounts/:param/balance-history",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Insert Balance Snapshot",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy account balance endpoint superseded by /metrics",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/accounts/{account_id}/balance-history",
+      "normalized_path": "/api/v1/accounts/:param/balance-history",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Balance History",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy account balance endpoint superseded by /metrics",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/accounts/{account_id}/balance-history/latest",
+      "normalized_path": "/api/v1/accounts/:param/balance-history/latest",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Latest Balance",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy account balance endpoint superseded by /metrics",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/accounts/{account_id}/dormancy",
+      "normalized_path": "/api/v1/accounts/:param/dormancy",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account Dormancy",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/v1/accounts/{account_id}/links",
+      "normalized_path": "/api/v1/accounts/:param/links",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Link Accounts",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/accounts/{account_id}/links",
+      "normalized_path": "/api/v1/accounts/:param/links",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Linked Accounts",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "DELETE /api/v1/accounts/{account_id}/links/{linked_account_id}",
+      "normalized_path": "/api/v1/accounts/:param/links/:param",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Unlink Accounts",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/accounts/{account_id}/metrics",
+      "normalized_path": "/api/v1/accounts/:param/metrics",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account Metrics",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/accounts/{account_id}/status",
+      "normalized_path": "/api/v1/accounts/:param/status",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account Status",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/behaviour",
+      "normalized_path": "/api/v1/behaviour",
+      "tags": [
+        "behaviour-workspace"
+      ],
+      "summary": "Get Behaviour",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/behaviour/cashflow-health",
+      "normalized_path": "/api/v1/behaviour/cashflow-health",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Cashflow Health",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/behaviour/debt-health",
+      "normalized_path": "/api/v1/behaviour/debt-health",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Debt Health",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/behaviour/monthly-report",
+      "normalized_path": "/api/v1/behaviour/monthly-report",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Monthly Report",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/behaviour/patterns",
+      "normalized_path": "/api/v1/behaviour/patterns",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Patterns",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/behaviour/profile",
+      "normalized_path": "/api/v1/behaviour/profile",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Financial Profile",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/behaviour/recommendations",
+      "normalized_path": "/api/v1/behaviour/recommendations",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Recommendations",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/cashflow",
+      "normalized_path": "/api/v1/cashflow",
+      "tags": [
+        "cashflow-workspace"
+      ],
+      "summary": "Get Cashflow",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/credit-cards",
+      "normalized_path": "/api/v1/credit-cards",
+      "tags": [
+        "credit-cards-workspace"
+      ],
+      "summary": "Get Credit Cards",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/v1/credit-cards",
+      "normalized_path": "/api/v1/credit-cards",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Create Card",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/credit-cards/{card_id}",
+      "normalized_path": "/api/v1/credit-cards/:param",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Card",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "PUT /api/v1/credit-cards/{card_id}",
+      "normalized_path": "/api/v1/credit-cards/:param",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Update Card",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "DELETE /api/v1/credit-cards/{card_id}",
+      "normalized_path": "/api/v1/credit-cards/:param",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Deactivate Card",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/v1/credit-cards/{card_id}/emi-conversion",
+      "normalized_path": "/api/v1/credit-cards/:param/emi-conversion",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Convert To Emi",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/v1/credit-cards/{card_id}/foreclosure",
+      "normalized_path": "/api/v1/credit-cards/:param/foreclosure",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Quote Foreclosure",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/credit-cards/{card_id}/metrics",
+      "normalized_path": "/api/v1/credit-cards/:param/metrics",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Metrics",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/credit-cards/{card_id}/next-statement-date",
+      "normalized_path": "/api/v1/credit-cards/:param/next-statement-date",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Next Statement Date",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/credit-cards/{card_id}/outstanding",
+      "normalized_path": "/api/v1/credit-cards/:param/outstanding",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Outstanding",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/v1/credit-cards/{card_id}/payments",
+      "normalized_path": "/api/v1/credit-cards/:param/payments",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Record Payment",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/credit-cards/{card_id}/statements",
+      "normalized_path": "/api/v1/credit-cards/:param/statements",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "List Statements",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/v1/credit-cards/{card_id}/statements",
+      "normalized_path": "/api/v1/credit-cards/:param/statements",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Generate Statement",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/credit-cards/{card_id}/utilization",
+      "normalized_path": "/api/v1/credit-cards/:param/utilization",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Utilization",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/financial-intelligence/cashflow-forecast",
+      "normalized_path": "/api/v1/financial-intelligence/cashflow-forecast",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Cashflow Forecast",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/financial-intelligence/credit-forecast",
+      "normalized_path": "/api/v1/financial-intelligence/credit-forecast",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Credit Forecast",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/financial-intelligence/liquidity-forecast",
+      "normalized_path": "/api/v1/financial-intelligence/liquidity-forecast",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Liquidity Forecast",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/financial-intelligence/outlook",
+      "normalized_path": "/api/v1/financial-intelligence/outlook",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Financial Outlook",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/financial-intelligence/priorities",
+      "normalized_path": "/api/v1/financial-intelligence/priorities",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Financial Intelligence Priorities",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/financial-intelligence/recommendations",
+      "normalized_path": "/api/v1/financial-intelligence/recommendations",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Financial Recommendations",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/financial-intelligence/recommendations/{recommendation_id}",
+      "normalized_path": "/api/v1/financial-intelligence/recommendations/:param",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Recommendation Details",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/financial-intelligence/report",
+      "normalized_path": "/api/v1/financial-intelligence/report",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Financial Intelligence Report",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/forecast",
+      "normalized_path": "/api/v1/forecast",
+      "tags": [
+        "forecast"
+      ],
+      "summary": "Get Forecast",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/institutions",
+      "normalized_path": "/api/v1/institutions",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "List Institutions",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "POST /api/v1/institutions",
+      "normalized_path": "/api/v1/institutions",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Create Institution",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/institutions/{institution_id}",
+      "normalized_path": "/api/v1/institutions/:param",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Institution",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "PUT /api/v1/institutions/{institution_id}",
+      "normalized_path": "/api/v1/institutions/:param",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Update Institution",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/investments",
+      "normalized_path": "/api/v1/investments",
+      "tags": [
+        "investments-workspace"
+      ],
+      "summary": "Get Investments",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/loans",
+      "normalized_path": "/api/v1/loans",
+      "tags": [
+        "loans-workspace"
+      ],
+      "summary": "Get Loans",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/net-worth",
+      "normalized_path": "/api/v1/net-worth",
+      "tags": [
+        "networth-workspace"
+      ],
+      "summary": "Get Networth",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/reconciliation",
+      "normalized_path": "/api/v1/reconciliation",
+      "tags": [
+        "reconciliation-workspace"
+      ],
+      "summary": "Get Reconciliation",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed user-facing endpoint requiring review",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "implement"
+    },
+    {
+      "backend_endpoint": "GET /health",
+      "normalized_path": "/health",
+      "tags": [],
+      "summary": "Health Check",
+      "classification": "INFRASTRUCTURE",
+      "reason": "Health/readiness probes - intentional",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/agents",
+      "normalized_path": "/platform/v1/ai/agents",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Agents",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/agents/{agent_name}",
+      "normalized_path": "/platform/v1/ai/agents/:param",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Agent",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/config",
+      "normalized_path": "/platform/v1/ai/config",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Config",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/config/provider",
+      "normalized_path": "/platform/v1/ai/config/provider",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Config Provider",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/diagnose",
+      "normalized_path": "/platform/v1/ai/diagnose",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Diagnose",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/engineering/execute",
+      "normalized_path": "/platform/v1/ai/engineering/execute",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Engineering Execute",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/financial/interpret",
+      "normalized_path": "/platform/v1/ai/financial/interpret",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Financial Interpret",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/mode",
+      "normalized_path": "/platform/v1/ai/mode",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Mode",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/providers",
+      "normalized_path": "/platform/v1/ai/providers",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Providers",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/runs",
+      "normalized_path": "/platform/v1/ai/runs",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Run",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/runs",
+      "normalized_path": "/platform/v1/ai/runs",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Runs",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/runs/{run_id}",
+      "normalized_path": "/platform/v1/ai/runs/:param",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Run",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/runs/{run_id}/cancel",
+      "normalized_path": "/platform/v1/ai/runs/:param/cancel",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Run Cancel",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/runs/{run_id}/finalize",
+      "normalized_path": "/platform/v1/ai/runs/:param/finalize",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Run Finalize",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/runs/{run_id}/steps",
+      "normalized_path": "/platform/v1/ai/runs/:param/steps",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Step",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/runs/{run_id}/trace",
+      "normalized_path": "/platform/v1/ai/runs/:param/trace",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Run Trace",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/tools",
+      "normalized_path": "/platform/v1/ai/tools",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Tools",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/tools/{tool_name}",
+      "normalized_path": "/platform/v1/ai/tools/:param",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Tool",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/workflow/run",
+      "normalized_path": "/platform/v1/ai/workflow/run",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Workflow Run",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/app/backend",
+      "normalized_path": "/platform/v1/app/backend",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get App Backend",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/app/domain",
+      "normalized_path": "/platform/v1/app/domain",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get App Domain",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/app/financial",
+      "normalized_path": "/platform/v1/app/financial",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get App Financial",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/app/frontend",
+      "normalized_path": "/platform/v1/app/frontend",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get App Frontend",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/app/workflows",
+      "normalized_path": "/platform/v1/app/workflows",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get App Workflows",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/architecture/authorities",
+      "normalized_path": "/platform/v1/architecture/authorities",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Authorities",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/architecture/authority/{name}",
+      "normalized_path": "/platform/v1/architecture/authority/:param",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Authority",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/architecture/boundaries",
+      "normalized_path": "/platform/v1/architecture/boundaries",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Boundaries",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/architecture/bypasses",
+      "normalized_path": "/platform/v1/architecture/bypasses",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Bypasses",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/architecture/deprecations",
+      "normalized_path": "/platform/v1/architecture/deprecations",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Deprecations",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/architecture/duplicates",
+      "normalized_path": "/platform/v1/architecture/duplicates",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Duplicates",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/architecture/unmapped",
+      "normalized_path": "/platform/v1/architecture/unmapped",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Unmapped",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/capabilities",
+      "normalized_path": "/platform/v1/capabilities",
+      "tags": [
+        "platform"
+      ],
+      "summary": "List Capabilities",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/capabilities/{capability_id}",
+      "normalized_path": "/platform/v1/capabilities/:param",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Capability",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/capabilities/{capability_id}/graph",
+      "normalized_path": "/platform/v1/capabilities/:param/graph",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Capability Graph",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/change/intelligence",
+      "normalized_path": "/platform/v1/change/intelligence",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Change Intelligence",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/context/pack",
+      "normalized_path": "/platform/v1/context/pack",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Context Pack",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/cross-layer",
+      "normalized_path": "/platform/v1/cross-layer",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Cross Layer Graph",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/cross-layer/{capability_id}",
+      "normalized_path": "/platform/v1/cross-layer/:param",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Cross Layer Capability",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/diagnose",
+      "normalized_path": "/platform/v1/diagnose",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Diagnose",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/diagnose/register",
+      "normalized_path": "/platform/v1/diagnose/register",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Diagnose Register",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/diagnostics",
+      "normalized_path": "/platform/v1/diagnostics",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Diagnostics",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/errors/current",
+      "normalized_path": "/platform/v1/errors/current",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Errors Current",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/errors/frequency",
+      "normalized_path": "/platform/v1/errors/frequency",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Errors Frequency",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/errors/recent",
+      "normalized_path": "/platform/v1/errors/recent",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Errors Recent",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/errors/recurring",
+      "normalized_path": "/platform/v1/errors/recurring",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Errors Recurring",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/errors/{error_id}",
+      "normalized_path": "/platform/v1/errors/:param",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Error",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/events/stream",
+      "normalized_path": "/platform/v1/events/stream",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Events Stream",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/evidence",
+      "normalized_path": "/platform/v1/evidence",
+      "tags": [
+        "platform"
+      ],
+      "summary": "List Evidence",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/evidence/by-execution/{execution_id}",
+      "normalized_path": "/platform/v1/evidence/by-execution/:param",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Evidence By Execution",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/evidence/compare",
+      "normalized_path": "/platform/v1/evidence/compare",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Evidence Compare",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/evidence/{evidence_id}",
+      "normalized_path": "/platform/v1/evidence/:param",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Evidence",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/executions/{execution_id}",
+      "normalized_path": "/platform/v1/executions/:param",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Execution",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/executions/{execution_id}/stream",
+      "normalized_path": "/platform/v1/executions/:param/stream",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Execution Stream",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/framework/integrity",
+      "normalized_path": "/platform/v1/framework/integrity",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Framework Integrity",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/framework/self-tests",
+      "normalized_path": "/platform/v1/framework/self-tests",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Framework Self Tests",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/health",
+      "normalized_path": "/platform/v1/health",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Health",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/health/deep",
+      "normalized_path": "/platform/v1/health/deep",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Health Deep",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/history/baselines",
+      "normalized_path": "/platform/v1/history/baselines",
+      "tags": [
+        "platform"
+      ],
+      "summary": "List History Baselines",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/history/compare",
+      "normalized_path": "/platform/v1/history/compare",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post History Compare",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/history/runs",
+      "normalized_path": "/platform/v1/history/runs",
+      "tags": [
+        "platform"
+      ],
+      "summary": "List History Runs",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/history/runs/{run_id}",
+      "normalized_path": "/platform/v1/history/runs/:param",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get History Run",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/runs/{run_id}",
+      "normalized_path": "/platform/v1/runs/:param",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Run",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/status",
+      "normalized_path": "/platform/v1/status",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Status",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/tasks",
+      "normalized_path": "/platform/v1/tasks",
+      "tags": [
+        "platform"
+      ],
+      "summary": "List Tasks",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/tasks/{task_id}",
+      "normalized_path": "/platform/v1/tasks/:param",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Task",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/tasks/{task_id}/cancel",
+      "normalized_path": "/platform/v1/tasks/:param/cancel",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Task Cancel",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/verification",
+      "normalized_path": "/platform/v1/verification",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Verification State",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/verification/recommendation",
+      "normalized_path": "/platform/v1/verification/recommendation",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Verification Recommendation",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/verification/run/affected",
+      "normalized_path": "/platform/v1/verification/run/affected",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Verification Run Affected",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/verification/run/full",
+      "normalized_path": "/platform/v1/verification/run/full",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Verification Run Full",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/verification/run/group",
+      "normalized_path": "/platform/v1/verification/run/group",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Verification Run Group",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/verification/runs/recent",
+      "normalized_path": "/platform/v1/verification/runs/recent",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Verification Runs Recent",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/workflows",
+      "normalized_path": "/platform/v1/workflows",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Workflows",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /ready",
+      "normalized_path": "/ready",
+      "tags": [],
+      "summary": "Readiness Check",
+      "classification": "INFRASTRUCTURE",
+      "reason": "Health/readiness probes - intentional",
+      "frontend_hooks": [],
+      "frontend_pages": [],
+      "action": "none"
+    }
+  ],
+  "frontend_routes": [
+    {
+      "route": "/page.tsx",
+      "api_dependencies": [],
+      "has_backend_dependency": false
+    },
+    {
+      "route": "/reconciliation",
+      "api_dependencies": [],
+      "has_backend_dependency": false
+    },
+    {
+      "route": "/accounts",
+      "api_dependencies": [],
+      "has_backend_dependency": false
+    },
+    {
+      "route": "/dashboard",
+      "api_dependencies": [
+        "/api/dashboard/summary"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/settings",
+      "api_dependencies": [],
+      "has_backend_dependency": false
+    },
+    {
+      "route": "/net-worth",
+      "api_dependencies": [],
+      "has_backend_dependency": false
+    },
+    {
+      "route": "/transactions",
+      "api_dependencies": [],
+      "has_backend_dependency": false
+    },
+    {
+      "route": "/investments",
+      "api_dependencies": [],
+      "has_backend_dependency": false
+    },
+    {
+      "route": "/command-center",
+      "api_dependencies": [
+        "/api/accounts/manage",
+        "/api/accounts/manage/$:param",
+        "/api/cards",
+        "/api/cashflow/monthly",
+        "/api/dashboard/summary",
+        "/api/investments",
+        "/api/investments/$:param",
+        "/api/loans",
+        "/api/loans/$:param",
+        "/api/loans/$:param/prepayment-simulation",
+        "/api/loans/$:param/schedule",
+        "/api/reconciliation",
+        "/api/reconciliation/$:param/confirm",
+        "/api/reconciliation/$:param/reject",
+        "/api/reconciliation/pending",
+        "/api/reconciliation/scan",
+        "/api/v1/behaviour/wellness-score"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/forecast",
+      "api_dependencies": [],
+      "has_backend_dependency": false
+    },
+    {
+      "route": "/behaviour",
+      "api_dependencies": [],
+      "has_backend_dependency": false
+    },
+    {
+      "route": "/loans",
+      "api_dependencies": [],
+      "has_backend_dependency": false
+    },
+    {
+      "route": "/cashflow",
+      "api_dependencies": [],
+      "has_backend_dependency": false
+    },
+    {
+      "route": "/cards",
+      "api_dependencies": [],
+      "has_backend_dependency": false
+    },
+    {
+      "route": "/platform",
+      "api_dependencies": [
+        "/platform/v1/capabilities/$:param",
+        "/platform/v1/capabilities/$:param/graph",
+        "/platform/v1/errors/$:param",
+        "/platform/v1/events"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/platform/architecture",
+      "api_dependencies": [
+        "/platform/v1/architecture/$:param",
+        "/platform/v1/architecture/authority/$:param"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/platform/health",
+      "api_dependencies": [],
+      "has_backend_dependency": false
+    },
+    {
+      "route": "/platform/diagnostics",
+      "api_dependencies": [
+        "/platform/diagnostics/detail/$:param",
+        "/platform/v1/events"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/platform/diagnostics/change",
+      "api_dependencies": [
+        "/platform/capabilities/$:param",
+        "/platform/verification/run/$:param"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/platform/diagnostics/detail/[id]",
+      "api_dependencies": [
+        "/platform/verification/run/$:param"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/platform/errors",
+      "api_dependencies": [
+        "/platform/v1/errors/$:param"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/platform/workflows",
+      "api_dependencies": [],
+      "has_backend_dependency": false
+    },
+    {
+      "route": "/platform/verification",
+      "api_dependencies": [
+        "/platform/v1/capabilities/$:param",
+        "/platform/v1/tasks/$:param/cancel",
+        "/platform/verification/$:param"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/platform/verification/[capability]",
+      "api_dependencies": [
+        "/platform/v1/capabilities/$:param",
+        "/platform/v1/tasks/$:param/cancel",
+        "/platform/verification/run/$:param"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/platform/verification/run/[capability]",
+      "api_dependencies": [
+        "/platform/v1/executions/$:param",
+        "/platform/v1/executions/$:param/stream",
+        "/platform/v1/verification/run"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/platform/verification/history/[runId]",
+      "api_dependencies": [
+        "/platform/v1/history/runs/$:param"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/platform/framework",
+      "api_dependencies": [],
+      "has_backend_dependency": false
+    },
+    {
+      "route": "/platform/evidence",
+      "api_dependencies": [
+        "/platform/v1/evidence/$:param"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/platform/capabilities",
+      "api_dependencies": [
+        "/platform/capabilities/$:param",
+        "/platform/v1/capabilities/$:param",
+        "/platform/v1/capabilities/$:param/graph"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/platform/capabilities/[capabilityId]",
+      "api_dependencies": [
+        "/platform/errors",
+        "/platform/v1/capabilities/$:param",
+        "/platform/v1/capabilities/$:param/graph",
+        "/platform/verification/run/$:param"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/platform/history",
+      "api_dependencies": [
+        "/platform/history/compare",
+        "/platform/verification/history/$:param"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/platform/history/compare",
+      "api_dependencies": [],
+      "has_backend_dependency": false
+    },
+    {
+      "route": "/platform/runs",
+      "api_dependencies": [
+        "/platform/runs/$:param",
+        "/platform/v1/runs",
+        "/platform/v1/runs/$:param"
+      ],
+      "has_backend_dependency": true
+    },
+    {
+      "route": "/platform/runs/[runId]",
+      "api_dependencies": [
+        "/platform/evidence",
+        "/platform/v1/runs",
+        "/platform/v1/runs/$:param"
+      ],
+      "has_backend_dependency": true
+    }
+  ],
+  "summary": {
+    "total_backend_endpoints": 190,
+    "frontend_consumed": 19,
+    "backend_unconsumed": 171,
+    "total_frontend_routes": 34,
+    "routes_with_backend_deps": 18,
+    "routes_without_backend_deps": 16,
+    "capabilities_complete": 2,
+    "capabilities_partial": 10,
+    "capabilities_missing": 16
+  }
+}
