@@ -82,7 +82,6 @@ from src.routers import (
     investments_workspace,
     loans,
     loans_workspace,
-    managed_accounts,
     members,
     networth,
     networth_workspace,
@@ -115,7 +114,6 @@ app.include_router(investments.router)
 app.include_router(investments_workspace.router)
 app.include_router(loans.router)
 app.include_router(loans_workspace.router)
-app.include_router(managed_accounts.router)
 app.include_router(members.router)
 app.include_router(networth.router)
 app.include_router(networth_workspace.router)

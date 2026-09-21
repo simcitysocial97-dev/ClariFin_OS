@@ -356,7 +356,7 @@ def test_delete__api_v1_accounts_account_id_links_linked_account_id_contract(cli
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/accounts/manage
+# Source: GET /api/v1/accounts
 # Generated: e99bd47f94ec
 # To regenerate: python tools/generate_contract_tests.py --routers accounts
 
@@ -365,9 +365,9 @@ import pytest
 
 @pytest.mark.contract
 def test_get__api_accounts_manage_contract(client):
-    """Contract: GET /api/accounts/manage matches OpenAPI schema"""
+    """Contract: GET /api/v1/accounts matches OpenAPI schema"""
 
-    response = client.get("/api/accounts/manage")
+    response = client.get("/api/v1/accounts")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [
@@ -379,7 +379,7 @@ def test_get__api_accounts_manage_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: POST /api/accounts/manage
+# Source: POST /api/v1/accounts
 # Generated: ba1bfdc9b86e
 # To regenerate: python tools/generate_contract_tests.py --routers accounts
 
@@ -388,11 +388,11 @@ import pytest
 
 @pytest.mark.contract
 def test_post__api_accounts_manage_contract(client):
-    """Contract: POST /api/accounts/manage matches OpenAPI schema"""
+    """Contract: POST /api/v1/accounts matches OpenAPI schema"""
 
     # TODO: Replace with a valid payload for this endpoint if needed.
     request_body = {}
-    response = client.post("/api/accounts/manage", json=request_body)
+    response = client.post("/api/v1/accounts", json=request_body)
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [
@@ -404,7 +404,7 @@ def test_post__api_accounts_manage_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: PUT /api/accounts/manage/{account_id}
+# Source: PUT /api/v1/accounts/{account_id}
 # Generated: 65447f5f26eb
 # To regenerate: python tools/generate_contract_tests.py --routers accounts
 
@@ -413,11 +413,11 @@ import pytest
 
 @pytest.mark.contract
 def test_put__api_accounts_manage_account_id_contract(client):
-    """Contract: PUT /api/accounts/manage/{account_id} matches OpenAPI schema"""
+    """Contract: PUT /api/v1/accounts/{account_id} matches OpenAPI schema"""
 
     # TODO: Replace with a valid payload for this endpoint if needed.
     request_body = {}
-    response = client.put("/api/accounts/manage/1", json=request_body)
+    response = client.put("/api/v1/accounts/1", json=request_body)
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [
@@ -429,7 +429,7 @@ def test_put__api_accounts_manage_account_id_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: DELETE /api/accounts/manage/{account_id}
+# Source: DELETE /api/v1/accounts/{account_id}
 # Generated: 57abc6daba73
 # To regenerate: python tools/generate_contract_tests.py --routers accounts
 
@@ -438,9 +438,9 @@ import pytest
 
 @pytest.mark.contract
 def test_delete__api_accounts_manage_account_id_contract(client):
-    """Contract: DELETE /api/accounts/manage/{account_id} matches OpenAPI schema"""
+    """Contract: DELETE /api/v1/accounts/{account_id} matches OpenAPI schema"""
 
-    response = client.delete("/api/accounts/manage/1")
+    response = client.delete("/api/v1/accounts/1")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [

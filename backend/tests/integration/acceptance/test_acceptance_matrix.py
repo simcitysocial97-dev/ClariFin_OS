@@ -36,11 +36,11 @@ class TestAccountsAcceptance:
 
     def test_accounts_list_works(self, client: TestClient) -> None:
         """Accounts list endpoint works."""
-        response = client.get("/api/accounts/manage")
+        response = client.get("/api/v1/accounts")
         assert response.status_code == 200
         data = response.json()
-        assert "accounts" in data
-        assert "total" in data
+        assert isinstance(data, list), "V1 accounts returns a list"
+        assert len(data) >= 0
 
     def test_accounts_create_works(self, client: TestClient) -> None:
         """Accounts create endpoint works."""
@@ -50,7 +50,7 @@ class TestAccountsAcceptance:
             "account_type": "savings",
             "balance_paise": 100000,
         }
-        response = client.post("/api/accounts/manage", json=payload)
+        response = client.post("/api/v1/accounts", json=payload)
         assert response.status_code in (200, 201)
 
 
@@ -134,11 +134,9 @@ class TestCrossLayerAcceptance:
 
     def test_account_to_networth_flow(self, client: TestClient) -> None:
         """Account creation should reflect in networth."""
-        initial_accounts = client.get("/api/accounts/manage")
+        initial_accounts = client.get("/api/v1/accounts")
         initial_count = (
-            initial_accounts.json().get("total", 0)
-            if initial_accounts.status_code == 200
-            else 0
+            len(initial_accounts.json()) if initial_accounts.status_code == 200 else 0
         )
 
         create_payload = {
@@ -147,12 +145,12 @@ class TestCrossLayerAcceptance:
             "account_type": "savings",
             "balance_paise": 500000,
         }
-        create_response = client.post("/api/accounts/manage", json=create_payload)
+        create_response = client.post("/api/v1/accounts", json=create_payload)
         assert create_response.status_code in (200, 201)
 
-        updated_accounts = client.get("/api/accounts/manage")
+        updated_accounts = client.get("/api/v1/accounts")
         if updated_accounts.status_code == 200:
-            updated_count = updated_accounts.json().get("total", 0)
+            updated_count = len(updated_accounts.json()) if updated_accounts.status_code == 200 else 0
             assert (
                 updated_count >= initial_count
             ), f"Account count should not decrease: {initial_count} -> {updated_count}"
@@ -164,7 +162,7 @@ class TestAcceptanceInvariants:
     def test_all_paise_fields_are_integers(self, client: TestClient) -> None:
         """All *_paise fields across endpoints are integers."""
         endpoints = [
-            "/api/accounts/manage",
+            "/api/v1/accounts",
             "/api/loans",
             "/api/dashboard/summary",
         ]
@@ -178,13 +176,13 @@ class TestAcceptanceInvariants:
 
     def test_no_negative_balances_in_normal_accounts(self, client: TestClient) -> None:
         """Active accounts shouldn't have unexpected negative balances."""
-        response = client.get("/api/accounts/manage")
+        response = client.get("/api/v1/accounts")
         if response.status_code != 200:
             pytest.skip("Account endpoint not available")
 
         data = response.json()
-        for account in data.get("accounts", []):
-            if account.get("is_active") == 1 and account.get("balance_paise", 0) < 0:
+        for account in data:
+            if account.get("status") == "active" and account.get("balance_paise", 0) < 0:
                 pytest.warns(
                     UserWarning,
                     f"Active account {account.get('id')} has negative balance",

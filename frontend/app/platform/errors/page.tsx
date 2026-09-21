@@ -44,7 +44,6 @@ export default function ErrorsPage() {
 useEffect(() => {
     if (activeTab !== 'frequency') return;
     let cancelled = false;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     startTransition(() => {
       _setFreqLoading(true);
     });
