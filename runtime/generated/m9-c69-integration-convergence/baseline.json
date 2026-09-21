@@ -1,0 +1,70 @@
+{
+  "milestone": "M9-C69",
+  "phase": "PHASE_0_FREEZE_AND_RECONCILE_C68",
+  "c68_certification_sha": "7e6d96500d422b8e4d30e6c9b1c3a910a63515ce",
+  "c68_branch": "m9c9-merge-authorization-resolution",
+  "recorded_at": "2026-09-21T06:33:22Z",
+  "current_head": "7e6d96500d422b8e4d30e6c9b1c3a910a63515ce",
+  "current_branch": "m9c9-merge-authorization-resolution",
+  "working_tree_dirty": true,
+  "dirty_files": [
+    "backend/runtime/generated/platform/snapshot.json",
+    "backend/tests/integration/performance/test_performance.py",
+    "frontend/__tests__/use-cards.test.ts",
+    "frontend/__tests__/use-cashflow.test.ts",
+    "frontend/__tests__/use-dashboard-metrics.test.ts",
+    "frontend/__tests__/use-investments.test.ts",
+    "frontend/__tests__/use-loans.test.ts",
+    "frontend/__tests__/use-overview.test.ts",
+    "frontend/__tests__/use-reconciliation.test.ts",
+    "frontend/lib/capabilities/use-net-worth-capability.ts",
+    "frontend/lib/hooks/__tests__/use-platform-status.test.ts",
+    "runtime/generated/engineering-events.jsonl",
+    "runtime/generated/frontend-backend-map.json",
+    "runtime/generated/git-fetch-events.jsonl",
+    "runtime/generated/m9-c68-frontend-completeness/backend-endpoint-inventory.json",
+    "runtime/generated/m9-c68-frontend-completeness/capability-coverage-matrix.json",
+    "runtime/generated/m9-c68-frontend-completeness/frontend-consumption-inventory.json",
+    "runtime/generated/m9-c68-frontend-completeness/gap-ledger.json",
+    "runtime/generated/m9-c68-frontend-completeness/progress.md",
+    "runtime/generated/platform/snapshot.json"
+  ],
+  "untracked_files": [
+    "frontend/app/api/",
+    "runtime/generated/m9-c68-frontend-completeness/final-certification.json",
+    "runtime/generated/m9-c68-frontend-completeness/final-certification.md",
+    "runtime/generated/m9-c68-frontend-completeness/route-inventory.json"
+  ],
+  "c68_artifacts_verified": {
+    "backend_endpoint_inventory": "runtime/generated/m9-c68-frontend-completeness/backend-endpoint-inventory.json",
+    "capability_coverage_matrix": "runtime/generated/m9-c68-frontend-completeness/capability-coverage-matrix.json",
+    "frontend_consumption_inventory": "runtime/generated/m9-c68-frontend-completeness/frontend-consumption-inventory.json",
+    "gap_ledger": "runtime/generated/m9-c68-frontend-completeness/gap-ledger.json",
+    "final_certification": "runtime/generated/m9-c68-frontend-completeness/final-certification.json",
+    "route_inventory": "runtime/generated/m9-c68-frontend-completeness/route-inventory.json",
+    "progress_md": "runtime/generated/m9-c68-frontend-completeness/progress.md"
+  },
+  "c68_summary": {
+    "backend_endpoints": 189,
+    "frontend_routes": 14,
+    "consumed_api_paths": 56,
+    "typescript_errors": 0,
+    "backend_tests": "2950 passed",
+    "runtime_health": "HEALTHY",
+    "framework_authority": "COHERENT"
+  },
+  "c68_capability_coverage": {
+    "COMPLETE": 20,
+    "INTERNAL": 2,
+    "DEPRECATED": 1,
+    "PARTIAL": 3,
+    "FRONTEND_MISSING": 2
+  },
+  "c68_gap_classifications": {
+    "NEEDS_REVIEW": 16,
+    "INTERNAL": 8,
+    "CONSUMED_BY_CAPABILITY": 1,
+    "PLATFORM_INTERNAL": 38,
+    "LEGACY_ENDPOINT": 6
+  }
+}

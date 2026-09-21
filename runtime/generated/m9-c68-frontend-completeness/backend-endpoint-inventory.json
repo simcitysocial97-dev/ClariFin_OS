@@ -1,1719 +1,1953 @@
-[
-  {
-    "path": "/api/accounts/manage",
-    "method": "GET",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Api Get Managed Accounts",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/accounts/manage",
-    "method": "POST",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Api Create Managed Account",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/accounts/manage/{account_id}",
-    "method": "PUT",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Api Update Managed Account",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/accounts/manage/{account_id}",
-    "method": "DELETE",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Api Delete Managed Account",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/accounts/{account_id}/balance",
-    "method": "GET",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Api Get Account Balance",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/accounts/{account_id}/running-balance",
-    "method": "GET",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Api Get Account Running Balance",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/analytics",
-    "method": "GET",
-    "tags": [
-      "transactions"
-    ],
-    "summary": "Get Analytics",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/audit/report",
-    "method": "GET",
-    "tags": [
-      "audit"
-    ],
-    "summary": "Api Audit Report",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/banks",
-    "method": "GET",
-    "tags": [
-      "banks"
-    ],
-    "summary": "Get Banks",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/cards",
-    "method": "GET",
-    "tags": [
-      "cards",
-      "statements"
-    ],
-    "summary": "Get Cards",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/cashflow",
-    "method": "GET",
-    "tags": [
-      "cashflow"
-    ],
-    "summary": "Get Cashflow",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/cashflow/categories",
-    "method": "GET",
-    "tags": [
-      "cashflow"
-    ],
-    "summary": "Get Cashflow Categories",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/cashflow/monthly",
-    "method": "GET",
-    "tags": [
-      "cashflow"
-    ],
-    "summary": "Get Cashflow Monthly",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/cashflow/transactions",
-    "method": "GET",
-    "tags": [
-      "cashflow"
-    ],
-    "summary": "Get Cashflow Transactions",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/categories",
-    "method": "GET",
-    "tags": [
-      "transactions"
-    ],
-    "summary": "Get Categories",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/dashboard/summary",
-    "method": "GET",
-    "tags": [
-      "dashboard"
-    ],
-    "summary": "Api Dashboard Summary",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/export/csv",
-    "method": "GET",
-    "tags": [
-      "export"
-    ],
-    "summary": "Export Csv",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/financial-events/",
-    "method": "POST",
-    "tags": [
-      "financial-events"
-    ],
-    "summary": "Create Event",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/financial-events/",
-    "method": "GET",
-    "tags": [
-      "financial-events"
-    ],
-    "summary": "List Events",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/financial-events/{event_id}",
-    "method": "GET",
-    "tags": [
-      "financial-events"
-    ],
-    "summary": "Get Event",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/import/detect",
-    "method": "POST",
-    "tags": [
-      "import"
-    ],
-    "summary": "Import Detect",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/import/execute",
-    "method": "POST",
-    "tags": [
-      "import"
-    ],
-    "summary": "Import Execute",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/investments",
-    "method": "GET",
-    "tags": [
-      "investments"
-    ],
-    "summary": "Get Investments",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/investments",
-    "method": "POST",
-    "tags": [
-      "investments"
-    ],
-    "summary": "Create Investment",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/investments/{investment_id}",
-    "method": "PUT",
-    "tags": [
-      "investments"
-    ],
-    "summary": "Update Investment",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/investments/{investment_id}",
-    "method": "DELETE",
-    "tags": [
-      "investments"
-    ],
-    "summary": "Delete Investment",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/loans",
-    "method": "GET",
-    "tags": [
-      "loans"
-    ],
-    "summary": "Get Loans",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/loans",
-    "method": "POST",
-    "tags": [
-      "loans"
-    ],
-    "summary": "Create Loan",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/loans/analysis/priority",
-    "method": "GET",
-    "tags": [
-      "loans"
-    ],
-    "summary": "Get Loan Priority",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/loans/analysis/surplus-allocation",
-    "method": "POST",
-    "tags": [
-      "loans"
-    ],
-    "summary": "Analyze Surplus Allocation",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/loans/{loan_id}",
-    "method": "GET",
-    "tags": [
-      "loans"
-    ],
-    "summary": "Get Loan",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/loans/{loan_id}",
-    "method": "PUT",
-    "tags": [
-      "loans"
-    ],
-    "summary": "Update Loan",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/loans/{loan_id}",
-    "method": "DELETE",
-    "tags": [
-      "loans"
-    ],
-    "summary": "Delete Loan",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
-    "method": "POST",
-    "tags": [
-      "loans"
-    ],
-    "summary": "Analyze Prepayment Vs Foreclosure",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/loans/{loan_id}/foreclosure-simulation",
-    "method": "POST",
-    "tags": [
-      "loans"
-    ],
-    "summary": "Simulate Foreclosure",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/loans/{loan_id}/payments",
-    "method": "POST",
-    "tags": [
-      "loans"
-    ],
-    "summary": "Record Loan Payment",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/loans/{loan_id}/prepayment-simulation",
-    "method": "POST",
-    "tags": [
-      "loans"
-    ],
-    "summary": "Simulate Prepayment",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/loans/{loan_id}/rate-change-simulation",
-    "method": "POST",
-    "tags": [
-      "loans"
-    ],
-    "summary": "Simulate Rate Change",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/loans/{loan_id}/schedule",
-    "method": "GET",
-    "tags": [
-      "loans"
-    ],
-    "summary": "Get Loan Schedule",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/members",
-    "method": "GET",
-    "tags": [
-      "members"
-    ],
-    "summary": "Get Members",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/members",
-    "method": "POST",
-    "tags": [
-      "members"
-    ],
-    "summary": "Create Member",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/members/{member_id}",
-    "method": "GET",
-    "tags": [
-      "members"
-    ],
-    "summary": "Get Member By Id",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/members/{member_id}",
-    "method": "PUT",
-    "tags": [
-      "members"
-    ],
-    "summary": "Update Member",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/members/{member_id}",
-    "method": "DELETE",
-    "tags": [
-      "members"
-    ],
-    "summary": "Delete Member",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/networth",
-    "method": "GET",
-    "tags": [
-      "networth"
-    ],
-    "summary": "Get Networth",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/overview",
-    "method": "GET",
-    "tags": [
-      "transactions"
-    ],
-    "summary": "Get Overview",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/reconciliation",
-    "method": "GET",
-    "tags": [
-      "reconciliation"
-    ],
-    "summary": "Api Get Reconciliations",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/reconciliation/batch-insert",
-    "method": "POST",
-    "tags": [
-      "reconciliation"
-    ],
-    "summary": "Api Batch Insert Reconciliations",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/reconciliation/create",
-    "method": "POST",
-    "tags": [
-      "reconciliation"
-    ],
-    "summary": "Api Create Reconciliation",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/reconciliation/pending",
-    "method": "GET",
-    "tags": [
-      "reconciliation"
-    ],
-    "summary": "Api Get Pending Reconciliations",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/reconciliation/scan",
-    "method": "GET",
-    "tags": [
-      "reconciliation"
-    ],
-    "summary": "Api Scan Reconciliations",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/reconciliation/{reconciliation_id}/confirm",
-    "method": "POST",
-    "tags": [
-      "reconciliation"
-    ],
-    "summary": "Api Confirm Reconciliation",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/reconciliation/{reconciliation_id}/reject",
-    "method": "POST",
-    "tags": [
-      "reconciliation"
-    ],
-    "summary": "Api Reject Reconciliation",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/statements",
-    "method": "GET",
-    "tags": [
-      "cards",
-      "statements"
-    ],
-    "summary": "Get Statements",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/statements/{statement_id}/validate",
-    "method": "GET",
-    "tags": [
-      "cards",
-      "statements"
-    ],
-    "summary": "Api Validate Statement",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/transactions",
-    "method": "GET",
-    "tags": [
-      "transactions"
-    ],
-    "summary": "Get Transactions",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/upload",
-    "method": "POST",
-    "tags": [
-      "import"
-    ],
-    "summary": "Upload Statement",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/accounts",
-    "method": "GET",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "List Accounts",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/accounts",
-    "method": "POST",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Create Account",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/accounts/{account_id}",
-    "method": "GET",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Get Account",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/accounts/{account_id}",
-    "method": "PUT",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Update Account",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/accounts/{account_id}",
-    "method": "DELETE",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Deactivate Account",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/accounts/{account_id}/analytics",
-    "method": "GET",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Get Account Analytics",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/accounts/{account_id}/balance-history",
-    "method": "POST",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Insert Balance Snapshot",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/accounts/{account_id}/balance-history",
-    "method": "GET",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Get Balance History",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/accounts/{account_id}/balance-history/latest",
-    "method": "GET",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Get Latest Balance",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/accounts/{account_id}/dormancy",
-    "method": "GET",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Get Account Dormancy",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/accounts/{account_id}/links",
-    "method": "POST",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Link Accounts",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/accounts/{account_id}/links",
-    "method": "GET",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Get Linked Accounts",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/accounts/{account_id}/links/{linked_account_id}",
-    "method": "DELETE",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Unlink Accounts",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/accounts/{account_id}/metrics",
-    "method": "GET",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Get Account Metrics",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/accounts/{account_id}/status",
-    "method": "GET",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Get Account Status",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/behaviour",
-    "method": "GET",
-    "tags": [
-      "behaviour-workspace"
-    ],
-    "summary": "Get Behaviour",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/behaviour/cashflow-health",
-    "method": "GET",
-    "tags": [
-      "behaviour"
-    ],
-    "summary": "Get Cashflow Health",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/behaviour/debt-health",
-    "method": "GET",
-    "tags": [
-      "behaviour"
-    ],
-    "summary": "Get Debt Health",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/behaviour/monthly-report",
-    "method": "GET",
-    "tags": [
-      "behaviour"
-    ],
-    "summary": "Get Monthly Report",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/behaviour/patterns",
-    "method": "GET",
-    "tags": [
-      "behaviour"
-    ],
-    "summary": "Get Patterns",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/behaviour/profile",
-    "method": "GET",
-    "tags": [
-      "behaviour"
-    ],
-    "summary": "Get Financial Profile",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/behaviour/recommendations",
-    "method": "GET",
-    "tags": [
-      "behaviour"
-    ],
-    "summary": "Get Recommendations",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/behaviour/wellness-score",
-    "method": "GET",
-    "tags": [
-      "behaviour"
-    ],
-    "summary": "Get Wellness Score",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/cashflow",
-    "method": "GET",
-    "tags": [
-      "cashflow-workspace"
-    ],
-    "summary": "Get Cashflow",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/credit-cards",
-    "method": "GET",
-    "tags": [
-      "credit-cards-workspace"
-    ],
-    "summary": "Get Credit Cards",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/credit-cards",
-    "method": "POST",
-    "tags": [
-      "credit-cards"
-    ],
-    "summary": "Create Card",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/credit-cards/{card_id}",
-    "method": "GET",
-    "tags": [
-      "credit-cards"
-    ],
-    "summary": "Get Card",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/credit-cards/{card_id}",
-    "method": "PUT",
-    "tags": [
-      "credit-cards"
-    ],
-    "summary": "Update Card",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/credit-cards/{card_id}",
-    "method": "DELETE",
-    "tags": [
-      "credit-cards"
-    ],
-    "summary": "Deactivate Card",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/credit-cards/{card_id}/emi-conversion",
-    "method": "POST",
-    "tags": [
-      "credit-cards"
-    ],
-    "summary": "Convert To Emi",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/credit-cards/{card_id}/foreclosure",
-    "method": "POST",
-    "tags": [
-      "credit-cards"
-    ],
-    "summary": "Quote Foreclosure",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/credit-cards/{card_id}/metrics",
-    "method": "GET",
-    "tags": [
-      "credit-cards"
-    ],
-    "summary": "Get Metrics",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/credit-cards/{card_id}/next-statement-date",
-    "method": "GET",
-    "tags": [
-      "credit-cards"
-    ],
-    "summary": "Get Next Statement Date",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/credit-cards/{card_id}/outstanding",
-    "method": "GET",
-    "tags": [
-      "credit-cards"
-    ],
-    "summary": "Get Outstanding",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/credit-cards/{card_id}/payments",
-    "method": "POST",
-    "tags": [
-      "credit-cards"
-    ],
-    "summary": "Record Payment",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/credit-cards/{card_id}/statements",
-    "method": "GET",
-    "tags": [
-      "credit-cards"
-    ],
-    "summary": "List Statements",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/credit-cards/{card_id}/statements",
-    "method": "POST",
-    "tags": [
-      "credit-cards"
-    ],
-    "summary": "Generate Statement",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/credit-cards/{card_id}/utilization",
-    "method": "GET",
-    "tags": [
-      "credit-cards"
-    ],
-    "summary": "Get Utilization",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/financial-intelligence/cashflow-forecast",
-    "method": "GET",
-    "tags": [
-      "financial-intelligence",
-      "financial-intelligence"
-    ],
-    "summary": "Get Cashflow Forecast",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/financial-intelligence/credit-forecast",
-    "method": "GET",
-    "tags": [
-      "financial-intelligence",
-      "financial-intelligence"
-    ],
-    "summary": "Get Credit Forecast",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/financial-intelligence/liquidity-forecast",
-    "method": "GET",
-    "tags": [
-      "financial-intelligence",
-      "financial-intelligence"
-    ],
-    "summary": "Get Liquidity Forecast",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/financial-intelligence/outlook",
-    "method": "GET",
-    "tags": [
-      "financial-intelligence",
-      "financial-intelligence"
-    ],
-    "summary": "Get Financial Outlook",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/financial-intelligence/priorities",
-    "method": "GET",
-    "tags": [
-      "financial-intelligence",
-      "financial-intelligence"
-    ],
-    "summary": "Get Financial Intelligence Priorities",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/financial-intelligence/recommendations",
-    "method": "GET",
-    "tags": [
-      "financial-intelligence",
-      "financial-intelligence"
-    ],
-    "summary": "Get Financial Recommendations",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/financial-intelligence/recommendations/{recommendation_id}",
-    "method": "GET",
-    "tags": [
-      "financial-intelligence",
-      "financial-intelligence"
-    ],
-    "summary": "Get Recommendation Details",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/financial-intelligence/report",
-    "method": "GET",
-    "tags": [
-      "financial-intelligence",
-      "financial-intelligence"
-    ],
-    "summary": "Get Financial Intelligence Report",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/forecast",
-    "method": "GET",
-    "tags": [
-      "forecast"
-    ],
-    "summary": "Get Forecast",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/institutions",
-    "method": "GET",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "List Institutions",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/institutions",
-    "method": "POST",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Create Institution",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/institutions/{institution_id}",
-    "method": "GET",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Get Institution",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/institutions/{institution_id}",
-    "method": "PUT",
-    "tags": [
-      "accounts"
-    ],
-    "summary": "Update Institution",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/investments",
-    "method": "GET",
-    "tags": [
-      "investments-workspace"
-    ],
-    "summary": "Get Investments",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/loans",
-    "method": "GET",
-    "tags": [
-      "loans-workspace"
-    ],
-    "summary": "Get Loans",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/net-worth",
-    "method": "GET",
-    "tags": [
-      "networth-workspace"
-    ],
-    "summary": "Get Networth",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/api/v1/reconciliation",
-    "method": "GET",
-    "tags": [
-      "reconciliation-workspace"
-    ],
-    "summary": "Get Reconciliation",
-    "class": "USER_FACING"
-  },
-  {
-    "path": "/health",
-    "method": "GET",
-    "tags": [],
-    "summary": "Health Check",
-    "class": "INFRASTRUCTURE"
-  },
-  {
-    "path": "/platform/v1/ai/agents",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Ai Agents",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/agents/{agent_name}",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Ai Agent",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/config",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Ai Config",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/config/provider",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Ai Config Provider",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/diagnose",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Ai Diagnose",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/engineering/execute",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Ai Engineering Execute",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/financial/interpret",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Ai Financial Interpret",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/mode",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Ai Mode",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/providers",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Ai Providers",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/runs",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Ai Run",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/runs",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Ai Runs",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/runs/{run_id}",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Ai Run",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/runs/{run_id}/cancel",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Ai Run Cancel",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/runs/{run_id}/finalize",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Ai Run Finalize",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/runs/{run_id}/steps",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Ai Step",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/runs/{run_id}/trace",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Ai Run Trace",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/tools",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Ai Tools",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/tools/{tool_name}",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Ai Tool",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/ai/workflow/run",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Ai Workflow Run",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/app/backend",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get App Backend",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/app/domain",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get App Domain",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/app/financial",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get App Financial",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/app/frontend",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get App Frontend",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/app/workflows",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get App Workflows",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/architecture/authorities",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Architecture Authorities",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/architecture/authority/{name}",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Architecture Authority",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/architecture/boundaries",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Architecture Boundaries",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/architecture/bypasses",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Architecture Bypasses",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/architecture/deprecations",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Architecture Deprecations",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/architecture/duplicates",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Architecture Duplicates",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/architecture/unmapped",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Architecture Unmapped",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/capabilities",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "List Capabilities",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/capabilities/{capability_id}",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Capability",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/capabilities/{capability_id}/graph",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Capability Graph",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/change/intelligence",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Change Intelligence",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/context/pack",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Context Pack",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/cross-layer",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Cross Layer Graph",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/cross-layer/{capability_id}",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Cross Layer Capability",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/diagnose",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Diagnose",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/diagnose/register",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Diagnose Register",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/diagnostics",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Diagnostics",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/errors/current",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Errors Current",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/errors/frequency",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Errors Frequency",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/errors/recent",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Errors Recent",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/errors/recurring",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Errors Recurring",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/errors/{error_id}",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Error",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/events",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Events",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/events/stream",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Events Stream",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/evidence",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "List Evidence",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/evidence/by-execution/{execution_id}",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Evidence By Execution",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/evidence/compare",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Evidence Compare",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/evidence/{evidence_id}",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Evidence",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/executions/{execution_id}",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Execution",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/executions/{execution_id}/stream",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Execution Stream",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/framework/integrity",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Framework Integrity",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/framework/self-tests",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Framework Self Tests",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/health",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Health",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/health/deep",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Health Deep",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/history/baselines",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "List History Baselines",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/history/compare",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post History Compare",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/history/runs",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "List History Runs",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/history/runs/{run_id}",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get History Run",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/runs",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "List Runs",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/runs/{run_id}",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Run",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/status",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Status",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/tasks",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "List Tasks",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/tasks/{task_id}",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Task",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/tasks/{task_id}/cancel",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Task Cancel",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/verification",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Verification State",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/verification/recommendation",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Verification Recommendation",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/verification/run",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Verification Run",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/verification/run/affected",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Verification Run Affected",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/verification/run/full",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Verification Run Full",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/verification/run/group",
-    "method": "POST",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Post Verification Run Group",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/verification/runs/recent",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Verification Runs Recent",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/platform/v1/workflows",
-    "method": "GET",
-    "tags": [
-      "platform"
-    ],
-    "summary": "Get Workflows",
-    "class": "PLATFORM"
-  },
-  {
-    "path": "/ready",
-    "method": "GET",
-    "tags": [],
-    "summary": "Readiness Check",
-    "class": "INFRASTRUCTURE"
-  }
-]
+{
+  "generated_at": "2026-09-21T05:30:00Z",
+  "total_endpoints": 189,
+  "classification_summary": {
+    "USER_FACING": 99,
+    "INTERNAL": 8,
+    "PLATFORM_FACING": 76,
+    "DEPRECATED": 6
+  },
+  "endpoints": [
+    {
+      "path": "/api/v1/accounts",
+      "method": "GET",
+      "module": "accounts",
+      "endpoint": "list_accounts",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts",
+      "method": "POST",
+      "module": "accounts",
+      "endpoint": "create_account",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}",
+      "method": "GET",
+      "module": "accounts",
+      "endpoint": "get_account",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}",
+      "method": "PUT",
+      "module": "accounts",
+      "endpoint": "update_account",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}",
+      "method": "DELETE",
+      "module": "accounts",
+      "endpoint": "deactivate_account",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/balance-history",
+      "method": "POST",
+      "module": "accounts",
+      "endpoint": "insert_balance_snapshot",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/balance-history",
+      "method": "GET",
+      "module": "accounts",
+      "endpoint": "get_balance_history",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/balance-history/latest",
+      "method": "GET",
+      "module": "accounts",
+      "endpoint": "get_latest_balance",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/analytics",
+      "method": "GET",
+      "module": "accounts",
+      "endpoint": "get_account_analytics",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/metrics",
+      "method": "GET",
+      "module": "accounts",
+      "endpoint": "get_account_metrics",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/status",
+      "method": "GET",
+      "module": "accounts",
+      "endpoint": "get_account_status",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/dormancy",
+      "method": "GET",
+      "module": "accounts",
+      "endpoint": "get_account_dormancy",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/institutions",
+      "method": "GET",
+      "module": "accounts",
+      "endpoint": "list_institutions",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/institutions",
+      "method": "POST",
+      "module": "accounts",
+      "endpoint": "create_institution",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/institutions/{institution_id}",
+      "method": "GET",
+      "module": "accounts",
+      "endpoint": "get_institution",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/institutions/{institution_id}",
+      "method": "PUT",
+      "module": "accounts",
+      "endpoint": "update_institution",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/links",
+      "method": "POST",
+      "module": "accounts",
+      "endpoint": "link_accounts",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/links/{linked_account_id}",
+      "method": "DELETE",
+      "module": "accounts",
+      "endpoint": "unlink_accounts",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/links",
+      "method": "GET",
+      "module": "accounts",
+      "endpoint": "get_linked_accounts",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/audit/report",
+      "method": "GET",
+      "module": "audit",
+      "endpoint": "api_audit_report",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/banks",
+      "method": "GET",
+      "module": "banks",
+      "endpoint": "get_banks",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/behaviour/profile",
+      "method": "GET",
+      "module": "behaviour",
+      "endpoint": "get_financial_profile",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/behaviour/wellness-score",
+      "method": "GET",
+      "module": "behaviour",
+      "endpoint": "get_wellness_score",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/behaviour/debt-health",
+      "method": "GET",
+      "module": "behaviour",
+      "endpoint": "get_debt_health",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/behaviour/cashflow-health",
+      "method": "GET",
+      "module": "behaviour",
+      "endpoint": "get_cashflow_health",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/behaviour/patterns",
+      "method": "GET",
+      "module": "behaviour",
+      "endpoint": "get_patterns",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/behaviour/recommendations",
+      "method": "GET",
+      "module": "behaviour",
+      "endpoint": "get_recommendations",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/behaviour/monthly-report",
+      "method": "GET",
+      "module": "behaviour",
+      "endpoint": "get_monthly_report",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/behaviour",
+      "method": "GET",
+      "module": "behaviour_workspace",
+      "endpoint": "get_behaviour",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/statements",
+      "method": "GET",
+      "module": "cards_statements",
+      "endpoint": "get_statements",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/cards",
+      "method": "GET",
+      "module": "cards_statements",
+      "endpoint": "get_cards",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/statements/{statement_id}/validate",
+      "method": "GET",
+      "module": "cards_statements",
+      "endpoint": "api_validate_statement",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/cashflow",
+      "method": "GET",
+      "module": "cashflow",
+      "endpoint": "get_cashflow",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/cashflow/monthly",
+      "method": "GET",
+      "module": "cashflow",
+      "endpoint": "get_cashflow_monthly",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/cashflow/categories",
+      "method": "GET",
+      "module": "cashflow",
+      "endpoint": "get_cashflow_categories",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/cashflow/transactions",
+      "method": "GET",
+      "module": "cashflow",
+      "endpoint": "get_cashflow_transactions",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/cashflow",
+      "method": "GET",
+      "module": "cashflow_workspace",
+      "endpoint": "get_cashflow",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards",
+      "method": "GET",
+      "module": "credit_cards",
+      "endpoint": "list_cards",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}",
+      "method": "GET",
+      "module": "credit_cards",
+      "endpoint": "get_card",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards",
+      "method": "POST",
+      "module": "credit_cards",
+      "endpoint": "create_card",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}",
+      "method": "PUT",
+      "module": "credit_cards",
+      "endpoint": "update_card",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}",
+      "method": "DELETE",
+      "module": "credit_cards",
+      "endpoint": "deactivate_card",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/statements",
+      "method": "GET",
+      "module": "credit_cards",
+      "endpoint": "list_statements",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/statements",
+      "method": "POST",
+      "module": "credit_cards",
+      "endpoint": "generate_statement",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/outstanding",
+      "method": "GET",
+      "module": "credit_cards",
+      "endpoint": "get_outstanding",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/utilization",
+      "method": "GET",
+      "module": "credit_cards",
+      "endpoint": "get_utilization",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/metrics",
+      "method": "GET",
+      "module": "credit_cards",
+      "endpoint": "get_metrics",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/next-statement-date",
+      "method": "GET",
+      "module": "credit_cards",
+      "endpoint": "get_next_statement_date",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/payments",
+      "method": "POST",
+      "module": "credit_cards",
+      "endpoint": "record_payment",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/emi-conversion",
+      "method": "POST",
+      "module": "credit_cards",
+      "endpoint": "convert_to_emi",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/foreclosure",
+      "method": "POST",
+      "module": "credit_cards",
+      "endpoint": "quote_foreclosure",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards",
+      "method": "GET",
+      "module": "credit_cards_workspace",
+      "endpoint": "get_credit_cards",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/dashboard/summary",
+      "method": "GET",
+      "module": "dashboard",
+      "endpoint": "api_dashboard_summary",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/export/csv",
+      "method": "GET",
+      "module": "export",
+      "endpoint": "export_csv",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/financial-events/",
+      "method": "POST",
+      "module": "financial_events",
+      "endpoint": "create_event",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/financial-events/",
+      "method": "GET",
+      "module": "financial_events",
+      "endpoint": "list_events",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/financial-events/{event_id}",
+      "method": "GET",
+      "module": "financial_events",
+      "endpoint": "get_event",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/financial-intelligence/cashflow-forecast",
+      "method": "GET",
+      "module": "financial_intelligence",
+      "endpoint": "get_cashflow_forecast",
+      "classification": "INTERNAL"
+    },
+    {
+      "path": "/financial-intelligence/liquidity-forecast",
+      "method": "GET",
+      "module": "financial_intelligence",
+      "endpoint": "get_liquidity_forecast",
+      "classification": "INTERNAL"
+    },
+    {
+      "path": "/financial-intelligence/credit-forecast",
+      "method": "GET",
+      "module": "financial_intelligence",
+      "endpoint": "get_credit_forecast",
+      "classification": "INTERNAL"
+    },
+    {
+      "path": "/financial-intelligence/outlook",
+      "method": "GET",
+      "module": "financial_intelligence",
+      "endpoint": "get_financial_outlook",
+      "classification": "INTERNAL"
+    },
+    {
+      "path": "/financial-intelligence/report",
+      "method": "GET",
+      "module": "financial_intelligence",
+      "endpoint": "get_financial_intelligence_report",
+      "classification": "INTERNAL"
+    },
+    {
+      "path": "/financial-intelligence/priorities",
+      "method": "GET",
+      "module": "financial_intelligence",
+      "endpoint": "get_financial_intelligence_priorities",
+      "classification": "INTERNAL"
+    },
+    {
+      "path": "/financial-intelligence/recommendations",
+      "method": "GET",
+      "module": "financial_intelligence",
+      "endpoint": "get_financial_recommendations",
+      "classification": "INTERNAL"
+    },
+    {
+      "path": "/financial-intelligence/recommendations/{recommendation_id}",
+      "method": "GET",
+      "module": "financial_intelligence",
+      "endpoint": "get_recommendation_details",
+      "classification": "INTERNAL"
+    },
+    {
+      "path": "/api/v1/forecast",
+      "method": "GET",
+      "module": "forecast",
+      "endpoint": "get_forecast",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/upload",
+      "method": "POST",
+      "module": "import_router",
+      "endpoint": "upload_statement",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/import/detect",
+      "method": "POST",
+      "module": "import_router",
+      "endpoint": "import_detect",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/import/execute",
+      "method": "POST",
+      "module": "import_router",
+      "endpoint": "import_execute",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/investments",
+      "method": "GET",
+      "module": "investments",
+      "endpoint": "get_investments",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/investments",
+      "method": "POST",
+      "module": "investments",
+      "endpoint": "create_investment",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/investments/{investment_id}",
+      "method": "PUT",
+      "module": "investments",
+      "endpoint": "update_investment",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/investments/{investment_id}",
+      "method": "DELETE",
+      "module": "investments",
+      "endpoint": "delete_investment",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/investments",
+      "method": "GET",
+      "module": "investments_workspace",
+      "endpoint": "get_investments",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/loans",
+      "method": "GET",
+      "module": "loans",
+      "endpoint": "get_loans",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}",
+      "method": "GET",
+      "module": "loans",
+      "endpoint": "get_loan",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/loans",
+      "method": "POST",
+      "module": "loans",
+      "endpoint": "create_loan",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}",
+      "method": "PUT",
+      "module": "loans",
+      "endpoint": "update_loan",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}",
+      "method": "DELETE",
+      "module": "loans",
+      "endpoint": "delete_loan",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}/schedule",
+      "method": "GET",
+      "module": "loans",
+      "endpoint": "get_loan_schedule",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}/prepayment-simulation",
+      "method": "POST",
+      "module": "loans",
+      "endpoint": "simulate_prepayment",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}/foreclosure-simulation",
+      "method": "POST",
+      "module": "loans",
+      "endpoint": "simulate_foreclosure",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}/rate-change-simulation",
+      "method": "POST",
+      "module": "loans",
+      "endpoint": "simulate_rate_change",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}/payments",
+      "method": "POST",
+      "module": "loans",
+      "endpoint": "record_loan_payment",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/analysis/priority",
+      "method": "GET",
+      "module": "loans",
+      "endpoint": "get_loan_priority",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "method": "POST",
+      "module": "loans",
+      "endpoint": "analyze_prepayment_vs_foreclosure",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/analysis/surplus-allocation",
+      "method": "POST",
+      "module": "loans",
+      "endpoint": "analyze_surplus_allocation",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/loans",
+      "method": "GET",
+      "module": "loans_workspace",
+      "endpoint": "get_loans",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/members",
+      "method": "GET",
+      "module": "members",
+      "endpoint": "get_members",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/members/{member_id}",
+      "method": "GET",
+      "module": "members",
+      "endpoint": "get_member_by_id",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/members",
+      "method": "POST",
+      "module": "members",
+      "endpoint": "create_member",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/members/{member_id}",
+      "method": "PUT",
+      "module": "members",
+      "endpoint": "update_member",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/members/{member_id}",
+      "method": "DELETE",
+      "module": "members",
+      "endpoint": "delete_member",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/networth",
+      "method": "GET",
+      "module": "networth",
+      "endpoint": "get_networth",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/net-worth",
+      "method": "GET",
+      "module": "networth_workspace",
+      "endpoint": "get_networth",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/platform/v1/health",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_health",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/status",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_status",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/framework/integrity",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_framework_integrity",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/framework/self-tests",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_framework_self_tests",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/capabilities",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "list_capabilities",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/capabilities/{capability_id}",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_capability",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/capabilities/{capability_id}/graph",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_capability_graph",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/tasks",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "list_tasks",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/tasks/{task_id}",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_task",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/tasks/{task_id}/cancel",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_task_cancel",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/verification",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_verification_state",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/verification/recommendation",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_verification_recommendation",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/verification/run",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_verification_run",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/verification/run/group",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_verification_run_group",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/verification/run/affected",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_verification_run_affected",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/verification/run/full",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_verification_run_full",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/verification/runs/recent",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_verification_runs_recent",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/executions/{execution_id}",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_execution",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/executions/{execution_id}/stream",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_execution_stream",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/events/stream",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_events_stream",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/evidence",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "list_evidence",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/evidence/{evidence_id}",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_evidence",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/evidence/by-execution/{execution_id}",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_evidence_by_execution",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/evidence/compare",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_evidence_compare",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/history/runs",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "list_history_runs",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/runs",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "list_runs",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/history/runs/{run_id}",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_history_run",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/runs/{run_id}",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_run",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/history/baselines",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "list_history_baselines",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/history/compare",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_history_compare",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/errors/current",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_errors_current",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/errors/recent",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_errors_recent",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/errors/recurring",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_errors_recurring",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/errors/frequency",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_errors_frequency",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/errors/{error_id}",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_error",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/architecture/authorities",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_architecture_authorities",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/architecture/authority/{name}",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_architecture_authority",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/architecture/boundaries",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_architecture_boundaries",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/architecture/duplicates",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_architecture_duplicates",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/architecture/bypasses",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_architecture_bypasses",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/architecture/deprecations",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_architecture_deprecations",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/architecture/unmapped",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_architecture_unmapped",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/cross-layer",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_cross_layer_graph",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/cross-layer/{capability_id}",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_cross_layer_capability",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/events",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_events",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/app/backend",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_app_backend",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/app/frontend",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_app_frontend",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/app/domain",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_app_domain",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/app/financial",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_app_financial",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/app/workflows",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_app_workflows",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/workflows",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_workflows",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/change/intelligence",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_change_intelligence",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/diagnostics",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_diagnostics",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/diagnose",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_diagnose",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/diagnose/register",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_diagnose_register",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/health/deep",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_health_deep",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/mode",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_ai_mode",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/runs",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_ai_run",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/runs",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_ai_runs",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/runs/{run_id}",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_ai_run",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/runs/{run_id}/cancel",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_ai_run_cancel",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/tools",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_ai_tools",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/tools/{tool_name}",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_ai_tool",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/runs/{run_id}/steps",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_ai_step",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/providers",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_ai_providers",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/agents",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_ai_agents",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/agents/{agent_name}",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_ai_agent",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/diagnose",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_ai_diagnose",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/financial/interpret",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_ai_financial_interpret",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/workflow/run",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_ai_workflow_run",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/engineering/execute",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_ai_engineering_execute",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/runs/{run_id}/finalize",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_ai_run_finalize",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/runs/{run_id}/trace",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_ai_run_trace",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/context/pack",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_context_pack",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/config",
+      "method": "GET",
+      "module": "platform",
+      "endpoint": "get_ai_config",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/platform/v1/ai/config/provider",
+      "method": "POST",
+      "module": "platform",
+      "endpoint": "post_ai_config_provider",
+      "classification": "PLATFORM_FACING"
+    },
+    {
+      "path": "/api/reconciliation",
+      "method": "GET",
+      "module": "reconciliation",
+      "endpoint": "api_get_reconciliations",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/reconciliation/pending",
+      "method": "GET",
+      "module": "reconciliation",
+      "endpoint": "api_get_pending_reconciliations",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/reconciliation/scan",
+      "method": "GET",
+      "module": "reconciliation",
+      "endpoint": "api_scan_reconciliations",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/reconciliation/create",
+      "method": "POST",
+      "module": "reconciliation",
+      "endpoint": "api_create_reconciliation",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/reconciliation/batch-insert",
+      "method": "POST",
+      "module": "reconciliation",
+      "endpoint": "api_batch_insert_reconciliations",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/reconciliation/{reconciliation_id}/confirm",
+      "method": "POST",
+      "module": "reconciliation",
+      "endpoint": "api_confirm_reconciliation",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/reconciliation/{reconciliation_id}/reject",
+      "method": "POST",
+      "module": "reconciliation",
+      "endpoint": "api_reject_reconciliation",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/reconciliation",
+      "method": "GET",
+      "module": "reconciliation_workspace",
+      "endpoint": "get_reconciliation",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/transactions",
+      "method": "GET",
+      "module": "transactions",
+      "endpoint": "get_transactions",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/overview",
+      "method": "GET",
+      "module": "transactions",
+      "endpoint": "get_overview",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/categories",
+      "method": "GET",
+      "module": "transactions",
+      "endpoint": "get_categories",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/analytics",
+      "method": "GET",
+      "module": "transactions",
+      "endpoint": "get_analytics",
+      "classification": "USER_FACING"
+    },
+    {
+      "path": "/api/accounts/manage",
+      "method": "GET",
+      "module": "managed_accounts",
+      "endpoint": "api_get_managed_accounts",
+      "classification": "DEPRECATED"
+    },
+    {
+      "path": "/api/accounts/manage",
+      "method": "POST",
+      "module": "managed_accounts",
+      "endpoint": "api_create_managed_account",
+      "classification": "DEPRECATED"
+    },
+    {
+      "path": "/api/accounts/manage/{account_id}",
+      "method": "PUT",
+      "module": "managed_accounts",
+      "endpoint": "api_update_managed_account",
+      "classification": "DEPRECATED"
+    },
+    {
+      "path": "/api/accounts/manage/{account_id}",
+      "method": "DELETE",
+      "module": "managed_accounts",
+      "endpoint": "api_delete_managed_account",
+      "classification": "DEPRECATED"
+    },
+    {
+      "path": "/api/accounts/{account_id}/balance",
+      "method": "GET",
+      "module": "managed_accounts",
+      "endpoint": "api_get_account_balance",
+      "classification": "DEPRECATED"
+    },
+    {
+      "path": "/api/accounts/{account_id}/running-balance",
+      "method": "GET",
+      "module": "managed_accounts",
+      "endpoint": "api_get_account_running_balance",
+      "classification": "DEPRECATED"
+    }
+  ],
+  "consumed_paths": [
+    "/api/analytics",
+    "/api/cards",
+    "/api/cashflow/monthly?months=:param",
+    "/api/dashboard/summary",
+    "/api/investments",
+    "/api/investments/:param",
+    "/api/loans",
+    "/api/loans/:param",
+    "/api/loans/:param/prepayment-simulation",
+    "/api/loans/:param/schedule",
+    "/api/networth",
+    "/api/overview",
+    "/api/overview?:param",
+    "/api/reconciliation",
+    "/api/reconciliation/:param/confirm",
+    "/api/reconciliation/:param/reject",
+    "/api/reconciliation/pending",
+    "/api/reconciliation/scan",
+    "/api/v1/accounts",
+    "/api/v1/accounts/:param",
+    "/api/v1/behaviour/wellness-score",
+    "/api/v1/reconciliation",
+    "/platform/architecture",
+    "/platform/capabilities/:param",
+    "/platform/diagnostics/detail/:param",
+    "/platform/errors",
+    "/platform/evidence",
+    "/platform/framework",
+    "/platform/history/compare?current=:param&baseline=:param",
+    "/platform/runs/:param",
+    "/platform/v1/architecture/:param",
+    "/platform/v1/architecture/authority/:param",
+    "/platform/v1/capabilities/:param",
+    "/platform/v1/capabilities/:param/graph",
+    "/platform/v1/change/intelligence",
+    "/platform/v1/errors/:param",
+    "/platform/v1/events?limit=:param",
+    "/platform/v1/evidence",
+    "/platform/v1/evidence/:param",
+    "/platform/v1/executions/:param",
+    "/platform/v1/executions/:param/stream",
+    "/platform/v1/framework/integrity",
+    "/platform/v1/health",
+    "/platform/v1/history/runs/:param",
+    "/platform/v1/runs/:param",
+    "/platform/v1/runs?page=:param&page_size=:param",
+    "/platform/v1/tasks/:param/cancel",
+    "/platform/v1/verification/recommendation",
+    "/platform/v1/verification/run",
+    "/platform/v1/verification/run/affected",
+    "/platform/v1/verification/run/full",
+    "/platform/v1/verification/run/group",
+    "/platform/verification",
+    "/platform/verification/:param",
+    "/platform/verification/history/:param",
+    "/platform/verification/run/:param"
+  ],
+  "consumption_map": {
+    "/api/v1/accounts": {
+      "source": "hook:use-accounts.ts",
+      "urls": [
+        "/api/v1/accounts",
+        "/api/v1/accounts"
+      ]
+    },
+    "/api/v1/accounts/:param": {
+      "source": "hook:use-accounts.ts",
+      "urls": [
+        "/api/v1/accounts/${id}",
+        "/api/v1/accounts/${id}"
+      ]
+    },
+    "/api/v1/behaviour/wellness-score": {
+      "source": "hook:use-behavior-score.ts",
+      "urls": [
+        "/api/v1/behaviour/wellness-score"
+      ]
+    },
+    "/platform/v1/health": {
+      "source": "hook:use-platform-health.ts",
+      "urls": [
+        "/platform/v1/health",
+        "/platform/v1/health"
+      ]
+    },
+    "/api/overview": {
+      "source": "hook:use-overview.ts",
+      "urls": [
+        "/api/overview"
+      ]
+    },
+    "/platform/v1/capabilities/:param": {
+      "source": "hook:use-platform-capabilities.ts",
+      "urls": [
+        "/platform/v1/capabilities/${encodeURIComponent(capabilityId!)}",
+        "/platform/v1/capabilities/${capabilityId}"
+      ]
+    },
+    "/platform/v1/capabilities/:param/graph": {
+      "source": "hook:use-platform-capabilities.ts",
+      "urls": [
+        "/platform/v1/capabilities/${encodeURIComponent(capabilityId!)}/graph"
+      ]
+    },
+    "/api/analytics": {
+      "source": "hook:use-analytics.ts",
+      "urls": [
+        "/api/analytics"
+      ]
+    },
+    "/platform/v1/verification/recommendation": {
+      "source": "hook:use-verification-center.ts",
+      "urls": [
+        "/platform/v1/verification/recommendation"
+      ]
+    },
+    "/platform/v1/verification/run": {
+      "source": "hook:use-verification-center.ts",
+      "urls": [
+        "/platform/v1/verification/run",
+        "/platform/v1/verification/run"
+      ]
+    },
+    "/platform/v1/verification/run/group": {
+      "source": "hook:use-verification-center.ts",
+      "urls": [
+        "/platform/v1/verification/run/group"
+      ]
+    },
+    "/platform/v1/verification/run/affected": {
+      "source": "hook:use-verification-center.ts",
+      "urls": [
+        "/platform/v1/verification/run/affected"
+      ]
+    },
+    "/platform/v1/verification/run/full": {
+      "source": "hook:use-verification-center.ts",
+      "urls": [
+        "/platform/v1/verification/run/full"
+      ]
+    },
+    "/platform/v1/tasks/:param/cancel": {
+      "source": "hook:use-verification-center.ts",
+      "urls": [
+        "/platform/v1/tasks/${taskId}/cancel"
+      ]
+    },
+    "/platform/v1/events?limit=:param": {
+      "source": "hook:use-platform-events.ts",
+      "urls": [
+        "/platform/v1/events?limit=${limit}"
+      ]
+    },
+    "/platform/v1/runs?page=:param&page_size=:param": {
+      "source": "hook:use-platform-runs.ts",
+      "urls": [
+        "/platform/v1/runs?page=${page}&page_size=${page_size}"
+      ]
+    },
+    "/platform/v1/runs/:param": {
+      "source": "hook:use-platform-runs.ts",
+      "urls": [
+        "/platform/v1/runs/${encodeURIComponent(runId!)}"
+      ]
+    },
+    "/platform/v1/architecture/authority/:param": {
+      "source": "hook:use-platform-architecture.ts",
+      "urls": [
+        "/platform/v1/architecture/authority/${encodeURIComponent(name!)}"
+      ]
+    },
+    "/platform/v1/architecture/:param": {
+      "source": "hook:use-platform-architecture.ts",
+      "urls": [
+        "/platform/v1/architecture/${kind}"
+      ]
+    },
+    "/api/reconciliation": {
+      "source": "hook:use-reconciliation.ts",
+      "urls": [
+        "/api/reconciliation"
+      ]
+    },
+    "/api/reconciliation/pending": {
+      "source": "hook:use-reconciliation.ts",
+      "urls": [
+        "/api/reconciliation/pending"
+      ]
+    },
+    "/api/reconciliation/scan": {
+      "source": "hook:use-reconciliation.ts",
+      "urls": [
+        "/api/reconciliation/scan"
+      ]
+    },
+    "/api/reconciliation/:param/confirm": {
+      "source": "hook:use-reconciliation.ts",
+      "urls": [
+        "/api/reconciliation/${id}/confirm"
+      ]
+    },
+    "/api/reconciliation/:param/reject": {
+      "source": "hook:use-reconciliation.ts",
+      "urls": [
+        "/api/reconciliation/${id}/reject"
+      ]
+    },
+    "/api/cashflow/monthly?months=:param": {
+      "source": "hook:use-cashflow.ts",
+      "urls": [
+        "/api/cashflow/monthly?months=${months}"
+      ]
+    },
+    "/platform/v1/framework/integrity": {
+      "source": "hook:use-platform-diagnostics.ts",
+      "urls": [
+        "/platform/v1/framework/integrity",
+        "/platform/v1/framework/integrity",
+        "/platform/v1/framework/integrity"
+      ]
+    },
+    "/api/overview?:param": {
+      "source": "hook:use-query-finance.ts",
+      "urls": [
+        "/api/overview?${query}"
+      ]
+    },
+    "/api/cards": {
+      "source": "hook:use-cards.ts",
+      "urls": [
+        "/api/cards"
+      ]
+    },
+    "/platform/v1/errors/:param": {
+      "source": "hook:use-platform-errors.ts",
+      "urls": [
+        "/platform/v1/errors/${window}"
+      ]
+    },
+    "/api/dashboard/summary": {
+      "source": "hook:use-dashboard-metrics.ts",
+      "urls": [
+        "/api/dashboard/summary"
+      ]
+    },
+    "/api/networth": {
+      "source": "hook:use-networth.ts",
+      "urls": [
+        "/api/networth",
+        "/api/networth"
+      ]
+    },
+    "/api/investments": {
+      "source": "hook:use-investments.ts",
+      "urls": [
+        "/api/investments",
+        "/api/investments"
+      ]
+    },
+    "/api/investments/:param": {
+      "source": "hook:use-investments.ts",
+      "urls": [
+        "/api/investments/${id}",
+        "/api/investments/${id}"
+      ]
+    },
+    "/platform/v1/executions/:param/stream": {
+      "source": "hook:use-live-execution.ts",
+      "urls": [
+        "/platform/v1/executions/${encodeURIComponent(executionId)}/stream"
+      ]
+    },
+    "/api/loans": {
+      "source": "hook:use-loans.ts",
+      "urls": [
+        "/api/loans",
+        "/api/loans"
+      ]
+    },
+    "/api/loans/:param/schedule": {
+      "source": "hook:use-loans.ts",
+      "urls": [
+        "/api/loans/${loanId}/schedule"
+      ]
+    },
+    "/api/loans/:param/prepayment-simulation": {
+      "source": "hook:use-loans.ts",
+      "urls": [
+        "/api/loans/${loanId}/prepayment-simulation"
+      ]
+    },
+    "/api/loans/:param": {
+      "source": "hook:use-loans.ts",
+      "urls": [
+        "/api/loans/${id}",
+        "/api/loans/${id}"
+      ]
+    },
+    "/api/v1/reconciliation": {
+      "source": "capability:use-reconciliation-capability.ts",
+      "urls": [
+        "/api/v1/reconciliation"
+      ]
+    },
+    "/platform/framework": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/framework",
+        "/platform/framework"
+      ]
+    },
+    "/platform/verification": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/verification",
+        "/platform/verification",
+        "/platform/verification",
+        "/platform/verification",
+        "/platform/verification",
+        "/platform/verification",
+        "/platform/verification"
+      ]
+    },
+    "/platform/architecture": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/architecture"
+      ]
+    },
+    "/platform/diagnostics/detail/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/diagnostics/detail/${encodeURIComponent(item.id)}"
+      ]
+    },
+    "/platform/verification/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/verification/${encodeURIComponent(cap)}",
+        "/platform/verification/${encodeURIComponent(cap.id)}"
+      ]
+    },
+    "/platform/v1/evidence": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/v1/evidence"
+      ]
+    },
+    "/platform/v1/evidence/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/v1/evidence/${selectedId}"
+      ]
+    },
+    "/platform/capabilities/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/capabilities/${encodeURIComponent(cap.id)}",
+        "/platform/capabilities/${encodeURIComponent(cap)}"
+      ]
+    },
+    "/platform/history/compare?current=:param&baseline=:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/history/compare?current=${encodeURIComponent(runId)}&baseline=${baseline}"
+      ]
+    },
+    "/platform/verification/history/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/verification/history/${run.id}"
+      ]
+    },
+    "/platform/runs/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/runs/${encodeURIComponent(run.id)}"
+      ]
+    },
+    "/platform/v1/change/intelligence": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/v1/change/intelligence"
+      ]
+    },
+    "/platform/verification/run/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/verification/run/${encodeURIComponent(rec)}",
+        "/platform/verification/run/${encodeURIComponent(v)}",
+        "/platform/verification/run/${encodeURIComponent(capId)}",
+        "/platform/verification/run/${encodeURIComponent(cap.id)}"
+      ]
+    },
+    "/platform/v1/executions/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/v1/executions/${encodeURIComponent(executionId!)}"
+      ]
+    },
+    "/platform/v1/history/runs/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/v1/history/runs/${runId}"
+      ]
+    },
+    "/platform/errors": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/errors"
+      ]
+    },
+    "/platform/evidence": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/evidence"
+      ]
+    }
+  },
+  "capability_matrix": [
+    {
+      "capability": "behaviour-workspace",
+      "total_endpoints": 1,
+      "consumed_endpoints": 1,
+      "coverage_pct": 100.0,
+      "status": "COMPLETE"
+    },
+    {
+      "capability": "dashboard",
+      "total_endpoints": 1,
+      "consumed_endpoints": 1,
+      "coverage_pct": 100.0,
+      "status": "COMPLETE"
+    },
+    {
+      "capability": "investments",
+      "total_endpoints": 4,
+      "consumed_endpoints": 4,
+      "coverage_pct": 100.0,
+      "status": "COMPLETE"
+    },
+    {
+      "capability": "loans",
+      "total_endpoints": 13,
+      "consumed_endpoints": 13,
+      "coverage_pct": 100.0,
+      "status": "COMPLETE"
+    },
+    {
+      "capability": "networth",
+      "total_endpoints": 1,
+      "consumed_endpoints": 1,
+      "coverage_pct": 100.0,
+      "status": "COMPLETE"
+    },
+    {
+      "capability": "reconciliation",
+      "total_endpoints": 7,
+      "consumed_endpoints": 7,
+      "coverage_pct": 100.0,
+      "status": "COMPLETE"
+    },
+    {
+      "capability": "reconciliation-workspace",
+      "total_endpoints": 1,
+      "consumed_endpoints": 1,
+      "coverage_pct": 100.0,
+      "status": "COMPLETE"
+    },
+    {
+      "capability": "financial-intelligence",
+      "total_endpoints": 8,
+      "consumed_endpoints": 0,
+      "coverage_pct": 0.0,
+      "status": "INTERNAL"
+    },
+    {
+      "capability": "members",
+      "total_endpoints": 5,
+      "consumed_endpoints": 0,
+      "coverage_pct": 0.0,
+      "status": "INTERNAL"
+    },
+    {
+      "capability": "accounts",
+      "total_endpoints": 25,
+      "consumed_endpoints": 15,
+      "coverage_pct": 60.0,
+      "status": "DEPRECATED"
+    },
+    {
+      "capability": "behaviour",
+      "total_endpoints": 7,
+      "consumed_endpoints": 1,
+      "coverage_pct": 14.3,
+      "status": "PARTIAL"
+    },
+    {
+      "capability": "cards",
+      "total_endpoints": 3,
+      "consumed_endpoints": 1,
+      "coverage_pct": 33.3,
+      "status": "PARTIAL"
+    },
+    {
+      "capability": "cashflow",
+      "total_endpoints": 4,
+      "consumed_endpoints": 2,
+      "coverage_pct": 50.0,
+      "status": "PARTIAL"
+    },
+    {
+      "capability": "platform",
+      "total_endpoints": 76,
+      "consumed_endpoints": 40,
+      "coverage_pct": 52.6,
+      "status": "PARTIAL"
+    },
+    {
+      "capability": "statements",
+      "total_endpoints": 3,
+      "consumed_endpoints": 1,
+      "coverage_pct": 33.3,
+      "status": "PARTIAL"
+    },
+    {
+      "capability": "transactions",
+      "total_endpoints": 4,
+      "consumed_endpoints": 2,
+      "coverage_pct": 50.0,
+      "status": "PARTIAL"
+    },
+    {
+      "capability": "audit",
+      "total_endpoints": 1,
+      "consumed_endpoints": 0,
+      "coverage_pct": 0.0,
+      "status": "FRONTEND_MISSING"
+    },
+    {
+      "capability": "banks",
+      "total_endpoints": 1,
+      "consumed_endpoints": 0,
+      "coverage_pct": 0.0,
+      "status": "FRONTEND_MISSING"
+    },
+    {
+      "capability": "cashflow-workspace",
+      "total_endpoints": 1,
+      "consumed_endpoints": 0,
+      "coverage_pct": 0.0,
+      "status": "FRONTEND_MISSING"
+    },
+    {
+      "capability": "credit-cards",
+      "total_endpoints": 14,
+      "consumed_endpoints": 0,
+      "coverage_pct": 0.0,
+      "status": "FRONTEND_MISSING"
+    },
+    {
+      "capability": "credit-cards-workspace",
+      "total_endpoints": 1,
+      "consumed_endpoints": 0,
+      "coverage_pct": 0.0,
+      "status": "FRONTEND_MISSING"
+    },
+    {
+      "capability": "export",
+      "total_endpoints": 1,
+      "consumed_endpoints": 0,
+      "coverage_pct": 0.0,
+      "status": "FRONTEND_MISSING"
+    },
+    {
+      "capability": "financial-events",
+      "total_endpoints": 3,
+      "consumed_endpoints": 0,
+      "coverage_pct": 0.0,
+      "status": "FRONTEND_MISSING"
+    },
+    {
+      "capability": "forecast",
+      "total_endpoints": 1,
+      "consumed_endpoints": 0,
+      "coverage_pct": 0.0,
+      "status": "FRONTEND_MISSING"
+    },
+    {
+      "capability": "import",
+      "total_endpoints": 3,
+      "consumed_endpoints": 0,
+      "coverage_pct": 0.0,
+      "status": "FRONTEND_MISSING"
+    },
+    {
+      "capability": "investments-workspace",
+      "total_endpoints": 1,
+      "consumed_endpoints": 0,
+      "coverage_pct": 0.0,
+      "status": "FRONTEND_MISSING"
+    },
+    {
+      "capability": "loans-workspace",
+      "total_endpoints": 1,
+      "consumed_endpoints": 0,
+      "coverage_pct": 0.0,
+      "status": "FRONTEND_MISSING"
+    },
+    {
+      "capability": "networth-workspace",
+      "total_endpoints": 1,
+      "consumed_endpoints": 0,
+      "coverage_pct": 0.0,
+      "status": "FRONTEND_MISSING"
+    }
+  ]
+}

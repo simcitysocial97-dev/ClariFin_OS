@@ -12,7 +12,8 @@ import { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, GitCompareArrows, GitCommit, Calendar } from 'lucide-react';
-import { cn } from '@/lib/utils';
+ import { cn } from '@/lib/utils';
+import { apiFetch } from '@/lib/api/gateway';
 
 interface DeltaResponse {
   kind: string;
@@ -79,7 +80,7 @@ function CompareContent() {
   const { data, isLoading, error } = useQuery<DeltaResponse, Error>({
     queryKey: ['platform', 'history', 'compare', currentId, baseline],
     queryFn: async () => {
-      const resp = await fetch('/platform/v1/history/compare', {
+      const resp = await apiFetch('/platform/v1/history/compare', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ current_run_id: currentId, baseline }),

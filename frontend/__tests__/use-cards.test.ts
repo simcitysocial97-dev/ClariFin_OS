@@ -11,22 +11,28 @@
  * - Error handling
  */
 
-import {
 import React from 'react';
-
-import React from 'react';
- describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useCards } from '../lib/hooks/use-cards';
 
-const mockApiFetch = vi.fn();
 vi.mock('@/lib/api/gateway', () => ({
-  apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  apiFetch: vi.fn(),
 }));
 
+import { apiFetch } from '@/lib/api/gateway';
+const mockApiFetch = vi.mocked(apiFetch);
+
 const createWrapper = () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: 0,
+      },
+    },
+  });
   const Wrapper = ({ children }: { children: React.ReactNode }) => React.createElement(
     QueryClientProvider, { client: queryClient }, children
   );
@@ -76,7 +82,7 @@ describe('useCards', () => {
   });
 
   it('should fetch cards successfully', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockCardsData),
     });
@@ -84,9 +90,7 @@ describe('useCards', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCards(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.data).toEqual(mockCardsData);
     expect(result.current.loading).toBe(false);
@@ -104,7 +108,7 @@ describe('useCards', () => {
       total_outstanding: 80000,
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(multiCardData),
     });
@@ -112,9 +116,7 @@ describe('useCards', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCards(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.data?.total_outstanding).toBe(80000);
     expect(result.current.data?.total_cards).toBe(2);
@@ -129,7 +131,7 @@ describe('useCards', () => {
       total_utilization_percent: 0,
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(emptyData),
     });
@@ -137,16 +139,14 @@ describe('useCards', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCards(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.data?.cards).toHaveLength(0);
     expect(result.current.data?.total_cards).toBe(0);
   });
 
   it('should handle API failure', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: false,
       status: 500,
       json: () => Promise.resolve({}),
@@ -155,9 +155,7 @@ describe('useCards', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCards(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.error).not.toBeNull();
     expect(result.current.loading).toBe(false);
@@ -173,7 +171,7 @@ describe('useCards', () => {
       ],
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(invalidData),
     });
@@ -181,9 +179,7 @@ describe('useCards', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCards(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.error).not.toBeNull();
   });
@@ -198,7 +194,7 @@ describe('useCards', () => {
       ],
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(statusData),
     });
@@ -206,9 +202,7 @@ describe('useCards', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCards(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.data?.cards[0].payment_status).toBe('overdue');
     expect(result.current.data?.cards[1].payment_status).toBe('on_track');

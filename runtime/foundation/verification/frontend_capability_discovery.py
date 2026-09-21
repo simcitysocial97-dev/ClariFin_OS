@@ -121,7 +121,7 @@ class FrontendCapabilityDiscoverer:
     """Discovers and attributes frontend capabilities from source code."""
 
     def __init__(self, repo_root: Path = None):
-        self.repo_root = repo_root or Path.cwd()
+        self.repo_root = repo_root or Path(__file__).resolve().parents[3]
         self.frontend_root = self.repo_root / "frontend"
         self.ts_extractor = TypeScriptSymbolExtractor()
         self._frontend_backend_mapper = None

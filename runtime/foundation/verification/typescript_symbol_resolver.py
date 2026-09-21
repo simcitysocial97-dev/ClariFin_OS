@@ -109,7 +109,7 @@ class TypeScriptSymbol:
         Format: frontend:<relative-path-from-repo-root>:<symbol-name>
         Example: frontend:frontend/lib/hooks/use-accounts.ts:useManagedAccounts
         """
-        repo_root = Path.cwd()
+        repo_root = Path(__file__).resolve().parents[3]
         try:
             rel_path = self.file.relative_to(repo_root)
         except ValueError:
@@ -121,10 +121,11 @@ class TypeScriptSymbolExtractor:
     """Extract symbols from TypeScript/TSX source files via ts-morph."""
 
     def __init__(self, cache_path: Path = None, frontend_root: Path = None):
-        self.frontend_root = frontend_root or Path("frontend")
-        self.cache_path = cache_path or Path("runtime/generated/typescript-symbol-cache/symbol-cache.json")
+        repo_root = Path(__file__).resolve().parents[3]
+        self.frontend_root = frontend_root or repo_root / "frontend"
+        self.cache_path = cache_path or repo_root / "runtime/generated/typescript-symbol-cache/symbol-cache.json"
         self.cache = self._load_cache()
-        self._ts_resolver_script = Path("runtime/foundation/verification/typescript_symbol_resolver.ts")
+        self._ts_resolver_script = repo_root / "runtime/foundation/verification/typescript_symbol_resolver.ts"
 
     def _load_cache(self) -> dict:
         if self.cache_path.exists():
@@ -140,7 +141,7 @@ class TypeScriptSymbolExtractor:
 
     def _run_ts_resolver(self, target_path: Path) -> dict:
         """Run the TypeScript symbol resolver script via npx tsx."""
-        repo_root = Path.cwd()
+        repo_root = Path(__file__).resolve().parents[3]
         target_abs = target_path if target_path.is_absolute() else repo_root / target_path
         frontend_root = repo_root / "frontend"
         ts_resolver_script_abs = repo_root / self._ts_resolver_script
@@ -221,7 +222,7 @@ class TypeScriptSymbolExtractor:
         """Extract symbols from all TypeScript/TSX files in a directory recursively."""
         result = {}
         directory = Path(directory)
-        repo_root = Path.cwd()
+        repo_root = Path(__file__).resolve().parents[3]
 
         result_data = self._run_ts_resolver(directory)
 
@@ -385,7 +386,7 @@ class TypeScriptCoverageSymbolMapper:
             try:
                 subprocess.run(
                     cmd,
-                    cwd=Path.cwd(),
+                    cwd=Path(__file__).resolve().parents[3],
                     capture_output=True,
                     text=True,
                     timeout=300,

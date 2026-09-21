@@ -10,22 +10,28 @@
  * - Error handling
  */
 
-import {
 import React from 'react';
-
-import React from 'react';
- describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useInvestments } from '../lib/hooks/use-investments';
 
-const mockApiFetch = vi.fn();
 vi.mock('@/lib/api/gateway', () => ({
-  apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  apiFetch: vi.fn(),
 }));
 
+import { apiFetch } from '@/lib/api/gateway';
+const mockApiFetch = vi.mocked(apiFetch);
+
 const createWrapper = () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: 0,
+      },
+    },
+  });
   const Wrapper = ({ children }: { children: React.ReactNode }) => React.createElement(
     QueryClientProvider, { client: queryClient }, children
   );
@@ -76,7 +82,7 @@ describe('useInvestments', () => {
   });
 
   it('should fetch investments successfully', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockInvestmentsData),
     });
@@ -84,9 +90,7 @@ describe('useInvestments', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useInvestments(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data).toEqual(mockInvestmentsData);
     expect(result.current.isLoading).toBe(false);
@@ -109,7 +113,7 @@ describe('useInvestments', () => {
       },
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(multiInvestmentData),
     });
@@ -117,9 +121,7 @@ describe('useInvestments', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useInvestments(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data?.summary.total_invested_paise).toBe(1500000);
     expect(result.current.data?.summary.total_current_value_paise).toBe(1650000);
@@ -143,7 +145,7 @@ describe('useInvestments', () => {
       },
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(diversifiedData),
     });
@@ -151,9 +153,7 @@ describe('useInvestments', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useInvestments(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data?.summary.allocation_by_type).toEqual({ stocks: 3000000, bonds: 500000 });
   });
@@ -171,7 +171,7 @@ describe('useInvestments', () => {
       },
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(emptyData),
     });
@@ -179,16 +179,14 @@ describe('useInvestments', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useInvestments(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data?.investments).toHaveLength(0);
     expect(result.current.data?.summary.total_investments).toBe(0);
   });
 
   it('should handle API failure', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: false,
       status: 500,
       json: () => Promise.resolve({}),
@@ -197,9 +195,7 @@ describe('useInvestments', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useInvestments(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.isError).toBe(true);
   });
@@ -213,7 +209,7 @@ describe('useInvestments', () => {
       ],
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(invalidData),
     });
@@ -221,9 +217,7 @@ describe('useInvestments', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useInvestments(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.isError).toBe(true);
   });

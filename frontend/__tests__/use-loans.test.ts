@@ -10,22 +10,28 @@
  * - Error handling
  */
 
-import {
 import React from 'react';
-
-import React from 'react';
- describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useLoans, useLoanSchedule, usePrepaymentSimulation } from '../lib/hooks/use-loans';
 
-const mockApiFetch = vi.fn();
 vi.mock('@/lib/api/gateway', () => ({
-  apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  apiFetch: vi.fn(),
 }));
 
+import { apiFetch } from '@/lib/api/gateway';
+const mockApiFetch = vi.mocked(apiFetch);
+
 const createWrapper = () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: 0,
+      },
+    },
+  });
   const Wrapper = ({ children }: { children: React.ReactNode }) => React.createElement(
     QueryClientProvider, { client: queryClient }, children
   );
@@ -78,7 +84,7 @@ describe('useLoans', () => {
   });
 
   it('should fetch loans successfully', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockLoanData),
     });
@@ -86,9 +92,7 @@ describe('useLoans', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useLoans(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data).toEqual(mockLoanData);
     expect(result.current.isLoading).toBe(false);
@@ -109,7 +113,7 @@ describe('useLoans', () => {
       },
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(multiLoanData),
     });
@@ -117,9 +121,7 @@ describe('useLoans', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useLoans(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data?.summary.total_loans).toBe(2);
     expect(result.current.data?.summary.total_outstanding_paise).toBe(25000000);
@@ -136,7 +138,7 @@ describe('useLoans', () => {
       },
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(emptyData),
     });
@@ -144,16 +146,14 @@ describe('useLoans', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useLoans(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data?.loans).toHaveLength(0);
     expect(result.current.data?.summary.total_loans).toBe(0);
   });
 
   it('should handle API failure', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: false,
       status: 500,
       json: () => Promise.resolve({}),
@@ -162,9 +162,7 @@ describe('useLoans', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useLoans(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.isError).toBe(true);
   });
@@ -178,7 +176,7 @@ describe('useLoans', () => {
       ],
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(invalidData),
     });
@@ -186,9 +184,7 @@ describe('useLoans', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useLoans(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.isError).toBe(true);
   });
@@ -212,7 +208,7 @@ describe('useLoanSchedule', () => {
       ],
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockSchedule),
     });
@@ -220,9 +216,7 @@ describe('useLoanSchedule', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useLoanSchedule('1'), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data).toEqual(mockSchedule);
   });
@@ -258,7 +252,7 @@ describe('usePrepaymentSimulation', () => {
       interest_saved_paise: 1500000,
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockSimulation),
     });
@@ -269,9 +263,7 @@ describe('usePrepaymentSimulation', () => {
       { wrapper }
     );
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data).toEqual(mockSimulation);
   });

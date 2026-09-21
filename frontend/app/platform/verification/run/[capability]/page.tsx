@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState, useCallback, useTransition } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { apiFetchJson } from '@/lib/api/gateway';
+import { apiFetchJson, apiFetch } from '@/lib/api/gateway';
 import { useLiveExecution } from '@/lib/hooks/use-live-execution';
 
 type ExecutionDetail = {
@@ -53,7 +53,7 @@ export default function LiveExecutionPage() {
     if (!capId || runSubmitted) return;
     setRunSubmitted(true);
     try {
-      const res = await fetch(`/platform/v1/verification/run`, {
+      const res = await apiFetch(`/platform/v1/verification/run`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ capability_id: capId }),

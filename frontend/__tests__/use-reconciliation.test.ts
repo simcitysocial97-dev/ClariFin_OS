@@ -11,22 +11,28 @@
  * - Error handling
  */
 
-import {
 import React from 'react';
-
-import React from 'react';
- describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useReconciliations, usePendingReconciliations, useScanReconciliations } from '../lib/hooks/use-reconciliation';
 
-const mockApiFetch = vi.fn();
 vi.mock('@/lib/api/gateway', () => ({
-  apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  apiFetch: vi.fn(),
 }));
 
+import { apiFetch } from '@/lib/api/gateway';
+const mockApiFetch = vi.mocked(apiFetch);
+
 const createWrapper = () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: 0,
+      },
+    },
+  });
   const Wrapper = ({ children }: { children: React.ReactNode }) => React.createElement(
     QueryClientProvider, { client: queryClient }, children
   );
@@ -35,24 +41,28 @@ const createWrapper = () => {
 };
 
 const mockReconciliationData = {
-  ledger_entry: {
-    id: 'led-1',
-    account_id: 'acc-1',
-    date: '2026-09-01',
-    description: 'Salary Credit',
-    amount_paise: 500000,
-    balance_after_paise: 1000000,
-  },
-  transaction: {
-    id: 'txn-1',
-    bank: 'SBI',
-    date: '2026-09-01',
-    description: 'Salary Credit',
-    amount_paise: 500000,
-  },
-  matched: true,
-  match_confidence: 0.95,
-  match_type: 'exact_amount',
+  id: 1,
+  debit_txn_id: 101,
+  credit_txn_id: 201,
+  debit_account_id: 'acc-1',
+  credit_account_id: 'acc-2',
+  amount_paise: 500000,
+  date_diff_days: 0,
+  match_confidence_bps: 9500,
+  match_type: 'exact',
+  status: 'confirmed',
+  created_at: '2026-09-01T00:00:00Z',
+  confirmed_at: '2026-09-01T00:00:00Z',
+  debit_date: '2026-09-01',
+  debit_date_iso: '2026-09-01',
+  debit_description: 'Salary Credit',
+  debit_amount_paise: 500000,
+  debit_bank: 'SBI',
+  credit_date: '2026-09-01',
+  credit_date_iso: '2026-09-01',
+  credit_description: 'Salary Credit',
+  credit_amount_paise: 500000,
+  credit_bank: 'SBI',
 };
 
 const mockReconciliationsData = {
@@ -76,7 +86,7 @@ describe('useReconciliations', () => {
   });
 
   it('should fetch reconciliations successfully', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockReconciliationsData),
     });
@@ -84,9 +94,7 @@ describe('useReconciliations', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useReconciliations(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.data).toEqual(mockReconciliationsData);
     expect(result.current.loading).toBe(false);
@@ -100,7 +108,7 @@ describe('useReconciliations', () => {
       total_count: 0,
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(emptyData),
     });
@@ -108,16 +116,14 @@ describe('useReconciliations', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useReconciliations(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.data?.reconciliations).toHaveLength(0);
     expect(result.current.data?.pending_count).toBe(0);
   });
 
   it('should handle API failure', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: false,
       status: 500,
       json: () => Promise.resolve({}),
@@ -126,9 +132,7 @@ describe('useReconciliations', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useReconciliations(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.error).not.toBeNull();
     expect(result.current.loading).toBe(false);
@@ -143,7 +147,7 @@ describe('useReconciliations', () => {
       ],
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(invalidData),
     });
@@ -151,9 +155,7 @@ describe('useReconciliations', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useReconciliations(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.error).not.toBeNull();
   });
@@ -163,13 +165,13 @@ describe('usePendingReconciliations', () => {
   it('should fetch pending reconciliations', async () => {
     const pendingData = {
       reconciliations: [
-        { ...mockReconciliationData, matched: false },
+        { ...mockReconciliationData, status: 'pending', confirmed_at: null },
       ],
       pending_count: 1,
       total_count: 1,
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(pendingData),
     });
@@ -177,9 +179,7 @@ describe('usePendingReconciliations', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => usePendingReconciliations(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.data?.pending_count).toBe(1);
   });
@@ -198,7 +198,7 @@ describe('useScanReconciliations', () => {
       count: 1,
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(scanData),
     });
@@ -206,9 +206,7 @@ describe('useScanReconciliations', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useScanReconciliations(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.data?.count).toBe(1);
     expect(result.current.data?.matches).toHaveLength(1);

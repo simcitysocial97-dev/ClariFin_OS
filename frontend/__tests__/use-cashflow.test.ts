@@ -10,22 +10,28 @@
  * - Error handling
  */
 
-import {
 import React from 'react';
-
-import React from 'react';
- describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useCashflow } from '../lib/hooks/use-cashflow';
 
-const mockApiFetch = vi.fn();
 vi.mock('@/lib/api/gateway', () => ({
-  apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  apiFetch: vi.fn(),
 }));
 
+import { apiFetch } from '@/lib/api/gateway';
+const mockApiFetch = vi.mocked(apiFetch);
+
 const createWrapper = () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: 0,
+      },
+    },
+  });
   const Wrapper = ({ children }: { children: React.ReactNode }) => React.createElement(
     QueryClientProvider, { client: queryClient }, children
   );
@@ -74,7 +80,7 @@ describe('useCashflow', () => {
   });
 
   it('should fetch cashflow with default 6 months', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockCashflowData),
     });
@@ -82,16 +88,14 @@ describe('useCashflow', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCashflow(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(mockApiFetch).toHaveBeenCalledWith('/api/cashflow/monthly?months=6');
     expect(result.current.data).toEqual(mockCashflowData);
   });
 
   it('should fetch cashflow with custom months parameter', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockCashflowData),
     });
@@ -99,15 +103,13 @@ describe('useCashflow', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCashflow(12), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(mockApiFetch).toHaveBeenCalledWith('/api/cashflow/monthly?months=12');
   });
 
   it('should aggregate income and expenses', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockCashflowData),
     });
@@ -115,9 +117,7 @@ describe('useCashflow', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCashflow(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     const months = result.current.data?.months || [];
     const totalIncome = months.reduce((sum, m) => sum + m.income_paise, 0);
@@ -135,7 +135,7 @@ describe('useCashflow', () => {
       total_count: 0,
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(emptyData),
     });
@@ -143,15 +143,13 @@ describe('useCashflow', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCashflow(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data?.months).toHaveLength(0);
   });
 
   it('should handle API failure', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: false,
       status: 500,
       json: () => Promise.resolve({}),
@@ -160,9 +158,7 @@ describe('useCashflow', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCashflow(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.isError).toBe(true);
   });
@@ -181,7 +177,7 @@ describe('useCashflow', () => {
       total_count: 1,
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(negativeNetData),
     });
@@ -189,9 +185,7 @@ describe('useCashflow', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCashflow(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data?.months[0].net_paise).toBe(-200000);
   });
@@ -205,7 +199,7 @@ describe('useCashflow', () => {
       ],
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(invalidData),
     });
@@ -213,9 +207,7 @@ describe('useCashflow', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCashflow(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.isError).toBe(true);
   });

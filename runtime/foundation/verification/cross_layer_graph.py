@@ -103,7 +103,7 @@ class CrossLayerGraphBuilder:
     """Builds the cross-layer dependency graph from source code."""
 
     def __init__(self, repo_root: Path = None):
-        self.repo_root = repo_root or Path.cwd()
+        self.repo_root = repo_root or Path(__file__).resolve().parents[3]
         self.frontend_root = self.repo_root / "frontend"
         self.backend_root = self.repo_root / "backend"
 

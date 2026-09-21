@@ -11,7 +11,8 @@ import { useEffect, useState, useTransition } from 'react';
 import { usePlatformErrors } from '@/lib/hooks/use-platform-errors';
 import { usePlatformHealth } from '@/lib/hooks/use-platform-health';
 import { AlertTriangle, Activity, Filter, Gauge, Layers, RefreshCw } from 'lucide-react';
-import { cn } from '@/lib/utils';
+ import { cn } from '@/lib/utils';
+import { apiFetch } from '@/lib/api/gateway';
 
 type Tab = 'current' | 'recent' | 'recurring' | 'frequency';
 
@@ -47,7 +48,7 @@ useEffect(() => {
     startTransition(() => {
       _setFreqLoading(true);
     });
-    fetch('/platform/v1/errors/frequency')
+    apiFetch('/platform/v1/errors/frequency')
       .then((r) => r.json())
       .then((json: { data: { total: number; buckets: { code: string; layer: string; count: number }[] } }) => {
         if (!cancelled) {

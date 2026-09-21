@@ -174,7 +174,7 @@ export function useDiagnosticSignatures() {
   return useQuery<LocalSignatureStore, Error>({
     queryKey: ['platform', 'diagnostic-signatures'],
     queryFn: async () => {
-      const response = await fetch('/api/diagnostic-signatures');
+      const response = await apiFetch('/platform/v1/diagnostics/signatures');
       if (!response.ok) {
         // Return empty store if file doesn't exist
         return { signatures: [], index: {} };

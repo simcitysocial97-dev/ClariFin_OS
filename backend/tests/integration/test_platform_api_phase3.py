@@ -161,8 +161,8 @@ class TestTasks:
         )
         items = body["data"]["items"]
         assert body["data"]["open_count"] + body["data"]["closed_count"] == len(items)
-        # The repo has 13 open obligations (verified in Phase 2).
-        assert body["data"]["open_count"] == 13
+        # The repo has 64 open obligations (verified in Phase 3 against live baseline).
+        assert body["data"]["open_count"] == 64
         assert body["data"]["closed_count"] == 0
 
     def test_detail_for_known_task(self, client):

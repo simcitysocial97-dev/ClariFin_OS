@@ -19,8 +19,9 @@ import {
   ShieldAlert,
   TestTube,
   Zap,
-} from 'lucide-react';
+ } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { apiFetch } from '@/lib/api/gateway';
 
 interface ChangedFile {
   path: string;
@@ -53,10 +54,10 @@ export default function ChangeIntelligencePage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/platform/v1/change/intelligence')
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json() as Promise<ChangeIntelligenceResponse>;
+    apiFetch('/platform/v1/change/intelligence')
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json() as Promise<ChangeIntelligenceResponse>;
       })
       .then((json) => setData(json.data))
       .catch((e: unknown) => setError(String(e)))

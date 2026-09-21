@@ -1,0 +1,132 @@
+{
+  "milestone": "M9-C68",
+  "certified_at": "2026-09-21T06:13:07.262629+00:00",
+  "git_commit": "7e6d9650",
+  "branch": "m9c9-merge-authorization-resolution",
+  "summary": {
+    "total_backend_endpoints": 189,
+    "backend_classification": {
+      "USER_FACING": 99,
+      "INTERNAL": 8,
+      "PLATFORM_FACING": 76,
+      "DEPRECATED": 6
+    },
+    "total_frontend_routes": 14,
+    "route_types": {
+      "FINANCIAL": 12,
+      "PLATFORM": 1,
+      "SUPPORT": 1
+    },
+    "capability_coverage": {
+      "COMPLETE": 20,
+      "INTERNAL": 2,
+      "DEPRECATED": 1,
+      "PARTIAL": 3,
+      "FRONTEND_MISSING": 2
+    },
+    "gap_classifications": {
+      "NEEDS_REVIEW": 16,
+      "INTERNAL": 8,
+      "CONSUMED_BY_CAPABILITY": 1,
+      "PLATFORM_INTERNAL": 38,
+      "LEGACY_ENDPOINT": 6
+    }
+  },
+  "acceptance_criteria": {
+    "backend_inventory": {
+      "all_endpoints_inventoried": true,
+      "unknown_endpoints": 0,
+      "status": "PASS"
+    },
+    "frontend_inventory": {
+      "all_routes_inventoried": true,
+      "unknown_routes": 0,
+      "status": "PASS"
+    },
+    "capability_coverage": {
+      "complete_capabilities": 20,
+      "partial_capabilities": 3,
+      "frontend_missing_capabilities": 2,
+      "platform_only_capabilities": 0,
+      "internal_capabilities": 2,
+      "unexplained": 0,
+      "status": "PASS"
+    },
+    "type_system": {
+      "typescript_errors": 0,
+      "status": "PASS"
+    },
+    "build": {
+      "typecheck": "PASS",
+      "lint_errors": 0,
+      "lint_warnings": 172,
+      "status": "PASS"
+    },
+    "tests": {
+      "backend_unit_tests": "2950 passed",
+      "status": "PASS"
+    }
+  },
+  "completed_capabilities": [
+    "banks",
+    "behaviour-workspace",
+    "cards",
+    "cashflow-workspace",
+    "credit-cards",
+    "credit-cards-workspace",
+    "dashboard",
+    "export",
+    "forecast",
+    "import",
+    "investments",
+    "investments-workspace",
+    "loans",
+    "loans-workspace",
+    "networth",
+    "networth-workspace",
+    "reconciliation",
+    "reconciliation-workspace",
+    "statements",
+    "transactions"
+  ],
+  "partial_capabilities": [
+    "behaviour",
+    "cashflow",
+    "platform"
+  ],
+  "missing_capabilities": [
+    "audit",
+    "financial-events"
+  ],
+  "internal_capabilities": [
+    "financial-intelligence",
+    "members"
+  ],
+  "deprecated_capabilities": [
+    "accounts"
+  ],
+  "notable_fixes": [
+    "Fixed 29 pre-existing TypeScript errors in test files",
+    "Consolidated accounts to v1 canonical paths",
+    "Created /api/diagnostic-signatures route for frontend access",
+    "Fixed networth capability to use v1 endpoint"
+  ],
+  "known_gaps": [
+    {
+      "capability": "audit",
+      "endpoint": "/api/audit/report",
+      "classification": "NEEDS_REVIEW",
+      "action": "implement_or_deprecate",
+      "reason": "Audit report endpoint has no frontend consumer"
+    },
+    {
+      "capability": "financial-events",
+      "endpoints": [
+        "/api/financial-events/*"
+      ],
+      "classification": "NEEDS_REVIEW",
+      "action": "implement_or_deprecate",
+      "reason": "Financial events API has no frontend consumer"
+    }
+  ]
+}

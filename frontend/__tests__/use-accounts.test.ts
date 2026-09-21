@@ -11,17 +11,26 @@
 
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useManagedAccounts } from '../lib/hooks/use-accounts';
 
-const mockApiFetch = vi.fn();
 vi.mock('@/lib/api/gateway', () => ({
-  apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  apiFetch: vi.fn(),
 }));
 
+import { apiFetch } from '@/lib/api/gateway';
+const mockApiFetch = vi.mocked(apiFetch);
+
 const createWrapper = () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: 0,
+      },
+    },
+  });
   const Wrapper = ({ children }: { children: React.ReactNode }) =>
     React.createElement(QueryClientProvider, { client: queryClient }, children);
   Wrapper.displayName = 'TestQueryClientWrapper';
@@ -58,7 +67,7 @@ describe('useManagedAccounts (v1)', () => {
   });
 
   it('should fetch accounts from /api/v1/accounts and wrap response', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockV1Response),
     });
@@ -66,9 +75,7 @@ describe('useManagedAccounts (v1)', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useManagedAccounts(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(mockApiFetch).toHaveBeenCalledWith('/api/v1/accounts');
     expect(result.current.data).toEqual({
@@ -80,7 +87,7 @@ describe('useManagedAccounts (v1)', () => {
   });
 
   it('should handle API failure', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: false,
       json: () => Promise.resolve({}),
     });
@@ -88,23 +95,19 @@ describe('useManagedAccounts (v1)', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useManagedAccounts(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.isError).toBe(true);
     expect(result.current.data).toBeUndefined();
   });
 
   it('should handle network error', async () => {
-    mockApiFetch.mockRejectedValueOnce(new Error('Network unavailable'));
+    mockApiFetch.mockRejectedValue(new Error('Network unavailable'));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useManagedAccounts(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.isError).toBe(true);
     expect(result.current.error).toBeDefined();
@@ -118,7 +121,7 @@ describe('useManagedAccounts (v1)', () => {
       },
     ];
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(invalidResponse),
     });
@@ -126,15 +129,13 @@ describe('useManagedAccounts (v1)', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useManagedAccounts(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.isError).toBe(true);
   });
 
   it('should fetch empty accounts list', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve([]),
     });
@@ -142,9 +143,7 @@ describe('useManagedAccounts (v1)', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useManagedAccounts(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data?.accounts).toHaveLength(0);
     expect(result.current.data?.total).toBe(0);

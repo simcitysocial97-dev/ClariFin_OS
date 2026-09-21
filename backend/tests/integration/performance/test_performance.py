@@ -17,7 +17,7 @@ class TestAPIPerformance:
     def test_accounts_list_under_1_second(self, client) -> None:
         """Accounts list endpoint responds under 1 second."""
         start = time.time()
-        response = client.get("/api/accounts/manage")
+        response = client.get("/api/v1/accounts")
         duration = time.time() - start
 
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
@@ -176,7 +176,7 @@ class TestQueryPerformance:
     def test_account_list_query_under_500ms(self, client) -> None:
         """Account list query is fast."""
         start = time.time()
-        response = client.get("/api/accounts/manage")
+        response = client.get("/api/v1/accounts")
         duration = time.time() - start
 
         assert response.status_code == 200

@@ -109,7 +109,7 @@ export function useNetWorthCapability(): NetWorthCapabilityReturn {
   } = useQuery<NetWorthViewModel | null>({
     queryKey: [NET_WORTH_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const raw = await apiFetchJson('/api/networth') as any;
+      const raw = await apiFetchJson('/api/v1/net-worth') as any;
       return netWorthMapper.mapNetWorthDTO(raw);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes

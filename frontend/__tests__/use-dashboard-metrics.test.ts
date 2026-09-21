@@ -10,22 +10,28 @@
  * - Error handling
  */
 
-import {
 import React from 'react';
-
-import React from 'react';
- describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useDashboardMetrics } from '../lib/hooks/use-dashboard-metrics';
 
-const mockApiFetch = vi.fn();
 vi.mock('@/lib/api/gateway', () => ({
-  apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  apiFetch: vi.fn(),
 }));
 
+import { apiFetch } from '@/lib/api/gateway';
+const mockApiFetch = vi.mocked(apiFetch);
+
 const createWrapper = () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: 0,
+      },
+    },
+  });
   const Wrapper = ({ children }: { children: React.ReactNode }) => React.createElement(
     QueryClientProvider, { client: queryClient }, children
   );
@@ -60,7 +66,7 @@ describe('useDashboardMetrics', () => {
   });
 
   it('should fetch dashboard metrics successfully', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockDashboardMetrics),
     });
@@ -68,9 +74,7 @@ describe('useDashboardMetrics', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.data).toEqual(mockDashboardMetrics);
     expect(result.current.loading).toBe(false);
@@ -78,7 +82,7 @@ describe('useDashboardMetrics', () => {
   });
 
   it('should compute cash flow correctly', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockDashboardMetrics),
     });
@@ -86,9 +90,7 @@ describe('useDashboardMetrics', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.data?.net_cash_flow_paise).toBe(200000);
     expect(result.current.data?.total_income_paise).toBe(500000);
@@ -96,7 +98,7 @@ describe('useDashboardMetrics', () => {
   });
 
   it('should calculate savings rate correctly', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockDashboardMetrics),
     });
@@ -104,15 +106,13 @@ describe('useDashboardMetrics', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.data?.savings_rate).toBe(0.4);
   });
 
   it('should calculate EMI ratio correctly', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockDashboardMetrics),
     });
@@ -120,16 +120,14 @@ describe('useDashboardMetrics', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.data?.emi_ratio).toBe(0.1);
     expect(result.current.data?.emi_paise).toBe(50000);
   });
 
   it('should show buffer days metric', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockDashboardMetrics),
     });
@@ -137,15 +135,13 @@ describe('useDashboardMetrics', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.data?.buffer_days).toBe(15);
   });
 
   it('should display financial health score', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockDashboardMetrics),
     });
@@ -153,9 +149,7 @@ describe('useDashboardMetrics', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.data?.financial_health_score).toBe(85);
   });
@@ -166,7 +160,7 @@ describe('useDashboardMetrics', () => {
       financial_health_score: null,
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(metricsWithNullScore),
     });
@@ -174,15 +168,13 @@ describe('useDashboardMetrics', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.data?.financial_health_score).toBeNull();
   });
 
   it('should handle API failure', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: false,
       status: 500,
       json: () => Promise.resolve({}),
@@ -191,9 +183,7 @@ describe('useDashboardMetrics', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.error).not.toBeNull();
     expect(result.current.loading).toBe(false);
@@ -204,7 +194,7 @@ describe('useDashboardMetrics', () => {
       net_cash_flow_paise: 'not-a-number',
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(invalidData),
     });
@@ -212,9 +202,7 @@ describe('useDashboardMetrics', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.error).not.toBeNull();
   });
@@ -228,16 +216,10 @@ describe('useDashboardMetrics', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
-
+    await waitFor(() => expect(result.current.loading).toBe(false))
     expect(mockApiFetch).toHaveBeenCalledTimes(1);
 
-    await act(async () => {
-      await result.current.refetch();
-    });
-
-    expect(mockApiFetch).toHaveBeenCalledTimes(2);
+    await result.current.refetch()
+    await waitFor(() => expect(mockApiFetch).toHaveBeenCalledTimes(2));
   });
 });

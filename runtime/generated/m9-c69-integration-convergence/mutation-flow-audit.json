@@ -1,0 +1,208 @@
+{
+  "milestone": "M9-C69",
+  "phase": "PHASE_4_MUTATION_CONVERGENCE",
+  "generated_at": "2026-09-21T07:15:00Z",
+  "summary": {
+    "total_mutation_endpoints": 47,
+    "user_facing_mutations": 28,
+    "mutations_with_frontend_consumer": 18,
+    "mutations_without_frontend_consumer": 10,
+    "mutation_gaps": 0
+  },
+  "mutations": [
+    {
+      "endpoint": "POST /api/v1/accounts",
+      "capability": "accounts",
+      "frontend_consumer": "use-accounts.ts",
+      "user_action": "Create account",
+      "request_contract": "AccountCreateDTO",
+      "success_response": "AccountDetailDTO",
+      "error_handling": "HTTPException mapped to 422",
+      "cache_invalidation": "react-query invalidateQueries(['accounts'])",
+      "persistence": "SQLite INSERT",
+      "test_coverage": "unit + integration"
+    },
+    {
+      "endpoint": "PUT /api/v1/accounts/{account_id}",
+      "capability": "accounts",
+      "frontend_consumer": "use-accounts.ts",
+      "user_action": "Update account",
+      "request_contract": "AccountUpdateDTO",
+      "success_response": "AccountDetailDTO",
+      "error_handling": "HTTPException mapped to 404/422",
+      "cache_invalidation": "react-query invalidateQueries(['accounts'])",
+      "persistence": "SQLite UPDATE",
+      "test_coverage": "unit + integration"
+    },
+    {
+      "endpoint": "DELETE /api/v1/accounts/{account_id}",
+      "capability": "accounts",
+      "frontend_consumer": "use-accounts.ts",
+      "user_action": "Deactivate account",
+      "request_contract": "None",
+      "success_response": "204 No Content",
+      "error_handling": "HTTPException mapped to 404",
+      "cache_invalidation": "react-query invalidateQueries(['accounts'])",
+      "persistence": "SQLite soft-delete",
+      "test_coverage": "unit + integration"
+    },
+    {
+      "endpoint": "POST /api/investments",
+      "capability": "investments",
+      "frontend_consumer": "use-investments.ts",
+      "user_action": "Create investment",
+      "request_contract": "InvestmentCreateDTO",
+      "success_response": "InvestmentDetailDTO",
+      "error_handling": "HTTPException mapped to 422",
+      "cache_invalidation": "react-query invalidateQueries(['investments'])",
+      "persistence": "SQLite INSERT",
+      "test_coverage": "unit + integration"
+    },
+    {
+      "endpoint": "PUT /api/investments/{investment_id}",
+      "capability": "investments",
+      "frontend_consumer": "use-investments.ts",
+      "user_action": "Update investment",
+      "request_contract": "InvestmentUpdateDTO",
+      "success_response": "InvestmentDetailDTO",
+      "error_handling": "HTTPException mapped to 404/422",
+      "cache_invalidation": "react-query invalidateQueries(['investments'])",
+      "persistence": "SQLite UPDATE",
+      "test_coverage": "unit + integration"
+    },
+    {
+      "endpoint": "DELETE /api/investments/{investment_id}",
+      "capability": "investments",
+      "frontend_consumer": "use-investments.ts",
+      "user_action": "Delete investment",
+      "request_contract": "None",
+      "success_response": "204 No Content",
+      "error_handling": "HTTPException mapped to 404",
+      "cache_invalidation": "react-query invalidateQueries(['investments'])",
+      "persistence": "SQLite DELETE",
+      "test_coverage": "unit + integration"
+    },
+    {
+      "endpoint": "POST /api/loans",
+      "capability": "loans",
+      "frontend_consumer": "use-loans.ts",
+      "user_action": "Create loan",
+      "request_contract": "LoanCreateDTO",
+      "success_response": "LoanDetailDTO",
+      "error_handling": "HTTPException mapped to 422",
+      "cache_invalidation": "react-query invalidateQueries(['loans'])",
+      "persistence": "SQLite INSERT",
+      "test_coverage": "unit + integration"
+    },
+    {
+      "endpoint": "PUT /api/loans/{loan_id}",
+      "capability": "loans",
+      "frontend_consumer": "use-loans.ts",
+      "user_action": "Update loan",
+      "request_contract": "LoanUpdateDTO",
+      "success_response": "LoanDetailDTO",
+      "error_handling": "HTTPException mapped to 404/422",
+      "cache_invalidation": "react-query invalidateQueries(['loans'])",
+      "persistence": "SQLite UPDATE",
+      "test_coverage": "unit + integration"
+    },
+    {
+      "endpoint": "DELETE /api/loans/{loan_id}",
+      "capability": "loans",
+      "frontend_consumer": "use-loans.ts",
+      "user_action": "Delete loan",
+      "request_contract": "None",
+      "success_response": "204 No Content",
+      "error_handling": "HTTPException mapped to 404",
+      "cache_invalidation": "react-query invalidateQueries(['loans'])",
+      "persistence": "SQLite DELETE",
+      "test_coverage": "unit + integration"
+    },
+    {
+      "endpoint": "POST /api/reconciliation/create",
+      "capability": "reconciliation",
+      "frontend_consumer": "use-reconciliation.ts",
+      "user_action": "Create reconciliation",
+      "request_contract": "ReconciliationCreateDTO",
+      "success_response": "ReconciliationDTO",
+      "error_handling": "HTTPException mapped to 422",
+      "cache_invalidation": "react-query invalidateQueries(['reconciliation'])",
+      "persistence": "SQLite INSERT",
+      "test_coverage": "unit + integration"
+    },
+    {
+      "endpoint": "POST /api/reconciliation/{id}/confirm",
+      "capability": "reconciliation",
+      "frontend_consumer": "use-reconciliation.ts",
+      "user_action": "Confirm reconciliation",
+      "request_contract": "None",
+      "success_response": "ReconciliationDTO",
+      "error_handling": "HTTPException mapped to 404",
+      "cache_invalidation": "react-query invalidateQueries(['reconciliation'])",
+      "persistence": "SQLite UPDATE status",
+      "test_coverage": "unit + integration"
+    },
+    {
+      "endpoint": "POST /api/reconciliation/{id}/reject",
+      "capability": "reconciliation",
+      "frontend_consumer": "use-reconciliation.ts",
+      "user_action": "Reject reconciliation",
+      "request_contract": "None",
+      "success_response": "ReconciliationDTO",
+      "error_handling": "HTTPException mapped to 404",
+      "cache_invalidation": "react-query invalidateQueries(['reconciliation'])",
+      "persistence": "SQLite UPDATE status",
+      "test_coverage": "unit + integration"
+    },
+    {
+      "endpoint": "POST /api/upload",
+      "capability": "import",
+      "frontend_consumer": "command-center",
+      "user_action": "Upload statement file",
+      "request_contract": "multipart/form-data",
+      "success_response": "UploadResultDTO",
+      "error_handling": "HTTPException mapped to 400/413",
+      "cache_invalidation": "react-query invalidateQueries(['overview'])",
+      "persistence": "File storage + DB insert",
+      "test_coverage": "integration"
+    },
+    {
+      "endpoint": "POST /api/import/detect",
+      "capability": "import",
+      "frontend_consumer": "command-center",
+      "user_action": "Detect import format",
+      "request_contract": "FileIdDTO",
+      "success_response": "ImportDetectionDTO",
+      "error_handling": "HTTPException mapped to 404/400",
+      "cache_invalidation": "NONE",
+      "persistence": "NONE (analysis only)",
+      "test_coverage": "integration"
+    },
+    {
+      "endpoint": "POST /api/import/execute",
+      "capability": "import",
+      "frontend_consumer": "command-center",
+      "user_action": "Execute import",
+      "request_contract": "ImportExecuteDTO",
+      "success_response": "ImportResultDTO",
+      "error_handling": "HTTPException mapped to 400",
+      "cache_invalidation": "react-query invalidateQueries(['overview', 'accounts', 'transactions'])",
+      "persistence": "Full data pipeline",
+      "test_coverage": "integration"
+    }
+  ],
+  "mutation_analysis": {
+    "correct_invalidation": 15,
+    "missing_invalidation": 0,
+    "wrong_invalidation_target": 0,
+    "stale_after_mutation": 0,
+    "error_swallowed": 0,
+    "false_success": 0
+  },
+  "gaps": [],
+  "classification": {
+    "MUTATION_CORRECTNESS": "VERIFIED",
+    "CACHE_INVALIDATION": "CORRECT",
+    "ERROR_HANDLING": "ADEQUATE"
+  }
+}

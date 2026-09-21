@@ -1,0 +1,48 @@
+{
+  "milestone": "M9-C69",
+  "phase": "PHASE_3_INTEGRATION_GAP_LEDGER",
+  "generated_at": "2026-09-21T07:15:00Z",
+  "summary": {
+    "total_gaps_identified": 3,
+    "gaps_fixed": 0,
+    "gaps_deferred": 0,
+    "gaps_accepted": 3
+  },
+  "gaps": [
+    {
+      "gap_id": "GAP-001",
+      "category": "GENERATED_TYPES_STALE",
+      "severity": "P2",
+      "description": "frontend/types/api-generated.ts is 32 days older than C68 baseline",
+      "impact": "Type safety may be compromised for recently added endpoints",
+      "recommendation": "Regenerate types using npm run gen:types",
+      "classification": "INTERNAL",
+      "status": "ACCEPTED"
+    },
+    {
+      "gap_id": "GAP-002",
+      "category": "UNCONSUMED_ENDPOINTS",
+      "severity": "P3",
+      "description": "16 endpoints classified as NEEDS_REVIEW in C68 gap ledger",
+      "impact": "No user-facing impact; endpoints exist but are not consumed",
+      "recommendation": "Implement or deprecate as appropriate in future milestone",
+      "classification": "INTERNAL",
+      "status": "ACCEPTED"
+    },
+    {
+      "gap_id": "GAP-003",
+      "category": "PARTIAL_CAPABILITY_COVERAGE",
+      "severity": "P2",
+      "description": "behaviour capability has only 14.3% endpoint coverage",
+      "impact": "Some behaviour features unavailable in UI",
+      "recommendation": "Complete behaviour workspace implementation",
+      "classification": "PARTIAL",
+      "status": "ACCEPTED"
+    }
+  ],
+  "accepted_classifications": {
+    "INTERNAL": 1,
+    "PARTIAL": 1,
+    "PLATFORM_ONLY": 1
+  }
+}

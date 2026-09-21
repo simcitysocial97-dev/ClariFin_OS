@@ -10,22 +10,28 @@
  * - Error handling
  */
 
-import {
 import React from 'react';
-
-import React from 'react';
- describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useOverview } from '../lib/hooks/use-overview';
 
-const mockApiFetch = vi.fn();
 vi.mock('@/lib/api/gateway', () => ({
-  apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  apiFetch: vi.fn(),
 }));
 
+import { apiFetch } from '@/lib/api/gateway';
+const mockApiFetch = vi.mocked(apiFetch);
+
 const createWrapper = () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: 0,
+      },
+    },
+  });
   const Wrapper = ({ children }: { children: React.ReactNode }) => React.createElement(
     QueryClientProvider, { client: queryClient }, children
   );
@@ -85,7 +91,7 @@ describe('useOverview', () => {
   });
 
   it('should fetch overview successfully', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockOverviewData),
     });
@@ -93,9 +99,7 @@ describe('useOverview', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useOverview(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data).toEqual(mockOverviewData);
     expect(result.current.isLoading).toBe(false);
@@ -103,7 +107,7 @@ describe('useOverview', () => {
   });
 
   it('should display key metrics', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockOverviewData),
     });
@@ -111,9 +115,7 @@ describe('useOverview', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useOverview(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data?.total_spend).toBe(50000);
     expect(result.current.data?.month_change).toBe('+14.3%');
@@ -121,7 +123,7 @@ describe('useOverview', () => {
   });
 
   it('should render monthly chart data', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockOverviewData),
     });
@@ -129,9 +131,7 @@ describe('useOverview', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useOverview(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data?.monthly_chart).toHaveLength(3);
     expect(result.current.data?.category_chart).toHaveLength(2);
@@ -139,7 +139,7 @@ describe('useOverview', () => {
   });
 
   it('should display behavioral insights', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockOverviewData),
     });
@@ -147,16 +147,14 @@ describe('useOverview', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useOverview(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data?.behavioral_insights).toHaveLength(1);
     expect(result.current.data?.behavioral_insights[0].severity).toBe('warning');
   });
 
   it('should handle API failure', async () => {
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: false,
       status: 500,
       json: () => Promise.resolve({}),
@@ -165,9 +163,7 @@ describe('useOverview', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useOverview(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.isError).toBe(true);
   });
@@ -177,7 +173,7 @@ describe('useOverview', () => {
       total_spend: 'not-a-number',
     };
 
-    mockApiFetch.mockResolvedValueOnce({
+    mockApiFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(invalidData),
     });
@@ -185,9 +181,7 @@ describe('useOverview', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useOverview(), { wrapper });
 
-    await act(async () => {
-      await result.current.refetch();
-    });
+    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.isError).toBe(true);
   });

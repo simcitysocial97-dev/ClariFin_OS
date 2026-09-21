@@ -27,7 +27,8 @@ import {
   AlertTriangle,
   ExternalLink,
   Search,
-} from 'lucide-react';
+ } from 'lucide-react';
+import { apiFetch } from '@/lib/api/gateway';
 
 interface DiagnosticDetail {
   id: string;
@@ -310,7 +311,7 @@ function ProvenanceField({ label, value }: { label: string; value: string }) {
 async function fetchDiagnosticDetail(id: string): Promise<DiagnosticDetail | null> {
   // Try to load from local diagnostic signatures store
   try {
-    const response = await fetch('/api/diagnostic-signatures');
+    const response = await apiFetch('/platform/v1/diagnostics/signatures');
     if (response.ok) {
       const store = await response.json();
       const sig = store.signatures?.find((s: any) => s.id === id);
@@ -343,7 +344,7 @@ async function fetchDiagnosticDetail(id: string): Promise<DiagnosticDetail | nul
 
   // Try errors API
   try {
-    const response = await fetch('/platform/v1/errors/current');
+    const response = await apiFetch('/platform/v1/errors/current');
     if (response.ok) {
       const data = await response.json();
       const error = data.data?.items?.find((e: any) => e.id === id);
@@ -372,7 +373,7 @@ async function fetchDiagnosticDetail(id: string): Promise<DiagnosticDetail | nul
 
   // Try tasks API
   try {
-    const response = await fetch('/platform/v1/tasks');
+    const response = await apiFetch('/platform/v1/tasks');
     if (response.ok) {
       const data = await response.json();
       const task = data.data?.items?.find((t: any) => t.id === id);

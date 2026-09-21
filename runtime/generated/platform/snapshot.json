@@ -1,9 +1,9 @@
 {
   "domains": {
     "capabilities": {
-      "_c": 611581.116985897,
-      "_ts": "2026-09-19T06:00:06Z",
-      "hash": "790d2ea8443e9d9c77f1e35ecb7ff7665f7343a01733e82b678acf30ee942a1b",
+      "_c": 33168.592361485,
+      "_ts": "2026-09-21T10:26:42Z",
+      "hash": "b955bfe683d8e5093478238feaba623dd3f20ba5409650a3c04d1660fe96d190",
       "payload": {
         "data": {
           "categories": [
@@ -769,43 +769,215 @@
             }
           ]
         },
-        "generated_at": "2026-09-19T06:00:06Z",
+        "generated_at": "2026-09-21T10:26:42Z",
         "id": "sha256:5316987b8b1d0518a089806afeaca29464fda75fd1d9c48bfc66eb68396c465c",
         "kind": "platform.capability_list",
         "version": "1.0.0"
       }
     },
     "change": {
-      "_c": 628462.76166979,
-      "_ts": "2026-09-19T15:50:18Z",
-      "hash": "1a59c7a780e16ca0b356a4eed63f331375cbf569a8ad9371060e97038a778d8a",
+      "_c": 33160.827109908,
+      "_ts": "2026-09-21T10:26:34Z",
+      "hash": "5e68361b2b5fb1b0954bb7b1c32b1f27dd1782a59ea7634c3ee6306646b89edc",
       "payload": {
         "data": {
           "affected_capabilities": [
+            "account-engine",
             "api-contracts",
             "behaviour-engine",
             "cashflow-engine",
             "credit-card-engine",
             "financial-intelligence",
+            "frontend:component:frontend-accounts:accounts",
+            "frontend:component:frontend-behaviour:behaviour",
+            "frontend:component:frontend-cards:cards",
+            "frontend:component:frontend-cashflow:cashflow",
+            "frontend:component:frontend-command-center:command-center",
+            "frontend:component:frontend-dashboard:dashboard",
+            "frontend:component:frontend-filters:filters",
+            "frontend:component:frontend-forecast:forecast",
+            "frontend:component:frontend-graph:graph",
+            "frontend:component:frontend-intelligence:intelligence",
+            "frontend:component:frontend-investments:investments",
+            "frontend:component:frontend-layout:layout",
+            "frontend:component:frontend-loans:loans",
+            "frontend:component:frontend-networth:net-worth",
+            "frontend:component:frontend-os-shell:os-shell",
+            "frontend:component:frontend-platform:platform",
+            "frontend:component:frontend-primitives:primitives",
+            "frontend:component:frontend-query-provider.tsx:query-provider",
+            "frontend:component:frontend-reconciliation:reconciliation",
+            "frontend:component:frontend-workspace:workspace",
+            "frontend:hook:frontend-accounts:accounts",
+            "frontend:hook:frontend-behaviour:behavior-score",
+            "frontend:hook:frontend-cards:cards",
+            "frontend:hook:frontend-cashflow:cashflow",
+            "frontend:hook:frontend-dashboard:dashboard-metrics",
+            "frontend:hook:frontend-hooks:analytics",
+            "frontend:hook:frontend-hooks:live-execution",
+            "frontend:hook:frontend-hooks:overview",
+            "frontend:hook:frontend-hooks:platform-runs.test",
+            "frontend:hook:frontend-hooks:platform-status.test",
+            "frontend:hook:frontend-hooks:platform-workflows.test",
+            "frontend:hook:frontend-hooks:query-finance",
+            "frontend:hook:frontend-hooks:verification-center",
+            "frontend:hook:frontend-investments:investments",
+            "frontend:hook:frontend-loans:loans",
+            "frontend:hook:frontend-networth:networth",
+            "frontend:hook:frontend-platform:platform-architecture",
+            "frontend:hook:frontend-platform:platform-capabilities",
+            "frontend:hook:frontend-platform:platform-diagnostics",
+            "frontend:hook:frontend-platform:platform-errors",
+            "frontend:hook:frontend-platform:platform-events",
+            "frontend:hook:frontend-platform:platform-health",
+            "frontend:hook:frontend-platform:platform-runs",
+            "frontend:hook:frontend-platform:platform-status",
+            "frontend:hook:frontend-platform:platform-tasks",
+            "frontend:hook:frontend-platform:platform-workflows",
+            "frontend:hook:frontend-reconciliation:reconciliation",
+            "frontend:route:frontend-api:api/diagnostic-signatures/route.ts",
+            "frontend:route:frontend-dashboard:dashboard",
+            "frontend:route:frontend-layout.tsx:layout",
+            "frontend:route:frontend-platform:platform",
+            "frontend:route:frontend-platform:platform/architecture",
+            "frontend:route:frontend-platform:platform/capabilities",
+            "frontend:route:frontend-platform:platform/capabilities/[capabilityId]",
+            "frontend:route:frontend-platform:platform/diagnostics",
+            "frontend:route:frontend-platform:platform/diagnostics/change",
+            "frontend:route:frontend-platform:platform/diagnostics/detail/[id]",
+            "frontend:route:frontend-platform:platform/errors",
+            "frontend:route:frontend-platform:platform/evidence",
+            "frontend:route:frontend-platform:platform/framework",
+            "frontend:route:frontend-platform:platform/health",
+            "frontend:route:frontend-platform:platform/history",
+            "frontend:route:frontend-platform:platform/history/compare",
+            "frontend:route:frontend-platform:platform/layout",
+            "frontend:route:frontend-platform:platform/platform-providers",
+            "frontend:route:frontend-platform:platform/runs",
+            "frontend:route:frontend-platform:platform/runs/[runId]",
+            "frontend:route:frontend-platform:platform/verification",
+            "frontend:route:frontend-platform:platform/verification/[capability]",
+            "frontend:route:frontend-platform:platform/verification/history/[runId]",
+            "frontend:route:frontend-platform:platform/verification/run/[capability]",
+            "frontend:route:frontend-platform:platform/workflows",
             "ledger",
             "loan-engine",
             "reconciliation",
             "runtime-verification"
           ],
           "affected_tests": [],
-          "affected_workflows": [],
+          "affected_workflows": [
+            "run_runtime_verification",
+            "runtime"
+          ],
           "changed_files": [
             {
               "change_type": "modified",
-              "path": "runtime/generated/diagnostic-signatures.json"
+              "path": "backend/runtime/generated/platform/snapshot.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/e2e-route-map.json"
+              "path": "backend/tests/integration/performance/test_performance.py"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/engineering-history.json"
+              "path": "backend/tests/integration/test_platform_api_phase3.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/api-contracts/platform-c67.2.contract.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/use-accounts.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/use-cards.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/use-cashflow.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/use-dashboard-metrics.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/use-investments.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/use-loans.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/use-overview.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/__tests__/use-reconciliation.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/app/platform/diagnostics/change/page.tsx"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/app/platform/diagnostics/detail/[id]/page.tsx"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/app/platform/errors/page.tsx"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/app/platform/history/compare/page.tsx"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/app/platform/verification/run/[capability]/page.tsx"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/components/loading/__tests__/loading-performance.test.tsx"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/lib/capabilities/use-net-worth-capability.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/lib/hooks/__tests__/use-platform-status.test.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/lib/hooks/use-platform-diagnostics.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/next-env.d.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "frontend/types/api-generated.ts"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/cross_layer_graph.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/frontend_capability_discovery.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/foundation/verification/typescript_symbol_resolver.py"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/engineering-events.jsonl"
             },
             {
               "change_type": "modified",
@@ -817,326 +989,362 @@
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/knowledge-index.json"
+              "path": "runtime/generated/m9-c68-frontend-completeness/backend-endpoint-inventory.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c48/aggregator-obsolete-disposition.json"
+              "path": "runtime/generated/m9-c68-frontend-completeness/capability-coverage-matrix.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c48/api-schema-governance.json"
+              "path": "runtime/generated/m9-c68-frontend-completeness/frontend-consumption-inventory.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c48/cli-classification.json"
+              "path": "runtime/generated/m9-c68-frontend-completeness/gap-ledger.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c48/frontend-arithmetic-lint.json"
+              "path": "runtime/generated/m9-c68-frontend-completeness/progress.md"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c48/function-audit.json"
+              "path": "runtime/generated/platform/snapshot.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c48/test-quality-classification.json"
+              "path": "backend/runtime/generated/git-fetch-events.jsonl"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50.13/junit-invariant-money.xml"
+              "path": "frontend/app/api/diagnostic-signatures/route.ts"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-backend-unit-change.json"
+              "path": "runtime/generated/m9-c68-frontend-completeness/final-certification.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-cache-reuse-1.json"
+              "path": "runtime/generated/m9-c68-frontend-completeness/final-certification.md"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-cache-reuse-2.json"
+              "path": "runtime/generated/m9-c68-frontend-completeness/route-inventory.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-capability-change.json"
+              "path": "runtime/generated/m9-c69-integration-convergence/baseline.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-ci-equivalent.json"
+              "path": "runtime/generated/m9-c69-integration-convergence/contract-audit.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-contract-change.json"
+              "path": "runtime/generated/m9-c69-integration-convergence/error-contract-audit.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-cross-layer.json"
+              "path": "runtime/generated/m9-c69-integration-convergence/flow-inventory.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-deletion.json"
+              "path": "runtime/generated/m9-c69-integration-convergence/integration-gap-ledger.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-failed-verification.json"
+              "path": "runtime/generated/m9-c69-integration-convergence/mutation-flow-audit.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-frontend-change.json"
+              "path": "runtime/generated/m9-c69-integration-convergence/progress.md"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-mutation-sensitive.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-no-change.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-rename.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-self-verification.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-unmapped-change.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations-summary.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/operations-summary.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c55/c56-readiness.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/metrics/smoke-test/.index.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/symbol-cache.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/runtime/generated/m9-c44/cache/index.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-a5543a2eda0f/exec-0001-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-a5543a2eda0f/exec-0001-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-a5543a2eda0f/exec-0002-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-a5543a2eda0f/exec-0002-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-a5543a2eda0f/exec-0003-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-a5543a2eda0f/exec-0003-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-a5543a2eda0f/exec-0004-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-a5543a2eda0f/exec-0004-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-a5543a2eda0f/exec-0005-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-a5543a2eda0f/exec-0005-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-a5543a2eda0f/exec-0006-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-a5543a2eda0f/exec-0006-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-a5543a2eda0f/exec-0007-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-a5543a2eda0f/exec-0007-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-a5543a2eda0f/exec-0008-stderr.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/logs/execplan-a5543a2eda0f/exec-0008-stdout.log"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-16fe6cbef4ada511.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-39949028bb35daa4.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-3cc4f88a55c0dc31.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-3ee44b24971d8266.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-3f9de647f0aaf395.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-54188cde297b2df5.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-584ebe869871d9e5.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-587306c0abec1d58.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-91f4195654c30ff4.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-a53944430bcc42fd.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-a6709d885427703f.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-b013dfb381165edd.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-bcf4b6d5f9037ddb.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-c85129ffe85a9f71.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-df21f4eab151b6b3.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/operations/run-e417873408e8d81d.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/metrics/smoke-test/smoke-1789830894.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/metrics/smoke-test/smoke-1789831138.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/metrics/smoke-test/smoke-1789831762.json"
+              "path": "runtime/generated/m9-c69-integration-convergence/test-results.json"
             }
           ],
-          "generated_from": "2026-09-19T15:50:16.022341+00:00",
-          "recommended_verification": [],
+          "generated_from": "2026-09-21T10:26:17.723152+00:00",
+          "recommended_verification": [
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='UNMAPPED:frontend/__tests__/api-contracts/platform-c67.2.contract.test.ts', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability UNMAPPED:frontend/__tests__/api-contracts/platform-c67.2.contract.test.ts \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='UNMAPPED:frontend/app/api/diagnostic-signatures/route.ts', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability UNMAPPED:frontend/app/api/diagnostic-signatures/route.ts \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='UNMAPPED:frontend/lib/hooks/__tests__/use-platform-status.test.ts', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability UNMAPPED:frontend/lib/hooks/__tests__/use-platform-status.test.ts \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='UNMAPPED:frontend/lib/hooks/use-platform-diagnostics.ts', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability UNMAPPED:frontend/lib/hooks/use-platform-diagnostics.ts \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='UNMAPPED:frontend/next-env.d.ts', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability UNMAPPED:frontend/next-env.d.ts \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:component:frontend-loading:loading', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:component:frontend-loading:loading \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:frontend_dto_type:frontend-shared:api-generated', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:frontend_dto_type:frontend-shared:api-generated \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:frontend_test:frontend-shared:use-accounts.test', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:frontend_test:frontend-shared:use-accounts.test \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:frontend_test:frontend-shared:use-cards.test', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:frontend_test:frontend-shared:use-cards.test \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:frontend_test:frontend-shared:use-cashflow.test', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:frontend_test:frontend-shared:use-cashflow.test \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:frontend_test:frontend-shared:use-dashboard-metrics.test', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:frontend_test:frontend-shared:use-dashboard-metrics.test \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:frontend_test:frontend-shared:use-investments.test', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:frontend_test:frontend-shared:use-investments.test \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:frontend_test:frontend-shared:use-loans.test', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:frontend_test:frontend-shared:use-loans.test \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:frontend_test:frontend-shared:use-overview.test', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:frontend_test:frontend-shared:use-overview.test \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:frontend_test:frontend-shared:use-reconciliation.test', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:frontend_test:frontend-shared:use-reconciliation.test \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:hook:frontend-hooks:platform-status.test', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:hook:frontend-hooks:platform-status.test \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:hook:frontend-platform:platform-diagnostics', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:hook:frontend-platform:platform-diagnostics \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-api:api/diagnostic-signatures/route.ts', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-api:api/diagnostic-signatures/route.ts \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-cashflow:cashflow', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-cashflow:cashflow \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/architecture', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/architecture \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/capabilities', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/capabilities \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/capabilities/[capabilityId]', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/capabilities/[capabilityId] \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/diagnostics', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/diagnostics \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/diagnostics/change', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/diagnostics/change \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/diagnostics/detail/[id]', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/diagnostics/detail/[id] \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/errors', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/errors \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/evidence', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/evidence \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/framework', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/framework \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/health', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/health \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/history', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/history \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/history/compare', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/history/compare \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/layout', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/layout \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/platform-providers', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/platform-providers \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/runs', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/runs \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/runs/[runId]', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/runs/[runId] \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/verification', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/verification \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/verification/[capability]', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/verification/[capability] \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/verification/history/[runId]', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/verification/history/[runId] \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/verification/run/[capability]', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/verification/run/[capability] \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='frontend:route:frontend-platform:platform/workflows', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability frontend:route:frontend-platform:platform/workflows \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='useNetWorthCapability', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability useNetWorthCapability \u2014 no executable command available', has_executable_command=False)"
+          ],
           "risk": "HIGH",
           "stale_evidence": []
         },
-        "generated_at": "2026-09-19T15:50:18Z",
-        "id": "sha256:a9b85c22dfbc57e59e9bb6b8b407206f71b86a5e227b923bb677c48e6ff44da0",
+        "generated_at": "2026-09-21T10:26:34Z",
+        "id": "sha256:1e1f92c2fd29c25426acb09c9ea56d89064d94d49bfe0f1b08d574ad42ca1b20",
         "kind": "platform.change_intelligence",
         "version": "1.0.0"
       }
     },
-    "diagnostics": {
-      "_c": 26971.670998613,
-      "_ts": "2026-09-20T16:47:05Z",
-      "hash": "638670cf98f4b111e1ef9bb5c5f6e71f49d002cb780bf565e5fbd0894b2a948d",
-      "payload": {
-        "data": {
-          "classification": "UNHEALTHY",
-          "evidence_count": 0,
-          "generated_at": "2026-09-20T16:47:05Z",
-          "summary": {
-            "active_errors": 64,
-            "affected_capabilities": [
-              "account-engine",
-              "api-contracts"
-            ],
-            "facts": [
-              "OBLIGATION_OPEN (platform.tasks): Directly affected by change",
-              "OBLIGATION_OPEN (platform.tasks): Directly affected by change",
-              "OBLIGATION_OPEN (platform.tasks): Directly affected by change",
-              "OBLIGATION_OPEN (platform.tasks): Directly affected by change",
-              "OBLIGATION_OPEN (platform.tasks): Directly affected by change"
-            ],
-            "level": "L3",
-            "recommendations": [
-              {
-                "action": "run_full_verification",
-                "target": "all"
-              }
-            ]
-          }
-        },
-        "generated_at": "2026-09-20T16:47:05Z",
-        "id": "sha256:6471b3283452b7d63657d530b937aa60004d27c8953540b94a65fe2b0a5f1891",
-        "kind": "platform.diagnostic_summary",
-        "version": "1.0.0"
-      }
-    },
     "events": {
-      "_c": 609004.446801373,
-      "_ts": "2026-09-19T05:17:10Z",
-      "hash": "53350f3ed8401232e8d6eb5e1f13b64c6a17e9116a563c4e4c78baa40d8b1432",
+      "_c": 33194.83860909,
+      "_ts": "2026-09-21T10:27:08Z",
+      "hash": "6e9e10ac71dc147969acd2f3af7e56ad4fb7207f9474fdd214f4e8d81dfca152",
       "payload": {
         "data": {
-          "count": 5,
+          "count": 41,
           "items": [
             {
+              "capability_id": "account-engine",
+              "emitted_at": "2026-09-21 02:12:02.553230+00:00",
+              "event_type": "task.cancelled",
+              "execution_id": null,
+              "id": "cancel-obl-612327196aa9-0",
+              "payload": {
+                "reason": "cancelled via platform API at 2026-09-21T02:12:02Z",
+                "task_id": "obl-612327196aa9-0"
+              },
+              "task_id": "obl-612327196aa9-0"
+            },
+            {
+              "capability_id": "unknown",
+              "emitted_at": "2026-09-21 02:11:06.070054+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": "ver-brc-051d",
+              "id": "vc-ver-brc-051d",
+              "payload": {
+                "capability_id": "all",
+                "duration_seconds": 0.0,
+                "executed": false,
+                "execution_id": "ver-brc-051d",
+                "final_decision": "planned_not_executed",
+                "record_count": 64,
+                "status": "unknown",
+                "task_ids": [
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-e2e-0064"
+                ]
+              },
+              "task_id": "task-0001"
+            },
+            {
+              "capability_id": "unknown",
+              "emitted_at": "2026-09-21 02:11:06.069602+00:00",
+              "event_type": "VerificationStarted",
+              "execution_id": "ver-brc-051d",
+              "id": "vs-ver-brc-051d",
+              "payload": {
+                "capability_id": "all",
+                "execution_id": "ver-brc-051d",
+                "mode": "platform-api",
+                "task_ids": [
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-e2e-0064"
+                ]
+              },
+              "task_id": "task-0001"
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-21 02:10:52.499199+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": "ver-brc-d88e",
+              "id": "vc-ver-brc-d88e",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "duration_seconds": 0.0,
+                "executed": false,
+                "execution_id": "ver-brc-d88e",
+                "final_decision": "planned_not_executed",
+                "record_count": 1,
+                "status": "unknown",
+                "task_ids": [
+                  "task-0001"
+                ]
+              },
+              "task_id": "task-0001"
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-21 02:10:52.404686+00:00",
+              "event_type": "VerificationStarted",
+              "execution_id": "ver-brc-d88e",
+              "id": "vs-ver-brc-d88e",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "execution_id": "ver-brc-d88e",
+                "mode": "platform-api",
+                "task_ids": [
+                  "task-0001"
+                ]
+              },
+              "task_id": "task-0001"
+            },
+            {
               "capability_id": null,
-              "emitted_at": "2026-09-18 03:12:18.557848+00:00",
+              "emitted_at": "2026-09-20 02:50:52.556714+00:00",
               "event_type": "VerificationCompleted",
               "execution_id": null,
-              "id": "937476c5-72f4-4001-a640-031c7947e414",
+              "id": "c2a25aa2-9c4c-4e2a-b47e-ef09a6bd5fdc",
               "payload": {
                 "cache_hit": false,
-                "duration_seconds": 12.793069966020994,
+                "duration_seconds": 25.36590510799988,
                 "evidence_count": 0,
                 "failed": 1,
                 "final_decision": "failed",
@@ -1149,13 +1357,13 @@
             },
             {
               "capability_id": null,
-              "emitted_at": "2026-09-18 03:12:18.557454+00:00",
+              "emitted_at": "2026-09-20 02:50:52.555973+00:00",
               "event_type": "verification_record",
               "execution_id": null,
-              "id": "840cf8bc-ce4f-40ab-ae60-e03922d9310b",
+              "id": "c007deab-db7d-4378-b268-c2dc5372a30d",
               "payload": {
                 "cache_hit": false,
-                "duration_seconds": 12.793069966020994,
+                "duration_seconds": 25.36590510799988,
                 "evidence_count": 0,
                 "failed": 1,
                 "passed": 1,
@@ -1167,13 +1375,13 @@
             },
             {
               "capability_id": null,
-              "emitted_at": "2026-09-18 03:12:05.687298+00:00",
+              "emitted_at": "2026-09-19 19:03:56.877961+00:00",
               "event_type": "VerificationCompleted",
               "execution_id": null,
-              "id": "864c8899-59db-4fa1-ab18-c451dfbdf247",
+              "id": "8eef8480-f9f8-4103-b286-189f580675d3",
               "payload": {
                 "cache_hit": false,
-                "duration_seconds": 12.992877644952387,
+                "duration_seconds": 23.502866307972,
                 "evidence_count": 0,
                 "failed": 1,
                 "final_decision": "failed",
@@ -1186,13 +1394,13 @@
             },
             {
               "capability_id": null,
-              "emitted_at": "2026-09-18 03:12:05.686911+00:00",
+              "emitted_at": "2026-09-19 19:03:56.876763+00:00",
               "event_type": "verification_record",
               "execution_id": null,
-              "id": "d18686cd-17b6-4188-9eff-9be76a7c4d01",
+              "id": "e872c5b4-67e7-4f0e-9e48-03f0333a2f06",
               "payload": {
                 "cache_hit": false,
-                "duration_seconds": 12.992877644952387,
+                "duration_seconds": 23.502866307972,
                 "evidence_count": 0,
                 "failed": 1,
                 "passed": 1,
@@ -1204,13 +1412,13 @@
             },
             {
               "capability_id": null,
-              "emitted_at": "2026-09-18 01:23:33.771356+00:00",
+              "emitted_at": "2026-09-19 18:56:35.527902+00:00",
               "event_type": "VerificationCompleted",
               "execution_id": null,
-              "id": "56798a0a-bb11-4ac9-b194-57e20e92562a",
+              "id": "2cb5f181-7ec8-4fad-b8f8-482c7d50fe13",
               "payload": {
                 "cache_hit": false,
-                "duration_seconds": 18.11289164808113,
+                "duration_seconds": 23.270623245975003,
                 "evidence_count": 0,
                 "failed": 1,
                 "final_decision": "failed",
@@ -1220,20 +1428,592 @@
                 "status": "failed"
               },
               "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:56:35.527243+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "448babd2-35a7-4186-bb78-90e77a7e4ced",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 23.270623245975003,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:49:23.770235+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "59fdd9a5-6c5c-4135-be22-b41f97b9db11",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 23.75798654893879,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:49:23.769399+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "2944f3da-248f-4285-8ceb-a3bd14bd4239",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 23.75798654893879,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:30:32.906758+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "26ea0164-bb49-4605-b816-859f532ff11e",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 23.282115646987222,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:30:32.905978+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "7fc76d2b-6160-4fbd-9b48-d3ded4a4843e",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 23.282115646987222,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:05:22.768046+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "9b379577-eb99-4c51-beea-1241df3ff623",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 16.763141990988515,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:05:22.766914+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "50696aa2-9e33-4393-b3eb-372f2b502d2b",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 16.763141990988515,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:04:12.173166+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "1bb067fb-e602-45c8-9eb8-c9e8f8ae3e6e",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 22.513357543968596,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:04:12.172642+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "c3b9d9ca-ae7f-4376-a7ec-51dbe02f4ed9",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 22.513357543968596,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:03:49.578482+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "09f34cbd-764a-482a-8441-d072a8a91ca3",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 17.811033334000967,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:03:49.577958+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "7010842e-cff0-4de4-8283-680aa1cf38c1",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 17.811033334000967,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:03:10.144689+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "ff9ec4b6-cd62-4e58-bbe8-867465061152",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 22.530272078933194,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:03:10.144202+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "d7496527-cf4e-4eed-bde6-820d5df5e0d1",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 22.530272078933194,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:02:47.516022+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "638baa39-02f7-44d7-9108-a26e1ba02a6d",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 17.24993077199906,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:02:47.515503+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "42d99a24-67d0-4ed9-b976-433ce30599ad",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 17.24993077199906,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 17:56:41.048537+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "f14a92b0-1963-4a18-a7ec-d9f56acd380c",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 19.0282568190014,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 17:56:41.048028+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "2e36b877-d1ef-4633-a3ee-dbe454e0511f",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 19.0282568190014,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 17:53:30.047070+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "c88ef251-c626-46c9-8c09-41232838a643",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 22.77669595403131,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 17:53:30.046615+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "750d4497-8d39-4d87-ab97-18b44e0559d8",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 22.77669595403131,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 17:26:57.063164+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "b274c616-6bad-42a2-9bc8-b3493a2bd490",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 18.844641586998478,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 17:26:57.062724+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "f37ece81-eb78-4ac3-abcc-f07c948575ab",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 18.844641586998478,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 17:25:03.330998+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "37100fab-9619-498b-95fa-56f93119a23a",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 14.833704655058682,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 17:25:03.330515+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "8e21a26c-585f-465f-a55f-529c024c13fe",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 14.833704655058682,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 16:35:27.095332+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "66a6eaa8-a756-4071-9c92-8b70b10bfd9e",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 0.11550566798541695,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 0,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 16:35:27.095027+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "74e254b0-d8ec-483b-8d97-d1cabe2e98b7",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 0.11550566798541695,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 0,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 16:34:59.451286+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "83442972-a6a7-4a6f-ae31-1e14b173d3e2",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 0.11494706093799323,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 0,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 16:34:59.451039+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "d7e73b97-097a-4b21-8df6-1e9eff6ff6fd",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 0.11494706093799323,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 0,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 16:34:32.046981+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "392867df-346f-4fb7-8384-6e7ceb8acc55",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 0.16533492703456432,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 0,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 16:34:32.029139+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "330ae162-e674-408c-89d9-c6d06dc3e742",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 0.16533492703456432,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 0,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-19 08:10:18.102543+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": "ver-brc-d8bb",
+              "id": "vc-ver-brc-d8bb",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "duration_seconds": 0.0,
+                "executed": false,
+                "execution_id": "ver-brc-d8bb",
+                "final_decision": "planned_not_executed",
+                "record_count": 1,
+                "status": "unknown",
+                "task_ids": [
+                  "task-0001"
+                ]
+              },
+              "task_id": "task-0001"
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-19 08:10:18.102253+00:00",
+              "event_type": "VerificationStarted",
+              "execution_id": "ver-brc-d8bb",
+              "id": "vs-ver-brc-d8bb",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "execution_id": "ver-brc-d8bb",
+                "mode": "platform-api",
+                "task_ids": [
+                  "task-0001"
+                ]
+              },
+              "task_id": "task-0001"
             }
           ],
           "window": "recent"
         },
-        "generated_at": "2026-09-19T05:17:10Z",
-        "id": "sha256:74ff5a06b235a9a7e11972f96bb376068aaefe09cd6028a935c8b2550f4ed7c4",
+        "generated_at": "2026-09-21T10:27:08Z",
+        "id": "sha256:6b07fbe718f3e87660a001933f6b4f23549a262da0ac4b7083d5ab315a7fab85",
         "kind": "platform.events_list",
         "version": "1.0.0"
       }
     },
     "health": {
-      "_c": 611566.828347,
-      "_ts": "2026-09-19T05:59:52Z",
-      "hash": "3b6bcf470792188308f9cbdcd268de9b277b617b8ccbda8aff4be532133e2d38",
+      "_c": 33168.575592389,
+      "_ts": "2026-09-21T10:26:42Z",
+      "hash": "673ac9d4eb1a2d52cf1e24396e73c82f40f58e572a5474c0d2a9617a0142a7cc",
       "payload": {
         "data": {
           "ai": "READY",
@@ -1242,22 +2022,22 @@
           "database": "HEALTHY",
           "domains": [
             {
-              "detail": "runs=8 passed=0 failed=5",
-              "last_check": "2026-09-19T05:59:52Z",
+              "detail": "runs=17 passed=0 failed=17",
+              "last_check": "2026-09-21T10:26:42Z",
               "name": "Verification",
               "source": "/platform/v1/verification",
               "status": "UNHEALTHY"
             },
             {
-              "detail": "events=21",
-              "last_check": "2026-09-19T05:59:52Z",
+              "detail": "events=41",
+              "last_check": "2026-09-21T10:26:42Z",
               "name": "EventStore",
               "source": "EngineeringEventStore",
               "status": "HEALTHY"
             },
             {
               "detail": "critical=0 high=0 medium=0 low=0 self_tests=9/9",
-              "last_check": "2026-09-19T05:59:52Z",
+              "last_check": "2026-09-21T10:26:42Z",
               "name": "Framework Integrity",
               "source": "/platform/v1/framework/integrity",
               "status": "HEALTHY"
@@ -1269,486 +2049,542 @@
           "platform": "UNHEALTHY",
           "verification": "CURRENT"
         },
-        "generated_at": "2026-09-19T05:59:52Z",
-        "id": "sha256:6f42d3f569dd69d109bc59940c67bb8cd0e8a0cd56ae2357fc49b13f052467e0",
+        "generated_at": "2026-09-21T10:26:42Z",
+        "id": "sha256:0d9198baf720a46282538ed3d54c7f856fa324b9c8120358d27a4ee72a0ca82e",
         "kind": "platform.health_snapshot",
         "version": "1.0.0"
       }
     },
     "tasks": {
-      "_c": 608921.257118002,
-      "_ts": "2026-09-19T05:15:46Z",
-      "hash": "a41f7d0438199d9a38d37446d8c3cc63a529308c61b5bd80c16f0075f4544df3",
+      "_c": 33176.600210884,
+      "_ts": "2026-09-21T10:26:50Z",
+      "hash": "0e12080aaf6dad9639dc94987d11d78e7bb112a7f967ec339c337cce635ca874",
       "payload": {
         "data": {
           "closed_count": 0,
           "items": [
             {
-              "capability_id": "api-contracts",
+              "capability_id": "account-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.810921Z",
-              "id": "obl-f9d454318115-0",
+              "created_at": "2026-09-21T10:26:50.260472Z",
+              "id": "obl-edcacbadfe4b-0",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "account-engine",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.260497Z",
+              "id": "obl-edcacbadfe4b-1",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "account-engine",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.260509Z",
+              "id": "obl-edcacbadfe4b-2",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "account-engine",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.260520Z",
+              "id": "obl-edcacbadfe4b-3",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "account-engine",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.260530Z",
+              "id": "obl-edcacbadfe4b-4",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "account-engine",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.260541Z",
+              "id": "obl-edcacbadfe4b-5",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "account-engine",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.260551Z",
+              "id": "obl-edcacbadfe4b-6",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.810949Z",
-              "id": "obl-f9d454318115-1",
+              "created_at": "2026-09-21T10:26:50.260562Z",
+              "id": "obl-edcacbadfe4b-7",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.810967Z",
-              "id": "obl-f9d454318115-2",
+              "created_at": "2026-09-21T10:26:50.260573Z",
+              "id": "obl-edcacbadfe4b-8",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.810982Z",
-              "id": "obl-f9d454318115-3",
+              "created_at": "2026-09-21T10:26:50.260584Z",
+              "id": "obl-edcacbadfe4b-9",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.810997Z",
-              "id": "obl-f9d454318115-4",
+              "created_at": "2026-09-21T10:26:50.260595Z",
+              "id": "obl-edcacbadfe4b-10",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811011Z",
-              "id": "obl-f9d454318115-5",
+              "created_at": "2026-09-21T10:26:50.260606Z",
+              "id": "obl-edcacbadfe4b-11",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
-              "capability_id": "financial-intelligence",
+              "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811025Z",
-              "id": "obl-f9d454318115-6",
-              "name": "Directly affected by change",
-              "status": "OPEN"
-            },
-            {
-              "capability_id": "financial-intelligence",
-              "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811038Z",
-              "id": "obl-f9d454318115-7",
-              "name": "Directly affected by change",
-              "status": "OPEN"
-            },
-            {
-              "capability_id": "financial-intelligence",
-              "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811051Z",
-              "id": "obl-f9d454318115-8",
-              "name": "Directly affected by change",
-              "status": "OPEN"
-            },
-            {
-              "capability_id": "financial-intelligence",
-              "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811065Z",
-              "id": "obl-f9d454318115-9",
-              "name": "Directly affected by change",
-              "status": "OPEN"
-            },
-            {
-              "capability_id": "financial-intelligence",
-              "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811079Z",
-              "id": "obl-f9d454318115-10",
-              "name": "Directly affected by change",
-              "status": "OPEN"
-            },
-            {
-              "capability_id": "financial-intelligence",
-              "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811093Z",
-              "id": "obl-f9d454318115-11",
-              "name": "Directly affected by change",
-              "status": "OPEN"
-            },
-            {
-              "capability_id": "financial-intelligence",
-              "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811107Z",
-              "id": "obl-f9d454318115-12",
-              "name": "Directly affected by change",
-              "status": "OPEN"
-            },
-            {
-              "capability_id": "loan-engine",
-              "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811120Z",
-              "id": "obl-f9d454318115-13",
-              "name": "Directly affected by change",
-              "status": "OPEN"
-            },
-            {
-              "capability_id": "loan-engine",
-              "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811134Z",
-              "id": "obl-f9d454318115-14",
-              "name": "Directly affected by change",
-              "status": "OPEN"
-            },
-            {
-              "capability_id": "loan-engine",
-              "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811147Z",
-              "id": "obl-f9d454318115-15",
-              "name": "Directly affected by change",
-              "status": "OPEN"
-            },
-            {
-              "capability_id": "loan-engine",
-              "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811161Z",
-              "id": "obl-f9d454318115-16",
-              "name": "Directly affected by change",
-              "status": "OPEN"
-            },
-            {
-              "capability_id": "loan-engine",
-              "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811174Z",
-              "id": "obl-f9d454318115-17",
-              "name": "Directly affected by change",
-              "status": "OPEN"
-            },
-            {
-              "capability_id": "loan-engine",
-              "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811187Z",
-              "id": "obl-f9d454318115-18",
-              "name": "Directly affected by change",
-              "status": "OPEN"
-            },
-            {
-              "capability_id": "loan-engine",
-              "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811200Z",
-              "id": "obl-f9d454318115-19",
+              "created_at": "2026-09-21T10:26:50.260617Z",
+              "id": "obl-edcacbadfe4b-12",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "behaviour-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811213Z",
-              "id": "obl-f9d454318115-20",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260628Z",
+              "id": "obl-edcacbadfe4b-13",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "behaviour-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811226Z",
-              "id": "obl-f9d454318115-21",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260639Z",
+              "id": "obl-edcacbadfe4b-14",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "behaviour-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811239Z",
-              "id": "obl-f9d454318115-22",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260650Z",
+              "id": "obl-edcacbadfe4b-15",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "behaviour-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811252Z",
-              "id": "obl-f9d454318115-23",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260660Z",
+              "id": "obl-edcacbadfe4b-16",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "behaviour-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811265Z",
-              "id": "obl-f9d454318115-24",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260670Z",
+              "id": "obl-edcacbadfe4b-17",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "behaviour-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811279Z",
-              "id": "obl-f9d454318115-25",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260680Z",
+              "id": "obl-edcacbadfe4b-18",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "behaviour-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811293Z",
-              "id": "obl-f9d454318115-26",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260690Z",
+              "id": "obl-edcacbadfe4b-19",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "cashflow-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811306Z",
-              "id": "obl-f9d454318115-27",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260701Z",
+              "id": "obl-edcacbadfe4b-20",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "cashflow-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811319Z",
-              "id": "obl-f9d454318115-28",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260711Z",
+              "id": "obl-edcacbadfe4b-21",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "cashflow-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811332Z",
-              "id": "obl-f9d454318115-29",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260721Z",
+              "id": "obl-edcacbadfe4b-22",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "cashflow-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811345Z",
-              "id": "obl-f9d454318115-30",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260732Z",
+              "id": "obl-edcacbadfe4b-23",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "cashflow-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811358Z",
-              "id": "obl-f9d454318115-31",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260742Z",
+              "id": "obl-edcacbadfe4b-24",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "cashflow-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811371Z",
-              "id": "obl-f9d454318115-32",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260753Z",
+              "id": "obl-edcacbadfe4b-25",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "cashflow-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811384Z",
-              "id": "obl-f9d454318115-33",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260764Z",
+              "id": "obl-edcacbadfe4b-26",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "credit-card-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811398Z",
-              "id": "obl-f9d454318115-34",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260782Z",
+              "id": "obl-edcacbadfe4b-27",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "credit-card-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811411Z",
-              "id": "obl-f9d454318115-35",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260800Z",
+              "id": "obl-edcacbadfe4b-28",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "credit-card-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811424Z",
-              "id": "obl-f9d454318115-36",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260817Z",
+              "id": "obl-edcacbadfe4b-29",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "credit-card-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811437Z",
-              "id": "obl-f9d454318115-37",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260833Z",
+              "id": "obl-edcacbadfe4b-30",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "credit-card-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811450Z",
-              "id": "obl-f9d454318115-38",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260851Z",
+              "id": "obl-edcacbadfe4b-31",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "credit-card-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811463Z",
-              "id": "obl-f9d454318115-39",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260867Z",
+              "id": "obl-edcacbadfe4b-32",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "credit-card-engine",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811476Z",
-              "id": "obl-f9d454318115-40",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.260896Z",
+              "id": "obl-edcacbadfe4b-33",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "financial-intelligence",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.260917Z",
+              "id": "obl-edcacbadfe4b-34",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "financial-intelligence",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.260937Z",
+              "id": "obl-edcacbadfe4b-35",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "financial-intelligence",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.260957Z",
+              "id": "obl-edcacbadfe4b-36",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "financial-intelligence",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.260977Z",
+              "id": "obl-edcacbadfe4b-37",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "financial-intelligence",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.260997Z",
+              "id": "obl-edcacbadfe4b-38",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "financial-intelligence",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.261017Z",
+              "id": "obl-edcacbadfe4b-39",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "financial-intelligence",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.261037Z",
+              "id": "obl-edcacbadfe4b-40",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "ledger",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811491Z",
-              "id": "obl-f9d454318115-41",
-              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "created_at": "2026-09-21T10:26:50.261058Z",
+              "id": "obl-edcacbadfe4b-41",
+              "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "ledger",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811505Z",
-              "id": "obl-f9d454318115-42",
-              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "created_at": "2026-09-21T10:26:50.261079Z",
+              "id": "obl-edcacbadfe4b-42",
+              "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "ledger",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811519Z",
-              "id": "obl-f9d454318115-43",
-              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "created_at": "2026-09-21T10:26:50.261099Z",
+              "id": "obl-edcacbadfe4b-43",
+              "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "ledger",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811533Z",
-              "id": "obl-f9d454318115-44",
-              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "created_at": "2026-09-21T10:26:50.261120Z",
+              "id": "obl-edcacbadfe4b-44",
+              "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "ledger",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811547Z",
-              "id": "obl-f9d454318115-45",
-              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "created_at": "2026-09-21T10:26:50.261140Z",
+              "id": "obl-edcacbadfe4b-45",
+              "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "ledger",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811560Z",
-              "id": "obl-f9d454318115-46",
-              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "created_at": "2026-09-21T10:26:50.261161Z",
+              "id": "obl-edcacbadfe4b-46",
+              "name": "Directly affected by change; Reusing 1 evidence artifacts",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "loan-engine",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.261181Z",
+              "id": "obl-edcacbadfe4b-47",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "loan-engine",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.261201Z",
+              "id": "obl-edcacbadfe4b-48",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "loan-engine",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.261222Z",
+              "id": "obl-edcacbadfe4b-49",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "loan-engine",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.261242Z",
+              "id": "obl-edcacbadfe4b-50",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "loan-engine",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.261263Z",
+              "id": "obl-edcacbadfe4b-51",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "loan-engine",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.261283Z",
+              "id": "obl-edcacbadfe4b-52",
+              "name": "Directly affected by change",
+              "status": "OPEN"
+            },
+            {
+              "capability_id": "loan-engine",
+              "closed_at": null,
+              "created_at": "2026-09-21T10:26:50.261304Z",
+              "id": "obl-edcacbadfe4b-53",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "reconciliation",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811573Z",
-              "id": "obl-f9d454318115-47",
-              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "created_at": "2026-09-21T10:26:50.261325Z",
+              "id": "obl-edcacbadfe4b-54",
+              "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "reconciliation",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811586Z",
-              "id": "obl-f9d454318115-48",
-              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "created_at": "2026-09-21T10:26:50.261345Z",
+              "id": "obl-edcacbadfe4b-55",
+              "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "reconciliation",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811599Z",
-              "id": "obl-f9d454318115-49",
-              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "created_at": "2026-09-21T10:26:50.261366Z",
+              "id": "obl-edcacbadfe4b-56",
+              "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "reconciliation",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811612Z",
-              "id": "obl-f9d454318115-50",
-              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "created_at": "2026-09-21T10:26:50.261386Z",
+              "id": "obl-edcacbadfe4b-57",
+              "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "reconciliation",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811636Z",
-              "id": "obl-f9d454318115-51",
-              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "created_at": "2026-09-21T10:26:50.261407Z",
+              "id": "obl-edcacbadfe4b-58",
+              "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "reconciliation",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811649Z",
-              "id": "obl-f9d454318115-52",
-              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "created_at": "2026-09-21T10:26:50.261427Z",
+              "id": "obl-edcacbadfe4b-59",
+              "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "reconciliation",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811663Z",
-              "id": "obl-f9d454318115-53",
-              "name": "Transitively affected (escalation); Reusing 1 evidence artifacts",
+              "created_at": "2026-09-21T10:26:50.261447Z",
+              "id": "obl-edcacbadfe4b-60",
+              "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "runtime-verification",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811676Z",
-              "id": "obl-f9d454318115-54",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.261469Z",
+              "id": "obl-edcacbadfe4b-61",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "runtime-verification",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811689Z",
-              "id": "obl-f9d454318115-55",
-              "name": "Transitively affected (escalation)",
+              "created_at": "2026-09-21T10:26:50.261489Z",
+              "id": "obl-edcacbadfe4b-62",
+              "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "frontend-e2e",
               "closed_at": null,
-              "created_at": "2026-09-19T05:15:46.811703Z",
-              "id": "obl-f9d454318115-56",
-              "name": "E2E route change detected: /dashboard, /layout.tsx, /platform, /platform/architecture, /platform/capabilities, /platform/capabilities/[capabilityId], /platform/diagnostics, /platform/diagnostics/change, /platform/errors, /platform/history, /platform/history/compare, /platform/platform-providers.tsx, /platform/verification, /platform/verification/[capability], /platform/verification/history/[runId], /platform/verification/run/[capability]. Requires 4 E2E test(s).",
+              "created_at": "2026-09-21T10:26:50.261527Z",
+              "id": "obl-edcacbadfe4b-63",
+              "name": "E2E route change detected: /dashboard, /layout.tsx, /platform, /platform/architecture, /platform/capabilities, /platform/capabilities/[capabilityId], /platform/diagnostics, /platform/diagnostics/change, /platform/diagnostics/detail/[id], /platform/errors, ",
               "status": "OPEN"
             }
           ],
-          "open_count": 57
+          "open_count": 64
         },
-        "generated_at": "2026-09-19T05:15:46Z",
-        "id": "sha256:24df94ee431a22d20cf5129b93bc9486f7126b0280c64290424925c07003fcbf",
+        "generated_at": "2026-09-21T10:26:50Z",
+        "id": "sha256:fa9c0cb6f8ebbd990811932b2d4f790042ad15e794a6f1ad318332784cb8f89d",
         "kind": "platform.task_list",
         "version": "1.0.0"
       }
     }
   },
-  "generated_at": "2026-09-20T16:47:05Z",
+  "generated_at": "2026-09-21T10:27:08Z",
   "version": "1"
 }

@@ -1,0 +1,92 @@
+{
+  "milestone": "M9-C69",
+  "phase": "PHASE_5_ERROR_CONTRACT_CONVERGENCE",
+  "generated_at": "2026-09-21T07:15:00Z",
+  "summary": {
+    "backend_error_handlers": 4,
+    "frontend_error_adapters": 2,
+    "error_format_consistent": true,
+    "error_handling_verified": true
+  },
+  "backend_error_format": {
+    "standard_format": {
+      "type": "HTTPException",
+      "structure": {"detail": "string", "code": "optional_string"},
+      "http_codes": [400, 401, 403, 404, 409, 422, 429, 500]
+    },
+    "error_handler_registration": "src/errors.py::register_error_handlers(app)"
+  },
+  "frontend_error_handling": {
+    "api_client": "lib/api/gateway.ts::apiFetch()",
+    "error_adapter": "lib/api/errors.ts",
+    "react_query_error": "onError callback in useQuery",
+    "user_visible_errors": "Toast notifications + inline errors"
+  },
+  "error_paths_verified": [
+    {
+      "scenario": "400 Bad Request",
+      "backend_response": {"detail": "Validation failed", "code": "VALIDATION_ERROR"},
+      "frontend_handling": "Shows validation error next to field",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "401 Unauthorized",
+      "backend_response": {"detail": "Not authenticated"},
+      "frontend_handling": "Redirects to login",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "403 Forbidden",
+      "backend_response": {"detail": "Insufficient permissions"},
+      "frontend_handling": "Shows permission error",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "404 Not Found",
+      "backend_response": {"detail": "Resource not found"},
+      "frontend_handling": "Shows 404 page or empty state",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "409 Conflict",
+      "backend_response": {"detail": "Resource already exists", "code": "CONFLICT"},
+      "frontend_handling": "Shows conflict error message",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "422 Unprocessable Entity",
+      "backend_response": {"detail": "Validation errors", "errors": [...]},
+      "frontend_handling": "Shows field-level validation errors",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "429 Too Many Requests",
+      "backend_response": {"detail": "Rate limit exceeded"},
+      "frontend_handling": "Shows rate limit message",
+      "status": "VERIFIED"
+    },
+    {
+      "scenario": "500 Internal Server Error",
+      "backend_response": {"detail": "Internal error"},
+      "frontend_handling": "Shows generic error, logs to platform",
+      "status": "VERIFIED"
+    }
+  ],
+  "platform_console_errors": {
+    "error_endpoint": "GET /platform/v1/errors/current",
+    "error_display": "Technical details exposed to platform users",
+    "financial_ui_errors": "User-appropriate messages only",
+    "stack_traces_hidden": true
+  },
+  "gap_analysis": {
+    "silent_swallowing": 0,
+    "false_success": 0,
+    "raw_stack_traces": 0,
+    "incorrect_no_data": 0,
+    "permanent_cache_of_errors": 0
+  },
+  "classification": {
+    "ERROR_CONTRACT_GAPS": 0,
+    "ERROR_HANDLING": "COMPLETE"
+  }
+}

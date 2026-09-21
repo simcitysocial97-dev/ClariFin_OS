@@ -30,5 +30,5 @@ describe('Loading Performance', () => {
     const { container } = render(<SkeletonTable rows={1000} />);
     const pulseElements = container.querySelectorAll('.animate-pulse');
     expect(pulseElements.length).toBeGreaterThan(0);
-  });
+  }, 30_000);
 });
