@@ -1,53 +1,2116 @@
 {
   "total_endpoints": 190,
-  "consumed_count": 19,
-  "unconsumed_count": 171,
-  "frontend_consumed_paths": [
-    "/api/accounts/manage",
-    "/api/accounts/manage/$:param",
-    "/api/analytics",
-    "/api/cards",
-    "/api/cashflow/monthly",
-    "/api/dashboard/summary",
-    "/api/investments",
-    "/api/investments/$:param",
-    "/api/loans",
-    "/api/loans/$:param",
-    "/api/loans/$:param/prepayment-simulation",
-    "/api/loans/$:param/schedule",
-    "/api/networth",
-    "/api/overview",
-    "/api/reconciliation",
-    "/api/reconciliation/$:param/confirm",
-    "/api/reconciliation/$:param/reject",
-    "/api/reconciliation/pending",
-    "/api/reconciliation/scan",
-    "/api/v1/behaviour/wellness-score",
-    "/platform/capabilities/$:param",
-    "/platform/diagnostics/detail/$:param",
-    "/platform/errors",
-    "/platform/evidence",
-    "/platform/history/compare",
-    "/platform/runs/$:param",
-    "/platform/v1/architecture/$:param",
-    "/platform/v1/architecture/authority/$:param",
-    "/platform/v1/capabilities/$:param",
-    "/platform/v1/capabilities/$:param/graph",
-    "/platform/v1/errors/$:param",
-    "/platform/v1/events",
-    "/platform/v1/evidence/$:param",
-    "/platform/v1/executions/$:param",
-    "/platform/v1/executions/$:param/stream",
-    "/platform/v1/history/runs/$:param",
-    "/platform/v1/runs",
-    "/platform/v1/runs/$:param",
-    "/platform/v1/tasks/$:param/cancel",
-    "/platform/v1/verification/run",
-    "/platform/verification/$:param",
-    "/platform/verification/history/$:param",
-    "/platform/verification/run/$:param"
+  "consumed_count": 0,
+  "unconsumed_count": 190,
+  "frontend_consumed_paths": [],
+  "consumed_endpoints": [],
+  "unconsumed_classified": [
+    {
+      "path": "/api/accounts/manage",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Get Managed Accounts",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/accounts/manage",
+      "method": "POST",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Create Managed Account",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/accounts/manage/{account_id}",
+      "method": "PUT",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Update Managed Account",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/accounts/manage/{account_id}",
+      "method": "DELETE",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Delete Managed Account",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/accounts/{account_id}/balance",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Get Account Balance",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Superseded by /metrics endpoint"
+    },
+    {
+      "path": "/api/accounts/{account_id}/running-balance",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Get Account Running Balance",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Superseded by /metrics endpoint"
+    },
+    {
+      "path": "/api/analytics",
+      "method": "GET",
+      "tags": [
+        "transactions"
+      ],
+      "summary": "Get Analytics",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/audit/report",
+      "method": "GET",
+      "tags": [
+        "audit"
+      ],
+      "summary": "Api Audit Report",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/banks",
+      "method": "GET",
+      "tags": [
+        "banks"
+      ],
+      "summary": "Get Banks",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/cards",
+      "method": "GET",
+      "tags": [
+        "cards",
+        "statements"
+      ],
+      "summary": "Get Cards",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/cashflow",
+      "method": "GET",
+      "tags": [
+        "cashflow"
+      ],
+      "summary": "Get Cashflow",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/cashflow/categories",
+      "method": "GET",
+      "tags": [
+        "cashflow"
+      ],
+      "summary": "Get Cashflow Categories",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/cashflow/monthly",
+      "method": "GET",
+      "tags": [
+        "cashflow"
+      ],
+      "summary": "Get Cashflow Monthly",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/cashflow/transactions",
+      "method": "GET",
+      "tags": [
+        "cashflow"
+      ],
+      "summary": "Get Cashflow Transactions",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Superseded by workspace endpoints"
+    },
+    {
+      "path": "/api/categories",
+      "method": "GET",
+      "tags": [
+        "transactions"
+      ],
+      "summary": "Get Categories",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/dashboard/summary",
+      "method": "GET",
+      "tags": [
+        "dashboard"
+      ],
+      "summary": "Api Dashboard Summary",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/export/csv",
+      "method": "GET",
+      "tags": [
+        "export"
+      ],
+      "summary": "Export Csv",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/financial-events/",
+      "method": "POST",
+      "tags": [
+        "financial-events"
+      ],
+      "summary": "Create Event",
+      "class": "USER_FACING",
+      "classification": "INTERNAL",
+      "reason": "Internal event tracking, no UI"
+    },
+    {
+      "path": "/api/financial-events/",
+      "method": "GET",
+      "tags": [
+        "financial-events"
+      ],
+      "summary": "List Events",
+      "class": "USER_FACING",
+      "classification": "INTERNAL",
+      "reason": "Internal event tracking, no UI"
+    },
+    {
+      "path": "/api/financial-events/{event_id}",
+      "method": "GET",
+      "tags": [
+        "financial-events"
+      ],
+      "summary": "Get Event",
+      "class": "USER_FACING",
+      "classification": "INTERNAL",
+      "reason": "Internal event tracking, no UI"
+    },
+    {
+      "path": "/api/import/detect",
+      "method": "POST",
+      "tags": [
+        "import"
+      ],
+      "summary": "Import Detect",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/import/execute",
+      "method": "POST",
+      "tags": [
+        "import"
+      ],
+      "summary": "Import Execute",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/investments",
+      "method": "GET",
+      "tags": [
+        "investments"
+      ],
+      "summary": "Get Investments",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/investments",
+      "method": "POST",
+      "tags": [
+        "investments"
+      ],
+      "summary": "Create Investment",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/investments/{investment_id}",
+      "method": "PUT",
+      "tags": [
+        "investments"
+      ],
+      "summary": "Update Investment",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/investments/{investment_id}",
+      "method": "DELETE",
+      "tags": [
+        "investments"
+      ],
+      "summary": "Delete Investment",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/loans",
+      "method": "GET",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Get Loans",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/loans",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Create Loan",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/loans/analysis/priority",
+      "method": "GET",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Get Loan Priority",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/loans/analysis/surplus-allocation",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Analyze Surplus Allocation",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/loans/{loan_id}",
+      "method": "GET",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Get Loan",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/loans/{loan_id}",
+      "method": "PUT",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Update Loan",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/loans/{loan_id}",
+      "method": "DELETE",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Delete Loan",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Analyze Prepayment Vs Foreclosure",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/loans/{loan_id}/foreclosure-simulation",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Simulate Foreclosure",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/loans/{loan_id}/payments",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Record Loan Payment",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/loans/{loan_id}/prepayment-simulation",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Simulate Prepayment",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/loans/{loan_id}/rate-change-simulation",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Simulate Rate Change",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/loans/{loan_id}/schedule",
+      "method": "GET",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Get Loan Schedule",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/members",
+      "method": "GET",
+      "tags": [
+        "members"
+      ],
+      "summary": "Get Members",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/members",
+      "method": "POST",
+      "tags": [
+        "members"
+      ],
+      "summary": "Create Member",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/members/{member_id}",
+      "method": "GET",
+      "tags": [
+        "members"
+      ],
+      "summary": "Get Member By Id",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/members/{member_id}",
+      "method": "PUT",
+      "tags": [
+        "members"
+      ],
+      "summary": "Update Member",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/members/{member_id}",
+      "method": "DELETE",
+      "tags": [
+        "members"
+      ],
+      "summary": "Delete Member",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/networth",
+      "method": "GET",
+      "tags": [
+        "networth"
+      ],
+      "summary": "Get Networth",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/overview",
+      "method": "GET",
+      "tags": [
+        "transactions"
+      ],
+      "summary": "Get Overview",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/reconciliation",
+      "method": "GET",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Get Reconciliations",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/reconciliation/batch-insert",
+      "method": "POST",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Batch Insert Reconciliations",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/reconciliation/create",
+      "method": "POST",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Create Reconciliation",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/reconciliation/pending",
+      "method": "GET",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Get Pending Reconciliations",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/reconciliation/scan",
+      "method": "GET",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Scan Reconciliations",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/reconciliation/{reconciliation_id}/confirm",
+      "method": "POST",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Confirm Reconciliation",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/reconciliation/{reconciliation_id}/reject",
+      "method": "POST",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Reject Reconciliation",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/statements",
+      "method": "GET",
+      "tags": [
+        "cards",
+        "statements"
+      ],
+      "summary": "Get Statements",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/statements/{statement_id}/validate",
+      "method": "GET",
+      "tags": [
+        "cards",
+        "statements"
+      ],
+      "summary": "Api Validate Statement",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/transactions",
+      "method": "GET",
+      "tags": [
+        "transactions"
+      ],
+      "summary": "Get Transactions",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Superseded by workspace endpoints"
+    },
+    {
+      "path": "/api/upload",
+      "method": "POST",
+      "tags": [
+        "import"
+      ],
+      "summary": "Upload Statement",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/accounts",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "List Accounts",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/accounts",
+      "method": "POST",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Create Account",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}",
+      "method": "PUT",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Update Account",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}",
+      "method": "DELETE",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Deactivate Account",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/analytics",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account Analytics",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/balance-history",
+      "method": "POST",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Insert Balance Snapshot",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Superseded by /metrics endpoint"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/balance-history",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Balance History",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Superseded by /metrics endpoint"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/balance-history/latest",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Latest Balance",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Superseded by /metrics endpoint"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/dormancy",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account Dormancy",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/links",
+      "method": "POST",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Link Accounts",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/links",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Linked Accounts",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/links/{linked_account_id}",
+      "method": "DELETE",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Unlink Accounts",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/metrics",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account Metrics",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/status",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account Status",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/behaviour",
+      "method": "GET",
+      "tags": [
+        "behaviour-workspace"
+      ],
+      "summary": "Get Behaviour",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/behaviour/cashflow-health",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Cashflow Health",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/behaviour/debt-health",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Debt Health",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/behaviour/monthly-report",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Monthly Report",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/behaviour/patterns",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Patterns",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/behaviour/profile",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Financial Profile",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/behaviour/recommendations",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Recommendations",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/behaviour/wellness-score",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Wellness Score",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/cashflow",
+      "method": "GET",
+      "tags": [
+        "cashflow-workspace"
+      ],
+      "summary": "Get Cashflow",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/credit-cards",
+      "method": "GET",
+      "tags": [
+        "credit-cards-workspace"
+      ],
+      "summary": "Get Credit Cards",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/credit-cards",
+      "method": "POST",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Create Card",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Card",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}",
+      "method": "PUT",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Update Card",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}",
+      "method": "DELETE",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Deactivate Card",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/emi-conversion",
+      "method": "POST",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Convert To Emi",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/foreclosure",
+      "method": "POST",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Quote Foreclosure",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/metrics",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Metrics",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/next-statement-date",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Next Statement Date",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/outstanding",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Outstanding",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/payments",
+      "method": "POST",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Record Payment",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/statements",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "List Statements",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/statements",
+      "method": "POST",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Generate Statement",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/utilization",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Utilization",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/financial-intelligence/cashflow-forecast",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Cashflow Forecast",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/financial-intelligence/credit-forecast",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Credit Forecast",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/financial-intelligence/liquidity-forecast",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Liquidity Forecast",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/financial-intelligence/outlook",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Financial Outlook",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/financial-intelligence/priorities",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Financial Intelligence Priorities",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/financial-intelligence/recommendations",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Financial Recommendations",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/financial-intelligence/recommendations/{recommendation_id}",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Recommendation Details",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/financial-intelligence/report",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Financial Intelligence Report",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/forecast",
+      "method": "GET",
+      "tags": [
+        "forecast"
+      ],
+      "summary": "Get Forecast",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/institutions",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "List Institutions",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/institutions",
+      "method": "POST",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Create Institution",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/institutions/{institution_id}",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Institution",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/institutions/{institution_id}",
+      "method": "PUT",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Update Institution",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/investments",
+      "method": "GET",
+      "tags": [
+        "investments-workspace"
+      ],
+      "summary": "Get Investments",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/loans",
+      "method": "GET",
+      "tags": [
+        "loans-workspace"
+      ],
+      "summary": "Get Loans",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/net-worth",
+      "method": "GET",
+      "tags": [
+        "networth-workspace"
+      ],
+      "summary": "Get Networth",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/api/v1/reconciliation",
+      "method": "GET",
+      "tags": [
+        "reconciliation-workspace"
+      ],
+      "summary": "Get Reconciliation",
+      "class": "USER_FACING",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Legacy /api/* endpoint, frontend uses alternative path"
+    },
+    {
+      "path": "/health",
+      "method": "GET",
+      "tags": [],
+      "summary": "Health Check",
+      "class": "INFRASTRUCTURE",
+      "classification": "INFRASTRUCTURE",
+      "reason": "Health/readiness - intentional"
+    },
+    {
+      "path": "/platform/v1/ai/agents",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Agents",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/agents/{agent_name}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Agent",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/config",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Config",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/config/provider",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Config Provider",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/diagnose",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Diagnose",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/engineering/execute",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Engineering Execute",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/financial/interpret",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Financial Interpret",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/mode",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Mode",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/providers",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Providers",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/runs",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Run",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/runs",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Runs",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/runs/{run_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Run",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/runs/{run_id}/cancel",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Run Cancel",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/runs/{run_id}/finalize",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Run Finalize",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/runs/{run_id}/steps",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Step",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/runs/{run_id}/trace",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Run Trace",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/tools",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Tools",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/tools/{tool_name}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Tool",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/ai/workflow/run",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Workflow Run",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/app/backend",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get App Backend",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/app/domain",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get App Domain",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/app/financial",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get App Financial",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/app/frontend",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get App Frontend",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/app/workflows",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get App Workflows",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/architecture/authorities",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Authorities",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/architecture/authority/{name}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Authority",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/architecture/boundaries",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Boundaries",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/architecture/bypasses",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Bypasses",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/architecture/deprecations",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Deprecations",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/architecture/duplicates",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Duplicates",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/architecture/unmapped",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Unmapped",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/capabilities",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "List Capabilities",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/capabilities/{capability_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Capability",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/capabilities/{capability_id}/graph",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Capability Graph",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/change/intelligence",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Change Intelligence",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/context/pack",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Context Pack",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/cross-layer",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Cross Layer Graph",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/cross-layer/{capability_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Cross Layer Capability",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/diagnose",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Diagnose",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/diagnose/register",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Diagnose Register",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/diagnostics",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Diagnostics",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/errors/current",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Errors Current",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/errors/frequency",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Errors Frequency",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/errors/recent",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Errors Recent",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/errors/recurring",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Errors Recurring",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/errors/{error_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Error",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/events",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Events",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/events/stream",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Events Stream",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/evidence",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "List Evidence",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/evidence/by-execution/{execution_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Evidence By Execution",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/evidence/compare",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Evidence Compare",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/evidence/{evidence_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Evidence",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/executions/{execution_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Execution",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/executions/{execution_id}/stream",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Execution Stream",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/framework/integrity",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Framework Integrity",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/framework/self-tests",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Framework Self Tests",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/health",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Health",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/health/deep",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Health Deep",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/history/baselines",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "List History Baselines",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/history/compare",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post History Compare",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/history/runs",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "List History Runs",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/history/runs/{run_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get History Run",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/runs",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "List Runs",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/runs/{run_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Run",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/status",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Status",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/tasks",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "List Tasks",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/tasks/{task_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Task",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/tasks/{task_id}/cancel",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Task Cancel",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/verification",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Verification State",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/verification/recommendation",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Verification Recommendation",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/verification/run",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Verification Run",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/verification/run/affected",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Verification Run Affected",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/verification/run/full",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Verification Run Full",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/verification/run/group",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Verification Run Group",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/verification/runs/recent",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Verification Runs Recent",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/platform/v1/workflows",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Workflows",
+      "class": "PLATFORM",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform Console endpoint"
+    },
+    {
+      "path": "/ready",
+      "method": "GET",
+      "tags": [],
+      "summary": "Readiness Check",
+      "class": "INFRASTRUCTURE",
+      "classification": "INFRASTRUCTURE",
+      "reason": "Health/readiness - intentional"
+    }
   ],
-  "consumed_endpoints": [
+  "classification_counts": {
+    "LEGACY_ENDPOINT": 109,
+    "INTERNAL": 3,
+    "INFRASTRUCTURE": 2,
+    "PLATFORM_INTERNAL": 76
+  },
+  "frontend_consumed_count": 0,
+  "unconsumed_endpoints": [
     {
       "path": "/api/accounts/manage",
       "method": "GET",
@@ -67,12 +2130,66 @@
       "class": "USER_FACING"
     },
     {
+      "path": "/api/accounts/manage/{account_id}",
+      "method": "PUT",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Update Managed Account",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/accounts/manage/{account_id}",
+      "method": "DELETE",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Delete Managed Account",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/accounts/{account_id}/balance",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Get Account Balance",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/accounts/{account_id}/running-balance",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Get Account Running Balance",
+      "class": "USER_FACING"
+    },
+    {
       "path": "/api/analytics",
       "method": "GET",
       "tags": [
         "transactions"
       ],
       "summary": "Get Analytics",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/audit/report",
+      "method": "GET",
+      "tags": [
+        "audit"
+      ],
+      "summary": "Api Audit Report",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/banks",
+      "method": "GET",
+      "tags": [
+        "banks"
+      ],
+      "summary": "Get Banks",
       "class": "USER_FACING"
     },
     {
@@ -86,6 +2203,24 @@
       "class": "USER_FACING"
     },
     {
+      "path": "/api/cashflow",
+      "method": "GET",
+      "tags": [
+        "cashflow"
+      ],
+      "summary": "Get Cashflow",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/cashflow/categories",
+      "method": "GET",
+      "tags": [
+        "cashflow"
+      ],
+      "summary": "Get Cashflow Categories",
+      "class": "USER_FACING"
+    },
+    {
       "path": "/api/cashflow/monthly",
       "method": "GET",
       "tags": [
@@ -95,12 +2230,84 @@
       "class": "USER_FACING"
     },
     {
+      "path": "/api/cashflow/transactions",
+      "method": "GET",
+      "tags": [
+        "cashflow"
+      ],
+      "summary": "Get Cashflow Transactions",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/categories",
+      "method": "GET",
+      "tags": [
+        "transactions"
+      ],
+      "summary": "Get Categories",
+      "class": "USER_FACING"
+    },
+    {
       "path": "/api/dashboard/summary",
       "method": "GET",
       "tags": [
         "dashboard"
       ],
       "summary": "Api Dashboard Summary",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/export/csv",
+      "method": "GET",
+      "tags": [
+        "export"
+      ],
+      "summary": "Export Csv",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/financial-events/",
+      "method": "POST",
+      "tags": [
+        "financial-events"
+      ],
+      "summary": "Create Event",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/financial-events/",
+      "method": "GET",
+      "tags": [
+        "financial-events"
+      ],
+      "summary": "List Events",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/financial-events/{event_id}",
+      "method": "GET",
+      "tags": [
+        "financial-events"
+      ],
+      "summary": "Get Event",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/import/detect",
+      "method": "POST",
+      "tags": [
+        "import"
+      ],
+      "summary": "Import Detect",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/import/execute",
+      "method": "POST",
+      "tags": [
+        "import"
+      ],
+      "summary": "Import Execute",
       "class": "USER_FACING"
     },
     {
@@ -122,6 +2329,24 @@
       "class": "USER_FACING"
     },
     {
+      "path": "/api/investments/{investment_id}",
+      "method": "PUT",
+      "tags": [
+        "investments"
+      ],
+      "summary": "Update Investment",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/investments/{investment_id}",
+      "method": "DELETE",
+      "tags": [
+        "investments"
+      ],
+      "summary": "Delete Investment",
+      "class": "USER_FACING"
+    },
+    {
       "path": "/api/loans",
       "method": "GET",
       "tags": [
@@ -137,6 +2362,150 @@
         "loans"
       ],
       "summary": "Create Loan",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/analysis/priority",
+      "method": "GET",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Get Loan Priority",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/analysis/surplus-allocation",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Analyze Surplus Allocation",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}",
+      "method": "GET",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Get Loan",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}",
+      "method": "PUT",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Update Loan",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}",
+      "method": "DELETE",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Delete Loan",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Analyze Prepayment Vs Foreclosure",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}/foreclosure-simulation",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Simulate Foreclosure",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}/payments",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Record Loan Payment",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}/prepayment-simulation",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Simulate Prepayment",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}/rate-change-simulation",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Simulate Rate Change",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/loans/{loan_id}/schedule",
+      "method": "GET",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Get Loan Schedule",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/members",
+      "method": "GET",
+      "tags": [
+        "members"
+      ],
+      "summary": "Get Members",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/members",
+      "method": "POST",
+      "tags": [
+        "members"
+      ],
+      "summary": "Create Member",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/members/{member_id}",
+      "method": "GET",
+      "tags": [
+        "members"
+      ],
+      "summary": "Get Member By Id",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/members/{member_id}",
+      "method": "PUT",
+      "tags": [
+        "members"
+      ],
+      "summary": "Update Member",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/members/{member_id}",
+      "method": "DELETE",
+      "tags": [
+        "members"
+      ],
+      "summary": "Delete Member",
       "class": "USER_FACING"
     },
     {
@@ -167,6 +2536,24 @@
       "class": "USER_FACING"
     },
     {
+      "path": "/api/reconciliation/batch-insert",
+      "method": "POST",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Batch Insert Reconciliations",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/reconciliation/create",
+      "method": "POST",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Create Reconciliation",
+      "class": "USER_FACING"
+    },
+    {
       "path": "/api/reconciliation/pending",
       "method": "GET",
       "tags": [
@@ -185,6 +2572,260 @@
       "class": "USER_FACING"
     },
     {
+      "path": "/api/reconciliation/{reconciliation_id}/confirm",
+      "method": "POST",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Confirm Reconciliation",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/reconciliation/{reconciliation_id}/reject",
+      "method": "POST",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Reject Reconciliation",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/statements",
+      "method": "GET",
+      "tags": [
+        "cards",
+        "statements"
+      ],
+      "summary": "Get Statements",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/statements/{statement_id}/validate",
+      "method": "GET",
+      "tags": [
+        "cards",
+        "statements"
+      ],
+      "summary": "Api Validate Statement",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/transactions",
+      "method": "GET",
+      "tags": [
+        "transactions"
+      ],
+      "summary": "Get Transactions",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/upload",
+      "method": "POST",
+      "tags": [
+        "import"
+      ],
+      "summary": "Upload Statement",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "List Accounts",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts",
+      "method": "POST",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Create Account",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}",
+      "method": "PUT",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Update Account",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}",
+      "method": "DELETE",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Deactivate Account",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/analytics",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account Analytics",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/balance-history",
+      "method": "POST",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Insert Balance Snapshot",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/balance-history",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Balance History",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/balance-history/latest",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Latest Balance",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/dormancy",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account Dormancy",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/links",
+      "method": "POST",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Link Accounts",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/links",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Linked Accounts",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/links/{linked_account_id}",
+      "method": "DELETE",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Unlink Accounts",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/metrics",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account Metrics",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/accounts/{account_id}/status",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account Status",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/behaviour",
+      "method": "GET",
+      "tags": [
+        "behaviour-workspace"
+      ],
+      "summary": "Get Behaviour",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/behaviour/cashflow-health",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Cashflow Health",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/behaviour/debt-health",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Debt Health",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/behaviour/monthly-report",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Monthly Report",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/behaviour/patterns",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Patterns",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/behaviour/profile",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Financial Profile",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/behaviour/recommendations",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Recommendations",
+      "class": "USER_FACING"
+    },
+    {
       "path": "/api/v1/behaviour/wellness-score",
       "method": "GET",
       "tags": [
@@ -194,12 +2835,864 @@
       "class": "USER_FACING"
     },
     {
+      "path": "/api/v1/cashflow",
+      "method": "GET",
+      "tags": [
+        "cashflow-workspace"
+      ],
+      "summary": "Get Cashflow",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards",
+      "method": "GET",
+      "tags": [
+        "credit-cards-workspace"
+      ],
+      "summary": "Get Credit Cards",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards",
+      "method": "POST",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Create Card",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Card",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}",
+      "method": "PUT",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Update Card",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}",
+      "method": "DELETE",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Deactivate Card",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/emi-conversion",
+      "method": "POST",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Convert To Emi",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/foreclosure",
+      "method": "POST",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Quote Foreclosure",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/metrics",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Metrics",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/next-statement-date",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Next Statement Date",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/outstanding",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Outstanding",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/payments",
+      "method": "POST",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Record Payment",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/statements",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "List Statements",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/statements",
+      "method": "POST",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Generate Statement",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/credit-cards/{card_id}/utilization",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Utilization",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/financial-intelligence/cashflow-forecast",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Cashflow Forecast",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/financial-intelligence/credit-forecast",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Credit Forecast",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/financial-intelligence/liquidity-forecast",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Liquidity Forecast",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/financial-intelligence/outlook",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Financial Outlook",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/financial-intelligence/priorities",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Financial Intelligence Priorities",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/financial-intelligence/recommendations",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Financial Recommendations",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/financial-intelligence/recommendations/{recommendation_id}",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Recommendation Details",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/financial-intelligence/report",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence",
+        "financial-intelligence"
+      ],
+      "summary": "Get Financial Intelligence Report",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/forecast",
+      "method": "GET",
+      "tags": [
+        "forecast"
+      ],
+      "summary": "Get Forecast",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/institutions",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "List Institutions",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/institutions",
+      "method": "POST",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Create Institution",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/institutions/{institution_id}",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Institution",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/institutions/{institution_id}",
+      "method": "PUT",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Update Institution",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/investments",
+      "method": "GET",
+      "tags": [
+        "investments-workspace"
+      ],
+      "summary": "Get Investments",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/loans",
+      "method": "GET",
+      "tags": [
+        "loans-workspace"
+      ],
+      "summary": "Get Loans",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/net-worth",
+      "method": "GET",
+      "tags": [
+        "networth-workspace"
+      ],
+      "summary": "Get Networth",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/api/v1/reconciliation",
+      "method": "GET",
+      "tags": [
+        "reconciliation-workspace"
+      ],
+      "summary": "Get Reconciliation",
+      "class": "USER_FACING"
+    },
+    {
+      "path": "/health",
+      "method": "GET",
+      "tags": [],
+      "summary": "Health Check",
+      "class": "INFRASTRUCTURE"
+    },
+    {
+      "path": "/platform/v1/ai/agents",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Agents",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/agents/{agent_name}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Agent",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/config",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Config",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/config/provider",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Config Provider",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/diagnose",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Diagnose",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/engineering/execute",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Engineering Execute",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/financial/interpret",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Financial Interpret",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/mode",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Mode",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/providers",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Providers",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/runs",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Run",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/runs",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Runs",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/runs/{run_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Run",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/runs/{run_id}/cancel",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Run Cancel",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/runs/{run_id}/finalize",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Run Finalize",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/runs/{run_id}/steps",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Step",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/runs/{run_id}/trace",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Run Trace",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/tools",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Tools",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/tools/{tool_name}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Ai Tool",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/ai/workflow/run",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Ai Workflow Run",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/app/backend",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get App Backend",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/app/domain",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get App Domain",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/app/financial",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get App Financial",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/app/frontend",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get App Frontend",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/app/workflows",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get App Workflows",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/architecture/authorities",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Authorities",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/architecture/authority/{name}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Authority",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/architecture/boundaries",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Boundaries",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/architecture/bypasses",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Bypasses",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/architecture/deprecations",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Deprecations",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/architecture/duplicates",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Duplicates",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/architecture/unmapped",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Architecture Unmapped",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/capabilities",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "List Capabilities",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/capabilities/{capability_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Capability",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/capabilities/{capability_id}/graph",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Capability Graph",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/change/intelligence",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Change Intelligence",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/context/pack",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Context Pack",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/cross-layer",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Cross Layer Graph",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/cross-layer/{capability_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Cross Layer Capability",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/diagnose",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Diagnose",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/diagnose/register",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Diagnose Register",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/diagnostics",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Diagnostics",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/errors/current",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Errors Current",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/errors/frequency",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Errors Frequency",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/errors/recent",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Errors Recent",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/errors/recurring",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Errors Recurring",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/errors/{error_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Error",
+      "class": "PLATFORM"
+    },
+    {
       "path": "/platform/v1/events",
       "method": "GET",
       "tags": [
         "platform"
       ],
       "summary": "Get Events",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/events/stream",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Events Stream",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/evidence",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "List Evidence",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/evidence/by-execution/{execution_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Evidence By Execution",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/evidence/compare",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Evidence Compare",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/evidence/{evidence_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Evidence",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/executions/{execution_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Execution",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/executions/{execution_id}/stream",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Execution Stream",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/framework/integrity",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Framework Integrity",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/framework/self-tests",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Framework Self Tests",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/health",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Health",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/health/deep",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get Health Deep",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/history/baselines",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "List History Baselines",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/history/compare",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post History Compare",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/history/runs",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "List History Runs",
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/history/runs/{run_id}",
+      "method": "GET",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Get History Run",
       "class": "PLATFORM"
     },
     {
@@ -212,1772 +3705,13 @@
       "class": "PLATFORM"
     },
     {
-      "path": "/platform/v1/verification/run",
-      "method": "POST",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Post Verification Run",
-      "class": "PLATFORM"
-    }
-  ],
-  "unconsumed_classified": [
-    {
-      "path": "/api/accounts/manage/{account_id}",
-      "method": "PUT",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Api Update Managed Account",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/accounts/manage/{account_id}",
-      "method": "DELETE",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Api Delete Managed Account",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/accounts/{account_id}/balance",
-      "method": "GET",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Api Get Account Balance",
-      "class": "USER_FACING",
-      "classification": "LEGACY_ENDPOINT",
-      "reason": "Legacy account balance endpoint superseded by /metrics"
-    },
-    {
-      "path": "/api/accounts/{account_id}/running-balance",
-      "method": "GET",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Api Get Account Running Balance",
-      "class": "USER_FACING",
-      "classification": "LEGACY_ENDPOINT",
-      "reason": "Legacy account balance endpoint superseded by /metrics"
-    },
-    {
-      "path": "/api/audit/report",
-      "method": "GET",
-      "tags": [
-        "audit"
-      ],
-      "summary": "Api Audit Report",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/banks",
-      "method": "GET",
-      "tags": [
-        "banks"
-      ],
-      "summary": "Get Banks",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/cashflow",
-      "method": "GET",
-      "tags": [
-        "cashflow"
-      ],
-      "summary": "Get Cashflow",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/cashflow/categories",
-      "method": "GET",
-      "tags": [
-        "cashflow"
-      ],
-      "summary": "Get Cashflow Categories",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/cashflow/transactions",
-      "method": "GET",
-      "tags": [
-        "cashflow"
-      ],
-      "summary": "Get Cashflow Transactions",
-      "class": "USER_FACING",
-      "classification": "LEGACY_ENDPOINT",
-      "reason": "Legacy transactions list - superseded by workspace endpoints"
-    },
-    {
-      "path": "/api/categories",
-      "method": "GET",
-      "tags": [
-        "transactions"
-      ],
-      "summary": "Get Categories",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/export/csv",
-      "method": "GET",
-      "tags": [
-        "export"
-      ],
-      "summary": "Export Csv",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/financial-events/",
-      "method": "POST",
-      "tags": [
-        "financial-events"
-      ],
-      "summary": "Create Event",
-      "class": "USER_FACING",
-      "classification": "INTERNAL",
-      "reason": "Internal financial event tracking - not user-facing UI"
-    },
-    {
-      "path": "/api/financial-events/",
-      "method": "GET",
-      "tags": [
-        "financial-events"
-      ],
-      "summary": "List Events",
-      "class": "USER_FACING",
-      "classification": "INTERNAL",
-      "reason": "Internal financial event tracking - not user-facing UI"
-    },
-    {
-      "path": "/api/financial-events/{event_id}",
-      "method": "GET",
-      "tags": [
-        "financial-events"
-      ],
-      "summary": "Get Event",
-      "class": "USER_FACING",
-      "classification": "INTERNAL",
-      "reason": "Internal financial event tracking - not user-facing UI"
-    },
-    {
-      "path": "/api/import/detect",
-      "method": "POST",
-      "tags": [
-        "import"
-      ],
-      "summary": "Import Detect",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/import/execute",
-      "method": "POST",
-      "tags": [
-        "import"
-      ],
-      "summary": "Import Execute",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/investments/{investment_id}",
-      "method": "PUT",
-      "tags": [
-        "investments"
-      ],
-      "summary": "Update Investment",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/investments/{investment_id}",
-      "method": "DELETE",
-      "tags": [
-        "investments"
-      ],
-      "summary": "Delete Investment",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/loans/analysis/priority",
-      "method": "GET",
-      "tags": [
-        "loans"
-      ],
-      "summary": "Get Loan Priority",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/loans/analysis/surplus-allocation",
-      "method": "POST",
-      "tags": [
-        "loans"
-      ],
-      "summary": "Analyze Surplus Allocation",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/loans/{loan_id}",
-      "method": "GET",
-      "tags": [
-        "loans"
-      ],
-      "summary": "Get Loan",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/loans/{loan_id}",
-      "method": "PUT",
-      "tags": [
-        "loans"
-      ],
-      "summary": "Update Loan",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/loans/{loan_id}",
-      "method": "DELETE",
-      "tags": [
-        "loans"
-      ],
-      "summary": "Delete Loan",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
-      "method": "POST",
-      "tags": [
-        "loans"
-      ],
-      "summary": "Analyze Prepayment Vs Foreclosure",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/loans/{loan_id}/foreclosure-simulation",
-      "method": "POST",
-      "tags": [
-        "loans"
-      ],
-      "summary": "Simulate Foreclosure",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/loans/{loan_id}/payments",
-      "method": "POST",
-      "tags": [
-        "loans"
-      ],
-      "summary": "Record Loan Payment",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/loans/{loan_id}/prepayment-simulation",
-      "method": "POST",
-      "tags": [
-        "loans"
-      ],
-      "summary": "Simulate Prepayment",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/loans/{loan_id}/rate-change-simulation",
-      "method": "POST",
-      "tags": [
-        "loans"
-      ],
-      "summary": "Simulate Rate Change",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/loans/{loan_id}/schedule",
-      "method": "GET",
-      "tags": [
-        "loans"
-      ],
-      "summary": "Get Loan Schedule",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/members",
-      "method": "GET",
-      "tags": [
-        "members"
-      ],
-      "summary": "Get Members",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/members",
-      "method": "POST",
-      "tags": [
-        "members"
-      ],
-      "summary": "Create Member",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/members/{member_id}",
-      "method": "GET",
-      "tags": [
-        "members"
-      ],
-      "summary": "Get Member By Id",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/members/{member_id}",
-      "method": "PUT",
-      "tags": [
-        "members"
-      ],
-      "summary": "Update Member",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/members/{member_id}",
-      "method": "DELETE",
-      "tags": [
-        "members"
-      ],
-      "summary": "Delete Member",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/reconciliation/batch-insert",
-      "method": "POST",
-      "tags": [
-        "reconciliation"
-      ],
-      "summary": "Api Batch Insert Reconciliations",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/reconciliation/create",
-      "method": "POST",
-      "tags": [
-        "reconciliation"
-      ],
-      "summary": "Api Create Reconciliation",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/reconciliation/{reconciliation_id}/confirm",
-      "method": "POST",
-      "tags": [
-        "reconciliation"
-      ],
-      "summary": "Api Confirm Reconciliation",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/reconciliation/{reconciliation_id}/reject",
-      "method": "POST",
-      "tags": [
-        "reconciliation"
-      ],
-      "summary": "Api Reject Reconciliation",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/statements",
-      "method": "GET",
-      "tags": [
-        "cards",
-        "statements"
-      ],
-      "summary": "Get Statements",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/statements/{statement_id}/validate",
-      "method": "GET",
-      "tags": [
-        "cards",
-        "statements"
-      ],
-      "summary": "Api Validate Statement",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/transactions",
-      "method": "GET",
-      "tags": [
-        "transactions"
-      ],
-      "summary": "Get Transactions",
-      "class": "USER_FACING",
-      "classification": "LEGACY_ENDPOINT",
-      "reason": "Legacy transactions list - superseded by workspace endpoints"
-    },
-    {
-      "path": "/api/upload",
-      "method": "POST",
-      "tags": [
-        "import"
-      ],
-      "summary": "Upload Statement",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/accounts",
-      "method": "GET",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "List Accounts",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/accounts",
-      "method": "POST",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Create Account",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/accounts/{account_id}",
-      "method": "GET",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Get Account",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/accounts/{account_id}",
-      "method": "PUT",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Update Account",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/accounts/{account_id}",
-      "method": "DELETE",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Deactivate Account",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/accounts/{account_id}/analytics",
-      "method": "GET",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Get Account Analytics",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/accounts/{account_id}/balance-history",
-      "method": "POST",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Insert Balance Snapshot",
-      "class": "USER_FACING",
-      "classification": "LEGACY_ENDPOINT",
-      "reason": "Legacy account balance endpoint superseded by /metrics"
-    },
-    {
-      "path": "/api/v1/accounts/{account_id}/balance-history",
-      "method": "GET",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Get Balance History",
-      "class": "USER_FACING",
-      "classification": "LEGACY_ENDPOINT",
-      "reason": "Legacy account balance endpoint superseded by /metrics"
-    },
-    {
-      "path": "/api/v1/accounts/{account_id}/balance-history/latest",
-      "method": "GET",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Get Latest Balance",
-      "class": "USER_FACING",
-      "classification": "LEGACY_ENDPOINT",
-      "reason": "Legacy account balance endpoint superseded by /metrics"
-    },
-    {
-      "path": "/api/v1/accounts/{account_id}/dormancy",
-      "method": "GET",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Get Account Dormancy",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/accounts/{account_id}/links",
-      "method": "POST",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Link Accounts",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/accounts/{account_id}/links",
-      "method": "GET",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Get Linked Accounts",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/accounts/{account_id}/links/{linked_account_id}",
-      "method": "DELETE",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Unlink Accounts",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/accounts/{account_id}/metrics",
-      "method": "GET",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Get Account Metrics",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/accounts/{account_id}/status",
-      "method": "GET",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Get Account Status",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/behaviour",
-      "method": "GET",
-      "tags": [
-        "behaviour-workspace"
-      ],
-      "summary": "Get Behaviour",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/behaviour/cashflow-health",
-      "method": "GET",
-      "tags": [
-        "behaviour"
-      ],
-      "summary": "Get Cashflow Health",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/behaviour/debt-health",
-      "method": "GET",
-      "tags": [
-        "behaviour"
-      ],
-      "summary": "Get Debt Health",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/behaviour/monthly-report",
-      "method": "GET",
-      "tags": [
-        "behaviour"
-      ],
-      "summary": "Get Monthly Report",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/behaviour/patterns",
-      "method": "GET",
-      "tags": [
-        "behaviour"
-      ],
-      "summary": "Get Patterns",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/behaviour/profile",
-      "method": "GET",
-      "tags": [
-        "behaviour"
-      ],
-      "summary": "Get Financial Profile",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/behaviour/recommendations",
-      "method": "GET",
-      "tags": [
-        "behaviour"
-      ],
-      "summary": "Get Recommendations",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/cashflow",
-      "method": "GET",
-      "tags": [
-        "cashflow-workspace"
-      ],
-      "summary": "Get Cashflow",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/credit-cards",
-      "method": "GET",
-      "tags": [
-        "credit-cards-workspace"
-      ],
-      "summary": "Get Credit Cards",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/credit-cards",
-      "method": "POST",
-      "tags": [
-        "credit-cards"
-      ],
-      "summary": "Create Card",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/credit-cards/{card_id}",
-      "method": "GET",
-      "tags": [
-        "credit-cards"
-      ],
-      "summary": "Get Card",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/credit-cards/{card_id}",
-      "method": "PUT",
-      "tags": [
-        "credit-cards"
-      ],
-      "summary": "Update Card",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/credit-cards/{card_id}",
-      "method": "DELETE",
-      "tags": [
-        "credit-cards"
-      ],
-      "summary": "Deactivate Card",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/credit-cards/{card_id}/emi-conversion",
-      "method": "POST",
-      "tags": [
-        "credit-cards"
-      ],
-      "summary": "Convert To Emi",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/credit-cards/{card_id}/foreclosure",
-      "method": "POST",
-      "tags": [
-        "credit-cards"
-      ],
-      "summary": "Quote Foreclosure",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/credit-cards/{card_id}/metrics",
-      "method": "GET",
-      "tags": [
-        "credit-cards"
-      ],
-      "summary": "Get Metrics",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/credit-cards/{card_id}/next-statement-date",
-      "method": "GET",
-      "tags": [
-        "credit-cards"
-      ],
-      "summary": "Get Next Statement Date",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/credit-cards/{card_id}/outstanding",
-      "method": "GET",
-      "tags": [
-        "credit-cards"
-      ],
-      "summary": "Get Outstanding",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/credit-cards/{card_id}/payments",
-      "method": "POST",
-      "tags": [
-        "credit-cards"
-      ],
-      "summary": "Record Payment",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/credit-cards/{card_id}/statements",
-      "method": "GET",
-      "tags": [
-        "credit-cards"
-      ],
-      "summary": "List Statements",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/credit-cards/{card_id}/statements",
-      "method": "POST",
-      "tags": [
-        "credit-cards"
-      ],
-      "summary": "Generate Statement",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/credit-cards/{card_id}/utilization",
-      "method": "GET",
-      "tags": [
-        "credit-cards"
-      ],
-      "summary": "Get Utilization",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/financial-intelligence/cashflow-forecast",
-      "method": "GET",
-      "tags": [
-        "financial-intelligence",
-        "financial-intelligence"
-      ],
-      "summary": "Get Cashflow Forecast",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/financial-intelligence/credit-forecast",
-      "method": "GET",
-      "tags": [
-        "financial-intelligence",
-        "financial-intelligence"
-      ],
-      "summary": "Get Credit Forecast",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/financial-intelligence/liquidity-forecast",
-      "method": "GET",
-      "tags": [
-        "financial-intelligence",
-        "financial-intelligence"
-      ],
-      "summary": "Get Liquidity Forecast",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/financial-intelligence/outlook",
-      "method": "GET",
-      "tags": [
-        "financial-intelligence",
-        "financial-intelligence"
-      ],
-      "summary": "Get Financial Outlook",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/financial-intelligence/priorities",
-      "method": "GET",
-      "tags": [
-        "financial-intelligence",
-        "financial-intelligence"
-      ],
-      "summary": "Get Financial Intelligence Priorities",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/financial-intelligence/recommendations",
-      "method": "GET",
-      "tags": [
-        "financial-intelligence",
-        "financial-intelligence"
-      ],
-      "summary": "Get Financial Recommendations",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/financial-intelligence/recommendations/{recommendation_id}",
-      "method": "GET",
-      "tags": [
-        "financial-intelligence",
-        "financial-intelligence"
-      ],
-      "summary": "Get Recommendation Details",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/financial-intelligence/report",
-      "method": "GET",
-      "tags": [
-        "financial-intelligence",
-        "financial-intelligence"
-      ],
-      "summary": "Get Financial Intelligence Report",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/forecast",
-      "method": "GET",
-      "tags": [
-        "forecast"
-      ],
-      "summary": "Get Forecast",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/institutions",
-      "method": "GET",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "List Institutions",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/institutions",
-      "method": "POST",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Create Institution",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/institutions/{institution_id}",
-      "method": "GET",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Get Institution",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/institutions/{institution_id}",
-      "method": "PUT",
-      "tags": [
-        "accounts"
-      ],
-      "summary": "Update Institution",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/investments",
-      "method": "GET",
-      "tags": [
-        "investments-workspace"
-      ],
-      "summary": "Get Investments",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/loans",
-      "method": "GET",
-      "tags": [
-        "loans-workspace"
-      ],
-      "summary": "Get Loans",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/net-worth",
-      "method": "GET",
-      "tags": [
-        "networth-workspace"
-      ],
-      "summary": "Get Networth",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/api/v1/reconciliation",
-      "method": "GET",
-      "tags": [
-        "reconciliation-workspace"
-      ],
-      "summary": "Get Reconciliation",
-      "class": "USER_FACING",
-      "classification": "NEEDS_REVIEW",
-      "reason": "Unconsumed user-facing endpoint requiring review"
-    },
-    {
-      "path": "/health",
-      "method": "GET",
-      "tags": [],
-      "summary": "Health Check",
-      "class": "INFRASTRUCTURE",
-      "classification": "INFRASTRUCTURE",
-      "reason": "Health/readiness probes - intentional"
-    },
-    {
-      "path": "/platform/v1/ai/agents",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Ai Agents",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/agents/{agent_name}",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Ai Agent",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/config",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Ai Config",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/config/provider",
-      "method": "POST",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Post Ai Config Provider",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/diagnose",
-      "method": "POST",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Post Ai Diagnose",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/engineering/execute",
-      "method": "POST",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Post Ai Engineering Execute",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/financial/interpret",
-      "method": "POST",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Post Ai Financial Interpret",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/mode",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Ai Mode",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/providers",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Ai Providers",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/runs",
-      "method": "POST",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Post Ai Run",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/runs",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Ai Runs",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/runs/{run_id}",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Ai Run",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/runs/{run_id}/cancel",
-      "method": "POST",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Post Ai Run Cancel",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/runs/{run_id}/finalize",
-      "method": "POST",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Post Ai Run Finalize",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/runs/{run_id}/steps",
-      "method": "POST",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Post Ai Step",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/runs/{run_id}/trace",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Ai Run Trace",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/tools",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Ai Tools",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/tools/{tool_name}",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Ai Tool",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/ai/workflow/run",
-      "method": "POST",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Post Ai Workflow Run",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/app/backend",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get App Backend",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/app/domain",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get App Domain",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/app/financial",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get App Financial",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/app/frontend",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get App Frontend",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/app/workflows",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get App Workflows",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/architecture/authorities",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Architecture Authorities",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/architecture/authority/{name}",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Architecture Authority",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/architecture/boundaries",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Architecture Boundaries",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/architecture/bypasses",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Architecture Bypasses",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/architecture/deprecations",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Architecture Deprecations",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/architecture/duplicates",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Architecture Duplicates",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/architecture/unmapped",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Architecture Unmapped",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/capabilities",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "List Capabilities",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/capabilities/{capability_id}",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Capability",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/capabilities/{capability_id}/graph",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Capability Graph",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/change/intelligence",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Change Intelligence",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/context/pack",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Context Pack",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/cross-layer",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Cross Layer Graph",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/cross-layer/{capability_id}",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Cross Layer Capability",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/diagnose",
-      "method": "POST",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Post Diagnose",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/diagnose/register",
-      "method": "POST",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Post Diagnose Register",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/diagnostics",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Diagnostics",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/errors/current",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Errors Current",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/errors/frequency",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Errors Frequency",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/errors/recent",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Errors Recent",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/errors/recurring",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Errors Recurring",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/errors/{error_id}",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Error",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/events/stream",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Events Stream",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/evidence",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "List Evidence",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/evidence/by-execution/{execution_id}",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Evidence By Execution",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/evidence/compare",
-      "method": "POST",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Post Evidence Compare",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/evidence/{evidence_id}",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Evidence",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/executions/{execution_id}",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Execution",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/executions/{execution_id}/stream",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Execution Stream",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/framework/integrity",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Framework Integrity",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/framework/self-tests",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Framework Self Tests",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/health",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Health",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/health/deep",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get Health Deep",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/history/baselines",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "List History Baselines",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/history/compare",
-      "method": "POST",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Post History Compare",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/history/runs",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "List History Runs",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
-      "path": "/platform/v1/history/runs/{run_id}",
-      "method": "GET",
-      "tags": [
-        "platform"
-      ],
-      "summary": "Get History Run",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
-    },
-    {
       "path": "/platform/v1/runs/{run_id}",
       "method": "GET",
       "tags": [
         "platform"
       ],
       "summary": "Get Run",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
+      "class": "PLATFORM"
     },
     {
       "path": "/platform/v1/status",
@@ -1986,9 +3720,7 @@
         "platform"
       ],
       "summary": "Get Status",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
+      "class": "PLATFORM"
     },
     {
       "path": "/platform/v1/tasks",
@@ -1997,9 +3729,7 @@
         "platform"
       ],
       "summary": "List Tasks",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
+      "class": "PLATFORM"
     },
     {
       "path": "/platform/v1/tasks/{task_id}",
@@ -2008,9 +3738,7 @@
         "platform"
       ],
       "summary": "Get Task",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
+      "class": "PLATFORM"
     },
     {
       "path": "/platform/v1/tasks/{task_id}/cancel",
@@ -2019,9 +3747,7 @@
         "platform"
       ],
       "summary": "Post Task Cancel",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
+      "class": "PLATFORM"
     },
     {
       "path": "/platform/v1/verification",
@@ -2030,9 +3756,7 @@
         "platform"
       ],
       "summary": "Get Verification State",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
+      "class": "PLATFORM"
     },
     {
       "path": "/platform/v1/verification/recommendation",
@@ -2041,9 +3765,16 @@
         "platform"
       ],
       "summary": "Get Verification Recommendation",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
+      "class": "PLATFORM"
+    },
+    {
+      "path": "/platform/v1/verification/run",
+      "method": "POST",
+      "tags": [
+        "platform"
+      ],
+      "summary": "Post Verification Run",
+      "class": "PLATFORM"
     },
     {
       "path": "/platform/v1/verification/run/affected",
@@ -2052,9 +3783,7 @@
         "platform"
       ],
       "summary": "Post Verification Run Affected",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
+      "class": "PLATFORM"
     },
     {
       "path": "/platform/v1/verification/run/full",
@@ -2063,9 +3792,7 @@
         "platform"
       ],
       "summary": "Post Verification Run Full",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
+      "class": "PLATFORM"
     },
     {
       "path": "/platform/v1/verification/run/group",
@@ -2074,9 +3801,7 @@
         "platform"
       ],
       "summary": "Post Verification Run Group",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
+      "class": "PLATFORM"
     },
     {
       "path": "/platform/v1/verification/runs/recent",
@@ -2085,9 +3810,7 @@
         "platform"
       ],
       "summary": "Get Verification Runs Recent",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
+      "class": "PLATFORM"
     },
     {
       "path": "/platform/v1/workflows",
@@ -2096,25 +3819,14 @@
         "platform"
       ],
       "summary": "Get Workflows",
-      "class": "PLATFORM",
-      "classification": "PLATFORM_INTERNAL",
-      "reason": "Platform Console endpoint - may be consumed by platform pages indirectly"
+      "class": "PLATFORM"
     },
     {
       "path": "/ready",
       "method": "GET",
       "tags": [],
       "summary": "Readiness Check",
-      "class": "INFRASTRUCTURE",
-      "classification": "INFRASTRUCTURE",
-      "reason": "Health/readiness probes - intentional"
+      "class": "INFRASTRUCTURE"
     }
-  ],
-  "classification_counts": {
-    "NEEDS_REVIEW": 86,
-    "LEGACY_ENDPOINT": 7,
-    "INTERNAL": 3,
-    "INFRASTRUCTURE": 2,
-    "PLATFORM_INTERNAL": 73
-  }
+  ]
 }
