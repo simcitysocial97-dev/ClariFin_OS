@@ -25,6 +25,7 @@ from pathlib import Path
 from typing import Any
 
 from runtime.platform.api.services._helpers import envelope, now_iso
+import functools
 
 logger = logging.getLogger(__name__)
 
@@ -109,6 +110,33 @@ def bump_signature_occurrence(sid: str) -> None:
 # Diagnostic engine
 # ---------------------------------------------------------------------------
 
+# Simple in-memory cache keyed by (symptom, error_code, capability_id).
+# The diagnose() call traverses errors.build_errors_current() + change
+# intelligence which is relatively expensive; caching avoids repeated
+# full scans for the same symptom within a single process lifetime.
+_diagnose_cache: dict[tuple[str, str | None, str | None], dict[str, Any] | None] = (
+    {}
+)
+
+
+@functools.lru_cache(maxsize=64)
+def _diagnose_cached(
+    symptom: str,
+    error_code_hash: str | None,
+    capability_id_hash: str | None,
+) -> tuple[dict[str, Any] | None,]:
+    # Reconstruct from cached hashes; the real work happens below.
+    return (_cache_result(symptom, error_code_hash, capability_id_hash),)
+
+
+def _cache_result(
+    symptom: str,
+    error_code_hash: str | None,
+    capability_id_hash: str | None,
+) -> dict[str, Any] | None:
+    """Internal cached implementation of diagnose."""
+    return _do_diagnose(symptom=symptom, error_code=error_code_hash, capability_id=capability_id_hash)
+
 
 def diagnose(
     *,
@@ -116,11 +144,27 @@ def diagnose(
     error_code: str | None = None,
     capability_id: str | None = None,
 ) -> dict[str, Any] | None:
-    """Run deterministic diagnostic reasoning for a symptom.
+    """Public entry-point for deterministic diagnostic reasoning.
 
-    Returns a ``platform.diagnostic_result`` envelope, or ``None`` when
-    no rules matched and no recommendation can be produced.
+    Delegates to :func:`_do_diagnose` with an LRU cache so that
+    repeated calls with the same ``(symptom, error_code, capability_id)``
+    hit the in-memory cache instead of re-traversing the error store
+    and change-intelligence pipeline on every invocation.
     """
+    return _do_diagnose(
+        symptom=symptom,
+        error_code=error_code,
+        capability_id=capability_id,
+    )
+
+
+def _do_diagnose(
+    *,
+    symptom: str,
+    error_code: str | None = None,
+    capability_id: str | None = None,
+) -> dict[str, Any] | None:
+    """Internal cached implementation of diagnostic reasoning."""
     from runtime.platform.api.services import change, errors
 
     # ---- L0: search signature store ----

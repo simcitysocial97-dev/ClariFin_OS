@@ -1,0 +1,211 @@
+{
+  "schema": "m9-c64-final-command-matrix/v1",
+  "generated_at": "2026-09-20T11:04:52Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "matrix": [
+    {
+      "command": "check",
+      "scenario": "normal (changed files)",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "stdout_clean": true,
+      "stderr_clean": false,
+      "stderr_issues": [
+        "WARNING boundary has 1156 files (>500)"
+      ],
+      "evidence_valid": true,
+      "artifact_valid": true,
+      "console_consistent": true,
+      "repeatable": true,
+      "classification": "PASS_WITH_WARNING"
+    },
+    {
+      "command": "check",
+      "scenario": "with VERIFICATION_BASE_REF narrow",
+      "expected_exit": 0,
+      "actual_exit": "not_tested",
+      "notes": "Would reduce changed-files count; not tested in this run"
+    },
+    {
+      "command": "plan",
+      "scenario": "deterministic planning",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "stdout_clean": true,
+      "stderr_clean": true,
+      "evidence_valid": true,
+      "artifact_valid": true,
+      "console_consistent": true,
+      "repeatable": true,
+      "classification": "PASS"
+    },
+    {
+      "command": "run",
+      "scenario": "full execution (64 obligations)",
+      "expected_exit": "0|1",
+      "actual_exit": 124,
+      "notes": "External timeout; command itself does not have hardcoded timeout",
+      "classification": "EXTERNAL_BOUNDARY"
+    },
+    {
+      "command": "diagnose",
+      "scenario": "healthy state diagnosis",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "stdout_clean": true,
+      "stderr_clean": true,
+      "evidence_valid": true,
+      "artifact_valid": true,
+      "console_consistent": true,
+      "repeatable": true,
+      "classification": "PASS"
+    },
+    {
+      "command": "strengthen",
+      "scenario": "smoke test",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "stdout_clean": true,
+      "stderr_clean": true,
+      "evidence_valid": true,
+      "artifact_valid": true,
+      "console_consistent": true,
+      "repeatable": true,
+      "classification": "PASS"
+    },
+    {
+      "command": "inspect.capabilities",
+      "scenario": "capability catalog",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "stdout_clean": true,
+      "stderr_clean": true,
+      "evidence_valid": true,
+      "artifact_valid": true,
+      "console_consistent": true,
+      "repeatable": true,
+      "classification": "PASS"
+    },
+    {
+      "command": "inspect.evidence",
+      "scenario": "obligation listing",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "stdout_clean": true,
+      "stderr_clean": true,
+      "evidence_valid": true,
+      "artifact_valid": true,
+      "console_consistent": true,
+      "repeatable": true,
+      "classification": "PASS"
+    },
+    {
+      "command": "inspect.plan",
+      "scenario": "plan summary",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "stdout_clean": true,
+      "stderr_clean": true,
+      "evidence_valid": true,
+      "artifact_valid": true,
+      "console_consistent": true,
+      "repeatable": true,
+      "classification": "PASS"
+    },
+    {
+      "command": "inspect.mutation",
+      "scenario": "measurement truth",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "stdout_clean": false,
+      "stderr_clean": true,
+      "stdout_issues": [
+        "INFRASTRUCTURE_FAILURE for coverage measurements"
+      ],
+      "evidence_valid": true,
+      "artifact_valid": true,
+      "console_consistent": true,
+      "repeatable": true,
+      "classification": "PASS_WITH_NOTES"
+    },
+    {
+      "command": "inspect.health",
+      "scenario": "health report",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "stdout_clean": true,
+      "stderr_clean": true,
+      "evidence_valid": true,
+      "artifact_valid": true,
+      "console_consistent": true,
+      "repeatable": true,
+      "classification": "PASS"
+    },
+    {
+      "command": "certify",
+      "scenario": "full certification (G1-G30)",
+      "expected_exit": "0|1",
+      "actual_exit": 124,
+      "notes": "External timeout; certifies by running pytest suites for G1-G4",
+      "classification": "EXTERNAL_BOUNDARY"
+    },
+    {
+      "command": "ci",
+      "scenario": "CI reconciliation",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "stdout_clean": true,
+      "stderr_clean": true,
+      "evidence_valid": true,
+      "artifact_valid": true,
+      "console_consistent": true,
+      "repeatable": true,
+      "classification": "PASS"
+    },
+    {
+      "command": "doctor",
+      "scenario": "framework health",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "stdout_clean": true,
+      "stderr_clean": true,
+      "evidence_valid": true,
+      "artifact_valid": true,
+      "console_consistent": true,
+      "repeatable": true,
+      "classification": "PASS"
+    },
+    {
+      "command": "status (legacy)",
+      "scenario": "compatibility route",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "stdout_clean": true,
+      "stderr_clean": false,
+      "stderr_issues": [
+        "[M9-C49] Legacy command 'status' -> canonical 'doctor'"
+      ],
+      "evidence_valid": true,
+      "artifact_valid": true,
+      "console_consistent": true,
+      "repeatable": true,
+      "classification": "PASS_WITH_DEPRECATION"
+    },
+    {
+      "command": "inspect.workflows",
+      "scenario": "workflow listing",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "stdout_clean": false,
+      "stderr_clean": true,
+      "stdout_issues": [
+        "Returns capability discovery resolution instead of workflow list"
+      ],
+      "evidence_valid": false,
+      "artifact_valid": false,
+      "console_consistent": false,
+      "repeatable": true,
+      "classification": "DEFECT"
+    }
+  ]
+}

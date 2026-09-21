@@ -1,0 +1,10 @@
+=== Command: verify certify  ===
+Exit: 124
+Class: EXTERNAL_BOUNDARY_TIMEOUT
+Duration: 30.035s
+
+--- STDOUT ---
+
+
+--- STDERR ---
+TIMEOUT

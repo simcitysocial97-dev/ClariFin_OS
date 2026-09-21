@@ -1,5 +1,6 @@
 /**
  * Unit tests for useDashboardMetrics hook
+
  *
  * Tests cover:
  * - Initial load state
@@ -9,7 +10,11 @@
  * - Error handling
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import {
+import React from 'react';
+
+import React from 'react';
+ describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useDashboardMetrics } from '../lib/hooks/use-dashboard-metrics';

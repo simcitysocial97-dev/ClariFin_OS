@@ -34,6 +34,7 @@ from runtime.platform.api.services import (  # noqa: F401  # re-exported via __a
     framework_integrity,
     health,
     history,
+    status,
     tasks,
     verification,
 )
@@ -51,6 +52,7 @@ __all__: list[str] = [
     "framework_integrity",
     "health",
     "history",
+    "status",
     "tasks",
     "verification",
 ]

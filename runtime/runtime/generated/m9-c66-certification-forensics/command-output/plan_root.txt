@@ -1,0 +1,121 @@
+=== Command: verify plan  ===
+Exit: 1
+Class: FAILED
+Duration: 2.567s
+
+--- STDOUT ---
+
+
+--- STDERR ---
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py", line 399, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py", line 349, in main
+    return canonical_main()
+           ^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/control_plane_facade.py", line 1085, in main
+    return _dispatch_canonical(command, args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/control_plane_facade.py", line 1309, in _dispatch_canonical
+    return cp.plan(changed_files=changed_files, json_out=json_out)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/control_plane_facade.py", line 292, in plan
+    plan: ControlPlanePlan = self.planner.plan(changed_files)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/control_plane.py", line 176, in plan
+    resolution = resolve_capabilities(
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py", line 675, in resolve_capabilities
+    return resolver.resolve(changed_files)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py", line 238, in resolve
+    classified = [self._classify_change(f) for f in changed_files]
+                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py", line 428, in _classify_change
+    clg = self._get_cross_layer_graph()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py", line 196, in _get_cross_layer_graph
+    self._cross_layer_graph = CrossLayerGraphBuilder().build()
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/cross_layer_graph.py", line 127, in build
+    self._graph.frontend_capabilities = self.capability_discoverer.discover_capabilities()
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/frontend_capability_discovery.py", line 342, in discover_capabilities
+    symbols_by_file = self.ts_extractor.extract_from_directory(target_dir)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/typescript_symbol_resolver.py", line 226, in extract_from_directory
+    result_data = self._run_ts_resolver(directory)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/typescript_symbol_resolver.py", line 149, in _run_ts_resolver
+    raise FileNotFoundError(f"TypeScript resolver script not found: {ts_resolver_script_abs}")
+FileNotFoundError: TypeScript resolver script not found: /home/vasantha/AI-Projects/ClariFin_OS/runtime/runtime/foundation/verification/typescript_symbol_resolver.ts
+Error in sys.excepthook:
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/apport_python_hook.py", line 228, in partial_apport_excepthook
+    return apport_excepthook(binary, exc_type, exc_obj, exc_tb)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/apport_python_hook.py", line 66, in apport_excepthook
+    import apport.report
+  File "/usr/lib/python3/dist-packages/apport/__init__.py", line 7, in <module>
+    from apport.packaging_impl import impl as packaging
+  File "/usr/lib/python3/dist-packages/apport/packaging_impl/__init__.py", line 33, in <module>
+    impl = load_packaging_implementation()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/apport/packaging_impl/__init__.py", line 28, in load_packaging_implementation
+    f"apport.packaging_impl.{determine_packaging_implementation()}"
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/apport/packaging_impl/__init__.py", line 12, in determine_packaging_implementation
+    info = platform.freedesktop_os_release()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'platform' has no attribute 'freedesktop_os_release'
+
+Original exception was:
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py", line 399, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/verify.py", line 349, in main
+    return canonical_main()
+           ^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/control_plane_facade.py", line 1085, in main
+    return _dispatch_canonical(command, args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/control_plane_facade.py", line 1309, in _dispatch_canonical
+    return cp.plan(changed_files=changed_files, json_out=json_out)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/control_plane_facade.py", line 292, in plan
+    plan: ControlPlanePlan = self.planner.plan(changed_files)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/control_plane.py", line 176, in plan
+    resolution = resolve_capabilities(
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py", line 675, in resolve_capabilities
+    return resolver.resolve(changed_files)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py", line 238, in resolve
+    classified = [self._classify_change(f) for f in changed_files]
+                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py", line 428, in _classify_change
+    clg = self._get_cross_layer_graph()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/capability_resolver.py", line 196, in _get_cross_layer_graph
+    self._cross_layer_graph = CrossLayerGraphBuilder().build()
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/cross_layer_graph.py", line 127, in build
+    self._graph.frontend_capabilities = self.capability_discoverer.discover_capabilities()
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/frontend_capability_discovery.py", line 342, in discover_capabilities
+    symbols_by_file = self.ts_extractor.extract_from_directory(target_dir)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/typescript_symbol_resolver.py", line 226, in extract_from_directory
+    result_data = self._run_ts_resolver(directory)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/typescript_symbol_resolver.py", line 149, in _run_ts_resolver
+    raise FileNotFoundError(f"TypeScript resolver script not found: {ts_resolver_script_abs}")
+FileNotFoundError: TypeScript resolver script not found: /home/vasantha/AI-Projects/ClariFin_OS/runtime/runtime/foundation/verification/typescript_symbol_resolver.ts
+

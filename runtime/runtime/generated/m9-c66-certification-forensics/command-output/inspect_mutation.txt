@@ -1,0 +1,198 @@
+=== Command: verify inspect mutation ===
+Exit: 0
+Class: PASS
+Duration: 0.83s
+
+--- STDOUT ---
+================================================================================
+  MEASUREMENT TRUTH INTEGRATION REPORT
+================================================================================
+  Generated: 2026-09-20T13:57:35.496090+00:00
+  Repository SHA: 23e4b661
+--------------------------------------------------------------------------------
+  SUMMARY:
+    total_capabilities: 16
+    capabilities_with_mutation: 3
+    capabilities_with_coverage: 11
+    authoritative_mutations: 0
+    certifiable_mutations: 0
+    authoritative_coverages: 0
+    fresh_required: 0
+    revalidation_recommended: 0
+--------------------------------------------------------------------------------
+  MEASUREMENTS:
+    loan-engine [mutation]
+      Completion: UNKNOWN
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 0.0s
+      Missing: No mutation measurement truth record found
+    loan-engine [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 9.2s
+      Missing: Coverage 11.287709281691228% < required 40%
+    reconciliation [mutation]
+      Completion: UNKNOWN
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 0.0s
+      Missing: No mutation measurement truth record found
+    reconciliation [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 9.2s
+      Missing: Coverage 11.287709281691228% < required 40%
+    ledger [mutation]
+      Completion: UNKNOWN
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 0.0s
+      Missing: No mutation measurement truth record found
+    ledger [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 9.2s
+      Missing: Coverage 11.287709281691228% < required 40%
+    api-contracts [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 9.2s
+      Missing: Coverage 11.287709281691228% < required 40%
+    migrations [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 9.2s
+      Missing: Coverage 11.287709281691228% < required 40%
+    balance-engine [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 9.2s
+      Missing: Coverage 11.287709281691228% < required 40%
+    behaviour-engine [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 9.2s
+      Missing: Coverage 11.287709281691228% < required 40%
+    cashflow-engine [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 9.2s
+      Missing: Coverage 11.287709281691228% < required 40%
+    credit-card-engine [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 9.2s
+      Missing: Coverage 11.287709281691228% < required 40%
+    financial-intelligence [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 9.2s
+      Missing: Coverage 11.287709281691228% < required 40%
+    account-engine [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 9.2s
+      Missing: Coverage 11.287709281691228% < required 40%
+--------------------------------------------------------------------------------
+  DECISIONS:
+    loan-engine [mutation]: no_measurement_exists
+      Reason: No mutation measurement truth record exists for Loan Engine
+      Action: Run measurement for mutation: verify.py measurement mutation <scope>
+      ⚠ ESCALATION NEEDED
+    loan-engine [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: 
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    reconciliation [mutation]: no_measurement_exists
+      Reason: No mutation measurement truth record exists for Reconciliation Engine
+      Action: Run measurement for mutation: verify.py measurement mutation <scope>
+      ⚠ ESCALATION NEEDED
+    reconciliation [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: 
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    ledger [mutation]: no_measurement_exists
+      Reason: No mutation measurement truth record exists for Ledger Service
+      Action: Run measurement for mutation: verify.py measurement mutation <scope>
+      ⚠ ESCALATION NEEDED
+    ledger [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: 
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    api-contracts [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: 
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    migrations [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: 
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    balance-engine [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: 
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    behaviour-engine [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: 
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    cashflow-engine [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: 
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    credit-card-engine [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: 
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    financial-intelligence [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: 
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    account-engine [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: 
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+================================================================================
+
+
+--- STDERR ---
+

@@ -1,0 +1,37 @@
+{
+  "schema": "m9-c64-final-output-quality/v1",
+  "generated_at": "2026-09-20T11:08:42Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "analysis": {
+    "contradictions_found": [
+      {
+        "location": "inspect.mutation",
+        "issue": "INFRASTRUCTURE_FAILURE for coverage",
+        "severity": "WARNING",
+        "classification": "ENVIRONMENT_BOUNDARY"
+      }
+    ],
+    "duplicate_output": [
+      {
+        "location": "check.stdout",
+        "issue": "E2E IMPACT printed twice",
+        "severity": "LOW",
+        "classification": "FALSE_POSITIVE"
+      }
+    ],
+    "formatting_defects": [
+      {
+        "location": "inspect.workflows",
+        "issue": "Returns capability discovery instead of workflow list",
+        "severity": "MEDIUM",
+        "classification": "DEFECT"
+      }
+    ]
+  },
+  "summary": {
+    "total_issues": 3,
+    "unexpected_material": 0,
+    "expected_intentional": 5,
+    "defects": 1
+  }
+}

@@ -1,0 +1,92 @@
+[
+  {
+    "endpoint": "GET /platform/v1/health",
+    "method": "GET",
+    "purpose": "System health — framework status, historical stats, runtime availability",
+    "canonical_source": "runtime.system.observability.analytics + EngineeringHealthReport",
+    "response_schema": {"platform": "HEALTHY|DEGRAD|UNHEALTHY|UNKNOWN", "backend": "Status", "frontend": "Status", "database": "Status", "architecture": "Status", "verification": "Status", "evidence": "Status", "ai": "Status", "domains": "list"},
+    "authority": "EngineeringEventStore -> AnalyticsEngine -> EngineeringHealthReport",
+    "tests": ["test_health_returns_correct_kind", "test_health_data_has_required_top_level_fields", "test_health_domains_have_required_fields"],
+    "status": "PASS"
+  },
+  {
+    "endpoint": "GET /platform/v1/status",
+    "method": "GET",
+    "purpose": "Operator-oriented snapshot — repository identity, commit, certification state, counts",
+    "canonical_source": "git + CapabilityCatalog + workflow_inspection + AnalyticsEngine + C66 artifact",
+    "response_schema": {"repository": "str", "commit_sha": "str", "tree_sha": "str", "branch": "str", "runtime_version": "str", "fingerprint": "str", "framework_health": "Status", "certification_state": "str", "capability_count": "int", "profile_count": "int", "workflow_count": "int", "recent_run_status": "Status|null", "recent_run_id": "str|null"},
+    "authority": "git/commit + Catalog/capability_count + Workflow/workflow_count + EventStore/recent_run + C66/certification_state",
+    "tests": ["test_status_returns_200", "test_status_is_valid_envelope", "test_status_commit_sha_matches_git", "test_status_capability_count_matches_catalog", "test_status_workflow_count_matches_inspection", "test_status_certification_state_from_c66_artifact", "test_status_no_fabricated_fields"],
+    "status": "PASS"
+  },
+  {
+    "endpoint": "GET /platform/v1/capabilities",
+    "method": "GET",
+    "purpose": "Canonical capability catalog — what capabilities exist, which profile owns them",
+    "canonical_source": "runtime.foundation.verification.capability_catalog.get_capability_catalog()",
+    "response_schema": {"count": "int", "items": "list[CapabilityListItem]", "categories": "list[str]"},
+    "authority": "CapabilityCatalog (single source of truth)",
+    "tests": ["test_capabilities_list", "test_capabilities_matches_catalog_count", "test_capabilities_no_duplicate_registry"],
+    "status": "PASS"
+  },
+  {
+    "endpoint": "GET /platform/v1/verification",
+    "method": "GET",
+    "purpose": "Current/latest canonical verification state — status, classification, gates, summary",
+    "canonical_source": "runtime.system.observability.analytics.AnalyticsEngine",
+    "response_schema": {"status": "passed|failed|unknown", "classification": "CERTIFIED|UNVERIFIED", "run_id": "str|null", "command": "str", "commit": "str", "plan_fingerprint": "str|null", "timestamp": "ISO8601", "duration_seconds": "float", "gates": "dict", "summary": "dict"},
+    "authority": "AnalyticsEngine (read-only, no execution)",
+    "tests": ["test_verification_returns_envelope", "test_verification_preserves_classification", "test_verification_run_identity_preserved", "test_verification_does_not_execute"],
+    "status": "PASS"
+  },
+  {
+    "endpoint": "GET /platform/v1/runs",
+    "method": "GET",
+    "purpose": "Canonical runtime runs/history — paginated list from event store",
+    "canonical_source": "runtime.system.observability.event_store.EngineeringEventStore",
+    "response_schema": {"page": "int", "page_size": "int", "total": "int", "items": "list[HistoryRunSummary]"},
+    "authority": "EngineeringEventStore (runs derived from VerificationCompleted events)",
+    "tests": ["test_runs_list", "test_runs_pagination"],
+    "status": "PASS"
+  },
+  {
+    "endpoint": "GET /platform/v1/runs/{run_id}",
+    "method": "GET",
+    "purpose": "Canonical RunRecord detail — preserves identity fields",
+    "canonical_source": "runtime.system.observability.event_store.EngineeringEventStore",
+    "response_schema": {"id": "str", "started_at": "Timestamp", "finished_at": "Timestamp|null", "duration_ms": "int|null", "status": "Status", "capabilities_run": "int", "capabilities_passed": "int", "capabilities_failed": "int", "capability_results": "list", "evidence_ids": "list[str]"},
+    "authority": "EngineeringEventStore",
+    "tests": ["test_runs_detail_for_known_run", "test_runs_detail_for_unknown_run"],
+    "status": "PASS"
+  },
+  {
+    "endpoint": "GET /platform/v1/evidence",
+    "method": "GET",
+    "purpose": "Existing evidence records/indexes — no second database",
+    "canonical_source": "runtime.foundation.verification.control_plane_facade.ControlPlane (obligation set)",
+    "response_schema": {"count": "int", "items": "list[EvidenceItem]"},
+    "authority": "ControlPlane obligation set (read-only projection)",
+    "tests": ["test_evidence_list", "test_evidence_identity_preserved"],
+    "status": "PASS"
+  },
+  {
+    "endpoint": "GET /platform/v1/diagnostics",
+    "method": "GET",
+    "purpose": "Existing diagnosis/health/problem info — what is wrong, classification, evidence",
+    "canonical_source": "runtime.platform.diagnostics.engine.diagnose() + errors.build_errors_current()",
+    "response_schema": {"summary": "dict", "classification": "HEALTHY|UNHEALTHY", "evidence_count": "int", "generated_at": "ISO8601"},
+    "authority": "DiagnosticEngine (deterministic, no LLM) + Error Observatory",
+    "tests": ["test_diagnostics_returns_200", "test_diagnostics_is_valid_envelope", "test_diagnostics_classification_preserved"],
+    "status": "PASS"
+  },
+  {
+    "endpoint": "GET /platform/v1/workflows",
+    "method": "GET",
+    "purpose": "C65 workflow inspection model — same source as verify inspect workflows",
+    "canonical_source": "runtime.foundation.verification.workflow_inspection.enumerate_workflows()",
+    "response_schema": {"count": "int", "items": "list[WorkflowItem]", "source": "str", "last_updated": "ISO8601"},
+    "authority": "WorkflowInspector (same as verify inspect workflows)",
+    "tests": ["test_workflows_returns_canonical_inventory", "test_workflows_matches_inspect_command_source", "test_workflows_metadata_preserved"],
+    "status": "PASS"
+  }
+]

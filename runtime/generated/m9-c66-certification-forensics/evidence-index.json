@@ -1,0 +1,74 @@
+{
+  "schema": "m9-c66-evidence-index/v1",
+  "generated_at": "2026-09-20T13:35:00Z",
+  "evidence_items": [
+    {
+      "id": "E001",
+      "type": "command_execution",
+      "description": "Complete runtime command matrix execution",
+      "artifact": "command-matrix.json",
+      "status": "completed"
+    },
+    {
+      "id": "E002",
+      "type": "output_truth",
+      "description": "Cross-surface output reconciliation",
+      "artifact": "cross-surface-reconciliation.json",
+      "status": "completed"
+    },
+    {
+      "id": "E003",
+      "type": "discrepancy_log",
+      "description": "All disagreements between claimed and observed behavior",
+      "artifact": "discrepancy-ledger.json",
+      "status": "completed"
+    },
+    {
+      "id": "E004",
+      "type": "ci_parity",
+      "description": "CI workflow local executability classification",
+      "artifact": "ci-parity.json",
+      "status": "completed"
+    },
+    {
+      "id": "E005",
+      "type": "adversarial",
+      "description": "Adversarial failure injection results",
+      "artifact": "adversarial-results.json",
+      "status": "completed"
+    },
+    {
+      "id": "E006",
+      "type": "stale_evidence",
+      "description": "Stale evidence attack resistance test",
+      "artifact": "stale-evidence-results.json",
+      "status": "completed"
+    },
+    {
+      "id": "E007",
+      "type": "provenance",
+      "description": "Artifact provenance audit",
+      "artifact": "artifact-provenance.json",
+      "status": "completed"
+    },
+    {
+      "id": "E008",
+      "type": "repeatability",
+      "description": "Three independent certification runs comparison",
+      "artifact": "repeatability-v2.json",
+      "status": "completed"
+    },
+    {
+      "id": "E009",
+      "type": "authority_contract",
+      "description": "Frozen runtime authority contract for Platform Console",
+      "artifact": "runtime-authority-contract.json",
+      "status": "completed"
+    }
+  ],
+  "summary": {
+    "total_evidence_items": 9,
+    "completed": 9,
+    "pending": 0
+  }
+}

@@ -1,5 +1,6 @@
 /**
  * Unit tests for useCards hook
+
  *
  * Tests cover:
  * - Initial load with empty cards
@@ -10,7 +11,11 @@
  * - Error handling
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import {
+import React from 'react';
+
+import React from 'react';
+ describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useCards } from '../lib/hooks/use-cards';

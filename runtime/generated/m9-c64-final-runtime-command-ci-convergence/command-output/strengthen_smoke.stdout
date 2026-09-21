@@ -1,0 +1,21 @@
+========================================================================
+  M9-C42.5 MUTATION RUNNER
+========================================================================
+  Mode             : smoke
+  Repo SHA         : 23e4b66187709b909cea5f84a5f03a8efa8ab320
+  mutmut           : mutmut, version 3.7.0 (pinned 3.7.0)
+  Killed           : 2
+  Survived         : 2
+  No tests         : 2
+  Timeout          : 0
+  Suspicious       : 0
+  Not checked      : 0
+  Generated        : 6
+  Mutation score   : 50.0
+  Threshold        : 80%
+------------------------------------------------------------------------
+  Gate A (Execution Integrity) : PASS
+  Gate B (Evidence Integrity)  : PASS
+  Gate C (Quality Threshold)   : N/A (infra validation only)
+========================================================================
+  [truth] measurement-truth persisted: backend/tests/generated/mutation/local-smoke/measurement-truth.json

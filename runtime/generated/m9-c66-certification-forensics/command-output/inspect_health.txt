@@ -1,0 +1,177 @@
+=== Command: verify inspect health ===
+Exit: 0
+Class: PASS
+Duration: 1.076s
+
+--- STDOUT ---
+# Engineering Health Report
+
+**Generated:** 2026-09-20T14:10:50.560598+00:00
+
+## Current Framework Health
+
+These dimensions describe the **operational state of the framework**.
+They are computed from the live codebase, not from historical runs.
+
+### Framework Integrity
+- Status: OPERATIONAL
+- Canonical command surface: coherent (9 operations, 7 inspect queries)
+- Authority chain: CLI → ControlPlane → CapabilityRegistry → Planner → Executor → Measurement → Evidence
+- Migration map: active (52 deprecated tokens routed through single canonical path)
+
+### Data Freshness
+- Last framework check: live
+- Source artifacts: present
+- Event store: operational
+
+## Historical Execution Statistics
+
+These dimensions describe **past verification runs**. They answer:
+'How have verification runs behaved over time?' This is NOT framework health.
+
+## Verification Success
+
+### Combined
+- Total runs: 17
+- Success rate: 0.0%
+- Passed: 0
+- Failed: 17
+
+### Local
+- Total runs: 17
+- Success rate: 0.0%
+- Passed: 0
+- Failed: 17
+
+### Ci
+- Total runs: 0
+- Success rate: 0.0%
+- Passed: 0
+- Failed: 0
+
+
+## Execution Context Summary
+
+### Environment Frequency
+- local: 36
+
+### Intent Frequency
+- unknown: 2
+- developer-feedback: 34
+
+
+## Local Feedback Metrics
+
+- Total runs: 17
+- Success rate: 0.0%
+- Avg duration: 17.2s
+
+
+## CI Validation Metrics
+
+- Total runs: 0
+- Success rate: 0.0%
+- Avg duration: 0.0s
+
+
+## Planner Performance
+
+### Combined Planner
+- Avg duration: 0.00s
+- Runs: 0
+### Local Planner
+- Avg duration: 0.00s
+- Runs: 0
+### Ci Planner
+- Avg duration: 0.00s
+- Runs: 0
+
+
+## Cache Effectiveness
+
+### Combined Cache
+- Hit rate: 0.0%
+- Hits: 0 / 17
+### Local Cache
+- Hit rate: 0.0%
+- Hits: 0 / 17
+### Ci Cache
+- Hit rate: 0.0%
+- Hits: 0 / 0
+
+- Stale entries: 0
+- Valid entries: 0
+
+
+## Dependency Growth
+
+| Category | Current Count | Delta |
+|----------|---------------|-------|
+| engines | 36 | +0 |
+| services | 17 | +0 |
+| routers | 14 | +0 |
+| endpoints | 99 | +0 |
+| capability_hooks | 10 | +0 |
+| components | 86 | +0 |
+| graph_renderers | 0 | +0 |
+
+
+## Verification Cost
+
+### Local Cost
+- Planning: 0.0s (0 runs)
+- Execution: 0.0s (0 runs)
+- Aggregation: 0.0s (0 runs)
+- Report generation: 291.9s (18 runs)
+- Cache lookup: 0.0s (0 runs)
+- Evidence generation: 0.0s (0 runs)
+- Cross-layer analysis: 0.0s (0 runs)
+
+### Ci Cost
+- Planning: 0.0s (0 runs)
+- Execution: 0.0s (0 runs)
+- Aggregation: 0.0s (0 runs)
+- Report generation: 0.0s (0 runs)
+- Cache lookup: 0.0s (0 runs)
+- Evidence generation: 0.0s (0 runs)
+- Cross-layer analysis: 0.0s (0 runs)
+
+
+## Most Frequently Changing Layers
+
+Layer change frequency derived from execution context branch and commit data.
+
+
+## Flaky Tests
+
+No flaky tests detected (threshold: >30% failure frequency).
+
+
+## Historical Trends
+
+### Combined Trends
+- Duration trend: increasing
+- Success rate trend: stable
+- Data points: 17
+### Local Trends
+- Duration trend: increasing
+- Success rate trend: stable
+- Data points: 17
+### Ci Trends
+- Duration trend: stable
+- Success rate trend: stable
+- Data points: 0
+
+
+## Recommendations
+
+- Local: Verification success rate below 95% — investigate failing runs.
+- Local: Cache hit rate below 50% — review cache invalidation strategy.
+- Ci: Verification success rate below 95% — investigate failing runs.
+- Ci: Cache hit rate below 50% — review cache invalidation strategy.
+
+
+
+
+--- STDERR ---
+

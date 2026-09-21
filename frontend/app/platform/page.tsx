@@ -43,17 +43,6 @@ function SystemStatusCard({ platform, frameworkIntegrity }: { platform: string; 
       <Clock className="h-8 w-8 text-amber-400" />
     );
 
-  const fiIcon =
-    frameworkIntegrity === 'HEALTHY' ? (
-      <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-    ) : frameworkIntegrity === 'UNHEALTHY' ? (
-      <AlertTriangle className="h-5 w-5 text-red-400" />
-    ) : frameworkIntegrity === 'DEGRAD' ? (
-      <AlertTriangle className="h-5 w-5 text-amber-400" />
-    ) : (
-      <Clock className="h-5 w-5 text-slate-400" />
-    );
-
   return (
     <div className="flex items-center gap-4">
       <div className="flex items-center gap-2">
@@ -73,7 +62,7 @@ function SystemStatusCard({ platform, frameworkIntegrity }: { platform: string; 
 
 function DimensionsGrid({
   domains,
-  platformStatus,
+  platformStatus: _platformStatus,
   frameworkIntegrityStatus,
 }: {
   domains: { name: string; status: string; last_check: string; source: string; detail?: string }[];
@@ -230,7 +219,6 @@ export default function PlatformDashboardPage() {
     platformStatus,
     frameworkIntegrityStatus,
     unhealthyDomains,
-    domainCount,
   } = usePlatformHealthSummary();
   const { data: eventsData, isLoading: eventsLoading } = usePlatformEvents(8);
   const errorCount = useCurrentErrorCount();

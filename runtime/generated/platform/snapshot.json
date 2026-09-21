@@ -1083,6 +1083,43 @@
         "version": "1.0.0"
       }
     },
+    "diagnostics": {
+      "_c": 26971.670998613,
+      "_ts": "2026-09-20T16:47:05Z",
+      "hash": "638670cf98f4b111e1ef9bb5c5f6e71f49d002cb780bf565e5fbd0894b2a948d",
+      "payload": {
+        "data": {
+          "classification": "UNHEALTHY",
+          "evidence_count": 0,
+          "generated_at": "2026-09-20T16:47:05Z",
+          "summary": {
+            "active_errors": 64,
+            "affected_capabilities": [
+              "account-engine",
+              "api-contracts"
+            ],
+            "facts": [
+              "OBLIGATION_OPEN (platform.tasks): Directly affected by change",
+              "OBLIGATION_OPEN (platform.tasks): Directly affected by change",
+              "OBLIGATION_OPEN (platform.tasks): Directly affected by change",
+              "OBLIGATION_OPEN (platform.tasks): Directly affected by change",
+              "OBLIGATION_OPEN (platform.tasks): Directly affected by change"
+            ],
+            "level": "L3",
+            "recommendations": [
+              {
+                "action": "run_full_verification",
+                "target": "all"
+              }
+            ]
+          }
+        },
+        "generated_at": "2026-09-20T16:47:05Z",
+        "id": "sha256:6471b3283452b7d63657d530b937aa60004d27c8953540b94a65fe2b0a5f1891",
+        "kind": "platform.diagnostic_summary",
+        "version": "1.0.0"
+      }
+    },
     "events": {
       "_c": 609004.446801373,
       "_ts": "2026-09-19T05:17:10Z",
@@ -1712,6 +1749,6 @@
       }
     }
   },
-  "generated_at": "2026-09-19T15:50:18Z",
+  "generated_at": "2026-09-20T16:47:05Z",
   "version": "1"
 }

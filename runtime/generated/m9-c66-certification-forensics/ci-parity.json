@@ -1,0 +1,31 @@
+{
+  "schema": "m9-c66-ci-parity/v1",
+  "generated_at": "2026-09-20T14:45:00Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "total_workflows": 14,
+  "classifications": {
+    "api-contracts": "EXTERNAL_SERVICE",
+    "backend-verify": "LOCAL",
+    "dependency-update": "GITHUB_ONLY",
+    "frontend-verify": "ENVIRONMENT_BOUNDARY",
+    "golden": "ENVIRONMENT_BOUNDARY",
+    "m9-forensic-diagnostic-lab": "LOCAL",
+    "mutation-pr": "EXTERNAL_TOOLING",
+    "mutation": "EXTERNAL_TOOLING",
+    "playwright": "BROWSER",
+    "quality": "ENVIRONMENT_BOUNDARY",
+    "release": "GITHUB_ONLY",
+    "security-codeql": "GITHUB_ONLY",
+    "verification-reconcile": "LOCAL",
+    "verification-runtime": "LOCAL"
+  },
+  "summary": {
+    "local_executable": 4,
+    "github_only": 3,
+    "environment_boundary": 3,
+    "external_service": 1,
+    "external_tooling": 2,
+    "browser": 1
+  },
+  "discrepancies": []
+}

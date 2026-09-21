@@ -21,6 +21,9 @@ import {
   ShieldCheck,
   Zap,
   FileText,
+  HeartPulse,
+  Terminal,
+  GitBranch,
 } from 'lucide-react';
 
 interface NavItem {
@@ -32,15 +35,18 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { href: '/platform', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/platform/health', label: 'Health', icon: HeartPulse },
   { href: '/platform/verification', label: 'Verification', icon: TestTube },
   { href: '/platform/diagnostics', label: 'Diagnostics', icon: Bug, badge: '5' },
   { href: '/platform/diagnostics/change', label: 'Change Intelligence', icon: Zap },
   { href: '/platform/framework', label: 'Framework', icon: ShieldCheck },
+  { href: '/platform/workflows', label: 'Workflows', icon: Terminal },
+  { href: '/platform/runs', label: 'Runs', icon: History },
   { href: '/platform/history', label: 'History', icon: History },
   { href: '/platform/errors', label: 'Errors', icon: Shield },
   { href: '/platform/evidence', label: 'Evidence', icon: FileText },
-  { href: '/platform/architecture', label: 'Architecture', icon: Shield },
   { href: '/platform/capabilities', label: 'Capabilities', icon: Layers },
+  { href: '/platform/architecture', label: 'Architecture', icon: GitBranch },
   { href: '/platform/settings', label: 'Settings', icon: Settings },
 ];
 

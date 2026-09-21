@@ -1,0 +1,32 @@
+{
+  "schema": "m9-c64-final-ci-results/v1",
+  "generated_at": "2026-09-20T11:09:10Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "executed_workflows": [
+    {
+      "workflow": "ci",
+      "local_equivalent": "verify ci",
+      "exit_code": 0,
+      "result": "PASS",
+      "canonical_framework": true
+    }
+  ],
+  "skipped_workflows": [
+    "backend-verify (full)",
+    "frontend-verify",
+    "playwright",
+    "golden",
+    "api-contracts",
+    "mutation full campaign",
+    "quality",
+    "release",
+    "security-codeql"
+  ],
+  "summary": {
+    "total_workflows": 14,
+    "locally_executed": 1,
+    "github_only": 2,
+    "environment_boundary": 8,
+    "non_canonical": 3
+  }
+}

@@ -1,0 +1,10 @@
+=== Command: verify check  ===
+Exit: 124
+Class: EXTERNAL_BOUNDARY_TIMEOUT
+Duration: 30.027s
+
+--- STDOUT ---
+
+
+--- STDERR ---
+TIMEOUT

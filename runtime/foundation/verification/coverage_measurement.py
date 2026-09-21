@@ -110,35 +110,69 @@ def _coverage_run(
     except subprocess.TimeoutExpired:
         return CoverageResult(), 124, True, "coverage run exceeded max_runtime"
 
-    # Report JSON.
+    # Report JSON — use `coverage json` subcommand (not `report --format json`).
+    # cwd MUST be BACKEND_DIR so coverage resolves source paths correctly.
     cov_result = CoverageResult()
     rc = res.returncode
     tail = (res.stderr or "")[-2000:]
+    json_out = COVERAGE_DIR / "raw-coverage.json"
     try:
         report = subprocess.run(
-            [str(coverage_bin), "report", "--data-file", data_file, "--format", "json"],
+            [
+                str(coverage_bin),
+                "json",
+                "--data-file",
+                data_file,
+                "-o",
+                str(json_out),
+            ],
             capture_output=True,
             text=True,
+            cwd=str(BACKEND_DIR),
             timeout=120,
         )
-        data = json.loads(report.stdout)
-        totals = data.get("totals", {})
-        cov_result = CoverageResult(
-            lines_total=int(totals.get("num_statements", 0)),
-            lines_covered=int(totals.get("covered_lines", 0)),
-            line_percent=(
-                float(totals.get("percent_covered", 0.0))
-                if totals.get("percent_covered") is not None
-                else None
-            ),
-            branches_total=int(totals.get("num_branches", 0)),
-            branches_covered=int(totals.get("covered_branches", 0)),
-            branch_percent=(
-                float(totals.get("percent_covered_branches", 0.0))
-                if totals.get("percent_covered_branches") is not None
-                else None
-            ),
-        )
+        if report.returncode == 0 and json_out.exists():
+            data = json.loads(json_out.read_text())
+            totals = data.get("totals", {})
+            cov_result = CoverageResult(
+                lines_total=int(totals.get("num_statements", 0)),
+                lines_covered=int(totals.get("covered_lines", 0)),
+                line_percent=(
+                    float(totals.get("percent_covered", 0.0))
+                    if totals.get("percent_covered") is not None
+                    else None
+                ),
+                branches_total=int(totals.get("num_branches", 0)),
+                branches_covered=int(totals.get("covered_branches", 0)),
+                branch_percent=(
+                    float(totals.get("percent_covered_branches", 0.0))
+                    if totals.get("percent_covered_branches") is not None
+                    else None
+                ),
+            )
+        elif json_out.exists():
+            # json subcommand wrote output despite non-zero rc (e.g. fail-under)
+            data = json.loads(json_out.read_text())
+            totals = data.get("totals", {})
+            cov_result = CoverageResult(
+                lines_total=int(totals.get("num_statements", 0)),
+                lines_covered=int(totals.get("covered_lines", 0)),
+                line_percent=(
+                    float(totals.get("percent_covered", 0.0))
+                    if totals.get("percent_covered") is not None
+                    else None
+                ),
+                branches_total=int(totals.get("num_branches", 0)),
+                branches_covered=int(totals.get("covered_branches", 0)),
+                branch_percent=(
+                    float(totals.get("percent_covered_branches", 0.0))
+                    if totals.get("percent_covered_branches") is not None
+                    else None
+                ),
+            )
+            rc = report.returncode
+        else:
+            raise RuntimeError(f"coverage json exited {report.returncode}: {report.stderr[:200]}")
     except Exception as exc:  # pragma: no cover - defensive
         rc = 2 if rc == 0 else rc
         tail = tail or f"coverage report failed: {exc}"

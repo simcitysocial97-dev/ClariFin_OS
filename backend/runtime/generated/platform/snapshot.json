@@ -1262,9 +1262,9 @@
       }
     },
     "health": {
-      "_c": 384348.346758238,
-      "_ts": "2026-09-08T02:54:50Z",
-      "hash": "1e424d402155b0cec1afa2881194a1a244fdae1c35ecd38f40f58513552f3b79",
+      "_c": 2512.9803209,
+      "_ts": "2026-09-21T01:40:43Z",
+      "hash": "12926af478f01070fe32acff9f45b08f7ce5225c2d5c0155b4ce29bea2d34b4d",
       "payload": {
         "data": {
           "ai": "READY",
@@ -1273,32 +1273,40 @@
           "database": "HEALTHY",
           "domains": [
             {
-              "detail": "runs=1 passed=0 failed=1",
-              "last_check": "2026-09-08T02:54:50Z",
+              "detail": "runs=17 passed=0 failed=17",
+              "last_check": "2026-09-21T01:40:43Z",
               "name": "Verification",
               "source": "/platform/v1/verification",
               "status": "UNHEALTHY"
             },
             {
-              "detail": "events=2",
-              "last_check": "2026-09-08T02:54:50Z",
+              "detail": "events=36",
+              "last_check": "2026-09-21T01:40:43Z",
               "name": "EventStore",
               "source": "EngineeringEventStore",
+              "status": "HEALTHY"
+            },
+            {
+              "detail": "critical=0 high=0 medium=0 low=0 self_tests=9/9",
+              "last_check": "2026-09-21T01:40:43Z",
+              "name": "Framework Integrity",
+              "source": "/platform/v1/framework/integrity",
               "status": "HEALTHY"
             }
           ],
           "evidence": "VALID",
+          "framework_integrity": "HEALTHY",
           "frontend": "HEALTHY",
           "platform": "UNHEALTHY",
           "verification": "CURRENT"
         },
-        "generated_at": "2026-09-08T02:54:50Z",
-        "id": "sha256:1fe66b5f7a86959b6ca9cce228f1ac31ec9e42d3579d2d9079f5a2cbedcadb27",
+        "generated_at": "2026-09-21T01:40:43Z",
+        "id": "sha256:81b7917bde366d5b45f70c1e79e82aff49951535d5467f3d52bf3a503f60832d",
         "kind": "platform.health_snapshot",
         "version": "1.0.0"
       }
     }
   },
-  "generated_at": "2026-09-08T02:54:50Z",
+  "generated_at": "2026-09-21T01:40:43Z",
   "version": "1"
 }

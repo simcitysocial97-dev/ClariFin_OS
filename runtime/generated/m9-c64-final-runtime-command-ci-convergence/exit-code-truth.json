@@ -1,0 +1,93 @@
+{
+  "schema": "m9-c64-final-exit-code-truth/v1",
+  "generated_at": "2026-09-20T11:04:52Z",
+  "truth_table": [
+    {
+      "situation": "successful_verification",
+      "expected_exit": 0,
+      "actual_behavior": "exit 0 on CERTIFIED decision"
+    },
+    {
+      "situation": "verification_failure",
+      "expected_exit": 1,
+      "actual_behavior": "exit 1 on non-certified decision"
+    },
+    {
+      "situation": "timeout_external",
+      "expected_exit": 124,
+      "actual_behavior": "external timeout kills process; 124 from timeout(1)"
+    },
+    {
+      "situation": "sigint_interrupt",
+      "expected_exit": 130,
+      "actual_behavior": " KeyboardInterrupt \u2192 exit 130 (see control_plane_facade.py:223)"
+    },
+    {
+      "situation": "invalid_cli_usage",
+      "expected_exit": "nonzero",
+      "actual_behavior": "click raises UsageError; nonzero exit"
+    },
+    {
+      "situation": "no_changed_files_no_git",
+      "expected_exit": 1,
+      "actual_behavior": "check/plan/run return 1 when no files and git unavailable"
+    },
+    {
+      "situation": "infrastructure_failure",
+      "expected_exit": 1,
+      "actual_behavior": "coverage measurement fails when backend/ dir not found"
+    }
+  ],
+  "observed_exit_codes": {
+    "check": {
+      "expected": "0|1|130",
+      "observed": "0 (with warning) / 124 (external timeout)",
+      "notes": "1156 changed files causes full execution; external 120s timeout"
+    },
+    "plan": {
+      "expected": "0",
+      "observed": "0",
+      "notes": "deterministic output; set_id stable across runs"
+    },
+    "run": {
+      "expected": "0|1|130",
+      "observed": "124 (external timeout)",
+      "notes": "Full execution of 64 obligations exceeds 120s"
+    },
+    "diagnose": {
+      "expected": "0|1",
+      "observed": "0",
+      "notes": "Diagnostic report produced correctly"
+    },
+    "strengthen": {
+      "expected": "0|1",
+      "observed": "0",
+      "notes": "Smoke test passes; full campaign would take ~27min"
+    },
+    "inspect.*": {
+      "expected": "0|1",
+      "observed": "0",
+      "notes": "All subqueries return 0"
+    },
+    "certify": {
+      "expected": "0|1|124",
+      "observed": "124 (external timeout)",
+      "notes": "Gates G1-G4 run pytest suites; full certification takes >120s"
+    },
+    "ci": {
+      "expected": "0|1",
+      "observed": "0",
+      "notes": "Reconciliation completes quickly; plans match"
+    },
+    "doctor": {
+      "expected": "0|1",
+      "observed": "0",
+      "notes": "Reports HEALTHY; 0% success rate is data issue not framework defect"
+    },
+    "legacy_status": {
+      "expected": "0",
+      "observed": "0",
+      "notes": "Deprecation warning emitted; routes to doctor"
+    }
+  }
+}

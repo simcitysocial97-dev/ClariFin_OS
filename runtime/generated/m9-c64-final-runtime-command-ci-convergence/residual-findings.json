@@ -1,0 +1,51 @@
+{
+  "schema": "m9-c64-final-residual-findings/v1",
+  "generated_at": "2026-09-20T11:08:42Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "findings": [
+    {
+      "id": "R001",
+      "issue": "Coverage measurement fails: backend dir not found",
+      "impact": "inspect.mutation shows INFRASTRUCTURE_FAILURE",
+      "classification": "ENVIRONMENT_BOUNDARY",
+      "priority": "P2"
+    },
+    {
+      "id": "R002",
+      "issue": "check prints E2E IMPACT block twice",
+      "impact": "Cosmetic duplicate output",
+      "classification": "FALSE_POSITIVE",
+      "priority": "P3"
+    },
+    {
+      "id": "R003",
+      "issue": "inspect.workflows returns capability discovery",
+      "impact": "Cannot list workflows via inspect",
+      "classification": "DEFECT",
+      "priority": "P2"
+    },
+    {
+      "id": "R004",
+      "issue": "Doctor shows 0% success rate from historical data",
+      "impact": "Misleading analytics",
+      "classification": "PROVEN_NON_DEFECT",
+      "priority": "P3"
+    },
+    {
+      "id": "R005",
+      "issue": "check times out with >500 changed files",
+      "impact": "External timeout",
+      "classification": "EXTERNAL_BOUNDARY",
+      "priority": "P2"
+    }
+  ],
+  "summary": {
+    "total_findings": 5,
+    "fixed": 0,
+    "proven_non_defect": 1,
+    "environment_boundary": 1,
+    "defect": 1,
+    "false_positive": 1,
+    "external_boundary": 1
+  }
+}

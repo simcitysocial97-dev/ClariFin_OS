@@ -222,45 +222,41 @@ class ControlPlanePlanner:
         blast_engine = BlastRadiusEngine()
         e2e_impact = blast_engine.compute_e2e_impact(changed_path_objects)
         if e2e_impact.get("has_e2e_impact"):
-            print("\n🎭 E2E IMPACT:", file=sys.stderr)
-            print(
-                f"   {e2e_impact['route_count']} route(s) changed",
-                file=sys.stderr,
-            )
-            print(
-                f"   {e2e_impact['test_count']} E2E test(s) required",
-                file=sys.stderr,
-            )
-            # Add E2E tasks for affected routes
             e2e_test_files = e2e_impact.get("affected_e2e_tests", [])
-            if e2e_test_files:
-                # Ensure tasks list exists and add e2e verification
-                has_e2e_task = any(t.verification_kind == "e2e" for t in tasks)
-                if not has_e2e_task:
-                    e2e_command = (
-                        "cd frontend && npx playwright test --reporter=list"
+            affected_routes = e2e_impact.get("affected_routes", [])
+            # Single structured output: collect all E2E info then emit once
+            e2e_notice_lines = [
+                "",
+                "E2E IMPACT:",
+                f"   {e2e_impact['route_count']} route(s) changed",
+                f"   {e2e_impact['test_count']} E2E test(s) required",
+            ]
+            # Add E2E tasks for affected routes
+            has_e2e_task = any(t.verification_kind == "e2e" for t in tasks)
+            if e2e_test_files and not has_e2e_task:
+                e2e_command = "cd frontend && npx playwright test --reporter=list"
+                tasks.append(
+                    VerificationTask(
+                        task_id=f"task-e2e-{len(tasks) + 1:04d}",
+                        capability_id="frontend-e2e",
+                        verification_kind="e2e",
+                        command=e2e_command,
+                        profile="playwright",
+                        is_mandatory=True,
+                        is_escalation=False,
+                        reason=(
+                            f"E2E route change detected: {', '.join(affected_routes)}. "
+                            f"Requires {len(e2e_test_files)} E2E test(s)."
+                        ),
+                        estimated_duration_seconds=300,
                     )
-                    tasks.append(
-                        VerificationTask(
-                            task_id=f"task-e2e-{len(tasks) + 1:04d}",
-                            capability_id="frontend-e2e",
-                            verification_kind="e2e",
-                            command=e2e_command,
-                            profile="playwright",
-                            is_mandatory=True,
-                            is_escalation=False,
-                            reason=(
-                                f"E2E route change detected: {', '.join(e2e_impact['affected_routes'])}. "
-                                f"Requires {len(e2e_test_files)} E2E test(s)."
-                            ),
-                            estimated_duration_seconds=300,
-                        )
-                    )
-                    print(
-                        f"   Added E2E verification task for routes: "
-                        f"{', '.join(e2e_impact['affected_routes'])}",
-                        file=sys.stderr,
-                    )
+                )
+                e2e_notice_lines.append(
+                    f"   Added E2E verification task for routes: {', '.join(affected_routes)}"
+                )
+            # Single presentation boundary — emit once
+            for line in e2e_notice_lines:
+                print(line, file=sys.stderr)
 
         plan_id = hashlib.sha256("\n".join(sorted(changed_files)).encode()).hexdigest()[
             :12

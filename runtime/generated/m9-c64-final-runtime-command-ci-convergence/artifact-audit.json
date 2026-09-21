@@ -1,0 +1,20 @@
+{
+  "schema": "m9-c64-final-artifact-audit/v1",
+  "generated_at": "2026-09-20T11:08:42Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "tracked_generated_files": 0,
+  "milestone_artifacts": {
+    "m9-c64-r2": {
+      "path": "runtime/generated/m9-c64-r2-runtime-pipeline-attribution-reconciliation/",
+      "preserved": true
+    },
+    "m9-c64-final": {
+      "path": "runtime/generated/m9-c64-final-runtime-command-ci-convergence",
+      "preserved": true
+    }
+  },
+  "ownership_summary": {
+    "command_inventory": "canonical_control_plane.py + command_inventory.py",
+    "command_results": "M9-C64-FINAL execution matrix"
+  }
+}

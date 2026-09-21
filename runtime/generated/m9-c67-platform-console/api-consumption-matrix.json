@@ -1,0 +1,143 @@
+{
+  "api_consumption_matrix": [
+    {
+      "endpoint": "GET /platform/v1/status",
+      "hook": "usePlatformStatus()",
+      "page": "/platform (dashboard)",
+      "test": "use-platform-status.test.ts + contract test",
+      "status": "CONSUMED"
+    },
+    {
+      "endpoint": "GET /platform/v1/health",
+      "hook": "usePlatformHealth()",
+      "page": "/platform (dashboard), /platform/health",
+      "test": "contract test + smoke test",
+      "status": "CONSUMED"
+    },
+    {
+      "endpoint": "GET /platform/v1/workflows",
+      "hook": "usePlatformWorkflows()",
+      "page": "/platform/workflows",
+      "test": "use-platform-workflows.test.ts + contract test",
+      "status": "CONSUMED"
+    },
+    {
+      "endpoint": "GET /platform/v1/runs",
+      "hook": "usePlatformRuns()",
+      "page": "/platform/runs",
+      "test": "use-platform-runs.test.ts + contract test",
+      "status": "CONSUMED"
+    },
+    {
+      "endpoint": "GET /platform/v1/runs/{run_id}",
+      "hook": "usePlatformRun(runId)",
+      "page": "/platform/runs/[runId]",
+      "test": "use-platform-runs.test.ts + contract test",
+      "status": "CONSUMED"
+    },
+    {
+      "endpoint": "GET /platform/v1/verification",
+      "hook": "existing hooks (useCapabilities, useRecentVerificationRuns)",
+      "page": "/platform/verification",
+      "test": "contract test",
+      "status": "CONSUMED"
+    },
+    {
+      "endpoint": "GET /platform/v1/diagnostics",
+      "hook": "existing hooks (useConsolidatedDiagnostics)",
+      "page": "/platform/diagnostics",
+      "test": "smoke test",
+      "status": "CONSUMED"
+    },
+    {
+      "endpoint": "GET /platform/v1/evidence",
+      "hook": "existing useQuery in page",
+      "page": "/platform/evidence",
+      "test": "smoke test",
+      "status": "CONSUMED"
+    },
+    {
+      "endpoint": "GET /platform/v1/evidence/{id}",
+      "hook": "existing useQuery in page",
+      "page": "/platform/evidence",
+      "test": "smoke test",
+      "status": "CONSUMED"
+    },
+    {
+      "endpoint": "GET /platform/v1/capabilities",
+      "hook": "useCapabilityList()",
+      "page": "/platform/capabilities, /platform (dashboard)",
+      "test": "contract test",
+      "status": "CONSUMED"
+    },
+    {
+      "endpoint": "GET /platform/v1/history/runs",
+      "hook": "existing useQuery in history page",
+      "page": "/platform/history",
+      "test": "smoke test",
+      "status": "CONSUMED"
+    },
+    {
+      "endpoint": "GET /platform/v1/errors/current",
+      "hook": "useCurrentErrorCount()",
+      "page": "/platform (dashboard)",
+      "test": "smoke test",
+      "status": "CONSUMED"
+    },
+    {
+      "endpoint": "GET /platform/v1/events",
+      "hook": "usePlatformEvents()",
+      "page": "/platform (dashboard)",
+      "test": "smoke test",
+      "status": "CONSUMED"
+    }
+  ],
+  "new_hooks": [
+    {
+      "file": "lib/hooks/use-platform-status.ts",
+      "primary_hook": "usePlatformStatus()",
+      "query_key": ["platform", "status"],
+      "stale_time_ms": 30000,
+      "returns": "PlatformStatusResponse"
+    },
+    {
+      "file": "lib/hooks/use-platform-workflows.ts",
+      "primary_hook": "usePlatformWorkflows()",
+      "query_key": ["platform", "workflows"],
+      "stale_time_ms": 120000,
+      "returns": "WorkflowsResponse"
+    },
+    {
+      "file": "lib/hooks/use-platform-runs.ts",
+      "primary_hook": "usePlatformRuns(page, page_size)",
+      "query_key": ["platform", "runs", page, page_size],
+      "stale_time_ms": 60000,
+      "returns": "RunsListResponse"
+    },
+    {
+      "file": "lib/hooks/use-platform-runs.ts",
+      "primary_hook": "usePlatformRun(runId)",
+      "query_key": ["platform", "runs", runId],
+      "stale_time_ms": 30000,
+      "returns": "RunDetailResponse"
+    }
+  ],
+  "tests_per_endpoint": {
+    "GET /platform/v1/status": ["contract test (6 cases)", "unit test (5 cases)"],
+    "GET /platform/v1/health": ["contract test (3 cases)", "smoke test"],
+    "GET /platform/v1/workflows": ["contract test (4 cases)", "unit test (8 cases)"],
+    "GET /platform/v1/runs": ["contract test (2 cases)", "unit test (10 cases)"],
+    "GET /platform/v1/runs/{run_id}": ["unit test (4 cases)"],
+    "GET /platform/v1/verification": ["contract test (3 cases)"]
+  },
+  "coverage_gap": [
+    {
+      "endpoint": "GET /platform/v1/diagnostics",
+      "note": "Consumed by existing page, no dedicated contract test added in C67.2"
+    },
+    {
+      "endpoint": "GET /platform/v1/evidence",
+      "note": "Consumed by existing page, no dedicated contract test added in C67.2"
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "schema": "m9-c66-certification-claims/v1",
+  "generated_at": "2026-09-20T13:35:00Z",
+  "source_milestone": "M9-C65",
+  "source_commit": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "claims": [
+    {
+      "claim_id": "C65-1",
+      "statement": "Every supported runtime command has a dedicated authoritative implementation",
+      "source": "runtime/generated/m9-c65-runtime-hardening/final-certification.md",
+      "evidence_required": "command-matrix.json with all commands executed and verified",
+      "independently_verified": true,
+      "verification_evidence": "24/24 canonical commands executed, 21 PASS, 3 EXTERNAL_BOUNDARY"
+    },
+    {
+      "claim_id": "C65-2",
+      "statement": "Truthful exit semantics for all commands",
+      "source": "runtime/generated/m9-c65-runtime-hardening/final-certification.md",
+      "evidence_required": "exit-code-truth reconciliation across all commands",
+      "independently_verified": false
+    },
+    {
+      "claim_id": "C65-3",
+      "statement": "Deterministic planning where applicable",
+      "source": "runtime/generated/m9-c65-runtime-hardening/final-certification.md",
+      "evidence_required": "plan fingerprint stability across multiple runs",
+      "independently_verified": false
+    },
+    {
+      "claim_id": "C65-4",
+      "statement": "Explicit boundary classification",
+      "source": "runtime/generated/m9-c65-runtime-hardening/final-certification.md",
+      "evidence_required": "boundary classification consistent across command matrix",
+      "independently_verified": false
+    },
+    {
+      "claim_id": "C65-5",
+      "statement": "Validated failure behavior",
+      "source": "runtime/generated/m9-c65-runtime-hardening/final-certification.md",
+      "evidence_required": "adversarial failure injection tests",
+      "independently_verified": false
+    },
+    {
+      "claim_id": "C65-6",
+      "statement": "Verified artifact provenance",
+      "source": "runtime/generated/m9-c65-runtime-hardening/final-certification.md",
+      "evidence_required": "artifact provenance scan results",
+      "independently_verified": false
+    },
+    {
+      "claim_id": "C65-7",
+      "statement": "CI parity",
+      "source": "runtime/generated/m9-c65-runtime-hardening/final-certification.md",
+      "evidence_required": "ci-parity.json with all workflow classifications",
+      "independently_verified": false
+    },
+    {
+      "claim_id": "C65-8",
+      "statement": "Cross-surface truth reconciliation",
+      "source": "runtime/generated/m9-c65-runtime-hardening/final-certification.md",
+      "evidence_required": "cross-surface-reconciliation.json with all disagreement checks",
+      "independently_verified": true,
+      "verification_evidence": "OutputTruthReconciler pass_rate=1.0"
+    },
+    {
+      "claim_id": "C65-9",
+      "statement": "Zero unexplained discrepancies",
+      "source": "runtime/generated/m9-c65-runtime-hardening/final-certification.md",
+      "evidence_required": "discrepancy-ledger.json with no UNEXPLAINED entries",
+      "independently_verified": true,
+      "verification_evidence": "discrepancy_count=0"
+    }
+  ],
+  "summary": {
+    "total_claims": 9,
+    "independently_verified": 3,
+    "pending_verification": 9
+  }
+}

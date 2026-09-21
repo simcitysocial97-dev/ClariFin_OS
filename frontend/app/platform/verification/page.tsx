@@ -22,7 +22,6 @@ import Link from 'next/link';
 import { useCapabilities, useRecentVerificationRuns, useVerificationRun, useVerificationRunAffected, useVerificationRunFull, useVerificationRunGroup, useVerificationRecommendation } from '@/lib/hooks/use-verification-center';
 import { HealthBadge } from '@/components/platform/health-badge';
 import {
-  TestTube,
   Play,
   Zap,
   Stethoscope,
@@ -32,7 +31,6 @@ import {
   Terminal,
   RotateCcw,
   AlertTriangle,
-  RefreshCw,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

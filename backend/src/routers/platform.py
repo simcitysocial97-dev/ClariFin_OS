@@ -170,6 +170,20 @@ async def get_health(request: Request) -> JSONResponse:
 
 
 # ---------------------------------------------------------------------------
+# Status (C67.1 — operator-oriented runtime snapshot)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/status")
+async def get_status() -> JSONResponse:
+    """Operator-oriented snapshot of canonical runtime state."""
+    from runtime.platform.api.services import status as status_svc
+
+    env = status_svc.build_status()
+    return _ok(env)
+
+
+# ---------------------------------------------------------------------------
 # Framework Integrity (C62)
 # ---------------------------------------------------------------------------
 
@@ -270,6 +284,91 @@ async def post_task_cancel(task_id: str) -> JSONResponse:
 # ---------------------------------------------------------------------------
 # Verification (read-mostly)
 # ---------------------------------------------------------------------------
+
+
+@router.get("/verification")
+async def get_verification_state() -> JSONResponse:
+    """Return the current/latest canonical verification state.
+
+    Read surface only — does not independently execute verification.
+    Sources: AnalyticsEngine + CapabilityCatalog + workflow inspection.
+    """
+    from runtime.platform.api.contracts import verification as verification_contract
+    from runtime.platform.api.services._helpers import envelope, now_iso
+
+    store = __import__(
+        "runtime.system.observability.event_store", fromlist=["EngineeringEventStore"]
+    ).EngineeringEventStore()
+    analytics = __import__(
+        "runtime.system.observability.analytics", fromlist=["AnalyticsEngine"]
+    ).AnalyticsEngine(store)
+    report = analytics.compute()
+    combined = report.combined
+    verif = combined.get("verification", {})
+
+    try:
+        from runtime.foundation.verification.capability_catalog import (
+            get_capability_catalog,
+        )
+
+        catalog = get_capability_catalog()
+        capability_count = len(catalog.entries)
+    except Exception:
+        capability_count = 0
+
+    try:
+        from runtime.foundation.verification.workflow_inspection import (
+            enumerate_workflows,
+        )
+
+        workflows = enumerate_workflows()
+        workflow_count = len(workflows)
+    except Exception:
+        workflow_count = 0
+
+    data = {
+        "status": (
+            "passed"
+            if float(verif.get("success_rate", 0.0)) >= 0.95
+            else "failed"
+            if float(verif.get("success_rate", 0.0)) > 0
+            else "unknown"
+        ),
+        "classification": (
+            "CERTIFIED"
+            if float(verif.get("success_rate", 0.0)) >= 0.95
+            else "UNVERIFIED"
+        ),
+        "run_id": None,
+        "command": "inspect",
+        "commit": "",
+        "plan_fingerprint": None,
+        "timestamp": now_iso(),
+        "duration_seconds": float(verif.get("avg_duration_seconds", 0.0)),
+        "gates": {
+            "total_runs": int(verif.get("total_runs", 0)),
+            "passed_runs": int(verif.get("passed_runs", 0)),
+            "failed_runs": int(verif.get("failed_runs", 0)),
+            "success_rate": round(float(verif.get("success_rate", 0.0)), 4),
+        },
+        "summary": {
+            "capability_count": capability_count,
+            "workflow_count": workflow_count,
+            "avg_duration_seconds": float(verif.get("avg_duration_seconds", 0.0)),
+            "cache_hit_rate": float(verif.get("cache_hit_rate", 0.0)),
+        },
+    }
+    # Resolve most recent run_id from event store.
+    for evt in reversed(list(store.iter_events())):
+        if evt.event_type == "VerificationCompleted":
+            data["run_id"] = evt.event_id
+            break
+
+    return JSONResponse(
+        content=envelope(
+            kind=verification_contract.VERIFICATION_RECOMMENDATION_KIND, data=data
+        )
+    )
 
 
 @router.get("/verification/recommendation")
@@ -570,6 +669,21 @@ async def list_history_runs(
     return _ok(env)
 
 
+# ---------------------------------------------------------------------------
+# Runs alias (C67.1 — maps directly to /history/runs)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/runs")
+async def list_runs(
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=20, ge=1, le=100),
+) -> JSONResponse:
+    """Alias for /history/runs — C67.1 required endpoint path."""
+    env = history.build_history_runs(page=page, page_size=page_size)
+    return _ok(env)
+
+
 @router.get("/history/runs/{run_id}")
 async def get_history_run(run_id: str) -> JSONResponse:
     env = history.build_history_run(run_id)
@@ -577,6 +691,23 @@ async def get_history_run(run_id: str) -> JSONResponse:
         return _not_found(
             f"History run {run_id!r} not found",
             "platform.history",
+        )
+    return _ok(env)
+
+
+# ---------------------------------------------------------------------------
+# Runs detail alias (C67.1 — maps directly to /history/runs/{run_id})
+# ---------------------------------------------------------------------------
+
+
+@router.get("/runs/{run_id}")
+async def get_run(run_id: str) -> JSONResponse:
+    """Alias for /history/runs/{run_id} — C67.1 required endpoint path."""
+    env = history.build_history_run(run_id)
+    if env is None:
+        return _not_found(
+            f"Run {run_id!r} not found",
+            "platform.runs",
         )
     return _ok(env)
 
@@ -803,6 +934,50 @@ async def get_app_workflows() -> JSONResponse:
 
 
 # ---------------------------------------------------------------------------
+# Workflows (C67.1 — canonical workflow inventory alias)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/workflows")
+async def get_workflows() -> JSONResponse:
+    """Canonical workflow inventory — same source as ``verify inspect workflows``."""
+    from runtime.foundation.verification.workflow_inspection import (
+        BoundaryClassification,
+        enumerate_workflows,
+    )
+    from runtime.platform.api.contracts._primitives import Status
+    from runtime.platform.api.services._helpers import envelope, now_iso
+
+    workflows = enumerate_workflows()
+    items = []
+    for w in workflows:
+        items.append(
+            {
+                "workflow_id": w.workflow_id,
+                "name": w.name,
+                "path": w.path,
+                "triggers": list(w.triggers),
+                "jobs": [j.job_id for j in w.jobs],
+                "commands": list(w.commands),
+                "canonical_command": w.canonical_command,
+                "local_executable": w.local_executable,
+                "boundary_classification": w.boundary_classification.value
+                if isinstance(w.boundary_classification, BoundaryClassification)
+                else str(w.boundary_classification),
+                "environment_requirements": list(w.environment_requirements),
+                "parity_status": w.parity_status,
+            }
+        )
+    data = {
+        "count": len(items),
+        "items": items,
+        "source": "runtime.foundation.verification.workflow_inspection",
+        "last_updated": now_iso(),
+    }
+    return JSONResponse(content=envelope(kind="platform.workflows", data=data))
+
+
+# ---------------------------------------------------------------------------
 # Change intelligence
 # ---------------------------------------------------------------------------
 
@@ -821,6 +996,81 @@ async def get_change_intelligence(request: Request) -> JSONResponse:
 # ---------------------------------------------------------------------------
 # Diagnostics (Phase 11)
 # ---------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------
+# Diagnostics (C67.1 — read-only canonical diagnosis summary)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/diagnostics")
+async def get_diagnostics(request: Request) -> JSONResponse:
+    """Return the canonical diagnostic summary from the diagnostic engine.
+
+    Answers: what is currently wrong, runtime classification, supporting
+    evidence, and affected capability/workflow. No new diagnostic engine
+    is introduced — the existing deterministic engine is read through.
+
+    Response is cached per nocache flag to avoid recomputing on every
+    request (the underlying diagnose() call traverses errors + change
+    intelligence which is relatively expensive).
+    """
+    nocache = _query_nocache(request)
+    cached = snapshot.get("diagnostics", nocache=nocache)
+    if cached is not None:
+        return _ok(cached)
+
+    from runtime.platform.diagnostics.engine import (
+        build_diagnostic_recommendation,
+        diagnose,
+    )
+    from runtime.platform.api.services.errors import build_errors_current
+    from runtime.platform.api.services._helpers import envelope, now_iso
+
+    errors_env = build_errors_current()
+    error_count = errors_env["data"]["count"]
+    items = errors_env["data"].get("items", [])
+
+    # Build a generic diagnostic summary from current errors.
+    facts: list[str] = []
+    evidence_ids: list[str] = []
+    affected_capabilities: list[str] = []
+    for item in items[:10]:
+        code = item.get("code", "")
+        layer = item.get("layer", "")
+        msg = item.get("message", "")
+        facts.append(f"{code} ({layer}): {msg[:100]}")
+        cap = item.get("affected_workflow") or item.get("id", "")
+        if cap:
+            affected_capabilities.append(str(cap)[:256])
+
+    level = "L0"
+    if error_count > 5:
+        level = "L3"
+    elif error_count > 0:
+        level = "L1"
+
+    diag_result = diagnose(symptom="platform_diagnostics_summary")
+    recommendation = diag_result.get("data", {}).get("recommendation", [])
+
+    data = {
+        "summary": {
+            "active_errors": error_count,
+            "level": level,
+            "facts": facts[:5],
+            "affected_capabilities": list(set(affected_capabilities))[:10],
+            "recommendations": [
+                {"action": r["action"], "target": r["target"]}
+                for r in recommendation[:5]
+            ],
+        },
+        "classification": "UNHEALTHY" if error_count > 0 else "HEALTHY",
+        "evidence_count": len(evidence_ids),
+        "generated_at": now_iso(),
+    }
+    env = envelope(kind="platform.diagnostic_summary", data=data)
+    snapshot.put("diagnostics", env)
+    return JSONResponse(content=env)
 
 
 @router.post("/diagnose")

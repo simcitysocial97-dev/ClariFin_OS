@@ -1,5 +1,6 @@
 /**
  * Unit tests for useReconciliations, usePendingReconciliations, useScanReconciliations hooks
+
  *
  * Tests cover:
  * - Initial load with empty reconciliations
@@ -10,7 +11,11 @@
  * - Error handling
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import {
+import React from 'react';
+
+import React from 'react';
+ describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useReconciliations, usePendingReconciliations, useScanReconciliations } from '../lib/hooks/use-reconciliation';

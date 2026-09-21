@@ -15,18 +15,12 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { apiFetchJson } from '@/lib/api/gateway';
-import { HealthBadge } from '@/components/platform/health-badge';
 import {
   FileText,
-  ArrowLeft,
-  CheckCircle2,
-  XCircle,
   Clock,
   Activity,
-  Search,
   Filter,
   GitBranch,
 } from 'lucide-react';
@@ -54,11 +48,6 @@ interface EvidenceDetailResponse {
   data: EvidenceItem & { payload: Record<string, unknown>; references: string[] };
 }
 
-interface ExecutionEvidenceResponse {
-  kind: string;
-  data: { count: number; items: EvidenceItem[] };
-}
-
 const STATUS_COLORS: Record<string, string> = {
   CLOSED: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
   OPEN: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
@@ -84,12 +73,12 @@ export default function EvidenceExplorerPage() {
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const { data: detailData, isLoading: detailLoading } = useQuery<EvidenceDetailResponse, Error>({
+  const { data: detailData, isLoading: detailLoading } = useQuery<EvidenceDetailResponse | null, Error>({
     queryKey: ['platform', 'evidence', selectedId],
-    queryFn: () =>
-      selectedId
-        ? apiFetchJson(`/platform/v1/evidence/${selectedId}` as Promise<EvidenceDetailResponse>)
-        : null as unknown as Promise<EvidenceDetailResponse>,
+    queryFn: async () => {
+      if (!selectedId) return null;
+      return apiFetchJson(`/platform/v1/evidence/${selectedId}`) as Promise<EvidenceDetailResponse>;
+    },
     enabled: !!selectedId,
     staleTime: 60_000,
   });

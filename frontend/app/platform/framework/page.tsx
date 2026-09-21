@@ -11,14 +11,11 @@
 
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { apiFetchJson } from '@/lib/api/gateway';
-import { HealthBadge } from '@/components/platform/health-badge';
 import {
   AlertTriangle,
-  ArrowLeft,
   CheckCircle2,
   FileText,
   RefreshCw,

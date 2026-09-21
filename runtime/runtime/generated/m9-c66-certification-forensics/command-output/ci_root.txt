@@ -1,0 +1,11 @@
+=== Command: verify ci  ===
+Exit: 1
+Class: FAILED
+Duration: 0.55s
+
+--- STDOUT ---
+
+
+--- STDERR ---
+CI artifacts not found: [Errno 2] No such file or directory: 'runtime/generated/vea5-tier-plan.pr.json'
+

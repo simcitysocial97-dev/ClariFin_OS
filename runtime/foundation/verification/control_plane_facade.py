@@ -222,6 +222,32 @@ class ControlPlane:
             print("[check] INTERRUPTED (SIGINT/SIGTERM)", file=sys.stderr)
             return 130
 
+        elapsed_total = time.monotonic() - run_start
+
+        # 5b. Execution budget report (M9-C65)
+        from runtime.foundation.verification.execution_budget import (
+            ExecutionBudget,
+            classify_boundary,
+        )
+
+        budget = ExecutionBudget()
+        total_tasks = len(execution_plan.tasks) if execution_plan.tasks else 0
+        completed_tasks = len(executed_task_ids)
+        external_timeout = elapsed_total > budget.execution_budget_seconds
+        decision_val = getattr(report, "final_decision", "unknown")
+        is_fail = decision_val not in ("certified", "passed")
+        boundary_report = classify_boundary(
+            elapsed=elapsed_total,
+            budget=budget,
+            completed=completed_tasks,
+            total=total_tasks,
+            external_timeout=external_timeout,
+            interrupted=False,
+            failed=is_fail,
+            current_obligation=executed_task_ids[-1] if executed_task_ids else None,
+        )
+        print(boundary_report.format_text(), file=sys.stderr)
+
         # 6. Record the canonical ExecutionReport through the event/RunRecord chain.
         from runtime.verify import record_execution_report
 
@@ -498,14 +524,13 @@ class ControlPlane:
             print(format_measurement_truth_report(report))
             return 0
         elif q == "workflows":
-            from runtime.foundation.verification.help_resolver import cmd_help_resolve
+            from runtime.foundation.verification.workflow_inspection import (
+                cmd_inspect_workflows,
+            )
 
-            old_argv = sys.argv
-            sys.argv = ["verify.py", "help-resolve", "workflows"] + sys.argv[1:]
-            try:
-                return cmd_help_resolve(sys.argv[1:])
-            finally:
-                sys.argv = old_argv
+            # Build clean argv for the workflow command: only flags like --json, --out
+            workflow_args = [a for a in sys.argv[2:] if a.startswith("--")]
+            return cmd_inspect_workflows(workflow_args)
         elif q == "health":
             from runtime.system.observability.health_report import (
                 EngineeringHealthReport,

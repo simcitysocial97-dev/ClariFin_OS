@@ -1,0 +1,5 @@
+
+🎭 E2E IMPACT:
+   19 route(s) changed
+   4 E2E test(s) required
+   Added E2E verification task for routes: /dashboard, /layout.tsx, /platform, /platform/architecture, /platform/capabilities, /platform/capabilities/[capabilityId], /platform/diagnostics, /platform/diagnostics/change, /platform/diagnostics/detail/[id], /platform/errors, /platform/evidence, /platform/framework, /platform/history, /platform/history/compare, /platform/platform-providers.tsx, /platform/verification, /platform/verification/[capability], /platform/verification/history/[runId], /platform/verification/run/[capability]

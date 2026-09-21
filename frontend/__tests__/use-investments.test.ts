@@ -1,5 +1,6 @@
 /**
  * Unit tests for useInvestments hook
+
  *
  * Tests cover:
  * - Initial load with empty investments
@@ -9,7 +10,11 @@
  * - Error handling
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import {
+import React from 'react';
+
+import React from 'react';
+ describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useInvestments } from '../lib/hooks/use-investments';

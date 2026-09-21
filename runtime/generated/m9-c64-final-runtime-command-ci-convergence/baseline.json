@@ -1,0 +1,25 @@
+{
+  "schema": "m9-c64-final-baseline/v1",
+  "generated_at": "2026-09-20T11:04:52Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "branch": "m9c9-merge-authorization-resolution",
+  "working_tree_state": "2 modified tracked files (.gitignore, generated/*); multiple untracked generated artifacts",
+  "c64_r2_artifacts_preserved": true,
+  "c64_r2_path": "runtime/generated/m9-c64-r2-runtime-pipeline-attribution-reconciliation/",
+  "c64_r2_files": [
+    "baseline.json",
+    "final-certification.md",
+    "progress.md",
+    "remediation-ledger.json",
+    "residual-findings.json",
+    "scenario-matrix.json"
+  ],
+  "canonical_command_count": 9,
+  "inspect_subquery_count": 7,
+  "compatibility_alias_count": 9,
+  "deprecated_token_count": 52,
+  "profile_alias_count": 9,
+  "ci_workflow_count": 14,
+  "ci_local_executable": 12,
+  "ci_github_only": 2
+}

@@ -1,0 +1,265 @@
+================================================================================
+  MEASUREMENT TRUTH INTEGRATION REPORT
+================================================================================
+  Generated: 2026-09-20T11:00:11.715155+00:00
+  Repository SHA: 23e4b661
+--------------------------------------------------------------------------------
+  SUMMARY:
+    total_capabilities: 16
+    capabilities_with_mutation: 3
+    capabilities_with_coverage: 11
+    authoritative_mutations: 0
+    certifiable_mutations: 0
+    authoritative_coverages: 0
+    fresh_required: 0
+    revalidation_recommended: 0
+--------------------------------------------------------------------------------
+  MEASUREMENTS:
+    loan-engine [mutation]
+      Completion: UNKNOWN
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 0.0s
+      Missing: No mutation measurement truth record found
+    loan-engine [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 5.4s
+      Error: ERROR: file or directory not found: backend
+
+
+      Missing: Coverage 0% < required 40%, Recorded error: ERROR: file or directory not found: backend
+
+
+    reconciliation [mutation]
+      Completion: UNKNOWN
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 0.0s
+      Missing: No mutation measurement truth record found
+    reconciliation [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 5.4s
+      Error: ERROR: file or directory not found: backend
+
+
+      Missing: Coverage 0% < required 40%, Recorded error: ERROR: file or directory not found: backend
+
+
+    ledger [mutation]
+      Completion: UNKNOWN
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 0.0s
+      Missing: No mutation measurement truth record found
+    ledger [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 5.4s
+      Error: ERROR: file or directory not found: backend
+
+
+      Missing: Coverage 0% < required 40%, Recorded error: ERROR: file or directory not found: backend
+
+
+    api-contracts [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 5.4s
+      Error: ERROR: file or directory not found: backend
+
+
+      Missing: Coverage 0% < required 40%, Recorded error: ERROR: file or directory not found: backend
+
+
+    migrations [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 5.4s
+      Error: ERROR: file or directory not found: backend
+
+
+      Missing: Coverage 0% < required 40%, Recorded error: ERROR: file or directory not found: backend
+
+
+    balance-engine [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 5.4s
+      Error: ERROR: file or directory not found: backend
+
+
+      Missing: Coverage 0% < required 40%, Recorded error: ERROR: file or directory not found: backend
+
+
+    behaviour-engine [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 5.4s
+      Error: ERROR: file or directory not found: backend
+
+
+      Missing: Coverage 0% < required 40%, Recorded error: ERROR: file or directory not found: backend
+
+
+    cashflow-engine [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 5.4s
+      Error: ERROR: file or directory not found: backend
+
+
+      Missing: Coverage 0% < required 40%, Recorded error: ERROR: file or directory not found: backend
+
+
+    credit-card-engine [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 5.4s
+      Error: ERROR: file or directory not found: backend
+
+
+      Missing: Coverage 0% < required 40%, Recorded error: ERROR: file or directory not found: backend
+
+
+    financial-intelligence [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 5.4s
+      Error: ERROR: file or directory not found: backend
+
+
+      Missing: Coverage 0% < required 40%, Recorded error: ERROR: file or directory not found: backend
+
+
+    account-engine [coverage]
+      Completion: INFRASTRUCTURE_FAILURE
+      Classification: derived
+      Authoritative: No
+      Certifiable: No
+      Reusable: No
+      Duration: 5.4s
+      Error: ERROR: file or directory not found: backend
+
+
+      Missing: Coverage 0% < required 40%, Recorded error: ERROR: file or directory not found: backend
+
+
+--------------------------------------------------------------------------------
+  DECISIONS:
+    loan-engine [mutation]: no_measurement_exists
+      Reason: No mutation measurement truth record exists for Loan Engine
+      Action: Run measurement for mutation: verify.py measurement mutation <scope>
+      ⚠ ESCALATION NEEDED
+    loan-engine [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: ERROR: file or directory not found: backend
+
+
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    reconciliation [mutation]: no_measurement_exists
+      Reason: No mutation measurement truth record exists for Reconciliation Engine
+      Action: Run measurement for mutation: verify.py measurement mutation <scope>
+      ⚠ ESCALATION NEEDED
+    reconciliation [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: ERROR: file or directory not found: backend
+
+
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    ledger [mutation]: no_measurement_exists
+      Reason: No mutation measurement truth record exists for Ledger Service
+      Action: Run measurement for mutation: verify.py measurement mutation <scope>
+      ⚠ ESCALATION NEEDED
+    ledger [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: ERROR: file or directory not found: backend
+
+
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    api-contracts [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: ERROR: file or directory not found: backend
+
+
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    migrations [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: ERROR: file or directory not found: backend
+
+
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    balance-engine [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: ERROR: file or directory not found: backend
+
+
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    behaviour-engine [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: ERROR: file or directory not found: backend
+
+
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    cashflow-engine [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: ERROR: file or directory not found: backend
+
+
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    credit-card-engine [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: ERROR: file or directory not found: backend
+
+
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    financial-intelligence [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: ERROR: file or directory not found: backend
+
+
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+    account-engine [coverage]: measurement_infrastructure_failure
+      Reason: Coverage measurement failed due to infrastructure error: ERROR: file or directory not found: backend
+
+
+      Action: Diagnose infrastructure (verify.py env-check) and re-run
+      ⚠ ESCALATION NEEDED
+================================================================================

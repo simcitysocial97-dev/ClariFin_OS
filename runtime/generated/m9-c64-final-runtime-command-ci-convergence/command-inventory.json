@@ -1,0 +1,185 @@
+{
+  "schema": "m9-c64-final-command-inventory/v1",
+  "generated_at": "2026-09-20T11:04:52Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "canonical_commands": [
+    {
+      "command": "check",
+      "description": "Plan + execute verification for current change",
+      "exit_codes": [
+        0,
+        1,
+        124,
+        130
+      ]
+    },
+    {
+      "command": "plan",
+      "description": "Plan-only mode (no execution)",
+      "exit_codes": [
+        0,
+        1
+      ]
+    },
+    {
+      "command": "run",
+      "description": "Execute an explicit verification plan",
+      "exit_codes": [
+        0,
+        1,
+        124,
+        130
+      ]
+    },
+    {
+      "command": "diagnose",
+      "description": "Evidence-backed failure/survivor diagnostic",
+      "exit_codes": [
+        0,
+        1
+      ]
+    },
+    {
+      "command": "strengthen",
+      "description": "Test-strengthening control plane (mutation pipeline)",
+      "exit_codes": [
+        0,
+        1
+      ]
+    },
+    {
+      "command": "inspect",
+      "description": "Read-only inspection queries",
+      "subqueries": [
+        "capabilities",
+        "evidence",
+        "plan",
+        "mutation",
+        "workflows",
+        "health",
+        "evidence-cleanup"
+      ],
+      "exit_codes": [
+        0,
+        1
+      ]
+    },
+    {
+      "command": "certify",
+      "description": "Certification gate (evidence-gated)",
+      "exit_codes": [
+        0,
+        1,
+        124
+      ]
+    },
+    {
+      "command": "ci",
+      "description": "CI orchestration / reconciliation",
+      "exit_codes": [
+        0,
+        1
+      ]
+    },
+    {
+      "command": "doctor",
+      "description": "Framework health / integrity diagnostic",
+      "exit_codes": [
+        0,
+        1
+      ]
+    }
+  ],
+  "compatibility_aliases": {
+    "status": "\u2192 doctor",
+    "metrics": "\u2192 doctor",
+    "history": "\u2192 doctor",
+    "deps": "\u2192 doctor",
+    "verify-status": "\u2192 doctor",
+    "analytics": "\u2192 doctor",
+    "health": "\u2192 doctor",
+    "ci-doctor": "\u2192 doctor",
+    "env-check": "\u2192 doctor"
+  },
+  "deprecated_tokens": [
+    "diagnose-failures",
+    "reconcile",
+    "exec-evidence",
+    "deep-contract",
+    "local-gate",
+    "affected",
+    "repair",
+    "risk",
+    "integrity",
+    "knowledge",
+    "dashboard",
+    "intelligence",
+    "audit",
+    "api-contracts",
+    "contract-governance",
+    "mutation",
+    "measurement-truth",
+    "measurement",
+    "evidence-plan",
+    "verification-contract",
+    "evidence-execute",
+    "evidence-reconcile",
+    "evidence-certify",
+    "enforce",
+    "strengthen-analyze",
+    "strengthen-discover",
+    "strengthen-propose",
+    "strengthen-validate",
+    "strengthen-survivor",
+    "strengthen-survivor-forensic",
+    "strengthen-report",
+    "strengthen-capability",
+    "generate-test",
+    "converge",
+    "help-resolve",
+    "blast-radius",
+    "execution-plan",
+    "execute",
+    "execution-status",
+    "execution-report",
+    "capabilities",
+    "capability-for",
+    "capability-graph",
+    "bypass-audit",
+    "bypass-enforcement",
+    "pipeline-enforcement",
+    "scenarios",
+    "evidence-integrity",
+    "strengthening-integration",
+    "cross-capability-impact",
+    "config-authority-verify",
+    "efficiency",
+    "regression",
+    "latent-audit",
+    "config-authority",
+    "c53-scenarios",
+    "c53-certify",
+    "convergence-status",
+    "coverage-analysis",
+    "mutation-analysis",
+    "gap-analysis",
+    "convergence-plan",
+    "threshold-assessment"
+  ],
+  "canonical_profile_aliases": [
+    "quick",
+    "backend",
+    "frontend",
+    "contracts",
+    "graph",
+    "full",
+    "runtime",
+    "golden",
+    "playwright"
+  ],
+  "total_canonical": 9,
+  "total_inspect_subqueries": 7,
+  "total_compat_aliases": 9,
+  "total_deprecated": 52,
+  "total_profile_aliases": 9
+}

@@ -1,0 +1,166 @@
+{
+  "schema": "m9-c64-final-ci-matrix/v1",
+  "generated_at": "2026-09-20T11:04:52Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "matrix": [
+    {
+      "workflow": "backend-verify.yml",
+      "local_equivalent": "python -m runtime.verify backend",
+      "executed": true,
+      "exit_code": "unknown",
+      "result": "NOT_EXECUTED_FULLY",
+      "artifact_valid": true,
+      "canonical_framework_used": true,
+      "parity_status": "PARITY_OK",
+      "boundary_reason": null,
+      "classification": "LOCAL_PASS_CANONICAL"
+    },
+    {
+      "workflow": "verification-runtime.yml",
+      "local_equivalent": "python -m runtime.verify runtime",
+      "executed": true,
+      "exit_code": "unknown",
+      "result": "NOT_EXECUTED_FULLY",
+      "artifact_valid": true,
+      "canonical_framework_used": true,
+      "parity_status": "PARITY_OK",
+      "boundary_reason": null,
+      "classification": "LOCAL_PASS_CANONICAL"
+    },
+    {
+      "workflow": "mutation.yml",
+      "local_equivalent": "python -m runtime.verify strengthen (full)",
+      "executed": true,
+      "exit_code": 0,
+      "result": "smoke_passed",
+      "artifact_valid": true,
+      "canonical_framework_used": true,
+      "parity_status": "PARITY_OK",
+      "boundary_reason": "Full campaign ~27min; only smoke executed locally",
+      "classification": "LOCAL_PARTIAL"
+    },
+    {
+      "workflow": "mutation-pr.yml",
+      "local_equivalent": "python -m runtime.verify strengthen --smoke --incremental",
+      "executed": false,
+      "result": "N/A",
+      "artifact_valid": true,
+      "canonical_framework_used": true,
+      "parity_status": "UNKNOWN",
+      "boundary_reason": "PR-targeted; needs PR context",
+      "classification": "ENVIRONMENT_BOUNDARY"
+    },
+    {
+      "workflow": "quality.yml",
+      "local_equivalent": "ruff check + black --check + mypy",
+      "executed": false,
+      "result": "N/A",
+      "artifact_valid": true,
+      "canonical_framework_used": false,
+      "parity_status": "NON_CANONICAL",
+      "boundary_reason": "Quality checks are outside runtime.verify scope",
+      "classification": "EXTERNAL_TOOLING"
+    },
+    {
+      "workflow": "playwright.yml",
+      "local_equivalent": "python -m runtime.verify playwright",
+      "executed": false,
+      "result": "N/A",
+      "artifact_valid": true,
+      "canonical_framework_used": true,
+      "parity_status": "UNKNOWN",
+      "boundary_reason": "Requires browser + frontend dev server",
+      "classification": "ENVIRONMENT_BOUNDARY"
+    },
+    {
+      "workflow": "golden.yml",
+      "local_equivalent": "python -m runtime.verify golden",
+      "executed": false,
+      "result": "N/A",
+      "artifact_valid": true,
+      "canonical_framework_used": true,
+      "parity_status": "UNKNOWN",
+      "boundary_reason": "Requires golden test fixtures",
+      "classification": "ENVIRONMENT_BOUNDARY"
+    },
+    {
+      "workflow": "api-contracts.yml",
+      "local_equivalent": "python -m runtime.verify contracts",
+      "executed": false,
+      "result": "N/A",
+      "artifact_valid": true,
+      "canonical_framework_used": true,
+      "parity_status": "UNKNOWN",
+      "boundary_reason": "Requires running API server",
+      "classification": "ENVIRONMENT_BOUNDARY"
+    },
+    {
+      "workflow": "frontend-verify.yml",
+      "local_equivalent": "python -m runtime.verify frontend",
+      "executed": false,
+      "result": "N/A",
+      "artifact_valid": true,
+      "canonical_framework_used": true,
+      "parity_status": "UNKNOWN",
+      "boundary_reason": "Requires Node.js + frontend build",
+      "classification": "ENVIRONMENT_BOUNDARY"
+    },
+    {
+      "workflow": "verification-reconcile.yml",
+      "local_equivalent": "python -m runtime.verify ci",
+      "executed": true,
+      "exit_code": 0,
+      "result": "PASS",
+      "artifact_valid": true,
+      "canonical_framework_used": true,
+      "parity_status": "PARITY_OK",
+      "boundary_reason": null,
+      "classification": "LOCAL_PASS_CANONICAL"
+    },
+    {
+      "workflow": "m9-forensic-diagnostic-lab.yml",
+      "local_equivalent": "python -m runtime.verify diagnose",
+      "executed": true,
+      "exit_code": 0,
+      "result": "PASS",
+      "artifact_valid": true,
+      "canonical_framework_used": true,
+      "parity_status": "PARITY_OK",
+      "boundary_reason": null,
+      "classification": "LOCAL_PASS_CANONICAL"
+    },
+    {
+      "workflow": "dependency-update.yml",
+      "local_equivalent": "pnpm audit + pip check",
+      "executed": false,
+      "result": "N/A",
+      "artifact_valid": true,
+      "canonical_framework_used": false,
+      "parity_status": "NON_CANONICAL",
+      "boundary_reason": "Dependency audit; outside verification scope",
+      "classification": "EXTERNAL_TOOLING"
+    },
+    {
+      "workflow": "release.yml",
+      "local_equivalent": "semantic-release",
+      "executed": false,
+      "result": "N/A",
+      "artifact_valid": true,
+      "canonical_framework_used": false,
+      "parity_status": "N/A",
+      "boundary_reason": "GitHub-native release workflow with npm publish",
+      "classification": "GITHUB_ONLY"
+    },
+    {
+      "workflow": "security-codeql.yml",
+      "local_equivalent": "N/A",
+      "executed": false,
+      "result": "N/A",
+      "artifact_valid": true,
+      "canonical_framework_used": false,
+      "parity_status": "N/A",
+      "boundary_reason": "GitHub-native CodeQL service; not locally executable",
+      "classification": "GITHUB_ONLY"
+    }
+  ]
+}
