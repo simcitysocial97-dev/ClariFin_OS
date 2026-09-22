@@ -82,11 +82,18 @@
     },
     {
       "category": "TEST_DEFECT",
-      "description": "Test data mismatch - mock reconciliation data used string IDs and old schema fields",
+      "description": "TypeScript test errors - mock Response objects didn't satisfy Response interface (104 TS2345 errors across 8 test files)",
       "files": [
-        "frontend/__tests__/use-reconciliation.test.ts:43-62"
+        "frontend/__tests__/use-accounts.test.ts",
+        "frontend/__tests__/use-cards.test.ts",
+        "frontend/__tests__/use-cashflow.test.ts",
+        "frontend/__tests__/use-dashboard-metrics.test.ts",
+        "frontend/__tests__/use-investments.test.ts",
+        "frontend/__tests__/use-loans.test.ts",
+        "frontend/__tests__/use-overview.test.ts",
+        "frontend/__tests__/use-reconciliation.test.ts"
       ],
-      "fix": "Updated mock data to match ReconciliationMatchSchema (numeric IDs, correct field names)"
+      "fix": "Created enterprise-grade mock Response factory (createMockResponse/createMockErrorResponse) in frontend/__tests__/utils/ with typed factory functions; updated all 8 test files to use proper Response objects instead of inline mock objects"
     },
     {
       "category": "P0_PRODUCT_DEFECT",
@@ -101,13 +108,28 @@
       ],
       "fix": "Replaced all raw fetch() calls with apiFetch from '@/lib/api/gateway'"
     },
+{
+      "category": "TEST_DEFECT",
+      "description": "Test data mismatch - mock reconciliation data used string IDs and old schema fields",
+      "files": [
+        "frontend/__tests__/use-reconciliation.test.ts:43-62"
+      ],
+      "fix": "Updated mock data to match ReconciliationMatchSchema (numeric IDs, correct field names)"
+    },
     {
       "category": "TEST_DEFECT",
-      "description": "Contract test timeout - health/workflow endpoints take ~30s, default timeout 5s",
+      "description": "TypeScript test errors - mock Response objects didn't satisfy Response interface (104 TS2345 errors across 8 test files)",
       "files": [
-        "frontend/__tests__/api-contracts/platform-c67.2.contract.test.ts"
+        "frontend/__tests__/use-accounts.test.ts",
+        "frontend/__tests__/use-cards.test.ts",
+        "frontend/__tests__/use-cashflow.test.ts",
+        "frontend/__tests__/use-dashboard-metrics.test.ts",
+        "frontend/__tests__/use-investments.test.ts",
+        "frontend/__tests__/use-loans.test.ts",
+        "frontend/__tests__/use-overview.test.ts",
+        "frontend/__tests__/use-reconciliation.test.ts"
       ],
-      "fix": "Added TEST_TIMEOUT=120000 to all test cases"
+      "fix": "Created enterprise-grade mock Response factory (createMockResponse/createMockErrorResponse) in frontend/__tests__/utils/ with typed factory functions; updated all 8 test files to use proper Response objects instead of inline mock objects"
     },
     {
       "category": "ENVIRONMENT_LIMITATION",
