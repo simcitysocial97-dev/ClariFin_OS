@@ -21,6 +21,7 @@ vi.mock('@/lib/api/gateway', () => ({
 }));
 
 import { apiFetch } from '@/lib/api/gateway';
+import { createMockResponse, createMockErrorResponse } from './utils/createMockResponse';
 const mockApiFetch = vi.mocked(apiFetch);
 
 const createWrapper = () => {
@@ -91,10 +92,7 @@ describe('useOverview', () => {
   });
 
   it('should fetch overview successfully', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockOverviewData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockOverviewData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useOverview(), { wrapper });
@@ -107,10 +105,7 @@ describe('useOverview', () => {
   });
 
   it('should display key metrics', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockOverviewData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockOverviewData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useOverview(), { wrapper });
@@ -123,10 +118,7 @@ describe('useOverview', () => {
   });
 
   it('should render monthly chart data', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockOverviewData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockOverviewData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useOverview(), { wrapper });
@@ -139,10 +131,7 @@ describe('useOverview', () => {
   });
 
   it('should display behavioral insights', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockOverviewData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockOverviewData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useOverview(), { wrapper });
@@ -154,11 +143,7 @@ describe('useOverview', () => {
   });
 
   it('should handle API failure', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: false,
-      status: 500,
-      json: () => Promise.resolve({}),
-    });
+    mockApiFetch.mockResolvedValue(createMockErrorResponse(500));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useOverview(), { wrapper });
@@ -173,10 +158,7 @@ describe('useOverview', () => {
       total_spend: 'not-a-number',
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(invalidData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(invalidData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useOverview(), { wrapper });

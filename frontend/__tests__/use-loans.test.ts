@@ -21,6 +21,7 @@ vi.mock('@/lib/api/gateway', () => ({
 }));
 
 import { apiFetch } from '@/lib/api/gateway';
+import { createMockResponse, createMockErrorResponse } from './utils/createMockResponse';
 const mockApiFetch = vi.mocked(apiFetch);
 
 const createWrapper = () => {
@@ -84,10 +85,7 @@ describe('useLoans', () => {
   });
 
   it('should fetch loans successfully', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockLoanData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockLoanData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useLoans(), { wrapper });
@@ -113,10 +111,7 @@ describe('useLoans', () => {
       },
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(multiLoanData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(multiLoanData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useLoans(), { wrapper });
@@ -138,10 +133,7 @@ describe('useLoans', () => {
       },
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(emptyData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(emptyData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useLoans(), { wrapper });
@@ -153,11 +145,7 @@ describe('useLoans', () => {
   });
 
   it('should handle API failure', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: false,
-      status: 500,
-      json: () => Promise.resolve({}),
-    });
+    mockApiFetch.mockResolvedValue(createMockErrorResponse(500));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useLoans(), { wrapper });
@@ -176,10 +164,7 @@ describe('useLoans', () => {
       ],
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(invalidData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(invalidData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useLoans(), { wrapper });
@@ -208,10 +193,7 @@ describe('useLoanSchedule', () => {
       ],
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockSchedule),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockSchedule));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useLoanSchedule('1'), { wrapper });
@@ -252,10 +234,7 @@ describe('usePrepaymentSimulation', () => {
       interest_saved_paise: 1500000,
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockSimulation),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockSimulation));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => 

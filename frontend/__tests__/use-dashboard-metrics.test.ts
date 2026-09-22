@@ -21,6 +21,7 @@ vi.mock('@/lib/api/gateway', () => ({
 }));
 
 import { apiFetch } from '@/lib/api/gateway';
+import { createMockResponse, createMockErrorResponse } from './utils/createMockResponse';
 const mockApiFetch = vi.mocked(apiFetch);
 
 const createWrapper = () => {
@@ -66,10 +67,7 @@ describe('useDashboardMetrics', () => {
   });
 
   it('should fetch dashboard metrics successfully', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockDashboardMetrics),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockDashboardMetrics));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
@@ -82,10 +80,7 @@ describe('useDashboardMetrics', () => {
   });
 
   it('should compute cash flow correctly', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockDashboardMetrics),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockDashboardMetrics));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
@@ -98,10 +93,7 @@ describe('useDashboardMetrics', () => {
   });
 
   it('should calculate savings rate correctly', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockDashboardMetrics),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockDashboardMetrics));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
@@ -112,10 +104,7 @@ describe('useDashboardMetrics', () => {
   });
 
   it('should calculate EMI ratio correctly', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockDashboardMetrics),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockDashboardMetrics));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
@@ -127,10 +116,7 @@ describe('useDashboardMetrics', () => {
   });
 
   it('should show buffer days metric', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockDashboardMetrics),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockDashboardMetrics));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
@@ -141,10 +127,7 @@ describe('useDashboardMetrics', () => {
   });
 
   it('should display financial health score', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockDashboardMetrics),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockDashboardMetrics));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
@@ -160,10 +143,7 @@ describe('useDashboardMetrics', () => {
       financial_health_score: null,
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(metricsWithNullScore),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(metricsWithNullScore));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
@@ -174,11 +154,7 @@ describe('useDashboardMetrics', () => {
   });
 
   it('should handle API failure', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: false,
-      status: 500,
-      json: () => Promise.resolve({}),
-    });
+    mockApiFetch.mockResolvedValue(createMockErrorResponse(500));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
@@ -194,10 +170,7 @@ describe('useDashboardMetrics', () => {
       net_cash_flow_paise: 'not-a-number',
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(invalidData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(invalidData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });
@@ -208,10 +181,7 @@ describe('useDashboardMetrics', () => {
   });
 
   it('should refetch on demand', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockDashboardMetrics),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockDashboardMetrics));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useDashboardMetrics(), { wrapper });

@@ -22,6 +22,7 @@ vi.mock('@/lib/api/gateway', () => ({
 }));
 
 import { apiFetch } from '@/lib/api/gateway';
+import { createMockResponse, createMockErrorResponse } from './utils/createMockResponse';
 const mockApiFetch = vi.mocked(apiFetch);
 
 const createWrapper = () => {
@@ -82,10 +83,7 @@ describe('useCards', () => {
   });
 
   it('should fetch cards successfully', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockCardsData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockCardsData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCards(), { wrapper });
@@ -108,10 +106,7 @@ describe('useCards', () => {
       total_outstanding: 80000,
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(multiCardData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(multiCardData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCards(), { wrapper });
@@ -131,10 +126,7 @@ describe('useCards', () => {
       total_utilization_percent: 0,
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(emptyData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(emptyData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCards(), { wrapper });
@@ -146,11 +138,7 @@ describe('useCards', () => {
   });
 
   it('should handle API failure', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: false,
-      status: 500,
-      json: () => Promise.resolve({}),
-    });
+    mockApiFetch.mockResolvedValue(createMockErrorResponse(500));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCards(), { wrapper });
@@ -171,10 +159,7 @@ describe('useCards', () => {
       ],
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(invalidData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(invalidData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCards(), { wrapper });
@@ -194,10 +179,7 @@ describe('useCards', () => {
       ],
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(statusData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(statusData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCards(), { wrapper });

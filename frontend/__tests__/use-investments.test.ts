@@ -21,6 +21,7 @@ vi.mock('@/lib/api/gateway', () => ({
 }));
 
 import { apiFetch } from '@/lib/api/gateway';
+import { createMockResponse, createMockErrorResponse } from './utils/createMockResponse';
 const mockApiFetch = vi.mocked(apiFetch);
 
 const createWrapper = () => {
@@ -82,10 +83,7 @@ describe('useInvestments', () => {
   });
 
   it('should fetch investments successfully', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockInvestmentsData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockInvestmentsData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useInvestments(), { wrapper });
@@ -113,10 +111,7 @@ describe('useInvestments', () => {
       },
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(multiInvestmentData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(multiInvestmentData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useInvestments(), { wrapper });
@@ -145,10 +140,7 @@ describe('useInvestments', () => {
       },
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(diversifiedData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(diversifiedData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useInvestments(), { wrapper });
@@ -171,10 +163,7 @@ describe('useInvestments', () => {
       },
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(emptyData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(emptyData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useInvestments(), { wrapper });
@@ -186,11 +175,7 @@ describe('useInvestments', () => {
   });
 
   it('should handle API failure', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: false,
-      status: 500,
-      json: () => Promise.resolve({}),
-    });
+    mockApiFetch.mockResolvedValue(createMockErrorResponse(500));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useInvestments(), { wrapper });
@@ -209,10 +194,7 @@ describe('useInvestments', () => {
       ],
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(invalidData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(invalidData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useInvestments(), { wrapper });

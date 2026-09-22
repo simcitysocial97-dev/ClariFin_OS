@@ -22,6 +22,7 @@ vi.mock('@/lib/api/gateway', () => ({
 }));
 
 import { apiFetch } from '@/lib/api/gateway';
+import { createMockResponse, createMockErrorResponse } from './utils/createMockResponse';
 const mockApiFetch = vi.mocked(apiFetch);
 
 const createWrapper = () => {
@@ -86,10 +87,7 @@ describe('useReconciliations', () => {
   });
 
   it('should fetch reconciliations successfully', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockReconciliationsData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockReconciliationsData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useReconciliations(), { wrapper });
@@ -108,10 +106,7 @@ describe('useReconciliations', () => {
       total_count: 0,
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(emptyData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(emptyData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useReconciliations(), { wrapper });
@@ -123,11 +118,7 @@ describe('useReconciliations', () => {
   });
 
   it('should handle API failure', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: false,
-      status: 500,
-      json: () => Promise.resolve({}),
-    });
+    mockApiFetch.mockResolvedValue(createMockErrorResponse(500));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useReconciliations(), { wrapper });
@@ -147,10 +138,7 @@ describe('useReconciliations', () => {
       ],
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(invalidData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(invalidData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useReconciliations(), { wrapper });
@@ -171,10 +159,7 @@ describe('usePendingReconciliations', () => {
       total_count: 1,
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(pendingData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(pendingData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => usePendingReconciliations(), { wrapper });
@@ -198,10 +183,7 @@ describe('useScanReconciliations', () => {
       count: 1,
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(scanData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(scanData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useScanReconciliations(), { wrapper });

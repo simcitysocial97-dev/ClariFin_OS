@@ -20,6 +20,7 @@ vi.mock('@/lib/api/gateway', () => ({
 }));
 
 import { apiFetch } from '@/lib/api/gateway';
+import { createMockResponse, createMockErrorResponse } from './utils/createMockResponse';
 const mockApiFetch = vi.mocked(apiFetch);
 
 const createWrapper = () => {
@@ -67,10 +68,7 @@ describe('useManagedAccounts (v1)', () => {
   });
 
   it('should fetch accounts from /api/v1/accounts and wrap response', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockV1Response),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockV1Response));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useManagedAccounts(), { wrapper });
@@ -87,10 +85,7 @@ describe('useManagedAccounts (v1)', () => {
   });
 
   it('should handle API failure', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: false,
-      json: () => Promise.resolve({}),
-    });
+    mockApiFetch.mockResolvedValue(createMockErrorResponse(500));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useManagedAccounts(), { wrapper });
@@ -121,10 +116,7 @@ describe('useManagedAccounts (v1)', () => {
       },
     ];
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(invalidResponse),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(invalidResponse));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useManagedAccounts(), { wrapper });
@@ -135,10 +127,7 @@ describe('useManagedAccounts (v1)', () => {
   });
 
   it('should fetch empty accounts list', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve([]),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse([]));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useManagedAccounts(), { wrapper });

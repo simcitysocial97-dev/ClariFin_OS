@@ -21,6 +21,7 @@ vi.mock('@/lib/api/gateway', () => ({
 }));
 
 import { apiFetch } from '@/lib/api/gateway';
+import { createMockResponse, createMockErrorResponse } from './utils/createMockResponse';
 const mockApiFetch = vi.mocked(apiFetch);
 
 const createWrapper = () => {
@@ -80,10 +81,7 @@ describe('useCashflow', () => {
   });
 
   it('should fetch cashflow with default 6 months', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockCashflowData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockCashflowData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCashflow(), { wrapper });
@@ -95,10 +93,7 @@ describe('useCashflow', () => {
   });
 
   it('should fetch cashflow with custom months parameter', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockCashflowData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockCashflowData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCashflow(12), { wrapper });
@@ -109,10 +104,7 @@ describe('useCashflow', () => {
   });
 
   it('should aggregate income and expenses', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockCashflowData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(mockCashflowData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCashflow(), { wrapper });
@@ -135,10 +127,7 @@ describe('useCashflow', () => {
       total_count: 0,
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(emptyData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(emptyData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCashflow(), { wrapper });
@@ -149,11 +138,7 @@ describe('useCashflow', () => {
   });
 
   it('should handle API failure', async () => {
-    mockApiFetch.mockResolvedValue({
-      ok: false,
-      status: 500,
-      json: () => Promise.resolve({}),
-    });
+    mockApiFetch.mockResolvedValue(createMockErrorResponse(500));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCashflow(), { wrapper });
@@ -177,10 +162,7 @@ describe('useCashflow', () => {
       total_count: 1,
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(negativeNetData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(negativeNetData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCashflow(), { wrapper });
@@ -199,10 +181,7 @@ describe('useCashflow', () => {
       ],
     };
 
-    mockApiFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(invalidData),
-    });
+    mockApiFetch.mockResolvedValue(createMockResponse(invalidData));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCashflow(), { wrapper });
