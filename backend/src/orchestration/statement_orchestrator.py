@@ -13,6 +13,7 @@ Synchronous orchestration with graceful degradation.
 
 from typing import Any
 
+from src.core.domain.household import DEFAULT_HOUSEHOLD_ID
 from src.services.behaviour_service import BehaviourService
 from src.services.cashflow_service import CashflowService
 from src.services.dashboard_service import DashboardService
@@ -97,7 +98,7 @@ class StatementProcessingOrchestrator:
             Behaviour result summary
         """
         profile = self.behaviour_service.compute_financial_profile(
-            household_id="default"
+            household_id=DEFAULT_HOUSEHOLD_ID
         )
         return {
             "profile_generated": bool(profile),

@@ -8,6 +8,7 @@ import json
 from decimal import Decimal
 from typing import Any
 
+from src.core.domain.household import DEFAULT_HOUSEHOLD_ID, resolve_household_id
 from src.repositories.base import BaseRepository
 
 
@@ -28,7 +29,7 @@ class PatternRepository(BaseRepository):
                 (
                     pattern_data["pattern_type"],
                     pattern_data["pattern_key"],
-                    pattern_data.get("household_id", "default"),
+                    pattern_data.get("household_id", DEFAULT_HOUSEHOLD_ID),
                     pattern_data["strength_bps"],
                     pattern_data["first_observed"],
                     pattern_data["last_observed"],
@@ -58,7 +59,7 @@ class PatternRepository(BaseRepository):
         self, pattern_type: str, pattern_key: str, household_id: str | None = None
     ) -> dict[str, Any] | None:
         """Get a specific behaviour pattern by key."""
-        household_id = household_id or "default"
+        household_id = resolve_household_id(household_id)
         with self._get_conn() as conn:
             row = conn.execute(
                 """
@@ -78,7 +79,7 @@ class PatternRepository(BaseRepository):
         self, pattern_type: str, household_id: str | None = None
     ) -> list[dict[str, Any]]:
         """Get behaviour patterns by type."""
-        household_id = household_id or "default"
+        household_id = resolve_household_id(household_id)
         with self._get_conn() as conn:
             rows = conn.execute(
                 """
@@ -112,7 +113,7 @@ class PatternRepository(BaseRepository):
         self, days: int = 30, household_id: str | None = None
     ) -> list[dict[str, Any]]:
         """Get recently observed behaviour patterns."""
-        household_id = household_id or "default"
+        household_id = resolve_household_id(household_id)
         with self._get_conn() as conn:
             rows = conn.execute(
                 """
@@ -133,7 +134,7 @@ class PatternRepository(BaseRepository):
         Args:
             min_strength: Minimum strength in percentage (0-100 range)
         """
-        household_id = household_id or "default"
+        household_id = resolve_household_id(household_id)
         # Convert percentage to 0-1 range for internal comparison
         min_strength_decimal = Decimal(str(min_strength)) / Decimal(100)
         min_strength_bps = self._decimal_to_bps(min_strength_decimal)

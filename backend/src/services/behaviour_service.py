@@ -9,6 +9,7 @@ from datetime import date
 from decimal import Decimal
 from typing import Any, cast
 
+from src.core.domain.household import DEFAULT_HOUSEHOLD_ID
 from src.engines.behaviour_engine import (
     classify_financial_personality,
     compute_borrowed_lifestyle_ratio,
@@ -86,7 +87,7 @@ class BehaviourService:
         self.pattern_repo = pattern_repo or PatternRepository(db_path)
 
     def compute_financial_profile(
-        self, household_id: str = "default"
+        self, household_id: str = DEFAULT_HOUSEHOLD_ID
     ) -> FinancialProfileResponse:
         """Compute and persist a comprehensive financial behaviour profile.
 
@@ -96,7 +97,7 @@ class BehaviourService:
         4. Return financial profile classification
 
         Args:
-            household_id: Household identifier (default: "default")
+            household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
 
         Returns:
             FinancialProfileResponse with profile classification
@@ -248,12 +249,12 @@ class BehaviourService:
             ) from e
 
     def get_wellness_score(
-        self, household_id: str = "default"
+        self, household_id: str = DEFAULT_HOUSEHOLD_ID
     ) -> WellnessScoreResponse:
         """Get the latest financial wellness score.
 
         Args:
-            household_id: Household identifier (default: "default")
+            household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
 
         Returns:
             WellnessScoreResponse with score, band, and components
@@ -344,11 +345,13 @@ class BehaviourService:
                 message=f"Failed to get wellness score: {str(e)}",
             ) from e
 
-    def get_debt_health(self, household_id: str = "default") -> DebtHealthResponse:
+    def get_debt_health(
+        self, household_id: str = DEFAULT_HOUSEHOLD_ID
+    ) -> DebtHealthResponse:
         """Get the latest debt health metrics.
 
         Args:
-            household_id: Household identifier (default: "default")
+            household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
 
         Returns:
             DebtHealthResponse with debt health metrics
@@ -406,12 +409,12 @@ class BehaviourService:
             ) from e
 
     def get_cashflow_health(
-        self, household_id: str = "default"
+        self, household_id: str = DEFAULT_HOUSEHOLD_ID
     ) -> CashflowHealthResponse:
         """Get the latest cashflow health metrics.
 
         Args:
-            household_id: Household identifier (default: "default")
+            household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
 
         Returns:
             CashflowHealthResponse with cashflow health metrics
@@ -457,12 +460,12 @@ class BehaviourService:
             ) from e
 
     def get_patterns(
-        self, household_id: str = "default", limit: int = 5
+        self, household_id: str = DEFAULT_HOUSEHOLD_ID, limit: int = 5
     ) -> list[FinancialPattern]:
         """Get the latest detected financial patterns.
 
         Args:
-            household_id: Household identifier (default: "default")
+            household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
             limit: Maximum number of patterns to return (converted to days for repo)
 
         Returns:
@@ -497,13 +500,13 @@ class BehaviourService:
             ) from e
 
     def generate_monthly_summary(
-        self, period: str, household_id: str = "default"
+        self, period: str, household_id: str = DEFAULT_HOUSEHOLD_ID
     ) -> MonthlySummaryResponse:
         """Generate a monthly financial summary report.
 
         Args:
             period: Period in YYYY-MM format
-            household_id: Household identifier (default: "default")
+            household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
 
         Returns:
             MonthlySummaryResponse with comprehensive financial summary
@@ -650,14 +653,14 @@ class BehaviourService:
 
     def get_recommendations(
         self,
-        household_id: str = "default",
+        household_id: str = DEFAULT_HOUSEHOLD_ID,
         limit: int = 10,
         severity_filter: str | None = None,
     ) -> RecommendationsResponse:
         """Get financial recommendations based on current behaviour metrics.
 
         Args:
-            household_id: Household identifier (default: "default")
+            household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
             limit: Maximum number of recommendations to return (default: 10)
             severity_filter: Optional filter for severity (LOW, MEDIUM, HIGH, CRITICAL)
 

@@ -29,7 +29,7 @@ from typing import Any, Literal
 
 import pytest
 from src.core.db.connection import get_connection
-from src.core.db.schema import create_all, run_migrations, verify_schema
+from src.core.db.schema import create_all, verify_schema
 
 # ============================================================
 # Canonical Test Database Handle
@@ -106,7 +106,10 @@ def _pristine_db_template(tmp_path_factory: pytest.TempPathFactory) -> Path:
     template_path = template_dir / "pristine.db"
 
     create_all(str(template_path))
-    run_migrations(str(template_path))
+    from src.core.db.migrations import apply_pending_migrations
+
+    with __import__("sqlite3").connect(str(template_path)) as conn:
+        apply_pending_migrations(conn)
     verify_schema(str(template_path))
 
     conn = __import__("sqlite3").connect(str(template_path))

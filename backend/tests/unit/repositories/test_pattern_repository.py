@@ -285,7 +285,7 @@ def test_household_id_handling(pattern_repo):
     # Test default household
     default_patterns = pattern_repo.get_patterns_by_type("IMPULSE")
     assert len(default_patterns) == 1
-    assert default_patterns[0]["household_id"] == "default"
+    assert default_patterns[0]["household_id"] == "primary"
     assert default_patterns[0]["strength"] == Decimal("80.00")
 
     # Test specific household

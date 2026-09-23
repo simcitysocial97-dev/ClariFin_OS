@@ -58,11 +58,16 @@ def run_startup_validation() -> bool:
     # (core/db/schema.py); the test suite and any operator bootstrap must use the
     # same path. Safe to run on an existing populated database.
     try:
-        from src.core.db.schema import create_all, run_migrations, verify_schema
+        from src.core.db.connection import get_connection_context
+        from src.core.db.migrations import apply_pending_migrations
+        from src.core.db.schema import create_all, verify_schema
 
         db_path = str(settings.database_path)
         create_all(db_path)
-        run_migrations(db_path)
+        with get_connection_context(db_path) as conn:
+            applied = apply_pending_migrations(conn)
+            if applied:
+                log_info(f"Applied migrations: {applied}")
         try:
             verify_schema(db_path)
             log_info("Database schema initialized and verified")

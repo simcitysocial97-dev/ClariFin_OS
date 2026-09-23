@@ -7,6 +7,7 @@ If it grows beyond 200, split by sub-domain.
 import json
 from typing import Any
 
+from src.core.domain.household import DEFAULT_HOUSEHOLD_ID, resolve_household_id
 from src.repositories.base import BaseRepository
 
 
@@ -26,7 +27,7 @@ class AlertRepository(BaseRepository):
                 (
                     alert_data["alert_type"],
                     alert_data["alert_code"],
-                    alert_data.get("household_id", "default"),
+                    alert_data.get("household_id", DEFAULT_HOUSEHOLD_ID),
                     alert_data["severity"],
                     alert_data["title"],
                     alert_data["description"],
@@ -56,7 +57,7 @@ class AlertRepository(BaseRepository):
         self, household_id: str | None = None
     ) -> list[dict[str, Any]]:
         """Get all active (unacknowledged) alerts."""
-        household_id = household_id or "default"
+        household_id = resolve_household_id(household_id)
         with self._get_conn() as conn:
             rows = conn.execute(
                 """
@@ -80,7 +81,7 @@ class AlertRepository(BaseRepository):
         self, alert_type: str, household_id: str | None = None
     ) -> list[dict[str, Any]]:
         """Get alerts by type."""
-        household_id = household_id or "default"
+        household_id = resolve_household_id(household_id)
         with self._get_conn() as conn:
             rows = conn.execute(
                 """
@@ -127,7 +128,7 @@ class AlertRepository(BaseRepository):
         self, household_id: str | None = None, days: int = 90
     ) -> list[dict[str, Any]]:
         """Get historical alerts."""
-        household_id = household_id or "default"
+        household_id = resolve_household_id(household_id)
         with self._get_conn() as conn:
             rows = conn.execute(
                 """

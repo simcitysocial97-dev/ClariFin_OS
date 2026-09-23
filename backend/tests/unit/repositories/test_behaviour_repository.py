@@ -213,7 +213,7 @@ def test_household_id_handling(behaviour_repo):
     # Test default household
     default_latest = behaviour_repo.get_latest_snapshot()
     assert default_latest is not None
-    assert default_latest["household_id"] == "default"
+    assert default_latest["household_id"] == "primary"
 
     # Test specific household
     household_latest = behaviour_repo.get_latest_snapshot("household_123")
