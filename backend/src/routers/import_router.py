@@ -29,74 +29,61 @@ async def upload_statement(
     member: str = Form("Self"),
 ) -> dict[str, Any]:
     """Upload and process a PDF statement."""
-    try:
-        filename = file.filename or ""
-        if Path(filename).suffix.lower() not in settings.pdf_upload_extensions:
-            raise HTTPException(status_code=400, detail="Only PDF files allowed")
+    filename = file.filename or ""
+    if Path(filename).suffix.lower() not in settings.pdf_upload_extensions:
+        raise HTTPException(status_code=400, detail="Only PDF files allowed")
 
-        safe_filename = Path(filename).name
-        save_path = UPLOAD_DIR / safe_filename
-        if save_path.resolve().parent != UPLOAD_DIR.resolve():
-            raise HTTPException(status_code=400, detail="Invalid filename")
-        content = await file.read()
-        if len(content) > settings.max_upload_size_bytes:
-            raise HTTPException(
-                status_code=413, detail="File exceeds maximum upload size"
-            )
-        with open(save_path, "wb") as f:
-            f.write(content)
+    safe_filename = Path(filename).name
+    save_path = UPLOAD_DIR / safe_filename
+    if save_path.resolve().parent != UPLOAD_DIR.resolve():
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    content = await file.read()
+    if len(content) > settings.max_upload_size_bytes:
+        raise HTTPException(status_code=413, detail="File exceeds maximum upload size")
+    with open(save_path, "wb") as f:
+        f.write(content)
 
-        service = ImportService()
-        return service.upload_statement(
-            save_path=str(save_path),
-            filename=safe_filename,
-            member=member,
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    service = ImportService()
+    return service.upload_statement(
+        save_path=str(save_path),
+        filename=safe_filename,
+        member=member,
+    )
 
 
 @router.post("/import/detect")
 async def import_detect(file: UploadFile = File(...)) -> dict[str, Any]:
     """Detect CSV/Excel format."""
-    try:
-        filename = file.filename or ""
-        suffix = Path(filename).suffix.lower()
-        if suffix not in settings.tabular_upload_extensions:
-            raise HTTPException(status_code=400, detail="Unsupported file type")
+    filename = file.filename or ""
+    suffix = Path(filename).suffix.lower()
+    if suffix not in settings.tabular_upload_extensions:
+        raise HTTPException(status_code=400, detail="Unsupported file type")
 
-        safe_filename = Path(filename).name or "unknown"
-        save_path = UPLOAD_DIR / safe_filename
-        if save_path.resolve().parent != UPLOAD_DIR.resolve():
-            raise HTTPException(status_code=400, detail="Invalid filename")
-        content = await file.read()
-        if len(content) > settings.max_upload_size_bytes:
-            raise HTTPException(
-                status_code=413, detail="File exceeds maximum upload size"
-            )
-        with open(save_path, "wb") as f:
-            f.write(content)
+    safe_filename = Path(filename).name or "unknown"
+    save_path = UPLOAD_DIR / safe_filename
+    if save_path.resolve().parent != UPLOAD_DIR.resolve():
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    content = await file.read()
+    if len(content) > settings.max_upload_size_bytes:
+        raise HTTPException(status_code=413, detail="File exceeds maximum upload size")
+    with open(save_path, "wb") as f:
+        f.write(content)
 
-        service = ImportService()
-        return service.detect_import_format(save_path=str(save_path))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    service = ImportService()
+    return service.detect_import_format(save_path=str(save_path))
 
 
 @router.post("/import/execute")
 def import_execute(data: ImportExecute) -> dict[str, Any]:
     """Execute CSV/Excel import."""
-    try:
-        save_path = UPLOAD_DIR / data.filename
+    save_path = UPLOAD_DIR / data.filename
 
-        if not save_path.exists():
-            raise HTTPException(status_code=404, detail="File not found")
+    if not save_path.exists():
+        raise HTTPException(status_code=404, detail="File not found")
 
-        service = ImportService()
-        return service.import_csv(
-            save_path=str(save_path),
-            mapping=data.mapping,
-            member=data.member,
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    service = ImportService()
+    return service.import_csv(
+        save_path=str(save_path),
+        mapping=data.mapping,
+        member=data.member,
+    )
