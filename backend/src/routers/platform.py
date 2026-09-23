@@ -306,25 +306,19 @@ async def get_verification_state() -> JSONResponse:
     combined = report.combined
     verif = combined.get("verification", {})
 
-    try:
-        from runtime.foundation.verification.capability_catalog import (
-            get_capability_catalog,
-        )
+    from runtime.foundation.verification.capability_catalog import (
+        get_capability_catalog,
+    )
 
-        catalog = get_capability_catalog()
-        capability_count = len(catalog.entries)
-    except Exception:
-        capability_count = 0
+    catalog = get_capability_catalog()
+    capability_count = len(catalog.entries)
 
-    try:
-        from runtime.foundation.verification.workflow_inspection import (
-            enumerate_workflows,
-        )
+    from runtime.foundation.verification.workflow_inspection import (
+        enumerate_workflows,
+    )
 
-        workflows = enumerate_workflows()
-        workflow_count = len(workflows)
-    except Exception:
-        workflow_count = 0
+    workflows = enumerate_workflows()
+    workflow_count = len(workflows)
 
     data = {
         "status": (
@@ -390,11 +384,8 @@ async def post_verification_run(request: Request) -> JSONResponse:
     If capability_id is omitted, the run uses the live changed-files set.
     """
     body: dict[str, Any] = {}
-    try:
-        if request.headers.get("content-length", "0") != "0":
-            body = await request.json()
-    except Exception:
-        body = {}
+    if request.headers.get("content-length", "0") != "0":
+        body = await request.json()
 
     capability_id = body.get("capability_id") if isinstance(body, dict) else None
     env = verification_write_svc.build_run_result(capability_id=capability_id)
@@ -405,11 +396,8 @@ async def post_verification_run(request: Request) -> JSONResponse:
 async def post_verification_run_group(request: Request) -> JSONResponse:
     """Run a verification group (e.g. backend, frontend)."""
     body: dict[str, Any] = {}
-    try:
-        if request.headers.get("content-length", "0") != "0":
-            body = await request.json()
-    except Exception:
-        body = {}
+    if request.headers.get("content-length", "0") != "0":
+        body = await request.json()
 
     group = body.get("group") if isinstance(body, dict) else None
     env = verification_write_svc.build_run_result(group=group)
@@ -627,11 +615,8 @@ async def get_evidence_by_execution(execution_id: str) -> JSONResponse:
 async def post_evidence_compare(request: Request) -> JSONResponse:
     """Compare two evidence ids with semantic delta."""
     body: dict[str, Any] = {}
-    try:
-        if request.headers.get("content-length", "0") != "0":
-            body = await request.json()
-    except Exception:
-        body = {}
+    if request.headers.get("content-length", "0") != "0":
+        body = await request.json()
 
     left_id = body.get("left_id") if isinstance(body, dict) else None
     right_id = body.get("right_id") if isinstance(body, dict) else None
@@ -722,11 +707,8 @@ async def list_history_baselines() -> JSONResponse:
 async def post_history_compare(request: Request) -> JSONResponse:
     """Compare two history runs (CURRENT vs LAST/LAST_PASS/KNOWN_GOOD/BASELINE)."""
     body: dict[str, Any] = {}
-    try:
-        if request.headers.get("content-length", "0") != "0":
-            body = await request.json()
-    except Exception:
-        body = {}
+    if request.headers.get("content-length", "0") != "0":
+        body = await request.json()
 
     current_run_id = body.get("current_run_id") if isinstance(body, dict) else None
     baseline = body.get("baseline") if isinstance(body, dict) else None
@@ -1077,11 +1059,8 @@ async def get_diagnostics(request: Request) -> JSONResponse:
 async def post_diagnose(request: Request) -> JSONResponse:
     """Deterministic diagnostic engine — Phase 11."""
     body: dict[str, Any] = {}
-    try:
-        if request.headers.get("content-length", "0") != "0":
-            body = await request.json()
-    except Exception:
-        body = {}
+    if request.headers.get("content-length", "0") != "0":
+        body = await request.json()
 
     symptom = body.get("symptom", "") if isinstance(body, dict) else ""
     error_code = body.get("error_code") if isinstance(body, dict) else None
@@ -1112,11 +1091,8 @@ async def post_diagnose(request: Request) -> JSONResponse:
 async def post_diagnose_register(request: Request) -> JSONResponse:
     """Register a failure signature and get a recommendation — Phase 11."""
     body: dict[str, Any] = {}
-    try:
-        if request.headers.get("content-length", "0") != "0":
-            body = await request.json()
-    except Exception:
-        body = {}
+    if request.headers.get("content-length", "0") != "0":
+        body = await request.json()
 
     error_code = body.get("error_code") if isinstance(body, dict) else None
     capability_id = body.get("capability_id") if isinstance(body, dict) else None
@@ -1274,11 +1250,8 @@ async def get_ai_mode() -> JSONResponse:
 async def post_ai_run(request: Request) -> JSONResponse:
     """Start a new AI run."""
     body: dict[str, Any] = {}
-    try:
-        if request.headers.get("content-length", "0") != "0":
-            body = await request.json()
-    except Exception:
-        body = {}
+    if request.headers.get("content-length", "0") != "0":
+        body = await request.json()
 
     symptom = body.get("symptom", "") if isinstance(body, dict) else ""
     mode = body.get("mode", "MANUAL") if isinstance(body, dict) else "MANUAL"
@@ -1364,11 +1337,8 @@ async def post_ai_step(run_id: str, request: Request) -> JSONResponse:
     persists audit event. No AI bypasses policy.
     """
     body: dict[str, Any] = {}
-    try:
-        if request.headers.get("content-length", "0") != "0":
-            body = await request.json()
-    except Exception:
-        body = {}
+    if request.headers.get("content-length", "0") != "0":
+        body = await request.json()
 
     tool_name = body.get("tool_name") if isinstance(body, dict) else None
     arguments = body.get("arguments", {}) if isinstance(body, dict) else {}
@@ -1487,7 +1457,7 @@ async def post_ai_step(run_id: str, request: Request) -> JSONResponse:
         data = {
             "run_id": run_id,
             "step": completed_step,
-            "error": str(exc)[:500],
+            "error": "Tool execution failed",
             "status": refreshed.get("status", "FAILED" if is_final else "RUNNING"),
         }
         return JSONResponse(content=envelope(kind=ai_contract.AI_RUN_KIND, data=data))
@@ -1549,11 +1519,8 @@ async def post_ai_diagnose(request: Request) -> JSONResponse:
     Never overwrites deterministic evidence.
     """
     body: dict[str, Any] = {}
-    try:
-        if request.headers.get("content-length", "0") != "0":
-            body = await request.json()
-    except Exception:
-        body = {}
+    if request.headers.get("content-length", "0") != "0":
+        body = await request.json()
 
     symptom = body.get("symptom", "") if isinstance(body, dict) else ""
     capability_id = body.get("capability_id") if isinstance(body, dict) else None
@@ -1589,7 +1556,9 @@ async def post_ai_diagnose(request: Request) -> JSONResponse:
         from runtime.platform.api.errors import PlatformError, PlatformErrorCode
 
         err = PlatformError(
-            code=PlatformErrorCode.INTERNAL, layer="platform.ai", message=str(exc)
+            code=PlatformErrorCode.INTERNAL,
+            layer="platform.ai",
+            message="Internal platform error",
         )
         return JSONResponse(content=error_envelope(error=err), status_code=500)
 
@@ -1602,11 +1571,8 @@ async def post_ai_financial_interpret(request: Request) -> JSONResponse:
     LLM never calculator. Disabled by default — requires explicit enablement.
     """
     body: dict[str, Any] = {}
-    try:
-        if request.headers.get("content-length", "0") != "0":
-            body = await request.json()
-    except Exception:
-        body = {}
+    if request.headers.get("content-length", "0") != "0":
+        body = await request.json()
 
     query = (
         body.get("query") or body.get("symptom") or "" if isinstance(body, dict) else ""
@@ -1634,11 +1600,14 @@ async def post_ai_financial_interpret(request: Request) -> JSONResponse:
             content=envelope(kind="platform.financial_ai_result", data=result)
         )
     except Exception as exc:
+        logger.warning("Financial AI interpret failed: %s", exc, exc_info=True)
         from runtime.platform.api.envelope import error_envelope
         from runtime.platform.api.errors import PlatformError, PlatformErrorCode
 
         err = PlatformError(
-            code=PlatformErrorCode.INTERNAL, layer="platform.ai", message=str(exc)
+            code=PlatformErrorCode.INTERNAL,
+            layer="platform.ai",
+            message="Internal platform error",
         )
         return JSONResponse(content=error_envelope(error=err), status_code=500)
 
@@ -1650,11 +1619,8 @@ async def post_ai_workflow_run(request: Request) -> JSONResponse:
     Requires explicit policy + per-task authorization. Disabled by default.
     """
     body: dict[str, Any] = {}
-    try:
-        if request.headers.get("content-length", "0") != "0":
-            body = await request.json()
-    except Exception:
-        body = {}
+    if request.headers.get("content-length", "0") != "0":
+        body = await request.json()
 
     workflow_id = (
         (body.get("workflow_id") or body.get("task_id") or "")
@@ -1695,11 +1661,14 @@ async def post_ai_workflow_run(request: Request) -> JSONResponse:
             content=envelope(kind="platform.workflow_result", data=result)
         )
     except Exception as exc:
+        logger.warning("Workflow run failed: %s", exc, exc_info=True)
         from runtime.platform.api.envelope import error_envelope
         from runtime.platform.api.errors import PlatformError, PlatformErrorCode
 
         err = PlatformError(
-            code=PlatformErrorCode.INTERNAL, layer="platform.ai", message=str(exc)
+            code=PlatformErrorCode.INTERNAL,
+            layer="platform.ai",
+            message="Internal platform error",
         )
         return JSONResponse(content=error_envelope(error=err), status_code=500)
 
@@ -1712,11 +1681,8 @@ async def post_ai_engineering_execute(request: Request) -> JSONResponse:
     Requires evidence_id and human authorization. Never reports success without evidence.
     """
     body: dict[str, Any] = {}
-    try:
-        if request.headers.get("content-length", "0") != "0":
-            body = await request.json()
-    except Exception:
-        body = {}
+    if request.headers.get("content-length", "0") != "0":
+        body = await request.json()
 
     symptom = body.get("symptom", "") if isinstance(body, dict) else ""
     evidence_id = body.get("evidence_id") if isinstance(body, dict) else None
@@ -1760,11 +1726,14 @@ async def post_ai_engineering_execute(request: Request) -> JSONResponse:
             content=envelope(kind="platform.engineering_result", data=result)
         )
     except Exception as exc:
+        logger.warning("Engineering execute failed: %s", exc, exc_info=True)
         from runtime.platform.api.envelope import error_envelope
         from runtime.platform.api.errors import PlatformError, PlatformErrorCode
 
         err = PlatformError(
-            code=PlatformErrorCode.INTERNAL, layer="platform.ai", message=str(exc)
+            code=PlatformErrorCode.INTERNAL,
+            layer="platform.ai",
+            message="Internal platform error",
         )
         return JSONResponse(content=error_envelope(error=err), status_code=500)
 
@@ -1849,7 +1818,7 @@ async def get_context_pack(
         err = PlatformError(
             code=PlatformErrorCode.INTERNAL,
             layer="platform.context",
-            message=str(exc),
+            message="Internal platform error",
         )
         return JSONResponse(content=error_envelope(error=err), status_code=500)
 
@@ -1907,11 +1876,8 @@ async def get_ai_config() -> JSONResponse:
 async def post_ai_config_provider(request: Request) -> JSONResponse:
     """Switch AI provider (e.g., local-small → local-large → openrouter)."""
     body: dict[str, Any] = {}
-    try:
-        if request.headers.get("content-length", "0") != "0":
-            body = await request.json()
-    except Exception:
-        body = {}
+    if request.headers.get("content-length", "0") != "0":
+        body = await request.json()
 
     provider_name = body.get("provider") if isinstance(body, dict) else None
     if not provider_name:
