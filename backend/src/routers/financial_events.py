@@ -33,27 +33,24 @@ def create_event(
     Returns the database ID of the created event.
     """
     service = FinancialEventsService()
-    try:
-        return service.create_and_persist_event(
-            event_type=event_type,
-            transaction_ids=transaction_ids,
-            account_id=account_id,
-            amount_paise=amount_paise,
-            asset_change_paise=asset_change_paise,
-            liability_change_paise=liability_change_paise,
-            expense_paise=expense_paise,
-            income_paise=income_paise,
-            outstanding_paise=outstanding_paise,
-            date_iso=date_iso,
-            category=category,
-            sub_type=sub_type,
-            provider=provider,
-            confidence_bps=confidence_bps,
-            household_id=household_id,
-            owner_id=owner_id,
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    return service.create_and_persist_event(
+        event_type=event_type,
+        transaction_ids=transaction_ids,
+        account_id=account_id,
+        amount_paise=amount_paise,
+        asset_change_paise=asset_change_paise,
+        liability_change_paise=liability_change_paise,
+        expense_paise=expense_paise,
+        income_paise=income_paise,
+        outstanding_paise=outstanding_paise,
+        date_iso=date_iso,
+        category=category,
+        sub_type=sub_type,
+        provider=provider,
+        confidence_bps=confidence_bps,
+        household_id=household_id,
+        owner_id=owner_id,
+    )
 
 
 @router.get("/", response_model=list)
@@ -66,14 +63,11 @@ def list_events(
     Returns list of event dicts with link information.
     """
     service = FinancialEventsService()
-    try:
-        if month_bucket:
-            return service.get_events_with_links(month_bucket, household_id)
-        else:
-            # Return all events (no month filter) using get_events_with_links
-            return service.get_events_with_links("", household_id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    if month_bucket:
+        return service.get_events_with_links(month_bucket, household_id)
+    else:
+        # Return all events (no month filter) using get_events_with_links
+        return service.get_events_with_links("", household_id)
 
 
 @router.get("/{event_id}", response_model=dict)
@@ -82,14 +76,9 @@ def get_event(event_id: int = Path(..., description="Event ID")) -> dict[str, An
     Get a specific event by ID.
     """
     service = FinancialEventsService()
-    try:
-        # Fetch all events and filter by ID (repository has no single-event getter)
-        all_events = service.event_repo.get_events_by_type("", "primary")
-        event = next((e for e in all_events if e.get("id") == event_id), None)
-        if not event:
-            raise HTTPException(status_code=404, detail="Event not found")
-        return event
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    # Fetch all events and filter by ID (repository has no single-event getter)
+    all_events = service.event_repo.get_events_by_type("", "primary")
+    event = next((e for e in all_events if e.get("id") == event_id), None)
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    return event

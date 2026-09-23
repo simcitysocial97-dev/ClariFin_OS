@@ -1,6 +1,6 @@
 """Dashboard summary endpoint."""
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
 from src.core.dtos.dashboard_dto import DashboardSummaryDTO
 from src.services.dashboard_service import DashboardService
@@ -22,8 +22,5 @@ def api_dashboard_summary() -> DashboardSummaryDTO:
     - reconciliation_pending: Count of pending transfers
     - large_transactions: Significant transactions (>= ₹10,000)
     """
-    try:
-        service = DashboardService()
-        return service.get_summary()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    service = DashboardService()
+    return service.get_summary()

@@ -1,6 +1,6 @@
 """Cashflow endpoints."""
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Query
 
 from src.core.dtos.cashflow_dto import (
     CashflowCategoryResponse,
@@ -19,11 +19,8 @@ def get_cashflow() -> CashflowSummaryDTO:
     Returns cashflow summary with total income, expenses, and net cashflow.
     All monetary values in paise (INTEGER).
     """
-    try:
-        service = CashflowService()
-        return service.calculate_summary()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    service = CashflowService()
+    return service.calculate_summary()
 
 
 @router.get("/cashflow/monthly")
@@ -34,11 +31,8 @@ def get_cashflow_monthly(
     Returns month-by-month income and expense aggregation.
     All monetary values in paise (INTEGER).
     """
-    try:
-        service = CashflowService()
-        return service.get_monthly(months=months)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    service = CashflowService()
+    return service.get_monthly(months=months)
 
 
 @router.get("/cashflow/categories")
@@ -47,11 +41,8 @@ def get_cashflow_categories() -> CashflowCategoryResponse:
     Returns category breakdown for cashflow.
     All monetary values in paise (INTEGER).
     """
-    try:
-        service = CashflowService()
-        return service.get_categories()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    service = CashflowService()
+    return service.get_categories()
 
 
 @router.get("/cashflow/transactions")
@@ -63,8 +54,5 @@ def get_cashflow_transactions(
     Returns transactions for cashflow view.
     All monetary values in paise (INTEGER).
     """
-    try:
-        service = CashflowService()
-        return service.get_transactions(limit=limit, offset=offset)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    service = CashflowService()
+    return service.get_transactions(limit=limit, offset=offset)

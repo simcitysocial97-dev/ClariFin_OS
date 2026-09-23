@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Query
 
 from src.core.dtos.transaction_dto import TransactionListResponse
 from src.services.transaction_service import TransactionService
@@ -21,19 +21,16 @@ def get_transactions(
     offset: int = Query(0, ge=0),
 ) -> TransactionListResponse:
     """Get transactions with filtering and pagination."""
-    try:
-        service = TransactionService()
-        return service.get_transactions(
-            search=search,
-            bank=bank,
-            category=category,
-            type=type,
-            member=member,
-            limit=limit,
-            offset=offset,
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    service = TransactionService()
+    return service.get_transactions(
+        search=search,
+        bank=bank,
+        category=category,
+        type=type,
+        member=member,
+        limit=limit,
+        offset=offset,
+    )
 
 
 @router.get("/overview")
@@ -42,14 +39,11 @@ def get_overview(
     member: str | None = "All",
 ) -> dict[str, Any]:
     """Get overview metrics and charts."""
-    try:
-        service = TransactionService()
-        return service.get_overview(
-            exclude_transfers=exclude_transfers,
-            member=member,
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    service = TransactionService()
+    return service.get_overview(
+        exclude_transfers=exclude_transfers,
+        member=member,
+    )
 
 
 @router.get("/categories")
@@ -59,15 +53,12 @@ def get_categories(
     drill_category: str | None = None,
 ) -> dict[str, Any]:
     """Get category summary and breakdown."""
-    try:
-        service = TransactionService()
-        return service.get_categories(
-            exclude_transfers=exclude_transfers,
-            member=member,
-            drill_category=drill_category,
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    service = TransactionService()
+    return service.get_categories(
+        exclude_transfers=exclude_transfers,
+        member=member,
+        drill_category=drill_category,
+    )
 
 
 @router.get("/analytics")
@@ -76,11 +67,8 @@ def get_analytics(
     member: str | None = "All",
 ) -> dict[str, Any]:
     """Get analytics data."""
-    try:
-        service = TransactionService()
-        return service.get_analytics(
-            exclude_transfers=exclude_transfers,
-            member=member,
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    service = TransactionService()
+    return service.get_analytics(
+        exclude_transfers=exclude_transfers,
+        member=member,
+    )

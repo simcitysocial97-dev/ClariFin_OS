@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
 from src.services import AuditService
 
@@ -23,9 +23,6 @@ def api_audit_report() -> dict[str, Any]:
             "hash_verification": {...}
         }
     """
-    try:
-        service = AuditService()
-        report = service.run_full_audit()
-        return report
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    service = AuditService()
+    report = service.run_full_audit()
+    return report
