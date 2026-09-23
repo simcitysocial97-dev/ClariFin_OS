@@ -57,8 +57,8 @@ def api_get_reconciliations(status: str | None = None) -> ReconciliationsListRes
         rows = service.get_reconciliations(status)
         matches = [_build_match_dto(r) for r in rows]
         return ReconciliationsListResponse(reconciliations=matches)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    except HTTPException:
+        raise
 
 
 @router.get("/pending", response_model=ReconciliationsListResponse)
@@ -80,8 +80,8 @@ def api_scan_reconciliations() -> ReconciliationScanResponse:
         service = ReconciliationService()
         matches = service.scan_potential_matches()
         return ReconciliationScanResponse(matches=matches, count=len(matches))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    except HTTPException:
+        raise
 
 
 @router.post("/create")
@@ -120,8 +120,8 @@ def api_create_reconciliation(
             match_type=match_type,
         )
         return {"success": True, "inserted": inserted}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    except HTTPException:
+        raise
 
 
 @router.post("/batch-insert")
@@ -161,8 +161,8 @@ def api_batch_insert_reconciliations() -> dict[str, Any]:
             "inserted": inserted_count,
             "skipped": len(matches) - inserted_count,
         }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
+    except HTTPException:
+        raise
 
 
 @router.post("/{reconciliation_id}/confirm")
@@ -182,8 +182,6 @@ def api_confirm_reconciliation(reconciliation_id: int) -> dict[str, Any]:
         return {"success": True, "status": "confirmed"}
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/{reconciliation_id}/reject")
@@ -203,5 +201,3 @@ def api_reject_reconciliation(reconciliation_id: int) -> dict[str, Any]:
         return {"success": True, "status": "rejected"}
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
