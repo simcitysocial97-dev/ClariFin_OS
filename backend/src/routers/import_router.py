@@ -6,6 +6,7 @@ from typing import Any
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
 
+from src.config import settings
 from src.services.import_service import ImportService
 
 router = APIRouter(prefix="/api", tags=["import"])
@@ -30,18 +31,25 @@ async def upload_statement(
     """Upload and process a PDF statement."""
     try:
         filename = file.filename or ""
-        if not filename.lower().endswith(".pdf"):
+        if Path(filename).suffix.lower() not in settings.pdf_upload_extensions:
             raise HTTPException(status_code=400, detail="Only PDF files allowed")
 
-        save_path = UPLOAD_DIR / filename
+        safe_filename = Path(filename).name
+        save_path = UPLOAD_DIR / safe_filename
+        if save_path.resolve().parent != UPLOAD_DIR.resolve():
+            raise HTTPException(status_code=400, detail="Invalid filename")
         content = await file.read()
+        if len(content) > settings.max_upload_size_bytes:
+            raise HTTPException(
+                status_code=413, detail="File exceeds maximum upload size"
+            )
         with open(save_path, "wb") as f:
             f.write(content)
 
         service = ImportService()
         return service.upload_statement(
             save_path=str(save_path),
-            filename=filename,
+            filename=safe_filename,
             member=member,
         )
     except Exception as e:
@@ -54,11 +62,18 @@ async def import_detect(file: UploadFile = File(...)) -> dict[str, Any]:
     try:
         filename = file.filename or ""
         suffix = Path(filename).suffix.lower()
-        if suffix not in [".csv", ".xlsx", ".xls"]:
+        if suffix not in settings.tabular_upload_extensions:
             raise HTTPException(status_code=400, detail="Unsupported file type")
 
-        save_path = UPLOAD_DIR / filename if filename else UPLOAD_DIR / "unknown"
+        safe_filename = Path(filename).name or "unknown"
+        save_path = UPLOAD_DIR / safe_filename
+        if save_path.resolve().parent != UPLOAD_DIR.resolve():
+            raise HTTPException(status_code=400, detail="Invalid filename")
         content = await file.read()
+        if len(content) > settings.max_upload_size_bytes:
+            raise HTTPException(
+                status_code=413, detail="File exceeds maximum upload size"
+            )
         with open(save_path, "wb") as f:
             f.write(content)
 
