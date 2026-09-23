@@ -62,9 +62,7 @@ def get_statements() -> list[dict[str, Any]]:
                 "file_name": stmt.get("file_name"),
                 "card_last4": stmt.get("card_last4"),
                 "card_display": (
-                    f"****{stmt.get('card_last4')}"
-                    if stmt.get("card_last4")
-                    else ""
+                    f"****{stmt.get('card_last4')}" if stmt.get("card_last4") else ""
                 ),
                 "period_from": stmt.get("statement_period_from"),
                 "period_to": stmt.get("statement_period_to"),
@@ -136,9 +134,7 @@ def get_cards() -> dict[str, Any]:
         # Compute utilization
         utilization_percent = 0.0
         if credit_limit > 0:
-            utilization_percent = round(
-                (current_outstanding / credit_limit) * 100, 1
-            )
+            utilization_percent = round((current_outstanding / credit_limit) * 100, 1)
 
         # Compute days until due
         days_until_due = None
