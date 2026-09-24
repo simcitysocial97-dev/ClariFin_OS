@@ -5,6 +5,13 @@
  * Fire-and-forget, synchronous delivery, error-isolated subscribers.
  *
  * Architecture: FINANCIAL_OS_SHELL_ARCHITECTURE.md §9
+ *
+ * NOTE: This is the MAIN application event bus, separate from GraphEventBus
+ * (lib/graph/event-bus.ts). The separation is intentional:
+ * - This bus: Application-level events (selection, timeline, navigation, intelligence)
+ * - GraphEventBus: Internal graph runtime events only
+ *
+ * No cross-consumers exist between these two buses (D13).
  */
 
 // ─── Base Event Interface ─────────────────────────────────────────────────────
