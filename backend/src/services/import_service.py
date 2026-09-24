@@ -50,11 +50,11 @@ class ImportService(BaseService):
 
         Returns:
             Dict with success, bank, transaction_count, validation_status,
-            metadata, and log entries.
+            metadata, log entries, and pipeline_summary.
         """
         log: list[str] = []
 
-        # Check duplicate
+        # Check duplicate (fast-path; aligns with existing contract tests).
         if self.statement_service.repo.get_duplicate_check_by_filename(filename):
             return {
                 "success": False,
@@ -62,14 +62,65 @@ class ImportService(BaseService):
                 "log": log + ["⚠️ Already imported, skipping"],
             }
 
-        # Extract
-        extractor = StatementExtractor(str(save_path))
-        result = extractor.extract()
-        bank = result.get("bank", "Unknown")
-        transactions = result.get("transactions", [])
+        # Shared pipeline: extract → categorize → persist → (optional) orchestrator.
+        svc_result = self.import_from_path(str(save_path), member=member)
 
-        log.append(f"✅ Bank: {bank}")
-        log.append(f"✅ Extracted {len(transactions)} transactions")
+        # Validate and enrich log (original post-import behaviour).
+        val_status = self._validate_statement(
+            svc_result["transactions"],
+            svc_result.get("metadata", {}),
+            log,
+            svc_result["statement_id"],
+        )
+        log.append(f"✅ Saved (Member: {member})")
+
+        pipeline_summary: dict[str, Any] = svc_result.get("pipeline_summary", {})
+        completed = [
+            k
+            for k, v in pipeline_summary.items()
+            if v is not None and not k.endswith("_error")
+        ]
+        if completed:
+            log.append(f"✅ Pipeline: {', '.join(completed)}")
+
+        return {
+            "success": True,
+            "bank": svc_result["bank"],
+            "transaction_count": len(svc_result["transactions"]),
+            "validation_status": val_status,
+            "metadata": svc_result.get("metadata", {}),
+            "log": log,
+            # M08: additive key surfaced for caller visibility.
+            "pipeline_summary": pipeline_summary,
+        }
+
+    def import_from_path(
+        self,
+        pdf_path: str,
+        member: str = "Self",
+        run_orchestrator: bool = True,
+    ) -> dict[str, Any]:
+        """Shared PDF-statement pipeline: extract → categorize → persist → (optionally) trigger post-upload intelligence.
+
+        This is the single canonical ingestion entrypoint for PDF statements.
+        HTTP handlers and the CLI both route through here (M09-D12).
+
+        Args:
+            pdf_path: Absolute or relative path to the PDF file.
+            member: Member name assigned to imported transactions.
+            run_orchestrator: When ``True`` (default) the post-upload
+                intelligence pipeline runs after persist; when ``False``
+                the CLI path stays lightweight per D12.
+
+        Returns:
+            Dict with ``bank``, ``transactions``, ``statement_id``,
+            ``metadata``, and optionally ``pipeline_summary``.
+        """
+        # Extract
+        extractor = StatementExtractor(pdf_path)
+        data = extractor.extract()
+        bank = data.get("bank", "Unknown")
+        transactions = data.get("transactions", [])
 
         # Categorize
         for txn in transactions:
@@ -81,10 +132,10 @@ class ImportService(BaseService):
             txn["member"] = member
 
         # Insert
-        period = result.get("statement_period", {})
+        period = data.get("statement_period", {})
         statement_id = self.statement_service.repo.insert_statement(
             bank=bank,
-            file_name=filename,
+            file_name=Path(pdf_path).name,
             period_from=period.get("from", ""),
             period_to=period.get("to", ""),
         )
@@ -93,52 +144,37 @@ class ImportService(BaseService):
         # Metadata
         metadata: dict[str, Any] = {}
         try:
-            meta_extractor = MetadataExtractor(str(save_path), bank=bank)
+            meta_extractor = MetadataExtractor(pdf_path, bank=bank)
             metadata = meta_extractor.extract()
             self.statement_service.repo.update_statement_metadata(
                 statement_id, metadata
             )
-            if metadata.get("total_amount_due"):
-                log.append(f"✅ Total Due: ₹{metadata['total_amount_due']:,.2f}")
-        except Exception as e:
-            log.append(f"⚠️ Metadata: {str(e)[:60]}")
+        except Exception:
+            pass  # metadata is best-effort; callers handle gracefully.
 
-        # Validation
-        val_status = self._validate_statement(transactions, metadata, log, statement_id)
-
-        log.append(f"✅ Saved (Member: {member})")
-
-        # Invalidate behavior cache
+        # Invalidate behaviour cache (shared invariant).
         from src.engines.behaviour_engine.core import invalidate_behavior_cache
 
         invalidate_behavior_cache()
 
-        # Post-upload pipeline
+        # Optional post-upload pipeline (M09-D12: default True, CLI may opt-out).
         pipeline_summary: dict[str, Any] = {}
-        try:
-            from src.orchestration.statement_orchestrator import (
-                StatementProcessingOrchestrator,
-            )
+        if run_orchestrator:
+            try:
+                from src.orchestration.statement_orchestrator import (
+                    StatementProcessingOrchestrator,
+                )
 
-            orchestrator = StatementProcessingOrchestrator()
-            pipeline_summary = orchestrator.process_after_upload(statement_id)
-            completed = [
-                k
-                for k, v in pipeline_summary.items()
-                if v is not None and not k.endswith("_error")
-            ]
-            log.append(f"✅ Pipeline: {', '.join(completed)}")
-        except Exception as pipeline_error:
-            log.append(f"⚠️ Pipeline warning: {str(pipeline_error)[:60]}")
+                orchestrator = StatementProcessingOrchestrator()
+                pipeline_summary = orchestrator.process_after_upload(statement_id)
+            except Exception:
+                pass  # pipeline failure must never abort the import.
 
         return {
-            "success": True,
             "bank": bank,
-            "transaction_count": len(transactions),
-            "validation_status": val_status,
+            "transactions": transactions,
+            "statement_id": statement_id,
             "metadata": metadata,
-            "log": log,
-            # M08: additive key surfaced for caller visibility.
             "pipeline_summary": pipeline_summary,
         }
 
