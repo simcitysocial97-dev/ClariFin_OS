@@ -25,6 +25,7 @@ export default defineConfig({
       'playwright/**',
       'tests/**',
       '**/.archive/**',
+      '.kilo/**',
     ],
     coverage: {
       provider: 'v8',

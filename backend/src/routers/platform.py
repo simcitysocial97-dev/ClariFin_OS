@@ -927,7 +927,6 @@ async def get_workflows() -> JSONResponse:
         BoundaryClassification,
         enumerate_workflows,
     )
-    from runtime.platform.api.contracts._primitives import Status
     from runtime.platform.api.services._helpers import envelope, now_iso
 
     workflows = enumerate_workflows()
@@ -1002,12 +1001,11 @@ async def get_diagnostics(request: Request) -> JSONResponse:
     if cached is not None:
         return _ok(cached)
 
+    from runtime.platform.api.services._helpers import envelope, now_iso
+    from runtime.platform.api.services.errors import build_errors_current
     from runtime.platform.diagnostics.engine import (
-        build_diagnostic_recommendation,
         diagnose,
     )
-    from runtime.platform.api.services.errors import build_errors_current
-    from runtime.platform.api.services._helpers import envelope, now_iso
 
     errors_env = build_errors_current()
     error_count = errors_env["data"]["count"]
