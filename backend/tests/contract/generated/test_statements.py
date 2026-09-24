@@ -3,7 +3,7 @@
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/statements
+# Source: GET /api/v1/statements
 # Generated: be5942e6c151
 # To regenerate: python tools/generate_contract_tests.py --routers statements
 
@@ -12,9 +12,9 @@ import pytest
 
 @pytest.mark.contract
 def test_get__api_statements_contract(client):
-    """Contract: GET /api/statements matches OpenAPI schema"""
+    """Contract: GET /api/v1/statements matches OpenAPI schema"""
 
-    response = client.get("/api/statements")
+    response = client.get("/api/v1/statements")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [
@@ -26,7 +26,7 @@ def test_get__api_statements_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/statements/{statement_id}/validate
+# Source: GET /api/v1/statements/{statement_id}/validate
 # Generated: 10a3fd51f3c5
 # To regenerate: python tools/generate_contract_tests.py --routers statements
 
@@ -35,9 +35,9 @@ import pytest
 
 @pytest.mark.contract
 def test_get__api_statements_statement_id_validate_contract(client):
-    """Contract: GET /api/statements/{statement_id}/validate matches OpenAPI schema"""
+    """Contract: GET /api/v1/statements/{statement_id}/validate matches OpenAPI schema"""
 
-    response = client.get("/api/statements/1/validate?claimed_balance_paise=1")
+    response = client.get("/api/v1/statements/1/validate?claimed_balance_paise=1")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [

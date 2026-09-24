@@ -9,7 +9,7 @@ from fastapi import APIRouter, Query
 from src.common import format_inr, parse_date
 from src.services.statement_service import StatementService
 
-router = APIRouter(prefix="/api", tags=["cards", "statements"])
+router = APIRouter(prefix="/api/v1", tags=["cards", "statements"])
 
 
 @router.get("/statements")

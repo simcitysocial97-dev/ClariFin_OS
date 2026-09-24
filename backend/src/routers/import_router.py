@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from src.config import settings
 from src.services.import_service import ImportService
 
-router = APIRouter(prefix="/api", tags=["import"])
+router = APIRouter(prefix="/api/v1", tags=["import"])
 
 UPLOAD_DIR = Path(__file__).parent.parent.parent / "data" / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)

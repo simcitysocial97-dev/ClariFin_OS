@@ -10,7 +10,7 @@ from src.core.dtos.cashflow_dto import (
 )
 from src.services import CashflowService
 
-router = APIRouter(prefix="/api", tags=["cashflow"])
+router = APIRouter(prefix="/api/v1", tags=["cashflow"])
 
 
 @router.get("/cashflow")

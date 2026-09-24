@@ -3,7 +3,7 @@
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/cashflow/categories
+# Source: GET /api/v1/cashflow/categories
 # Generated: 774e1fda0e93
 # To regenerate: python tools/generate_contract_tests.py --routers categories
 
@@ -13,9 +13,9 @@ from tests.contract.schema_validators import validate_response_schema
 
 @pytest.mark.contract
 def test_get__api_cashflow_categories_contract(client):
-    """Contract: GET /api/cashflow/categories matches OpenAPI schema"""
+    """Contract: GET /api/v1/cashflow/categories matches OpenAPI schema"""
 
-    response = client.get("/api/cashflow/categories")
+    response = client.get("/api/v1/cashflow/categories")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [
@@ -31,7 +31,7 @@ def test_get__api_cashflow_categories_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/categories
+# Source: GET /api/v1/categories
 # Generated: b8dd18676679
 # To regenerate: python tools/generate_contract_tests.py --routers categories
 
@@ -40,9 +40,9 @@ import pytest
 
 @pytest.mark.contract
 def test_get__api_categories_contract(client):
-    """Contract: GET /api/categories matches OpenAPI schema"""
+    """Contract: GET /api/v1/categories matches OpenAPI schema"""
 
-    response = client.get("/api/categories")
+    response = client.get("/api/v1/categories")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [

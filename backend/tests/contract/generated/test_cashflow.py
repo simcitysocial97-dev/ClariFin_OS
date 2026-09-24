@@ -27,7 +27,7 @@ def test_get__api_v1_behaviour_cashflow_health_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/cashflow
+# Source: GET /api/v1/cashflow
 # Generated: 1c7f6b2f47e0
 # To regenerate: python tools/generate_contract_tests.py --routers cashflow
 
@@ -36,9 +36,9 @@ import pytest
 
 @pytest.mark.contract
 def test_get__api_cashflow_contract(client):
-    """Contract: GET /api/cashflow matches OpenAPI schema"""
+    """Contract: GET /api/v1/cashflow matches OpenAPI schema"""
 
-    response = client.get("/api/cashflow")
+    response = client.get("/api/v1/cashflow")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [
@@ -54,7 +54,7 @@ def test_get__api_cashflow_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/cashflow/monthly
+# Source: GET /api/v1/cashflow/monthly
 # Generated: 38ba7a544579
 # To regenerate: python tools/generate_contract_tests.py --routers cashflow
 
@@ -63,9 +63,9 @@ import pytest
 
 @pytest.mark.contract
 def test_get__api_cashflow_monthly_contract(client):
-    """Contract: GET /api/cashflow/monthly matches OpenAPI schema"""
+    """Contract: GET /api/v1/cashflow/monthly matches OpenAPI schema"""
 
-    response = client.get("/api/cashflow/monthly")
+    response = client.get("/api/v1/cashflow/monthly")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [
@@ -81,7 +81,7 @@ def test_get__api_cashflow_monthly_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/cashflow/categories
+# Source: GET /api/v1/cashflow/categories
 # Generated: 041904637a8e
 # To regenerate: python tools/generate_contract_tests.py --routers cashflow
 
@@ -90,9 +90,9 @@ import pytest
 
 @pytest.mark.contract
 def test_get__api_cashflow_categories_contract(client):
-    """Contract: GET /api/cashflow/categories matches OpenAPI schema"""
+    """Contract: GET /api/v1/cashflow/categories matches OpenAPI schema"""
 
-    response = client.get("/api/cashflow/categories")
+    response = client.get("/api/v1/cashflow/categories")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [
@@ -108,7 +108,7 @@ def test_get__api_cashflow_categories_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/cashflow/transactions
+# Source: GET /api/v1/cashflow/transactions
 # Generated: 60c2cbdc4209
 # To regenerate: python tools/generate_contract_tests.py --routers cashflow
 
@@ -117,9 +117,9 @@ import pytest
 
 @pytest.mark.contract
 def test_get__api_cashflow_transactions_contract(client):
-    """Contract: GET /api/cashflow/transactions matches OpenAPI schema"""
+    """Contract: GET /api/v1/cashflow/transactions matches OpenAPI schema"""
 
-    response = client.get("/api/cashflow/transactions")
+    response = client.get("/api/v1/cashflow/transactions")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [

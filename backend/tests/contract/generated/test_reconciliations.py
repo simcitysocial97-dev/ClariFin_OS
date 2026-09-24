@@ -3,7 +3,7 @@
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/reconciliations
+# Source: GET /api/v1/reconciliation
 # Generated: 76cd40f7f00e
 # To regenerate: python tools/generate_contract_tests.py --routers reconciliations
 
@@ -12,9 +12,9 @@ import pytest
 
 @pytest.mark.contract
 def test_get__api_reconciliations_contract(client):
-    """Contract: GET /api/reconciliations matches OpenAPI schema"""
+    """Contract: GET /api/v1/reconciliation matches OpenAPI schema"""
 
-    response = client.get("/api/reconciliations")
+    response = client.get("/api/v1/reconciliation")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [
@@ -26,7 +26,7 @@ def test_get__api_reconciliations_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/reconciliations/pending
+# Source: GET /api/v1/reconciliation/pending
 # Generated: 96d6427ac0d3
 # To regenerate: python tools/generate_contract_tests.py --routers reconciliations
 
@@ -35,9 +35,9 @@ import pytest
 
 @pytest.mark.contract
 def test_get__api_reconciliations_pending_contract(client):
-    """Contract: GET /api/reconciliations/pending matches OpenAPI schema"""
+    """Contract: GET /api/v1/reconciliation/pending matches OpenAPI schema"""
 
-    response = client.get("/api/reconciliations/pending")
+    response = client.get("/api/v1/reconciliation/pending")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [
@@ -49,7 +49,7 @@ def test_get__api_reconciliations_pending_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/reconciliations/scan
+# Source: GET /api/v1/reconciliation/scan
 # Generated: 949c904aeec1
 # To regenerate: python tools/generate_contract_tests.py --routers reconciliations
 
@@ -58,9 +58,9 @@ import pytest
 
 @pytest.mark.contract
 def test_get__api_reconciliations_scan_contract(client):
-    """Contract: GET /api/reconciliations/scan matches OpenAPI schema"""
+    """Contract: GET /api/v1/reconciliation/scan matches OpenAPI schema"""
 
-    response = client.get("/api/reconciliations/scan")
+    response = client.get("/api/v1/reconciliation/scan")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [
@@ -72,7 +72,7 @@ def test_get__api_reconciliations_scan_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: POST /api/reconciliations/create
+# Source: POST /api/v1/reconciliation/create
 # Generated: 9e353e5dcc16
 # To regenerate: python tools/generate_contract_tests.py --routers reconciliations
 
@@ -81,9 +81,9 @@ import pytest
 
 @pytest.mark.contract
 def test_post__api_reconciliations_create_contract(client):
-    """Contract: POST /api/reconciliations/create matches OpenAPI schema"""
+    """Contract: POST /api/v1/reconciliation/create matches OpenAPI schema"""
 
-    response = client.post("/api/reconciliations/create")
+    response = client.post("/api/v1/reconciliation/create")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [
@@ -95,7 +95,7 @@ def test_post__api_reconciliations_create_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: POST /api/reconciliations/batch-insert
+# Source: POST /api/v1/reconciliation/batch-insert
 # Generated: 7891d1b17d4d
 # To regenerate: python tools/generate_contract_tests.py --routers reconciliations
 
@@ -104,9 +104,9 @@ import pytest
 
 @pytest.mark.contract
 def test_post__api_reconciliations_batch_insert_contract(client):
-    """Contract: POST /api/reconciliations/batch-insert matches OpenAPI schema"""
+    """Contract: POST /api/v1/reconciliation/batch-insert matches OpenAPI schema"""
 
-    response = client.post("/api/reconciliations/batch-insert")
+    response = client.post("/api/v1/reconciliation/batch-insert")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [
@@ -118,7 +118,7 @@ def test_post__api_reconciliations_batch_insert_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: POST /api/reconciliations/{reconciliation_id}/confirm
+# Source: POST /api/v1/reconciliation/{reconciliation_id}/confirm
 # Generated: 9000ccb2243a
 # To regenerate: python tools/generate_contract_tests.py --routers reconciliations
 
@@ -127,9 +127,9 @@ import pytest
 
 @pytest.mark.contract
 def test_post__api_reconciliations_reconciliation_id_confirm_contract(client):
-    """Contract: POST /api/reconciliations/{reconciliation_id}/confirm matches OpenAPI schema"""
+    """Contract: POST /api/v1/reconciliation/{reconciliation_id}/confirm matches OpenAPI schema"""
 
-    response = client.post("/api/reconciliations/1/confirm")
+    response = client.post("/api/v1/reconciliation/1/confirm")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [
@@ -141,7 +141,7 @@ def test_post__api_reconciliations_reconciliation_id_confirm_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: POST /api/reconciliations/{reconciliation_id}/reject
+# Source: POST /api/v1/reconciliation/{reconciliation_id}/reject
 # Generated: 0dcaa8e20215
 # To regenerate: python tools/generate_contract_tests.py --routers reconciliations
 
@@ -150,9 +150,9 @@ import pytest
 
 @pytest.mark.contract
 def test_post__api_reconciliations_reconciliation_id_reject_contract(client):
-    """Contract: POST /api/reconciliations/{reconciliation_id}/reject matches OpenAPI schema"""
+    """Contract: POST /api/v1/reconciliation/{reconciliation_id}/reject matches OpenAPI schema"""
 
-    response = client.post("/api/reconciliations/1/reject")
+    response = client.post("/api/v1/reconciliation/1/reject")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [

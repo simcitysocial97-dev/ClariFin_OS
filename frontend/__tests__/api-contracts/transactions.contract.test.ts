@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 
-describe('GET /api/transactions contract', () => {
+describe('GET /api/v1/transactions contract', () => {
   it('returns a wrapped response with transactions array and total', async () => {
-    const response = await fetch('/api/transactions')
+    const response = await fetch('/api/v1/transactions')
     const data = await response.json()
 
     expect(data).toHaveProperty('transactions')
@@ -13,7 +13,7 @@ describe('GET /api/transactions contract', () => {
   })
 
   it('each transaction has required canonical fields', async () => {
-    const response = await fetch('/api/transactions')
+    const response = await fetch('/api/v1/transactions')
     const data = await response.json()
 
     const tx = data.transactions[0]
@@ -28,7 +28,7 @@ describe('GET /api/transactions contract', () => {
   })
 
   it('amount uses canonical MoneyDTO with paise integer', async () => {
-    const response = await fetch('/api/transactions')
+    const response = await fetch('/api/v1/transactions')
     const data = await response.json()
 
     data.transactions.forEach((tx: { amount: { paise: number } }) => {

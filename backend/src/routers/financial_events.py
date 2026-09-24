@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Path, Query
 
 from src.services.financial_events_service import FinancialEventsService
 
-router = APIRouter(prefix="/api/financial-events", tags=["financial-events"])
+router = APIRouter(prefix="/api/v1/financial-events", tags=["financial-events"])
 
 
 @router.post("/", response_model=int)

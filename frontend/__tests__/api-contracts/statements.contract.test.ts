@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest'
 
-describe('GET /api/statements contract', () => {
+describe('GET /api/v1/statements contract', () => {
   it('returns an array of statements', async () => {
-    const response = await fetch('/api/statements')
+    const response = await fetch('/api/v1/statements')
     const data = await response.json()
 
     expect(Array.isArray(data)).toBe(true)
   })
 
   it('each statement has required fields', async () => {
-    const response = await fetch('/api/statements')
+    const response = await fetch('/api/v1/statements')
     const data = await response.json()
 
     const stmt = data[0]

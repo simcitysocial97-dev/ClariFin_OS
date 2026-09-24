@@ -138,7 +138,7 @@ export async function fetchTransactions(params?: {
   if (params?.limit) query.set('limit', String(params.limit));
   if (params?.offset) query.set('offset', String(params.offset));
   
-  const res = await apiFetch(`/api/transactions?${query}`);
+  const res = await apiFetch(`/api/v1/transactions?${query}`);
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   
   const raw = await res.json();
@@ -156,7 +156,7 @@ export async function fetchTransactions(params?: {
  * Fetch all statements
  */
 export async function fetchStatements(): Promise<Statement[]> {
-  const res = await apiFetch(`/api/statements`);
+  const res = await apiFetch(`/api/v1/statements`);
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
@@ -165,7 +165,7 @@ export async function fetchStatements(): Promise<Statement[]> {
  * Fetch list of banks
  */
 export async function fetchBanks(): Promise<{ banks: string[] }> {
-  const res = await apiFetch(`/api/banks`);
+  const res = await apiFetch(`/api/v1/banks`);
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
@@ -174,7 +174,7 @@ export async function fetchBanks(): Promise<{ banks: string[] }> {
  * Fetch list of categories
  */
 export async function fetchCategoryList(): Promise<{ categories: string[] }> {
-  const res = await apiFetch(`/api/categories`);
+  const res = await apiFetch(`/api/v1/categories`);
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
@@ -183,7 +183,7 @@ export async function fetchCategoryList(): Promise<{ categories: string[] }> {
  * Fetch list of members
  */
 export async function fetchMembers(): Promise<{ members: Member[] }> {
-  const res = await apiFetch(`/api/members`);
+  const res = await apiFetch(`/api/v1/members`);
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
@@ -199,7 +199,7 @@ export async function uploadStatement(
   formData.append('file', file);
   formData.append('member', member);
   
-  const res = await apiFetch(`/api/upload`, {
+  const res = await apiFetch(`/api/v1/upload`, {
     method: 'POST',
     body: formData,
   });
@@ -222,7 +222,7 @@ export async function exportCSV(params?: {
   if (params?.category) query.set('category', params.category);
   if (params?.type) query.set('type', params.type);
   
-  const res = await apiFetch(`/api/export/csv?${query}`);
+  const res = await apiFetch(`/api/v1/export/csv?${query}`);
   if (!res.ok) throw new Error(`Export error: ${res.status}`);
   return res.blob();
 }
@@ -231,7 +231,7 @@ export async function exportCSV(params?: {
  * Create a new member
  */
 export async function createMember(name: string, color: string): Promise<Member> {
-  const res = await apiFetch(`/api/members`, {
+  const res = await apiFetch(`/api/v1/members`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name, color }),
@@ -285,7 +285,7 @@ export async function detectImportColumns(file: File): Promise<ImportDetectResul
   const formData = new FormData();
   formData.append('file', file);
   
-  const res = await apiFetch(`/api/import/detect`, {
+  const res = await apiFetch(`/api/v1/import/detect`, {
     method: 'POST',
     body: formData,
   });
@@ -300,7 +300,7 @@ export async function executeImport(
   filename: string,
   mapping: ImportMapping
 ): Promise<ImportExecuteResult> {
-  const res = await apiFetch(`/api/import/execute`, {
+  const res = await apiFetch(`/api/v1/import/execute`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ filename, mapping }),

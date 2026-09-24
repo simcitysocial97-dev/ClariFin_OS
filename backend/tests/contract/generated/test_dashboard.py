@@ -3,7 +3,7 @@
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/dashboard/summary
+# Source: GET /api/v1/dashboard/summary
 # Generated: 6c26d11373a9
 # To regenerate: python tools/generate_contract_tests.py --routers dashboard
 
@@ -13,9 +13,9 @@ from tests.contract.schema_validators import validate_response_schema
 
 @pytest.mark.contract
 def test_get__api_dashboard_summary_contract(client):
-    """Contract: GET /api/dashboard/summary matches OpenAPI schema"""
+    """Contract: GET /api/v1/dashboard/summary matches OpenAPI schema"""
 
-    response = client.get("/api/dashboard/summary")
+    response = client.get("/api/v1/dashboard/summary")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [

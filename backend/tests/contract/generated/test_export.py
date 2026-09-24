@@ -3,7 +3,7 @@
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/export/csv
+# Source: GET /api/v1/export/csv
 # Generated: 64d99240d9b7
 # To regenerate: python tools/generate_contract_tests.py --routers export
 
@@ -12,9 +12,9 @@ import pytest
 
 @pytest.mark.contract
 def test_get__api_export_csv_contract(client):
-    """Contract: GET /api/export/csv matches OpenAPI schema"""
+    """Contract: GET /api/v1/export/csv matches OpenAPI schema"""
 
-    response = client.get("/api/export/csv")
+    response = client.get("/api/v1/export/csv")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [

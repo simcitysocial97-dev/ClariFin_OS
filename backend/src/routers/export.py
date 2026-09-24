@@ -4,7 +4,7 @@ from fastapi import APIRouter
 
 from src.services.export_service import ExportService
 
-router = APIRouter(prefix="/api", tags=["export"])
+router = APIRouter(prefix="/api/v1", tags=["export"])
 
 
 @router.get("/export/csv")

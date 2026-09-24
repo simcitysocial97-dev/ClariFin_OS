@@ -6,7 +6,7 @@ from fastapi import APIRouter
 
 from src.services import AuditService
 
-router = APIRouter(prefix="/api/audit", tags=["audit"])
+router = APIRouter(prefix="/api/v1/audit", tags=["audit"])
 
 
 @router.get("/report")

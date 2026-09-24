@@ -463,7 +463,7 @@ import pytest
 def test_get__api_accounts_account_id_balance_contract(client):
     """Contract: GET /api/accounts/{account_id}/balance matches OpenAPI schema"""
 
-    response = client.get("/api/accounts/1/balance")
+    response = client.get("/api/v1/accounts/1/balance")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [
@@ -486,7 +486,7 @@ import pytest
 def test_get__api_accounts_account_id_running_balance_contract(client):
     """Contract: GET /api/accounts/{account_id}/running-balance matches OpenAPI schema"""
 
-    response = client.get("/api/accounts/1/running-balance")
+    response = client.get("/api/v1/accounts/1/running-balance")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [

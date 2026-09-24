@@ -72,23 +72,23 @@ const mockScanResponse = {
 }
 
 export const reconciliationHandlers = [
-  http.get('/api/reconciliation', () => {
+  http.get('/api/v1/reconciliation', () => {
     return HttpResponse.json(mockReconciliationsResponse)
   }),
 
-  http.get('/api/reconciliation/pending', () => {
+  http.get('/api/v1/reconciliation/pending', () => {
     return HttpResponse.json(mockReconciliationsResponse)
   }),
 
-  http.get('/api/reconciliation/scan', () => {
+  http.get('/api/v1/reconciliation/scan', () => {
     return HttpResponse.json(mockScanResponse)
   }),
 
-  http.post('/api/reconciliation/:id/confirm', () => {
+  http.post('/api/v1/reconciliation/:id/confirm', () => {
     return HttpResponse.json({ success: true, status: 'confirmed' })
   }),
 
-  http.post('/api/reconciliation/:id/reject', () => {
+  http.post('/api/v1/reconciliation/:id/reject', () => {
     return HttpResponse.json({ success: true, status: 'rejected' })
   }),
 ]

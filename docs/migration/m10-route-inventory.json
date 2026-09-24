@@ -1,0 +1,172 @@
+{
+  "generated_at": "2026-09-24T05:30:00Z",
+  "milestone": "M10",
+  "description": "Backend route inventory before M10 prefix standardization",
+  "routers": [
+    {
+      "file": "accounts.py",
+      "current_prefix": "/api/v1",
+      "new_prefix": "/api/v1",
+      "changed": false
+    },
+    {
+      "file": "audit.py",
+      "current_prefix": "/api/audit",
+      "new_prefix": "/api/v1/audit",
+      "changed": true
+    },
+    {
+      "file": "banks.py",
+      "current_prefix": "/api",
+      "new_prefix": "/api/v1",
+      "changed": true
+    },
+    {
+      "file": "behaviour.py",
+      "current_prefix": "/api/v1/behaviour",
+      "new_prefix": "/api/v1/behaviour",
+      "changed": false
+    },
+    {
+      "file": "behaviour_workspace.py",
+      "current_prefix": "/api/v1",
+      "new_prefix": "/api/v1",
+      "changed": false
+    },
+    {
+      "file": "cards_statements.py",
+      "current_prefix": "/api",
+      "new_prefix": "/api/v1",
+      "changed": true
+    },
+    {
+      "file": "cashflow.py",
+      "current_prefix": "/api",
+      "new_prefix": "/api/v1",
+      "changed": true
+    },
+    {
+      "file": "cashflow_workspace.py",
+      "current_prefix": "/api/v1",
+      "new_prefix": "/api/v1",
+      "changed": false
+    },
+    {
+      "file": "credit_cards.py",
+      "current_prefix": "/api/v1",
+      "new_prefix": "/api/v1",
+      "changed": false
+    },
+    {
+      "file": "credit_cards_workspace.py",
+      "current_prefix": "/api/v1",
+      "new_prefix": "/api/v1",
+      "changed": false
+    },
+    {
+      "file": "dashboard.py",
+      "current_prefix": "/api/dashboard",
+      "new_prefix": "/api/v1/dashboard",
+      "changed": true
+    },
+    {
+      "file": "export.py",
+      "current_prefix": "/api",
+      "new_prefix": "/api/v1",
+      "changed": true
+    },
+    {
+      "file": "financial_events.py",
+      "current_prefix": "/api/financial-events",
+      "new_prefix": "/api/v1/financial-events",
+      "changed": true
+    },
+    {
+      "file": "financial_intelligence.py",
+      "current_prefix": "/financial-intelligence (in-router) + /api/v1 (via include_router)",
+      "new_prefix": "/api/v1/financial-intelligence (in-router only)",
+      "changed": true,
+      "notes": "Prefix moved from include_router() call into APIRouter definition; include_router() call updated accordingly"
+    },
+    {
+      "file": "forecast.py",
+      "current_prefix": "/api/v1",
+      "new_prefix": "/api/v1",
+      "changed": false
+    },
+    {
+      "file": "import_router.py",
+      "current_prefix": "/api",
+      "new_prefix": "/api/v1",
+      "changed": true
+    },
+    {
+      "file": "investments.py",
+      "current_prefix": "/api",
+      "new_prefix": "/api/v1",
+      "changed": true
+    },
+    {
+      "file": "investments_workspace.py",
+      "current_prefix": "/api/v1",
+      "new_prefix": "/api/v1",
+      "changed": false
+    },
+    {
+      "file": "loans.py",
+      "current_prefix": "/api",
+      "new_prefix": "/api/v1",
+      "changed": true
+    },
+    {
+      "file": "loans_workspace.py",
+      "current_prefix": "/api/v1",
+      "new_prefix": "/api/v1",
+      "changed": false
+    },
+    {
+      "file": "members.py",
+      "current_prefix": "/api",
+      "new_prefix": "/api/v1",
+      "changed": true
+    },
+    {
+      "file": "networth.py",
+      "current_prefix": "/api",
+      "new_prefix": "/api/v1",
+      "changed": true,
+      "notes": "D2: route sub-path changes from /networth to /net-worth"
+    },
+    {
+      "file": "networth_workspace.py",
+      "current_prefix": "/api/v1",
+      "new_prefix": "/api/v1",
+      "changed": false
+    },
+    {
+      "file": "platform.py",
+      "current_prefix": "/platform/v1",
+      "new_prefix": "/platform/v1",
+      "changed": false,
+      "notes": "Platform namespace — explicitly excluded from D1 standardization"
+    },
+    {
+      "file": "reconciliation.py",
+      "current_prefix": "/api/reconciliation",
+      "new_prefix": "/api/v1/reconciliation",
+      "changed": true
+    },
+    {
+      "file": "reconciliation_workspace.py",
+      "current_prefix": "/api/v1",
+      "new_prefix": "/api/v1",
+      "changed": false
+    },
+    {
+      "file": "transactions.py",
+      "current_prefix": "/api",
+      "new_prefix": "/api/v1",
+      "changed": true
+    }
+  ]
+}

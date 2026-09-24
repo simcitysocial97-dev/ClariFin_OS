@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 
-describe('GET /api/cashflow/monthly contract', () => {
+describe('GET /api/v1/cashflow/monthly contract', () => {
   it('returns months array with required fields', async () => {
-    const response = await fetch('/api/cashflow/monthly')
+    const response = await fetch('/api/v1/cashflow/monthly')
     const data = await response.json()
 
     expect(data).toHaveProperty('months')
@@ -13,7 +13,7 @@ describe('GET /api/cashflow/monthly contract', () => {
   })
 
   it('each month has required fields in paise', async () => {
-    const response = await fetch('/api/cashflow/monthly')
+    const response = await fetch('/api/v1/cashflow/monthly')
     const data = await response.json()
 
     const month = data.months[0]
@@ -25,7 +25,7 @@ describe('GET /api/cashflow/monthly contract', () => {
   })
 
   it('all monetary values are integers (paise convention)', async () => {
-    const response = await fetch('/api/cashflow/monthly')
+    const response = await fetch('/api/v1/cashflow/monthly')
     const data = await response.json()
 
     data.months.forEach((month: { income_paise: number; expense_paise: number; net_paise: number }) => {
@@ -39,7 +39,7 @@ describe('GET /api/cashflow/monthly contract', () => {
   })
 
   it('months are in ascending order', async () => {
-    const response = await fetch('/api/cashflow/monthly')
+    const response = await fetch('/api/v1/cashflow/monthly')
     const data = await response.json()
 
     const keys = data.months.map((m: { month_key: string }) => m.month_key)

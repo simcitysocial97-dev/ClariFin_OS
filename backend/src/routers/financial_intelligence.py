@@ -16,7 +16,7 @@ from fastapi import APIRouter, Query
 from src.services.financial_intelligence_service import FinancialIntelligenceService
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/financial-intelligence", tags=["financial-intelligence"])
+router = APIRouter(prefix="/api/v1/financial-intelligence", tags=["financial-intelligence"])
 
 
 def _timed_log(

@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from src.services.member_service import MemberService
 
-router = APIRouter(prefix="/api", tags=["members"])
+router = APIRouter(prefix="/api/v1", tags=["members"])
 
 
 class MemberCreate(BaseModel):

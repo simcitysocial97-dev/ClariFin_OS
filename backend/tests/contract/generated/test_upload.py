@@ -3,7 +3,7 @@
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: POST /api/upload
+# Source: POST /api/v1/upload
 # Generated: 1cbcdd2cdf54
 # To regenerate: python tools/generate_contract_tests.py --routers upload
 
@@ -12,11 +12,11 @@ import pytest
 
 @pytest.mark.contract
 def test_post__api_upload_contract(client):
-    """Contract: POST /api/upload matches OpenAPI schema"""
+    """Contract: POST /api/v1/upload matches OpenAPI schema"""
 
     # TODO: Replace with a valid payload for this endpoint if needed.
     request_body = {}
-    response = client.post("/api/upload", json=request_body)
+    response = client.post("/api/v1/upload", json=request_body)
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [

@@ -88,7 +88,7 @@ describe('useCashflow', () => {
 
     await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
-    expect(mockApiFetch).toHaveBeenCalledWith('/api/cashflow/monthly?months=6');
+    expect(mockApiFetch).toHaveBeenCalledWith('/api/v1/cashflow/monthly?months=6');
     expect(result.current.data).toEqual(mockCashflowData);
   });
 
@@ -100,7 +100,7 @@ describe('useCashflow', () => {
 
     await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
-    expect(mockApiFetch).toHaveBeenCalledWith('/api/cashflow/monthly?months=12');
+    expect(mockApiFetch).toHaveBeenCalledWith('/api/v1/cashflow/monthly?months=12');
   });
 
   it('should aggregate income and expenses', async () => {

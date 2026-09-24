@@ -3,7 +3,7 @@
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/members
+# Source: GET /api/v1/members
 # Generated: a1098deaf823
 # To regenerate: python tools/generate_contract_tests.py --routers members
 
@@ -12,9 +12,9 @@ import pytest
 
 @pytest.mark.contract
 def test_get__api_members_contract(client):
-    """Contract: GET /api/members matches OpenAPI schema"""
+    """Contract: GET /api/v1/members matches OpenAPI schema"""
 
-    response = client.get("/api/members")
+    response = client.get("/api/v1/members")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [
@@ -26,7 +26,7 @@ def test_get__api_members_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: POST /api/members
+# Source: POST /api/v1/members
 # Generated: 0ea9c08db477
 # To regenerate: python tools/generate_contract_tests.py --routers members
 
@@ -35,11 +35,11 @@ import pytest
 
 @pytest.mark.contract
 def test_post__api_members_contract(client):
-    """Contract: POST /api/members matches OpenAPI schema"""
+    """Contract: POST /api/v1/members matches OpenAPI schema"""
 
     # TODO: Replace with a valid payload for this endpoint if needed.
     request_body = {}
-    response = client.post("/api/members", json=request_body)
+    response = client.post("/api/v1/members", json=request_body)
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [

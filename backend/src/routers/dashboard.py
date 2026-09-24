@@ -5,7 +5,7 @@ from fastapi import APIRouter
 from src.core.dtos.dashboard_dto import DashboardSummaryDTO
 from src.services.dashboard_service import DashboardService
 
-router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
+router = APIRouter(prefix="/api/v1/dashboard", tags=["dashboard"])
 
 
 @router.get("/summary", response_model=DashboardSummaryDTO)

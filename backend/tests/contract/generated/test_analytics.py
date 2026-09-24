@@ -26,7 +26,7 @@ def test_get__api_v1_accounts_account_id_analytics_contract(client):
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/analytics
+# Source: GET /api/v1/analytics
 # Generated: 5ceb676bca1a
 # To regenerate: python tools/generate_contract_tests.py --routers analytics
 
@@ -35,9 +35,9 @@ import pytest
 
 @pytest.mark.contract
 def test_get__api_analytics_contract(client):
-    """Contract: GET /api/analytics matches OpenAPI schema"""
+    """Contract: GET /api/v1/analytics matches OpenAPI schema"""
 
-    response = client.get("/api/analytics")
+    response = client.get("/api/v1/analytics")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [

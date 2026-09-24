@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw'
 
 export const cashflowHandlers = [
-  http.get('/api/cashflow/monthly', () => {
+  http.get('/api/v1/cashflow/monthly', () => {
     return HttpResponse.json({
       months: [
         {

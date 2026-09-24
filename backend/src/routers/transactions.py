@@ -7,7 +7,7 @@ from fastapi import APIRouter, Query
 from src.core.dtos.transaction_dto import TransactionListResponse
 from src.services.transaction_service import TransactionService
 
-router = APIRouter(prefix="/api", tags=["transactions"])
+router = APIRouter(prefix="/api/v1", tags=["transactions"])
 
 
 @router.get("/transactions", response_model=TransactionListResponse)

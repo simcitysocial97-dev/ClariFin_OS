@@ -11,7 +11,7 @@ from src.core.dtos.reconciliation_dto import (
 )
 from src.services.reconciliation_service import ReconciliationService
 
-router = APIRouter(prefix="/api/reconciliation", tags=["reconciliation"])
+router = APIRouter(prefix="/api/v1/reconciliation", tags=["reconciliation"])
 
 
 def _build_match_dto(row: dict[str, Any]) -> ReconciliationMatchDTO:

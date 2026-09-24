@@ -10,7 +10,7 @@ import { CashflowResponseSchema, type CashflowResponse } from '@/lib/schemas/cas
 
 // 🛡️ Data fetching function utilizing Zod runtime parsing
 async function fetchCashflow(months: number = 6): Promise<CashflowResponse> {
-  const response = await apiFetch(`/api/cashflow/monthly?months=${months}`)
+  const response = await apiFetch(`/api/v1/cashflow/monthly?months=${months}`)
   
   if (!response.ok) {
     throw new Error(`Cashflow fetch failed: ${response.status}`)

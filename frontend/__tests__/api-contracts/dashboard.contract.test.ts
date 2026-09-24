@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 
-describe('GET /api/dashboard/summary contract', () => {
+describe('GET /api/v1/dashboard/summary contract', () => {
   it('returns an object with required fields', async () => {
-    const response = await fetch('/api/dashboard/summary')
+    const response = await fetch('/api/v1/dashboard/summary')
     const data = await response.json()
 
     expect(data).toHaveProperty('net_cash_flow_paise')
@@ -14,7 +14,7 @@ describe('GET /api/dashboard/summary contract', () => {
   })
 
   it('numeric fields are numbers', async () => {
-    const response = await fetch('/api/dashboard/summary')
+    const response = await fetch('/api/v1/dashboard/summary')
     const data = await response.json()
 
     expect(typeof data.net_cash_flow_paise).toBe('number')
@@ -25,7 +25,7 @@ describe('GET /api/dashboard/summary contract', () => {
   })
 
   it('net_cash_flow_paise is an integer (paise convention)', async () => {
-    const response = await fetch('/api/dashboard/summary')
+    const response = await fetch('/api/v1/dashboard/summary')
     const data = await response.json()
 
     expect(Number.isInteger(data.net_cash_flow_paise)).toBe(true)
