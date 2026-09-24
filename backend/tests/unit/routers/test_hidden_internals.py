@@ -27,24 +27,24 @@ class _Boom:
 
 # (module, service symbol, http method, url) — one entry per swept router.
 _SWEPT_ROUTERS = [
-    ("src.routers.audit", "AuditService", "get", "/api/audit/report"),
-    ("src.routers.dashboard", "DashboardService", "get", "/api/dashboard/summary"),
-    ("src.routers.export", "ExportService", "get", "/api/export/csv"),
-    ("src.routers.transactions", "TransactionService", "get", "/api/transactions"),
-    ("src.routers.cashflow", "CashflowService", "get", "/api/cashflow"),
+    ("src.routers.audit", "AuditService", "get", "/api/v1/audit/report"),
+    ("src.routers.dashboard", "DashboardService", "get", "/api/v1/dashboard/summary"),
+    ("src.routers.export", "ExportService", "get", "/api/v1/export/csv"),
+    ("src.routers.transactions", "TransactionService", "get", "/api/v1/transactions"),
+    ("src.routers.cashflow", "CashflowService", "get", "/api/v1/cashflow"),
     (
         "src.routers.financial_events",
         "FinancialEventsService",
         "get",
-        "/api/financial-events/",
+        "/api/v1/financial-events/",
     ),
     (
         "src.routers.reconciliation",
         "ReconciliationService",
         "get",
-        "/api/reconciliation",
+        "/api/v1/reconciliation",
     ),
-    ("src.routers.cards_statements", "StatementService", "get", "/api/statements"),
+    ("src.routers.cards_statements", "StatementService", "get", "/api/v1/statements"),
 ]
 
 
@@ -117,7 +117,7 @@ def test_import_router_forced_exception_returns_generic_message(
     client = _make_client(seeded_db)
     with caplog.at_level(logging.ERROR):
         response = client.post(
-            "/api/upload",
+            "/api/v1/upload",
             files={
                 "file": ("statement.pdf", b"%PDF-1.4 forced-error", "application/pdf")
             },

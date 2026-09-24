@@ -58,7 +58,7 @@ class TestUploadStatementSafety:
         _patch_service(monkeypatch)
         try:
             response = client.post(
-                "/api/upload",
+                "/api/v1/upload",
                 files={"file": ("../../evil.pdf", b"%PDF-1.4 fake", "application/pdf")},
             )
             assert response.status_code == 200
@@ -71,7 +71,7 @@ class TestUploadStatementSafety:
     ) -> None:
         _patch_service(monkeypatch)
         response = client.post(
-            "/api/upload",
+            "/api/v1/upload",
             files={"file": ("data.csv", b"Date,Amount\n", "text/csv")},
         )
         assert response.status_code in (400, 413, 500)
@@ -85,7 +85,7 @@ class TestUploadStatementSafety:
         monkeypatch.setenv("MAX_UPLOAD_SIZE_MB", "0")
         try:
             response = client.post(
-                "/api/upload",
+                "/api/v1/upload",
                 files={"file": ("big.pdf", b"%PDF-1.4 fake", "application/pdf")},
             )
             # Small payload with a zero limit hits the explicit 413 check.
@@ -101,7 +101,7 @@ class TestUploadStatementSafety:
         _patch_service(monkeypatch)
         try:
             response = client.post(
-                "/api/upload",
+                "/api/v1/upload",
                 files={"file": ("stmt.pdf", b"%PDF-1.4 fake", "application/pdf")},
             )
             assert response.status_code == 200
@@ -123,7 +123,7 @@ class TestImportDetectSafety:
         _patch_service(monkeypatch)
         try:
             response = client.post(
-                "/api/import/detect",
+                "/api/v1/import/detect",
                 files={"file": ("../../evil.csv", b"Date,Amount\n", "text/csv")},
             )
             assert response.status_code == 200
@@ -136,7 +136,7 @@ class TestImportDetectSafety:
     ) -> None:
         _patch_service(monkeypatch)
         response = client.post(
-            "/api/import/detect",
+            "/api/v1/import/detect",
             files={"file": ("stmt.pdf", b"%PDF-1.4 fake", "application/pdf")},
         )
         assert response.status_code in (400, 413, 500)
@@ -150,7 +150,7 @@ class TestImportDetectSafety:
         monkeypatch.setenv("MAX_UPLOAD_SIZE_MB", "0")
         try:
             response = client.post(
-                "/api/import/detect",
+                "/api/v1/import/detect",
                 files={"file": ("big.csv", b"Date,Amount\n", "text/csv")},
             )
             assert response.status_code in (400, 413, 500)
@@ -165,7 +165,7 @@ class TestImportDetectSafety:
         _patch_service(monkeypatch)
         try:
             response = client.post(
-                "/api/import/detect",
+                "/api/v1/import/detect",
                 files={"file": ("data.csv", b"Date,Amount\n", "text/csv")},
             )
             assert response.status_code == 200
