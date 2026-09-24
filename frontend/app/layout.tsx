@@ -5,7 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { MemberProvider } from '@/lib/context/member-context';
-import { ErrorBoundary } from '@/components/error-boundary';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { QueryProvider } from '@/components/query-provider';
 import { AppShell } from '@/components/os-shell';
 import { RuntimeProvider } from '@/lib/runtime';

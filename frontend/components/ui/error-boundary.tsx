@@ -59,3 +59,21 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     return this.props.children
   }
 }
+
+/**
+ * Error fallback component for use with React's error boundary conventions
+ */
+export function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
+  return (
+    <div className="flex items-center justify-center min-h-[400px] p-6">
+      <div className="text-center">
+        <p className="text-sm text-muted-foreground">
+          {error.message || 'An unexpected error occurred. Please try again.'}
+        </p>
+        <button onClick={resetErrorBoundary} className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md">
+          Try Again
+        </button>
+      </div>
+    </div>
+  );
+}

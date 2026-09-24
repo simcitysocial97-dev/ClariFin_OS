@@ -15,7 +15,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { TrendingUp, TrendingDown, PiggyBank, Home, Shield, Activity, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton";
-import { ErrorFallback } from "@/components/error-boundary";
+import { ErrorFallback } from "@/components/ui/error-boundary";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { useDashboardMetrics } from "@/lib/hooks/use-dashboard-metrics";
 import { formatPercentage } from "@/lib/utils/format";
