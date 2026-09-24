@@ -88,6 +88,7 @@ class VerificationTask:
         "integration",
         "golden",
         "e2e",
+        "capability",
     ]
     command: str
     profile: str
@@ -282,6 +283,31 @@ class ControlPlanePlanner:
         tasks = []
         task_counter = 0
 
+        # M9-C50 Phase-3 (STOP GATE 3): unmapped changes must NOT silently fall
+        # through to generic testing. Every unmapped blast capability becomes an
+        # explicit fail-closed blocking task. Resolution of the mapping is a
+        # review obligation, not a silent pass.
+        for raw_unmapped in resolution.unmapped_blast_capabilities:
+            tasks.append(
+                VerificationTask(
+                    task_id=f"task-unmapped-{task_counter + 1:04d}",
+                    capability_id=f"unmapped:{raw_unmapped}",
+                    verification_kind="capability",
+                    command=(
+                        "echo 'UNMAPPED capability requires review: "
+                        f"{raw_unmapped}' && exit 1"
+                    ),
+                    profile="unmapped-review",
+                    is_mandatory=True,
+                    is_escalation=False,
+                    reason=(
+                        "Change resolved to a capability with no verification-registry "
+                        f"mapping ({raw_unmapped}); blocked pending review obligation"
+                    ),
+                )
+            )
+            task_counter += 1
+
         # Process mandatory verification (directly affected capabilities)
         for cap_id in resolution.directly_affected_capabilities:
             contract = self._contract_registry.get_contract(cap_id)
@@ -373,6 +399,7 @@ class ControlPlanePlanner:
                         "integration",
                         "golden",
                         "e2e",
+                        "capability",
                     ],
                     vkind,
                 ),

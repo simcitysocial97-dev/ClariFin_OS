@@ -5,6 +5,14 @@
  * Computes overall financial risk from multiple dimensions.
  *
  * Every risk score includes evidence, calculation, confidence, source, and related graph nodes.
+ *
+ * ARCHITECTURAL EXCEPTION (M9-C50 Phase 7):
+ * This engine computes DERIVED METRICS for display/analysis only.
+ * Backend owns canonical financial calculations; frontend computes derived ratios
+ * (risk score averaging, factor weighting) for real-time UI responsiveness.
+ * No monetary mutations or decisions are made.
+ * Disposition: ARCHITECTURAL_EXCEPTION — derived metrics for display, advisory only.
+ * TODO: Backend capability tickets for canonical metric APIs (tracking issue).
  */
 
 import type {

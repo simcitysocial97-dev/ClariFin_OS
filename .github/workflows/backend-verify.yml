@@ -1,10 +1,9 @@
 # .github/workflows/backend-verify.yml
 #
 # PURPOSE: Backend verification via the autonomous runtime.
-# RESPONSIBILITY: Run `python -m runtime.verify backend` — the ONLY verification command.
+# RESPONSIBILITY: Run `runtime/verify.py check` — the canonical verification command.
 # Rule 1: no engineering logic in YAML. Rule 2: single responsibility. Rule 8:
-# delegate to python -m runtime.verify. Rule 9: append `runtime.verify status` summary.
-# Canonical entrypoint: runtime/verify.py (python -m runtime.verify <profile>)
+# delegate to runtime/verify.py. Rule 9: append `verify.py status` summary.
 
 name: Backend Verification
 
@@ -54,8 +53,8 @@ jobs:
           node-version: "24"
           working-directory: "frontend"
 
-      - name: Run backend verification
-        run: python -m runtime.verify backend
+      - name: Run backend verification (canonical check)
+        run: python runtime/verify.py check
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
@@ -106,5 +105,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
+          python runtime/verify.py doctor >> $GITHUB_STEP_SUMMARY
         shell: bash

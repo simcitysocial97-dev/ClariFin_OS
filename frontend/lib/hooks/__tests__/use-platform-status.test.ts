@@ -8,8 +8,6 @@ vi.mock('@/lib/api/gateway', () => ({
   apiFetchJson: vi.fn(),
 }));
 
-import { usePlatformStatus } from '../use-platform-status';
-
 const MOCK_STATUS = {
   kind: 'platform.status',
   version: '1.0.0',

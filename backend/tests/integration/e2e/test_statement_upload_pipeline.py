@@ -35,12 +35,14 @@ class TestStatementUploadPipeline:
         assert response.status_code in (400, 422, 500)
 
     def test_transactions_after_upload(self, client: TestClient) -> None:
-        """GET /transactions returns list after upload."""
+        """GET /transactions returns paginated dict after upload."""
         response = client.get("/api/v1/transactions")
         assert response.status_code in (200, 404, 500)
         if response.status_code == 200:
             data = response.json()
-            assert isinstance(data, list)
+            assert isinstance(data, dict)
+            assert "transactions" in data
+            assert "total" in data
 
     def test_balance_after_upload(self, client: TestClient) -> None:
         """GET /accounts/{id}/analytics returns valid response after upload."""

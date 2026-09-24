@@ -60,6 +60,14 @@ export class CreditCardsMapper implements ICreditCardsMapper {
       statement_date: dto.statement_date ? String(dto.statement_date) : null,
       bill_cycle_start: dto.bill_cycle_start ? String(dto.bill_cycle_start) : null,
       bill_cycle_end: dto.bill_cycle_end ? String(dto.bill_cycle_end) : null,
+      /**
+       * Credit card utilization percentage for UI display.
+       *
+       * APPROVED EXCEPTION (M9-C50 Phase 7): Pure presentation-layer computation.
+       * Backend owns all monetary arithmetic (returns raw paise values).
+       * Frontend only formats for display — no monetary decisions made.
+       * Disposition: APPROVED_EXCEPTION — display formatting only.
+       */
       utilization_percent: (Number(dto.available_paise ?? 0) && Number(dto.credit_limit_paise ?? 0))
         ? ((Number(dto.credit_limit_paise ?? 0) - Number(dto.available_paise ?? 0)) / Number(dto.credit_limit_paise ?? 1)) * 100
         : 0,

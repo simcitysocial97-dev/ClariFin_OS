@@ -324,9 +324,7 @@ async def get_verification_state() -> JSONResponse:
         "status": (
             "passed"
             if float(verif.get("success_rate", 0.0)) >= 0.95
-            else "failed"
-            if float(verif.get("success_rate", 0.0)) > 0
-            else "unknown"
+            else "failed" if float(verif.get("success_rate", 0.0)) > 0 else "unknown"
         ),
         "classification": (
             "CERTIFIED"
@@ -942,9 +940,11 @@ async def get_workflows() -> JSONResponse:
                 "commands": list(w.commands),
                 "canonical_command": w.canonical_command,
                 "local_executable": w.local_executable,
-                "boundary_classification": w.boundary_classification.value
-                if isinstance(w.boundary_classification, BoundaryClassification)
-                else str(w.boundary_classification),
+                "boundary_classification": (
+                    w.boundary_classification.value
+                    if isinstance(w.boundary_classification, BoundaryClassification)
+                    else str(w.boundary_classification)
+                ),
                 "environment_requirements": list(w.environment_requirements),
                 "parity_status": w.parity_status,
             }
@@ -1030,8 +1030,8 @@ async def get_diagnostics(request: Request) -> JSONResponse:
     elif error_count > 0:
         level = "L1"
 
-    diag_result = diagnose(symptom="platform_diagnostics_summary")
-    recommendation = diag_result.get("data", {}).get("recommendation", [])
+    diag_result = diagnose(symptom="platform_diagnostics_summary") or {}
+    recommendation = (diag_result.get("data") or {}).get("recommendation", [])
 
     data = {
         "summary": {
@@ -1114,6 +1114,17 @@ async def post_diagnose_register(request: Request) -> JSONResponse:
         description=description,
         severity=severity,
     )
+    if rec is None:
+        return JSONResponse(
+            content=error_envelope(
+                error=PlatformError(
+                    code=PlatformErrorCode.INTERNAL,
+                    layer="platform.diagnose",
+                    message="No recommendation produced",
+                )
+            ),
+            status_code=500,
+        )
     return _ok(rec)
 
 

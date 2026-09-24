@@ -1,10 +1,9 @@
 # .github/workflows/golden.yml
 #
 # PURPOSE: Golden dataset regression tests (nightly).
-# RESPONSIBILITY: Run `python -m runtime.verify golden` — the ONLY verification command.
+# RESPONSIBILITY: Run `runtime/verify.py check` — the canonical verification command.
 # Rule 1: no engineering logic in YAML. Rule 2: single responsibility. Rule 8:
-# delegate to python -m runtime.verify. Rule 9: append `runtime.verify status` summary.
-# Canonical entrypoint: runtime/verify.py (python -m runtime.verify <profile>)
+# delegate to runtime/verify.py. Rule 9: append `verify.py status` summary.
 # Concurrency: never cancel (golden is in the Rule 6 exception list).
 
 name: Golden Dataset Regression
@@ -42,8 +41,8 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Run golden verification
-        run: python -m runtime.verify golden
+      - name: Run golden verification (canonical check)
+        run: python runtime/verify.py check
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
@@ -92,5 +91,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
+          python runtime/verify.py doctor >> $GITHUB_STEP_SUMMARY
         shell: bash

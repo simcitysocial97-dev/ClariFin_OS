@@ -5,6 +5,13 @@
  * Ensures every insight includes evidence, calculation, confidence, source, and related graph nodes.
  *
  * All engines use this builder to produce consistent, explainable insights.
+ *
+ * ARCHITECTURAL EXCEPTION (M9-C50 Phase 7):
+ * This module contains utilities for DERIVED METRICS computation for display/analysis.
+ * Backend owns canonical financial calculations; frontend uses these utilities
+ * for real-time UI responsiveness. No monetary mutations or decisions.
+ * Disposition: ARCHITECTURAL_EXCEPTION — derived metrics utilities, advisory only.
+ * TODO: Backend capability tickets for canonical metric APIs (tracking issue).
  */
 
 import type {

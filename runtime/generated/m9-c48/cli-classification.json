@@ -1,10 +1,10 @@
 {
   "schema": "m9-c48/cli-governance@1",
-  "generated_at": "2026-09-20T11:14:57+00:00",
-  "total": 87,
+  "generated_at": "2026-09-04T12:15:16+00:00",
+  "total": 88,
   "by_class": {
     "INTERNAL": 24,
-    "CANONICAL": 61,
+    "CANONICAL": 62,
     "COMPATIBILITY": 2
   },
   "classifications": [
@@ -19,6 +19,12 @@
       "classification": "INTERNAL",
       "canonical_target": "",
       "rationale": "analytics diagnostic"
+    },
+    {
+      "command": "api-contracts",
+      "classification": "CANONICAL",
+      "canonical_target": "",
+      "rationale": "api contract gate"
     },
     {
       "command": "audit",

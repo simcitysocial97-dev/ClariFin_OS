@@ -1,10 +1,9 @@
 # .github/workflows/playwright.yml
 #
 # PURPOSE: End-to-end browser tests (Playwright).
-# RESPONSIBILITY: Run `python -m runtime.verify playwright` — the ONLY verification command.
+# RESPONSIBILITY: Run `runtime/verify.py check` — the canonical verification command.
 # Rule 1: no engineering logic in YAML. Rule 2: single responsibility. Rule 8:
-# delegate to python -m runtime.verify. Rule 9: append `runtime.verify status` summary.
-# Canonical entrypoint: runtime/verify.py (python -m runtime.verify <profile>)
+# delegate to runtime/verify.py. Rule 9: append `verify.py status` summary.
 #
 # The playwright profile (run_playwright_tests.sh) owns build + browser tests.
 # Browsers are provisioned by the setup-playwright action (environment only).
@@ -79,11 +78,11 @@ jobs:
           browsers: chromium
           browser-version: "1.58.2"
 
-      - name: Run playwright verification
+      - name: Run playwright verification (canonical check)
         env:
           PLAYWRIGHT_PROJECT: ${{ matrix.project }}
           CLARIFIN_PYTHON: python3
-        run: python -m runtime.verify playwright
+        run: python runtime/verify.py check
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
@@ -132,5 +131,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }} — ${{ matrix.project }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
+          python runtime/verify.py doctor >> $GITHUB_STEP_SUMMARY
         shell: bash

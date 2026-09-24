@@ -13,7 +13,7 @@ export function createMockErrorResponse(status: number = 500): Response {
   return createMockResponse({}, status);
 }
 
-export const MOCK_RESPONSE: typeof MockResponse = {
+export const MOCK_RESPONSE: MockResponse = {
   createSuccess: createMockResponse,
   createError: createMockErrorResponse,
 };

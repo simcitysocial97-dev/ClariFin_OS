@@ -130,3 +130,84 @@ def create_event(
         payload=payload,
         metadata=metadata or {},
     )
+
+
+def record_verification_event(
+    report: Any,
+    profile: str,
+    duration: float,
+    *,
+    cache_hit: bool = False,
+    status: str = "pass",
+) -> None:
+    """Record a verification run event to the engineering event store and metrics repository.
+
+    This is the canonical function for persisting verification telemetry.
+    It writes both an EngineeringEvent (to the JSONL event store) and a
+    RunRecord (to the hybrid metrics history).
+
+    Args:
+        report: The verification report (or None for cache-only events).
+        profile: The verification profile name (e.g. "backend", "runtime").
+        duration: Execution duration in seconds.
+        cache_hit: Whether this was a cache-hit observation.
+        status: The verification status ("pass" or "fail").
+    """
+    import uuid as _uuid
+
+    from runtime.system.observability.repository import (
+        LocalMetricsRepository,
+        RunRecord,
+    )
+
+    # Build payload
+    payload: dict[str, Any] = {
+        "profile": profile,
+        "cache_hit": cache_hit,
+        "status": status,
+        "duration": duration,
+    }
+    if report is not None:
+        payload["passed"] = getattr(report.summary, "passed", 0) if hasattr(report, "summary") else 0
+        payload["failed"] = getattr(report.summary, "failed", 0) if hasattr(report, "summary") else 0
+        payload["skipped"] = getattr(report.summary, "skipped", 0) if hasattr(report, "summary") else 0
+        payload["evidence_count"] = len(getattr(report, "evidence_files", [])) if hasattr(report, "evidence_files") else 0
+        payload["blast_radius"] = getattr(report, "blast_radius", {}) if hasattr(report, "blast_radius") else {}
+
+    # Write to event store
+    event = create_event(
+        event_type="verification_run",
+        execution_context={"environment": "local"},
+        payload=payload,
+        event_id=str(_uuid.uuid4()),
+    )
+    store = EngineeringEventStore()
+    store.append(event)
+
+    # Write to metrics repository
+    repo = LocalMetricsRepository()
+    run_record = RunRecord(
+        run_id=str(_uuid.uuid4()),
+        timestamp=datetime.now(UTC),
+        environment="local",
+        runner="verify.py",
+        verification_depth="profile",
+        intent="developer-feedback",
+        trigger="manual",
+        commit_sha="unknown",
+        branch="unknown",
+        profile=profile,
+        status=status,
+        passed=payload.get("passed", 0),
+        failed=payload.get("failed", 0),
+        skipped=payload.get("skipped", 0),
+        duration_seconds=duration,
+        blast_radius=payload.get("blast_radius", {}),
+        evidence_count=payload.get("evidence_count", 0),
+        cache_hit=cache_hit,
+    )
+    repo.append(run_record)
+
+
+# Backward-compatible private alias
+_record_verification_event = record_verification_event
