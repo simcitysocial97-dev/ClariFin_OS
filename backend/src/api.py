@@ -22,6 +22,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.config import settings
 from src.errors import register_error_handlers
 from src.health import register_health_routes
+from src.middleware import LoggingMiddleware
 from src.startup import run_startup_validation
 
 # ============================================================
@@ -53,6 +54,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# App-wide request logging (after CORSMiddleware per M07-T3)
+app.add_middleware(LoggingMiddleware)
 
 # Register error handlers
 register_error_handlers(app)
