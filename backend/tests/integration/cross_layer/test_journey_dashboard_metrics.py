@@ -17,8 +17,8 @@ class TestDashboardMetricsJourney:
     """Full-stack dashboard metrics journey tests."""
 
     def test_dashboard_summary_via_api(self, client: TestClient) -> None:
-        """GET /api/dashboard/summary returns valid metrics."""
-        response = client.get("/api/dashboard/summary")
+        """GET /api/v1/dashboard/summary returns valid metrics."""
+        response = client.get("/api/v1/dashboard/summary")
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
@@ -26,7 +26,7 @@ class TestDashboardMetricsJourney:
 
     def test_dashboard_schema_validation(self, client: TestClient) -> None:
         """Dashboard metrics match frontend Zod schema."""
-        response = client.get("/api/dashboard/summary")
+        response = client.get("/api/v1/dashboard/summary")
         assert response.status_code == 200
 
         data = response.json()
@@ -57,7 +57,7 @@ class TestDashboardMetricsJourney:
 
     def test_dashboard_rates_in_range(self, client: TestClient) -> None:
         """savings_rate and emi_ratio are ratios (0-1) per backend DTO spec."""
-        response = client.get("/api/dashboard/summary")
+        response = client.get("/api/v1/dashboard/summary")
         assert response.status_code == 200
 
         data = response.json()
@@ -70,7 +70,7 @@ class TestDashboardMetricsJourney:
 
     def test_health_score_in_range(self, client: TestClient) -> None:
         """financial_health_score is 0-100 or null per DTO spec."""
-        response = client.get("/api/dashboard/summary")
+        response = client.get("/api/v1/dashboard/summary")
         assert response.status_code == 200
 
         data = response.json()
@@ -82,7 +82,7 @@ class TestDashboardMetricsJourney:
 
     def test_buffer_days_is_non_negative(self, client: TestClient) -> None:
         """buffer_days is a non-negative integer."""
-        response = client.get("/api/dashboard/summary")
+        response = client.get("/api/v1/dashboard/summary")
         assert response.status_code == 200
 
         data = response.json()

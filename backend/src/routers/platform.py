@@ -61,6 +61,7 @@ from runtime.platform.api.services import (
     framework_integrity,
     health,
     history,
+    status,
     tasks,
     verification,
 )
@@ -177,9 +178,7 @@ async def get_health(request: Request) -> JSONResponse:
 @router.get("/status")
 async def get_status() -> JSONResponse:
     """Operator-oriented snapshot of canonical runtime state."""
-    from runtime.platform.api.services import status as status_svc
-
-    env = status_svc.build_status()
+    env = status.build_status()
     return _ok(env)
 
 

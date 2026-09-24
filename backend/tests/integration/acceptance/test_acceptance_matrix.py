@@ -24,7 +24,7 @@ class TestAcceptanceMatrix:
 
     def test_health_endpoint(self, client: TestClient) -> None:
         """Health endpoint returns success."""
-        response = client.get("/api/health")
+        response = client.get("/api/v1/health")
         assert response.status_code in (
             200,
             404,
@@ -59,7 +59,7 @@ class TestLoansAcceptance:
 
     def test_loans_list_works(self, client: TestClient) -> None:
         """Loans list endpoint works."""
-        response = client.get("/api/loans")
+        response = client.get("/api/v1/loans")
         assert response.status_code == 200
         assert isinstance(response.json(), list)
 
@@ -75,7 +75,7 @@ class TestLoansAcceptance:
             "disbursed_date": "2026-01-01",
             "tenure_months": 36,
         }
-        response = client.post("/api/loans", json=payload)
+        response = client.post("/api/v1/loans", json=payload)
         assert response.status_code in (200, 201)
 
 
@@ -84,7 +84,7 @@ class TestDashboardAcceptance:
 
     def test_dashboard_summary_works(self, client: TestClient) -> None:
         """Dashboard summary endpoint works."""
-        response = client.get("/api/dashboard/summary")
+        response = client.get("/api/v1/dashboard/summary")
         assert response.status_code == 200
         data = response.json()
         assert "net_cash_flow_paise" in data
@@ -96,7 +96,7 @@ class TestNetworthAcceptance:
 
     def test_networth_works(self, client: TestClient) -> None:
         """Networth endpoint works."""
-        response = client.get("/api/networth")
+        response = client.get("/api/v1/net-worth")
         assert response.status_code in (200, 404)
         if response.status_code == 200:
             data = response.json()
@@ -112,7 +112,7 @@ class TestCashflowAcceptance:
 
     def test_cashflow_works(self, client: TestClient) -> None:
         """Cashflow endpoint works."""
-        response = client.get("/api/cashflow/monthly?months=6")
+        response = client.get("/api/v1/cashflow/monthly?months=6")
         assert response.status_code == 200
         data = response.json()
         assert "months" in data
@@ -124,7 +124,7 @@ class TestReconciliationAcceptance:
 
     def test_reconciliation_works(self, client: TestClient) -> None:
         """Reconciliation endpoint works."""
-        response = client.get("/api/reconciliation")
+        response = client.get("/api/v1/reconciliation")
         assert response.status_code == 200
         assert isinstance(response.json(), dict)
 
@@ -163,8 +163,8 @@ class TestAcceptanceInvariants:
         """All *_paise fields across endpoints are integers."""
         endpoints = [
             "/api/v1/accounts",
-            "/api/loans",
-            "/api/dashboard/summary",
+            "/api/v1/loans",
+            "/api/v1/dashboard/summary",
         ]
 
         for endpoint in endpoints:

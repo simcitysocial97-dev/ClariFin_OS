@@ -26,7 +26,7 @@ class TestAPIPerformance:
     def test_loans_list_under_1_second(self, client) -> None:
         """Loans list endpoint responds under 1 second."""
         start = time.time()
-        response = client.get("/api/loans")
+        response = client.get("/api/v1/loans")
         duration = time.time() - start
 
         assert response.status_code == 200
@@ -35,7 +35,7 @@ class TestAPIPerformance:
     def test_dashboard_summary_under_1_second(self, client) -> None:
         """Dashboard summary endpoint responds under 1 second."""
         start = time.time()
-        response = client.get("/api/dashboard/summary")
+        response = client.get("/api/v1/dashboard/summary")
         duration = time.time() - start
 
         assert response.status_code == 200
@@ -44,7 +44,7 @@ class TestAPIPerformance:
     def test_cashflow_under_1_second(self, client) -> None:
         """Cashflow endpoint responds under 1 second."""
         start = time.time()
-        response = client.get("/api/cashflow/monthly?months=6")
+        response = client.get("/api/v1/cashflow/monthly?months=6")
         duration = time.time() - start
 
         assert response.status_code == 200
@@ -57,7 +57,7 @@ class TestConcurrentRequests:
     def test_health_endpoint_handles_concurrent(self, client) -> None:
         """Health endpoint handles 10 concurrent requests."""
         for _ in range(10):
-            response = client.get("/api/health")
+            response = client.get("/api/v1/health")
             assert response.status_code in (
                 200,
                 404,

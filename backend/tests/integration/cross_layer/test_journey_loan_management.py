@@ -16,8 +16,8 @@ class TestLoanJourney:
     """Full-stack loan management journey tests."""
 
     def test_list_loans_via_api(self, client: TestClient) -> None:
-        """GET /api/loans returns list of loans."""
-        response = client.get("/api/loans")
+        """GET /api/v1/loans returns list of loans."""
+        response = client.get("/api/v1/loans")
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
@@ -25,7 +25,7 @@ class TestLoanJourney:
 
     def test_loan_schema_validation(self, client: TestClient) -> None:
         """Loan objects have all required fields matching frontend Zod schema."""
-        response = client.get("/api/loans")
+        response = client.get("/api/v1/loans")
         assert response.status_code == 200
 
         data = response.json()
@@ -64,7 +64,7 @@ class TestLoanJourney:
 
     def test_loan_paise_precision(self, client: TestClient) -> None:
         """All monetary values are in paise (integers)."""
-        response = client.get("/api/loans")
+        response = client.get("/api/v1/loans")
         assert response.status_code == 200
 
         data = response.json()
@@ -90,7 +90,7 @@ class TestLoanJourney:
             "emi_paise": 32500,
         }
 
-        response = client.post("/api/loans", json=new_loan)
+        response = client.post("/api/v1/loans", json=new_loan)
         assert response.status_code in (
             200,
             201,
@@ -103,7 +103,7 @@ class TestLoanJourney:
 
     def test_loan_principal_outstanding_invariant(self, client: TestClient) -> None:
         """outstanding_paise should be <= principal_paise for active loans."""
-        response = client.get("/api/loans")
+        response = client.get("/api/v1/loans")
         assert response.status_code == 200
 
         data = response.json()
@@ -138,17 +138,17 @@ class TestPrepaymentSimulation:
     """Test prepayment simulation journey."""
 
     def test_loan_schedule_endpoint_exists(self, client: TestClient) -> None:
-        """GET /api/loans/{id}/schedule returns schedule or 404."""
-        response = client.get("/api/loans/1/schedule")
+        """GET /api/v1/loans/{id}/schedule returns schedule or 404."""
+        response = client.get("/api/v1/loans/1/schedule")
         assert response.status_code in (
             200,
             404,
         ), f"Expected 200 or 404, got {response.status_code}"
 
     def test_prepayment_simulation_endpoint_exists(self, client: TestClient) -> None:
-        """POST /api/loans/{id}/prepayment-simulation returns simulation or 404."""
+        """POST /api/v1/loans/{id}/prepayment-simulation returns simulation or 404."""
         response = client.post(
-            "/api/loans/1/prepayment-simulation",
+            "/api/v1/loans/1/prepayment-simulation",
             json={"amount_paise": 50000, "mode": "reduce_tenure"},
         )
         assert response.status_code in (
