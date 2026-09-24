@@ -136,17 +136,35 @@ class TestValidateLedgerIntegrity:
         assert any(v["type"] == "NULL_HASH" for v in result["violations"])
 
     def test_fails_duplicate_hash_signature(self, temp_db: str) -> None:
-        """Ledger with duplicate hash_signature is prevented by unique constraint."""
+        """Ledger with duplicate hash_signature is detected by ledger audit.
+
+        Post-M05: the DB-level UNIQUE constraint on ``hash_signature`` was
+        replaced by one on ``hash_signature_v2``; raw inserts no longer
+        raise ``IntegrityError`` for duplicate ``hash_signature``. The
+        invariant is enforced at the application level by
+        ``validate_ledger_integrity`` (check-6).
+        """
+        from src.engines.ledger_audit_engine import validate_ledger_integrity
+
         conn = sqlite3.connect(temp_db)
-        # First insertion succeeds
+        # Insert two rows with the same hash_signature (different v2 columns
+        # so the new unique index on v2 does not fire either).
         _insert_transaction(conn, description="Dup1", hash_signature="duplicate_hash")
+        conn.execute(
+            """
+            INSERT INTO transactions
+                (statement_id, date, date_iso, description, amount_paise, type,
+                 account_id, hash_signature, hash_signature_v2)
+            VALUES (1, '01/01/2025', '2025-01-01', 'Dup2', 100000, 'debit',
+                    'Account_A', 'duplicate_hash', 'different_v2_hash')
+            """,
+        )
         conn.commit()
-        # Second insertion with same hash should fail due to UNIQUE constraint
-        with pytest.raises(sqlite3.IntegrityError, match="UNIQUE constraint"):
-            _insert_transaction(
-                conn, description="Dup2", hash_signature="duplicate_hash"
-            )
         conn.close()
+
+        result = validate_ledger_integrity(temp_db)
+        assert result["status"] == "FAIL"
+        assert any(v["type"] == "DUPLICATE_HASH" for v in result["violations"])
 
 
 class TestLedgerAuditToleranceBoundaryMutants:

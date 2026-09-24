@@ -89,7 +89,27 @@ class StatementProcessingOrchestrator:
         except Exception as e:
             summary["transaction_intelligence_error"] = str(e)
 
+        # M08: surface has_errors and persist the summary for auditability.
+        summary["has_errors"] = any(k.endswith("_error") for k in summary)
+        self._persist_summary(statement_id, summary)
+
         return summary
+
+    def _persist_summary(self, statement_id: int, summary: dict[str, Any]) -> None:
+        """Persist the post-upload summary to ``import_runs`` (fire-and-forget)."""
+        try:
+            from src.repositories.import_run_repository import ImportRunRepository
+
+            repo = ImportRunRepository(self.db_path)
+            repo.save(statement_id, summary)
+        except Exception:
+            # Persistence failure must never break the upload path; log and continue.
+            import logging
+
+            logging.getLogger(__name__).exception(
+                "M08: failed to persist import run summary for statement %s",
+                statement_id,
+            )
 
     def _run_behaviour(self) -> dict[str, Any]:
         """Run behaviour profile recalculation.

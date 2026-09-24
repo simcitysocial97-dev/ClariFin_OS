@@ -69,7 +69,7 @@ def test_unapplied_migration_runs_exactly_once(tmp_path) -> None:
             conn.close()
     finally:
         reg.MIGRATIONS[:] = original
-    assert [m[0] for m in MIGRATIONS] == [1, 2, 3]
+    assert [m[0] for m in MIGRATIONS] == [1, 2, 3, 4]
 
 
 def test_m003_backfill_populates_v2_without_touching_content(tmp_path) -> None:

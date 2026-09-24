@@ -138,6 +138,8 @@ class ImportService(BaseService):
             "validation_status": val_status,
             "metadata": metadata,
             "log": log,
+            # M08: additive key surfaced for caller visibility.
+            "pipeline_summary": pipeline_summary,
         }
 
     def _validate_statement(

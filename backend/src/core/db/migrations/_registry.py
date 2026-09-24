@@ -46,6 +46,13 @@ try:
 except ImportError:  # pragma: no cover - defensive; m003 ships with M05
     logger.warning("Migration 003 (transaction hash v2) unavailable")
 
+try:
+    from src.core.db.migrations.m004_import_runs import migrate as _m004
+
+    MIGRATIONS.append((4, "import runs tracking", _m004))
+except ImportError:  # pragma: no cover - defensive; m004 ships with M08
+    logger.warning("Migration 004 (import runs tracking) unavailable")
+
 
 def apply_pending_migrations(conn: sqlite3.Connection) -> list[int]:
     """Apply unapplied migrations in ascending version order.
