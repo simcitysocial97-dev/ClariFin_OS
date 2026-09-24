@@ -12,9 +12,16 @@ cd ..
 # 2. Run backend validation if backend files are modified
 if git diff --cached --name-only | grep -q '^backend/'; then
     echo "🐍 Backend changes detected. Running Python linting and type gates..."
-    cd backend && python3 -m ruff check . && python3 -m mypy .
+    VENV_PY="$(dirname "$(dirname -- "$0")")/.venv/bin/python"
+    BACKEND_DIR="$(dirname "$(dirname -- "$0")")/backend"
+    if [ ! -x "$VENV_PY" ]; then
+        echo "❌ ERROR: Canonical environment not found at $(dirname "$(dirname -- "$0")")/.venv" >&2
+        exit 1
+    fi
+    "$VENV_PY" -m ruff check src/ --fix && \
+    "$VENV_PY" -m black --check src/ && \
+    "$VENV_PY" -m mypy src/
     BACKEND_STATUS=$?
-    cd ..
 else
     BACKEND_STATUS=0
 fi
