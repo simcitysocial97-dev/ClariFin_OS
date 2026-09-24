@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import sqlite3
 
-
 DESCRIPTION = "import runs tracking"
 
 DDL = """

@@ -7,7 +7,6 @@ available outside the HTTP response envelope.
 from __future__ import annotations
 
 import json
-import sqlite3
 from typing import Any
 
 from src.repositories.base import BaseRepository
@@ -26,9 +25,7 @@ class ImportRunRepository(BaseRepository):
         Returns:
             The new row's ``id``.
         """
-        has_errors = int(
-            any(k.endswith("_error") for k in summary.keys())
-        )
+        has_errors = int(any(k.endswith("_error") for k in summary))
         with self._get_conn() as conn:
             cursor = conn.execute(
                 """
@@ -38,7 +35,9 @@ class ImportRunRepository(BaseRepository):
                 (statement_id, has_errors, json.dumps(summary)),
             )
             conn.commit()
-            return int(cursor.lastrowid)
+            last = cursor.lastrowid
+            assert last is not None, "INSERT must return a row id"
+            return int(last)
 
     def get_by_statement(self, statement_id: int) -> list[dict[str, Any]]:
         """Return all rows for a given statement, newest first."""

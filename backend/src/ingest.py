@@ -38,11 +38,9 @@ from pathlib import Path
 from typing import Any
 
 from src.extraction.categorizer import categorize
-from src.extraction.hybrid_extractor import HybridExtractor
 from src.extraction.metadata_extractor import MetadataExtractor
 from src.extraction.statement_extractor import StatementExtractor
 from src.repositories.statement_repository import StatementRepository
-from src.repositories.transaction_repository import TransactionRepository
 from src.services.import_service import ImportService
 
 # ============================================================
@@ -167,9 +165,7 @@ def ingest_pdf(
     try:
         meta_extractor = MetadataExtractor(pdf_path, bank=bank, debug=debug)
         metadata = meta_extractor.extract()
-        stmt_repo.update_statement_metadata(
-            svc_result["statement_id"], metadata
-        )
+        stmt_repo.update_statement_metadata(svc_result["statement_id"], metadata)
 
         # Print metadata findings
         if metadata.get("card_last4"):
@@ -177,9 +173,7 @@ def ingest_pdf(
         if metadata.get("total_amount_due") is not None:
             total_due = metadata["total_amount_due"]
             if total_due < 0:
-                print(
-                    f"  Total Amount Due: -₹{abs(total_due):,.2f} (credit balance)"
-                )
+                print(f"  Total Amount Due: -₹{abs(total_due):,.2f} (credit balance)")
             else:
                 print(f"  Total Amount Due: ₹{total_due:,.2f}")
         if metadata.get("minimum_amount_due") is not None:
@@ -276,9 +270,7 @@ def ingest_pdf(
 
             traceback.print_exc()
         with contextlib.suppress(Exception):
-            stmt_repo.update_validation_status(
-                svc_result["statement_id"], "error", 0.0
-            )
+            stmt_repo.update_validation_status(svc_result["statement_id"], "error", 0.0)
 
     return result
 
