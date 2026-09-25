@@ -245,7 +245,7 @@ class ControlPlane:
             external_timeout=external_timeout,
             interrupted=False,
             failed=is_fail,
-            current_obligation=executed_task_ids[-1] if executed_task_ids else None,
+            current_task=executed_task_ids[-1] if executed_task_ids else None,
         )
         print(boundary_report.format_text(), file=sys.stderr)
 
