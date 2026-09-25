@@ -59,7 +59,7 @@ class ExecutionBudget:
     """Budget allocation per phase."""
 
     planning_budget_seconds: int = 120
-    execution_budget_seconds: int = 2700
+    execution_budget_seconds: int = 4200
     measurement_budget_seconds: int = 1800
     certification_budget_seconds: int = 600
     diagnostic_budget_seconds: int = 120
