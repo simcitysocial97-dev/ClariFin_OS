@@ -73,18 +73,8 @@ class TestSnapshotFile:
 class TestCacheTiming:
     """Measure cold (first) vs warm (cached) latency for slow endpoints."""
 
-    def _warmup(self, client):
-        """Pre-populate all caches so the 'cold' measurement reflects
-        first-ever computation rather than Python import overhead."""
-
-        for path in [
-            "/platform/v1/health",
-            "/platform/v1/capabilities",
-            "/platform/v1/tasks",
-            "/platform/v1/events",
-            "/platform/v1/change/intelligence",
-        ]:
-            client.get(path, params={"nocache": "1"})
+    def _warmup(self, client, path):
+        client.get(path, params={"nocache": "1"})
 
     @pytest.mark.parametrize(
         "path,domain",
@@ -96,7 +86,7 @@ class TestCacheTiming:
     def test_cached_response_is_faster_than_uncached(self, client, path, domain):
         """A cached response should be noticeably faster than computing fresh."""
 
-        self._warmup(client)
+        self._warmup(client, path)
 
         # Cold (force miss via nocache=1).
         t0 = time.perf_counter()
@@ -120,7 +110,7 @@ class TestCacheTiming:
     def test_healthy_service_does_not_break_when_cached(self, client):
         """Even a fast service like health should still work when cached."""
 
-        self._warmup(client)
+        self._warmup(client, "/platform/v1/health")
         r = client.get("/platform/v1/health")
         assert r.status_code == 200
         body = r.json()

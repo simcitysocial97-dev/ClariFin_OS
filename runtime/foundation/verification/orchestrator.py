@@ -92,7 +92,7 @@ def _default_branch() -> str | None:
     return None
 
 
-def _merge_base_with_default() -> str | None:
+def _merge_base_with_default(*, fetch_remote: bool = True) -> str | None:
     """Return the merge-base SHA of HEAD and the default branch, if resolvable.
 
     The default branch ref is fetched first to ensure it is not stale, so the
@@ -104,7 +104,7 @@ def _merge_base_with_default() -> str | None:
     import os
 
     # Offline mode: skip fetch entirely (for local verification without network)
-    if os.environ.get("VERIFICATION_OFFLINE") == "1":
+    if not fetch_remote or os.environ.get("VERIFICATION_OFFLINE") == "1":
         default = _default_branch()
         if not default:
             return None
@@ -263,7 +263,7 @@ class _ChangedFilesResult:
     error: str | None = None
 
 
-def _resolve_base_ref() -> str | None:
+def _resolve_base_ref(*, fetch_remote: bool = True) -> str | None:
     """Determine the git reference to diff against.
 
     Priority:
@@ -293,14 +293,14 @@ def _resolve_base_ref() -> str | None:
     gh_ref = os.environ.get("GITHUB_REF")
 
     if gh_event == "push":
-        mb = _merge_base_with_default()
+        mb = _merge_base_with_default(fetch_remote=fetch_remote)
         if mb:
             return mb
         if gh_ref:
             return f"{gh_ref}..."
         return None
     if gh_sha and gh_event != "push":
-        mb = _merge_base_with_default()
+        mb = _merge_base_with_default(fetch_remote=fetch_remote)
         if mb:
             return mb
         return f"{gh_sha}..."
@@ -308,7 +308,7 @@ def _resolve_base_ref() -> str | None:
     return None
 
 
-def _collect_changed_files() -> _ChangedFilesResult:
+def _collect_changed_files(*, fetch_remote: bool = True) -> _ChangedFilesResult:
     """Detect changed files using git diff.
 
     Returns a :class:`_ChangedFilesResult` carrying the detected files plus the
@@ -384,13 +384,14 @@ def _collect_changed_files() -> _ChangedFilesResult:
         if len(ref) == 40 and all(c in "0123456789abcdef" for c in ref):
             return ref
         # Refresh the remote branch so a cached ref cannot be stale.
-        subprocess.run(
-            ["git", "fetch", "origin", ref],
-            capture_output=True,
-            text=True,
-            cwd=str(repo_root),
-            timeout=30,
-        )
+        if fetch_remote:
+            subprocess.run(
+                ["git", "fetch", "origin", ref],
+                capture_output=True,
+                text=True,
+                cwd=str(repo_root),
+                timeout=30,
+            )
         for candidate in (f"origin/{ref}", ref):
             check = subprocess.run(
                 ["git", "rev-parse", "--verify", "--quiet", candidate],
@@ -404,7 +405,7 @@ def _collect_changed_files() -> _ChangedFilesResult:
         return ref
 
     in_pr_event = os.environ.get("GITHUB_EVENT_NAME") == "pull_request"
-    base_ref = _resolve_base_ref()
+    base_ref = _resolve_base_ref(fetch_remote=fetch_remote)
     pr_base, pr_head = _github_pr_refs()
 
     # PR boundary (M9-C3): when the authoritative PR base SHA is in play AND a PR
@@ -441,7 +442,7 @@ def _collect_changed_files() -> _ChangedFilesResult:
         # always populates GITHUB_EVENT_PATH, so this branch is the safe local/CI
         # fallback, not the path that produced the historical ~986-file inflation
         # (that is avoided by the two-dot base..head path above when SHAs exist).
-        local_base = _merge_base_with_default()
+        local_base = _merge_base_with_default(fetch_remote=fetch_remote)
         if local_base:
             combined = _run_diff_three_dot(local_base)
             result = _ChangedFilesResult(
@@ -458,7 +459,7 @@ def _collect_changed_files() -> _ChangedFilesResult:
         # (merge-base of HEAD and the default branch) so the local path agrees
         # with the CI path instead of two-dot `git diff HEAD` (sensitive to
         # uncommitted working-tree state and therefore not parity-safe).
-        local_base = _merge_base_with_default()
+        local_base = _merge_base_with_default(fetch_remote=fetch_remote)
         if local_base:
             combined = _run_diff_three_dot(local_base)
             result = _ChangedFilesResult(

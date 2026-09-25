@@ -39,7 +39,7 @@ def current_plan_fingerprint() -> str:
     from the live git state and must be rebuilt.
     """
 
-    files = _collect_changed_files()
+    files = _collect_changed_files(fetch_remote=False)
     return hashlib.sha256("\n".join(sorted(files)).encode()).hexdigest()[:12]
 
 

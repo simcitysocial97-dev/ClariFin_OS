@@ -83,12 +83,12 @@ from runtime.foundation.verification.obligation import (
 )
 
 
-def _collect_changed_files() -> list[str]:
+def _collect_changed_files(*, fetch_remote: bool = True) -> list[str]:
     """Collect changed files via the canonical intelligence layer."""
-    return _collect_changed_files_result().files
+    return _collect_changed_files_result(fetch_remote=fetch_remote).files
 
 
-def _collect_changed_files_result() -> Any:
+def _collect_changed_files_result(*, fetch_remote: bool = True) -> Any:
     """Return the full ``_ChangedFilesResult`` from the orchestrator layer, so
     callers can inspect the resolved boundary (source, base ref, file count).
     """
@@ -98,7 +98,7 @@ def _collect_changed_files_result() -> Any:
     )
 
     if _is_git_available():
-        return _collect_changed_files()
+        return _collect_changed_files(fetch_remote=fetch_remote)
     from types import SimpleNamespace
 
     return SimpleNamespace(
