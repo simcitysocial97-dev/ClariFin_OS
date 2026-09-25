@@ -13,6 +13,17 @@
 - C69 application evidence was inherited rather than repeating the full backend/frontend baseline suite. Current backend collection is 3,868 tests.
 - Runtime framework authority is `HEALTHY`; its historical local execution record reports 17 failures and is queued for command/output reconciliation.
 
+## Phase 1 — Complete GitHub Workflow Inventory
+
+**Status:** COMPLETE
+
+- Inspected all 14 workflow YAML files and all 5 referenced local composite actions.
+- Recorded 15 job definitions and 16 matrix-expanded executions.
+- No reusable workflows, declared databases, service containers, or explicit named repository secrets were found.
+- Recorded actual commands rather than relying on workflow names.
+- Material drift captured for generic profile selection, inert manual inputs, mutation infrastructure exit handling, release publication claims, Playwright matrix coverage, and direct-script invocation.
+- Inventory JSON validation: 14 workflows, 15 jobs, 16 matrix instances.
+
 ## Next
 
-Inventory every workflow and meaningful job from actual YAML, then classify each job and derive its exact local equivalent.
+Classify every job and derive the exact local equivalent of each reproducible command.

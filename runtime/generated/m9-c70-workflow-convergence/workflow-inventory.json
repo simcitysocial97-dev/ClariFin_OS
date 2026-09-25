@@ -1,0 +1,1339 @@
+{
+  "schema_version": 1,
+  "milestone": "M9-C70",
+  "phase": "PHASE_1_COMPLETE_GITHUB_WORKFLOW_INVENTORY",
+  "generated_at": "2026-09-25T04:27:21Z",
+  "source": "Direct inspection of .github/workflows and every referenced local composite action",
+  "workflow_count": 14,
+  "job_definition_count": 15,
+  "matrix_instance_count": 16,
+  "reusable_workflow_count": 0,
+  "named_repository_secret_count": 0,
+  "referenced_local_actions": [
+    {
+      "name": "Bootstrap Engineering Runtime",
+      "path": ".github/actions/bootstrap-runtime/action.yml",
+      "uses": [
+        "./.github/actions/setup-python-runtime",
+        "python3 tools/generators/build_cross_layer_map.py",
+        "python3 -c from runtime.foundation.knowledge.indexer import save_index; save_index()",
+        "read runtime/VERSION",
+        "seed engineering-history.json and verification-cache.json"
+      ]
+    },
+    {
+      "name": "Setup Python Runtime",
+      "path": ".github/actions/setup-python-runtime/action.yml",
+      "uses": [
+        "actions/setup-python@v7.0.0",
+        "python -m pip install --timeout 300 --retries 10 -e .[all]",
+        "python --version",
+        "python -m pytest --version",
+        "python -m runtime.verify with failure suppressed"
+      ],
+      "sets": [
+        "TZ=UTC",
+        "LC_ALL=C.UTF-8",
+        "LANG=C.UTF-8"
+      ],
+      "cache": "pip cache keyed by OS, Python version, and root pyproject.toml"
+    },
+    {
+      "name": "Setup Node Runtime",
+      "path": ".github/actions/setup-node-runtime/action.yml",
+      "uses": [
+        "actions/setup-node@v7.0.0",
+        "npm ci in frontend"
+      ],
+      "cache": "npm cache keyed by frontend/package-lock.json"
+    },
+    {
+      "name": "Setup Playwright",
+      "path": ".github/actions/setup-playwright/action.yml",
+      "uses": [
+        "npx playwright install --with-deps chromium@1.58.2"
+      ],
+      "cache": "Playwright browser cache keyed by OS, browser version, lockfile, and browser list"
+    },
+    {
+      "name": "Upload Runtime Artifact",
+      "path": ".github/actions/upload-runtime/action.yml",
+      "uses": [
+        "actions/upload-artifact@v7.0.1"
+      ],
+      "defaults": {
+        "if": "always()",
+        "if_no_files_found": "warn",
+        "retention_days": 14
+      }
+    }
+  ],
+  "workflows": [
+    {
+      "workflow_file": ".github/workflows/frontend-verify.yml",
+      "workflow_name": "Frontend Verification",
+      "trigger": [
+        "push: all branches when frontend/**, backend/src/routers/**, backend/src/mappers/**, or runtime/** changes",
+        "pull_request: main/develop on the same paths"
+      ],
+      "manual_dispatch": true,
+      "schedule": [],
+      "jobs": [
+        {
+          "job_id": "verify",
+          "name": "Frontend Verification",
+          "needs": [],
+          "timeout_minutes": 25,
+          "actual_commands": [
+            "python runtime/verify.py check",
+            "python runtime/verify.py doctor"
+          ]
+        }
+      ],
+      "job_dependencies": {
+        "verify": []
+      },
+      "runner": "ubuntu-latest",
+      "working_directory": "repository root; setup-node-runtime uses frontend",
+      "setup_steps": [
+        "actions/checkout@v7.0.1 with fetch-depth 0",
+        "./.github/actions/bootstrap-runtime with Python 3.12",
+        "./.github/actions/setup-node-runtime with Node 24 in frontend"
+      ],
+      "runtime_versions": {
+        "python": "3.12",
+        "node": "24"
+      },
+      "services": [],
+      "databases": [],
+      "secrets": {
+        "explicit_named": [],
+        "implicit_github_token_required": true
+      },
+      "environment_variables": {
+        "composite_defaults": [
+          "TZ=UTC",
+          "LANG=C.UTF-8",
+          "LC_ALL=C.UTF-8"
+        ],
+        "job": {}
+      },
+      "cache_usage": [
+        "pip cache",
+        "npm cache"
+      ],
+      "artifacts": [
+        "cross-layer-map (14 days)",
+        "knowledge-index (14 days)",
+        "verification-cache (14 days)",
+        "engineering-history (14 days)",
+        "frontend-report (14 days)",
+        "frontend-evidence (30 days)"
+      ],
+      "test_commands": [
+        "python runtime/verify.py check"
+      ],
+      "build_commands": [],
+      "lint_commands": [],
+      "typecheck_commands": [],
+      "deployment_actions": [],
+      "external_services": [
+        "GitHub Actions checkout and artifact service"
+      ],
+      "browser_dependencies": [],
+      "platform_dependencies": [
+        "git",
+        "Python 3.12",
+        "Node 24",
+        "npm",
+        "bash",
+        "jq only in some summary paths, not required by this job"
+      ],
+      "status": "ACTIVE",
+      "observed_drift": [
+        "Workflow comments say status summary but the actual summary command is doctor.",
+        "No explicit frontend profile or literal frontend test/typecheck/lint/build command appears in YAML."
+      ]
+    },
+    {
+      "workflow_file": ".github/workflows/backend-verify.yml",
+      "workflow_name": "Backend Verification",
+      "trigger": [
+        "push: all branches when backend/** or runtime/** changes",
+        "pull_request: main/develop on the same paths"
+      ],
+      "manual_dispatch": true,
+      "schedule": [],
+      "jobs": [
+        {
+          "job_id": "verify",
+          "name": "Backend Verification",
+          "needs": [],
+          "timeout_minutes": 30,
+          "actual_commands": [
+            "python runtime/verify.py check",
+            "python runtime/verify.py doctor"
+          ]
+        }
+      ],
+      "job_dependencies": {
+        "verify": []
+      },
+      "runner": "ubuntu-latest",
+      "working_directory": "repository root; setup-node-runtime uses frontend",
+      "setup_steps": [
+        "actions/checkout@v7.0.1 with fetch-depth 0",
+        "./.github/actions/bootstrap-runtime with Python 3.12",
+        "./.github/actions/setup-node-runtime with Node 24 in frontend"
+      ],
+      "runtime_versions": {
+        "python": "3.12",
+        "node": "24"
+      },
+      "services": [],
+      "databases": [],
+      "secrets": {
+        "explicit_named": [],
+        "implicit_github_token_required": true
+      },
+      "environment_variables": {
+        "composite_defaults": [
+          "TZ=UTC",
+          "LANG=C.UTF-8",
+          "LC_ALL=C.UTF-8"
+        ],
+        "job": {}
+      },
+      "cache_usage": [
+        "pip cache",
+        "npm cache"
+      ],
+      "artifacts": [
+        "cross-layer-map (14 days)",
+        "knowledge-index (14 days)",
+        "verification-cache (14 days)",
+        "engineering-history (14 days)",
+        "backend-report (14 days)",
+        "backend-evidence (30 days)"
+      ],
+      "test_commands": [
+        "python runtime/verify.py check"
+      ],
+      "build_commands": [],
+      "lint_commands": [],
+      "typecheck_commands": [],
+      "deployment_actions": [],
+      "external_services": [
+        "GitHub Actions checkout and artifact service"
+      ],
+      "browser_dependencies": [],
+      "platform_dependencies": [
+        "git",
+        "Python 3.12",
+        "Node 24 and npm",
+        "bash"
+      ],
+      "status": "ACTIVE",
+      "observed_drift": [
+        "Workflow comments say status summary but the actual summary command is doctor.",
+        "No explicit backend profile or literal backend test command appears in YAML.",
+        "Node and frontend npm ci setup is not visibly required by the backend-only YAML command."
+      ]
+    },
+    {
+      "workflow_file": ".github/workflows/verification-runtime.yml",
+      "workflow_name": "Verification Runtime",
+      "trigger": [
+        "push: all branches when runtime/**, backend/src/engines/**, backend/src/routers/**, or backend/src/mappers/** changes",
+        "pull_request: main/develop on the same paths"
+      ],
+      "manual_dispatch": true,
+      "schedule": [],
+      "jobs": [
+        {
+          "job_id": "verify-runtime",
+          "name": "Runtime Verification",
+          "needs": [],
+          "timeout_minutes": 30,
+          "actual_commands": [
+            "python runtime/verify.py check",
+            "python runtime/verify.py doctor"
+          ]
+        }
+      ],
+      "job_dependencies": {
+        "verify-runtime": []
+      },
+      "runner": "ubuntu-latest",
+      "working_directory": "repository root; setup-node-runtime uses frontend",
+      "setup_steps": [
+        "actions/checkout@v7.0.1 with fetch-depth 0",
+        "./.github/actions/bootstrap-runtime with Python 3.12",
+        "./.github/actions/setup-node-runtime with Node 24 in frontend"
+      ],
+      "runtime_versions": {
+        "python": "3.12",
+        "node": "24"
+      },
+      "services": [],
+      "databases": [],
+      "secrets": {
+        "explicit_named": [],
+        "implicit_github_token_required": true
+      },
+      "environment_variables": {
+        "composite_defaults": [
+          "TZ=UTC",
+          "LANG=C.UTF-8",
+          "LC_ALL=C.UTF-8"
+        ],
+        "job": {}
+      },
+      "cache_usage": [
+        "pip cache",
+        "npm cache"
+      ],
+      "artifacts": [
+        "cross-layer-map (14 days)",
+        "knowledge-index (14 days)",
+        "verification-cache (14 days)",
+        "engineering-history (14 days)",
+        "runtime-quality (14 days)",
+        "runtime-performance (30 days, optional)"
+      ],
+      "test_commands": [
+        "python runtime/verify.py check"
+      ],
+      "build_commands": [],
+      "lint_commands": [],
+      "typecheck_commands": [],
+      "deployment_actions": [],
+      "external_services": [
+        "GitHub Actions checkout and artifact service"
+      ],
+      "browser_dependencies": [],
+      "platform_dependencies": [
+        "git",
+        "Python 3.12",
+        "Node 24 and npm",
+        "bash"
+      ],
+      "status": "ACTIVE",
+      "observed_drift": [
+        "Workflow comments say status summary but the actual summary command is doctor.",
+        "No explicit runtime profile appears in YAML."
+      ]
+    },
+    {
+      "workflow_file": ".github/workflows/quality.yml",
+      "workflow_name": "Quality Gate",
+      "trigger": [
+        "push: all branches",
+        "pull_request: main/develop"
+      ],
+      "manual_dispatch": true,
+      "schedule": [],
+      "jobs": [
+        {
+          "job_id": "quality",
+          "name": "Quality Gate",
+          "needs": [],
+          "timeout_minutes": 10,
+          "actual_commands": [
+            "python runtime/verify.py check",
+            "python runtime/verify.py doctor"
+          ]
+        }
+      ],
+      "job_dependencies": {
+        "quality": []
+      },
+      "runner": "ubuntu-latest",
+      "working_directory": "repository root; setup-node-runtime uses frontend",
+      "setup_steps": [
+        "actions/checkout@v7.0.1 with fetch-depth 0",
+        "./.github/actions/bootstrap-runtime with Python 3.12",
+        "./.github/actions/setup-node-runtime with Node 24 in frontend"
+      ],
+      "runtime_versions": {
+        "python": "3.12",
+        "node": "24"
+      },
+      "services": [],
+      "databases": [],
+      "secrets": {
+        "explicit_named": [],
+        "implicit_github_token_required": true
+      },
+      "environment_variables": {
+        "composite_defaults": [
+          "TZ=UTC",
+          "LANG=C.UTF-8",
+          "LC_ALL=C.UTF-8"
+        ],
+        "job": {}
+      },
+      "cache_usage": [
+        "pip cache",
+        "npm cache"
+      ],
+      "artifacts": [
+        "cross-layer-map (14 days)",
+        "knowledge-index (14 days)",
+        "verification-cache (14 days)",
+        "engineering-history (14 days)",
+        "quality-report (14 days)",
+        "fast-checks-evidence (30 days)"
+      ],
+      "test_commands": [
+        "python runtime/verify.py check"
+      ],
+      "build_commands": [],
+      "lint_commands": [],
+      "typecheck_commands": [],
+      "deployment_actions": [],
+      "external_services": [
+        "GitHub Actions checkout and artifact service"
+      ],
+      "browser_dependencies": [],
+      "platform_dependencies": [
+        "git",
+        "Python 3.12",
+        "Node 24 and npm",
+        "bash"
+      ],
+      "status": "ACTIVE",
+      "observed_drift": [
+        "The YAML has no literal Ruff, Black, mypy, pytest, architecture, or meta commands; all behavior is delegated to generic check.",
+        "The claim that this blocks merge depends on external branch protection.",
+        "Workflow comments say status summary but the actual summary command is doctor."
+      ]
+    },
+    {
+      "workflow_file": ".github/workflows/api-contracts.yml",
+      "workflow_name": "API Contract Integrity",
+      "trigger": [
+        "push: all branches when backend/**, frontend/**, or runtime/** changes",
+        "pull_request: main/develop on the same paths",
+        "workflow_run: after Playwright Tests fails"
+      ],
+      "manual_dispatch": true,
+      "schedule": [],
+      "jobs": [
+        {
+          "job_id": "api-contracts",
+          "name": "API Contract Integrity Gate",
+          "needs": [],
+          "timeout_minutes": 5,
+          "actual_commands": [
+            "python runtime/verify.py check",
+            "python runtime/verify.py doctor"
+          ]
+        }
+      ],
+      "job_dependencies": {
+        "api-contracts": []
+      },
+      "runner": "ubuntu-latest",
+      "working_directory": "repository root; setup-node-runtime uses frontend",
+      "setup_steps": [
+        "actions/checkout@v7.0.1 with fetch-depth 0",
+        "./.github/actions/bootstrap-runtime with Python 3.12",
+        "./.github/actions/setup-node-runtime with Node 24 in frontend"
+      ],
+      "runtime_versions": {
+        "python": "3.12",
+        "node": "24"
+      },
+      "services": [],
+      "databases": [],
+      "secrets": {
+        "explicit_named": [],
+        "implicit_github_token_required": true
+      },
+      "environment_variables": {
+        "composite_defaults": [
+          "TZ=UTC",
+          "LANG=C.UTF-8",
+          "LC_ALL=C.UTF-8"
+        ],
+        "job": {}
+      },
+      "cache_usage": [
+        "pip cache",
+        "npm cache"
+      ],
+      "artifacts": [
+        "api-contract-evidence (30 days)"
+      ],
+      "test_commands": [
+        "python runtime/verify.py check"
+      ],
+      "build_commands": [],
+      "lint_commands": [],
+      "typecheck_commands": [],
+      "deployment_actions": [],
+      "external_services": [
+        "GitHub Actions workflow_run context and artifact service"
+      ],
+      "browser_dependencies": [],
+      "platform_dependencies": [
+        "git",
+        "Python 3.12",
+        "Node 24 and npm",
+        "bash"
+      ],
+      "status": "ACTIVE_WITH_DEFECT",
+      "observed_drift": [
+        "The workflow comment calls this a precondition for E2E, but Playwright has no dependency on this workflow.",
+        "The workflow_run checkout is not pinned to the failed workflow head SHA.",
+        "Generic check does not force an API-contract capability in the YAML."
+      ]
+    },
+    {
+      "workflow_file": ".github/workflows/verification-reconcile.yml",
+      "workflow_name": "Verification Reconcile",
+      "trigger": [
+        "push: all branches when runtime/** or backend/** changes",
+        "pull_request: main/develop on the same paths"
+      ],
+      "manual_dispatch": true,
+      "schedule": [],
+      "jobs": [
+        {
+          "job_id": "reconcile-gate",
+          "name": "Plan / Execute / Reconcile",
+          "needs": [],
+          "timeout_minutes": 30,
+          "actual_commands": [
+            "python runtime/verify.py plan --tier pr --base ${GITHUB_BASE_REF:-main} --head $GITHUB_SHA --no-write",
+            "python runtime/verify.py check",
+            "python runtime/verify.py exec-evidence --plan runtime/generated/vea5-tier-plan.pr.json --profile runtime --report runtime/generated/verification-report.md --status <success|fail> --exit <0|1> --duration 0.0 --commit $GITHUB_SHA --out runtime/generated/vea5-execution.pr.json",
+            "python runtime/verify.py ci --plan runtime/generated/vea5-tier-plan.pr.json --evidence runtime/generated/vea5-execution.pr.json --report runtime/generated/vea5-reconciliation.pr.json --commit $GITHUB_SHA",
+            "python runtime/verify.py doctor"
+          ]
+        }
+      ],
+      "job_dependencies": {
+        "reconcile-gate": []
+      },
+      "runner": "ubuntu-latest",
+      "working_directory": "repository root",
+      "setup_steps": [
+        "actions/checkout@v7.0.1 with fetch-depth 0",
+        "./.github/actions/bootstrap-runtime with Python 3.12"
+      ],
+      "runtime_versions": {
+        "python": "3.12"
+      },
+      "services": [],
+      "databases": [],
+      "secrets": {
+        "explicit_named": [],
+        "implicit_github_token_required": true
+      },
+      "environment_variables": {
+        "github_context": [
+          "GITHUB_BASE_REF",
+          "GITHUB_SHA"
+        ],
+        "composite_defaults": [
+          "TZ=UTC",
+          "LANG=C.UTF-8",
+          "LC_ALL=C.UTF-8"
+        ],
+        "job": {}
+      },
+      "cache_usage": [
+        "pip cache"
+      ],
+      "artifacts": [
+        "reconciliation-report containing plan, execution evidence, and reconciliation JSON (14 days)"
+      ],
+      "test_commands": [
+        "python runtime/verify.py check"
+      ],
+      "build_commands": [],
+      "lint_commands": [],
+      "typecheck_commands": [],
+      "deployment_actions": [],
+      "external_services": [
+        "GitHub Actions checkout and artifact service"
+      ],
+      "browser_dependencies": [],
+      "platform_dependencies": [
+        "git",
+        "Python 3.12",
+        "bash"
+      ],
+      "status": "ACTIVE_WITH_DEFECT",
+      "observed_drift": [
+        "Generic check is labeled as the runtime profile only in synthesized evidence.",
+        "Evidence duration is always 0.0 and the original check exit is reduced to 0 or 1.",
+        "Required-check semantics require external branch protection."
+      ]
+    },
+    {
+      "workflow_file": ".github/workflows/mutation.yml",
+      "workflow_name": "Mutation Testing",
+      "trigger": [
+        "schedule: daily at 02:00 UTC"
+      ],
+      "manual_dispatch": true,
+      "schedule": [
+        "0 2 * * *"
+      ],
+      "manual_inputs": {
+        "target-path": "declared but unused",
+        "engine-name": "declared but unused"
+      },
+      "jobs": [
+        {
+          "job_id": "mutation-smoke",
+          "name": "Mutation Smoke (infra health)",
+          "needs": [],
+          "timeout_minutes": 15,
+          "actual_commands": [
+            "python runtime/verify.py doctor",
+            "python runtime/verify.py check"
+          ]
+        },
+        {
+          "job_id": "mutation",
+          "name": "Mutation Testing (authoritative)",
+          "needs": [
+            "mutation-smoke"
+          ],
+          "timeout_minutes": 90,
+          "actual_commands": [
+            "python runtime/verify.py doctor",
+            "python runtime/verify.py check",
+            "classify backend/tests/generated/mutation/mutation-summary.json with jq and bc",
+            "python runtime/verify.py doctor"
+          ]
+        }
+      ],
+      "job_dependencies": {
+        "mutation-smoke": [],
+        "mutation": [
+          "mutation-smoke"
+        ]
+      },
+      "runner": "ubuntu-latest",
+      "working_directory": "repository root",
+      "setup_steps": [
+        "actions/checkout@v7.0.1 with fetch-depth 0",
+        "./.github/actions/bootstrap-runtime with Python 3.12"
+      ],
+      "runtime_versions": {
+        "python": "3.12"
+      },
+      "services": [],
+      "databases": [],
+      "secrets": {
+        "explicit_named": [],
+        "implicit_github_token_required": true
+      },
+      "environment_variables": {
+        "composite_defaults": [
+          "TZ=UTC",
+          "LANG=C.UTF-8",
+          "LC_ALL=C.UTF-8"
+        ],
+        "job": {},
+        "github_output": [
+          "GITHUB_OUTPUT"
+        ],
+        "github_summary": [
+          "GITHUB_STEP_SUMMARY"
+        ]
+      },
+      "cache_usage": [
+        "pip cache"
+      ],
+      "artifacts": [
+        "cross-layer-map (14 days)",
+        "knowledge-index (14 days)",
+        "verification-cache (14 days)",
+        "engineering-history (14 days)",
+        "mutation-report (90 days)",
+        "mutation-evidence (30 days)",
+        "coverage-evidence (90 days, optional)"
+      ],
+      "test_commands": [
+        "python runtime/verify.py check"
+      ],
+      "build_commands": [],
+      "lint_commands": [],
+      "typecheck_commands": [],
+      "deployment_actions": [],
+      "external_services": [
+        "GitHub Actions scheduler, output files, summary, checkout, and artifact service"
+      ],
+      "browser_dependencies": [],
+      "platform_dependencies": [
+        "git",
+        "Python 3.12",
+        "bash",
+        "jq",
+        "bc"
+      ],
+      "status": "ACTIVE_DEFECTIVE",
+      "observed_drift": [
+        "Both smoke and authoritative jobs run the same generic check; neither invokes mutation.",
+        "Manual target-path and engine-name inputs are inert.",
+        "The mutation summary classifies missing evidence as infrastructure failure and fails the authoritative job if generic check does not create mutation-summary.json."
+      ]
+    },
+    {
+      "workflow_file": ".github/workflows/golden.yml",
+      "workflow_name": "Golden Dataset Regression",
+      "trigger": [
+        "schedule: daily at 03:00 UTC"
+      ],
+      "manual_dispatch": true,
+      "schedule": [
+        "0 3 * * *"
+      ],
+      "manual_inputs": {
+        "dataset": "declared but unused"
+      },
+      "jobs": [
+        {
+          "job_id": "golden",
+          "name": "Golden Dataset Regression",
+          "needs": [],
+          "timeout_minutes": 30,
+          "actual_commands": [
+            "python runtime/verify.py check",
+            "python runtime/verify.py doctor"
+          ]
+        }
+      ],
+      "job_dependencies": {
+        "golden": []
+      },
+      "runner": "ubuntu-latest",
+      "working_directory": "repository root",
+      "setup_steps": [
+        "actions/checkout@v7.0.1 with fetch-depth 0",
+        "./.github/actions/bootstrap-runtime with Python 3.12"
+      ],
+      "runtime_versions": {
+        "python": "3.12"
+      },
+      "services": [],
+      "databases": [],
+      "secrets": {
+        "explicit_named": [],
+        "implicit_github_token_required": true
+      },
+      "environment_variables": {
+        "composite_defaults": [
+          "TZ=UTC",
+          "LANG=C.UTF-8",
+          "LC_ALL=C.UTF-8"
+        ],
+        "job": {},
+        "github_summary": [
+          "GITHUB_STEP_SUMMARY"
+        ]
+      },
+      "cache_usage": [
+        "pip cache"
+      ],
+      "artifacts": [
+        "cross-layer-map (14 days)",
+        "knowledge-index (14 days)",
+        "verification-cache (14 days)",
+        "engineering-history (14 days)",
+        "golden-report (90 days)",
+        "golden-evidence (30 days)"
+      ],
+      "test_commands": [
+        "python runtime/verify.py check"
+      ],
+      "build_commands": [],
+      "lint_commands": [],
+      "typecheck_commands": [],
+      "deployment_actions": [],
+      "external_services": [
+        "GitHub Actions scheduler, checkout, and artifact service"
+      ],
+      "browser_dependencies": [],
+      "platform_dependencies": [
+        "git",
+        "Python 3.12",
+        "bash"
+      ],
+      "status": "ACTIVE_DEFECTIVE",
+      "observed_drift": [
+        "Generic check does not force a golden/deep profile.",
+        "The manual dataset input is unused.",
+        "The generic check may run golden checks by change plan, but the workflow does not guarantee the named regression scope."
+      ]
+    },
+    {
+      "workflow_file": ".github/workflows/playwright.yml",
+      "workflow_name": "Playwright Tests",
+      "trigger": [
+        "push: main/master/develop when frontend/**, e2e/**, or runtime/** changes",
+        "pull_request: main/master/develop on the same paths"
+      ],
+      "manual_dispatch": true,
+      "schedule": [],
+      "jobs": [
+        {
+          "job_id": "test",
+          "name": "E2E Tests (${{ matrix.project }})",
+          "needs": [],
+          "timeout_minutes": 90,
+          "matrix": {
+            "project": [
+              "chromium",
+              "mobile-chrome"
+            ]
+          },
+          "matrix_instance_count": 2,
+          "actual_commands": [
+            "npx playwright install --with-deps chromium@1.58.2",
+            "python runtime/verify.py check with PLAYWRIGHT_PROJECT and CLARIFIN_PYTHON=python3",
+            "python runtime/verify.py doctor"
+          ]
+        }
+      ],
+      "job_dependencies": {
+        "test": []
+      },
+      "runner": "ubuntu-latest",
+      "working_directory": "repository root; setup-node-runtime and browser installation use frontend",
+      "setup_steps": [
+        "actions/checkout@v7.0.1 with fetch-depth 0",
+        "./.github/actions/bootstrap-runtime with Python 3.12",
+        "./.github/actions/setup-node-runtime with Node 24 in frontend",
+        "./.github/actions/setup-playwright with chromium browser-version 1.58.2"
+      ],
+      "runtime_versions": {
+        "python": "3.12",
+        "node": "24",
+        "playwright_cli_target": "1.58.2"
+      },
+      "services": [],
+      "databases": [],
+      "secrets": {
+        "explicit_named": [],
+        "implicit_github_token_required": true
+      },
+      "environment_variables": {
+        "composite_defaults": [
+          "TZ=UTC",
+          "LANG=C.UTF-8",
+          "LC_ALL=C.UTF-8"
+        ],
+        "job": {
+          "PLAYWRIGHT_PROJECT": "${{ matrix.project }}",
+          "CLARIFIN_PYTHON": "python3"
+        }
+      },
+      "cache_usage": [
+        "pip cache",
+        "npm cache",
+        "Playwright browser cache"
+      ],
+      "artifacts": [
+        "cross-layer-map-<project> (14 days)",
+        "knowledge-index-<project> (14 days)",
+        "verification-cache-<project> (14 days)",
+        "engineering-history-<project> (14 days)",
+        "playwright-report-<project> (30 days)",
+        "playwright-evidence-<project> (30 days)"
+      ],
+      "test_commands": [
+        "python runtime/verify.py check with PLAYWRIGHT_PROJECT set per matrix instance"
+      ],
+      "build_commands": [],
+      "lint_commands": [],
+      "typecheck_commands": [],
+      "deployment_actions": [],
+      "external_services": [
+        "GitHub Actions matrix, checkout, and artifact service"
+      ],
+      "browser_dependencies": [
+        "Playwright CLI browser target 1.58.2",
+        "Chromium installed with system dependencies",
+        "mobile-chrome project uses Chromium browser"
+      ],
+      "platform_dependencies": [
+        "git",
+        "Python 3.12",
+        "Node 24 and npm",
+        "Linux browser system libraries",
+        "bash"
+      ],
+      "status": "ACTIVE_WITH_DEFECT",
+      "observed_drift": [
+        "The comment claims a six-project full-coverage slice, but the matrix contains only chromium and mobile-chrome.",
+        "Generic check does not explicitly select a Playwright profile.",
+        "No literal npm run build or npx playwright test appears in YAML; behavior is delegated to the runtime profile."
+      ]
+    },
+    {
+      "workflow_file": ".github/workflows/dependency-update.yml",
+      "workflow_name": "Dependency Updates",
+      "trigger": [
+        "schedule: weekly Monday at 04:00 UTC"
+      ],
+      "manual_dispatch": true,
+      "schedule": [
+        "0 4 * * 1"
+      ],
+      "jobs": [
+        {
+          "job_id": "dependency-health",
+          "name": "Dependency Health",
+          "needs": [],
+          "timeout_minutes": 15,
+          "actual_commands": [
+            "bash .github/scripts/run_dependency_checks.sh",
+            "python runtime/verify.py doctor"
+          ]
+        }
+      ],
+      "job_dependencies": {
+        "dependency-health": []
+      },
+      "runner": "ubuntu-latest",
+      "working_directory": "repository root; script uses frontend",
+      "setup_steps": [
+        "actions/checkout@v7.0.1 with fetch-depth 0",
+        "./.github/actions/bootstrap-runtime with Python 3.12",
+        "./.github/actions/setup-node-runtime with Node 24 in frontend"
+      ],
+      "runtime_versions": {
+        "python": "3.12",
+        "node": "24"
+      },
+      "services": [],
+      "databases": [],
+      "secrets": {
+        "explicit_named": [],
+        "implicit_github_token_required": true
+      },
+      "environment_variables": {
+        "composite_defaults": [
+          "TZ=UTC",
+          "LANG=C.UTF-8",
+          "LC_ALL=C.UTF-8"
+        ],
+        "job": {}
+      },
+      "cache_usage": [
+        "pip cache",
+        "npm cache"
+      ],
+      "artifacts": [
+        "python-dependencies (30 days)",
+        "npm-dependencies (30 days)",
+        "dependency-health (30 days)"
+      ],
+      "test_commands": [
+        "python -m pip_audit",
+        "npm audit --audit-level=moderate"
+      ],
+      "build_commands": [],
+      "lint_commands": [],
+      "typecheck_commands": [],
+      "deployment_actions": [],
+      "external_services": [
+        "Python package vulnerability database",
+        "npm registry and vulnerability service"
+      ],
+      "browser_dependencies": [],
+      "platform_dependencies": [
+        "git",
+        "Python 3.12",
+        "Node 24 and npm",
+        "pip-audit installed dynamically",
+        "bash"
+      ],
+      "status": "INFORMATIONAL",
+      "observed_drift": [
+        "The workflow does not update dependencies; it only audits and reports.",
+        "Audit findings are converted to a successful script exit."
+      ]
+    },
+    {
+      "workflow_file": ".github/workflows/release.yml",
+      "workflow_name": "Release",
+      "trigger": [
+        "release: published"
+      ],
+      "manual_dispatch": true,
+      "schedule": [],
+      "manual_inputs": {
+        "version": "required; used only for release notes and summary"
+      },
+      "jobs": [
+        {
+          "job_id": "build",
+          "name": "Build Release",
+          "needs": [],
+          "timeout_minutes": 30,
+          "actual_commands": [
+            "npm ci in frontend through setup-node-runtime",
+            "npm ci && npm run build in frontend",
+            "bash .github/scripts/generate_release_notes.sh <tag-or-input>"
+          ]
+        }
+      ],
+      "job_dependencies": {
+        "build": []
+      },
+      "runner": "ubuntu-latest",
+      "working_directory": "repository root; build uses frontend",
+      "setup_steps": [
+        "actions/checkout@v7.0.1 with fetch-depth 0",
+        "./.github/actions/setup-node-runtime with Node 24 in frontend",
+        "./.github/actions/bootstrap-runtime with Python 3.12"
+      ],
+      "runtime_versions": {
+        "python": "3.12",
+        "node": "24"
+      },
+      "services": [],
+      "databases": [],
+      "secrets": {
+        "explicit_named": [],
+        "implicit_github_token_required": true,
+        "declared_permissions": [
+          "contents: write (unused by current steps)"
+        ]
+      },
+      "environment_variables": {
+        "composite_defaults": [
+          "TZ=UTC",
+          "LANG=C.UTF-8",
+          "LC_ALL=C.UTF-8"
+        ],
+        "job": {},
+        "github_context": [
+          "github.event.release.tag_name",
+          "inputs.version",
+          "github.sha",
+          "github.ref_name"
+        ]
+      },
+      "cache_usage": [
+        "pip cache",
+        "npm cache"
+      ],
+      "artifacts": [
+        "frontend-dist (90 days)",
+        "release-notes (90 days)"
+      ],
+      "test_commands": [],
+      "build_commands": [
+        "cd frontend && npm ci && npm run build"
+      ],
+      "lint_commands": [],
+      "typecheck_commands": [],
+      "deployment_actions": [],
+      "external_services": [
+        "GitHub Release event context and Actions artifact service"
+      ],
+      "browser_dependencies": [],
+      "platform_dependencies": [
+        "git",
+        "Python 3.12",
+        "Node 24 and npm",
+        "bash"
+      ],
+      "status": "STALE_CLAIM",
+      "observed_drift": [
+        "The workflow says publish but performs no GitHub release publication or deployment.",
+        "The claim of permanent artifact retention is false; configured retention is 90 days.",
+        "npm ci is run twice.",
+        "The manual version does not select a tag, change build metadata, or publish."
+      ]
+    },
+    {
+      "workflow_file": ".github/workflows/mutation-pr.yml",
+      "workflow_name": "Mutation Testing (PR Incremental)",
+      "trigger": [
+        "pull_request when backend/src/engines/**, backend/src/services/**, or backend/tests/** changes"
+      ],
+      "manual_dispatch": false,
+      "schedule": [],
+      "jobs": [
+        {
+          "job_id": "incremental-mutation",
+          "name": "Incremental Mutation (PR)",
+          "needs": [],
+          "timeout_minutes": 15,
+          "actual_commands": [
+            "python -m runtime.verify env-check",
+            "git fetch origin ${{ github.base_ref }} --depth=1 with failure suppressed",
+            "git diff --name-only origin/${{ github.base_ref }}...HEAD filtered to backend/src/engines or backend/src/services",
+            "python -m runtime.verify mutation --incremental --changed-files $FILES --allow-dirty | tee mutation_output.txt",
+            "post PR comment through actions/github-script@v7"
+          ]
+        }
+      ],
+      "job_dependencies": {
+        "incremental-mutation": []
+      },
+      "runner": "ubuntu-latest",
+      "working_directory": "repository root",
+      "setup_steps": [
+        "actions/checkout@v7.0.1 with fetch-depth 0",
+        "./.github/actions/bootstrap-runtime with Python 3.12"
+      ],
+      "runtime_versions": {
+        "python": "3.12"
+      },
+      "services": [],
+      "databases": [],
+      "secrets": {
+        "explicit_named": [],
+        "implicit_github_token_required": true
+      },
+      "environment_variables": {
+        "composite_defaults": [
+          "TZ=UTC",
+          "LANG=C.UTF-8",
+          "LC_ALL=C.UTF-8"
+        ],
+        "job": {},
+        "github_context": [
+          "GITHUB_BASE_REF",
+          "github.base_ref",
+          "GITHUB_OUTPUT"
+        ]
+      },
+      "cache_usage": [
+        "pip cache"
+      ],
+      "artifacts": [
+        "mutation-pr-report (30 days)"
+      ],
+      "test_commands": [
+        "python -m runtime.verify mutation --incremental --changed-files $FILES --allow-dirty"
+      ],
+      "build_commands": [],
+      "lint_commands": [],
+      "typecheck_commands": [],
+      "deployment_actions": [],
+      "external_services": [
+        "GitHub PR event context, comment API, checkout, and artifact service"
+      ],
+      "browser_dependencies": [],
+      "platform_dependencies": [
+        "git",
+        "Python 3.12",
+        "grep",
+        "sed",
+        "awk",
+        "bash"
+      ],
+      "status": "ACTIVE_DEFECTIVE",
+      "observed_drift": [
+        "Newline-separated changed files are assigned to GITHUB_OUTPUT without a multiline delimiter.",
+        "The changed-files argument is unquoted.",
+        "Infrastructure exit code 1 is reported but does not fail the final job; only exit 2 fails.",
+        "Tests-only changes trigger the workflow but are filtered to no mutation work."
+      ]
+    },
+    {
+      "workflow_file": ".github/workflows/security-codeql.yml",
+      "workflow_name": "CodeQL Security Analysis",
+      "trigger": [
+        "pull_request: main/develop",
+        "push: main",
+        "schedule: weekly Monday at 04:27 UTC"
+      ],
+      "manual_dispatch": true,
+      "schedule": [
+        "27 4 * * 1"
+      ],
+      "jobs": [
+        {
+          "job_id": "analyze",
+          "name": "Analyze",
+          "needs": [],
+          "timeout_minutes": 45,
+          "actual_commands": [
+            "github/codeql-action/init@v3 for python,javascript",
+            "github/codeql-action/autobuild@v3",
+            "github/codeql-action/analyze@v3"
+          ]
+        }
+      ],
+      "job_dependencies": {
+        "analyze": []
+      },
+      "runner": "ubuntu-latest",
+      "working_directory": "repository root",
+      "setup_steps": [
+        "actions/checkout@v7.0.1 with fetch-depth 0",
+        "github/codeql-action/init@v3",
+        "github/codeql-action/autobuild@v3"
+      ],
+      "runtime_versions": {
+        "codeql": "v3 action toolchain selected by GitHub"
+      },
+      "services": [],
+      "databases": [],
+      "secrets": {
+        "explicit_named": [],
+        "implicit_github_token_required": true,
+        "permissions": [
+          "security-events: write",
+          "contents: read",
+          "actions: read",
+          "pull-requests: write"
+        ]
+      },
+      "environment_variables": {
+        "github_context": [
+          "GITHUB_STEP_SUMMARY"
+        ],
+        "job": {}
+      },
+      "cache_usage": [
+        "GitHub CodeQL managed caches and services"
+      ],
+      "artifacts": [],
+      "test_commands": [],
+      "build_commands": [
+        "CodeQL autobuild"
+      ],
+      "lint_commands": [],
+      "typecheck_commands": [],
+      "deployment_actions": [
+        "Upload SARIF to GitHub code scanning"
+      ],
+      "external_services": [
+        "GitHub CodeQL",
+        "GitHub code scanning",
+        "GitHub code-scanning API"
+      ],
+      "browser_dependencies": [],
+      "platform_dependencies": [
+        "ubuntu-latest",
+        "git",
+        "GitHub CodeQL action environment"
+      ],
+      "status": "ACTIVE_GITHUB_NATIVE",
+      "observed_drift": [
+        "The always-run summary states analysis complete even if the preceding analysis step failed.",
+        "A GitHub-managed CodeQL workflow may still exist unless repository settings disable it."
+      ]
+    },
+    {
+      "workflow_file": ".github/workflows/m9-forensic-diagnostic-lab.yml",
+      "workflow_name": "M9 Forensic Diagnostic Lab",
+      "trigger": [
+        "pull_request: main"
+      ],
+      "manual_dispatch": true,
+      "schedule": [],
+      "jobs": [
+        {
+          "job_id": "diagnostician",
+          "name": "M9 Forensic Evidence Collection",
+          "needs": [],
+          "timeout_minutes": 20,
+          "actual_commands": [
+            "capture GitHub context, Git topology, changed-file calculations, source hashes, environment, and generated artifacts",
+            "run scripts/bootstrap.sh through conditional bootstrap logic",
+            "run four Black --check variants and capture exit/output",
+            "run .github/scripts/run_fast_checks.sh through four shell invocations",
+            "run python runtime/verify.py check twice with failures captured and suppressed",
+            "generate diagnostic-summary.json"
+          ]
+        }
+      ],
+      "job_dependencies": {
+        "diagnostician": []
+      },
+      "runner": "ubuntu-latest",
+      "working_directory": "repository root; Black matrix uses backend",
+      "setup_steps": [
+        "actions/checkout@v7.0.1 with fetch-depth 0 and PR head SHA",
+        "conditional runtime/bootstrap.sh, scripts/bootstrap.sh, or pip install -e .[all]"
+      ],
+      "runtime_versions": {
+        "python": "runner Python; scripts/bootstrap.sh creates repository .venv",
+        "node": "not explicitly set before npm ci"
+      },
+      "services": [],
+      "databases": [],
+      "secrets": {
+        "explicit_named": [],
+        "implicit_github_token_required": true
+      },
+      "environment_variables": {
+        "github_context": [
+          "GITHUB_REPOSITORY",
+          "GITHUB_REF",
+          "GITHUB_REF_NAME",
+          "GITHUB_HEAD_REF",
+          "GITHUB_BASE_REF",
+          "GITHUB_SHA",
+          "github.event.pull_request.base.sha",
+          "github.event.pull_request.head.sha",
+          "github.event.pull_request.number"
+        ],
+        "job": {}
+      },
+      "cache_usage": [],
+      "artifacts": [
+        "m9-execution-forensic-<run_id> (30 days)"
+      ],
+      "test_commands": [
+        "python runtime/verify.py check twice, diagnostic-only with failures suppressed"
+      ],
+      "build_commands": [],
+      "lint_commands": [
+        "black --check .",
+        "black --check --diff .",
+        "python -m black --check .",
+        "python -m black --check --diff .",
+        "bash .github/scripts/run_fast_checks.sh diagnostic invocations"
+      ],
+      "typecheck_commands": [],
+      "deployment_actions": [],
+      "external_services": [
+        "GitHub PR event payload and artifact service"
+      ],
+      "browser_dependencies": [],
+      "platform_dependencies": [
+        "git with full history and exact PR commits",
+        "bash",
+        "find",
+        "sed",
+        "grep",
+        "Black",
+        "Python",
+        "Node/npm without an explicit Node 24 setup"
+      ],
+      "status": "STALE_DIAGNOSTIC",
+      "observed_drift": [
+        "Manual dispatch has no PR base/head payload, so the base-resolution step is expected to fail.",
+        "Quick and backend labels run the same generic check command.",
+        "A step named Black exit from run_fast_checks.sh invokes Black directly.",
+        "scripts/bootstrap.sh creates .venv but subsequent bare commands may use runner Python instead.",
+        "The workflow is diagnostic and does not gate verification failures."
+      ]
+    }
+  ],
+  "repository_wide_findings": [
+    "No workflow uses a reusable workflow.",
+    "No workflow declares a database or service container.",
+    "No workflow references an explicit named repository or organization secret.",
+    "All jobs use ubuntu-latest.",
+    "Ordinary workflows invoke runtime/verify.py directly instead of the repository-canonical python -m runtime.verify module form.",
+    "Required status-check and branch-protection behavior is external GitHub repository configuration.",
+    "Third-party actions are pinned to tags or major versions rather than immutable commit SHAs."
+  ]
+}
