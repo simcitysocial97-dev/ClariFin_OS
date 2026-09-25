@@ -125,6 +125,7 @@ class FrontendCapabilityDiscoverer:
         self.frontend_root = self.repo_root / "frontend"
         self.ts_extractor = TypeScriptSymbolExtractor()
         self._frontend_backend_mapper = None
+        self._endpoint_capability_map_cache = None
 
     @property
     def frontend_backend_mapper(self):
@@ -186,7 +187,7 @@ class FrontendCapabilityDiscoverer:
 
     def _get_api_dependencies(self, symbols: list[TypeScriptSymbol], file_path: Path) -> list[dict]:
         """Extract API dependencies from symbols and file content.
-        
+
         Returns a list of dicts with 'endpoint' and 'method' keys.
         """
         endpoints = []
@@ -258,6 +259,8 @@ class FrontendCapabilityDiscoverer:
 
     def _build_endpoint_capability_map(self) -> dict[str, str]:
         """Build mapping from endpoint to backend capability."""
+        if self._endpoint_capability_map_cache is not None:
+            return dict(self._endpoint_capability_map_cache)
         endpoint_map = {}
         try:
             import json
@@ -302,6 +305,7 @@ class FrontendCapabilityDiscoverer:
                         endpoint_map[endpoint] = capability
         except Exception:
             pass
+        self._endpoint_capability_map_cache = dict(endpoint_map)
         return endpoint_map
 
     def _endpoints_match(self, endpoint1: str, endpoint2: str) -> bool:

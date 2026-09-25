@@ -18,6 +18,8 @@ from runtime.foundation.verification.symbol_resolver import Symbol
 
 logger = logging.getLogger(__name__)
 
+_DIRECTORY_CACHE = {}
+
 
 class TypeScriptSymbol:
     """Represents a TypeScript/TSX symbol."""
@@ -105,7 +107,7 @@ class TypeScriptSymbol:
     @property
     def symbol_id(self) -> str:
         """Deterministic frontend symbol identity.
-        
+
         Format: frontend:<relative-path-from-repo-root>:<symbol-name>
         Example: frontend:frontend/lib/hooks/use-accounts.ts:useManagedAccounts
         """
@@ -218,8 +220,52 @@ class TypeScriptSymbolExtractor:
         self._save_cache()
         return symbols
 
+    def _directory_signature(self, directory: Path) -> tuple[tuple[str, int, int], ...]:
+        files = []
+        for root, directories, filenames in os.walk(directory):
+            directories[:] = [
+                name
+                for name in directories
+                if name not in {"node_modules", ".next", "dist", "coverage", ".git"}
+            ]
+            for filename in filenames:
+                if not filename.endswith((".ts", ".tsx")):
+                    continue
+                path = Path(root) / filename
+                try:
+                    stat = path.stat()
+                except OSError:
+                    return ()
+                files.append((str(path.resolve()), stat.st_mtime_ns, stat.st_size))
+        return tuple(sorted(files))
+
+    def _cached_directory_symbols(
+        self, directory: Path
+    ) -> dict[Path, list[TypeScriptSymbol]] | None:
+        key = str(directory.resolve())
+        signature = self._directory_signature(directory)
+        cached = _DIRECTORY_CACHE.get(key)
+        if cached is not None and cached[0] == signature:
+            return {path: list(symbols) for path, symbols in cached[1].items()}
+        result = {}
+        for path_string, mtime_ns, _ in signature:
+            entry = self.cache.get(path_string)
+            if entry is None or entry.get("mtime") != mtime_ns / 1_000_000_000:
+                return None
+            path = Path(path_string)
+            result[path] = [
+                TypeScriptSymbol.from_dict(symbol) for symbol in entry.get("symbols", [])
+            ]
+        if result:
+            _DIRECTORY_CACHE[key] = (signature, result)
+            return {path: list(symbols) for path, symbols in result.items()}
+        return None
+
     def extract_from_directory(self, directory: Path) -> dict[Path, list[TypeScriptSymbol]]:
         """Extract symbols from all TypeScript/TSX files in a directory recursively."""
+        cached_result = self._cached_directory_symbols(Path(directory))
+        if cached_result is not None:
+            return cached_result
         result = {}
         directory = Path(directory)
         repo_root = Path(__file__).resolve().parents[3]
@@ -243,6 +289,11 @@ class TypeScriptSymbolExtractor:
                 pass
 
         self._save_cache()
+        if result:
+            _DIRECTORY_CACHE[str(directory.resolve())] = (
+                self._directory_signature(directory),
+                result,
+            )
         return result
 
     def get_symbol_at_line(self, file_path: Path, line_number: int) -> TypeScriptSymbol | None:
@@ -286,16 +337,12 @@ class TypeScriptSymbolExtractor:
     def find_symbol_by_name(self, name: str, directory: Path = None) -> list[TypeScriptSymbol]:
         """Find all symbols with a given name in a directory."""
         search_dir = directory or self.frontend_root
-        all_symbols = []
-
-        result_data = self._run_ts_resolver(search_dir)
-
-        for file_data in result_data.get("files", []):
-            for sym_data in file_data.get("symbols", []):
-                if sym_data["name"] == name:
-                    all_symbols.append(TypeScriptSymbol.from_dict(sym_data))
-
-        return all_symbols
+        return [
+            symbol
+            for symbols in self.extract_from_directory(search_dir).values()
+            for symbol in symbols
+            if symbol.name == name
+        ]
 
 
 class TypeScriptCoverageSymbolMapper:
@@ -448,7 +495,7 @@ class TypeScriptCoverageSymbolMapper:
             if not cached:
                 return False
 
-            for symbol_name, test_files in cached.items():
+            for _symbol_name, test_files in cached.items():
                 for test_file in test_files:
                     tf = Path(test_file)
                     if not tf.exists():
