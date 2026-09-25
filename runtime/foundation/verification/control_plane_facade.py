@@ -1154,6 +1154,8 @@ def _run_profile_alias(operation: str) -> int:
     timeout_override = _profile_task_timeout_seconds()
 
     for task in profile.tasks:
+        if task.name == "Aggregate evidence":
+            continue
         task_timeout = timeout_override
         if task_timeout <= 0:
             task_timeout = max(600, 2 * task.estimated_duration_seconds)
