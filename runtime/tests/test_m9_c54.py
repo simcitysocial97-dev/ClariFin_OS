@@ -120,7 +120,7 @@ class TestC54CommandExtraction(unittest.TestCase):
         api = next((i for i in invs if i.filename == "api-contracts.yml"), None)
         self.assertIsNotNone(api)
         verif_cmds = [s.run for j in api.jobs for s in j.verification_steps]
-        self.assertTrue(any("api-contracts" in c for c in verif_cmds))
+        self.assertTrue(any("runtime.verify contracts" in c for c in verif_cmds))
 
     def test_golden_command_classified(self):
         from runtime.foundation.verification.workflow_convergence import (
@@ -1027,7 +1027,7 @@ class TestC54RealScenarioExecution(unittest.TestCase):
         self.assertGreater(len(result.stdout.strip().split("\n")), 0)
 
     def test_scenario_E_mutation_evidence_reconciliation(self):
-        """E: Mutation evidence is reconciled via verification-reconcile."""
+        """E: Reconciliation delegates to the canonical verification check."""
         from runtime.foundation.verification.workflow_convergence import (
             inventory_workflows,
         )
@@ -1037,12 +1037,11 @@ class TestC54RealScenarioExecution(unittest.TestCase):
             (i for i in invs if i.filename == "verification-reconcile.yml"), None
         )
         self.assertIsNotNone(reconcile)
-        # Check it has reconcile command
         for job in reconcile.jobs:
             for step in job.steps:
-                if "reconcile" in (step.run or ""):
+                if "runtime.verify check" in (step.run or ""):
                     return
-        self.fail("No reconcile command found")
+        self.fail("No canonical verification check found")
 
     def test_scenario_G_ci_failure_blocks(self):
         """G: CI failure blocks certification."""

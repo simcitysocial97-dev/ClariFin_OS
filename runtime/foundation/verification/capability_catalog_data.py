@@ -262,7 +262,7 @@ _REGISTRATIONS_PLANNING = [
             "that the CI reconciliation gate validates."
         ),
         command="python runtime/verify.py plan --tier <local|pr|deep> [--base REF] [--changed FILE...]",
-        implementation="runtime/verify.py:cmd_plan",
+        implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(PROBLEM_CHANGED_FILE, PROBLEM_PROPOSED_CHANGE),
         input_types=("changed_files",),
@@ -302,7 +302,7 @@ _REGISTRATIONS_PLANNING = [
             "the LOCAL TierPlan manifest from the working-tree delta."
         ),
         command="python runtime/verify.py local-gate [--out PATH]",
-        implementation="runtime/verify.py:cmd_local_gate",
+        implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(PROBLEM_CHANGED_FILE,),
         input_types=("changed_files",),
@@ -321,7 +321,7 @@ _REGISTRATIONS_PLANNING = [
             "effectiveness/UI/performance/security surfaces."
         ),
         command="python runtime/verify.py deep-contract [--out PATH]",
-        implementation="runtime/verify.py:cmd_deep_contract",
+        implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(),
         produces=("certification_report",),
@@ -420,7 +420,7 @@ _REGISTRATIONS_EXECUTION = [
             "recorded outcomes."
         ),
         command="python runtime/verify.py exec-evidence",
-        implementation="runtime/verify.py:cmd_exec_evidence",
+        implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.RECONCILIATION,
         trigger_conditions=(PROBLEM_CHANGED_FILE,),
         input_types=("plan_manifest", "recorded_outcome"),
@@ -581,7 +581,7 @@ _REGISTRATIONS_DIAGNOSIS = [
             "manual log parsing."
         ),
         command="python runtime/verify.py diagnose-failures",
-        implementation="runtime/verify.py:cmd_diagnose_failures",
+        implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(PROBLEM_WORKFLOW_FAILURE, PROBLEM_UNKNOWN_FAILURE),
         input_types=("none",),
@@ -601,7 +601,7 @@ _REGISTRATIONS_DIAGNOSIS = [
             "across all layers (backend, frontend, contracts, property)."
         ),
         command="python runtime/verify.py intelligence [--logs] [--no-ci]",
-        implementation="runtime/verify.py:cmd_intelligence",
+        implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(PROBLEM_CHANGED_FILE,),
         input_types=("changed_files",),
@@ -924,7 +924,7 @@ _REGISTRATIONS_CERTIFICATION = [
             "workspace, integrity, GitHub Actions, runtime CLI, and ROI."
         ),
         command="python runtime/verify.py audit",
-        implementation="runtime/verify.py:cmd_audit",
+        implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.CERTIFICATION,
         trigger_conditions=(PROBLEM_UNKNOWN_FAILURE, PROBLEM_STALE_EVIDENCE),
         input_types=("repository",),
@@ -998,7 +998,7 @@ _REGISTRATIONS_EVIDENCE = [
             "execution-status [--plan PLAN] [--latest] [--json] | "
             "execution-report [--plan PLAN] [--latest] [--json]"
         ),
-        implementation="runtime/verify.py:execution_status",
+        implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(),
         input_types=("plan_id",),
@@ -1088,7 +1088,7 @@ _REGISTRATIONS_EVIDENCE = [
             "was omitted. This is the CI reconciliation gate."
         ),
         command="python runtime/verify.py reconcile --plan PATH [--evidence PATH] [--local] [--json]",
-        implementation="runtime/verify.py:cmd_reconcile",
+        implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.RECONCILIATION,
         trigger_conditions=(PROBLEM_WORKFLOW_FAILURE, PROBLEM_STALE_EVIDENCE),
         input_types=("plan_manifest",),

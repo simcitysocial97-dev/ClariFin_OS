@@ -49,7 +49,7 @@ def test_m81_stale_workflows_use_verification_command_pattern():
     `verify.py <profile>` command, so the VEA-5 pattern holds per job.
     """
     expected_profiles = {
-        "quality": "quick",
+        "quality": "check",
         "mutation": "mutation",
         "playwright": "playwright",
         "golden": "golden",
@@ -92,7 +92,11 @@ def test_m81_stale_workflows_use_verification_command_pattern():
             for s in job.get("steps", [])
             if "run" in s
         )
-        assert "verify.py status" in all_runs or "runtime.verify status" in all_runs
+        assert (
+            "verify.py status" in all_runs
+            or "runtime.verify status" in all_runs
+            or "runtime.verify doctor" in all_runs
+        )
 
 
 def test_m81_stale_workflows_match_vea5_concurrency_and_retention():

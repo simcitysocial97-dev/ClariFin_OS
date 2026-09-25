@@ -93,8 +93,8 @@ def execute_scenarios(
             description="Mutation evidence is reconciled",
             executed=True,
             passed=True,
-            evidence="verification-reconcile.yml runs reconcile command",
-            notes="The reconcile gate compares plan vs execution evidence",
+            evidence="verification-reconcile.yml delegates to the canonical change-driven check",
+            notes="The reconcile gate now consumes the existing check authority instead of a synthetic TierPlan path",
         )
     )
 

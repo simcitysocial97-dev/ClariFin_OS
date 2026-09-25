@@ -5,18 +5,13 @@
 from __future__ import annotations
 
 import json
-import time
 from pathlib import Path
-from unittest.mock import patch
-
-import pytest
 
 from runtime.foundation.verification.frontend_backend_map import (
     ConsumerInfo,
     FrontendBackendMapper,
     _normalize_path,
 )
-
 
 # ---------------------------------------------------------------------------
 # Normalisation tests
@@ -219,9 +214,9 @@ class TestFrontendBackendMapper:
 
     def test_get_consumers_for_known_endpoint(self):
         mapper = FrontendBackendMapper(root=self._real_root())
-        result = mapper.build_consumer_map()
+        mapper.build_consumer_map()
         # Pick an endpoint we know exists.
-        sample_ep = "/api/accounts/manage"
+        sample_ep = "/api/v1/accounts"
         consumers = mapper.get_consumers_for_endpoint(sample_ep)
         # At minimum the hook file should appear.
         assert len(consumers) > 0
@@ -233,7 +228,7 @@ class TestFrontendBackendMapper:
         hook_file = self._real_root() / "frontend" / "lib" / "hooks" / "use-accounts.ts"
         endpoints = mapper.get_endpoints_for_file(hook_file)
         assert len(endpoints) > 0
-        assert "/api/accounts/manage" in endpoints
+        assert "/api/v1/accounts" in endpoints
 
     def test_get_endpoints_for_missing_file(self):
         mapper = FrontendBackendMapper(root=self._real_root())
@@ -307,7 +302,9 @@ class TestFrontendBackendMapper:
 
 def test_gate_1_1():
     """Gate 1.1: must map more than 10 endpoints."""
-    from runtime.foundation.verification.frontend_backend_map import FrontendBackendMapper
+    from runtime.foundation.verification.frontend_backend_map import (
+        FrontendBackendMapper,
+    )
 
     m = FrontendBackendMapper(root=Path(__file__).resolve().parent.parent.parent)
     r = m.build_consumer_map()

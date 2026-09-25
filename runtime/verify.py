@@ -26,6 +26,7 @@ from runtime.foundation.verification.control_plane_facade import (
 from runtime.system.observability.event_store import (  # noqa: E402, F401
     _normalize_status,
     _record_verification_event,
+    _resolve_repository_identity,
     decision_to_status,
     record_execution_report,
 )

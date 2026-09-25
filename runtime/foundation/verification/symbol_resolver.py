@@ -101,33 +101,45 @@ class SymbolExtractor:
             source = file_path.read_text(encoding="utf-8")
             tree = ast.parse(source, filename=str(file_path))
 
-            # Single-pass O(n) AST traversal to extract symbols
-            # Track parent class context as we walk
-            class_stack: list[str] = []
+            class Visitor(ast.NodeVisitor):
+                def __init__(self):
+                    self.class_stack = []
 
-            for node in ast.walk(tree):
-                if isinstance(node, ast.ClassDef):
-                    # Push class onto stack
-                    class_stack.append(node.name)
-                    symbols.append(Symbol(
-                        name=node.name,
-                        kind="class",
-                        file=file_path,
-                        start_line=node.lineno,
-                        end_line=node.end_lineno or node.lineno,
-                    ))
+                def visit_ClassDef(self, node):
+                    symbols.append(
+                        Symbol(
+                            name=node.name,
+                            kind="class",
+                            file=file_path,
+                            start_line=node.lineno,
+                            end_line=node.end_lineno or node.lineno,
+                        )
+                    )
+                    self.class_stack.append(node.name)
+                    self.generic_visit(node)
+                    self.class_stack.pop()
 
-                elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                    # Use current class context if any
-                    parent = class_stack[-1] if class_stack else None
-                    symbols.append(Symbol(
-                        name=node.name,
-                        kind="method" if parent else "function",
-                        file=file_path,
-                        start_line=node.lineno,
-                        end_line=node.end_lineno or node.lineno,
-                        parent_class=parent,
-                    ))
+                def visit_FunctionDef(self, node):
+                    self._function(node)
+
+                def visit_AsyncFunctionDef(self, node):
+                    self._function(node)
+
+                def _function(self, node):
+                    parent = self.class_stack[-1] if self.class_stack else None
+                    symbols.append(
+                        Symbol(
+                            name=node.name,
+                            kind="method" if parent else "function",
+                            file=file_path,
+                            start_line=node.lineno,
+                            end_line=node.end_lineno or node.lineno,
+                            parent_class=parent,
+                        )
+                    )
+                    self.generic_visit(node)
+
+            Visitor().visit(tree)
 
         except SyntaxError as e:
             logger.warning(f"Syntax error in {file_path}: {e}")
@@ -223,7 +235,6 @@ class CoverageSymbolMapper:
         file_to_symbols = {}
 
         for file_path, lines in covered_lines.items():
-            symbols = self.extractor.extract_from_file(file_path)
             covered_symbols = set()
 
             for line in lines:
@@ -256,7 +267,7 @@ class CoverageSymbolMapper:
             ]
 
             try:
-                result = subprocess.run(
+                subprocess.run(
                     cmd,
                     cwd=Path.cwd(),
                     capture_output=True,
@@ -324,7 +335,7 @@ class CoverageSymbolMapper:
                 return False
 
             # Check mtime of all test files referenced
-            for symbol_name, test_files in cached.items():
+            for _symbol_name, test_files in cached.items():
                 for test_file in test_files:
                     tf = Path(test_file)
                     if not tf.exists():

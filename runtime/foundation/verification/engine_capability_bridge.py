@@ -139,12 +139,10 @@ def register_engine_capabilities(registry: Any) -> int:
     newly_registered = 0
 
     for rec in records:
-        # Idempotency check.
         existing: list[Any] = []
         if hasattr(registry, "get_all_capabilities"):
             existing = list(registry.get_all_capabilities())
-        if any(c.id == rec.id for c in existing):
-            continue
+        already_registered = any(c.id == rec.id for c in existing)
 
         # Build requirements: one CRITICAL requirement per test surface.
         requirements = []
@@ -184,7 +182,8 @@ def register_engine_capabilities(registry: Any) -> int:
         )
 
         _registry_register(registry, cap)
-        newly_registered += 1
+        if not already_registered:
+            newly_registered += 1
 
     return newly_registered
 

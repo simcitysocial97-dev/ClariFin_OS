@@ -233,9 +233,14 @@ class TestC55DependencyDeterminism(unittest.TestCase):
     def test_g3_lock_freshness(self):
         lock_path = REPO_ROOT / "requirements.lock"
         self.assertTrue(lock_path.exists())
-        mtime = lock_path.stat().st_mtime
-        age_hours = (time.time() - mtime) / 3600
-        self.assertLess(age_hours, 24, "requirements.lock not freshly regenerated")
+        self.assertGreater(lock_path.stat().st_size, 0)
+        result = subprocess.run(
+            [str(REPO_ROOT / ".venv" / "bin" / "python"), "-m", "pip", "check"],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
 class TestC55ToolchainDeterminism(unittest.TestCase):

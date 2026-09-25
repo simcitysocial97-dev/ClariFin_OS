@@ -15,11 +15,7 @@ from __future__ import annotations
 
 import json
 import subprocess
-import tempfile
 from pathlib import Path
-from unittest.mock import patch
-
-import pytest
 
 import runtime.system.observability.event_store as es_mod
 import runtime.system.observability.repository as repo_mod
@@ -39,7 +35,7 @@ class TestGMypyBoundary:
         mypy_task = next(t for t in profile.tasks if t.id == "quick-mypy")
         cmd = mypy_task.commands[0]
         assert "cd backend" in cmd
-        assert "python3 -m mypy src/" in cmd
+        assert "../.venv/bin/python -m mypy src/" in cmd
         assert "mypy backend/src" not in cmd
 
     def test_backend_mypy_command_uses_backend_boundary(self) -> None:
@@ -47,20 +43,20 @@ class TestGMypyBoundary:
         mypy_task = next(t for t in profile.tasks if t.id == "backend-mypy")
         cmd = mypy_task.commands[0]
         assert "cd backend" in cmd
-        assert "python3 -m mypy src/" in cmd
+        assert "../.venv/bin/python -m mypy src/" in cmd
 
     def test_full_mypy_command_uses_backend_boundary(self) -> None:
         profile = get_profile("full")
         mypy_task = next(t for t in profile.tasks if t.id == "full-mypy")
         cmd = mypy_task.commands[0]
         assert "cd backend" in cmd
-        assert "python3 -m mypy src/" in cmd
+        assert "../.venv/bin/python -m mypy src/" in cmd
 
     def test_quick_mypy_actual_run_succeeds(self) -> None:
         """End-to-end: the fixed mypy command reaches backend source tree."""
         actual_repo = Path(__file__).resolve().parents[2]
         result = subprocess.run(
-            ["bash", "-c", "cd backend && python3 -m mypy src/"],
+            ["bash", "-c", "cd backend && ../.venv/bin/python -m mypy src/"],
             capture_output=True,
             text=True,
             cwd=str(actual_repo),
@@ -175,9 +171,6 @@ class TestG3CLIRunRecording:
 
     def test_interrupted_run_not_recorded(self) -> None:
         """Exit 130 (SIGINT) must not produce a VerificationCompleted event."""
-        from runtime.foundation.verification.control_plane_facade import (
-            _dispatch_canonical,
-        )
 
         # We simulate this by checking the exit-code guard logic directly.
         # The facade skips recording for exit codes 130 and 143.
