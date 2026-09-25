@@ -1,61 +1,105 @@
 {
   "milestone": "M9-C69",
-  "certification": "PASSED",
-  "certified_at": "2026-09-22T11:50:00Z",
-  "git_commit": "34c6c330",
-  "branch": "m9c9-merge-authorization-resolution",
-  "target_metrics": {
-    "CONTRACT_MISMATCHES": { "target": 0, "actual": 0, "status": "MET" },
-    "BROKEN_USER_FLOWS": { "target": 0, "actual": 0, "status": "MET" },
-    "UNCLASSIFIED_FLOWS": { "target": 0, "actual": 0, "status": "MET" },
-    "ACTIVE_TYPESCRIPT_ERRORS": { "target": 0, "actual": 0, "status": "MET" },
-    "BUILD_ERRORS": { "target": 0, "actual": 0, "status": "MET" },
-    "UNEXPLAINED_TEST_FAILURES": { "target": 0, "actual": 0, "status": "MET" },
-    "UNEXPLAINED_COMMAND_DISCREPANCIES": { "target": 0, "actual": 0, "status": "MET" },
-    "RUNTIME_AUTHORITY_DRIFT": { "target": 0, "actual": 0, "status": "MET" }
+  "name": "API CONTRACT, INTEGRATION & APPLICATION CONVERGENCE",
+  "certification_sha": "06bf5b12",
+  "baseline_sha": "7e6d9650",
+  "tree_sha": "68432e3dd6c6ba8626a9201bce63ab5dfe3dec0a",
+  "timestamp": "2026-09-25T03:47:55Z",
+  "backend": {
+    "endpoint_count": 189,
+    "unit_tests_passed": 2982,
+    "integration_tests_passed": 79,
+    "unit_tests_failed": 0,
+    "integration_tests_failed": 0,
+    "platform_api_tests_passed": 20
   },
-  "test_summary": {
-    "backend_unit": { "passed": 2950, "failed": 0, "total": 2950 },
-    "backend_integration": { "passed": 64, "failed": 0, "total": 64 },
-    "frontend_unit": { "passed": 1366, "failed": 0, "total": 1366 },
-    "frontend_typecheck": { "errors": 0 },
-    "lint": { "errors": 0, "warnings": 172 }
+  "frontend": {
+    "route_count": 14,
+    "consumed_api_paths": 56,
+    "typescript_errors": 0,
+    "lint_errors": 0,
+    "lint_warnings": 172,
+    "build_success": true,
+    "unit_tests_passed": 1367,
+    "unit_tests_failed": 0
   },
-  "phases_completed": [
-    "Phase 0: Freeze and Reconcile C68",
-    "Phase 1: API Contract Reconciliation",
-    "Phase 2: User Flow Inventory",
-    "Phase 3: Real API Integration",
-    "Phase 4: Mutation Flow Audit",
-    "Phase 5: Error Contract Audit",
-    "Phase 6: Money and Data Semantics",
-    "Phase 7: Platform Console Integration",
-    "Phase 8: Frontend Route Convergence",
-    "Phase 9: Test Actual Flows",
-    "Phase 10: E2E Environment",
-    "Phase 11: Backend/Frontend Drift Check",
-    "Phase 12: Local Full Stack Validation",
-    "Phase 13: Command/Output Discrepancy Analysis",
-    "Phase 14: CI Parity Preparation",
-    "Phase 15: Fix Only Real Findings",
-    "Phase 16: Final Certification"
+  "user_facing_flows": {
+    "total_inventoried": 18,
+    "complete": 15,
+    "partial": 2,
+    "broken": 0,
+    "untested": 0,
+    "internal": 1,
+    "deprecated": 0,
+    "platform_only": 0
+  },
+  "contract": {
+    "mismatches_total": 0,
+    "mismatches_classified": {
+      "INTERNAL": 0,
+      "DEPRECATED": 0,
+      "PLATFORM_ONLY": 0,
+      "EXTERNAL_BOUNDARY": 0,
+      "MIGRATION_SUPPORT": 0
+    }
+  },
+  "mutations": {
+    "total_inventoried": 8,
+    "verified": 8,
+    "gaps": 0
+  },
+  "error_contract": {
+    "endpoints_tested": 6,
+    "gaps": 0
+  },
+  "data_semantics": {
+    "money_mismatches": 0,
+    "date_mismatches": 0,
+    "enum_mismatches": 0,
+    "nullable_mismatches": 0
+  },
+  "stale_frontend_references": 0,
+  "build_errors": 0,
+  "runtime_health": "HEALTHY",
+  "framework_authority": "COHERENT",
+  "local_ci_workflow_results": {
+    "backend_unit": "PASS",
+    "backend_integration": "PASS",
+    "frontend_typecheck": "PASS",
+    "frontend_lint": "PASS",
+    "frontend_tests": "PASS",
+    "frontend_build": "PASS"
+  },
+  "external_boundary_items": [
+    "PLAYWRIGHT_BROWSER_UNAVAILABLE - Playwright browser revision 1243 not installed locally; CI pins 1.58.2; local revision 1234"
   ],
-  "key_fixes": {
-    "P0_path_resolution": "Fixed Path.cwd() → module-relative in 3 verification modules (typescript_symbol_resolver.py, frontend_capability_discovery.py, cross_layer_graph.py)",
-    "P0_gateway_invariance": "Fixed 7 raw fetch() violations across platform console pages and hooks",
-    "TEST_DEFECT_test_patterns": "Fixed React Query v5 test patterns in 8 test files (mockResolvedValueOnce→mockResolvedValue, waitFor pattern, retry:false)",
-    "TEST_DEFECT_typescript_mocks": "Resolved 104 TypeScript errors with enterprise-grade mock Response factory (createMockResponse/createMockErrorResponse)",
-    "TEST_DEFECT_contract_timeout": "Extended contract test timeout to 120s for slow platform endpoints",
-    "TEST_DEFECT_backend_assertion": "Fixed hardcoded open_count assertion (13→64) in Phase 3 integration test"
+  "unresolved_findings": [
+    "SIM102 style warnings in capability_resolver.py (pre-existing, 4 occurrences)",
+    "W293 blank line whitespace in capability_resolver.py and cross_layer_graph.py (pre-existing, 12 occurrences)",
+    "172 ESLint warnings (pre-existing, no errors)"
+  ],
+  "deferred_findings": [
+    "Full E2E test suite requires Playwright browser installation",
+    "Mutation campaign not run locally (C69 scope)"
+  ],
+  "targets": {
+    "CONTRACT_MISMATCHES": 0,
+    "BROKEN_USER_FLOWS": 0,
+    "UNCLASSIFIED_FLOWS": 0,
+    "ACTIVE_TYPESCRIPT_ERRORS": 0,
+    "BUILD_ERRORS": 0,
+    "UNEXPLAINED_TEST_FAILURES": 0,
+    "UNEXPLAINED_COMMAND_DISCREPANCIES": 0,
+    "RUNTIME_AUTHORITY_DRIFT": 0
   },
-  "artifacts": {
-    "contract_audit": "runtime/generated/m9-c69-integration-convergence/contract-audit.json",
-    "flow_inventory": "runtime/generated/m9-c69-integration-convergence/flow-inventory.json",
-    "mutation_flow_audit": "runtime/generated/m9-c69-integration-convergence/mutation-flow-audit.json",
-    "error_contract_audit": "runtime/generated/m9-c69-integration-convergence/error-contract-audit.json",
-    "integration_gap_ledger": "runtime/generated/m9-c69-integration-convergence/integration-gap-ledger.json",
-    "mutation_flow_audit": "runtime/generated/m9-c69-integration-convergence/mutation-flow-audit.json",
-    "test_results": "runtime/generated/m9-c69-integration-convergence/test-results.json",
-    "progress": "runtime/generated/m9-c69-integration-convergence/progress.md"
-  }
+  "evidence_artifacts": [
+    "runtime/generated/m9-c69-integration-convergence/baseline.json",
+    "runtime/generated/m9-c69-integration-convergence/contract-audit.json",
+    "runtime/generated/m9-c69-integration-convergence/flow-inventory.json",
+    "runtime/generated/m9-c69-integration-convergence/integration-gap-ledger.json",
+    "runtime/generated/m9-c69-integration-convergence/mutation-flow-audit.json",
+    "runtime/generated/m9-c69-integration-convergence/error-contract-audit.json",
+    "runtime/generated/m9-c69-integration-convergence/test-results.json",
+    "runtime/generated/m9-c69-integration-convergence/progress.md"
+  ]
 }
