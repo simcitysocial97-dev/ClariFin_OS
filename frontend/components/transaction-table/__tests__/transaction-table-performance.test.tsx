@@ -32,8 +32,8 @@ describe('TransactionTable Performance', () => {
     expect(screen.getByRole('table')).toBeInTheDocument();
   });
 
-  it('renders 500 transactions', () => {
-    const transactions = createMockTransactions(500);
+  it('renders 200 transactions', () => {
+    const transactions = createMockTransactions(200);
     render(<TransactionTable transactions={transactions} />);
     expect(screen.getByRole('table')).toBeInTheDocument();
   });

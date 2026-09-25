@@ -114,7 +114,7 @@ export function useCashflowCapability(): CashflowCapabilityReturn {
   } = useQuery<CashflowViewModel | null>({
     queryKey: [CASHFLOW_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const raw = await apiFetchJson('/api/v1/cashflow') as any;
+      const raw = await apiFetchJson('/api/v1/workspaces/cashflow') as any;
       return cashflowMapper.mapCashflowDTO(raw);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes

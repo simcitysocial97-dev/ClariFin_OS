@@ -12,7 +12,7 @@ from fastapi import APIRouter, Query
 from src.services.reconciliation_workspace_service import ReconciliationWorkspaceService
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/api/v1", tags=["reconciliation-workspace"])
+router = APIRouter(prefix="/api/v1/workspaces", tags=["reconciliation-workspace"])
 
 
 def _timed_log(

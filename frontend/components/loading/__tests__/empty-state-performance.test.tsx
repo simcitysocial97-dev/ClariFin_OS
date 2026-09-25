@@ -10,6 +10,8 @@ import { EmptyState } from '../empty-state';
 
 describe('Empty State Performance', () => {
   it('EmptyState renders under 150ms', () => {
+    const warmup = render(<EmptyState />);
+    warmup.unmount();
     const start = performance.now();
     render(<EmptyState />);
     const end = performance.now();

@@ -109,7 +109,12 @@ export function useNetWorthCapability(): NetWorthCapabilityReturn {
   } = useQuery<NetWorthViewModel | null>({
     queryKey: [NET_WORTH_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const raw = await apiFetchJson('/api/v1/net-worth') as any;
+      const query = new URLSearchParams();
+      if (queryParams.date_range) query.set('date_range', queryParams.date_range);
+      if (queryParams.account_types) query.set('account_types', queryParams.account_types);
+      if (queryParams.period) query.set('period', queryParams.period);
+      const suffix = query.size > 0 ? `?${query.toString()}` : '';
+      const raw = await apiFetchJson(`/api/v1/workspaces/net-worth${suffix}`) as any;
       return netWorthMapper.mapNetWorthDTO(raw);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes

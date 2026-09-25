@@ -31,6 +31,7 @@ class TaskListData(BaseModel):
     open_count: int = Field(ge=0)
     closed_count: int = Field(ge=0)
     items: list[TaskListItem] = Field(default_factory=list)
+    plan_fingerprint: str = Field(min_length=1, max_length=128)
 
 
 class TaskListEnvelope(BaseModel):

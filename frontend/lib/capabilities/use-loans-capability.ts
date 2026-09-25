@@ -116,7 +116,12 @@ export function useLoansCapability(): LoansCapabilityReturn {
   } = useQuery<LoansViewModel | null>({
     queryKey: [LOANS_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const raw = await apiFetchJson('/api/v1/loans') as any;
+      const query = new URLSearchParams();
+      if (queryParams.loan_types) query.set('loan_types', queryParams.loan_types);
+      if (queryParams.lenders) query.set('lenders', queryParams.lenders);
+      if (queryParams.statuses) query.set('statuses', queryParams.statuses);
+      const suffix = query.size > 0 ? `?${query.toString()}` : '';
+      const raw = await apiFetchJson(`/api/v1/workspaces/loans${suffix}`) as any;
       return loansMapper.mapLoansDTO(raw);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes

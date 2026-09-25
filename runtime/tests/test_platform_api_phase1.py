@@ -479,6 +479,7 @@ class TestTasksContract:
                 "open_count": 0,
                 "closed_count": 0,
                 "items": [],
+                "plan_fingerprint": "test-plan",
             },
         )
         parsed = tasks.TaskListEnvelope.model_validate(env)

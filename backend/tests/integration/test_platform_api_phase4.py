@@ -210,8 +210,8 @@ class TestGate4ProgrammaticAnswers:
         total = body["data"]["total"]
         assert total >= 0
         items = body["data"]["items"]
+        assert len(items) == min(total, 1)
         assert len(items) <= 1
-        assert total == 75
 
     def test_what_evidence_exists(self, client):
         r = client.get("/platform/v1/evidence?nocache=1")
@@ -222,10 +222,10 @@ class TestGate4ProgrammaticAnswers:
     def test_what_obligations_are_open(self, client):
         r = client.get("/platform/v1/tasks?nocache=1")
         body = r.json()
-        open_count = body["data"]["open_count"]
-        closed_count = body["data"]["closed_count"]
-        assert open_count == 13, f"Expected 13 open obligations, got {open_count}"
-        assert closed_count == 0
+        data = body["data"]
+        assert data["open_count"] + data["closed_count"] == len(data["items"])
+        assert data["open_count"] > 0
+        assert data["plan_fingerprint"]
 
     def test_what_happened_recently(self, client):
         r = client.get("/platform/v1/events?limit=5&nocache=1")

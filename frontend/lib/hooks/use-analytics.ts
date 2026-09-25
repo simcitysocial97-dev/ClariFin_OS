@@ -5,7 +5,7 @@ import { AnalyticsSchema, type Analytics } from '@/lib/schemas/analytics'
 
 // 🛡️ Data fetching function utilizing Zod runtime parsing
 async function fetchAnalytics(): Promise<Analytics> {
-  const response = await apiFetch(`/api/analytics`)
+  const response = await apiFetch(`/api/v1/analytics`)
   if (!response.ok) throw new Error(`Analytics fetch failed: ${response.status}`)
   
   // This is unverified raw payload from the network

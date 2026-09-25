@@ -112,7 +112,11 @@ export function useReconciliationCapability(): ReconciliationCapabilityReturn {
   } = useQuery<ReconciliationViewModel | null>({
     queryKey: [RECONCILIATION_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const raw = await apiFetchJson('/api/v1/reconciliation') as any;
+      const query = new URLSearchParams();
+      if (queryParams.status) query.set('status', queryParams.status);
+      if (queryParams.banks) query.set('banks', queryParams.banks);
+      const suffix = query.size > 0 ? `?${query.toString()}` : '';
+      const raw = await apiFetchJson(`/api/v1/workspaces/reconciliation${suffix}`) as any;
       return reconciliationMapper.mapReconciliationDTO(raw);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes

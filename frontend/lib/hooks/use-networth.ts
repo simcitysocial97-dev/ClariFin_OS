@@ -3,30 +3,59 @@ import { apiFetch } from '@/lib/api/gateway';
 import { z } from 'zod'
 
 
+const NetWorthBreakdownItemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  type: z.string(),
+  balance_paise: z.number().int(),
+  percentage: z.number(),
+  contribution_paise: z.number().int(),
+})
+
 const NetWorthSchema = z.object({
-  net_worth_paise: z.number().int(),
-  assets: z.object({
-    total_paise: z.number().int(),
-    accounts_paise: z.number().int(),
-    investments_paise: z.number().int(),
-    account_count: z.number(),
-    investment_count: z.number(),
+  total_net_worth_paise: z.number().int(),
+  total_assets_paise: z.number().int(),
+  total_liabilities_paise: z.number().int(),
+  composition: z.object({
+    total_assets_paise: z.number().int(),
+    total_liabilities_paise: z.number().int(),
+    asset_breakdown: z.array(NetWorthBreakdownItemSchema),
+    liability_breakdown: z.array(NetWorthBreakdownItemSchema),
   }),
-  liabilities: z.object({
-    total_paise: z.number().int(),
-    loans_paise: z.number().int(),
-    cards_paise: z.number().int(),
-    loan_count: z.number(),
-    card_count: z.number(),
-  }),
-  is_partial: z.boolean(),
-  partial_reason: z.string().nullable(),
+  trend: z.object({
+    direction: z.enum(['up', 'down', 'flat']),
+    percentage_change: z.number(),
+    period: z.string(),
+  }).nullable().optional(),
+  insights: z.array(z.object({
+    type: z.enum(['positive', 'warning', 'info', 'alert']),
+    severity: z.enum(['low', 'medium', 'high']),
+    message: z.string(),
+    action_url: z.string().optional(),
+  })),
+  evidence_chain: z.object({
+    summary: z.string(),
+    evidence: z.array(z.object({
+      type: z.string(),
+      summary: z.string(),
+      source: z.string(),
+      confidence: z.number().optional(),
+    })),
+    calculation_steps: z.array(z.object({
+      name: z.string(),
+      description: z.string(),
+      inputs: z.record(z.string(), z.unknown()),
+      outputs: z.record(z.string(), z.unknown()),
+    })),
+    source_references: z.array(z.string()),
+    confidence_score: z.number(),
+  }).nullable().optional(),
 })
 
 export type NetWorth = z.infer<typeof NetWorthSchema>
 
 async function fetchNetWorth() {
-  const res = await apiFetch(`/api/networth`)
+  const res = await apiFetch(`/api/v1/net-worth`)
   if (!res.ok) throw new Error('Failed to fetch net worth')
   
   // This is unverified raw payload from the network

@@ -112,7 +112,11 @@ export function useCreditCardsCapability(): CreditCardsCapabilityReturn {
   } = useQuery<CreditCardsViewModel | null>({
     queryKey: [CREDIT_CARDS_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const raw = await apiFetchJson('/api/v1/credit-cards') as any;
+      const query = new URLSearchParams();
+      if (queryParams.statuses) query.set('statuses', queryParams.statuses);
+      if (queryParams.banks) query.set('banks', queryParams.banks);
+      const suffix = query.size > 0 ? `?${query.toString()}` : '';
+      const raw = await apiFetchJson(`/api/v1/workspaces/credit-cards${suffix}`) as any;
       return creditCardsMapper.mapCreditCardsDTO(raw);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes

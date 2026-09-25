@@ -11,6 +11,7 @@ plane remains the single authority for state-changing operations.
 
 from __future__ import annotations
 
+import hashlib
 from typing import Any
 
 from runtime.foundation.verification.control_plane_facade import (
@@ -25,7 +26,21 @@ from runtime.platform.api.services._helpers import envelope, now_iso
 __all__ = [
     "build_task_list",
     "build_task_detail",
+    "current_plan_fingerprint",
 ]
+
+
+def current_plan_fingerprint() -> str:
+    """Cheaply return the live obligation-set plan fingerprint.
+
+    Mirrors the ``plan_id`` derivation in the control plane
+    (``sha256(sorted(changed_files))[:12]``) without building the full
+    plan. Callers use this to detect that a cached task list has drifted
+    from the live git state and must be rebuilt.
+    """
+
+    files = _collect_changed_files()
+    return hashlib.sha256("\n".join(sorted(files)).encode()).hexdigest()[:12]
 
 
 def _build_obligation_set() -> ObligationSet:
@@ -93,6 +108,7 @@ def build_task_list() -> dict[str, Any]:
         "open_count": open_count,
         "closed_count": closed_count,
         "items": items,
+        "plan_fingerprint": oset.plan_fingerprint,
     }
     return envelope(kind=tasks_contract.TASK_LIST_KIND, data=data)
 

@@ -6,7 +6,7 @@ import { CardsDataSchema, type CardsData, type CardSummary } from '@/lib/schemas
 
 // 🛡️ Data fetching function utilizing Zod runtime parsing
 async function fetchCards(): Promise<CardsData> {
-  const response = await apiFetch(`/api/cards`)
+  const response = await apiFetch(`/api/v1/cards`)
   if (!response.ok) throw new Error(`Cards fetch failed: ${response.status}`)
 
   // This is unverified raw payload from the network

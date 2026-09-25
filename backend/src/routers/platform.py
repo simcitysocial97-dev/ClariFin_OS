@@ -244,15 +244,34 @@ async def get_capability_graph(capability_id: str) -> JSONResponse:
 # ---------------------------------------------------------------------------
 
 
+def _current_tasks_list() -> dict[str, Any]:
+    """Return a task list consistent with the current live obligation set.
+
+    Serves the cached list when its ``plan_fingerprint`` matches the live
+    git-derived plan; otherwise rebuilds and re-caches so the list never
+    lags the live set (which would otherwise make list and detail disagree).
+    """
+
+    cached = snapshot.get("tasks")
+    if (
+        cached is not None
+        and cached.get("data", {}).get("plan_fingerprint")
+        == tasks.current_plan_fingerprint()
+    ):
+        return cached
+    env = tasks.build_task_list()
+    snapshot.put("tasks", env)
+    return env
+
+
 @router.get("/tasks")
 async def list_tasks(request: Request) -> JSONResponse:
     nocache = _query_nocache(request)
-    cached = snapshot.get("tasks", nocache=nocache)
-    if cached is not None:
-        return _ok(cached)
-    env = tasks.build_task_list()
-    snapshot.put("tasks", env)
-    return _ok(env)
+    if nocache:
+        env = tasks.build_task_list()
+        snapshot.put("tasks", env)
+        return _ok(env)
+    return _ok(_current_tasks_list())
 
 
 @router.get("/tasks/{task_id}")

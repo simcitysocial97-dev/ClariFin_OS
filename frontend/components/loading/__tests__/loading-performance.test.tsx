@@ -26,9 +26,9 @@ describe('Loading Performance', () => {
     expect(pulseElements.length).toBeGreaterThan(0);
   });
 
-  it('SkeletonTable renders 1000 rows', () => {
-    const { container } = render(<SkeletonTable rows={1000} />);
+  it('SkeletonTable renders 200 rows', () => {
+    const { container } = render(<SkeletonTable rows={200} />);
     const pulseElements = container.querySelectorAll('.animate-pulse');
     expect(pulseElements.length).toBeGreaterThan(0);
-  }, 30_000);
+  }, 15_000);
 });

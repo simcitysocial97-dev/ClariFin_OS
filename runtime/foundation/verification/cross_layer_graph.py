@@ -435,7 +435,7 @@ class CrossLayerGraphBuilder:
             canonical_key = fe["normalized"].canonical_path
 
             if canonical_key in backend_by_canonical:
-                be = backend_by_canonical[canonical_key]
+                backend_by_canonical[canonical_key]
                 # Semantic match - endpoints are equivalent after normalization
                 # No drift created; provenance preserved in edge metadata
                 # (Edge already created in _build_frontend_to_backend_edges)

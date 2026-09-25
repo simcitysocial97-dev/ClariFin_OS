@@ -4,34 +4,26 @@ import { z } from 'zod'
 
 
 const InvestmentSchema = z.object({
-  id: z.number(),
+  id: z.union([z.string(), z.number()]),
   name: z.string(),
-  investment_type: z.string(),
-  platform: z.string().nullable(),
-  invested_paise: z.number().int(),
+  type: z.string(),
+  institution: z.string(),
   current_value_paise: z.number().int(),
-  units: z.number().nullable(),
-  buy_price_paise: z.number().int().nullable(),
-  current_price_paise: z.number().int().nullable(),
-  as_of_date: z.string().nullable(),
-  is_active: z.boolean(),
-  notes: z.string().nullable(),
-  last_updated: z.string().optional(),
-  created_at: z.string(),
-})
-
-const InvestmentSummarySchema = z.object({
-  total_investments: z.number(),
-  total_invested_paise: z.number().int(),
-  total_current_value_paise: z.number().int(),
-  total_gain_paise: z.number().int(),
-  gain_percent: z.number(),
-  allocation_by_type: z.record(z.string(), z.number().int()),
+  invested_paise: z.number().int(),
+  returns_paise: z.number().int(),
+  returns_percentage: z.number(),
+  returns_ytd_bps: z.number().int(),
+  status: z.enum(['active', 'closed', 'matured']),
 })
 
 const InvestmentsResponseSchema = z.object({
   investments: z.array(InvestmentSchema),
-  summary: InvestmentSummarySchema,
+  total_value_paise: z.number().int(),
+  total_invested_paise: z.number().int(),
+  total_returns_paise: z.number().int(),
+  investment_count: z.number().int().nonnegative(),
+  insights: z.array(z.record(z.string(), z.unknown())),
+  evidence_chain: z.unknown().nullable(),
 })
 
 export type Investment = z.infer<typeof InvestmentSchema>
@@ -50,7 +42,7 @@ export interface CreateInvestmentInput {
 }
 
 async function fetchInvestments() {
-  const res = await apiFetch(`/api/investments`)
+  const res = await apiFetch(`/api/v1/investments`)
   if (!res.ok) throw new Error('Failed to fetch investments')
   
   // This is unverified raw payload from the network
@@ -69,7 +61,7 @@ async function fetchInvestments() {
 }
 
 async function createInvestment(input: CreateInvestmentInput) {
-  const res = await apiFetch(`/api/investments`, {
+  const res = await apiFetch(`/api/v1/investments`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
@@ -79,7 +71,7 @@ async function createInvestment(input: CreateInvestmentInput) {
 }
 
 async function updateInvestment(id: string, input: Partial<CreateInvestmentInput>) {
-  const res = await apiFetch(`/api/investments/${id}`, {
+  const res = await apiFetch(`/api/v1/investments/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
@@ -89,7 +81,7 @@ async function updateInvestment(id: string, input: Partial<CreateInvestmentInput
 }
 
 async function deleteInvestment(id: string) {
-  const res = await apiFetch(`/api/investments/${id}`, { method: 'DELETE' })
+  const res = await apiFetch(`/api/v1/investments/${id}`, { method: 'DELETE' })
   if (!res.ok) throw new Error('Failed to delete investment')
   return res.json()
 }

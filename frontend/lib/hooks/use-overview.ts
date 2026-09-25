@@ -5,7 +5,7 @@ import { OverviewSchema, type Overview } from '@/lib/schemas/overview'
 
 // 🛡️ Data fetching function utilizing Zod runtime parsing
 async function fetchOverview(): Promise<Overview> {
-  const response = await apiFetch(`/api/overview`)
+  const response = await apiFetch(`/api/v1/overview`)
   if (!response.ok) throw new Error(`Overview fetch failed: ${response.status}`)
 
   // This is unverified raw payload from the network

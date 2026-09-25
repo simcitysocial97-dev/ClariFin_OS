@@ -322,7 +322,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/audit/report": {
+    "/api/v1/audit/report": {
         parameters: {
             query?: never;
             header?: never;
@@ -342,7 +342,7 @@ export interface paths {
          *             "hash_verification": {...}
          *         }
          */
-        get: operations["api_audit_report_api_audit_report_get"];
+        get: operations["api_audit_report_api_v1_audit_report_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -351,7 +351,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/banks": {
+    "/api/v1/banks": {
         parameters: {
             query?: never;
             header?: never;
@@ -365,7 +365,7 @@ export interface paths {
          *     Returns:
          *         List of unique bank names
          */
-        get: operations["get_banks_api_banks_get"];
+        get: operations["get_banks_api_v1_banks_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -388,7 +388,7 @@ export interface paths {
          *     Returns financial personality classification based on transaction and account data.
          *
          *     Args:
-         *         household_id: Household identifier (default: "default")
+         *         household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
          *
          *     Returns:
          *         FinancialProfileResponse with profile classification
@@ -416,7 +416,7 @@ export interface paths {
          *     Returns wellness score with band classification and component breakdown.
          *
          *     Args:
-         *         household_id: Household identifier (default: "default")
+         *         household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
          *
          *     Returns:
          *         WellnessScoreResponse with score, band, and components
@@ -444,7 +444,7 @@ export interface paths {
          *     Returns FOIR, credit dependency ratio, debt cycle score, and revolver ratio.
          *
          *     Args:
-         *         household_id: Household identifier (default: "default")
+         *         household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
          *
          *     Returns:
          *         DebtHealthResponse with debt health metrics
@@ -472,7 +472,7 @@ export interface paths {
          *     Returns cashflow stability index, income/expense stability, and monthly surplus.
          *
          *     Args:
-         *         household_id: Household identifier (default: "default")
+         *         household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
          *
          *     Returns:
          *         CashflowHealthResponse with cashflow health metrics
@@ -500,7 +500,7 @@ export interface paths {
          *     Returns patterns like impulse spending and subscriptions with strength scores.
          *
          *     Args:
-         *         household_id: Household identifier (default: "default")
+         *         household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
          *         pattern_type: Optional filter for specific pattern type
          *         days: Number of days to look back (1-365, default: 30)
          *
@@ -530,7 +530,7 @@ export interface paths {
          *     Returns actionable recommendations sorted by severity.
          *
          *     Args:
-         *         household_id: Household identifier (default: "default")
+         *         household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
          *         limit: Maximum number of recommendations to return (1-50, default: 10)
          *         severity: Optional filter for specific severity level
          *
@@ -561,7 +561,7 @@ export interface paths {
          *
          *     Args:
          *         period: Period in YYYY-MM format (default: current month)
-         *         household_id: Household identifier (default: "default")
+         *         household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
          *
          *     Returns:
          *         MonthlySummaryResponse with comprehensive financial summary
@@ -597,7 +597,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/statements": {
+    "/api/v1/statements": {
         parameters: {
             query?: never;
             header?: never;
@@ -608,7 +608,7 @@ export interface paths {
          * Get Statements
          * @description Get all statements with metadata.
          */
-        get: operations["get_statements_api_statements_get"];
+        get: operations["get_statements_api_v1_statements_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -617,7 +617,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/cards": {
+    "/api/v1/cards": {
         parameters: {
             query?: never;
             header?: never;
@@ -630,7 +630,7 @@ export interface paths {
          *     Groups statements by card_last4 and bank.
          *     Returns one entry per unique card with latest statement data.
          */
-        get: operations["get_cards_api_cards_get"];
+        get: operations["get_cards_api_v1_cards_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -639,7 +639,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/statements/{statement_id}/validate": {
+    "/api/v1/statements/{statement_id}/validate": {
         parameters: {
             query?: never;
             header?: never;
@@ -650,7 +650,7 @@ export interface paths {
          * Api Validate Statement
          * @description Validate a statement's closing balance against computed balance.
          */
-        get: operations["api_validate_statement_api_statements__statement_id__validate_get"];
+        get: operations["api_validate_statement_api_v1_statements__statement_id__validate_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -667,12 +667,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get Credit Cards
-         * @description Get credit cards summary for the Credit Cards Intelligence Workspace.
-         *
-         *     Returns aggregated data matching CreditCardsViewModel format.
+         * List Cards
+         * @description Get all active credit cards.
          */
-        get: operations["get_credit_cards_api_v1_credit_cards_get"];
+        get: operations["list_cards_api_v1_credit_cards_get"];
         put?: never;
         /**
          * Create Card
@@ -882,7 +880,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/cashflow": {
+    "/api/v1/workspaces/credit-cards": {
         parameters: {
             query?: never;
             header?: never;
@@ -890,74 +888,12 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get Cashflow
-         * @description Returns cashflow summary with total income, expenses, and net cashflow.
-         *     All monetary values in paise (INTEGER).
+         * Get Credit Cards
+         * @description Get credit cards summary for the Credit Cards Intelligence Workspace.
+         *
+         *     Returns aggregated data matching CreditCardsViewModel format.
          */
-        get: operations["get_cashflow_api_cashflow_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/cashflow/monthly": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Cashflow Monthly
-         * @description Returns month-by-month income and expense aggregation.
-         *     All monetary values in paise (INTEGER).
-         */
-        get: operations["get_cashflow_monthly_api_cashflow_monthly_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/cashflow/categories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Cashflow Categories
-         * @description Returns category breakdown for cashflow.
-         *     All monetary values in paise (INTEGER).
-         */
-        get: operations["get_cashflow_categories_api_cashflow_categories_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/cashflow/transactions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Cashflow Transactions
-         * @description Returns transactions for cashflow view.
-         *     All monetary values in paise (INTEGER).
-         */
-        get: operations["get_cashflow_transactions_api_cashflow_transactions_get"];
+        get: operations["get_credit_cards_api_v1_workspaces_credit_cards_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -975,10 +911,8 @@ export interface paths {
         };
         /**
          * Get Cashflow
-         * @description Get cashflow summary for the Cashflow Truth Workspace.
-         *
-         *     Returns aggregated data matching CashflowViewModel format.
-         *     All monetary values in paise (integer).
+         * @description Returns cashflow summary with total income, expenses, and net cashflow.
+         *     All monetary values in paise (INTEGER).
          */
         get: operations["get_cashflow_api_v1_cashflow_get"];
         put?: never;
@@ -989,7 +923,93 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/dashboard/summary": {
+    "/api/v1/cashflow/monthly": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Cashflow Monthly
+         * @description Returns month-by-month income and expense aggregation.
+         *     All monetary values in paise (INTEGER).
+         */
+        get: operations["get_cashflow_monthly_api_v1_cashflow_monthly_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cashflow/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Cashflow Categories
+         * @description Returns category breakdown for cashflow.
+         *     All monetary values in paise (INTEGER).
+         */
+        get: operations["get_cashflow_categories_api_v1_cashflow_categories_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cashflow/transactions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Cashflow Transactions
+         * @description Returns transactions for cashflow view.
+         *     All monetary values in paise (INTEGER).
+         */
+        get: operations["get_cashflow_transactions_api_v1_cashflow_transactions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/workspaces/cashflow": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Cashflow
+         * @description Get cashflow summary for the Cashflow Truth Workspace.
+         *
+         *     Returns aggregated data matching CashflowViewModel format.
+         *     All monetary values in paise (integer).
+         */
+        get: operations["get_cashflow_api_v1_workspaces_cashflow_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/dashboard/summary": {
         parameters: {
             query?: never;
             header?: never;
@@ -1009,7 +1029,7 @@ export interface paths {
          *     - reconciliation_pending: Count of pending transfers
          *     - large_transactions: Significant transactions (>= ₹10,000)
          */
-        get: operations["api_dashboard_summary_api_dashboard_summary_get"];
+        get: operations["api_dashboard_summary_api_v1_dashboard_summary_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1018,7 +1038,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/export/csv": {
+    "/api/v1/export/csv": {
         parameters: {
             query?: never;
             header?: never;
@@ -1032,7 +1052,7 @@ export interface paths {
          *     Returns:
          *         Path to the generated CSV file
          */
-        get: operations["export_csv_api_export_csv_get"];
+        get: operations["export_csv_api_v1_export_csv_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1041,7 +1061,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/financial-events/": {
+    "/api/v1/financial-events/": {
         parameters: {
             query?: never;
             header?: never;
@@ -1053,21 +1073,21 @@ export interface paths {
          * @description List events, optionally filtered by month_bucket.
          *     Returns list of event dicts with link information.
          */
-        get: operations["list_events_api_financial_events__get"];
+        get: operations["list_events_api_v1_financial_events__get"];
         put?: never;
         /**
          * Create Event
          * @description Create a FinancialEvent and persist it.
          *     Returns the database ID of the created event.
          */
-        post: operations["create_event_api_financial_events__post"];
+        post: operations["create_event_api_v1_financial_events__post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/financial-events/{event_id}": {
+    "/api/v1/financial-events/{event_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1078,7 +1098,7 @@ export interface paths {
          * Get Event
          * @description Get a specific event by ID.
          */
-        get: operations["get_event_api_financial_events__event_id__get"];
+        get: operations["get_event_api_v1_financial_events__event_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1349,7 +1369,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/upload": {
+    "/api/v1/upload": {
         parameters: {
             query?: never;
             header?: never;
@@ -1362,14 +1382,14 @@ export interface paths {
          * Upload Statement
          * @description Upload and process a PDF statement.
          */
-        post: operations["upload_statement_api_upload_post"];
+        post: operations["upload_statement_api_v1_upload_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/import/detect": {
+    "/api/v1/import/detect": {
         parameters: {
             query?: never;
             header?: never;
@@ -1382,14 +1402,14 @@ export interface paths {
          * Import Detect
          * @description Detect CSV/Excel format.
          */
-        post: operations["import_detect_api_import_detect_post"];
+        post: operations["import_detect_api_v1_import_detect_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/import/execute": {
+    "/api/v1/import/execute": {
         parameters: {
             query?: never;
             header?: never;
@@ -1402,56 +1422,8 @@ export interface paths {
          * Import Execute
          * @description Execute CSV/Excel import.
          */
-        post: operations["import_execute_api_import_execute_post"];
+        post: operations["import_execute_api_v1_import_execute_post"];
         delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/investments": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Investments
-         * @description Get all investments with calculated returns.
-         */
-        get: operations["get_investments_api_investments_get"];
-        put?: never;
-        /**
-         * Create Investment
-         * @description Create a new investment.
-         */
-        post: operations["create_investment_api_investments_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/investments/{investment_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /**
-         * Update Investment
-         * @description Update an investment.
-         */
-        put: operations["update_investment_api_investments__investment_id__put"];
-        post?: never;
-        /**
-         * Delete Investment
-         * @description Delete an investment.
-         */
-        delete: operations["delete_investment_api_investments__investment_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1466,239 +1438,61 @@ export interface paths {
         };
         /**
          * Get Investments
+         * @description Get all investments with calculated returns.
+         */
+        get: operations["get_investments_api_v1_investments_get"];
+        put?: never;
+        /**
+         * Create Investment
+         * @description Create a new investment.
+         */
+        post: operations["create_investment_api_v1_investments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/investments/{investment_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update Investment
+         * @description Update an investment.
+         */
+        put: operations["update_investment_api_v1_investments__investment_id__put"];
+        post?: never;
+        /**
+         * Delete Investment
+         * @description Delete an investment.
+         */
+        delete: operations["delete_investment_api_v1_investments__investment_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/workspaces/investments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Investments
          * @description Get investments summary for the Investments Intelligence Workspace.
          *
          *     Returns aggregated data matching InvestmentsViewModel format.
          */
-        get: operations["get_investments_api_v1_investments_get"];
+        get: operations["get_investments_api_v1_workspaces_investments_get"];
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/loans": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Loans
-         * @description Get all active loans via LoanService.
-         *
-         *     Returns array of loan objects directly (not wrapped in object).
-         */
-        get: operations["get_loans_api_loans_get"];
-        put?: never;
-        /**
-         * Create Loan
-         * @description Create a new loan via LoanService.
-         *
-         *     Uses rate_bps as canonical field; converts to interest_rate for repository.
-         */
-        post: operations["create_loan_api_loans_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/loans/{loan_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Loan
-         * @description Get loan details via LoanService.
-         */
-        get: operations["get_loan_api_loans__loan_id__get"];
-        /**
-         * Update Loan
-         * @description Update loan via LoanService.
-         */
-        put: operations["update_loan_api_loans__loan_id__put"];
-        post?: never;
-        /**
-         * Delete Loan
-         * @description Soft delete loan via LoanService.
-         */
-        delete: operations["delete_loan_api_loans__loan_id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/loans/{loan_id}/schedule": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Loan Schedule
-         * @description Get amortization schedule via LoanService.
-         *
-         *     Returns schedule with loan_id, emi_paise, total_interest_paise, and schedule rows.
-         */
-        get: operations["get_loan_schedule_api_loans__loan_id__schedule_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/loans/{loan_id}/prepayment-simulation": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Simulate Prepayment
-         * @description Simulate prepayment via LoanSimulationService.
-         *
-         *     Returns spec-compliant response with original_interest_paise, new_interest_paise, etc.
-         */
-        post: operations["simulate_prepayment_api_loans__loan_id__prepayment_simulation_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/loans/{loan_id}/foreclosure-simulation": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Simulate Foreclosure
-         * @description Simulate foreclosure via LoanSimulationService.
-         *
-         *     Returns spec-compliant response with outstanding_paise, penalty_paise, foreclosure_amount_paise.
-         */
-        post: operations["simulate_foreclosure_api_loans__loan_id__foreclosure_simulation_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/loans/{loan_id}/rate-change-simulation": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Simulate Rate Change
-         * @description Simulate rate change via LoanSimulationService.
-         *
-         *     Uses request body instead of query params.
-         */
-        post: operations["simulate_rate_change_api_loans__loan_id__rate_change_simulation_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/loans/{loan_id}/payments": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Record Loan Payment
-         * @description Record a loan payment via LoanService.
-         */
-        post: operations["record_loan_payment_api_loans__loan_id__payments_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/loans/analysis/priority": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Loan Priority
-         * @description Get prepayment priority ranking via LoanAnalysisService.
-         *
-         *     Returns array of recommendations matching spec format.
-         */
-        get: operations["get_loan_priority_api_loans_analysis_priority_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/loans/{loan_id}/analysis/prepayment-vs-foreclosure": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Analyze Prepayment Vs Foreclosure
-         * @description Compare prepayment vs foreclosure via LoanAnalysisService.
-         */
-        post: operations["analyze_prepayment_vs_foreclosure_api_loans__loan_id__analysis_prepayment_vs_foreclosure_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/loans/analysis/surplus-allocation": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Analyze Surplus Allocation
-         * @description Analyze surplus allocation via LoanAnalysisService.
-         */
-        post: operations["analyze_surplus_allocation_api_loans_analysis_surplus_allocation_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1714,11 +1508,67 @@ export interface paths {
         };
         /**
          * Get Loans
-         * @description Get loans summary for the Loans Intelligence Workspace.
+         * @description Get all active loans via LoanService.
          *
-         *     Returns aggregated data matching LoansViewModel format.
+         *     Returns array of loan objects directly (not wrapped in object).
          */
         get: operations["get_loans_api_v1_loans_get"];
+        put?: never;
+        /**
+         * Create Loan
+         * @description Create a new loan via LoanService.
+         *
+         *     Uses rate_bps as canonical field; converts to interest_rate for repository.
+         */
+        post: operations["create_loan_api_v1_loans_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/loans/{loan_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Loan
+         * @description Get loan details via LoanService.
+         */
+        get: operations["get_loan_api_v1_loans__loan_id__get"];
+        /**
+         * Update Loan
+         * @description Update loan via LoanService.
+         */
+        put: operations["update_loan_api_v1_loans__loan_id__put"];
+        post?: never;
+        /**
+         * Delete Loan
+         * @description Soft delete loan via LoanService.
+         */
+        delete: operations["delete_loan_api_v1_loans__loan_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/loans/{loan_id}/schedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Loan Schedule
+         * @description Get amortization schedule via LoanService.
+         *
+         *     Returns schedule with loan_id, emi_paise, total_interest_paise, and schedule rows.
+         */
+        get: operations["get_loan_schedule_api_v1_loans__loan_id__schedule_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1727,31 +1577,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/accounts/manage": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Api Get Managed Accounts
-         * @description Get all persistently stored accounts.
-         */
-        get: operations["api_get_managed_accounts_api_accounts_manage_get"];
-        put?: never;
-        /**
-         * Api Create Managed Account
-         * @description Create a new persistent account.
-         */
-        post: operations["api_create_managed_account_api_accounts_manage_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/accounts/manage/{account_id}": {
+    "/api/v1/loans/{loan_id}/prepayment-simulation": {
         parameters: {
             query?: never;
             header?: never;
@@ -1759,23 +1585,85 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
+        put?: never;
         /**
-         * Api Update Managed Account
-         * @description Update an existing account.
+         * Simulate Prepayment
+         * @description Simulate prepayment via LoanSimulationService.
+         *
+         *     Returns spec-compliant response with original_interest_paise, new_interest_paise, etc.
          */
-        put: operations["api_update_managed_account_api_accounts_manage__account_id__put"];
-        post?: never;
-        /**
-         * Api Delete Managed Account
-         * @description Soft delete an account.
-         */
-        delete: operations["api_delete_managed_account_api_accounts_manage__account_id__delete"];
+        post: operations["simulate_prepayment_api_v1_loans__loan_id__prepayment_simulation_post"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/accounts/{account_id}/balance": {
+    "/api/v1/loans/{loan_id}/foreclosure-simulation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Simulate Foreclosure
+         * @description Simulate foreclosure via LoanSimulationService.
+         *
+         *     Returns spec-compliant response with outstanding_paise, penalty_paise, foreclosure_amount_paise.
+         */
+        post: operations["simulate_foreclosure_api_v1_loans__loan_id__foreclosure_simulation_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/loans/{loan_id}/rate-change-simulation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Simulate Rate Change
+         * @description Simulate rate change via LoanSimulationService.
+         *
+         *     Uses request body instead of query params.
+         */
+        post: operations["simulate_rate_change_api_v1_loans__loan_id__rate_change_simulation_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/loans/{loan_id}/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record Loan Payment
+         * @description Record a loan payment via LoanService.
+         */
+        post: operations["record_loan_payment_api_v1_loans__loan_id__payments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/loans/analysis/priority": {
         parameters: {
             query?: never;
             header?: never;
@@ -1783,10 +1671,12 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Api Get Account Balance
-         * @description Get computed balance for an account.
+         * Get Loan Priority
+         * @description Get prepayment priority ranking via LoanAnalysisService.
+         *
+         *     Returns array of recommendations matching spec format.
          */
-        get: operations["api_get_account_balance_api_accounts__account_id__balance_get"];
+        get: operations["get_loan_priority_api_v1_loans_analysis_priority_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1795,7 +1685,47 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/accounts/{account_id}/running-balance": {
+    "/api/v1/loans/{loan_id}/analysis/prepayment-vs-foreclosure": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Analyze Prepayment Vs Foreclosure
+         * @description Compare prepayment vs foreclosure via LoanAnalysisService.
+         */
+        post: operations["analyze_prepayment_vs_foreclosure_api_v1_loans__loan_id__analysis_prepayment_vs_foreclosure_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/loans/analysis/surplus-allocation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Analyze Surplus Allocation
+         * @description Analyze surplus allocation via LoanAnalysisService.
+         */
+        post: operations["analyze_surplus_allocation_api_v1_loans_analysis_surplus_allocation_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/workspaces/loans": {
         parameters: {
             query?: never;
             header?: never;
@@ -1803,10 +1733,12 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Api Get Account Running Balance
-         * @description Get running balance for an account.
+         * Get Loans
+         * @description Get loans summary for the Loans Intelligence Workspace.
+         *
+         *     Returns aggregated data matching LoansViewModel format.
          */
-        get: operations["api_get_account_running_balance_api_accounts__account_id__running_balance_get"];
+        get: operations["get_loans_api_v1_workspaces_loans_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1815,7 +1747,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/members": {
+    "/api/v1/members": {
         parameters: {
             query?: never;
             header?: never;
@@ -1828,7 +1760,7 @@ export interface paths {
          *
          *     Returns list of members who have transactions.
          */
-        get: operations["get_members_api_members_get"];
+        get: operations["get_members_api_v1_members_get"];
         put?: never;
         /**
          * Create Member
@@ -1840,14 +1772,14 @@ export interface paths {
          *     Returns:
          *         Success message and member id
          */
-        post: operations["create_member_api_members_post"];
+        post: operations["create_member_api_v1_members_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/members/{member_id}": {
+    "/api/v1/members/{member_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1864,7 +1796,7 @@ export interface paths {
          *     Returns:
          *         Member details
          */
-        get: operations["get_member_by_id_api_members__member_id__get"];
+        get: operations["get_member_by_id_api_v1_members__member_id__get"];
         /**
          * Update Member
          * @description Update member details.
@@ -1876,7 +1808,7 @@ export interface paths {
          *     Returns:
          *         Success status
          */
-        put: operations["update_member_api_members__member_id__put"];
+        put: operations["update_member_api_v1_members__member_id__put"];
         post?: never;
         /**
          * Delete Member
@@ -1888,31 +1820,7 @@ export interface paths {
          *     Returns:
          *         Success status
          */
-        delete: operations["delete_member_api_members__member_id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/networth": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Networth
-         * @description Compute net worth from all financial data.
-         *
-         *     Net Worth = Assets - Liabilities
-         *     Assets = account balances + investment current values
-         *     Liabilities = loan outstanding + card outstanding
-         */
-        get: operations["get_networth_api_networth_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
+        delete: operations["delete_member_api_v1_members__member_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1927,9 +1835,11 @@ export interface paths {
         };
         /**
          * Get Networth
-         * @description Get net worth summary for the Net Worth Intelligence Workspace.
+         * @description Compute net worth from all financial data.
          *
-         *     Returns aggregated data matching NetWorthViewModel format.
+         *     Net Worth = Assets - Liabilities
+         *     Assets = account balances + investment current values
+         *     Liabilities = loan outstanding + card outstanding
          */
         get: operations["get_networth_api_v1_net_worth_get"];
         put?: never;
@@ -1940,7 +1850,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/reconciliation": {
+    "/api/v1/workspaces/net-worth": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Networth
+         * @description Get net worth summary for the Net Worth Intelligence Workspace.
+         *
+         *     Returns aggregated data matching NetWorthViewModel format.
+         */
+        get: operations["get_networth_api_v1_workspaces_net_worth_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reconciliation": {
         parameters: {
             query?: never;
             header?: never;
@@ -1956,7 +1888,7 @@ export interface paths {
          *     Args:
          *         status: Optional filter ('pending', 'confirmed', 'rejected')
          */
-        get: operations["api_get_reconciliations_api_reconciliation_get"];
+        get: operations["api_get_reconciliations_api_v1_reconciliation_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1965,7 +1897,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/reconciliation/pending": {
+    "/api/v1/reconciliation/pending": {
         parameters: {
             query?: never;
             header?: never;
@@ -1976,7 +1908,7 @@ export interface paths {
          * Api Get Pending Reconciliations
          * @description Get all pending reconciliations.
          */
-        get: operations["api_get_pending_reconciliations_api_reconciliation_pending_get"];
+        get: operations["api_get_pending_reconciliations_api_v1_reconciliation_pending_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1985,7 +1917,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/reconciliation/scan": {
+    "/api/v1/reconciliation/scan": {
         parameters: {
             query?: never;
             header?: never;
@@ -2000,7 +1932,7 @@ export interface paths {
          *
          *     Returns potential matches that can be saved as reconciliations.
          */
-        get: operations["api_scan_reconciliations_api_reconciliation_scan_get"];
+        get: operations["api_scan_reconciliations_api_v1_reconciliation_scan_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2009,7 +1941,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/reconciliation/create": {
+    "/api/v1/reconciliation/create": {
         parameters: {
             query?: never;
             header?: never;
@@ -2025,14 +1957,14 @@ export interface paths {
          *     Phase 2B: Metadata-only, no ledger mutation.
          *     Uses INSERT OR IGNORE for idempotency.
          */
-        post: operations["api_create_reconciliation_api_reconciliation_create_post"];
+        post: operations["api_create_reconciliation_api_v1_reconciliation_create_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/reconciliation/batch-insert": {
+    "/api/v1/reconciliation/batch-insert": {
         parameters: {
             query?: never;
             header?: never;
@@ -2047,14 +1979,14 @@ export interface paths {
          *
          *     Uses INSERT OR IGNORE for idempotency - existing records are not duplicated.
          */
-        post: operations["api_batch_insert_reconciliations_api_reconciliation_batch_insert_post"];
+        post: operations["api_batch_insert_reconciliations_api_v1_reconciliation_batch_insert_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/reconciliation/{reconciliation_id}/confirm": {
+    "/api/v1/reconciliation/{reconciliation_id}/confirm": {
         parameters: {
             query?: never;
             header?: never;
@@ -2069,14 +2001,14 @@ export interface paths {
          *
          *     Phase 2B: Updates reconciliation.status only. No ledger mutation.
          */
-        post: operations["api_confirm_reconciliation_api_reconciliation__reconciliation_id__confirm_post"];
+        post: operations["api_confirm_reconciliation_api_v1_reconciliation__reconciliation_id__confirm_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/reconciliation/{reconciliation_id}/reject": {
+    "/api/v1/reconciliation/{reconciliation_id}/reject": {
         parameters: {
             query?: never;
             header?: never;
@@ -2091,14 +2023,14 @@ export interface paths {
          *
          *     Phase 2B: Updates reconciliation.status only. No ledger mutation.
          */
-        post: operations["api_reject_reconciliation_api_reconciliation__reconciliation_id__reject_post"];
+        post: operations["api_reject_reconciliation_api_v1_reconciliation__reconciliation_id__reject_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/reconciliation": {
+    "/api/v1/workspaces/reconciliation": {
         parameters: {
             query?: never;
             header?: never;
@@ -2111,7 +2043,7 @@ export interface paths {
          *
          *     Returns aggregated data matching ReconciliationViewModel format.
          */
-        get: operations["get_reconciliation_api_v1_reconciliation_get"];
+        get: operations["get_reconciliation_api_v1_workspaces_reconciliation_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2120,7 +2052,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/transactions": {
+    "/api/v1/transactions": {
         parameters: {
             query?: never;
             header?: never;
@@ -2131,7 +2063,7 @@ export interface paths {
          * Get Transactions
          * @description Get transactions with filtering and pagination.
          */
-        get: operations["get_transactions_api_transactions_get"];
+        get: operations["get_transactions_api_v1_transactions_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2140,7 +2072,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/overview": {
+    "/api/v1/overview": {
         parameters: {
             query?: never;
             header?: never;
@@ -2151,7 +2083,7 @@ export interface paths {
          * Get Overview
          * @description Get overview metrics and charts.
          */
-        get: operations["get_overview_api_overview_get"];
+        get: operations["get_overview_api_v1_overview_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2160,7 +2092,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/categories": {
+    "/api/v1/categories": {
         parameters: {
             query?: never;
             header?: never;
@@ -2171,7 +2103,7 @@ export interface paths {
          * Get Categories
          * @description Get category summary and breakdown.
          */
-        get: operations["get_categories_api_categories_get"];
+        get: operations["get_categories_api_v1_categories_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2180,7 +2112,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/analytics": {
+    "/api/v1/analytics": {
         parameters: {
             query?: never;
             header?: never;
@@ -2191,7 +2123,7 @@ export interface paths {
          * Get Analytics
          * @description Get analytics data.
          */
-        get: operations["get_analytics_api_analytics_get"];
+        get: operations["get_analytics_api_v1_analytics_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3696,27 +3628,6 @@ export interface components {
             velocity_paise_per_day: number;
         };
         /**
-         * AccountCreate
-         * @description Account creation request.
-         */
-        AccountCreate: {
-            /** Name */
-            name: string;
-            /** Bank */
-            bank: string;
-            /**
-             * Account Type
-             * @default savings
-             */
-            account_type: string;
-            /** Balance Paise */
-            balance_paise: number;
-            /** Account Number Last4 */
-            account_number_last4?: string | null;
-            /** Notes */
-            notes?: string | null;
-        };
-        /**
          * AccountCreateRequest
          * @description Account creation request.
          */
@@ -3857,24 +3768,6 @@ export interface components {
             relationship_type: "TRANSFER" | "JOINT" | "GUARANTOR";
         };
         /**
-         * AccountUpdate
-         * @description Account update request.
-         */
-        AccountUpdate: {
-            /** Name */
-            name?: string | null;
-            /** Bank */
-            bank?: string | null;
-            /** Account Type */
-            account_type?: string | null;
-            /** Balance Paise */
-            balance_paise?: number | null;
-            /** Account Number Last4 */
-            account_number_last4?: string | null;
-            /** Notes */
-            notes?: string | null;
-        };
-        /**
          * AccountUpdateRequest
          * @description Account update request.
          */
@@ -3951,13 +3844,13 @@ export interface components {
              */
             source: "actual" | "projected" | "adjusted";
         };
-        /** Body_import_detect_api_import_detect_post */
-        Body_import_detect_api_import_detect_post: {
+        /** Body_import_detect_api_v1_import_detect_post */
+        Body_import_detect_api_v1_import_detect_post: {
             /** File */
             file: string;
         };
-        /** Body_upload_statement_api_upload_post */
-        Body_upload_statement_api_upload_post: {
+        /** Body_upload_statement_api_v1_upload_post */
+        Body_upload_statement_api_v1_upload_post: {
             /** File */
             file: string;
             /**
@@ -7039,7 +6932,7 @@ export interface operations {
             };
         };
     };
-    api_audit_report_api_audit_report_get: {
+    api_audit_report_api_v1_audit_report_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -7061,7 +6954,7 @@ export interface operations {
             };
         };
     };
-    get_banks_api_banks_get: {
+    get_banks_api_v1_banks_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -7350,7 +7243,7 @@ export interface operations {
             };
         };
     };
-    get_statements_api_statements_get: {
+    get_statements_api_v1_statements_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -7372,7 +7265,7 @@ export interface operations {
             };
         };
     };
-    get_cards_api_cards_get: {
+    get_cards_api_v1_cards_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -7394,7 +7287,7 @@ export interface operations {
             };
         };
     };
-    api_validate_statement_api_statements__statement_id__validate_get: {
+    api_validate_statement_api_v1_statements__statement_id__validate_get: {
         parameters: {
             query: {
                 /** @description Claimed closing balance in paise */
@@ -7430,12 +7323,9 @@ export interface operations {
             };
         };
     };
-    get_credit_cards_api_v1_credit_cards_get: {
+    list_cards_api_v1_credit_cards_get: {
         parameters: {
-            query?: {
-                statuses?: string | null;
-                banks?: string | null;
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
@@ -7448,18 +7338,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["CreditCardSummaryDTO"][];
                 };
             };
         };
@@ -7905,7 +7784,41 @@ export interface operations {
             };
         };
     };
-    get_cashflow_api_cashflow_get: {
+    get_credit_cards_api_v1_workspaces_credit_cards_get: {
+        parameters: {
+            query?: {
+                statuses?: string | null;
+                banks?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_cashflow_api_v1_cashflow_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -7925,7 +7838,7 @@ export interface operations {
             };
         };
     };
-    get_cashflow_monthly_api_cashflow_monthly_get: {
+    get_cashflow_monthly_api_v1_cashflow_monthly_get: {
         parameters: {
             query?: {
                 months?: number;
@@ -7956,7 +7869,7 @@ export interface operations {
             };
         };
     };
-    get_cashflow_categories_api_cashflow_categories_get: {
+    get_cashflow_categories_api_v1_cashflow_categories_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -7976,7 +7889,7 @@ export interface operations {
             };
         };
     };
-    get_cashflow_transactions_api_cashflow_transactions_get: {
+    get_cashflow_transactions_api_v1_cashflow_transactions_get: {
         parameters: {
             query?: {
                 limit?: number;
@@ -8008,7 +7921,7 @@ export interface operations {
             };
         };
     };
-    get_cashflow_api_v1_cashflow_get: {
+    get_cashflow_api_v1_workspaces_cashflow_get: {
         parameters: {
             query?: {
                 period?: string;
@@ -8041,7 +7954,7 @@ export interface operations {
             };
         };
     };
-    api_dashboard_summary_api_dashboard_summary_get: {
+    api_dashboard_summary_api_v1_dashboard_summary_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -8061,7 +7974,7 @@ export interface operations {
             };
         };
     };
-    export_csv_api_export_csv_get: {
+    export_csv_api_v1_export_csv_get: {
         parameters: {
             query?: {
                 search?: string | null;
@@ -8096,7 +8009,7 @@ export interface operations {
             };
         };
     };
-    list_events_api_financial_events__get: {
+    list_events_api_v1_financial_events__get: {
         parameters: {
             query?: {
                 month_bucket?: string | null;
@@ -8128,7 +8041,7 @@ export interface operations {
             };
         };
     };
-    create_event_api_financial_events__post: {
+    create_event_api_v1_financial_events__post: {
         parameters: {
             query: {
                 event_type: string;
@@ -8177,7 +8090,7 @@ export interface operations {
             };
         };
     };
-    get_event_api_financial_events__event_id__get: {
+    get_event_api_v1_financial_events__event_id__get: {
         parameters: {
             query?: never;
             header?: never;
@@ -8533,7 +8446,7 @@ export interface operations {
             };
         };
     };
-    upload_statement_api_upload_post: {
+    upload_statement_api_v1_upload_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -8542,7 +8455,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "multipart/form-data": components["schemas"]["Body_upload_statement_api_upload_post"];
+                "multipart/form-data": components["schemas"]["Body_upload_statement_api_v1_upload_post"];
             };
         };
         responses: {
@@ -8568,7 +8481,7 @@ export interface operations {
             };
         };
     };
-    import_detect_api_import_detect_post: {
+    import_detect_api_v1_import_detect_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -8577,7 +8490,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "multipart/form-data": components["schemas"]["Body_import_detect_api_import_detect_post"];
+                "multipart/form-data": components["schemas"]["Body_import_detect_api_v1_import_detect_post"];
             };
         };
         responses: {
@@ -8603,7 +8516,7 @@ export interface operations {
             };
         };
     };
-    import_execute_api_import_execute_post: {
+    import_execute_api_v1_import_execute_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -8638,7 +8551,7 @@ export interface operations {
             };
         };
     };
-    get_investments_api_investments_get: {
+    get_investments_api_v1_investments_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -8658,7 +8571,7 @@ export interface operations {
             };
         };
     };
-    create_investment_api_investments_post: {
+    create_investment_api_v1_investments_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -8693,7 +8606,7 @@ export interface operations {
             };
         };
     };
-    update_investment_api_investments__investment_id__put: {
+    update_investment_api_v1_investments__investment_id__put: {
         parameters: {
             query?: never;
             header?: never;
@@ -8730,7 +8643,7 @@ export interface operations {
             };
         };
     };
-    delete_investment_api_investments__investment_id__delete: {
+    delete_investment_api_v1_investments__investment_id__delete: {
         parameters: {
             query?: never;
             header?: never;
@@ -8763,7 +8676,7 @@ export interface operations {
             };
         };
     };
-    get_investments_api_v1_investments_get: {
+    get_investments_api_v1_workspaces_investments_get: {
         parameters: {
             query?: {
                 investment_types?: string | null;
@@ -8798,7 +8711,7 @@ export interface operations {
             };
         };
     };
-    get_loans_api_loans_get: {
+    get_loans_api_v1_loans_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -8820,7 +8733,7 @@ export interface operations {
             };
         };
     };
-    create_loan_api_loans_post: {
+    create_loan_api_v1_loans_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -8855,7 +8768,7 @@ export interface operations {
             };
         };
     };
-    get_loan_api_loans__loan_id__get: {
+    get_loan_api_v1_loans__loan_id__get: {
         parameters: {
             query?: never;
             header?: never;
@@ -8888,7 +8801,7 @@ export interface operations {
             };
         };
     };
-    update_loan_api_loans__loan_id__put: {
+    update_loan_api_v1_loans__loan_id__put: {
         parameters: {
             query?: never;
             header?: never;
@@ -8925,7 +8838,7 @@ export interface operations {
             };
         };
     };
-    delete_loan_api_loans__loan_id__delete: {
+    delete_loan_api_v1_loans__loan_id__delete: {
         parameters: {
             query?: never;
             header?: never;
@@ -8958,7 +8871,7 @@ export interface operations {
             };
         };
     };
-    get_loan_schedule_api_loans__loan_id__schedule_get: {
+    get_loan_schedule_api_v1_loans__loan_id__schedule_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -8991,7 +8904,7 @@ export interface operations {
             };
         };
     };
-    simulate_prepayment_api_loans__loan_id__prepayment_simulation_post: {
+    simulate_prepayment_api_v1_loans__loan_id__prepayment_simulation_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -9028,7 +8941,7 @@ export interface operations {
             };
         };
     };
-    simulate_foreclosure_api_loans__loan_id__foreclosure_simulation_post: {
+    simulate_foreclosure_api_v1_loans__loan_id__foreclosure_simulation_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -9061,7 +8974,7 @@ export interface operations {
             };
         };
     };
-    simulate_rate_change_api_loans__loan_id__rate_change_simulation_post: {
+    simulate_rate_change_api_v1_loans__loan_id__rate_change_simulation_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -9098,7 +9011,7 @@ export interface operations {
             };
         };
     };
-    record_loan_payment_api_loans__loan_id__payments_post: {
+    record_loan_payment_api_v1_loans__loan_id__payments_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -9135,7 +9048,7 @@ export interface operations {
             };
         };
     };
-    get_loan_priority_api_loans_analysis_priority_get: {
+    get_loan_priority_api_v1_loans_analysis_priority_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -9157,7 +9070,7 @@ export interface operations {
             };
         };
     };
-    analyze_prepayment_vs_foreclosure_api_loans__loan_id__analysis_prepayment_vs_foreclosure_post: {
+    analyze_prepayment_vs_foreclosure_api_v1_loans__loan_id__analysis_prepayment_vs_foreclosure_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -9194,7 +9107,7 @@ export interface operations {
             };
         };
     };
-    analyze_surplus_allocation_api_loans_analysis_surplus_allocation_post: {
+    analyze_surplus_allocation_api_v1_loans_analysis_surplus_allocation_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -9229,7 +9142,7 @@ export interface operations {
             };
         };
     };
-    get_loans_api_v1_loans_get: {
+    get_loans_api_v1_workspaces_loans_get: {
         parameters: {
             query?: {
                 loan_types?: string | null;
@@ -9264,7 +9177,7 @@ export interface operations {
             };
         };
     };
-    api_get_managed_accounts_api_accounts_manage_get: {
+    get_members_api_v1_members_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -9286,200 +9199,7 @@ export interface operations {
             };
         };
     };
-    api_create_managed_account_api_accounts_manage_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AccountCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    api_update_managed_account_api_accounts_manage__account_id__put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                account_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AccountUpdate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    api_delete_managed_account_api_accounts_manage__account_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                account_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    api_get_account_balance_api_accounts__account_id__balance_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                account_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    api_get_account_running_balance_api_accounts__account_id__running_balance_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                account_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    }[];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_members_api_members_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-        };
-    };
-    create_member_api_members_post: {
+    create_member_api_v1_members_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -9514,7 +9234,7 @@ export interface operations {
             };
         };
     };
-    get_member_by_id_api_members__member_id__get: {
+    get_member_by_id_api_v1_members__member_id__get: {
         parameters: {
             query?: never;
             header?: never;
@@ -9547,7 +9267,7 @@ export interface operations {
             };
         };
     };
-    update_member_api_members__member_id__put: {
+    update_member_api_v1_members__member_id__put: {
         parameters: {
             query?: never;
             header?: never;
@@ -9584,7 +9304,7 @@ export interface operations {
             };
         };
     };
-    delete_member_api_members__member_id__delete: {
+    delete_member_api_v1_members__member_id__delete: {
         parameters: {
             query?: never;
             header?: never;
@@ -9617,7 +9337,7 @@ export interface operations {
             };
         };
     };
-    get_networth_api_networth_get: {
+    get_networth_api_v1_net_worth_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -9637,7 +9357,7 @@ export interface operations {
             };
         };
     };
-    get_networth_api_v1_net_worth_get: {
+    get_networth_api_v1_workspaces_net_worth_get: {
         parameters: {
             query?: {
                 date_range?: string | null;
@@ -9672,7 +9392,7 @@ export interface operations {
             };
         };
     };
-    api_get_reconciliations_api_reconciliation_get: {
+    api_get_reconciliations_api_v1_reconciliation_get: {
         parameters: {
             query?: {
                 status?: string | null;
@@ -9703,7 +9423,7 @@ export interface operations {
             };
         };
     };
-    api_get_pending_reconciliations_api_reconciliation_pending_get: {
+    api_get_pending_reconciliations_api_v1_reconciliation_pending_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -9723,7 +9443,7 @@ export interface operations {
             };
         };
     };
-    api_scan_reconciliations_api_reconciliation_scan_get: {
+    api_scan_reconciliations_api_v1_reconciliation_scan_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -9743,7 +9463,7 @@ export interface operations {
             };
         };
     };
-    api_create_reconciliation_api_reconciliation_create_post: {
+    api_create_reconciliation_api_v1_reconciliation_create_post: {
         parameters: {
             query: {
                 /** @description Debit transaction ID */
@@ -9791,7 +9511,7 @@ export interface operations {
             };
         };
     };
-    api_batch_insert_reconciliations_api_reconciliation_batch_insert_post: {
+    api_batch_insert_reconciliations_api_v1_reconciliation_batch_insert_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -9813,7 +9533,7 @@ export interface operations {
             };
         };
     };
-    api_confirm_reconciliation_api_reconciliation__reconciliation_id__confirm_post: {
+    api_confirm_reconciliation_api_v1_reconciliation__reconciliation_id__confirm_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -9846,7 +9566,7 @@ export interface operations {
             };
         };
     };
-    api_reject_reconciliation_api_reconciliation__reconciliation_id__reject_post: {
+    api_reject_reconciliation_api_v1_reconciliation__reconciliation_id__reject_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -9879,7 +9599,7 @@ export interface operations {
             };
         };
     };
-    get_reconciliation_api_v1_reconciliation_get: {
+    get_reconciliation_api_v1_workspaces_reconciliation_get: {
         parameters: {
             query?: {
                 status?: string | null;
@@ -9913,7 +9633,7 @@ export interface operations {
             };
         };
     };
-    get_transactions_api_transactions_get: {
+    get_transactions_api_v1_transactions_get: {
         parameters: {
             query?: {
                 search?: string | null;
@@ -9950,7 +9670,7 @@ export interface operations {
             };
         };
     };
-    get_overview_api_overview_get: {
+    get_overview_api_v1_overview_get: {
         parameters: {
             query?: {
                 exclude_transfers?: boolean;
@@ -9984,7 +9704,7 @@ export interface operations {
             };
         };
     };
-    get_categories_api_categories_get: {
+    get_categories_api_v1_categories_get: {
         parameters: {
             query?: {
                 exclude_transfers?: boolean;
@@ -10019,7 +9739,7 @@ export interface operations {
             };
         };
     };
-    get_analytics_api_analytics_get: {
+    get_analytics_api_v1_analytics_get: {
         parameters: {
             query?: {
                 exclude_transfers?: boolean;

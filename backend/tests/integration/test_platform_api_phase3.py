@@ -160,10 +160,14 @@ class TestTasks:
             client.get("/platform/v1/tasks"), "platform.task_list"
         )
         items = body["data"]["items"]
+        # Internal consistency: the counts must always reconcile with the items.
+        # (The live obligation count is git-state dependent, so we assert the
+        # invariant rather than a fixed number that drifts across runs.)
         assert body["data"]["open_count"] + body["data"]["closed_count"] == len(items)
-        # The repo has 64 open obligations (verified in Phase 3 against live baseline).
-        assert body["data"]["open_count"] == 64
-        assert body["data"]["closed_count"] == 0
+        assert body["data"]["open_count"] > 0
+        # The list must carry its plan fingerprint so the detail endpoint can
+        # stay consistent with the list even as the live set drifts.
+        assert body["data"]["plan_fingerprint"]
 
     def test_detail_for_known_task(self, client):
         list_resp = client.get("/platform/v1/tasks")

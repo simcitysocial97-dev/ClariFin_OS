@@ -43,6 +43,7 @@ export function Sidebar({ sidebarCollapsed = false, toggleSidebar }: SidebarProp
   const pathname = usePathname();
 
   const { data: netWorthData } = useNetWorth();
+  const netWorthPaise = netWorthData?.total_net_worth_paise;
 
   const renderSidebarContent = () => (
     <div className="flex h-full flex-col">
@@ -64,12 +65,12 @@ export function Sidebar({ sidebarCollapsed = false, toggleSidebar }: SidebarProp
                 Net Worth
               </span>
               <span className="text-sm font-semibold">
-                {netWorthData?.net_worth_paise ? formatINR(netWorthData.net_worth_paise) : ' — '}
+                {netWorthPaise !== undefined ? formatINR(netWorthPaise) : ' — '}
               </span>
             </div>
           ) : (
             <span className="text-sm font-semibold">
-              {netWorthData?.net_worth_paise ? formatINR(netWorthData.net_worth_paise) : ' — '}
+              {netWorthPaise !== undefined ? formatINR(netWorthPaise) : ' — '}
             </span>
           )}
         </div>

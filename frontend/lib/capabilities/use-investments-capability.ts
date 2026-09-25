@@ -116,7 +116,12 @@ export function useInvestmentsCapability(): InvestmentsCapabilityReturn {
   } = useQuery<InvestmentsViewModel | null>({
     queryKey: [INVESTMENTS_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const raw = await apiFetchJson('/api/v1/investments') as any;
+      const query = new URLSearchParams();
+      if (queryParams.investment_types) query.set('investment_types', queryParams.investment_types);
+      if (queryParams.institutions) query.set('institutions', queryParams.institutions);
+      if (queryParams.statuses) query.set('statuses', queryParams.statuses);
+      const suffix = query.size > 0 ? `?${query.toString()}` : '';
+      const raw = await apiFetchJson(`/api/v1/workspaces/investments${suffix}`) as any;
       return investmentsMapper.mapInvestmentsDTO(raw);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes

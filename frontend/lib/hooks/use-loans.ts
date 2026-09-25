@@ -6,34 +6,14 @@ import { z } from 'zod'
 const LoanSchema = z.object({
   id: z.number(),
   name: z.string(),
-  lender: z.string(),
-  loan_type: z.string(),
+  lender: z.string().nullable(),
+  loan_type: z.string().nullable(),
   principal_paise: z.number().int(),
-  outstanding_paise: z.number().int(),
-  interest_rate: z.number(),
-  tenure_months: z.number().int().nullable(),
+  rate_bps: z.number().int(),
+  tenure_months: z.number().int(),
   emi_paise: z.number().int().nullable(),
-  disbursed_date: z.string(),
-  next_emi_date: z.string().nullable(),
-  gold_weight_grams: z.number().nullable(),
-  gold_purity: z.string().nullable(),
-  interest_type: z.string(),
-  is_active: z.boolean(),
-  notes: z.string().nullable(),
-  created_at: z.string(),
-  updated_at: z.string(),
-})
-
-const LoanSummarySchema = z.object({
-  total_loans: z.number(),
-  total_outstanding_paise: z.number().int(),
-  total_principal_paise: z.number().int(),
-  total_monthly_emi_paise: z.number().int(),
-})
-
-const LoansResponseSchema = z.object({
-  loans: z.array(LoanSchema),
-  summary: LoanSummarySchema,
+  disbursed_date: z.string().nullable(),
+  outstanding_paise: z.number().int().nullable(),
 })
 
 export type Loan = z.infer<typeof LoanSchema>
@@ -43,27 +23,30 @@ export interface CreateLoanInput {
   lender: string
   loan_type: string
   principal_paise: number
-  outstanding_paise: number
-  interest_rate: number
+  rate_bps: number
+  tenure_months: number
   disbursed_date: string
+  emi_paise?: number
+  outstanding_paise?: number
+}
+
+export interface UpdateLoanInput {
+  outstanding_paise?: number
+  rate_bps?: number
   tenure_months?: number
   emi_paise?: number
-  next_emi_date?: string
-  gold_weight_grams?: number
-  gold_purity?: string
-  interest_type?: string
   notes?: string
 }
 
 async function fetchLoans() {
-  const res = await apiFetch(`/api/loans`)
+  const res = await apiFetch(`/api/v1/loans`)
   if (!res.ok) throw new Error('Failed to fetch loans')
   
   // This is unverified raw payload from the network
   const raw = await res.json()
   
   // Intercept and parse data before passing it to frontend state loaders
-  const parsed = LoansResponseSchema.safeParse(raw)
+  const parsed = z.array(LoanSchema).safeParse(raw)
   
   if (!parsed.success) {
     // Safely prints exact path anomalies and mismatched value types to the browser console
@@ -75,7 +58,7 @@ async function fetchLoans() {
 }
 
 async function fetchLoanSchedule(loanId: string) {
-  const res = await apiFetch(`/api/loans/${loanId}/schedule`)
+  const res = await apiFetch(`/api/v1/loans/${loanId}/schedule`)
   if (!res.ok) throw new Error('Failed to fetch schedule')
   return res.json()
 }
@@ -85,17 +68,17 @@ async function simulatePrepayment(
   prepaymentPaise: number,
   mode: 'reduce_tenure' | 'reduce_emi'
 ) {
-  const res = await apiFetch(`/api/loans/${loanId}/prepayment-simulation`, {
+  const res = await apiFetch(`/api/v1/loans/${loanId}/prepayment-simulation`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prepayment_paise: prepaymentPaise, mode }),
+    body: JSON.stringify({ amount_paise: prepaymentPaise, mode }),
   })
   if (!res.ok) throw new Error('Failed to simulate prepayment')
   return res.json()
 }
 
 async function createLoan(input: CreateLoanInput) {
-  const res = await apiFetch(`/api/loans`, {
+  const res = await apiFetch(`/api/v1/loans`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
@@ -104,8 +87,8 @@ async function createLoan(input: CreateLoanInput) {
   return res.json()
 }
 
-async function updateLoan(id: string, input: Partial<CreateLoanInput>) {
-  const res = await apiFetch(`/api/loans/${id}`, {
+async function updateLoan(id: string, input: UpdateLoanInput) {
+  const res = await apiFetch(`/api/v1/loans/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
@@ -115,7 +98,7 @@ async function updateLoan(id: string, input: Partial<CreateLoanInput>) {
 }
 
 async function deleteLoan(id: string) {
-  const res = await apiFetch(`/api/loans/${id}`, { method: 'DELETE' })
+  const res = await apiFetch(`/api/v1/loans/${id}`, { method: 'DELETE' })
   if (!res.ok) throw new Error('Failed to delete loan')
   return res.json()
 }
@@ -161,7 +144,7 @@ export function useCreateLoan() {
 export function useUpdateLoan() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, ...input }: { id: string } & Partial<CreateLoanInput>) =>
+    mutationFn: ({ id, ...input }: { id: string } & UpdateLoanInput) =>
       updateLoan(id, input),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['loans'] }),
   })

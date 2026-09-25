@@ -40,33 +40,27 @@ const createWrapper = () => {
   return Wrapper;
 };
 
+const mockInvestment = {
+  id: '1',
+  name: 'Mutual Fund A',
+  type: 'mutual_funds',
+  institution: 'Zerodha',
+  current_value_paise: 1200000,
+  invested_paise: 1000000,
+  returns_paise: 200000,
+  returns_percentage: 20,
+  returns_ytd_bps: 2000,
+  status: 'active' as const,
+};
+
 const mockInvestmentsData = {
-  investments: [
-    {
-      id: 1,
-      name: 'Mutual Fund A',
-      investment_type: 'mutual_fund',
-      platform: 'Zerodha',
-      invested_paise: 1000000,
-      current_value_paise: 1200000,
-      units: 1000,
-      buy_price_paise: 1000,
-      current_price_paise: 1200,
-      as_of_date: '2026-09-01',
-      is_active: true,
-      notes: 'Long-term',
-      last_updated: '2026-09-01T10:00:00Z',
-      created_at: '2024-01-15T10:00:00Z',
-    },
-  ],
-  summary: {
-    total_investments: 1,
-    total_invested_paise: 1000000,
-    total_current_value_paise: 1200000,
-    total_gain_paise: 200000,
-    gain_percent: 20,
-    allocation_by_type: { mutual_fund: 1000000 },
-  },
+  investments: [mockInvestment],
+  total_value_paise: 1200000,
+  total_invested_paise: 1000000,
+  total_returns_paise: 200000,
+  investment_count: 1,
+  insights: [],
+  evidence_chain: null,
 };
 
 describe('useInvestments', () => {
@@ -98,17 +92,15 @@ describe('useInvestments', () => {
   it('should calculate portfolio gain correctly', async () => {
     const multiInvestmentData = {
       investments: [
-        { ...mockInvestmentsData.investments[0], invested_paise: 1000000, current_value_paise: 1200000 },
-        { ...mockInvestmentsData.investments[0], id: 2, invested_paise: 500000, current_value_paise: 450000 },
+        { ...mockInvestment, invested_paise: 1000000, current_value_paise: 1200000, returns_paise: 200000, returns_percentage: 20 },
+        { ...mockInvestment, id: '2', invested_paise: 500000, current_value_paise: 450000, returns_paise: -50000, returns_percentage: -10 },
       ],
-      summary: {
-        total_investments: 2,
-        total_invested_paise: 1500000,
-        total_current_value_paise: 1650000,
-        total_gain_paise: 150000,
-        gain_percent: 10,
-        allocation_by_type: { mutual_fund: 1500000 },
-      },
+      total_value_paise: 1650000,
+      total_invested_paise: 1500000,
+      total_returns_paise: 150000,
+      investment_count: 2,
+      insights: [],
+      evidence_chain: null,
     };
 
     mockApiFetch.mockResolvedValue(createMockResponse(multiInvestmentData));
@@ -118,26 +110,24 @@ describe('useInvestments', () => {
 
     await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
-    expect(result.current.data?.summary.total_invested_paise).toBe(1500000);
-    expect(result.current.data?.summary.total_current_value_paise).toBe(1650000);
-    expect(result.current.data?.summary.total_gain_paise).toBe(150000);
+    expect(result.current.data?.total_invested_paise).toBe(1500000);
+    expect(result.current.data?.total_value_paise).toBe(1650000);
+    expect(result.current.data?.total_returns_paise).toBe(150000);
   });
 
-  it('should track allocation by type', async () => {
+  it('should track holdings by type', async () => {
     const diversifiedData = {
       investments: [
-        { ...mockInvestmentsData.investments[0], investment_type: 'stocks', invested_paise: 1000000 },
-        { ...mockInvestmentsData.investments[0], id: 2, investment_type: 'bonds', invested_paise: 500000 },
-        { ...mockInvestmentsData.investments[0], id: 3, investment_type: 'stocks', invested_paise: 2000000 },
+        { ...mockInvestment, type: 'stocks', invested_paise: 1000000 },
+        { ...mockInvestment, id: '2', type: 'bonds', invested_paise: 500000 },
+        { ...mockInvestment, id: '3', type: 'stocks', invested_paise: 2000000 },
       ],
-      summary: {
-        total_investments: 3,
-        total_invested_paise: 3500000,
-        total_current_value_paise: 3500000,
-        total_gain_paise: 0,
-        gain_percent: 0,
-        allocation_by_type: { stocks: 3000000, bonds: 500000 },
-      },
+      total_value_paise: 3500000,
+      total_invested_paise: 3500000,
+      total_returns_paise: 0,
+      investment_count: 3,
+      insights: [],
+      evidence_chain: null,
     };
 
     mockApiFetch.mockResolvedValue(createMockResponse(diversifiedData));
@@ -147,20 +137,22 @@ describe('useInvestments', () => {
 
     await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
-    expect(result.current.data?.summary.allocation_by_type).toEqual({ stocks: 3000000, bonds: 500000 });
+    expect(result.current.data?.investments.map((investment) => investment.type)).toEqual([
+      'stocks',
+      'bonds',
+      'stocks',
+    ]);
   });
 
   it('should handle empty investments list', async () => {
     const emptyData = {
       investments: [],
-      summary: {
-        total_investments: 0,
-        total_invested_paise: 0,
-        total_current_value_paise: 0,
-        total_gain_paise: 0,
-        gain_percent: 0,
-        allocation_by_type: {},
-      },
+      total_value_paise: 0,
+      total_invested_paise: 0,
+      total_returns_paise: 0,
+      investment_count: 0,
+      insights: [],
+      evidence_chain: null,
     };
 
     mockApiFetch.mockResolvedValue(createMockResponse(emptyData));
@@ -171,7 +163,7 @@ describe('useInvestments', () => {
     await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
     expect(result.current.data?.investments).toHaveLength(0);
-    expect(result.current.data?.summary.total_investments).toBe(0);
+    expect(result.current.data?.investment_count).toBe(0);
   });
 
   it('should handle API failure', async () => {

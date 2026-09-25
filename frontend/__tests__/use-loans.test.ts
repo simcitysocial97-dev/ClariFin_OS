@@ -40,36 +40,20 @@ const createWrapper = () => {
   return Wrapper;
 };
 
-const mockLoanData = {
-  loans: [
-    {
-      id: 1,
-      name: 'Home Loan',
-      lender: 'SBI',
-      loan_type: 'home_loan',
-      principal_paise: 30000000,
-      outstanding_paise: 25000000,
-      interest_rate: 8.5,
-      tenure_months: 240,
-      emi_paise: 260000,
-      disbursed_date: '2024-01-15',
-      next_emi_date: '2026-10-01',
-      gold_weight_grams: null,
-      gold_purity: null,
-      interest_type: 'reducing',
-      is_active: true,
-      notes: 'Primary residence',
-      created_at: '2024-01-15T10:00:00Z',
-      updated_at: '2026-09-01T14:30:00Z',
-    },
-  ],
-  summary: {
-    total_loans: 1,
-    total_outstanding_paise: 25000000,
-    total_principal_paise: 30000000,
-    total_monthly_emi_paise: 260000,
+const mockLoanData = [
+  {
+    id: 1,
+    name: 'Home Loan',
+    lender: 'SBI',
+    loan_type: 'home',
+    principal_paise: 30000000,
+    outstanding_paise: 25000000,
+    rate_bps: 850,
+    tenure_months: 240,
+    emi_paise: 260000,
+    disbursed_date: '2024-01-15',
   },
-};
+];
 
 describe('useLoans', () => {
   beforeEach(() => {
@@ -97,19 +81,11 @@ describe('useLoans', () => {
     expect(result.current.isError).toBe(false);
   });
 
-  it('should calculate summary totals correctly', async () => {
-    const multiLoanData = {
-      loans: [
-        { ...mockLoanData.loans[0], outstanding_paise: 10000000 },
-        { ...mockLoanData.loans[0], id: 2, outstanding_paise: 15000000 },
-      ],
-      summary: {
-        total_loans: 2,
-        total_outstanding_paise: 25000000,
-        total_principal_paise: 40000000,
-        total_monthly_emi_paise: 450000,
-      },
-    };
+  it('should fetch multiple loans successfully', async () => {
+    const multiLoanData = [
+      { ...mockLoanData[0], outstanding_paise: 10000000 },
+      { ...mockLoanData[0], id: 2, outstanding_paise: 15000000 },
+    ];
 
     mockApiFetch.mockResolvedValue(createMockResponse(multiLoanData));
 
@@ -118,30 +94,19 @@ describe('useLoans', () => {
 
     await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
-    expect(result.current.data?.summary.total_loans).toBe(2);
-    expect(result.current.data?.summary.total_outstanding_paise).toBe(25000000);
+    expect(result.current.data).toHaveLength(2);
+    expect(result.current.data?.reduce((total, loan) => total + (loan.outstanding_paise ?? 0), 0)).toBe(25000000);
   });
 
   it('should handle empty loans list', async () => {
-    const emptyData = {
-      loans: [],
-      summary: {
-        total_loans: 0,
-        total_outstanding_paise: 0,
-        total_principal_paise: 0,
-        total_monthly_emi_paise: 0,
-      },
-    };
-
-    mockApiFetch.mockResolvedValue(createMockResponse(emptyData));
+    mockApiFetch.mockResolvedValue(createMockResponse([]));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useLoans(), { wrapper });
 
     await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
-    expect(result.current.data?.loans).toHaveLength(0);
-    expect(result.current.data?.summary.total_loans).toBe(0);
+    expect(result.current.data).toHaveLength(0);
   });
 
   it('should handle API failure', async () => {
@@ -156,13 +121,11 @@ describe('useLoans', () => {
   });
 
   it('should validate response schema', async () => {
-    const invalidData = {
-      loans: [
-        {
-          id: 'not-a-number',
-        },
-      ],
-    };
+    const invalidData = [
+      {
+        id: 'not-a-number',
+      },
+    ];
 
     mockApiFetch.mockResolvedValue(createMockResponse(invalidData));
 

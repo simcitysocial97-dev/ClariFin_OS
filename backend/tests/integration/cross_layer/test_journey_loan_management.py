@@ -23,6 +23,15 @@ class TestLoanJourney:
         data = response.json()
         assert isinstance(data, list), "Response should be a list of loans"
 
+    def test_loan_workspace_contract_is_separate(self, client: TestClient) -> None:
+        """GET /api/v1/workspaces/loans returns the capability DTO."""
+        response = client.get("/api/v1/workspaces/loans")
+        assert response.status_code == 200
+        data = response.json()
+        assert "loans" in data
+        assert "total_outstanding_paise" in data
+        assert "loan_count" in data
+
     def test_loan_schema_validation(self, client: TestClient) -> None:
         """Loan objects have all required fields matching frontend Zod schema."""
         response = client.get("/api/v1/loans")

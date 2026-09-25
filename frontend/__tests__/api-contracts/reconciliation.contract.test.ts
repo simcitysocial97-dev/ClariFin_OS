@@ -19,9 +19,9 @@ describe('GET /api/v1/reconciliation contract', () => {
     expect(rec).toHaveProperty('credit_txn_id')
     expect(rec).toHaveProperty('debit_account_id')
     expect(rec).toHaveProperty('credit_account_id')
-    expect(rec).toHaveProperty('amount')
+    expect(rec).toHaveProperty('amount_paise')
     expect(rec).toHaveProperty('date_diff_days')
-    expect(rec).toHaveProperty('match_confidence')
+    expect(rec).toHaveProperty('match_confidence_bps')
     expect(rec).toHaveProperty('match_type')
     expect(rec).toHaveProperty('status')
   })
@@ -45,13 +45,13 @@ describe('GET /api/v1/reconciliation contract', () => {
     expect(rec).toHaveProperty('credit_bank')
   })
 
-  it('match_confidence is between 0 and 1', async () => {
+  it('match_confidence_bps is between 0 and 10000', async () => {
     const response = await fetch('/api/v1/reconciliation')
     const data = await response.json()
 
     for (const rec of data.reconciliations) {
-      expect(rec.match_confidence).toBeGreaterThanOrEqual(0)
-      expect(rec.match_confidence).toBeLessThanOrEqual(1)
+      expect(rec.match_confidence_bps).toBeGreaterThanOrEqual(0)
+      expect(rec.match_confidence_bps).toBeLessThanOrEqual(10000)
     }
   })
 
@@ -105,8 +105,8 @@ describe('GET /api/v1/reconciliation/scan contract', () => {
     const match = data.matches[0]
     expect(match).toHaveProperty('debit_txn_id')
     expect(match).toHaveProperty('credit_txn_id')
-    expect(match).toHaveProperty('amount')
-    expect(match).toHaveProperty('match_confidence')
+    expect(match).toHaveProperty('amount_paise')
+    expect(match).toHaveProperty('match_confidence_bps')
     expect(match).toHaveProperty('match_type')
   })
 })
