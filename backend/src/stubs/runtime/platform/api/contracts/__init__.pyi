@@ -5,3 +5,4 @@ from . import ai as ai
 from . import context as context
 from . import diagnostics as diagnostics
 from . import health as health
+from . import verification as verification

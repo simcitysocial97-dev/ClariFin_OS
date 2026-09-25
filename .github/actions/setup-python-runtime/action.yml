@@ -8,13 +8,10 @@ description: "Installs Python 3.12, the root runtime package, backend deps, and 
 
 inputs:
   python-version:
-    description: "Python version to install"
+    description: "Python version"
     required: false
     default: "3.12"
-  working-directory:
-    description: "Directory containing backend dependencies (repo root by default)"
-    required: false
-    default: "."
+
 
 runs:
   using: "composite"
@@ -44,23 +41,24 @@ runs:
     - name: Configure pip
       shell: bash
       run: |
-        python -m pip install --upgrade pip
-        pip config set global.timeout 300
-        pip config set global.retries 10
+        python -m pip config set global.timeout 300
+        python -m pip config set global.retries 10
 
-    # M10: single dependency authority. The root pyproject.toml declares ALL
-    # repository dependencies (runtime + backend + verification tooling).
-    # LOCAL bootstrap (scripts/bootstrap.sh) and CI consume the SAME contract,
-    # so CI can never silently define a different project.
-    - name: Install ClariFin_OS (canonical dependency authority)
+    - name: Create repository virtual environment
+      shell: bash
+      run: python -m venv .venv
+
+    - name: Install ClariFin_OS
       shell: bash
       run: |
-        python -m pip install --timeout 300 --retries 10 -e ".[all]"
+        .venv/bin/python -m pip install --upgrade pip
+        .venv/bin/python -m pip install --timeout 300 --retries 10 -e ".[all]"
+        echo "$GITHUB_WORKSPACE/.venv/bin" >> "$GITHUB_PATH"
 
     - name: Verify environment
       shell: bash
       run: |
-        python --version
-        python -m pytest --version
-        python -m runtime.verify 2>/dev/null || true
-        echo "Environment ready"
+        .venv/bin/python --version
+        .venv/bin/python -m pytest --version
+        .venv/bin/python -m runtime.verify env-check
+        .venv/bin/python -m runtime.verify doctor

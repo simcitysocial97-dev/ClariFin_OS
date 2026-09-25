@@ -370,8 +370,10 @@ def main_env_check(argv: list[str]) -> int:
     report = resolve_environment()
 
     if full:
-        # Print extended fingerprint
-        print(json.dumps(report.fingerprint, indent=2))
+        payload = dict(report.fingerprint)
+        payload["consistent"] = report.consistent
+        payload["errors"] = list(report.errors)
+        print(json.dumps(payload, indent=2))
     else:
         # Print minimal fingerprint (backward compatible)
         print(
@@ -395,7 +397,10 @@ def main_env_check(argv: list[str]) -> int:
         )
 
     if report.consistent:
-        print("\nENVIRONMENT CONSISTENT — canonical .venv is the only environment.")
+        print(
+            "\nENVIRONMENT CONSISTENT — canonical .venv is the only environment.",
+            file=sys.stderr,
+        )
         return 0
     print(
         "\nENVIRONMENT INCONSISTENT — resolve before running mutation:",

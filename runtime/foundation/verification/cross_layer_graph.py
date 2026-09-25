@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -486,20 +487,26 @@ class CrossLayerGraphBuilder:
         logger.info(f"Contract drifts detected: {len(self._graph.contract_drifts)}")
 
     def _identify_unmapped_frontend(self) -> None:
-        all_ts_files = list(self.frontend_root.rglob("*.ts")) + list(self.frontend_root.rglob("*.tsx"))
-
-        filtered_files = []
-        for f in all_ts_files:
-            parts = f.parts
-            if not any(part in ["node_modules", ".next", "dist", "__tests__", ".git", "tests"] for part in parts):
-                filtered_files.append(f)
+        excluded_dirs = {"node_modules", ".next", "dist", "__tests__", ".git", "tests"}
+        all_ts_files: list[Path] = []
+        for root, directories, filenames in os.walk(self.frontend_root):
+            directories[:] = [
+                directory
+                for directory in directories
+                if directory not in excluded_dirs
+            ]
+            all_ts_files.extend(
+                Path(root) / filename
+                for filename in filenames
+                if filename.endswith((".ts", ".tsx"))
+            )
 
         mapped_files = set()
         for cap in self._graph.frontend_capabilities.values():
             for f in cap.files:
                 mapped_files.add(str(f))
 
-        for f in filtered_files:
+        for f in all_ts_files:
             rel_path = str(f.relative_to(self.repo_root))
             if rel_path not in mapped_files:
                 self._graph.unmapped_frontend.append(rel_path)

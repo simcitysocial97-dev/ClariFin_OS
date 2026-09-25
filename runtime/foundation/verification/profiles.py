@@ -56,7 +56,7 @@ _VERIFY_QUICK_TASKS = (
         id="quick-ruff",
         name="Ruff lint check",
         profile="quick",
-        commands=["python3 -m ruff check backend/src/"],
+        commands=[".venv/bin/python -m ruff check backend/src/"],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.QUICK,
         estimated_duration_seconds=30,
@@ -65,7 +65,7 @@ _VERIFY_QUICK_TASKS = (
         id="quick-black",
         name="Black format check",
         profile="quick",
-        commands=["python3 -m black --check backend/src/ runtime/"],
+        commands=[".venv/bin/python -m black --check backend/src/ runtime/"],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.QUICK,
         estimated_duration_seconds=30,
@@ -74,7 +74,7 @@ _VERIFY_QUICK_TASKS = (
         id="quick-mypy",
         name="MyPy type check",
         profile="quick",
-        commands=['bash -c "cd backend && python3 -m mypy src/"'],
+        commands=['bash -c "cd backend && ../.venv/bin/python -m mypy src/"'],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.QUICK,
         estimated_duration_seconds=60,
@@ -83,7 +83,7 @@ _VERIFY_QUICK_TASKS = (
         id="quick-unit",
         name="Quick unit tests",
         profile="quick",
-        commands=["python3 -m pytest backend/tests/unit/ -x --tb=short -q"],
+        commands=[".venv/bin/python -m pytest backend/tests/unit/ -x --tb=short -q"],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.QUICK,
         estimated_duration_seconds=120,
@@ -95,7 +95,7 @@ _VERIFY_BACKEND_TASKS = (
         id="backend-ruff",
         name="Ruff lint check",
         profile="backend",
-        commands=["python3 -m ruff check backend/src/"],
+        commands=[".venv/bin/python -m ruff check backend/src/"],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.BACKEND,
         estimated_duration_seconds=30,
@@ -104,7 +104,7 @@ _VERIFY_BACKEND_TASKS = (
         id="backend-black",
         name="Black format check",
         profile="backend",
-        commands=["python3 -m black --check backend/src/"],
+        commands=[".venv/bin/python -m black --check backend/src/"],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.BACKEND,
         estimated_duration_seconds=30,
@@ -113,7 +113,7 @@ _VERIFY_BACKEND_TASKS = (
         id="backend-mypy",
         name="MyPy type check",
         profile="backend",
-        commands=['bash -c "cd backend && python3 -m mypy src/"'],
+        commands=['bash -c "cd backend && ../.venv/bin/python -m mypy src/"'],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.BACKEND,
         estimated_duration_seconds=60,
@@ -122,7 +122,7 @@ _VERIFY_BACKEND_TASKS = (
         id="backend-unit",
         name="Backend unit tests",
         profile="backend",
-        commands=["python3 -m pytest backend/tests/unit/ -x --tb=short -q"],
+        commands=[".venv/bin/python -m pytest backend/tests/unit/ -x --tb=short -q"],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.BACKEND,
         estimated_duration_seconds=120,
@@ -131,7 +131,7 @@ _VERIFY_BACKEND_TASKS = (
         id="backend-integration",
         name="Backend integration tests",
         profile="backend",
-        commands=["python3 -m pytest backend/tests/integration/ -x --tb=short -q"],
+        commands=[".venv/bin/python -m pytest backend/tests/integration/ -x --tb=short -q"],
         category=VerificationCategory.INTEGRATION,
         scope=VerificationScope.BACKEND,
         estimated_duration_seconds=180,
@@ -150,7 +150,7 @@ _VERIFY_BACKEND_TASKS = (
         name="Aggregate evidence",
         profile="backend",
         commands=[
-            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+            ".venv/bin/python .github/scripts/aggregate_evidence.py runtime/generated/evidence"
         ],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.BACKEND,
@@ -200,7 +200,7 @@ _VERIFY_FRONTEND_TASKS = (
         name="Aggregate evidence",
         profile="frontend",
         commands=[
-            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+            ".venv/bin/python .github/scripts/aggregate_evidence.py runtime/generated/evidence"
         ],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.FRONTEND,
@@ -222,7 +222,7 @@ _VERIFY_CONTRACTS_TASKS = (
         id="contracts-backend-unit",
         name="Backend unit tests for contracts",
         profile="contracts",
-        commands=["python3 -m pytest backend/tests/unit/ -x --tb=short -q -k contract"],
+        commands=[".venv/bin/python -m pytest backend/tests/unit/ -x --tb=short -q -k contract"],
         category=VerificationCategory.CONTRACT,
         scope=VerificationScope.CONTRACTS,
         estimated_duration_seconds=120,
@@ -232,7 +232,7 @@ _VERIFY_CONTRACTS_TASKS = (
         name="Aggregate contract evidence",
         profile="contracts",
         commands=[
-            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+            ".venv/bin/python .github/scripts/aggregate_evidence.py runtime/generated/evidence"
         ],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.CONTRACTS,
@@ -246,7 +246,7 @@ _VERIFY_GRAPH_TASKS = (
         name="Graph integrity check",
         profile="graph",
         commands=[
-            "python3 -c 'from runtime.foundation.repository.graph.graph_service import RepositoryGraphService; s=RepositoryGraphService(index_path=\"runtime/generated/dependency-graph-v2.json\"); s.load()'"
+            ".venv/bin/python -c 'from runtime.foundation.repository.graph.graph_service import RepositoryGraphService; s=RepositoryGraphService(index_path=\"runtime/generated/dependency-graph-v2.json\"); s.load()'"
         ],
         category=VerificationCategory.ARCHITECTURAL,
         scope=VerificationScope.REPOSITORY,
@@ -257,7 +257,7 @@ _VERIFY_GRAPH_TASKS = (
         name="Cross-layer map validation",
         profile="graph",
         commands=[
-            "python3 -c 'import json; json.load(open(\"runtime/generated/cross-layer-map.json\"))'"
+            ".venv/bin/python -c 'import json; json.load(open(\"runtime/generated/cross-layer-map.json\"))'"
         ],
         category=VerificationCategory.ARCHITECTURAL,
         scope=VerificationScope.REPOSITORY,
@@ -268,7 +268,7 @@ _VERIFY_GRAPH_TASKS = (
         name="Aggregate graph evidence",
         profile="graph",
         commands=[
-            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+            ".venv/bin/python .github/scripts/aggregate_evidence.py runtime/generated/evidence"
         ],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.REPOSITORY,
@@ -281,7 +281,7 @@ _VERIFY_FULL_TASKS = (
         id="full-ruff",
         name="Ruff lint check",
         profile="full",
-        commands=["python3 -m ruff check backend/src/"],
+        commands=[".venv/bin/python -m ruff check backend/src/"],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.FULL,
         estimated_duration_seconds=30,
@@ -290,7 +290,7 @@ _VERIFY_FULL_TASKS = (
         id="full-mypy",
         name="MyPy type check",
         profile="full",
-        commands=['bash -c "cd backend && python3 -m mypy src/"'],
+        commands=['bash -c "cd backend && ../.venv/bin/python -m mypy src/"'],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.FULL,
         estimated_duration_seconds=60,
@@ -299,7 +299,7 @@ _VERIFY_FULL_TASKS = (
         id="full-backend-unit",
         name="Backend unit tests",
         profile="full",
-        commands=["python3 -m pytest backend/tests/unit/ -x --tb=short -q"],
+        commands=[".venv/bin/python -m pytest backend/tests/unit/ -x --tb=short -q"],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.FULL,
         estimated_duration_seconds=120,
@@ -308,7 +308,7 @@ _VERIFY_FULL_TASKS = (
         id="full-backend-integration",
         name="Backend integration tests",
         profile="full",
-        commands=["python3 -m pytest backend/tests/integration/ -x --tb=short -q"],
+        commands=[".venv/bin/python -m pytest backend/tests/integration/ -x --tb=short -q"],
         category=VerificationCategory.INTEGRATION,
         scope=VerificationScope.FULL,
         estimated_duration_seconds=180,
@@ -363,7 +363,7 @@ _VERIFY_FULL_TASKS = (
         name="Graph integrity check",
         profile="full",
         commands=[
-            "python3 -c 'from runtime.foundation.repository.graph.graph_service import RepositoryGraphService; s=RepositoryGraphService(index_path=\"runtime/generated/dependency-graph-v2.json\"); s.load()'"
+            ".venv/bin/python -c 'from runtime.foundation.repository.graph.graph_service import RepositoryGraphService; s=RepositoryGraphService(index_path=\"runtime/generated/dependency-graph-v2.json\"); s.load()'"
         ],
         category=VerificationCategory.ARCHITECTURAL,
         scope=VerificationScope.FULL,
@@ -374,7 +374,7 @@ _VERIFY_FULL_TASKS = (
         name="Aggregate evidence",
         profile="full",
         commands=[
-            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+            ".venv/bin/python .github/scripts/aggregate_evidence.py runtime/generated/evidence"
         ],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.FULL,
@@ -397,7 +397,7 @@ _VERIFY_MUTATION_TASKS = (
         name="Aggregate mutation evidence",
         profile="mutation",
         commands=[
-            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+            ".venv/bin/python .github/scripts/aggregate_evidence.py runtime/generated/evidence"
         ],
         category=VerificationCategory.MUTATION,
         scope=VerificationScope.MUTATION,
@@ -420,7 +420,7 @@ _VERIFY_RUNTIME_TASKS = (
         name="Aggregate runtime evidence",
         profile="runtime",
         commands=[
-            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+            ".venv/bin/python .github/scripts/aggregate_evidence.py runtime/generated/evidence"
         ],
         category=VerificationCategory.ARCHITECTURAL,
         scope=VerificationScope.RUNTIME,
@@ -455,7 +455,7 @@ _VERIFY_GOLDEN_TASKS = (
         name="Aggregate golden evidence",
         profile="golden",
         commands=[
-            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+            ".venv/bin/python .github/scripts/aggregate_evidence.py runtime/generated/evidence"
         ],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.GOLDEN,
@@ -487,7 +487,7 @@ _VERIFY_PLAYWRIGHT_TASKS = (
         name="Aggregate e2e evidence",
         profile="playwright",
         commands=[
-            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+            ".venv/bin/python .github/scripts/aggregate_evidence.py runtime/generated/evidence"
         ],
         category=VerificationCategory.INTEGRATION,
         scope=VerificationScope.PLAYWRIGHT,

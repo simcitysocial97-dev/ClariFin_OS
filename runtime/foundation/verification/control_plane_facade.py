@@ -36,6 +36,7 @@ Internal implementation complexity is permitted; operator-facing complexity is n
 
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 import sys
@@ -610,7 +611,6 @@ class ControlPlane:
         )
 
         plan_path = _find_arg("--plan", args, default=None)
-        profile = _find_arg("--profile", args, default="runtime")
         status = _find_arg("--status", args, default="pass")
         exit_code_str = _find_arg("--exit", args, default="0")
         duration_str = _find_arg("--duration", args, default="0.0")
@@ -789,19 +789,15 @@ class ControlPlane:
                     _unit_results_from_any_evidence,
                 )
 
-                try:
+                with contextlib.suppress(Exception):
                     local_results = _unit_results_from_any_evidence(local_evidence_path)
-                except Exception:
-                    pass
             if evidence_path:
                 from runtime.foundation.verification.reconciliation import (
                     _unit_results_from_any_evidence,
                 )
 
-                try:
+                with contextlib.suppress(Exception):
                     ci_results = _unit_results_from_any_evidence(evidence_path)
-                except Exception:
-                    pass
             report = reconcile(
                 local_plan,
                 ci_plan,
@@ -1063,6 +1059,11 @@ def main() -> int:
 
     command = sys.argv[1]
     args = sys.argv[2:]
+
+    if command == "env-check":
+        from runtime.foundation.verification.env import main_env_check
+
+        return main_env_check(args)
 
     # Handle legacy commands via the migration map
     classification = classification_for(command)
@@ -1342,7 +1343,7 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
 
 def _find_changed_files_arg(args: list[str]) -> list[str] | None:
     """Extract --changed-files arguments from args list.
-    
+
     Handles both --changed-files=file1,file2 and --changed-files file1 file2 spellings.
     Returns list of files or None if not specified.
     """

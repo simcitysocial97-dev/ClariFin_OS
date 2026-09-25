@@ -49,26 +49,24 @@ jobs:
         uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Bootstrap Engineering Runtime
         uses: ./.github/actions/bootstrap-runtime
         with:
           python-version: "3.12"
 
-      - name: Setup Node.js runtime
-        uses: ./.github/actions/setup-node-runtime
-        with:
-          node-version: "24"
-          working-directory: "frontend"
-
       - name: Run API contract integrity gate (canonical check)
-        run: python runtime/verify.py check
+        run: .venv/bin/python -m runtime.verify contracts
 
       - name: Upload contract evidence
         uses: ./.github/actions/upload-runtime
         with:
           name: api-contract-evidence
-          path: runtime/generated/api-contract-evidence.json
+          path: |
+            runtime/generated/evidence/summary.json
+            runtime/generated/evidence/summary.md
+            backend/tests/generated/contract-coverage.json
           retention-days: 30
 
       - name: Job Summary
@@ -76,4 +74,4 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          python runtime/verify.py doctor >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY

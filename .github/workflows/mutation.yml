@@ -20,12 +20,8 @@ on:
     - cron: "0 2 * * *"
   workflow_dispatch:
     inputs:
-      target-path:
-        description: "Path to mutate (e.g. src/engines/loan_engine.py)"
-        required: false
-        default: ""
       engine-name:
-        description: "Specific engine name (e.g. loan, credit_card)"
+        description: "Specific engine name (e.g. loan, credit_card), or all"
         required: false
         default: "all"
 
@@ -53,10 +49,10 @@ jobs:
           python-version: "3.12"
 
       - name: Verify canonical environment
-        run: python runtime/verify.py doctor
+        run: .venv/bin/python -m runtime.verify doctor
 
       - name: Run bounded mutation smoke (canonical check)
-        run: python runtime/verify.py check
+        run: .venv/bin/python -m runtime.verify mutation --smoke
 
   mutation:
     name: Mutation Testing (authoritative)
@@ -75,10 +71,17 @@ jobs:
           python-version: "3.12"
 
       - name: Verify canonical environment
-        run: python runtime/verify.py doctor
+        run: .venv/bin/python -m runtime.verify doctor
 
       - name: Run mutation testing (canonical check)
-        run: python runtime/verify.py check
+        shell: bash
+        run: |
+          ENGINE_NAME="${{ inputs.engine-name || 'all' }}"
+          if [ "$ENGINE_NAME" = "all" ]; then
+            .venv/bin/python -m runtime.verify mutation
+          else
+            .venv/bin/python -m runtime.verify mutation --target "$ENGINE_NAME"
+          fi
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
@@ -112,9 +115,7 @@ jobs:
         uses: ./.github/actions/upload-runtime
         with:
           name: mutation-report
-          path: |
-            backend/tests/generated/mutation/mutation-report.md
-            backend/tests/generated/mutation/mutation-summary.json
+          path: backend/tests/generated/mutation/
           retention-days: 90
 
       - name: Upload mutation evidence
@@ -136,8 +137,14 @@ jobs:
       - name: Classify mutation result
         id: mutation
         if: always()
+        env:
+          ENGINE_NAME: ${{ inputs.engine-name || 'all' }}
         run: |
-          SUMMARY="backend/tests/generated/mutation/mutation-summary.json"
+          if [ "$ENGINE_NAME" = "all" ]; then
+            SUMMARY="backend/tests/generated/mutation/mutation-summary.json"
+          else
+            SUMMARY="backend/tests/generated/mutation/mutation-summary-${ENGINE_NAME}.json"
+          fi
           if [ ! -f "$SUMMARY" ]; then
             echo "mutation_execution_status=INFRASTRUCTURE_FAILURE" >> $GITHUB_OUTPUT
             echo "mutation_evaluated=false" >> $GITHUB_OUTPUT
@@ -146,7 +153,7 @@ jobs:
             echo "mutation_survived=0" >> $GITHUB_OUTPUT
             echo "mutation_threshold=80" >> $GITHUB_OUTPUT
             echo "mutation_exit_code=1" >> $GITHUB_OUTPUT
-            echo "mutation_reason=mutation-summary.json was not produced (execution did not complete)" >> $GITHUB_OUTPUT
+            echo "mutation_reason=requested mutation summary was not produced (execution did not complete)" >> $GITHUB_OUTPUT
             exit 0
           fi
           EXEC=$(jq -r '.execution_status' "$SUMMARY")
@@ -207,7 +214,7 @@ jobs:
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          python runtime/verify.py doctor >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
         shell: bash
 
       - name: Fail if mutation gate not satisfied

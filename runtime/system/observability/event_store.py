@@ -8,6 +8,8 @@ One JSON object per line. Immutable events only.
 from __future__ import annotations
 
 import json
+import logging
+import subprocess
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -132,82 +134,208 @@ def create_event(
     )
 
 
+def _normalize_status(status: str) -> str:
+    if status in {"pass", "passed"}:
+        return "passed"
+    if status in {"fail", "failed"}:
+        return "failed"
+    return status
+
+
+_DECISION_TO_STATUS = {
+    "certified": "passed",
+    "diagnostic": "failed",
+    "not_certifiable": "failed",
+    "infrastructure_blocked": "blocked",
+    "timeout_blocked": "blocked",
+    "validation_blocked": "blocked",
+    "awaiting_authorization": "blocked",
+    "interrupted": "interrupted",
+}
+
+
+def decision_to_status(final_decision: str | None) -> str:
+    return _DECISION_TO_STATUS.get(final_decision or "unknown", "unknown")
+
+
+def _resolve_repository_identity() -> tuple[str, str]:
+    try:
+        commit_result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+        branch_result = subprocess.run(
+            ["git", "branch", "--show-current"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+        commit_sha = (getattr(commit_result, "stdout", "") or "").strip()
+        branch = (getattr(branch_result, "stdout", "") or "").strip()
+    except (OSError, subprocess.SubprocessError):
+        return "", ""
+    return commit_sha, branch
+
+
 def record_verification_event(
-    report: Any,
-    profile: str,
-    duration: float,
+    report: Any | None,
+    profile_name: str | None = None,
+    elapsed: float = 0.0,
     *,
+    profile: str | None = None,
+    duration: float | None = None,
     cache_hit: bool = False,
-    status: str = "pass",
+    status: str | None = None,
+    passed: int | None = None,
+    failed: int | None = None,
+    skipped: int | None = None,
+    evidence_count: int | None = None,
+    plan_id: str | None = None,
+    report_id: str | None = None,
+    final_decision: str | None = None,
+    extra_metadata: dict[str, Any] | None = None,
 ) -> None:
-    """Record a verification run event to the engineering event store and metrics repository.
+    resolved_profile = profile_name or profile
+    if not resolved_profile:
+        raise ValueError("profile_name is required")
+    resolved_duration = elapsed if duration is None else duration
+    try:
+        from runtime.system.observability.execution_context import create_context
+        from runtime.system.observability.repository import (
+            LocalMetricsRepository,
+            RunRecord,
+        )
 
-    This is the canonical function for persisting verification telemetry.
-    It writes both an EngineeringEvent (to the JSONL event store) and a
-    RunRecord (to the hybrid metrics history).
+        summary = getattr(report, "summary", None)
+        if summary is not None:
+            overall_status = getattr(summary, "overall_status", "unknown")
+            raw_status = getattr(overall_status, "value", overall_status)
+            normalized_status = _normalize_status(str(raw_status))
+            normalized_passed = int(getattr(summary, "passed", 0))
+            normalized_failed = int(getattr(summary, "failed", 0))
+            normalized_skipped = int(getattr(summary, "skipped", 0))
+            normalized_evidence = len(getattr(report, "evidence_files", []) or [])
+        else:
+            normalized_status = _normalize_status(
+                status or decision_to_status(final_decision)
+            )
+            normalized_passed = int(passed or 0)
+            normalized_failed = int(failed or 0)
+            normalized_skipped = int(skipped or 0)
+            normalized_evidence = int(evidence_count or 0)
 
-    Args:
-        report: The verification report (or None for cache-only events).
-        profile: The verification profile name (e.g. "backend", "runtime").
-        duration: Execution duration in seconds.
-        cache_hit: Whether this was a cache-hit observation.
-        status: The verification status ("pass" or "fail").
-    """
-    import uuid as _uuid
+        commit_sha, branch = _resolve_repository_identity()
+        context = create_context(commit_sha=commit_sha, branch=branch)
+        metadata = dict(extra_metadata or {})
+        if plan_id:
+            metadata["plan_id"] = plan_id
+        if report_id:
+            metadata["report_id"] = report_id
 
-    from runtime.system.observability.repository import (
-        LocalMetricsRepository,
-        RunRecord,
-    )
+        event_payload = {
+            "profile": resolved_profile,
+            "status": normalized_status,
+            "passed": normalized_passed,
+            "failed": normalized_failed,
+            "skipped": normalized_skipped,
+            "duration_seconds": resolved_duration,
+            "evidence_count": normalized_evidence,
+            "cache_hit": cache_hit,
+        }
+        completed_payload = {
+            **event_payload,
+            "final_decision": final_decision
+            or ("certified" if normalized_status == "passed" else normalized_status),
+        }
+        event_store = EngineeringEventStore()
+        record_event = create_event(
+            "verification_record",
+            context.to_dict(),
+            event_payload,
+            metadata=metadata,
+        )
+        event_store.append(record_event)
+        completed_event = create_event(
+            "VerificationCompleted",
+            context.to_dict(),
+            completed_payload,
+            metadata=metadata,
+        )
+        event_store.append(completed_event)
 
-    # Build payload
-    payload: dict[str, Any] = {
-        "profile": profile,
-        "cache_hit": cache_hit,
-        "status": status,
-        "duration": duration,
-    }
-    if report is not None:
-        payload["passed"] = getattr(report.summary, "passed", 0) if hasattr(report, "summary") else 0
-        payload["failed"] = getattr(report.summary, "failed", 0) if hasattr(report, "summary") else 0
-        payload["skipped"] = getattr(report.summary, "skipped", 0) if hasattr(report, "summary") else 0
-        payload["evidence_count"] = len(getattr(report, "evidence_files", [])) if hasattr(report, "evidence_files") else 0
-        payload["blast_radius"] = getattr(report, "blast_radius", {}) if hasattr(report, "blast_radius") else {}
+        LocalMetricsRepository().append(
+            RunRecord(
+                run_id=record_event.event_id,
+                timestamp=record_event.timestamp,
+                environment=context.environment.value,
+                runner=context.runner.value,
+                verification_depth=context.verification_depth.value,
+                intent=context.intent.value,
+                trigger=context.trigger.value,
+                commit_sha=commit_sha,
+                branch=branch,
+                profile=resolved_profile,
+                status=normalized_status,
+                passed=normalized_passed,
+                failed=normalized_failed,
+                skipped=normalized_skipped,
+                duration_seconds=resolved_duration,
+                evidence_count=normalized_evidence,
+                cache_hit=cache_hit,
+                metadata=metadata,
+            )
+        )
+    except Exception as exc:
+        logging.getLogger(__name__).warning(
+            "Failed to record verification event: %s", exc
+        )
 
-    # Write to event store
-    event = create_event(
-        event_type="verification_run",
-        execution_context={"environment": "local"},
-        payload=payload,
-        event_id=str(_uuid.uuid4()),
-    )
-    store = EngineeringEventStore()
-    store.append(event)
 
-    # Write to metrics repository
-    repo = LocalMetricsRepository()
-    run_record = RunRecord(
-        run_id=str(_uuid.uuid4()),
-        timestamp=datetime.now(UTC),
-        environment="local",
-        runner="verify.py",
-        verification_depth="profile",
-        intent="developer-feedback",
-        trigger="manual",
-        commit_sha="unknown",
-        branch="unknown",
-        profile=profile,
+def record_execution_report(
+    profile_name: str,
+    report: Any,
+    elapsed: float,
+) -> None:
+    decision = getattr(report, "final_decision", None) or "unknown"
+    status = decision_to_status(decision)
+    records = getattr(report, "records", None) or []
+    passed = 0
+    failed = 0
+    skipped = 0
+    states: dict[str, int] = {}
+    artifacts: set[str] = set()
+
+    for task_record in records:
+        state = getattr(task_record, "completion_state", "unknown")
+        states[state] = states.get(state, 0) + 1
+        if state in {"pass", "reused"}:
+            passed += 1
+        elif state == "failed":
+            failed += 1
+        elif state == "skipped":
+            skipped += 1
+        artifacts.update(getattr(task_record, "artifacts", None) or [])
+
+    record_verification_event(
+        None,
+        profile_name,
+        elapsed,
         status=status,
-        passed=payload.get("passed", 0),
-        failed=payload.get("failed", 0),
-        skipped=payload.get("skipped", 0),
-        duration_seconds=duration,
-        blast_radius=payload.get("blast_radius", {}),
-        evidence_count=payload.get("evidence_count", 0),
-        cache_hit=cache_hit,
+        passed=passed,
+        failed=failed,
+        skipped=skipped,
+        evidence_count=sum(1 for artifact in artifacts if Path(artifact).exists()),
+        plan_id=getattr(report, "plan_id", None),
+        report_id=getattr(report, "report_id", None),
+        final_decision=decision,
+        extra_metadata={"task_states": states} if states else None,
     )
-    repo.append(run_record)
 
 
-# Backward-compatible private alias
 _record_verification_event = record_verification_event

@@ -33,9 +33,7 @@ fi
 v() { printf '  %-22s %s\n' "$1" "$2"; }
 
 if [ "$JSON_MODE" = true ]; then
-  report="{"
-  report+="\"repository\":\"$ROOT_DIR\","
-  report+="\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\","
+  exec "$PY" -m runtime.verify env-check --full
 fi
 
 echo "======================================================"
@@ -61,11 +59,11 @@ if [ -x "$PY" ]; then
   done
 
   # C57: interpreter membership proof + import-resolution probe
-  _exe_realpath="$(readlink -f "$PY" 2>/dev/null || echo "$PY")"
-  if [[ "$_exe_realpath" == *"/.venv/bin/python"* ]]; then
+  _venv_prefix="$("$PY" -c 'import sys; print(sys.prefix)' 2>/dev/null)"
+  if [ "$_venv_prefix" = "$ROOT_DIR/.venv" ]; then
     v "interpreter membership" "CANONICAL (.venv/bin/python)"
   else
-    v "interpreter membership" "NON-CANONICAL ($_exe_realpath)"
+    v "interpreter membership" "NON-CANONICAL ($_venv_prefix)"
   fi
   echo ""
   echo "[ Import resolution (canonical module execution) ]"

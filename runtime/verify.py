@@ -23,13 +23,11 @@ if str(REPO_ROOT) not in sys.path:
 from runtime.foundation.verification.control_plane_facade import (
     main as canonical_main,
 )
-
-# Re-export observability function for backward compatibility with tests.
-# This function was historically defined in verify.py; it now lives in the
-# observability module but is re-exported here so existing test imports
-# (from runtime.verify import _record_verification_event) continue to work.
-from runtime.system.observability.event_store import (  # noqa: E401, F401
+from runtime.system.observability.event_store import (  # noqa: E402, F401
+    _normalize_status,
     _record_verification_event,
+    decision_to_status,
+    record_execution_report,
 )
 
 

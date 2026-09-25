@@ -32,7 +32,7 @@ import json
 import logging
 import uuid
 from collections.abc import AsyncIterator
-from typing import Any
+from typing import Any, cast
 
 from fastapi import APIRouter, FastAPI, Query, Request, Response
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -258,7 +258,7 @@ def _current_tasks_list() -> dict[str, Any]:
         and cached.get("data", {}).get("plan_fingerprint")
         == tasks.current_plan_fingerprint()
     ):
-        return cached
+        return cast(dict[str, Any], cached)
     env = tasks.build_task_list()
     snapshot.put("tasks", env)
     return env

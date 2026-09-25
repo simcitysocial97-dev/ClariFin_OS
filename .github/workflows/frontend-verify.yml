@@ -58,7 +58,7 @@ jobs:
           working-directory: "frontend"
 
       - name: Run frontend verification (canonical check)
-        run: python runtime/verify.py check
+        run: .venv/bin/python -m runtime.verify frontend
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
@@ -109,5 +109,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          python runtime/verify.py doctor >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
         shell: bash

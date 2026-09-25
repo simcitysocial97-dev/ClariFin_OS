@@ -167,7 +167,7 @@ def _run_integrity_test(test_case: IntegrityTestCase) -> IntegrityTestResult:
     if test_case.name == "complete_valid_chain":
         engine = VerificationContractEngine()
         decision = engine.decide(
-            changed_files=["backend/src/engines/credit_card_engine/core.py"]
+            changed_files=["backend/src/engines/behaviour_engine/core.py"]
         )
         enforcer = ExecutionEnforcer()
         result = enforcer.enforce(decision)

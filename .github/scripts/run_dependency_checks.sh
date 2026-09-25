@@ -12,10 +12,8 @@ cd "$REPO_ROOT"
 # Canonical Python resolver (venv-first)
 if [ -x "$REPO_ROOT/.venv/bin/python" ]; then
   PY="$REPO_ROOT/.venv/bin/python"
-  PIP="$REPO_ROOT/.venv/bin/pip"
 else
   PY="$(command -v python3 || command -v python)"
-  PIP="$(command -v pip3 || command -v pip)"
 fi
 
 echo "================================================"
@@ -26,7 +24,6 @@ mkdir -p dependency-reports
 
 # ── Python dependency audit ───────────────────────
 echo -e "\n[1/2] Python dependency security audit..."
-"$PIP" install --quiet pip-audit 2>/dev/null || true
 # M10: the single dependency authority is root pyproject.toml (no more
 # backend/requirements.txt). Audit the resolved environment lock/deps directly.
 if [ -f requirements.lock ]; then

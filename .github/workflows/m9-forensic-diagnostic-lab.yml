@@ -3,7 +3,6 @@ name: M9 Forensic Diagnostic Lab
 on:
   pull_request:
     branches: [main]
-  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -200,21 +199,15 @@ jobs:
           } > runtime/generated/evidence/environment.txt
 
       - name: Bootstrap runtime
-        run: |
-          set -euxo pipefail
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
 
-          if [ -f runtime/bootstrap.sh ]; then
-            bash runtime/bootstrap.sh
-          elif [ -f scripts/bootstrap.sh ]; then
-            bash scripts/bootstrap.sh
-          elif [ -f pyproject.toml ]; then
-            # M10: single dependency authority (root pyproject.toml).
-            python -m pip install -e ".[all]"
-          else
-            echo "No bootstrap mechanism found"
-          fi
-
-          # Tooling is installed via [all] extras in the single authority.
+      - name: Setup Node.js runtime
+        uses: ./.github/actions/setup-node-runtime
+        with:
+          node-version: "24"
+          working-directory: "frontend"
 
       - name: Verify runtime dependency health
         run: |
@@ -446,7 +439,7 @@ jobs:
 
           START=$(date +%s)
 
-          python runtime/verify.py check \
+          .venv/bin/python -m runtime.verify quick \
             > runtime/generated/evidence/verify-quick.stdout.log 2>&1
 
           EXIT_CODE=$?
@@ -468,7 +461,7 @@ jobs:
 
           START=$(date +%s)
 
-          python runtime/verify.py check \
+          .venv/bin/python -m runtime.verify backend \
             > runtime/generated/evidence/verify-backend.stdout.log 2>&1
 
           EXIT_CODE=$?

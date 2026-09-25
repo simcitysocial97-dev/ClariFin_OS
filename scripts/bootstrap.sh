@@ -45,18 +45,13 @@ require_python() {
 }
 
 require_node() {
-  local node=""
-  if command -v node >/dev/null 2>&1; then
-    if node --version 2>/dev/null | grep -qE '^v(2[4-9]|[3-9][0-9])\.'; then
-      node="node"
-    fi
-  fi
-  # Node < 24 is permitted only for informational warning; npm ci still works.
-  # Some WSL2 installations ship older node without rootfs replacement.
-  if [ -z "$node" ]; then
-    warn "Node.js >= 24 not found on PATH — frontend provisioning may require manual attention"
-  fi
-  echo "${node:-node}"
+  command -v node >/dev/null 2>&1 || die "Node.js 24 is required. None found on PATH."
+  node --version 2>/dev/null | grep -qE '^v24\.' || die "Node.js 24 is required; found $(node --version 2>/dev/null)."
+  local expected_npm actual_npm
+  expected_npm=$(node -p "require('./frontend/package.json').packageManager.split('@')[1]")
+  actual_npm=$(npm --version 2>/dev/null)
+  [ "$actual_npm" = "$expected_npm" ] || die "npm $expected_npm is required; found ${actual_npm:-missing}."
+  echo "node"
 }
 
 PY_SRC="$(require_python)"

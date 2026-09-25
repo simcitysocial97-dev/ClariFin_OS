@@ -89,6 +89,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Security analysis complete. Results are available under the repository" >> $GITHUB_STEP_SUMMARY
-          echo "**Security** tab (code scanning) and as PR check annotations." >> $GITHUB_STEP_SUMMARY
+          echo "**Security analysis status:** ${{ job.status }}" >> "$GITHUB_STEP_SUMMARY"
         shell: bash

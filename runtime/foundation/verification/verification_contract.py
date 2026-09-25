@@ -23,9 +23,6 @@ from pathlib import Path
 from typing import Any
 
 from runtime.foundation.verification.blast_radius import compute_blast_radius
-from runtime.foundation.verification.capability_discovery import (
-    CapabilityDiscoveryService,
-)
 from runtime.foundation.verification.change_surface import (
     discover_change_surfaces,
 )
@@ -94,7 +91,6 @@ class VerificationContractEngine:
     """
 
     def __init__(self) -> None:
-        self._capability_resolver = CapabilityDiscoveryService()
         self._evidence_planner = default_planner()
 
     def _get_repo_sha(self) -> str:
@@ -157,19 +153,10 @@ class VerificationContractEngine:
 
         # 3. Capability resolution (C51 certified resolver)
         # Resolve each changed file to its canonical capability path
-        capability_resolutions = {}
-        if changed_files:
-            # Use blast-radius's capability impacts for provenance
-            for cap_impact in blast_contract.capability_impacts:
-                cap_id = cap_impact.capability_id
-                if cap_id not in capability_resolutions:
-                    # Run the C51 resolver for this capability
-                    problem_type = "changed_file"
-                    res = self._capability_resolver.discover(
-                        problem_type=problem_type,
-                        changed_files=changed_files,
-                    )
-                    capability_resolutions[cap_id] = res.to_dict()
+        capability_resolutions = {
+            cap_impact.capability_id: cap_impact.to_dict()
+            for cap_impact in blast_contract.capability_impacts
+        }
 
         # 4. Evidence planning (C42.27 certified planner)
         evidence_plan = self._evidence_planner.plan(changed_files)

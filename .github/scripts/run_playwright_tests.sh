@@ -22,12 +22,15 @@ echo "================================================"
 
 # ED6: Pre-flight browser availability check — fail fast if browser not available
 echo -e "\n${YELLOW}Checking browser availability...${NC}"
-if ! npx playwright install --dry-run chromium 2>/dev/null | grep -q "chromium"; then
-  echo -e "${RED}✗ Browser 'chromium' not available. Run 'npx playwright install chromium' first.${NC}"
+EXPECTED_CHROMIUM=$(node -e "const b=require('./node_modules/playwright-core/browsers.json').browsers; process.stdout.write(String(b.find(x=>x.name==='chromium').revision))")
+EXPECTED_SHELL=$(node -e "const b=require('./node_modules/playwright-core/browsers.json').browsers; process.stdout.write(String(b.find(x=>x.name==='chromium-headless-shell').revision))")
+BROWSER_LIST=$(npx --no-install playwright install --list)
+if ! printf '%s\n' "$BROWSER_LIST" | grep -q "chromium-$EXPECTED_CHROMIUM" || ! printf '%s\n' "$BROWSER_LIST" | grep -q "chromium_headless_shell-$EXPECTED_SHELL"; then
+  echo -e "${RED}✗ Required Playwright browser revision is unavailable. Run 'npx --no-install playwright install chromium' first.${NC}"
   echo "================================================"
   exit 1
 fi
-echo -e "${GREEN}✓ Browser 'chromium' available${NC}"
+echo -e "${GREEN}✓ Browser 'chromium' revision $EXPECTED_CHROMIUM available${NC}"
 
 mkdir -p test-results playwright-report
 

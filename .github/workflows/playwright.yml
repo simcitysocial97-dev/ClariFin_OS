@@ -43,10 +43,6 @@ jobs:
   test:
     name: E2E Tests (${{ matrix.project }})
     runs-on: ubuntu-latest
-    # M9-C8: each matrix job runs exactly one Playwright project (a bounded,
-    # full-coverage slice of the six-project matrix) in parallel, so the runtime
-    # of any single job stays well inside this window instead of serialising the
-    # entire 1,392-test matrix.
     timeout-minutes: 90
     strategy:
       fail-fast: false
@@ -76,13 +72,12 @@ jobs:
         with:
           working-directory: "frontend"
           browsers: chromium
-          browser-version: "1.58.2"
 
       - name: Run playwright verification (canonical check)
         env:
           PLAYWRIGHT_PROJECT: ${{ matrix.project }}
-          CLARIFIN_PYTHON: python3
-        run: python runtime/verify.py check
+          CLARIFIN_PYTHON: .venv/bin/python
+        run: .venv/bin/python -m runtime.verify playwright
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
@@ -131,5 +126,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }} — ${{ matrix.project }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          python runtime/verify.py doctor >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
         shell: bash

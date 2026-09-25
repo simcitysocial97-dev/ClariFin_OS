@@ -12,11 +12,6 @@ on:
   schedule:
     - cron: "0 3 * * *"
   workflow_dispatch:
-    inputs:
-      dataset:
-        description: "Specific dataset (or 'all')"
-        required: false
-        default: "all"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -42,7 +37,7 @@ jobs:
           python-version: "3.12"
 
       - name: Run golden verification (canonical check)
-        run: python runtime/verify.py check
+        run: .venv/bin/python -m runtime.verify golden
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
@@ -91,5 +86,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          python runtime/verify.py doctor >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
         shell: bash
