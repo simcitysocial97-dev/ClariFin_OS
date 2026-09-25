@@ -278,13 +278,13 @@ class ExecutionEnforcer:
         # Delegate to the execution orchestrator for the specific capability
         # This is where the actual pytest/mutmut/black/etc commands run
         if capability.startswith("measure."):
-            return f"python runtime/verify.py measurement coverage {task.component}"
+            return f".venv/bin/python -m runtime.verify measurement coverage {task.component}"
         if capability.startswith("exec."):
-            return f"python runtime/verify.py execute --component {task.component}"
+            return f".venv/bin/python -m runtime.verify execute --component {task.component}"
         if capability.startswith("quality."):
             return f"python -m {task.component} --check"  # simplified
         if capability.startswith("evidence."):
-            return f"python runtime/verify.py evidence-execute --component {task.component}"
+            return f".venv/bin/python -m runtime.verify evidence-execute --component {task.component}"
         return ""
 
     def _build_reuse_command(self, task: PlannedTask, capability: str) -> str:

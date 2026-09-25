@@ -318,7 +318,7 @@ def generate_proposal(s: SurvivorEvidence) -> StrengtheningProposal | RejectionR
         regression_risk="low",
         validation_command=(
             f".venv/bin/python -m pytest {test_dir} -q && "
-            f".venv/bin/python runtime/verify.py strengthen-validate "
+            f".venv/bin/python -m runtime.verify strengthen-validate "
             f"--proposal prop::{pid} --component {s.component}"
         ),
         acceptance_criteria=(

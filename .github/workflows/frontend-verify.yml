@@ -58,7 +58,7 @@ jobs:
           working-directory: "frontend"
 
       - name: Run frontend verification (canonical local equivalent)
-        run: bash scripts/verify-frontend.sh
+        run: bash .github/scripts/run_frontend_verification.sh
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime

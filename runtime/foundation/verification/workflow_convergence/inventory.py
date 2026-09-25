@@ -312,6 +312,16 @@ def _build_additional_patterns() -> dict[str, CommandSemantics]:
             False,
             "change-driven verification",
         ),
+        "run_frontend_verification.sh": _sem(
+            "frontend",
+            "task::frontend::validation",
+            "frontend-evidence",
+            "observational",
+            True,
+            "surface_only",
+            False,
+            "frontend validation script",
+        ),
         "verify-frontend.sh": _sem(
             "frontend",
             "task::frontend::validation",

@@ -263,7 +263,7 @@ class CapabilityDiscoveryService:
                 return DiscoveryResult(
                     problem_type=problem_type,
                     decision="DISCOVERED",
-                    command="python runtime/verify.py diagnose-failures",
+                    command=".venv/bin/python -m runtime.verify diagnose-failures",
                     expected_evidence=["diagnostic_report"],
                     reason="Run pipeline failure attribution to classify the test failure.",
                 )
@@ -280,7 +280,7 @@ class CapabilityDiscoveryService:
                             problem_type=problem_type,
                             decision="DISCOVERED",
                             recommended_capability=f"exec.profile.{cap.id}",
-                            command=f"python runtime/verify.py {cap.minimum_verification_profile or 'backend'}",
+                            command=f".venv/bin/python -m runtime.verify {cap.minimum_verification_profile or 'backend'}",
                             required_inputs=[],
                             prerequisites=[],
                             expected_evidence=["test_pass"],
@@ -291,7 +291,7 @@ class CapabilityDiscoveryService:
             return DiscoveryResult(
                 problem_type=problem_type,
                 decision="DISCOVERED",
-                command="python runtime/verify.py diagnose-failures",
+                command=".venv/bin/python -m runtime.verify diagnose-failures",
                 expected_evidence=["diagnostic_report"],
                 reason="Unmapped test — attribute failure to blast radius first.",
             )
@@ -319,7 +319,7 @@ class CapabilityDiscoveryService:
                     decision="DISCOVERED",
                     recommended_capability="strengthen.survivor-intel",
                     command=(
-                        f"python runtime/verify.py strengthen-survivor "
+                        f".venv/bin/python -m runtime.verify strengthen-survivor "
                         f"{survivor_id}"
                     ),
                     required_inputs=["survivor_id"],
@@ -343,7 +343,7 @@ class CapabilityDiscoveryService:
                 problem_type=problem_type,
                 decision="DISCOVERED",
                 recommended_capability="strengthen.survivor-intel",
-                command="python runtime/verify.py mutation-intel",
+                command=".venv/bin/python -m runtime.verify mutation-intel",
                 required_inputs=[],
                 prerequisites=[],
                 expected_evidence=["survivor_intel"],
@@ -365,7 +365,7 @@ class CapabilityDiscoveryService:
                 problem_type=problem_type,
                 decision="DISCOVERED",
                 recommended_capability="measure.coverage",
-                command=f"python runtime/verify.py measurement coverage {scope}",
+                command=f".venv/bin/python -m runtime.verify measurement coverage {scope}",
                 required_inputs=["scope"],
                 prerequisites=[],
                 expected_evidence=["coverage_measurement"],
@@ -403,7 +403,7 @@ class CapabilityDiscoveryService:
             return DiscoveryResult(
                 problem_type=problem_type,
                 decision="DISCOVERED",
-                command="python runtime/verify.py execute --dry-run",
+                command=".venv/bin/python -m runtime.verify execute --dry-run",
                 expected_evidence=["execution_report"],
                 reason=(
                     "Classify the workflow failure semantics first, then "
@@ -452,7 +452,7 @@ class CapabilityDiscoveryService:
             return DiscoveryResult(
                 problem_type=problem_type,
                 decision="DISCOVERED",
-                command="python runtime/verify.py integrity",
+                command=".venv/bin/python -m runtime.verify integrity",
                 expected_evidence=["certification_report"],
                 reason=(
                     "Unknown quality tool failure. Run architecture integrity "
@@ -466,7 +466,7 @@ class CapabilityDiscoveryService:
                 problem_type=problem_type,
                 decision="DISCOVERED",
                 recommended_capability="measure.truth-report",
-                command="python runtime/verify.py measurement-truth-report",
+                command=".venv/bin/python -m runtime.verify measurement-truth-report",
                 required_inputs=[],
                 prerequisites=[],
                 expected_evidence=["certification_report"],
@@ -485,7 +485,7 @@ class CapabilityDiscoveryService:
         return DiscoveryResult(
             problem_type=problem_type,
             decision=BypassVerdict.NO_CANONICAL_CAPABILITY,
-            command="python runtime/verify.py integrity",
+            command=".venv/bin/python -m runtime.verify integrity",
             required_inputs=[],
             prerequisites=[],
             expected_evidence=["certification_report"],

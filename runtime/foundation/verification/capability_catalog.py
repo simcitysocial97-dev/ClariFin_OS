@@ -485,7 +485,7 @@ def _profile_entries() -> list[_Registration]:
                     wf.description
                     + " — exposed as a verify.py profile that selects and runs the workflow."
                 ),
-                command=f"python runtime/verify.py {wf.id}",
+                command=f".venv/bin/python -m runtime.verify {wf.id}",
                 implementation=(
                     f"runtime.foundation.verification.orchestrator:"
                     f"VerificationOrchestrator.run(profile={wf.id!r})"

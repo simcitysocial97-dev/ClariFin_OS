@@ -160,51 +160,13 @@ _VERIFY_BACKEND_TASKS = (
 
 _VERIFY_FRONTEND_TASKS = (
     VerificationTask(
-        id="frontend-lint",
-        name="Frontend lint check",
+        id="frontend-verification",
+        name="Frontend lint, typecheck, tests, and build",
         profile="frontend",
-        commands=["cd frontend && npx eslint ."],
+        commands=["bash .github/scripts/run_frontend_verification.sh"],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.FRONTEND,
-        estimated_duration_seconds=30,
-    ),
-    VerificationTask(
-        id="frontend-typecheck",
-        name="Frontend type check",
-        profile="frontend",
-        commands=["cd frontend && npx tsc --noEmit"],
-        category=VerificationCategory.CAPABILITY,
-        scope=VerificationScope.FRONTEND,
-        estimated_duration_seconds=60,
-    ),
-    VerificationTask(
-        id="frontend-unit",
-        name="Frontend unit tests",
-        profile="frontend",
-        commands=["cd frontend && npx vitest run"],
-        category=VerificationCategory.CAPABILITY,
-        scope=VerificationScope.FRONTEND,
-        estimated_duration_seconds=120,
-    ),
-    VerificationTask(
-        id="frontend-build",
-        name="Frontend build",
-        profile="frontend",
-        commands=["cd frontend && npm run build"],
-        category=VerificationCategory.CAPABILITY,
-        scope=VerificationScope.FRONTEND,
-        estimated_duration_seconds=60,
-    ),
-    VerificationTask(
-        id="frontend-aggregate",
-        name="Aggregate evidence",
-        profile="frontend",
-        commands=[
-            ".venv/bin/python .github/scripts/aggregate_evidence.py runtime/generated/evidence"
-        ],
-        category=VerificationCategory.CAPABILITY,
-        scope=VerificationScope.FRONTEND,
-        estimated_duration_seconds=30,
+        estimated_duration_seconds=600,
     ),
 )
 

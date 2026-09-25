@@ -78,7 +78,7 @@ _AUTHORITY_TABLE: tuple[ToolAuthority, ...] = (
     ToolAuthority(
         tool="coverage",
         name="Coverage (C47 canonical)",
-        canonical_command="python runtime/verify.py measurement coverage <scope>",
+        canonical_command=".venv/bin/python -m runtime.verify measurement coverage <scope>",
         config_path="backend/pyproject.toml [tool.coverage]",
         config_scope="backend",
         source_scope="backend/src/",
@@ -87,7 +87,7 @@ _AUTHORITY_TABLE: tuple[ToolAuthority, ...] = (
     ToolAuthority(
         tool="mutation",
         name="Mutation Testing (C47)",
-        canonical_command="python runtime/verify.py mutation [--smoke|--target <engine>]",
+        canonical_command=".venv/bin/python -m runtime.verify mutation [--smoke|--target <engine>]",
         config_path="backend/pyproject.toml [tool.mutmut]",
         config_scope="backend",
         source_scope="backend/src/",

@@ -52,7 +52,7 @@ _REGISTRATIONS_DISCOVERY = [
             "the next capability to invoke."
         ),
         command=(
-            "python runtime/verify.py capability-for --type <problem> "
+            ".venv/bin/python -m runtime.verify capability-for --type <problem> "
             "[--changed FILE] [--test PATH] [--survivor ID] "
             "[--capability ID] [--engine NAME] [--scope SCOPE] "
             "[--workflow ID] [--record PATH] [--error TEXT] "
@@ -94,7 +94,7 @@ _REGISTRATIONS_DISCOVERY = [
             "scope, escalation conditions, fail-closed status."
         ),
         command=(
-            "python runtime/verify.py blast-radius "
+            ".venv/bin/python -m runtime.verify blast-radius "
             "[--files FILE...] [--base REF] [--head REF] [--json] [--out PATH]"
         ),
         implementation="runtime.foundation.verification.blast_radius:compute_blast_radius",
@@ -121,7 +121,7 @@ _REGISTRATIONS_DISCOVERY = [
             "capabilities, invalidated vs reusable evidence, and mandatory "
             "vs optional verification."
         ),
-        command="python runtime/verify.py resolve-capabilities FILE... [--json] [--out PATH]",
+        command=".venv/bin/python -m runtime.verify resolve-capabilities FILE... [--json] [--out PATH]",
         implementation="runtime.foundation.verification.operational_cli:cmd_resolve_capabilities",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(PROBLEM_CHANGED_FILE, PROBLEM_PROPOSED_CHANGE),
@@ -141,7 +141,7 @@ _REGISTRATIONS_DISCOVERY = [
             "failure semantics, escalation behavior, certifiability."
         ),
         command=(
-            "python runtime/verify.py "
+            ".venv/bin/python -m runtime.verify "
             "capability-inventory [--capability X] [--profile X] [--category X] [--json] | "
             "capabilities [--stage X] [--json]"
         ),
@@ -160,7 +160,7 @@ _REGISTRATIONS_DISCOVERY = [
             "Answer 'what should I run?' given a set of changed files: "
             "minimum safe verification scope and escalation conditions."
         ),
-        command="python runtime/verify.py what-should-i-run [--files FILE...] [--json]",
+        command=".venv/bin/python -m runtime.verify what-should-i-run [--files FILE...] [--json]",
         implementation="runtime.foundation.verification.blast_radius_cli:cmd_what_should_i_run_c50",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(PROBLEM_CHANGED_FILE, PROBLEM_PROPOSED_CHANGE),
@@ -181,7 +181,7 @@ _REGISTRATIONS_DISCOVERY = [
             "(44 nodes, edges) used for blast-radius propagation and "
             "cross-capability impact analysis."
         ),
-        command="python runtime/verify.py capability-graph [--json] [--out PATH]",
+        command=".venv/bin/python -m runtime.verify capability-graph [--json] [--out PATH]",
         implementation=(
             "runtime.foundation.verification.capability_graph:cmd_capability_graph"
         ),
@@ -210,7 +210,7 @@ _REGISTRATIONS_DISCOVERY = [
             "operationalized) verification capabilities. Classifies them; "
             "never deletes them."
         ),
-        command="python runtime/verify.py latent-audit [--json] [--out PATH]",
+        command=".venv/bin/python -m runtime.verify latent-audit [--json] [--out PATH]",
         implementation=(
             "runtime.foundation.verification.capability_latent_audit:"
             "cmd_latent_audit"
@@ -241,7 +241,7 @@ _REGISTRATIONS_PLANNING = [
             "escalation, measurement and certification requirements) from a "
             "capability resolution."
         ),
-        command="python runtime/verify.py control-plane-plan FILE... [--json] [--out PATH]",
+        command=".venv/bin/python -m runtime.verify control-plane-plan FILE... [--json] [--out PATH]",
         implementation="runtime.foundation.verification.operational_cli:cmd_control_plane_plan",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(PROBLEM_CHANGED_FILE, PROBLEM_PROPOSED_CHANGE),
@@ -261,7 +261,7 @@ _REGISTRATIONS_PLANNING = [
             "Emit the tier-aware (local/pr/deep) verification plan manifest "
             "that the CI reconciliation gate validates."
         ),
-        command="python runtime/verify.py plan --tier <local|pr|deep> [--base REF] [--changed FILE...]",
+        command=".venv/bin/python -m runtime.verify plan --tier <local|pr|deep> [--base REF] [--changed FILE...]",
         implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(PROBLEM_CHANGED_FILE, PROBLEM_PROPOSED_CHANGE),
@@ -281,7 +281,7 @@ _REGISTRATIONS_PLANNING = [
             "executable, observable, deterministic C49 ExecutionPlan of "
             "ordered verification tasks."
         ),
-        command="python runtime/verify.py execution-plan FILE... [--json] [--out PATH]",
+        command=".venv/bin/python -m runtime.verify execution-plan FILE... [--json] [--out PATH]",
         implementation="runtime.foundation.verification.execution_orchestrator:ExecutionOrchestrator.build_execution_plan",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(PROBLEM_CHANGED_FILE, PROBLEM_PROPOSED_CHANGE),
@@ -301,7 +301,7 @@ _REGISTRATIONS_PLANNING = [
             "Developer-side LOCAL plan artifact (pre-push closure): emits "
             "the LOCAL TierPlan manifest from the working-tree delta."
         ),
-        command="python runtime/verify.py local-gate [--out PATH]",
+        command=".venv/bin/python -m runtime.verify local-gate [--out PATH]",
         implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(PROBLEM_CHANGED_FILE,),
@@ -320,7 +320,7 @@ _REGISTRATIONS_PLANNING = [
             "explicit categorization of functional/regression/test-"
             "effectiveness/UI/performance/security surfaces."
         ),
-        command="python runtime/verify.py deep-contract [--out PATH]",
+        command=".venv/bin/python -m runtime.verify deep-contract [--out PATH]",
         implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(),
@@ -345,7 +345,7 @@ _REGISTRATIONS_EXECUTION = [
             "evidence, stop at deterministic stop rules, and return a final "
             "certifiable/not-certifiable decision."
         ),
-        command="python runtime/verify.py execute FILE... [--json] [--out PATH]",
+        command=".venv/bin/python -m runtime.verify execute FILE... [--json] [--out PATH]",
         implementation="runtime.foundation.verification.execution_orchestrator:ExecutionOrchestrator.execute",
         category=CommandCategory.QUALITY_GATE,
         trigger_conditions=(PROBLEM_CHANGED_FILE,),
@@ -369,7 +369,7 @@ _REGISTRATIONS_EXECUTION = [
             "Plan backend evidence through the existing C42.28-C42.31 "
             "evidence-aware pipeline."
         ),
-        command="python runtime/verify.py evidence-plan",
+        command=".venv/bin/python -m runtime.verify evidence-plan",
         implementation="runtime.foundation.verification.executor_pipeline:main",
         category=CommandCategory.QUALITY_GATE,
         trigger_conditions=(PROBLEM_CHANGED_FILE,),
@@ -393,7 +393,7 @@ _REGISTRATIONS_EXECUTION = [
             "matched units, including the targeted mutation scope, capturing "
             "per-unit execution evidence."
         ),
-        command="python runtime/verify.py evidence-execute [--run-mutation]",
+        command=".venv/bin/python -m runtime.verify evidence-execute [--run-mutation]",
         implementation="runtime.foundation.verification.executor_pipeline:main",
         category=CommandCategory.QUALITY_GATE,
         trigger_conditions=(PROBLEM_CHANGED_FILE,),
@@ -419,7 +419,7 @@ _REGISTRATIONS_EXECUTION = [
             "(unit_id -> attempt -> artifact) from the plan manifest and "
             "recorded outcomes."
         ),
-        command="python runtime/verify.py exec-evidence",
+        command=".venv/bin/python -m runtime.verify exec-evidence",
         implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.RECONCILIATION,
         trigger_conditions=(PROBLEM_CHANGED_FILE,),
@@ -439,7 +439,7 @@ _REGISTRATIONS_EXECUTION = [
             "machine-readable fingerprint; fail-closed if the sanctioned "
             "environment is missing or drifted."
         ),
-        command="python runtime/verify.py env-check",
+        command=".venv/bin/python -m runtime.verify env-check",
         implementation="runtime.foundation.verification.env:main_env_check",
         category=CommandCategory.QUALITY_GATE,
         trigger_conditions=(PROBLEM_QUALITY_FAILURE, PROBLEM_WORKFLOW_FAILURE),
@@ -473,7 +473,7 @@ _REGISTRATIONS_MEASUREMENT = [
             "measurement-truth record plus durable survivor intel."
         ),
         command=(
-            "python runtime/verify.py mutation "
+            ".venv/bin/python -m runtime.verify mutation "
             "[--smoke | --target <engine>] [--restore] [--json]"
         ),
         implementation="runtime.foundation.verification.mutation_runner:run_mutation_cli",
@@ -502,7 +502,7 @@ _REGISTRATIONS_MEASUREMENT = [
             "Inventory the certified mutation population per engine and "
             "report mutation-corpus completeness/certification state."
         ),
-        command="python runtime/verify.py mutation-inventory [--json]",
+        command=".venv/bin/python -m runtime.verify mutation-inventory [--json]",
         implementation="runtime.foundation.verification.mutation_inventory:run_mutation_inventory_cli",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(PROBLEM_MUTATION_SURVIVOR,),
@@ -522,7 +522,7 @@ _REGISTRATIONS_MEASUREMENT = [
             "measurement-truth record for coverage over a scope. The only "
             "canonical coverage path; raw `coverage run` is non-canonical."
         ),
-        command="python runtime/verify.py measurement coverage <SCOPE> [--json]",
+        command=".venv/bin/python -m runtime.verify measurement coverage <SCOPE> [--json]",
         implementation="runtime.foundation.verification.coverage_measurement:measure_coverage_cli",
         category=CommandCategory.COVERAGE_MEASUREMENT,
         trigger_conditions=(PROBLEM_COVERAGE_DROP, PROBLEM_STALE_EVIDENCE),
@@ -548,7 +548,7 @@ _REGISTRATIONS_MEASUREMENT = [
             "which are authoritative-complete vs partial/derived — the gate "
             "that blocks certification from derived/incomplete evidence."
         ),
-        command="python runtime/verify.py measurement-truth-report",
+        command=".venv/bin/python -m runtime.verify measurement-truth-report",
         implementation="runtime.foundation.verification.measurement_truth_integration:get_measurement_truth_integrator",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(
@@ -580,7 +580,7 @@ _REGISTRATIONS_DIAGNOSIS = [
             "radius from M5 evidence (unit_id already joined), never by "
             "manual log parsing."
         ),
-        command="python runtime/verify.py diagnose-failures",
+        command=".venv/bin/python -m runtime.verify diagnose-failures",
         implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(PROBLEM_WORKFLOW_FAILURE, PROBLEM_UNKNOWN_FAILURE),
@@ -600,7 +600,7 @@ _REGISTRATIONS_DIAGNOSIS = [
             "analysis, blast radius, risk, and verification planning "
             "across all layers (backend, frontend, contracts, property)."
         ),
-        command="python runtime/verify.py intelligence [--logs] [--no-ci]",
+        command=".venv/bin/python -m runtime.verify intelligence [--logs] [--no-ci]",
         implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(PROBLEM_CHANGED_FILE,),
@@ -621,7 +621,7 @@ _REGISTRATIONS_DIAGNOSIS = [
             "UNSAFE_BYPASS / NO_CANONICAL_CAPABILITY, so the certification "
             "path can never silently use a bypass."
         ),
-        command="python runtime/verify.py bypass-audit [--json] [--out PATH]",
+        command=".venv/bin/python -m runtime.verify bypass-audit [--json] [--out PATH]",
         implementation=(
             "runtime.foundation.verification.capability_discovery:" "cmd_bypass_audit"
         ),
@@ -655,7 +655,7 @@ _REGISTRATIONS_STRENGTHENING = [
             "record: per-survivor classification (A-E), capability "
             "attribution, covering tests, and prior investigation status."
         ),
-        command="python runtime/verify.py mutation-intel [SURVIVOR_ID] [--json]",
+        command=".venv/bin/python -m runtime.verify mutation-intel [SURVIVOR_ID] [--json]",
         implementation="runtime.foundation.verification.survivor_intel:run_intel_cli",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(PROBLEM_MUTATION_SURVIVOR,),
@@ -681,7 +681,7 @@ _REGISTRATIONS_STRENGTHENING = [
             "proposals against mutants, and record durable decisions."
         ),
         command=(
-            "python runtime/verify.py "
+            ".venv/bin/python -m runtime.verify "
             "strengthen-capability <CAPABILITY_ID> [--max-survivors N] [--json] | "
             "strengthen-survivor <SURVIVOR_ID> [--json] [--out PATH]"
         ),
@@ -712,7 +712,7 @@ _REGISTRATIONS_STRENGTHENING = [
             "engine through the forensic CLI."
         ),
         command=(
-            "python runtime/verify.py forensic-diagnose <ENGINE> | "
+            ".venv/bin/python -m runtime.verify forensic-diagnose <ENGINE> | "
             "forensic-report | strengthen-discover <ENGINE> | "
             "strengthen-propose <ENGINE> | strengthen-validate <ENGINE> | "
             "strengthen-survivor-forensic <SURVIVOR_ID> [--json] | "
@@ -863,7 +863,7 @@ _REGISTRATIONS_CERTIFICATION = [
             "exhaustive mutation surface inventory, semantic blind spots, "
             "authority policy, and CI enforcement."
         ),
-        command="python runtime/verify.py contract-governance",
+        command=".venv/bin/python -m runtime.verify contract-governance",
         implementation="runtime.foundation.verification.api_contracts.c30_certification:main",
         category=CommandCategory.CERTIFICATION,
         trigger_conditions=(PROBLEM_STALE_EVIDENCE,),
@@ -883,7 +883,7 @@ _REGISTRATIONS_CERTIFICATION = [
             "and WIRE validation. Emits machine-readable evidence and exits "
             "non-zero on drift."
         ),
-        command="python runtime/verify.py api-contracts",
+        command=".venv/bin/python -m runtime.verify api-contracts",
         implementation="runtime.foundation.verification.api_contracts.gate:ApiContractGate.run",
         category=CommandCategory.CONTRACT_TEST,
         trigger_conditions=(PROBLEM_CHANGED_FILE, PROBLEM_PROPOSED_CHANGE),
@@ -903,7 +903,7 @@ _REGISTRATIONS_CERTIFICATION = [
             "current source tree. Detects architecture drift, ownership "
             "violations, and cross-layer boundary violations."
         ),
-        command="python runtime/verify.py integrity",
+        command=".venv/bin/python -m runtime.verify integrity",
         implementation="runtime.foundation.integrity.engine:evaluate_integrity",
         category=CommandCategory.ARCHITECTURAL,
         trigger_conditions=(PROBLEM_QUALITY_FAILURE, PROBLEM_UNKNOWN_FAILURE),
@@ -923,7 +923,7 @@ _REGISTRATIONS_CERTIFICATION = [
             "planner, executor, evidence, observability, knowledge, "
             "workspace, integrity, GitHub Actions, runtime CLI, and ROI."
         ),
-        command="python runtime/verify.py audit",
+        command=".venv/bin/python -m runtime.verify audit",
         implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.CERTIFICATION,
         trigger_conditions=(PROBLEM_UNKNOWN_FAILURE, PROBLEM_STALE_EVIDENCE),
@@ -944,7 +944,7 @@ _REGISTRATIONS_CERTIFICATION = [
             "verdict. This is the canonical evidence-driven certification "
             "path."
         ),
-        command="python runtime/verify.py evidence-certify",
+        command=".venv/bin/python -m runtime.verify evidence-certify",
         implementation="runtime.foundation.verification.executor_pipeline:main",
         category=CommandCategory.CERTIFICATION,
         trigger_conditions=(PROBLEM_CHANGED_FILE,),
@@ -975,7 +975,7 @@ _REGISTRATIONS_EVIDENCE = [
             "Inspect a specific measurement-truth record: validate its "
             "classification, fingerprint, scope, and certifiability."
         ),
-        command="python runtime/verify.py measurement-truth <RECORD_PATH> [--json]",
+        command=".venv/bin/python -m runtime.verify measurement-truth <RECORD_PATH> [--json]",
         implementation="runtime.foundation.verification.measurement_truth_cli:run_measurement_truth_cli",
         category=CommandCategory.DIAGNOSTIC,
         trigger_conditions=(PROBLEM_STALE_EVIDENCE,),
@@ -994,7 +994,7 @@ _REGISTRATIONS_EVIDENCE = [
             "latest report. Returns per-task status, duration, decisions."
         ),
         command=(
-            "python runtime/verify.py "
+            ".venv/bin/python -m runtime.verify "
             "execution-status [--plan PLAN] [--latest] [--json] | "
             "execution-report [--plan PLAN] [--latest] [--json]"
         ),
@@ -1016,7 +1016,7 @@ _REGISTRATIONS_EVIDENCE = [
             "dependency health, verification status, and metrics snapshots."
         ),
         command=(
-            "python runtime/verify.py status | metrics | history | deps | "
+            ".venv/bin/python -m runtime.verify status | metrics | history | deps | "
             "verify-status"
         ),
         implementation="runtime.foundation.workspace.*",
@@ -1038,7 +1038,7 @@ _REGISTRATIONS_EVIDENCE = [
             "mypy/mutmut/hypothesis/frontend/CI) against the repository state. "
             "Detects drift and ensures no tool silently uses non-canonical config."
         ),
-        command="python runtime/verify.py config-authority [--validate] [--json] [--out PATH]",
+        command=".venv/bin/python -m runtime.verify config-authority [--validate] [--json] [--out PATH]",
         implementation=(
             "runtime.foundation.verification.configuration_authority:"
             "cmd_config_authority"
@@ -1061,7 +1061,7 @@ _REGISTRATIONS_EVIDENCE = [
             "reconciliation phase, consuming existing on-disk evidence plus the "
             "planner output to verify plan-vs-evidence consistency."
         ),
-        command="python runtime/verify.py evidence-reconcile",
+        command=".venv/bin/python -m runtime.verify evidence-reconcile",
         implementation="runtime.foundation.verification.executor_pipeline:main",
         category=CommandCategory.RECONCILIATION,
         trigger_conditions=(PROBLEM_CHANGED_FILE,),
@@ -1087,7 +1087,7 @@ _REGISTRATIONS_EVIDENCE = [
             "NOT classify as environment-divergence merely because a local side "
             "was omitted. This is the CI reconciliation gate."
         ),
-        command="python runtime/verify.py reconcile --plan PATH [--evidence PATH] [--local] [--json]",
+        command=".venv/bin/python -m runtime.verify reconcile --plan PATH [--evidence PATH] [--local] [--json]",
         implementation="runtime.foundation.verification.control_plane_facade:_dispatch_canonical",
         category=CommandCategory.RECONCILIATION,
         trigger_conditions=(PROBLEM_WORKFLOW_FAILURE, PROBLEM_STALE_EVIDENCE),
@@ -1109,7 +1109,7 @@ _REGISTRATIONS_EVIDENCE = [
             "formats the knowledge catalog for operator/agent consumption."
         ),
         command=(
-            "python runtime/verify.py knowledge [endpoint|capability|workspace|rule|component] [--json] [--out PATH]"
+            ".venv/bin/python -m runtime.verify knowledge [endpoint|capability|workspace|rule|component] [--json] [--out PATH]"
         ),
         implementation="runtime.foundation.knowledge.indexer:build_index",
         category=CommandCategory.DIAGNOSTIC,

@@ -813,7 +813,7 @@ class ExecutionOrchestrator:
                                 capabilities=(cap,),
                                 verification_kind="mutation",
                                 command=(
-                                    f".venv/bin/python runtime/verify.py mutation "
+                                    f".venv/bin/python -m runtime.verify mutation "
                                     f"--target {component} --json"
                                     if component
                                     else ""
@@ -846,7 +846,7 @@ class ExecutionOrchestrator:
                                 capabilities=(cap,),
                                 verification_kind="mutation",
                                 command=(
-                                    f".venv/bin/python runtime/verify.py mutation "
+                                    f".venv/bin/python -m runtime.verify mutation "
                                     f"--target {target} --json"
                                 ),
                                 profile="mutation",
@@ -878,7 +878,7 @@ class ExecutionOrchestrator:
                             capabilities=(cap,),
                             verification_kind="coverage",
                             command=(
-                                f".venv/bin/python runtime/verify.py measurement "
+                                f".venv/bin/python -m runtime.verify measurement "
                                 f"coverage {scope} --out "
                                 f"{REPO_ROOT / 'runtime' / 'generated' / 'm9-c49' / 'measurements' / f'measurement-truth-{cap}-coverage.json'}"
                             ),

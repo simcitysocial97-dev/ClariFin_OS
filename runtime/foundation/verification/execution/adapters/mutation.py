@@ -60,7 +60,7 @@ def adapt_mutation_task(
             },
         )
     sel = _engine_selection_for(component) or {}
-    cmd = f".venv/bin/python runtime/verify.py mutation " f"--target {component} --json"
+    cmd = f".venv/bin/python -m runtime.verify mutation " f"--target {component} --json"
     return ExecutableVerificationTask(
         task_id=f"exec::{planned.task_id}",
         component=component,

@@ -26,13 +26,48 @@ else
   PY="$(command -v python3 || command -v python)"
 fi
 
+BACKEND_LOG="$REPO_ROOT/runtime/generated/frontend-contract-backend.log"
+STARTED_BACKEND=false
+BACKEND_PID=""
+
+cleanup() {
+  if [ "$STARTED_BACKEND" = true ] && [ -n "$BACKEND_PID" ]; then
+    kill "$BACKEND_PID" 2>/dev/null || true
+    wait "$BACKEND_PID" 2>/dev/null || true
+  fi
+}
+trap cleanup EXIT INT TERM
+
+if ! curl --fail --silent http://127.0.0.1:8000/platform/v1/health >/dev/null 2>&1; then
+  mkdir -p "$(dirname "$BACKEND_LOG")"
+  (
+    cd "$REPO_ROOT/backend"
+    exec "$PY" -m uvicorn src.api:app --host 127.0.0.1 --port 8000
+  ) >"$BACKEND_LOG" 2>&1 &
+  BACKEND_PID=$!
+  STARTED_BACKEND=true
+  ready=false
+  for _ in $(seq 1 60); do
+    if curl --fail --silent http://127.0.0.1:8000/platform/v1/health >/dev/null 2>&1; then
+      ready=true
+      break
+    fi
+    sleep 1
+  done
+  if [ "$ready" != true ]; then
+    echo "Backend did not become ready" >&2
+    tail -50 "$BACKEND_LOG" >&2 || true
+    exit 1
+  fi
+fi
+
 EVIDENCE_DIR="${FRONTEND_EVIDENCE_DIR:-$REPO_ROOT/runtime/generated/evidence/frontend}"
 mkdir -p "$EVIDENCE_DIR"
 
 # VEA-2 Phase 2 (M4): the verification unit this execution belongs to, so the
 # evidence self-identifies. Empty (rather than a guessed value) when the caller
 # does not supply one.
-VERIFICATION_UNIT_ID="${VERIFICATION_UNIT_ID:-}"
+VERIFICATION_UNIT_ID="${VERIFICATION_UNIT_ID:-frontend-typecheck-build}"
 
 fail=0
 phase_json=""
