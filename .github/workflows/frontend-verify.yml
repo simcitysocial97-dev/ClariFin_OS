@@ -57,8 +57,8 @@ jobs:
           node-version: "24"
           working-directory: "frontend"
 
-      - name: Run frontend verification (canonical check)
-        run: .venv/bin/python -m runtime.verify frontend
+      - name: Run frontend verification (canonical local equivalent)
+        run: bash scripts/verify-frontend.sh
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
