@@ -68,7 +68,7 @@ def _obligation_failures() -> list[dict[str, Any]]:
     """Project open/failed obligations into error items."""
 
     cp = ControlPlane()
-    files = _collect_changed_files()
+    files = _collect_changed_files(fetch_remote=False)
     plan = cp.planner.plan(files)
     oset = cp._plan_to_obligations(plan, files)
 

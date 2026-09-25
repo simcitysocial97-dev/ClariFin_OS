@@ -47,7 +47,7 @@ def _build_obligation_set() -> ObligationSet:
     """Return the live obligation set derived from the canonical planner."""
 
     cp = ControlPlane()
-    files = _collect_changed_files()
+    files = _collect_changed_files(fetch_remote=False)
     plan = cp.planner.plan(files)
     return cp._plan_to_obligations(plan, files)
 

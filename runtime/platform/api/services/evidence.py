@@ -63,7 +63,7 @@ def _list_items() -> tuple[list[dict[str, Any]], dict[str, str]]:
     """Walk the live obligation set, returning a list row and an id→capability map."""
 
     cp = ControlPlane()
-    files = _collect_changed_files()
+    files = _collect_changed_files(fetch_remote=False)
     plan = cp.planner.plan(files)
     oset = cp._plan_to_obligations(plan, files)
 

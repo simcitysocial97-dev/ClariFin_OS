@@ -89,7 +89,7 @@ def build_verification_recommendation() -> dict[str, Any]:
 
     catalog = get_capability_catalog()
     cp = ControlPlane()
-    files = _collect_changed_files()
+    files = _collect_changed_files(fetch_remote=False)
     plan = cp.planner.plan(files)
     directly_affected = sorted(
         plan.capability_resolution.directly_affected_capabilities

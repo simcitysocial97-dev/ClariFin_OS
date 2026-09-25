@@ -39,7 +39,7 @@ def build_cancel_result(*, task_id: str) -> dict[str, Any] | None:
     returns the canonical cancel-result envelope.
     """
     cp = ControlPlane()
-    files = _collect_changed_files()
+    files = _collect_changed_files(fetch_remote=False)
     plan = cp.planner.plan(files)
     oset = cp._plan_to_obligations(plan, files)
 

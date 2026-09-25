@@ -49,7 +49,7 @@ def build_change_intelligence() -> dict[str, Any]:
     """Build the ``platform.change_intelligence`` envelope from live state."""
 
     contract = compute_blast_radius()
-    files = _collect_changed_files()
+    files = _collect_changed_files(fetch_remote=False)
     cp = ControlPlane()
     plan = cp.planner.plan(files)
     cap_res = plan.capability_resolution

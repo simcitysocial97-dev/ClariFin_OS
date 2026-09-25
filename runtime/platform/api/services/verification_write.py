@@ -140,18 +140,14 @@ def _safe_run(capability_id: str | None = None) -> dict[str, Any]:
 
     try:
         cp = ControlPlane()
-        files = _collect_changed_files()
+        files = _collect_changed_files(fetch_remote=False)
         plan = cp.planner.plan(files)
-        oset = cp._plan_to_obligations(plan, files)
         contract = compute_blast_radius()
         report_id = contract.contract_id or uuid.uuid4().hex[:8]
         report_id = f"ver-{report_id[:8]}"
         # Use the most recent execution report timestamp if available
         started_at = (
             plan.generated_at if getattr(plan, "generated_at", None) else now_iso()
-        )
-        finalized = (
-            oset.finalized_label if hasattr(oset, "finalized_label") else "stale"
         )
         # Keep capability_id routing intact: if a specific capability was
         # requested, only count matching tasks/obligations.

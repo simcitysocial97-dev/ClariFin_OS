@@ -33,7 +33,7 @@ __all__ = [
 
 def _obligation_counts() -> tuple[int, int]:
     cp = ControlPlane()
-    files = _collect_changed_files()
+    files = _collect_changed_files(fetch_remote=False)
     plan = cp.planner.plan(files)
     oset = cp._plan_to_obligations(plan, files)
     open_n = sum(1 for o in oset.obligations if o.disposition == Disposition.OPEN)
