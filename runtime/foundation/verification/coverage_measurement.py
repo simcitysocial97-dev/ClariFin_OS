@@ -89,6 +89,7 @@ def _coverage_run(
     )
     # .coverage data file is isolated per-run under the C47 coverage dir.
     data_file = str(COVERAGE_DIR / ".coverage")
+    pytest_scope = "." if scope in {"backend", ".", "full"} else scope
     cmd = [
         str(coverage_bin),
         "run",
@@ -96,7 +97,7 @@ def _coverage_run(
         data_file,
         "-m",
         "pytest",
-        scope,
+        pytest_scope,
         "-q",
     ]
     try:

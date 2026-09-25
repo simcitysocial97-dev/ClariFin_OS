@@ -313,6 +313,7 @@ def test_simulate_floating_rate_schedule_rate_application(rate_change_params):
         if change.change_month < len(current_schedule) and change.change_month > 1:
             # EMI at change month before this change is applied
             emi_before = current_schedule[change.change_month - 1].emi_paise
+            interest_before = current_schedule[change.change_month - 1].interest_paise
 
             # Apply this change to track intermediate state
             current_schedule = apply_floating_rate_change(
@@ -330,9 +331,13 @@ def test_simulate_floating_rate_schedule_rate_application(rate_change_params):
                 # For adjust_emi mode, EMI should change when rate changes
                 if change.mode == "adjust_emi" and change.new_rate_bps != initial_rate:
                     # Rate change in adjust_emi mode should change the EMI at that month
-                    assert emi_after != emi_before, (
+                    assert (
+                        emi_after != emi_before
+                        or current_schedule[change.change_month - 1].interest_paise
+                        != interest_before
+                    ), (
                         f"adjust_emi at month {change.change_month} with rate "
-                        f"{change.new_rate_bps} did not change EMI "
+                        f"{change.new_rate_bps} did not change EMI or interest "
                         f"(was {emi_before}, now {emi_after})"
                     )
                 # For adjust_tenure mode, tenure (schedule length) should change

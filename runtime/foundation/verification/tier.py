@@ -84,7 +84,7 @@ UNIT_CATALOG: tuple[dict[str, Any], ...] = (
     {"id": "frontend-unit", "category": "frontend", "estimated_seconds": 120},
     {"id": "frontend-typecheck-build", "category": "frontend", "estimated_seconds": 90},
     {"id": "playwright-e2e", "category": "e2e", "estimated_seconds": 1800},
-    {"id": "runtime-self-test", "category": "runtime", "estimated_seconds": 120},
+    {"id": "runtime-self-test", "category": "runtime", "estimated_seconds": 2700},
     {"id": "mutation-run", "category": "mutation", "estimated_seconds": 600},
     {"id": "golden-regression", "category": "golden", "estimated_seconds": 600},
 )

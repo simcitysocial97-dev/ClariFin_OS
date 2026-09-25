@@ -404,7 +404,7 @@ _VERIFY_RUNTIME_TASKS = (
         commands=["bash .github/scripts/run_runtime_verification.sh"],
         category=VerificationCategory.ARCHITECTURAL,
         scope=VerificationScope.RUNTIME,
-        estimated_duration_seconds=120,
+        estimated_duration_seconds=2700,
     ),
     VerificationTask(
         id="runtime-aggregate",

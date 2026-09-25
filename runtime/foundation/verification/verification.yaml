@@ -178,7 +178,7 @@ workflows:
     category: "architectural"
     scope: "runtime"
     command: "bash .github/scripts/run_runtime_verification.sh"
-    estimated_duration_seconds: 120
+    estimated_duration_seconds: 2700
     scopes: ["runtime"]
     capabilities: ["runtime-verification"]
 
@@ -282,7 +282,7 @@ scripts:
     description: "Engineering Runtime self-verification"
     category: "architectural"
     scope: "runtime"
-    estimated_duration_seconds: 120
+    estimated_duration_seconds: 2700
 
   run_golden_tests:
     name: "Golden Regression Tests"

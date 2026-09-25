@@ -410,7 +410,7 @@ class VerificationRegistry:
                 category=VerificationCategory.ARCHITECTURAL,
                 scope=VerificationScope.RUNTIME,
                 command="bash .github/scripts/run_runtime_verification.sh",
-                estimated_duration_seconds=120,
+                estimated_duration_seconds=2700,
                 scopes=[VerificationScope.RUNTIME],
             ),
             "golden": VerificationWorkflow(
@@ -585,7 +585,7 @@ class VerificationRegistry:
                 description="Engineering Runtime self-verification",
                 category=VerificationCategory.ARCHITECTURAL,
                 scope=VerificationScope.RUNTIME,
-                estimated_duration_seconds=120,
+                estimated_duration_seconds=2700,
             ),
             "run_golden_tests": VerificationScript(
                 id="run_golden_tests",

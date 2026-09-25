@@ -16,7 +16,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Literal
 
 
 class BudgetPhase(str, Enum):
@@ -60,7 +59,7 @@ class ExecutionBudget:
     """Budget allocation per phase."""
 
     planning_budget_seconds: int = 120
-    execution_budget_seconds: int = 600
+    execution_budget_seconds: int = 2700
     measurement_budget_seconds: int = 1800
     certification_budget_seconds: int = 600
     diagnostic_budget_seconds: int = 120

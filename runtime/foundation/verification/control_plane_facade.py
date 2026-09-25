@@ -1060,6 +1060,13 @@ def main() -> int:
     command = sys.argv[1]
     args = sys.argv[2:]
 
+    if command == "measurement" and len(args) > 1 and args[0] == "coverage":
+        from runtime.foundation.verification.coverage_measurement import (
+            measure_coverage_cli,
+        )
+
+        return measure_coverage_cli(args[1:])
+
     if command == "env-check":
         from runtime.foundation.verification.env import main_env_check
 
