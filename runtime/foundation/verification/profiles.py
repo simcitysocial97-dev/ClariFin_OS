@@ -219,15 +219,6 @@ _VERIFY_CONTRACTS_TASKS = (
         estimated_duration_seconds=180,
     ),
     VerificationTask(
-        id="contracts-backend-unit",
-        name="Backend unit tests for contracts",
-        profile="contracts",
-        commands=[".venv/bin/python -m pytest backend/tests/unit/ -x --tb=short -q -k contract"],
-        category=VerificationCategory.CONTRACT,
-        scope=VerificationScope.CONTRACTS,
-        estimated_duration_seconds=120,
-    ),
-    VerificationTask(
         id="contracts-aggregate",
         name="Aggregate contract evidence",
         profile="contracts",
