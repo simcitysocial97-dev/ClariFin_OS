@@ -66,7 +66,7 @@ def child_process_env() -> dict[str, str]:
     env["LANG"] = "C.UTF-8"
 
     prepend: list[str] = []
-    exe_bin = Path(sys.executable).resolve().parent
+    exe_bin = Path(sys.executable).parent
     if exe_bin.is_dir():
         prepend.append(str(exe_bin))
     if VENV_BIN.is_dir() and str(VENV_BIN) not in prepend:

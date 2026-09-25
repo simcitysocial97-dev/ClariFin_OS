@@ -18,6 +18,8 @@ import unittest
 from datetime import UTC, datetime
 from pathlib import Path
 
+import pytest
+
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 ARTIFACT_DIR = REPO_ROOT / "runtime" / "generated" / "m9-c55"
 
@@ -118,6 +120,7 @@ class TestC55BaselinePreservation(unittest.TestCase):
         data = json.loads(c54_base.read_text())
         self.assertEqual(len(data.get("gates", [])), 28)
 
+    @pytest.mark.timeout(180)
     def test_g1_regression_green(self):
         result = subprocess.run(
             [
@@ -490,6 +493,7 @@ class TestC55StaleEvidence(unittest.TestCase):
 class TestC55ReproducibilityExperiments(unittest.TestCase):
     """G20-G23: Reproducibility experiments."""
 
+    @pytest.mark.timeout(240)
     def test_g20_backend_repeated_verification(self):
         """Experiment A: Same repo state + same env → repeated test execution."""
         result1 = subprocess.run(
@@ -943,6 +947,7 @@ class TestC55CertificationGates(unittest.TestCase):
         blocking = [b for b in bypasses if b.risk.value == "BLOCKING_BYPASS"]
         self.assertEqual(len(blocking), 0, "Blocking bypasses detected")
 
+    @pytest.mark.timeout(360)
     def test_g30_regression_green(self):
         result = subprocess.run(
             [

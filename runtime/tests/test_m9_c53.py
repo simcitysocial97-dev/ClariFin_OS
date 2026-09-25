@@ -16,6 +16,8 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
+import pytest
+
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
@@ -666,11 +668,12 @@ class TestC53EndToEnd(unittest.TestCase):
 class TestC53RegressionPreservation(unittest.TestCase):
     """M9-C53 regression preservation: C52 tests must not regress."""
 
+    @pytest.mark.timeout(180)
     def test_c52_tests_still_pass(self):
         import subprocess
 
         result = subprocess.run(
-            ["python", "-m", "pytest", "runtime/tests/test_m9_c52.py", "-q", "--tb=no"],
+            [str(REPO_ROOT / ".venv" / "bin" / "python"), "-m", "pytest", "runtime/tests/test_m9_c52.py", "-q", "--tb=no"],
             cwd=REPO_ROOT,
             capture_output=True,
             text=True,
@@ -682,11 +685,12 @@ class TestC53RegressionPreservation(unittest.TestCase):
             f"C52 tests regressed: {result.stdout}{result.stderr}",
         )
 
+    @pytest.mark.timeout(180)
     def test_c51_tests_still_pass(self):
         import subprocess
 
         result = subprocess.run(
-            ["python", "-m", "pytest", "runtime/tests/test_m9_c51.py", "-q", "--tb=no"],
+            [str(REPO_ROOT / ".venv" / "bin" / "python"), "-m", "pytest", "runtime/tests/test_m9_c51.py", "-q", "--tb=no"],
             cwd=REPO_ROOT,
             capture_output=True,
             text=True,
@@ -698,11 +702,12 @@ class TestC53RegressionPreservation(unittest.TestCase):
             f"C51 tests regressed: {result.stdout}{result.stderr}",
         )
 
+    @pytest.mark.timeout(180)
     def test_c50_tests_still_pass(self):
         import subprocess
 
         result = subprocess.run(
-            ["python", "-m", "pytest", "runtime/tests/test_m9_c50.py", "-q", "--tb=no"],
+            [str(REPO_ROOT / ".venv" / "bin" / "python"), "-m", "pytest", "runtime/tests/test_m9_c50.py", "-q", "--tb=no"],
             cwd=REPO_ROOT,
             capture_output=True,
             text=True,
