@@ -384,7 +384,7 @@ def _collect_changed_files(*, fetch_remote: bool = True) -> _ChangedFilesResult:
         if len(ref) == 40 and all(c in "0123456789abcdef" for c in ref):
             return ref
         # Refresh the remote branch so a cached ref cannot be stale.
-        if fetch_remote:
+        if fetch_remote and os.environ.get("VERIFICATION_OFFLINE") != "1":
             subprocess.run(
                 ["git", "fetch", "origin", ref],
                 capture_output=True,
