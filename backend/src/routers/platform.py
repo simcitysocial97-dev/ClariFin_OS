@@ -78,6 +78,7 @@ from runtime.platform.diagnostics import engine as diagnostics_engine
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/platform/v1", tags=["platform"])
+EVENTS_CACHE_LIMIT = 1000
 
 # Register built-in tools at module load
 register_builtin_tools(TOOL_REGISTRY_INSTANCE)
@@ -886,11 +887,13 @@ async def get_events(
 ) -> JSONResponse:
     nocache = _query_nocache(request)
     cached = snapshot.get("events", nocache=nocache)
-    if cached is not None:
-        return _ok(cached)
-    env = events.build_events_list(limit=limit)
-    snapshot.put("events", env)
-    return _ok(env)
+    if cached is None:
+        cached = events.build_events_list(limit=EVENTS_CACHE_LIMIT)
+        snapshot.put("events", cached)
+    data = dict(cached["data"])
+    data["items"] = data["items"][:limit]
+    data["count"] = len(data["items"])
+    return _ok(envelope(kind=cached["kind"], data=data))
 
 
 # Note: /events/stream (SSE) is deferred to Phase 7.
