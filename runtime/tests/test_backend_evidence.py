@@ -142,15 +142,27 @@ class TestExitCodeContract:
         probe_dir.mkdir(parents=True, exist_ok=True)
         try:
             shutil.copy2(probe_file, probe_dir / "test_m4_exit_probe.py")
-            failing = subprocess.run(
-                ["bash", str(BACKEND_SCRIPT)],
-                capture_output=True,
-                text=True,
-                env={**_env(), "BACKEND_EVIDENCE_DIR": str(evidence)},
-            )
-            assert failing.returncode == 1
+            child_env = {
+                key: value
+                for key, value in _env().items()
+                if not key.startswith("PYTEST_")
+            }
+            child_env["BACKEND_EVIDENCE_DIR"] = str(evidence)
+            child_env["BACKEND_PHASES"] = "tests/invariants"
+            process_log = tmp_path / "backend-verification.log"
+            with process_log.open("w", encoding="utf-8") as log_handle:
+                failing = subprocess.run(
+                    ["bash", str(BACKEND_SCRIPT)],
+                    stdin=subprocess.DEVNULL,
+                    stdout=log_handle,
+                    stderr=subprocess.STDOUT,
+                    text=True,
+                    env=child_env,
+                )
+            process_output = process_log.read_text(encoding="utf-8")
+            assert failing.returncode == 1, process_output
             summary = json.loads((evidence / "backend-verification.json").read_text())
-            assert summary["overall_status"] == "fail"
+            assert summary["overall_status"] == "fail", process_output
             failed = [p for p in summary["phases"] if p["status"] == "fail"]
             failed_phases = [p["phase"] for p in failed]
             assert "invariants" in failed_phases, (

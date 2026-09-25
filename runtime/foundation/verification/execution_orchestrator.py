@@ -870,6 +870,12 @@ class ExecutionOrchestrator:
                         )
                 elif kind == "coverage":
                     scope = mm.scope or "tests/unit/engines"
+                    if (
+                        cap == "api-contracts"
+                        or "contract" in cap
+                        or scope in {"backend", "backend/src", "."}
+                    ):
+                        scope = "."
                     new_tasks.append(
                         ExecutionTaskSpec(
                             task_id=f"exec-{next_id:04d}",
@@ -895,8 +901,8 @@ class ExecutionOrchestrator:
                             expected_evidence=("measurement_truth",),
                             measurement_required=("coverage",),
                             authorization_required=False,
-                            timeout_seconds=900,
-                            estimated_duration_seconds=900,
+                                timeout_seconds=1800,
+                                estimated_duration_seconds=1800,
                         )
                     )
                 next_id += 1

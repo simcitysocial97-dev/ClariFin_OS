@@ -67,7 +67,7 @@ mkdir -p "$EVIDENCE_DIR"
 # VEA-2 Phase 2 (M4): the verification unit this execution belongs to, so the
 # evidence self-identifies. Empty (rather than a guessed value) when the caller
 # does not supply one.
-VERIFICATION_UNIT_ID="${VERIFICATION_UNIT_ID:-frontend-typecheck-build}"
+VERIFICATION_UNIT_ID="${VERIFICATION_UNIT_ID:-}"
 
 fail=0
 phase_json=""

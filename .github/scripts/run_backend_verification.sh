@@ -70,7 +70,8 @@ phase_name_for() {
   esac
 }
 
-for tdir in tests/contract tests/invariants tests/properties tests/unit/engines; do
+BACKEND_PHASES="${BACKEND_PHASES:-tests/contract tests/invariants tests/properties tests/unit/engines}"
+for tdir in $BACKEND_PHASES; do
   if [ -d "$tdir" ]; then
     name="$(phase_name_for "$tdir")"
     out="$EVIDENCE_DIR/${name}.log"

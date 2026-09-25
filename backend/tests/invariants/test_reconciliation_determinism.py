@@ -84,7 +84,7 @@ def transactions_strategy():
         transaction_strategy(),
         min_size=2,
         max_size=20,
-        unique_by=lambda txn: tuple(sorted(txn.items())),
+        unique_by=lambda txn: txn["statement_id"],
     ).filter(
         lambda txns: any(txn["type"] == "debit" for txn in txns)
         and any(txn["type"] == "credit" for txn in txns)

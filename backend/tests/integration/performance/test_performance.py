@@ -7,8 +7,11 @@ efficiently. Tests are advisory and may not block the workflow.
 from __future__ import annotations
 
 import time
+from pathlib import Path
 
 import pytest
+
+REPO_ROOT = Path(__file__).resolve().parents[4]
 
 
 class TestAPIPerformance:
@@ -78,10 +81,10 @@ class TestResourceUsage:
         start = time.time()
         result = subprocess.run(
             [
-                ".venv/bin/python",
+                str(REPO_ROOT / ".venv" / "bin" / "python"),
                 "-m",
                 "pytest",
-                "backend/tests/golden/",
+                str(REPO_ROOT / "backend/tests/golden/"),
                 "--tb=no",
                 "-q",
             ],

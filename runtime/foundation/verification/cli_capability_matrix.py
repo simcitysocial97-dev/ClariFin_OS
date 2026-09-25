@@ -26,7 +26,7 @@ from runtime.foundation.verification.route_authority import analyze_dispatch_tab
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 _VERIFY_PY = REPO_ROOT / "runtime" / "verify.py"
 
-_CLI_ROUTE_RE = re.compile(r"verify\.py\s+(\S+)")
+_CLI_ROUTE_RE = re.compile(r"(?:verify\.py|runtime\.verify)\s+(\S+)")
 
 
 def _command_routes(command: str) -> list[str]:
