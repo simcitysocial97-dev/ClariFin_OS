@@ -32,7 +32,7 @@ echo "================================================"
 
 # ── Runtime unit tests ───────────────────────────
 echo -e "\n${YELLOW}[1/2] Runtime test suite...${NC}"
-if "$PY" -m pytest runtime/tests/ -q --timeout=30; then
+if VERIFICATION_OFFLINE=1 "$PY" -m pytest runtime/tests/ -q --timeout=30; then
   echo -e "${GREEN}✓ Runtime tests passed${NC}"
 else
   echo -e "${RED}✗ Runtime tests failed${NC}"
