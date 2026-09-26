@@ -14,6 +14,8 @@ artifact.
 
 from __future__ import annotations
 
+import json
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -188,12 +190,21 @@ class ScenarioETargetedTestFailure(unittest.TestCase):
 class ScenarioFMutationSurvivor(unittest.TestCase):
     def test_survivor_intel_loads_and_strengthening_path_is_referenced(self):
         from runtime.foundation.verification.survivor_intel import (
-            DEFAULT_INTEL_PATH,
             find_survivor,
             load_survivor_intel,
         )
 
-        intel = load_survivor_intel(DEFAULT_INTEL_PATH)
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            intel_path = Path(tmp_dir) / "mutation-survivor-intel.json"
+            intel_path.write_text(
+                json.dumps(
+                    {
+                        "schema": "m9-c45-survivor-intel/v1",
+                        "survivors": [{"survivor_id": "fixture-survivor"}],
+                    }
+                )
+            )
+            intel = load_survivor_intel(intel_path)
         self.assertGreater(len(intel.get("survivors", [])), 0)
         # pick any survivor
         survivor = intel["survivors"][0]
