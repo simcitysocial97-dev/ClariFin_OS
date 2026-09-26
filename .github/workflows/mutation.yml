@@ -48,6 +48,12 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Setup Node.js runtime
+        uses: ./.github/actions/setup-node-runtime
+        with:
+          node-version: "24"
+          working-directory: "frontend"
+
       - name: Verify canonical environment
         run: .venv/bin/python -m runtime.verify doctor
 
@@ -69,6 +75,12 @@ jobs:
         uses: ./.github/actions/bootstrap-runtime
         with:
           python-version: "3.12"
+
+      - name: Setup Node.js runtime
+        uses: ./.github/actions/setup-node-runtime
+        with:
+          node-version: "24"
+          working-directory: "frontend"
 
       - name: Verify canonical environment
         run: .venv/bin/python -m runtime.verify doctor
