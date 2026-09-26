@@ -56,6 +56,8 @@ def test_ingest_pdf_delegates_to_import_service_and_skips_orchestrator_by_defaul
         "src.ingest.StatementExtractor"
     ) as mock_extractor_cls, patch(
         "src.ingest.ImportService", return_value=mock_svc
+    ), patch(
+        "src.ingest.StatementRepository.get_duplicate_check", return_value=None
     ):
         mock_extractor_cls.return_value.extract.return_value = {
             "bank": "TestBank",
@@ -97,6 +99,8 @@ def test_ingest_pdf_runs_orchestrator_when_flagged(tmp_path: Path) -> None:
         "src.ingest.StatementExtractor"
     ) as mock_extractor_cls, patch(
         "src.ingest.ImportService", return_value=mock_svc
+    ), patch(
+        "src.ingest.StatementRepository.get_duplicate_check", return_value=None
     ):
         mock_extractor_cls.return_value.extract.return_value = {
             "bank": "TestBank",
