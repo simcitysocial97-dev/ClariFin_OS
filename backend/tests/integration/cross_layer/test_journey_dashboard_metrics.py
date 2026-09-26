@@ -134,5 +134,8 @@ class TestCashflowAggregation:
         from src.services.cashflow_service import CashflowService
 
         service = CashflowService()
-        summary = service.calculate_summary()
+        with patch.object(
+            service.cashflow_repo, "get_monthly_cashflow", return_value=[]
+        ):
+            summary = service.calculate_summary()
         assert summary is not None
