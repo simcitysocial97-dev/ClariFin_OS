@@ -15,6 +15,7 @@ Run:
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from unittest.mock import patch
 
@@ -236,10 +237,11 @@ class TestCanonicalFailedExecution:
 
         # Check RunRecord
         data = json.loads(hist_path.read_text())
-        local = data.get("local", [])
-        assert len(local) == 1
-        assert local[0]["status"] == "failed"
-        assert local[0]["profile"] == "quick"
+        bucket = "ci" if os.environ.get("CI") else "local"
+        history = data.get(bucket, [])
+        assert len(history) == 1
+        assert history[0]["status"] == "failed"
+        assert history[0]["profile"] == "quick"
 
     def test_failed_run_record_reflected_in_analytics(self, tmp_path: Path) -> None:
         """A failed run contributes to failed_runs and reduces success_rate."""
@@ -326,7 +328,8 @@ class TestIdempotency:
         assert len(vr) == 1
 
         data = json.loads(hist_path.read_text())
-        assert len(data.get("local", [])) == 1
+        bucket = "ci" if os.environ.get("CI") else "local"
+        assert len(data.get(bucket, [])) == 1
 
     def test_two_calls_two_of_each(self, tmp_path: Path) -> None:
         event_path, hist_path = _make_stores(tmp_path)
@@ -338,4 +341,5 @@ class TestIdempotency:
         assert len(vc) == 2
 
         data = json.loads(hist_path.read_text())
-        assert len(data.get("local", [])) == 2
+        bucket = "ci" if os.environ.get("CI") else "local"
+        assert len(data.get(bucket, [])) == 2

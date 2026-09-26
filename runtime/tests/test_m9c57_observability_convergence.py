@@ -14,6 +14,7 @@ Run:
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 from pathlib import Path
 
@@ -162,9 +163,10 @@ class TestG3CLIRunRecording:
         _record_verification_event(None, "quick", 3.14, status="pass")
 
         data = json.loads(hist_path.read_text())
-        local = data.get("local", [])
-        assert len(local) == 1
-        rec = local[0]
+        bucket = "ci" if os.environ.get("CI") else "local"
+        history = data.get(bucket, [])
+        assert len(history) == 1
+        rec = history[0]
         assert rec["profile"] == "quick"
         assert rec["status"] == "passed"
         assert rec["duration_seconds"] == 3.14

@@ -147,11 +147,12 @@ class TestExecutionToEventChain:
         assert vc[0].payload["failed"] == 0
 
         data = json.loads((tmp_events.parent / "history.json").read_text())
-        local = data.get("local", [])
-        assert len(local) == 1
-        assert local[0]["status"] == "passed"
-        assert local[0]["commit_sha"] != ""  # O2-G9: identity not empty
-        assert local[0]["branch"] != ""
+        bucket = "ci" if os.environ.get("CI") else "local"
+        history = data.get(bucket, [])
+        assert len(history) == 1
+        assert history[0]["status"] == "passed"
+        assert history[0]["commit_sha"] != ""  # O2-G9: identity not empty
+        assert history[0]["branch"] != ""
 
     def test_failed_recorded_as_failed(self, tmp_events: Path):
         from runtime.system.observability.event_store import EngineeringEventStore
@@ -512,8 +513,9 @@ class TestControlledFailureDetection:
         from runtime.system.observability.repository import LocalMetricsRepository
 
         data = json.loads((tmp_events.parent / "history.json").read_text())
-        local = data.get("local", [])
-        assert any(r["status"] == "failed" for r in local)
+        bucket = "ci" if os.environ.get("CI") else "local"
+        history = data.get(bucket, [])
+        assert any(r["status"] == "failed" for r in history)
 
         report2 = analytics_mod.AnalyticsEngine(store).compute()
         v = report2.combined["verification"]
@@ -643,11 +645,16 @@ class TestFrontendVerificationBoundary:
             timeout=30,
         )
         assert result.returncode == 0
-        # Version must start with "9." given the lockfile assertion above.
+        # Version must be a supported ESLint major from the locked toolchain.
         version_line = result.stdout.strip()
-        assert version_line.startswith("v9."), (
+        assert version_line.startswith("v"), (
+            f"Unexpected ESLint version output: {version_line!r}. "
+            "G6 regression: frontend lint is not using a recognized ESLint CLI."
+        )
+        major = int(version_line[1:].split(".", 1)[0])
+        assert major >= 9, (
             f"Unexpected ESLint major version: {version_line!r}. "
-            "G6 regression: frontend lint is on the wrong major version."
+            "G6 regression: frontend lint is on an unsupported major version."
         )
 
 

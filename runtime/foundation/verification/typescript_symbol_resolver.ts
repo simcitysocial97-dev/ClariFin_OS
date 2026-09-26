@@ -1,7 +1,10 @@
 #!/usr/bin/env npx tsx
-import { Project, SyntaxKind, Node } from "ts-morph";
-import { existsSync, statSync, writeFileSync, mkdirSync, readFileSync } from "fs";
+import { createRequire } from "node:module";
+import { existsSync, statSync, writeFileSync, mkdirSync, readFileSync, readdirSync } from "fs";
 import { join, resolve, relative, extname } from "path";
+
+const frontendRequire = createRequire(join(process.cwd(), "package.json"));
+const { Project, SyntaxKind, Node } = frontendRequire("ts-morph");
 
 interface SymbolInfo { name: string; kind: string; file: string; startLine: number; endLine: number; exported: boolean; isReactComponent: boolean; isHook: boolean; }
 interface CacheData { [k: string]: { mtime: number; symbols: SymbolInfo[] }; }
@@ -18,10 +21,10 @@ async function main() {
   const cacheFile = join(repoRoot, cacheDir, "symbol-cache.json");
   mkdirSync(join(repoRoot, cacheDir), {recursive:true});
   let cache: CacheData = {};
-  if (existsSync(cacheFile)) { try { cache = JSON.parse(require("fs").readFileSync(cacheFile,"utf-8")); } catch {} }
+  if (existsSync(cacheFile)) { try { cache = JSON.parse(readFileSync(cacheFile,"utf-8")); } catch {} }
   const project = new Project({ tsConfigFilePath: join(repoRoot, "frontend/tsconfig.json"), skipAddingFilesFromTsConfig: true });
   const files: string[] = [];
-  function walk(dir: string) { for (const e of require("fs").readdirSync(dir,{withFileTypes:true})) { const p=join(dir,e.name); if(e.isDirectory()&&!["node_modules",".next","dist"].includes(e.name))walk(p); else if(e.isFile()&&(extname(e.name)===".ts"||extname(e.name)===".tsx"))files.push(p); } }
+  function walk(dir: string) { for (const e of readdirSync(dir,{withFileTypes:true})) { const p=join(dir,e.name); if(e.isDirectory()&&!["node_modules",".next","dist"].includes(e.name))walk(p); else if(e.isFile()&&(extname(e.name)===".ts"||extname(e.name)===".tsx"))files.push(p); } }
   walk(inputPath);
   const results = [];
   for (const fp of files) {
