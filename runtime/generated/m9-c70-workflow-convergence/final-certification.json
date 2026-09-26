@@ -1,80 +1,57 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "milestone": "M9-C70",
-  "phase": "PHASE_16_FINAL_CERTIFICATION",
-  "certification_status": "CERTIFIED_WITH_EXPLICIT_BOUNDARIES",
-  "commit_sha": "ce63c369568cb622498731702bda4a5ce41d8d19",
-  "tree_sha": "17fe119005f79fad8d425d1c5e2c0302c5043e59",
+  "certification_status": "RESOLVED_WITH_TWO_EXPLICIT_PRODUCT_GAPS",
+  "commit_sha": "b7d83af4ee5104a9021724d28f7dfd55eb3fd69c",
+  "tree_sha": "dca9257ed67e42fa0d28308f83f91d628125bff4",
   "branch": "m9c9-merge-authorization-resolution",
-  "certified_at": "2026-09-26T02:30:00Z",
+  "updated_at": "2026-09-26T11:40:00Z",
   "workflow_count": 14,
   "job_count": 15,
   "matrix_instance_count": 16,
-  "local_reproducible_job_count": 7,
-  "local_pass_count": 6,
-  "local_failure_count": 0,
-  "local_environment_boundary_count": 1,
-  "partially_reproducible_job_count": 4,
-  "github_only_count": 2,
-  "external_boundary_count": 1,
-  "browser_boundary_count": 0,
-  "schedule_only_count": 1,
-  "unknown_count": 0,
-  "workflow_drift_count": 47,
-  "unexplained_discrepancy_count": 0,
-  "fixed_failures": 24,
-  "remaining_boundaries": [
-    "Quality/Reconcile generic check: combined plan runtime task hung in poll wait for more than eight hours; standalone runtime profile is PASS.",
-    "Playwright full E2E: ports 3000 and 8000 are occupied by existing project services and reuseExistingServer=false; browser revision 1243 is installed.",
-    "Mutation incremental representative campaign exceeded the local 600-second budget without a summary; mutation --smoke is PASS and full mutation remains CI-only.",
-    "Dependency audit requires live vulnerability services and is informational.",
-    "CodeQL requires GitHub security-events write and code scanning.",
-    "Forensic diagnostic requires a pull_request payload and Actions artifacts.",
-    "Release has no publication/deployment implementation; its local build is PASS and the claim is classified stale."
+  "github_ready_workflows": {
+    "backend": "PASS 36231192064",
+    "frontend": "PASS 36231192038",
+    "quality": "PASS 36231192015",
+    "api_contracts": "PASS 36231192006",
+    "runtime": "PASS 36231192130",
+    "golden": "PASS 36233134436",
+    "codeql": "PASS 36237918919",
+    "dependency_updates": "PASS 36237917290"
+  },
+  "resolved_boundaries": [
+    "Local port ownership boundary: ports 3000/8000 are free and functional E2E runs execute.",
+    "Playwright browser boundary: revision 1243 installed and functional Chromium/mobile projects pass.",
+    "Dependency audit boundary: local and GitHub audits pass with zero npm vulnerabilities.",
+    "Generic check boundary: event-delta bounding and certified no-op plans implemented; Quality GitHub run is green.",
+    "Node provisioning boundary: Quality, Runtime, Golden, and Mutation jobs now install frontend dependencies.",
+    "Fresh-CI database assumptions, TypeScript resolver, CI-aware observability contracts, and ESLint version assertions are fixed."
   ],
-  "local_ci_status": "PASS_WITH_EXPLICIT_ENVIRONMENT_BOUNDARIES",
-  "local_reproducible_pass_rate": "6/7; one strict local job (Playwright matrix definition) is environment-bounded, and no strict local job failed.",
+  "remaining_boundaries": [
+    {
+      "scope": "authoritative mutation",
+      "classification": "GENUINE_PRODUCT_GAP",
+      "evidence": "GitHub targeted balance_engine run 36238247482: 0.0% score, 285 survived, 80% gate failed; full run 36233136018 cancelled after 91m45s.",
+      "action": "Requires mutation test-quality/selection work; threshold was not lowered."
+    },
+    {
+      "scope": "Playwright visual and platform-console groups",
+      "classification": "UI_CONTRACT_GAP",
+      "evidence": "Functional flows pass (Chromium 225, mobile 196), while full project runs retain visual snapshot and platform console/render assertion failures.",
+      "action": "Requires product/UI baseline reconciliation; tests were not suppressed."
+    }
+  ],
+  "local_ci_status": "PASS_WITH_TWO_EXPLICIT_PRODUCT_GAPS",
   "runtime_health": "HEALTHY",
   "framework_authority": "COHERENT",
-  "verification_authority": "Framework integrity OPERATIONAL; authority chain CLI → ControlPlane → CapabilityRegistry → Planner → Executor → Measurement → Evidence.",
   "backend_regression_status": "PASS",
   "frontend_regression_status": "PASS",
   "typecheck_status": "PASS",
   "lint_status": "PASS_WITH_172_DOCUMENTED_FRONTEND_WARNINGS",
   "build_status": "PASS",
-  "backend_evidence": {
-    "unit": "2982 passed",
-    "integration": "173 passed",
-    "contract": "161 passed",
-    "profile_exit_code": 0
-  },
-  "frontend_evidence": {
-    "unit": "1367 passed",
-    "typescript_errors": 0,
-    "build": "pass",
-    "lint": "0 errors; 172 documented warnings"
-  },
-  "runtime_evidence": {
-    "tests": "2239 passed, 25 skipped",
-    "integrity": "HEALTHY",
-    "profile_exit_code": 0
-  },
-  "contracts_evidence": "161 generated contract tests passed",
-  "golden_evidence": "19 golden and 38 capability tests passed",
-  "mutation_evidence": "mutation --smoke Gates A/B PASS; no full score claim",
-  "check_evidence": "Generic check attempt bounded by an orchestration/resource hang; direct authoritative profiles provide the closest valid local evidence.",
-  "required_targets": {
-    "UNKNOWN_WORKFLOWS": 0,
-    "UNKNOWN_DRIFT": 0,
-    "UNEXPLAINED_FAILURES": 0,
-    "UNEXPLAINED_COMMAND_DISCREPANCIES": 0,
-    "LOCAL_REPRODUCIBLE_FAILURES": 0
-  },
-  "c71_scope": [
-    "Establish GitHub Actions green state for all ready workflows.",
-    "Resolve or reproduce the check orchestration contention with isolated task resources.",
-    "Run dependency audit with live services.",
-    "Run Playwright E2E on the Actions runner or free local ports.",
-    "Validate GitHub-only CodeQL/forensic boundaries and required-check configuration."
-  ]
+  "unexplained_failures": 0,
+  "unexplained_command_discrepancies": 0,
+  "unknown_workflows": 0,
+  "unknown_drift": 0,
+  "github_main_workflows_green": true
 }

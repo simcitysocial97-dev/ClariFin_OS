@@ -1,62 +1,73 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "milestone": "M9-C70",
-  "phase": "PHASE_5_AND_9_ENVIRONMENT_BOUNDARIES",
-  "captured_at": "2026-09-26T02:25:00Z",
-  "source_commit": "ce63c369568cb622498731702bda4a5ce41d8d19",
-  "environment": {
-    "os": "Linux Mint 22.3",
-    "platform": "Linux-7.0.0-30-generic-x86_64-with-glibc2.39",
+  "phase": "BOUNDARY_RESOLUTION",
+  "updated_at": "2026-09-26T11:30:00Z",
+  "source_commit": "b7d83af4ee5104a9021724d28f7dfd55eb3fd69c",
+  "resolved": {
+    "ports": {
+      "status": "RESOLVED",
+      "evidence": "Ports 3000 and 8000 were free; launcher status showed no active ClariFin services."
+    },
+    "playwright_browser": {
+      "status": "RESOLVED",
+      "package_version": "1.63.0",
+      "chromium_revision": 1243,
+      "functional_chromium_passed": 225,
+      "functional_mobile_chrome_passed": 196,
+      "remaining_failures": "visual snapshot baselines, platform UI console-contract assertions, and one memory test"
+    },
+    "dependency_audit": {
+      "status": "RESOLVED",
+      "local_audit_vulnerabilities": 0,
+      "github_dispatch_run": "36237917290",
+      "github_result": "success"
+    },
+    "github_backend_frontend_quality_api_runtime": {
+      "status": "RESOLVED",
+      "run_ids": ["36231192064", "36231192038", "36231192015", "36231192006", "36231192130"],
+      "result": "all success"
+    },
+    "golden": {
+      "status": "RESOLVED",
+      "run_id": "36233134436",
+      "result": "success"
+    },
+    "codeql": {
+      "status": "RESOLVED",
+      "run_id": "36237918919",
+      "result": "success"
+    },
+    "generic_check_no_task": {
+      "status": "RESOLVED",
+      "evidence": "Quality/Reconcile now certify an explicit no-task change-scope no-op."
+    }
+  },
+  "remaining": {
+    "mutation": {
+      "status": "REAL_MUTATION_GAP",
+      "local_full_run": "exceeded the 90-minute runner limit without a score",
+      "github_full_run": "36233136018 cancelled after 91m45s",
+      "github_targeted_balance_engine_run": "36238247482",
+      "targeted_result": "0.0% score, 285 survived, threshold gate correctly failed",
+      "classification": "GENUINE_PRODUCT_MUTATION_GAP",
+      "note": "No threshold was lowered and no zero score was converted into success."
+    },
+    "e2e_nonfunctional": {
+      "status": "UI_CONTRACT_GAP",
+      "functional_flows": "PASS",
+      "remaining": "visual snapshot baselines and platform console/render assertions require product/test contract updates"
+    },
+    "generic_check_broad_delta": {
+      "status": "GITHUB_RESOLVED",
+      "evidence": "Quality runs now use PR base or push before SHA; the latest workflow-only delta is a certified no-op."
+    }
+  },
+  "canonical_environment": {
     "python": "3.12.3",
-    "python_source": "repository-root .venv",
     "node": "24.20.0",
     "npm": "11.19.0",
-    "package_manager_policy": "npm@11.19.0",
-    "pytest": "9.1.1",
-    "ruff": "0.16.6",
-    "black": "26.5.1",
-    "mypy": "2.3.1",
-    "pip_audit": "2.10.1",
-    "mutmut": "3.7.0",
-    "docker_available": false,
-    "docker_required_by_local_reproducible_jobs": false,
-    "sqlite": "3.45.1",
-    "external_database_required": false
-  },
-  "playwright": {
-    "locked_package": "1.63.0",
-    "required_revision": 1243,
-    "installed_revision": 1243,
-    "installed_headless_shell_revision": 1243,
-    "install_command": "npm --prefix frontend exec -- playwright install chromium",
-    "browser_boundary": "RESOLVED",
-    "full_e2e_boundary": "OCCUPIED_LOCAL_PORTS",
-    "occupied_ports": {"backend": 8000, "frontend": 3000},
-    "reason": "Playwright config uses reuseExistingServer=false; pre-existing project services were preserved rather than terminated."
-  },
-  "check_boundary": {
-    "command": "VERIFICATION_OFFLINE=1 VERIFICATION_BASE_REF=06bf5b12 VERIFICATION_HEAD_REF=HEAD .venv/bin/python -m runtime.verify check",
-    "result": "ENVIRONMENT_BOUNDARY",
-    "reason": "The combined plan's runtime self-test task entered a poll wait for more than eight hours after other tasks had run; the check process was stopped. This is an orchestration/resource contention boundary, not a fabricated pass.",
-    "closest_evidence": "Standalone runtime profile passed 2239 tests; backend, frontend, contracts, and golden profiles passed independently.",
-    "reproduction_limitation": "Do not treat the generic plan hang as a product test failure without a standalone reproduction; C71/CI must provide resource isolation or serialized task execution."
-  },
-  "mutation_boundary": {
-    "smoke": "PASS",
-    "authoritative_full_campaign": "NOT_EXECUTED; repository policy CI-only",
-    "representative_incremental": "ENVIRONMENT_BOUNDARY after 600 seconds with no summary artifact",
-    "closest_evidence": "Bounded mutation --smoke Gates A/B and backend/profile evidence."
-  },
-  "external_boundaries": [
-    {"classification":"EXTERNAL_SERVICE","scope":"dependency-update","reason":"live vulnerability services/registries","closest_evidence":"pinned tool versions and manifest inspection"},
-    {"classification":"GITHUB_ONLY","scope":"CodeQL","reason":"security-events write and GitHub code scanning","closest_evidence":"workflow/source inspection"},
-    {"classification":"GITHUB_ONLY","scope":"forensic lab","reason":"pull_request payload and Actions artifacts","closest_evidence":"workflow/source inspection"}
-  ],
-  "setup": {
-    "canonical_command": "bash scripts/bootstrap.sh",
-    "global_machine_modification_required": false,
-    "python_contract": "root pyproject.toml [all]",
-    "node_contract": "frontend/package-lock.json with npm ci",
-    "secrets_persisted": false
+    "root_venv": true,
+    "external_secrets_persisted": false
   }
 }

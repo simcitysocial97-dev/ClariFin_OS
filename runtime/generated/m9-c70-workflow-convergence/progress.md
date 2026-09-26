@@ -310,15 +310,33 @@ The branch was pushed to:
 origin/m9c9-merge-authorization-resolution
 ```
 
-## C71 Handoff
+## Boundary Resolution Addendum — 2026-09-26
 
-C71 must focus strictly on GitHub workflow convergence and green-state certification:
+**Status:** RESOLVED_WITH_TWO_EXPLICIT_PRODUCT_GAPS
 
-1. Reproduce the remaining check orchestration contention on GitHub infrastructure.
-2. Execute the external dependency audit.
-3. Execute Playwright E2E on the Actions runner.
-4. Validate CodeQL/forensic GitHub-native workflows.
-5. Confirm required status checks and branch protection.
-6. Certify the final GitHub Actions green state.
+The remaining local blocks were investigated and the GitHub workflows were executed against the pushed branch.
 
-C70 stops here. C71 is not started.
+### Resolved
+
+- Ports 3000/8000 were free; Playwright functional runs execute.
+- Chromium functional E2E: 225 passed.
+- Mobile-chrome functional E2E: 196 passed.
+- Local and GitHub dependency audits are clean; npm audit reports zero vulnerabilities after Next/pdfjs/brace-expansion upgrades.
+- GitHub Backend run `36231192064`: success.
+- GitHub Frontend run `36231192038`: success.
+- GitHub Quality run `36231192015`: success.
+- GitHub API Contract Integrity run `36231192006`: success.
+- GitHub Verification Runtime run `36231192130`: success.
+- GitHub Golden run `36233134436`: success.
+- GitHub CodeQL run `36237918919`: success.
+- GitHub Dependency Updates run `36237917290`: success.
+- GitHub Quality now uses event-delta bounding and certified no-op plans for workflow-only changes.
+
+### Remaining Explicit Product Gaps
+
+- Authoritative mutation: targeted balance-engine run `36238247482` produced 0.0% with 285 survivors and correctly failed the 80% gate. Full run `36233136018` was cancelled after 91m45s.
+- Playwright visual and platform-console groups: functional flows pass, but visual snapshot baselines and platform render/console assertions still fail. No tests were suppressed or weakened.
+
+### Updated Conclusion
+
+The original environment/service boundaries are resolved. The two remaining items are genuine mutation-detection quality and UI/test-contract gaps, not unresolved environment blocks. C71 should focus on those two items and final GitHub green-state certification.
