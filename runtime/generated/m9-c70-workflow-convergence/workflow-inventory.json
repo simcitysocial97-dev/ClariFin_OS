@@ -4,6 +4,12 @@
   "phase": "PHASE_1_COMPLETE_GITHUB_WORKFLOW_INVENTORY",
   "generated_at": "2026-09-25T04:27:21Z",
   "source": "Direct inspection of .github/workflows and every referenced local composite action",
+  "inventory_state": "PRE_REMEDIATION_SNAPSHOT",
+  "remediation_evidence": {
+    "source_commit": "ce63c369568cb622498731702bda4a5ce41d8d19",
+    "artifact_commit": "977857580f9a3edc213aa742b6025b54c4b630a1",
+    "current_command_authority": "runtime/generated/m9-c70-workflow-convergence/workflow-classification.json and local-command-matrix.json"
+  },
   "workflow_count": 14,
   "job_definition_count": 15,
   "matrix_instance_count": 16,
