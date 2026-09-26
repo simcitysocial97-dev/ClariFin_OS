@@ -14,6 +14,8 @@ obligation records, per ``PLATFORM_COMPONENT_MAP.md`` §4.5.
 from __future__ import annotations
 
 from collections import Counter
+from threading import RLock
+from time import monotonic
 from typing import Any
 
 from runtime.foundation.verification.control_plane_facade import (
@@ -36,61 +38,86 @@ __all__ = [
     "build_errors_detail",
 ]
 
+_CACHE_TTL_SECONDS = 2.0
+_CACHE_LOCK = RLock()
+_INTEGRITY_CACHE: tuple[float, list[dict[str, Any]]] | None = None
+_OBLIGATION_CACHE: tuple[float, list[dict[str, Any]]] | None = None
+
 
 def _integrity_failures() -> list[dict[str, Any]]:
     """Project failed evidence-integrity test cases into error items."""
 
-    report = build_evidence_integrity_report()
-    items: list[dict[str, Any]] = []
-    for result in report.test_results:
-        if result.passed:
-            continue
-        items.append(
-            {
-                "id": f"integrity.{result.test_case.name}",
-                "code": "INTEGRITY_FAILED",
-                "layer": "platform.evidence",
-                "message": result.test_case.description,
-                "first_seen": (
-                    Timestamp(report.generated_at) if report.generated_at else now_iso()
-                ),
-                "last_seen": (
-                    Timestamp(report.generated_at) if report.generated_at else now_iso()
-                ),
-                "occurrences": 1,
-                "affected_workflow": None,
-            }
-        )
-    return items
+    global _INTEGRITY_CACHE
+    with _CACHE_LOCK:
+        cached = _INTEGRITY_CACHE
+        if cached is not None and monotonic() - cached[0] < _CACHE_TTL_SECONDS:
+            return list(cached[1])
+        report = build_evidence_integrity_report()
+        items: list[dict[str, Any]] = []
+        for result in report.test_results:
+            if result.passed:
+                continue
+            items.append(
+                {
+                    "id": f"integrity.{result.test_case.name}",
+                    "code": "INTEGRITY_FAILED",
+                    "layer": "platform.evidence",
+                    "message": result.test_case.description,
+                    "first_seen": (
+                        Timestamp(report.generated_at)
+                        if report.generated_at
+                        else now_iso()
+                    ),
+                    "last_seen": (
+                        Timestamp(report.generated_at)
+                        if report.generated_at
+                        else now_iso()
+                    ),
+                    "occurrences": 1,
+                    "affected_workflow": None,
+                }
+            )
+        _INTEGRITY_CACHE = (monotonic(), list(items))
+        return items
 
 
 def _obligation_failures() -> list[dict[str, Any]]:
     """Project open/failed obligations into error items."""
 
-    cp = ControlPlane()
-    files = _collect_changed_files(fetch_remote=False)
-    plan = cp.planner.plan(files)
-    oset = cp._plan_to_obligations(plan, files)
+    global _OBLIGATION_CACHE
+    with _CACHE_LOCK:
+        cached = _OBLIGATION_CACHE
+        if cached is not None and monotonic() - cached[0] < _CACHE_TTL_SECONDS:
+            return list(cached[1])
+        cp = ControlPlane()
+        files = _collect_changed_files(fetch_remote=False)
+        plan = cp.planner.plan(files)
+        oset = cp._plan_to_obligations(plan, files)
 
-    items: list[dict[str, Any]] = []
-    for o in oset.obligations:
-        if o.disposition != Disposition.OPEN:
-            continue
-        req = getattr(o, "requirement", None)
-        cap = getattr(o, "capability", None)
-        items.append(
-            {
-                "id": f"obligation.{o.obligation_id}",
-                "code": "OBLIGATION_OPEN",
-                "layer": "platform.tasks",
-                "message": (req.rationale if req else o.obligation_id),
-                "first_seen": Timestamp(o.created_at) if o.created_at else now_iso(),
-                "last_seen": Timestamp(o.created_at) if o.created_at else now_iso(),
-                "occurrences": 1,
-                "affected_workflow": (cap.capability_id if cap else None),
-            }
-        )
-    return items
+        items: list[dict[str, Any]] = []
+        for o in oset.obligations:
+            if o.disposition != Disposition.OPEN:
+                continue
+            req = getattr(o, "requirement", None)
+            cap = getattr(o, "capability", None)
+            items.append(
+                {
+                    "id": f"obligation.{o.obligation_id}",
+                    "code": "OBLIGATION_OPEN",
+                    "layer": "platform.tasks",
+                    "message": (req.rationale if req else o.obligation_id),
+                    "first_seen": (
+                        Timestamp(o.created_at) if o.created_at else now_iso()
+                    ),
+                    "last_seen": (
+                        Timestamp(o.created_at) if o.created_at else now_iso()
+                    ),
+                    "occurrences": 1,
+                    "affected_workflow": (cap.capability_id if cap else None),
+                }
+            )
+        _OBLIGATION_CACHE = (monotonic(), list(items))
+        return items
 
 
 def _list_envelope(

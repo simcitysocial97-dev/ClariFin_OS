@@ -1,8 +1,1 @@
-Found 5 known vulnerabilities in 1 package
-Name             Version ID              Fix Versions
----------------- ------- --------------- ------------
-python-multipart 0.0.22  PYSEC-2026-3038 0.0.26
-python-multipart 0.0.22  PYSEC-2026-3037 0.0.30
-python-multipart 0.0.22  PYSEC-2026-3036 0.0.30
-python-multipart 0.0.22  PYSEC-2026-3040 0.0.31
-python-multipart 0.0.22  PYSEC-2026-3039 0.0.27
+No known vulnerabilities found

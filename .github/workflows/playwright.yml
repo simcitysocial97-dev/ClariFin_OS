@@ -76,7 +76,7 @@ jobs:
       - name: Run playwright verification (canonical check)
         env:
           PLAYWRIGHT_PROJECT: ${{ matrix.project }}
-          CLARIFIN_PYTHON: .venv/bin/python
+          CLARIFIN_PYTHON: ${{ github.workspace }}/.venv/bin/python
         run: .venv/bin/python -m runtime.verify playwright
 
       - name: Upload shared artifact — cross-layer-map
