@@ -1,13 +1,13 @@
 {
   "schema": "m9-c47-measurement-truth/v1",
-  "run_id": "cov-70b9adff3dd9",
+  "run_id": "cov-056a8874d8f9",
   "measurement_kind": "coverage",
-  "repository_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
-  "tree_sha": "97ae0c827eff021041d095c3e4e86af78d471514",
+  "repository_sha": "ce63c369568cb622498731702bda4a5ce41d8d19",
+  "tree_sha": "17fe119005f79fad8d425d1c5e2c0302c5043e59",
   "working_tree_fingerprint": "",
   "configuration_fingerprint": "",
   "toolchain_fingerprint": "",
-  "environment_fingerprint": "{'python_version': 'Python 3.12.3', 'python_source': 'venv', 'python_path': '/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python3', 'pytest_version': 'pytest 9.1.1', 'pytest_source': 'venv', 'mutmut_version': 'mutmut, version 3.7.0', 'mutmut_source': 'venv', 'pinned_mutmut': '3.7.0', 'forbidden_venvs': [], 'venv_bin': '/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin', 'ruff_version': 'ruff 0.16.6', 'ruff_source': 'venv', 'black_version': 'black, 26.5.1 (compiled: yes)', 'black_source': 'venv', 'mypy_version': 'mypy 2.3.1 (compiled: yes)', 'mypy_source': 'venv', 'coverage_version': 'Coverage.py, version 7.16.0 with C extension', 'coverage_source': 'venv', 'config_hashes': {'pyproject_toml': '288dcb866b87a0af', 'ruff_toml': 'missing', 'black': 'embedded_in_pyproject', 'mypy': '10c8dbbaa291dc75'}, 'requirements_lock_hash': 'b941df164b6c5ead', 'repository_sha': '23e4b66187709b909cea5f84a5f03a8efa8ab320', 'verification_profile': None, 'capability_selection': [], 'fingerprint_version': '1.0'}",
+  "environment_fingerprint": "{'python_version': 'Python 3.12.3', 'python_source': 'venv', 'python_path': '/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python3', 'pytest_version': 'pytest 9.1.1', 'pytest_source': 'venv', 'mutmut_version': 'mutmut, version 3.7.0', 'mutmut_source': 'venv', 'pinned_mutmut': '3.7.0', 'forbidden_venvs': [], 'venv_bin': '/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin', 'ruff_version': 'ruff 0.16.6', 'ruff_source': 'venv', 'black_version': 'black, 26.5.1 (compiled: yes)', 'black_source': 'venv', 'mypy_version': 'mypy 2.3.1 (compiled: yes)', 'mypy_source': 'venv', 'coverage_version': 'Coverage.py, version 7.16.0 with C extension', 'coverage_source': 'venv', 'config_hashes': {'pyproject_toml': 'eaec458de0509ca5', 'ruff_toml': 'missing', 'black': 'embedded_in_pyproject', 'mypy': '10c8dbbaa291dc75'}, 'requirements_lock_hash': 'b941df164b6c5ead', 'repository_sha': 'ce63c369568cb622498731702bda4a5ce41d8d19', 'verification_profile': None, 'capability_selection': [], 'fingerprint_version': '1.0'}",
   "command": "verify.py measurement coverage tests/unit/engines/credit_card",
   "requested_scope": "tests/unit/engines/credit_card",
   "actual_scope": "tests/unit/engines/credit_card",
@@ -25,28 +25,28 @@
     "actually_processed": 0
   },
   "coverage": {
-    "lines_total": 10221,
-    "lines_covered": 1357,
-    "line_percent": 11.287709281691228,
-    "branches_total": 2740,
+    "lines_total": 10470,
+    "lines_covered": 1358,
+    "line_percent": 11.04738907334742,
+    "branches_total": 2782,
     "branches_covered": 106,
     "branch_percent": null
   },
   "mutation_score": null,
-  "coverage_result_percent": 11.287709281691228,
+  "coverage_result_percent": 11.04738907334742,
   "execution_status": "FAIL",
   "completion_status": "INFRASTRUCTURE_FAILURE",
   "failure_classification": "infrastructure",
-  "start_time": "2026-09-20T15:17:32.151239+00:00",
+  "start_time": "2026-09-25T17:46:50.097195+00:00",
   "end_time": null,
-  "duration_seconds": 7.66,
+  "duration_seconds": 10.05,
   "toolchain_versions": {
     "python": "Python 3.12.3",
     "coverage": "unknown"
   },
   "artifact_paths": [],
   "evidence_classification": "derived",
-  "evidence_fingerprint": "ae9bc07246baf51e4d2ff80e0558a922a55bd26f1a8dba8fffe6500953f48ba4",
+  "evidence_fingerprint": "f4db468679f3e804b1146beb22e0016cae0a470a7c1022af26c389a08a5434af",
   "consumable_by_certification": false,
   "mode": "coverage",
   "target": null,
@@ -54,5 +54,5 @@
   "note": "coverage measurement failed to complete",
   "derived_from": [],
   "durable_survivor_evidence": [],
-  "generated_at": "2026-09-20T15:17:32.151303+00:00"
+  "generated_at": "2026-09-25T17:46:50.097271+00:00"
 }

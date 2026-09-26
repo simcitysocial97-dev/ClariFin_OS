@@ -1,5 +1,5 @@
 {
-  "indexed_at": "2026-09-19T18:10:42.631371+00:00",
+  "indexed_at": "2026-09-25T17:48:11.274609+00:00",
   "source_artifacts": [
     "runtime.foundation.architecture (canonical provider)",
     "runtime/generated/dashboard.json",
@@ -15991,6 +15991,16 @@
         ]
       },
       {
+        "title": "m10-frontend-path-map",
+        "path": "docs/migration/m10-frontend-path-map.md",
+        "references": {
+          "path": "docs/migration/m10-frontend-path-map.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
         "title": "program-c-backlog",
         "path": "docs/program-c-backlog.md",
         "references": {
@@ -16663,6 +16673,6 @@
     "verification_profiles": 11,
     "integrity_rules": 28,
     "runtime_artifacts": 9,
-    "documentation": 189
+    "documentation": 190
   }
 }

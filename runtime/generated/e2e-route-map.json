@@ -22,12 +22,16 @@
     "/platform/errors",
     "/platform/evidence",
     "/platform/framework",
+    "/platform/health",
     "/platform/history",
     "/platform/history/compare",
+    "/platform/runs",
+    "/platform/runs/[runId]",
     "/platform/verification",
     "/platform/verification/[capability]",
     "/platform/verification/history/[runId]",
     "/platform/verification/run/[capability]",
+    "/platform/workflows",
     "/reconciliation",
     "/settings",
     "/transactions"
@@ -64,12 +68,16 @@
     "/platform/errors": [],
     "/platform/evidence": [],
     "/platform/framework": [],
+    "/platform/health": [],
     "/platform/history": [],
     "/platform/history/compare": [],
+    "/platform/runs": [],
+    "/platform/runs/[runId]": [],
     "/platform/verification": [],
     "/platform/verification/[capability]": [],
     "/platform/verification/history/[runId]": [],
     "/platform/verification/run/[capability]": [],
+    "/platform/workflows": [],
     "/reconciliation": [
       "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/reconciliation.spec.ts"
     ],
@@ -82,5 +90,5 @@
       "/home/vasantha/AI-Projects/ClariFin_OS/frontend/tests/e2e/specs/transactions.spec.ts"
     ]
   },
-  "generated_at": "2026-09-20T12:18:51.262628+00:00"
+  "generated_at": "2026-09-25T17:47:04.597132+00:00"
 }

@@ -1,37 +1,37 @@
 {
   "runs": [
     {
-      "run_id": "backend_unit_change-5c949ba9",
+      "run_id": "backend_unit_change-788ab815",
       "scenario": "backend_unit_change",
-      "plan_identity": "plan::backend_unit_change-c46ae048",
-      "execution_identity": "exec::backend_unit_change-0d359dcd",
+      "plan_identity": "plan::backend_unit_change-f82c89e8",
+      "execution_identity": "exec::backend_unit_change-1bd7a5e4",
       "final_decision": "planned",
       "plan_exit_code": 0,
       "task_count": 4
     },
     {
-      "run_id": "cache_reuse_1-408b135d",
+      "run_id": "cache_reuse_1-a2172dcf",
       "scenario": "cache_reuse_1",
-      "plan_identity": "plan::cache_reuse_1-a86157fc",
-      "execution_identity": "exec::cache_reuse_1-f12c1581",
+      "plan_identity": "plan::cache_reuse_1-21b8ffa2",
+      "execution_identity": "exec::cache_reuse_1-45641b9e",
       "final_decision": "planned",
       "plan_exit_code": 0,
       "task_count": 4
     },
     {
-      "run_id": "cache_reuse_2-51d0acd7",
+      "run_id": "cache_reuse_2-b8d1d9aa",
       "scenario": "cache_reuse_2",
-      "plan_identity": "plan::cache_reuse_2-b9a6f176",
-      "execution_identity": "exec::cache_reuse_2-0271aefb",
+      "plan_identity": "plan::cache_reuse_2-3873ab7d",
+      "execution_identity": "exec::cache_reuse_2-5c1ec779",
       "final_decision": "planned",
       "plan_exit_code": 0,
       "task_count": 4
     },
     {
-      "run_id": "capability_change-f61de97e",
+      "run_id": "capability_change-0f4307e9",
       "scenario": "capability_change",
-      "plan_identity": "plan::capability_change-d8086396",
-      "execution_identity": "exec::capability_change-a6beeba2",
+      "plan_identity": "plan::capability_change-8ee4d9bc",
+      "execution_identity": "exec::capability_change-b28ff5b8",
       "final_decision": "planned",
       "plan_exit_code": 0,
       "task_count": 0
@@ -46,73 +46,73 @@
       "task_count": 0
     },
     {
-      "run_id": "contract_change-9ce7630f",
+      "run_id": "contract_change-f7e538cd",
       "scenario": "contract_change",
-      "plan_identity": "plan::contract_change-7ed1dd27",
-      "execution_identity": "exec::contract_change-4d886533",
+      "plan_identity": "plan::contract_change-77870aa0",
+      "execution_identity": "exec::contract_change-211df123",
       "final_decision": "planned",
       "plan_exit_code": 0,
       "task_count": 4
     },
     {
-      "run_id": "cross_layer-677e32d1",
+      "run_id": "cross_layer-351615ee",
       "scenario": "cross_layer",
-      "plan_identity": "plan::cross_layer-4968ace9",
-      "execution_identity": "exec::cross_layer-981f34f5",
+      "plan_identity": "plan::cross_layer-b4b7e7c1",
+      "execution_identity": "exec::cross_layer-d86303bd",
       "final_decision": "planned",
       "plan_exit_code": 0,
-      "task_count": 4
+      "task_count": 5
     },
     {
-      "run_id": "deletion-808f9d74",
+      "run_id": "deletion-1d90dd66",
       "scenario": "deletion",
-      "plan_identity": "plan::deletion-e27a178c",
-      "execution_identity": "exec::deletion-b1309f98",
+      "plan_identity": "plan::deletion-9d32af39",
+      "execution_identity": "exec::deletion-c0ddcb35",
       "final_decision": "planned",
       "plan_exit_code": 0,
       "task_count": 4
     },
     {
-      "run_id": "failed_verification-5b4ee59d",
+      "run_id": "failed_verification-3230ca72",
       "scenario": "failed_verification",
-      "plan_identity": "plan::failed_verification-3d395fb5",
-      "execution_identity": "exec::failed_verification-0befe7c1",
+      "plan_identity": "plan::failed_verification-b1d29c45",
+      "execution_identity": "exec::failed_verification-d57db841",
       "final_decision": "planned",
       "plan_exit_code": 0,
       "task_count": 4
     },
     {
-      "run_id": "frontend_change-801b5a0b",
+      "run_id": "frontend_change-b5bc8c75",
       "scenario": "frontend_change",
-      "plan_identity": "plan::frontend_change-6205d423",
-      "execution_identity": "exec::frontend_change-2ad091a8",
+      "plan_identity": "plan::frontend_change-355e5e48",
+      "execution_identity": "exec::frontend_change-59097a44",
       "final_decision": "planned",
       "plan_exit_code": 0,
-      "task_count": 0
+      "task_count": 1
     },
     {
-      "run_id": "mutation_sensitive-13096f9f",
+      "run_id": "mutation_sensitive-8361acdd",
       "scenario": "mutation_sensitive",
-      "plan_identity": "plan::mutation_sensitive-f4f3e9b7",
-      "execution_identity": "exec::mutation_sensitive-43aa71c3",
+      "plan_identity": "plan::mutation_sensitive-83037eb0",
+      "execution_identity": "exec::mutation_sensitive-a6ae9aac",
       "final_decision": "planned",
       "plan_exit_code": 0,
-      "task_count": 7
+      "task_count": 8
     },
     {
-      "run_id": "no_change-794f1c29",
+      "run_id": "no_change-3f345f7a",
       "scenario": "no_change",
-      "plan_identity": "plan::no_change-e12560c8",
-      "execution_identity": "exec::no_change-29f01e4d",
+      "plan_identity": "plan::no_change-bed6314d",
+      "execution_identity": "exec::no_change-e2814d49",
       "final_decision": "planned",
       "plan_exit_code": 0,
       "task_count": 0
     },
     {
-      "run_id": "rename-b04ced5e",
+      "run_id": "rename-4b51095c",
       "scenario": "rename",
-      "plan_identity": "plan::rename-182331fd",
-      "execution_identity": "exec::rename-e0edef82",
+      "plan_identity": "plan::rename-caf2db2f",
+      "execution_identity": "exec::rename-ee9df72b",
       "final_decision": "planned",
       "plan_exit_code": 0,
       "task_count": 4
@@ -127,15 +127,15 @@
       "task_count": 0
     },
     {
-      "run_id": "unmapped_change-eb74543a",
+      "run_id": "unmapped_change-509b4d30",
       "scenario": "unmapped_change",
-      "plan_identity": "plan::unmapped_change-534a98d9",
-      "execution_identity": "exec::unmapped_change-9c15565e",
+      "plan_identity": "plan::unmapped_change-d03d1f03",
+      "execution_identity": "exec::unmapped_change-f3e83aff",
       "final_decision": "planned",
       "plan_exit_code": 0,
       "task_count": 0
     }
   ],
   "total": 15,
-  "generated_at": "2026-09-19T15:27:01.128833+00:00"
+  "generated_at": "2026-09-25T17:39:05.755050+00:00"
 }

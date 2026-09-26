@@ -1,21 +1,22 @@
 {
-  "run_id": "cross_layer-677e32d1",
-  "timestamp": "2026-09-19T15:27:01.128833+00:00",
-  "repository_sha": "56370d19e2f234cb4c2d0ed203642f550b84ec5e",
+  "run_id": "cross_layer-351615ee",
+  "timestamp": "2026-09-25T17:39:05.755050+00:00",
+  "repository_sha": "ce63c369568cb622498731702bda4a5ce41d8d19",
   "scenario": "cross_layer",
   "changed_files": [
     "backend/src/engines/test_cross_b.py",
     "frontend/lib/test_cross_f.ts"
   ],
-  "plan_identity": "plan::cross_layer-4968ace9",
-  "execution_identity": "exec::cross_layer-981f34f5",
+  "plan_identity": "plan::cross_layer-b4b7e7c1",
+  "execution_identity": "exec::cross_layer-d86303bd",
   "task_ids": [
     "exec-0001",
     "exec-0002",
     "exec-0003",
-    "exec-0004"
+    "exec-0004",
+    "exec-0005"
   ],
-  "task_count": 4,
+  "task_count": 5,
   "evidence_identities": [],
   "obligations": [],
   "reconciliation": {

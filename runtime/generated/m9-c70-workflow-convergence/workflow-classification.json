@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "milestone": "M9-C70",
+  "phase": "PHASE_2_CLASSIFICATION_AND_FINAL_BOUNDARIES",
+  "classified_at": "2026-09-26T02:20:00Z",
+  "unknown_count": 0,
+  "workflows": [
+    {
+      "workflow_file": ".github/workflows/frontend-verify.yml",
+      "workflow_name": "Frontend Verification",
+      "classification": "LOCAL_REPRODUCIBLE_WITH_SETUP",
+      "jobs": [{"job_id": "verify", "classification": "LOCAL_REPRODUCIBLE_WITH_SETUP", "result": "PASS", "boundary": null}]
+    },
+    {
+      "workflow_file": ".github/workflows/backend-verify.yml",
+      "workflow_name": "Backend Verification",
+      "classification": "LOCAL_REPRODUCIBLE_WITH_SETUP",
+      "jobs": [{"job_id": "verify", "classification": "LOCAL_REPRODUCIBLE_WITH_SETUP", "result": "PASS", "boundary": null}]
+    },
+    {
+      "workflow_file": ".github/workflows/verification-runtime.yml",
+      "workflow_name": "Verification Runtime",
+      "classification": "LOCAL_REPRODUCIBLE_WITH_SETUP",
+      "jobs": [{"job_id": "verify-runtime", "classification": "LOCAL_REPRODUCIBLE_WITH_SETUP", "result": "PASS", "boundary": null}]
+    },
+    {
+      "workflow_file": ".github/workflows/quality.yml",
+      "workflow_name": "Quality Gate",
+      "classification": "PARTIALLY_REPRODUCIBLE",
+      "jobs": [{"job_id": "quality", "classification": "PARTIALLY_REPRODUCIBLE", "result": "ENVIRONMENT_BOUNDARY", "boundary": "CHECK_ORCHESTRATION_CONTENTION"}],
+      "reason": "The canonical change-driven command is local, but the combined plan hung in its runtime self-test task after more than eight hours of poll waiting; standalone authoritative profile evidence passes."
+    },
+    {
+      "workflow_file": ".github/workflows/api-contracts.yml",
+      "workflow_name": "API Contract Integrity",
+      "classification": "LOCAL_REPRODUCIBLE_WITH_SETUP",
+      "jobs": [{"job_id": "api-contracts", "classification": "LOCAL_REPRODUCIBLE_WITH_SETUP", "result": "PASS", "boundary": null}],
+      "trigger_boundary": "GITHUB_ONLY workflow_run context only"
+    },
+    {
+      "workflow_file": ".github/workflows/verification-reconcile.yml",
+      "workflow_name": "Verification Reconcile",
+      "classification": "PARTIALLY_REPRODUCIBLE",
+      "jobs": [{"job_id": "reconcile-gate", "classification": "PARTIALLY_REPRODUCIBLE", "result": "ENVIRONMENT_BOUNDARY", "boundary": "CHECK_ORCHESTRATION_CONTENTION"}],
+      "reason": "The stale synthetic TierPlan path was retired; the remaining canonical check shares the Quality plan boundary."
+    },
+    {
+      "workflow_file": ".github/workflows/mutation.yml",
+      "workflow_name": "Mutation Testing",
+      "classification": "PARTIALLY_REPRODUCIBLE",
+      "jobs": [
+        {"job_id": "mutation-smoke", "classification": "LOCAL_REPRODUCIBLE", "result": "PASS", "boundary": null},
+        {"job_id": "mutation", "classification": "SCHEDULE_ONLY", "result": "NOT_EXECUTED", "boundary": "FULL_MUTATION_CI_POLICY"}
+      ]
+    },
+    {
+      "workflow_file": ".github/workflows/golden.yml",
+      "workflow_name": "Golden Dataset Regression",
+      "classification": "LOCAL_REPRODUCIBLE_WITH_SETUP",
+      "jobs": [{"job_id": "golden", "classification": "LOCAL_REPRODUCIBLE_WITH_SETUP", "result": "PASS", "boundary": null}]
+    },
+    {
+      "workflow_file": ".github/workflows/playwright.yml",
+      "workflow_name": "Playwright Tests",
+      "classification": "LOCAL_REPRODUCIBLE_WITH_SETUP",
+      "jobs": [
+        {"job_id": "test[chromium]", "classification": "LOCAL_REPRODUCIBLE_WITH_SETUP", "result": "ENVIRONMENT_BOUNDARY", "boundary": "OCCUPIED_LOCAL_PORTS"},
+        {"job_id": "test[mobile-chrome]", "classification": "LOCAL_REPRODUCIBLE_WITH_SETUP", "result": "ENVIRONMENT_BOUNDARY", "boundary": "OCCUPIED_LOCAL_PORTS"}
+      ],
+      "resolved_browser_boundary": {"required_revision": 1243, "installed_revision": 1243, "status": "RESOLVED"}
+    },
+    {
+      "workflow_file": ".github/workflows/dependency-update.yml",
+      "workflow_name": "Dependency Updates",
+      "classification": "EXTERNAL_SERVICE",
+      "jobs": [{"job_id": "dependency-health", "classification": "EXTERNAL_SERVICE", "result": "EXTERNAL_BOUNDARY", "boundary": "LIVE_VULNERABILITY_SERVICES"}]
+    },
+    {
+      "workflow_file": ".github/workflows/release.yml",
+      "workflow_name": "Release",
+      "classification": "PARTIALLY_REPRODUCIBLE",
+      "jobs": [{"job_id": "build", "classification": "PARTIALLY_REPRODUCIBLE", "result": "PASS", "boundary": "GITHUB_RELEASE_EVENT"}],
+      "status": "STALE_CLAIM",
+      "reason": "Build is reproducible; the workflow has no publication/deployment implementation."
+    },
+    {
+      "workflow_file": ".github/workflows/mutation-pr.yml",
+      "workflow_name": "Mutation Testing (PR Incremental)",
+      "classification": "PARTIALLY_REPRODUCIBLE",
+      "jobs": [{"job_id": "incremental-mutation", "classification": "PARTIALLY_REPRODUCIBLE", "result": "ENVIRONMENT_BOUNDARY", "boundary": "LOCAL_MUTATION_CAMPAIGN_DURATION"}],
+      "reason": "Environment check and bounded smoke pass; representative incremental campaign exceeded the local campaign budget and produced no summary."
+    },
+    {
+      "workflow_file": ".github/workflows/security-codeql.yml",
+      "workflow_name": "CodeQL Security Analysis",
+      "classification": "GITHUB_ONLY",
+      "jobs": [{"job_id": "analyze", "classification": "GITHUB_ONLY", "result": "GITHUB_ONLY", "boundary": "CODEQL_SECURITY_EVENTS"}]
+    },
+    {
+      "workflow_file": ".github/workflows/m9-forensic-diagnostic-lab.yml",
+      "workflow_name": "M9 Forensic Diagnostic Lab",
+      "classification": "GITHUB_ONLY",
+      "jobs": [{"job_id": "diagnostician", "classification": "GITHUB_ONLY", "result": "GITHUB_ONLY", "boundary": "PULL_REQUEST_EVENT_PAYLOAD"}]
+    }
+  ],
+  "job_counts": {
+    "LOCAL_REPRODUCIBLE": 1,
+    "LOCAL_REPRODUCIBLE_WITH_SETUP": 6,
+    "PARTIALLY_REPRODUCIBLE": 4,
+    "GITHUB_ONLY": 2,
+    "EXTERNAL_SERVICE": 1,
+    "EXTERNAL_CREDENTIAL": 0,
+    "BROWSER_ENVIRONMENT": 0,
+    "DEPLOYMENT_ONLY": 0,
+    "SCHEDULE_ONLY": 1,
+    "INFORMATIONAL": 0,
+    "DEPRECATED": 0,
+    "UNKNOWN": 0
+  },
+  "workflow_counts": {
+    "LOCAL_REPRODUCIBLE": 0,
+    "LOCAL_REPRODUCIBLE_WITH_SETUP": 6,
+    "PARTIALLY_REPRODUCIBLE": 5,
+    "GITHUB_ONLY": 2,
+    "EXTERNAL_SERVICE": 1,
+    "UNKNOWN": 0
+  }
+}

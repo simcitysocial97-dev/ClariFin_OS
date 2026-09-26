@@ -1,13 +1,13 @@
 {
-  "run_id": "deletion-808f9d74",
-  "timestamp": "2026-09-19T15:27:01.128833+00:00",
-  "repository_sha": "56370d19e2f234cb4c2d0ed203642f550b84ec5e",
+  "run_id": "deletion-1d90dd66",
+  "timestamp": "2026-09-25T17:39:05.755050+00:00",
+  "repository_sha": "ce63c369568cb622498731702bda4a5ce41d8d19",
   "scenario": "deletion",
   "changed_files": [
     "backend/src/engines/test_del_r4.py"
   ],
-  "plan_identity": "plan::deletion-e27a178c",
-  "execution_identity": "exec::deletion-b1309f98",
+  "plan_identity": "plan::deletion-9d32af39",
+  "execution_identity": "exec::deletion-c0ddcb35",
   "task_ids": [
     "exec-0001",
     "exec-0002",

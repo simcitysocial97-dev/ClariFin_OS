@@ -1,7 +1,7 @@
 {
   "run_id": "ci_equivalent-00000001",
-  "timestamp": "2026-09-19T15:27:01.128833+00:00",
-  "repository_sha": "56370d19e2f234cb4c2d0ed203642f550b84ec5e",
+  "timestamp": "2026-09-25T17:39:05.755050+00:00",
+  "repository_sha": "ce63c369568cb622498731702bda4a5ce41d8d19",
   "scenario": "ci_equivalent",
   "changed_files": [],
   "plan_identity": "plan::ci-equivalent",

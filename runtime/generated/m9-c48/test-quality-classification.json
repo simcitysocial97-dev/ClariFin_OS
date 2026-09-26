@@ -1,12 +1,12 @@
 {
   "schema": "m9-c48/test-quality@1",
-  "generated_at": "2026-09-04T12:15:27+00:00",
+  "generated_at": "2026-09-25T17:54:04+00:00",
   "summary": {
     "EXECUTION_ONLY": 19,
-    "BEHAVIORAL": 4,
+    "BEHAVIORAL": 5,
+    "GOLDEN": 14,
     "INVARIANT": 1,
-    "GOLDEN": 12,
-    "CONTRACT": 14
+    "CONTRACT": 11
   },
   "total_files": 50,
   "classifications": [
@@ -41,6 +41,32 @@
       "rationale": "asserts=55 param=0 e2e=False golden=False"
     },
     {
+      "file": "backend/tests/architecture/test_household_sentinel_cross_group_consistency.py",
+      "primary_category": "GOLDEN",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD",
+        "GOLDEN"
+      ],
+      "assert_count": 1,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": true,
+      "rationale": "asserts=1 param=0 e2e=False golden=True"
+    },
+    {
+      "file": "backend/tests/architecture/test_household_sentinel_internal_consistency.py",
+      "primary_category": "GOLDEN",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD",
+        "GOLDEN"
+      ],
+      "assert_count": 1,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": true,
+      "rationale": "asserts=1 param=0 e2e=False golden=True"
+    },
+    {
       "file": "backend/tests/architecture/test_layer_boundaries.py",
       "primary_category": "INVARIANT",
       "secondary_categories": [
@@ -51,6 +77,18 @@
       "is_e2e": false,
       "is_golden": false,
       "rationale": "asserts=8 param=0 e2e=False golden=False"
+    },
+    {
+      "file": "backend/tests/architecture/test_no_raw_household_default.py",
+      "primary_category": "BEHAVIORAL",
+      "secondary_categories": [
+        "FALSE_POSITIVE_GUARD"
+      ],
+      "assert_count": 1,
+      "parametrize_count": 0,
+      "is_e2e": false,
+      "is_golden": false,
+      "rationale": "asserts=1 param=0 e2e=False golden=False"
     },
     {
       "file": "backend/tests/audits/test_audit_minimal.py",
@@ -549,42 +587,6 @@
       "is_e2e": false,
       "is_golden": false,
       "rationale": "asserts=1 param=0 e2e=False golden=False"
-    },
-    {
-      "file": "backend/tests/contract/generated/test_financial_events.py",
-      "primary_category": "CONTRACT",
-      "secondary_categories": [
-        "CONTRACT"
-      ],
-      "assert_count": 3,
-      "parametrize_count": 0,
-      "is_e2e": false,
-      "is_golden": false,
-      "rationale": "asserts=3 param=0 e2e=False golden=False"
-    },
-    {
-      "file": "backend/tests/contract/generated/test_forecast.py",
-      "primary_category": "CONTRACT",
-      "secondary_categories": [
-        "CONTRACT"
-      ],
-      "assert_count": 1,
-      "parametrize_count": 0,
-      "is_e2e": false,
-      "is_golden": false,
-      "rationale": "asserts=1 param=0 e2e=False golden=False"
-    },
-    {
-      "file": "backend/tests/contract/generated/test_import.py",
-      "primary_category": "CONTRACT",
-      "secondary_categories": [
-        "CONTRACT"
-      ],
-      "assert_count": 2,
-      "parametrize_count": 0,
-      "is_e2e": false,
-      "is_golden": false,
-      "rationale": "asserts=2 param=0 e2e=False golden=False"
     }
   ]
 }

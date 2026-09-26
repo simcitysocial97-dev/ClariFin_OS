@@ -1,9 +1,9 @@
 {
   "domains": {
     "capabilities": {
-      "_c": 18630.81689501,
-      "_ts": "2026-09-25T03:43:31Z",
-      "hash": "c33ce75b02f8dbeea5e5118f089eadaee71e0ebdaa1dbea4354ec5a171cc649e",
+      "_c": 35405.010731297,
+      "_ts": "2026-09-25T17:15:16Z",
+      "hash": "88055c85ab15a343bd1935ceed0fdacc4bd3ecba0dca617540d0f9f59ecb4591",
       "payload": {
         "data": {
           "categories": [
@@ -727,7 +727,7 @@
             },
             {
               "authorization": "none",
-              "cost": "moderate",
+              "cost": "high",
               "id": "exec.profile.runtime",
               "name": "Profile: Runtime Verification",
               "produces": [
@@ -769,20 +769,1038 @@
             }
           ]
         },
-        "generated_at": "2026-09-25T03:43:31Z",
-        "id": "sha256:5316987b8b1d0518a089806afeaca29464fda75fd1d9c48bfc66eb68396c465c",
+        "generated_at": "2026-09-25T17:15:16Z",
+        "id": "sha256:604de18e19d978fb4d43a3200ec7c8f9552cfd2ba9ffc88a7d31d64d79551925",
         "kind": "platform.capability_list",
         "version": "1.0.0"
       }
     },
     "events": {
-      "_c": 18649.042254611,
-      "_ts": "2026-09-25T03:43:49Z",
-      "hash": "7a71a2fc0dcefdb86b999013d2aced21042a97de21375c5b8855cba6fc78f792",
+      "_c": 35438.652918767,
+      "_ts": "2026-09-25T17:15:49Z",
+      "hash": "579e922d99663d38cb6d3b442a0187bbb5e52b96efcc5d7834bb5c6803eb1a03",
       "payload": {
         "data": {
-          "count": 5,
+          "count": 102,
           "items": [
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-25 17:03:30.831082+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": "ver-brc-86af",
+              "id": "vc-ver-brc-86af",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "duration_seconds": 0.0,
+                "executed": false,
+                "execution_id": "ver-brc-86af",
+                "final_decision": "planned_not_executed",
+                "record_count": 1,
+                "status": "unknown",
+                "task_ids": [
+                  "task-unmapped-0001"
+                ]
+              },
+              "task_id": "task-unmapped-0001"
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-25 17:03:30.829695+00:00",
+              "event_type": "VerificationStarted",
+              "execution_id": "ver-brc-86af",
+              "id": "vs-ver-brc-86af",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "execution_id": "ver-brc-86af",
+                "mode": "platform-api",
+                "task_ids": [
+                  "task-unmapped-0001"
+                ]
+              },
+              "task_id": "task-unmapped-0001"
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-25 16:41:18.995646+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": "ver-brc-6438",
+              "id": "vc-ver-brc-6438",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "duration_seconds": 0.0,
+                "executed": false,
+                "execution_id": "ver-brc-6438",
+                "final_decision": "planned_not_executed",
+                "record_count": 1,
+                "status": "unknown",
+                "task_ids": [
+                  "task-unmapped-0001"
+                ]
+              },
+              "task_id": "task-unmapped-0001"
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-25 16:41:18.993021+00:00",
+              "event_type": "VerificationStarted",
+              "execution_id": "ver-brc-6438",
+              "id": "vs-ver-brc-6438",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "execution_id": "ver-brc-6438",
+                "mode": "platform-api",
+                "task_ids": [
+                  "task-unmapped-0001"
+                ]
+              },
+              "task_id": "task-unmapped-0001"
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 15:10:04.217519+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "3dc6838b-1fe0-4a2f-989c-43993da89eb3",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 2194.636105578,
+                "evidence_count": 10,
+                "failed": 3,
+                "final_decision": "diagnostic",
+                "passed": 2,
+                "profile": "check",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 15:10:04.216448+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "ab922d13-d62e-4b36-8eec-164e40f7f165",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 2194.636105578,
+                "evidence_count": 10,
+                "failed": 3,
+                "passed": 2,
+                "profile": "check",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 14:11:24.985486+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "2948ec2b-9c9f-4cd5-acdf-4777d30f062e",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 3078.446644634001,
+                "evidence_count": 10,
+                "failed": 4,
+                "final_decision": "diagnostic",
+                "passed": 1,
+                "profile": "check",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 14:11:24.956304+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "b7e82510-c739-431c-bddc-424b881eb8cb",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 3078.446644634001,
+                "evidence_count": 10,
+                "failed": 4,
+                "passed": 1,
+                "profile": "check",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": "unmapped:useAccountsCapability",
+              "emitted_at": "2026-09-25 12:26:12.891545+00:00",
+              "event_type": "task.cancelled",
+              "execution_id": null,
+              "id": "cancel-obl-37ebc7a6ba2d-0",
+              "payload": {
+                "reason": "cancelled via platform API at 2026-09-25T12:26:12Z",
+                "task_id": "obl-37ebc7a6ba2d-0"
+              },
+              "task_id": "obl-37ebc7a6ba2d-0"
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-25 12:25:48.493239+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": "ver-brc-263d",
+              "id": "vc-ver-brc-263d",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "duration_seconds": 0.0,
+                "executed": false,
+                "execution_id": "ver-brc-263d",
+                "final_decision": "planned_not_executed",
+                "record_count": 1,
+                "status": "unknown",
+                "task_ids": [
+                  "task-unmapped-0001"
+                ]
+              },
+              "task_id": "task-unmapped-0001"
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-25 12:25:48.492015+00:00",
+              "event_type": "VerificationStarted",
+              "execution_id": "ver-brc-263d",
+              "id": "vs-ver-brc-263d",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "execution_id": "ver-brc-263d",
+                "mode": "platform-api",
+                "task_ids": [
+                  "task-unmapped-0001"
+                ]
+              },
+              "task_id": "task-unmapped-0001"
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 11:50:58.556077+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "fa5f6df9-9855-4e95-8d19-67d928548fc9",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 636.6873388060012,
+                "evidence_count": 10,
+                "failed": 3,
+                "final_decision": "timeout_blocked",
+                "passed": 1,
+                "profile": "check",
+                "skipped": 0,
+                "status": "blocked"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 11:50:58.555038+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "47b952a5-45a5-4d90-9f1c-b560bb05e620",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 636.6873388060012,
+                "evidence_count": 10,
+                "failed": 3,
+                "passed": 1,
+                "profile": "check",
+                "skipped": 0,
+                "status": "blocked"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 10:55:51.345870+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "93e2ac6c-ae3d-445c-8a49-420a74258518",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 3.999865581999984,
+                "evidence_count": 0,
+                "failed": 0,
+                "final_decision": "certified",
+                "passed": 2,
+                "profile": "golden",
+                "skipped": 0,
+                "status": "passed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 10:55:51.344751+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "93933f0f-b341-4dcc-8473-0b4d654f13be",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 3.999865581999984,
+                "evidence_count": 0,
+                "failed": 0,
+                "passed": 2,
+                "profile": "golden",
+                "skipped": 0,
+                "status": "passed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 10:45:25.459959+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "ab5dd978-74dc-407b-840e-41428597d01b",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 84.68627076599842,
+                "evidence_count": 0,
+                "failed": 0,
+                "final_decision": "certified",
+                "passed": 2,
+                "profile": "contracts",
+                "skipped": 0,
+                "status": "passed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 10:45:25.458954+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "49db877f-b08d-4b4a-b29a-158fd25546a5",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 84.68627076599842,
+                "evidence_count": 0,
+                "failed": 0,
+                "passed": 2,
+                "profile": "contracts",
+                "skipped": 0,
+                "status": "passed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 10:33:15.556786+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "1c4353c2-7307-4965-88dc-e1eb55a2b290",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 91.56596044800062,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "contracts",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 10:33:15.555466+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "b8688a68-de2c-46cd-b397-5e094112d15e",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 91.56596044800062,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "contracts",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 10:28:57.611966+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "74946962-8f4d-448f-829b-3edb39351185",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 1990.739404349999,
+                "evidence_count": 0,
+                "failed": 0,
+                "final_decision": "certified",
+                "passed": 2,
+                "profile": "runtime",
+                "skipped": 0,
+                "status": "passed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 10:28:57.610940+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "85405217-9677-4393-947d-f39d877399fd",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 1990.739404349999,
+                "evidence_count": 0,
+                "failed": 0,
+                "passed": 2,
+                "profile": "runtime",
+                "skipped": 0,
+                "status": "passed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 09:50:22.851650+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "db4465e2-a689-4d1a-b874-24b00dbbff7d",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 2117.01933286,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 0,
+                "profile": "runtime",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 09:50:22.850427+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "2be52762-7e42-4818-851b-70ff0b1ad46b",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 2117.01933286,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 0,
+                "profile": "runtime",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 09:04:49.034962+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "bba598a8-b888-478d-af06-529bfcbb7550",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 2037.0291499129999,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 0,
+                "profile": "runtime",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 09:04:49.032866+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "7dc4d51c-667c-41e9-9a2d-1295482379b4",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 2037.0291499129999,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 0,
+                "profile": "runtime",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 08:06:58.168779+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "fc4455de-a6b7-4649-97b5-16ecc0525c4e",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 2077.608681155,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 0,
+                "profile": "runtime",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 08:06:58.166380+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "1666d045-c9f3-4839-bd31-a39f22e3bd48",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 2077.608681155,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 0,
+                "profile": "runtime",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 07:31:43.586810+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "b511c5ba-5ded-4e1c-a46d-e00a87a23ffe",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 293.5832550320001,
+                "evidence_count": 0,
+                "failed": 0,
+                "final_decision": "certified",
+                "passed": 4,
+                "profile": "frontend",
+                "skipped": 0,
+                "status": "passed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 07:31:43.472295+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "615fecb7-d06b-4ce3-9383-fcd11eb0816b",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 293.5832550320001,
+                "evidence_count": 0,
+                "failed": 0,
+                "passed": 4,
+                "profile": "frontend",
+                "skipped": 0,
+                "status": "passed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 07:24:56.137276+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "7fd9007c-874e-4771-9e5d-3568df6e9e0a",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 224.3748589910001,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 2,
+                "profile": "frontend",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 07:24:56.136006+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "bbce4215-226e-4532-bab5-1469007681ac",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 224.3748589910001,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 2,
+                "profile": "frontend",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 07:20:37.230548+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "7ccdaea4-eb1a-498b-b51d-ed5856f9167a",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 392.08864363199973,
+                "evidence_count": 0,
+                "failed": 0,
+                "final_decision": "certified",
+                "passed": 6,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "passed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 07:20:37.229550+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "06298ad9-9cf7-4ba4-a754-7bc47c6bb7f8",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 392.08864363199973,
+                "evidence_count": 0,
+                "failed": 0,
+                "passed": 6,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "passed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-25 07:18:26.383224+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": "ver-brc-2085",
+              "id": "vc-ver-brc-2085",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "duration_seconds": 0.0,
+                "executed": false,
+                "execution_id": "ver-brc-2085",
+                "final_decision": "planned_not_executed",
+                "record_count": 1,
+                "status": "unknown",
+                "task_ids": [
+                  "task-unmapped-0001"
+                ]
+              },
+              "task_id": "task-unmapped-0001"
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-25 07:18:26.382500+00:00",
+              "event_type": "VerificationStarted",
+              "execution_id": "ver-brc-2085",
+              "id": "vs-ver-brc-2085",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "execution_id": "ver-brc-2085",
+                "mode": "platform-api",
+                "task_ids": [
+                  "task-unmapped-0001"
+                ]
+              },
+              "task_id": "task-unmapped-0001"
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 07:11:58.675738+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "30eabdeb-9c80-4506-96b9-0a8bafa6ce30",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 396.1277044830001,
+                "evidence_count": 0,
+                "failed": 0,
+                "final_decision": "certified",
+                "passed": 7,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "passed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 07:11:58.671570+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "403e403c-d14e-4449-a618-caceb6b9df64",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 396.1277044830001,
+                "evidence_count": 0,
+                "failed": 0,
+                "passed": 7,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "passed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 07:03:22.500909+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "b48e76bf-5484-4745-9986-c9cc6724fdbb",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 393.477256763,
+                "evidence_count": 0,
+                "failed": 0,
+                "final_decision": "certified",
+                "passed": 7,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "passed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 07:03:22.499998+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "3ecd3d75-13da-4e23-8d39-86af33da91f6",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 393.477256763,
+                "evidence_count": 0,
+                "failed": 0,
+                "passed": 7,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "passed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": "unmapped:UNMAPPED:frontend/.nvmrc",
+              "emitted_at": "2026-09-25 07:01:28.929993+00:00",
+              "event_type": "task.cancelled",
+              "execution_id": null,
+              "id": "cancel-obl-7c5f73be2f5f-0",
+              "payload": {
+                "reason": "cancelled via platform API at 2026-09-25T07:01:28Z",
+                "task_id": "obl-7c5f73be2f5f-0"
+              },
+              "task_id": "obl-7c5f73be2f5f-0"
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-25 07:01:09.431014+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": "ver-brc-74ca",
+              "id": "vc-ver-brc-74ca",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "duration_seconds": 0.0,
+                "executed": false,
+                "execution_id": "ver-brc-74ca",
+                "final_decision": "planned_not_executed",
+                "record_count": 1,
+                "status": "unknown",
+                "task_ids": [
+                  "task-unmapped-0001"
+                ]
+              },
+              "task_id": "task-unmapped-0001"
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-25 07:01:09.430363+00:00",
+              "event_type": "VerificationStarted",
+              "execution_id": "ver-brc-74ca",
+              "id": "vs-ver-brc-74ca",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "execution_id": "ver-brc-74ca",
+                "mode": "platform-api",
+                "task_ids": [
+                  "task-unmapped-0001"
+                ]
+              },
+              "task_id": "task-unmapped-0001"
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 06:20:58.864154+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "9e3be18a-6b20-4c49-9fa1-52bdd1970d37",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 407.4560091909989,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 4,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 06:20:58.851161+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "ae82616b-a436-456a-88f2-f7ce8b67c2e5",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 407.4560091909989,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 4,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 06:12:06.287256+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "8cb5c333-a45a-40b5-8d45-9534db1dcbe8",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 350.4598174849998,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 4,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 06:12:06.285008+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "b9d2078b-cb96-49cc-ad82-1e35477d91be",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 350.4598174849998,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 4,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 06:00:04.050374+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "491bba13-3977-4bc4-94ae-78715d8ecc37",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 780.6297335410018,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 4,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 06:00:04.048767+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "69afdcc7-b0af-47dd-8929-363361ecfe15",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 780.6297335410018,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 4,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 05:45:18.038983+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "e970bd85-4526-4fc0-a13a-ee012a0385a8",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 452.0004423049977,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 4,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 05:45:18.035225+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "cfc8327c-9740-473c-a2b4-6eda7392407e",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 452.0004423049977,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 4,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 05:18:43.455260+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "cfe47397-b5a9-41bb-98e7-5b7ed7fdbcce",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 349.0008347639996,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 4,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 05:18:43.453180+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "3840fd24-0a91-4d1b-90f6-f9a646955152",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 349.0008347639996,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 4,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 04:51:16.099251+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "d618bc39-d6c4-4d80-aef5-97860dfe8fe4",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 16.248198735000187,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 2,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 04:51:16.097677+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "9974e337-7f1d-4e11-92b3-a417d0067ad8",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 16.248198735000187,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 2,
+                "profile": "backend",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 04:50:15.644511+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "8271efc7-9e87-4851-bda6-3f8fba58d847",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 26.920665931000258,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-25 04:50:15.629382+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "810d35fc-8eae-403f-8cc6-6f52eb71b8a3",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 26.920665931000258,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
             {
               "capability_id": "unmapped:useAccountsCapability",
               "emitted_at": "2026-09-25 03:14:38.378352+00:00",
@@ -1024,20 +2042,895 @@
                 ]
               },
               "task_id": "task-unmapped-0001"
+            },
+            {
+              "capability_id": "account-engine",
+              "emitted_at": "2026-09-21 02:12:02.553230+00:00",
+              "event_type": "task.cancelled",
+              "execution_id": null,
+              "id": "cancel-obl-612327196aa9-0",
+              "payload": {
+                "reason": "cancelled via platform API at 2026-09-21T02:12:02Z",
+                "task_id": "obl-612327196aa9-0"
+              },
+              "task_id": "obl-612327196aa9-0"
+            },
+            {
+              "capability_id": "unknown",
+              "emitted_at": "2026-09-21 02:11:06.070054+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": "ver-brc-051d",
+              "id": "vc-ver-brc-051d",
+              "payload": {
+                "capability_id": "all",
+                "duration_seconds": 0.0,
+                "executed": false,
+                "execution_id": "ver-brc-051d",
+                "final_decision": "planned_not_executed",
+                "record_count": 64,
+                "status": "unknown",
+                "task_ids": [
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-e2e-0064"
+                ]
+              },
+              "task_id": "task-0001"
+            },
+            {
+              "capability_id": "unknown",
+              "emitted_at": "2026-09-21 02:11:06.069602+00:00",
+              "event_type": "VerificationStarted",
+              "execution_id": "ver-brc-051d",
+              "id": "vs-ver-brc-051d",
+              "payload": {
+                "capability_id": "all",
+                "execution_id": "ver-brc-051d",
+                "mode": "platform-api",
+                "task_ids": [
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-0003",
+                  "task-0004",
+                  "task-0005",
+                  "task-0006",
+                  "task-0007",
+                  "task-0001",
+                  "task-0002",
+                  "task-e2e-0064"
+                ]
+              },
+              "task_id": "task-0001"
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-21 02:10:52.499199+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": "ver-brc-d88e",
+              "id": "vc-ver-brc-d88e",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "duration_seconds": 0.0,
+                "executed": false,
+                "execution_id": "ver-brc-d88e",
+                "final_decision": "planned_not_executed",
+                "record_count": 1,
+                "status": "unknown",
+                "task_ids": [
+                  "task-0001"
+                ]
+              },
+              "task_id": "task-0001"
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-21 02:10:52.404686+00:00",
+              "event_type": "VerificationStarted",
+              "execution_id": "ver-brc-d88e",
+              "id": "vs-ver-brc-d88e",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "execution_id": "ver-brc-d88e",
+                "mode": "platform-api",
+                "task_ids": [
+                  "task-0001"
+                ]
+              },
+              "task_id": "task-0001"
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-20 02:50:52.556714+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "c2a25aa2-9c4c-4e2a-b47e-ef09a6bd5fdc",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 25.36590510799988,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-20 02:50:52.555973+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "c007deab-db7d-4378-b268-c2dc5372a30d",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 25.36590510799988,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 19:03:56.877961+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "8eef8480-f9f8-4103-b286-189f580675d3",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 23.502866307972,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 19:03:56.876763+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "e872c5b4-67e7-4f0e-9e48-03f0333a2f06",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 23.502866307972,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:56:35.527902+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "2cb5f181-7ec8-4fad-b8f8-482c7d50fe13",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 23.270623245975003,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:56:35.527243+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "448babd2-35a7-4186-bb78-90e77a7e4ced",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 23.270623245975003,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:49:23.770235+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "59fdd9a5-6c5c-4135-be22-b41f97b9db11",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 23.75798654893879,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:49:23.769399+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "2944f3da-248f-4285-8ceb-a3bd14bd4239",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 23.75798654893879,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:30:32.906758+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "26ea0164-bb49-4605-b816-859f532ff11e",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 23.282115646987222,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:30:32.905978+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "7fc76d2b-6160-4fbd-9b48-d3ded4a4843e",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 23.282115646987222,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:05:22.768046+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "9b379577-eb99-4c51-beea-1241df3ff623",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 16.763141990988515,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:05:22.766914+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "50696aa2-9e33-4393-b3eb-372f2b502d2b",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 16.763141990988515,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:04:12.173166+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "1bb067fb-e602-45c8-9eb8-c9e8f8ae3e6e",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 22.513357543968596,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:04:12.172642+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "c3b9d9ca-ae7f-4376-a7ec-51dbe02f4ed9",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 22.513357543968596,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:03:49.578482+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "09f34cbd-764a-482a-8441-d072a8a91ca3",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 17.811033334000967,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:03:49.577958+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "7010842e-cff0-4de4-8283-680aa1cf38c1",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 17.811033334000967,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:03:10.144689+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "ff9ec4b6-cd62-4e58-bbe8-867465061152",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 22.530272078933194,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:03:10.144202+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "d7496527-cf4e-4eed-bde6-820d5df5e0d1",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 22.530272078933194,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:02:47.516022+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "638baa39-02f7-44d7-9108-a26e1ba02a6d",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 17.24993077199906,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 18:02:47.515503+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "42d99a24-67d0-4ed9-b976-433ce30599ad",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 17.24993077199906,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 17:56:41.048537+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "f14a92b0-1963-4a18-a7ec-d9f56acd380c",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 19.0282568190014,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 17:56:41.048028+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "2e36b877-d1ef-4633-a3ee-dbe454e0511f",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 19.0282568190014,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 17:53:30.047070+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "c88ef251-c626-46c9-8c09-41232838a643",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 22.77669595403131,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 17:53:30.046615+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "750d4497-8d39-4d87-ab97-18b44e0559d8",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 22.77669595403131,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 17:26:57.063164+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "b274c616-6bad-42a2-9bc8-b3493a2bd490",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 18.844641586998478,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 17:26:57.062724+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "f37ece81-eb78-4ac3-abcc-f07c948575ab",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 18.844641586998478,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 17:25:03.330998+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "37100fab-9619-498b-95fa-56f93119a23a",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 14.833704655058682,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 17:25:03.330515+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "8e21a26c-585f-465f-a55f-529c024c13fe",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 14.833704655058682,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 1,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 16:35:27.095332+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "66a6eaa8-a756-4071-9c92-8b70b10bfd9e",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 0.11550566798541695,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 0,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 16:35:27.095027+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "74e254b0-d8ec-483b-8d97-d1cabe2e98b7",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 0.11550566798541695,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 0,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 16:34:59.451286+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "83442972-a6a7-4a6f-ae31-1e14b173d3e2",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 0.11494706093799323,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 0,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 16:34:59.451039+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "d7e73b97-097a-4b21-8df6-1e9eff6ff6fd",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 0.11494706093799323,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 0,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 16:34:32.046981+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": null,
+              "id": "392867df-346f-4fb7-8384-6e7ceb8acc55",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 0.16533492703456432,
+                "evidence_count": 0,
+                "failed": 1,
+                "final_decision": "failed",
+                "passed": 0,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": null,
+              "emitted_at": "2026-09-19 16:34:32.029139+00:00",
+              "event_type": "verification_record",
+              "execution_id": null,
+              "id": "330ae162-e674-408c-89d9-c6d06dc3e742",
+              "payload": {
+                "cache_hit": false,
+                "duration_seconds": 0.16533492703456432,
+                "evidence_count": 0,
+                "failed": 1,
+                "passed": 0,
+                "profile": "quick",
+                "skipped": 0,
+                "status": "failed"
+              },
+              "task_id": null
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-19 08:10:18.102543+00:00",
+              "event_type": "VerificationCompleted",
+              "execution_id": "ver-brc-d8bb",
+              "id": "vc-ver-brc-d8bb",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "duration_seconds": 0.0,
+                "executed": false,
+                "execution_id": "ver-brc-d8bb",
+                "final_decision": "planned_not_executed",
+                "record_count": 1,
+                "status": "unknown",
+                "task_ids": [
+                  "task-0001"
+                ]
+              },
+              "task_id": "task-0001"
+            },
+            {
+              "capability_id": "discover.blast-radius",
+              "emitted_at": "2026-09-19 08:10:18.102253+00:00",
+              "event_type": "VerificationStarted",
+              "execution_id": "ver-brc-d8bb",
+              "id": "vs-ver-brc-d8bb",
+              "payload": {
+                "capability_id": "discover.blast-radius",
+                "execution_id": "ver-brc-d8bb",
+                "mode": "platform-api",
+                "task_ids": [
+                  "task-0001"
+                ]
+              },
+              "task_id": "task-0001"
             }
           ],
           "window": "recent"
         },
-        "generated_at": "2026-09-25T03:43:49Z",
-        "id": "sha256:d65f95dad3a4869147e0c5b226b7f775acbff82648ba079e63d3210c9940d9e7",
+        "generated_at": "2026-09-25T17:15:49Z",
+        "id": "sha256:d44ee7286a41569950e47f237c49b025f26dcbf0a1308fa0b27cc101f21e81ed",
         "kind": "platform.events_list",
         "version": "1.0.0"
       }
     },
     "health": {
-      "_c": 18636.273971275,
-      "_ts": "2026-09-25T03:43:36Z",
-      "hash": "268a02af3f93809b554343af4e57c5d68908027517e2e00f7642b18f692f6b98",
+      "_c": 36726.103098226,
+      "_ts": "2026-09-25T17:37:17Z",
+      "hash": "a88942d0d937284bbee9b383bfa75ff6596719b7a1dc77384ab1c852872332c4",
       "payload": {
         "data": {
           "ai": "READY",
@@ -1046,22 +2939,22 @@
           "database": "HEALTHY",
           "domains": [
             {
-              "detail": "runs=17 passed=0 failed=17",
-              "last_check": "2026-09-25T03:43:36Z",
+              "detail": "runs=39 passed=7 failed=31",
+              "last_check": "2026-09-25T17:37:17Z",
               "name": "Verification",
               "source": "/platform/v1/verification",
               "status": "UNHEALTHY"
             },
             {
-              "detail": "events=46",
-              "last_check": "2026-09-25T03:43:36Z",
+              "detail": "events=102",
+              "last_check": "2026-09-25T17:37:17Z",
               "name": "EventStore",
               "source": "EngineeringEventStore",
               "status": "HEALTHY"
             },
             {
-              "detail": "critical=0 high=0 medium=0 low=0 self_tests=8/9",
-              "last_check": "2026-09-25T03:43:36Z",
+              "detail": "critical=0 high=0 medium=0 low=0 self_tests=9/9",
+              "last_check": "2026-09-25T17:37:17Z",
               "name": "Framework Integrity",
               "source": "/platform/v1/framework/integrity",
               "status": "HEALTHY"
@@ -1073,16 +2966,16 @@
           "platform": "UNHEALTHY",
           "verification": "CURRENT"
         },
-        "generated_at": "2026-09-25T03:43:36Z",
-        "id": "sha256:30024d7df33263ca970e6422243f7129e5cd6e1f014da67dcbfa0e0cf525a1c4",
+        "generated_at": "2026-09-25T17:37:17Z",
+        "id": "sha256:d23f8d51baf51e950cd127ff966072c1a071bec2a87899f14a072a76a46d547e",
         "kind": "platform.health_snapshot",
         "version": "1.0.0"
       }
     },
     "tasks": {
-      "_c": 18649.035424195,
-      "_ts": "2026-09-25T03:43:49Z",
-      "hash": "6f6e536dcd07b4bd483c4927ab6ff8327d0849a45b40caf3d3d5b4b49deb23b5",
+      "_c": 35438.554541011,
+      "_ts": "2026-09-25T17:15:49Z",
+      "hash": "512e7f02ae61e0584d8bde8d57f92dea892a0f40d7e2f212bcf4cb533e12b711",
       "payload": {
         "data": {
           "closed_count": 0,
@@ -1090,654 +2983,654 @@
             {
               "capability_id": "unmapped:useAccountsCapability",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748174Z",
-              "id": "obl-e48a437754f5-0",
+              "created_at": "2026-09-25T17:15:49.719318Z",
+              "id": "obl-7c5f73be2f5f-0",
               "name": "Change resolved to a capability with no verification-registry mapping (useAccountsCapability); blocked pending review obligation",
               "status": "OPEN"
             },
             {
               "capability_id": "unmapped:useBehaviourCapability",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748200Z",
-              "id": "obl-e48a437754f5-1",
+              "created_at": "2026-09-25T17:15:49.719411Z",
+              "id": "obl-7c5f73be2f5f-1",
               "name": "Change resolved to a capability with no verification-registry mapping (useBehaviourCapability); blocked pending review obligation",
               "status": "OPEN"
             },
             {
               "capability_id": "unmapped:useCashflowCapability",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748217Z",
-              "id": "obl-e48a437754f5-2",
+              "created_at": "2026-09-25T17:15:49.719478Z",
+              "id": "obl-7c5f73be2f5f-2",
               "name": "Change resolved to a capability with no verification-registry mapping (useCashflowCapability); blocked pending review obligation",
               "status": "OPEN"
             },
             {
               "capability_id": "unmapped:useCreditCardsCapability",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748233Z",
-              "id": "obl-e48a437754f5-3",
+              "created_at": "2026-09-25T17:15:49.719541Z",
+              "id": "obl-7c5f73be2f5f-3",
               "name": "Change resolved to a capability with no verification-registry mapping (useCreditCardsCapability); blocked pending review obligation",
               "status": "OPEN"
             },
             {
               "capability_id": "unmapped:useForecastCapability",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748249Z",
-              "id": "obl-e48a437754f5-4",
+              "created_at": "2026-09-25T17:15:49.719603Z",
+              "id": "obl-7c5f73be2f5f-4",
               "name": "Change resolved to a capability with no verification-registry mapping (useForecastCapability); blocked pending review obligation",
               "status": "OPEN"
             },
             {
               "capability_id": "unmapped:useInvestmentsCapability",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748264Z",
-              "id": "obl-e48a437754f5-5",
+              "created_at": "2026-09-25T17:15:49.719665Z",
+              "id": "obl-7c5f73be2f5f-5",
               "name": "Change resolved to a capability with no verification-registry mapping (useInvestmentsCapability); blocked pending review obligation",
               "status": "OPEN"
             },
             {
               "capability_id": "unmapped:useNetWorthCapability",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748280Z",
-              "id": "obl-e48a437754f5-6",
+              "created_at": "2026-09-25T17:15:49.719728Z",
+              "id": "obl-7c5f73be2f5f-6",
               "name": "Change resolved to a capability with no verification-registry mapping (useNetWorthCapability); blocked pending review obligation",
               "status": "OPEN"
             },
             {
               "capability_id": "unmapped:useReconciliationCapability",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748295Z",
-              "id": "obl-e48a437754f5-7",
+              "created_at": "2026-09-25T17:15:49.719789Z",
+              "id": "obl-7c5f73be2f5f-7",
               "name": "Change resolved to a capability with no verification-registry mapping (useReconciliationCapability); blocked pending review obligation",
               "status": "OPEN"
             },
             {
               "capability_id": "unmapped:useTransactionCapability",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748311Z",
-              "id": "obl-e48a437754f5-8",
+              "created_at": "2026-09-25T17:15:49.719849Z",
+              "id": "obl-7c5f73be2f5f-8",
               "name": "Change resolved to a capability with no verification-registry mapping (useTransactionCapability); blocked pending review obligation",
               "status": "OPEN"
             },
             {
               "capability_id": "account-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748324Z",
-              "id": "obl-e48a437754f5-9",
+              "created_at": "2026-09-25T17:15:49.719903Z",
+              "id": "obl-7c5f73be2f5f-9",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "account-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748333Z",
-              "id": "obl-e48a437754f5-10",
+              "created_at": "2026-09-25T17:15:49.719946Z",
+              "id": "obl-7c5f73be2f5f-10",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "account-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748342Z",
-              "id": "obl-e48a437754f5-11",
+              "created_at": "2026-09-25T17:15:49.719988Z",
+              "id": "obl-7c5f73be2f5f-11",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "account-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748351Z",
-              "id": "obl-e48a437754f5-12",
+              "created_at": "2026-09-25T17:15:49.720032Z",
+              "id": "obl-7c5f73be2f5f-12",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "account-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748359Z",
-              "id": "obl-e48a437754f5-13",
+              "created_at": "2026-09-25T17:15:49.720074Z",
+              "id": "obl-7c5f73be2f5f-13",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "account-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748368Z",
-              "id": "obl-e48a437754f5-14",
+              "created_at": "2026-09-25T17:15:49.720126Z",
+              "id": "obl-7c5f73be2f5f-14",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "account-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748377Z",
-              "id": "obl-e48a437754f5-15",
+              "created_at": "2026-09-25T17:15:49.720169Z",
+              "id": "obl-7c5f73be2f5f-15",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748386Z",
-              "id": "obl-e48a437754f5-16",
+              "created_at": "2026-09-25T17:15:49.720214Z",
+              "id": "obl-7c5f73be2f5f-16",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748395Z",
-              "id": "obl-e48a437754f5-17",
+              "created_at": "2026-09-25T17:15:49.720257Z",
+              "id": "obl-7c5f73be2f5f-17",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748404Z",
-              "id": "obl-e48a437754f5-18",
+              "created_at": "2026-09-25T17:15:49.720300Z",
+              "id": "obl-7c5f73be2f5f-18",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748413Z",
-              "id": "obl-e48a437754f5-19",
+              "created_at": "2026-09-25T17:15:49.720344Z",
+              "id": "obl-7c5f73be2f5f-19",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748422Z",
-              "id": "obl-e48a437754f5-20",
+              "created_at": "2026-09-25T17:15:49.720388Z",
+              "id": "obl-7c5f73be2f5f-20",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "api-contracts",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748431Z",
-              "id": "obl-e48a437754f5-21",
+              "created_at": "2026-09-25T17:15:49.720432Z",
+              "id": "obl-7c5f73be2f5f-21",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "behaviour-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748440Z",
-              "id": "obl-e48a437754f5-22",
+              "created_at": "2026-09-25T17:15:49.720474Z",
+              "id": "obl-7c5f73be2f5f-22",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "behaviour-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748448Z",
-              "id": "obl-e48a437754f5-23",
+              "created_at": "2026-09-25T17:15:49.720518Z",
+              "id": "obl-7c5f73be2f5f-23",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "behaviour-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748457Z",
-              "id": "obl-e48a437754f5-24",
+              "created_at": "2026-09-25T17:15:49.720563Z",
+              "id": "obl-7c5f73be2f5f-24",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "behaviour-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748465Z",
-              "id": "obl-e48a437754f5-25",
+              "created_at": "2026-09-25T17:15:49.720608Z",
+              "id": "obl-7c5f73be2f5f-25",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "behaviour-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748474Z",
-              "id": "obl-e48a437754f5-26",
+              "created_at": "2026-09-25T17:15:49.720654Z",
+              "id": "obl-7c5f73be2f5f-26",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "behaviour-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748482Z",
-              "id": "obl-e48a437754f5-27",
+              "created_at": "2026-09-25T17:15:49.720699Z",
+              "id": "obl-7c5f73be2f5f-27",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "behaviour-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748491Z",
-              "id": "obl-e48a437754f5-28",
+              "created_at": "2026-09-25T17:15:49.720744Z",
+              "id": "obl-7c5f73be2f5f-28",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "cashflow-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748499Z",
-              "id": "obl-e48a437754f5-29",
+              "created_at": "2026-09-25T17:15:49.720790Z",
+              "id": "obl-7c5f73be2f5f-29",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "cashflow-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748508Z",
-              "id": "obl-e48a437754f5-30",
+              "created_at": "2026-09-25T17:15:49.720834Z",
+              "id": "obl-7c5f73be2f5f-30",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "cashflow-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748516Z",
-              "id": "obl-e48a437754f5-31",
+              "created_at": "2026-09-25T17:15:49.720881Z",
+              "id": "obl-7c5f73be2f5f-31",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "cashflow-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748525Z",
-              "id": "obl-e48a437754f5-32",
+              "created_at": "2026-09-25T17:15:49.720927Z",
+              "id": "obl-7c5f73be2f5f-32",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "cashflow-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748534Z",
-              "id": "obl-e48a437754f5-33",
+              "created_at": "2026-09-25T17:15:49.720969Z",
+              "id": "obl-7c5f73be2f5f-33",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "cashflow-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748543Z",
-              "id": "obl-e48a437754f5-34",
+              "created_at": "2026-09-25T17:15:49.721011Z",
+              "id": "obl-7c5f73be2f5f-34",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "cashflow-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748552Z",
-              "id": "obl-e48a437754f5-35",
+              "created_at": "2026-09-25T17:15:49.721057Z",
+              "id": "obl-7c5f73be2f5f-35",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "financial-intelligence",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748560Z",
-              "id": "obl-e48a437754f5-36",
+              "created_at": "2026-09-25T17:15:49.721112Z",
+              "id": "obl-7c5f73be2f5f-36",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "financial-intelligence",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748569Z",
-              "id": "obl-e48a437754f5-37",
+              "created_at": "2026-09-25T17:15:49.721161Z",
+              "id": "obl-7c5f73be2f5f-37",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "financial-intelligence",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748578Z",
-              "id": "obl-e48a437754f5-38",
+              "created_at": "2026-09-25T17:15:49.721199Z",
+              "id": "obl-7c5f73be2f5f-38",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "financial-intelligence",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748586Z",
-              "id": "obl-e48a437754f5-39",
+              "created_at": "2026-09-25T17:15:49.721225Z",
+              "id": "obl-7c5f73be2f5f-39",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "financial-intelligence",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748595Z",
-              "id": "obl-e48a437754f5-40",
+              "created_at": "2026-09-25T17:15:49.721251Z",
+              "id": "obl-7c5f73be2f5f-40",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "financial-intelligence",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748604Z",
-              "id": "obl-e48a437754f5-41",
+              "created_at": "2026-09-25T17:15:49.721277Z",
+              "id": "obl-7c5f73be2f5f-41",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "financial-intelligence",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748612Z",
-              "id": "obl-e48a437754f5-42",
+              "created_at": "2026-09-25T17:15:49.721302Z",
+              "id": "obl-7c5f73be2f5f-42",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "ledger",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748622Z",
-              "id": "obl-e48a437754f5-43",
+              "created_at": "2026-09-25T17:15:49.721330Z",
+              "id": "obl-7c5f73be2f5f-43",
               "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "ledger",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748631Z",
-              "id": "obl-e48a437754f5-44",
+              "created_at": "2026-09-25T17:15:49.721358Z",
+              "id": "obl-7c5f73be2f5f-44",
               "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "ledger",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748640Z",
-              "id": "obl-e48a437754f5-45",
+              "created_at": "2026-09-25T17:15:49.721384Z",
+              "id": "obl-7c5f73be2f5f-45",
               "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "ledger",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748649Z",
-              "id": "obl-e48a437754f5-46",
+              "created_at": "2026-09-25T17:15:49.721410Z",
+              "id": "obl-7c5f73be2f5f-46",
               "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "ledger",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748658Z",
-              "id": "obl-e48a437754f5-47",
+              "created_at": "2026-09-25T17:15:49.721437Z",
+              "id": "obl-7c5f73be2f5f-47",
               "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "ledger",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748667Z",
-              "id": "obl-e48a437754f5-48",
+              "created_at": "2026-09-25T17:15:49.721462Z",
+              "id": "obl-7c5f73be2f5f-48",
               "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748675Z",
-              "id": "obl-e48a437754f5-49",
+              "created_at": "2026-09-25T17:15:49.721489Z",
+              "id": "obl-7c5f73be2f5f-49",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748684Z",
-              "id": "obl-e48a437754f5-50",
+              "created_at": "2026-09-25T17:15:49.721515Z",
+              "id": "obl-7c5f73be2f5f-50",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748693Z",
-              "id": "obl-e48a437754f5-51",
+              "created_at": "2026-09-25T17:15:49.721542Z",
+              "id": "obl-7c5f73be2f5f-51",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748701Z",
-              "id": "obl-e48a437754f5-52",
+              "created_at": "2026-09-25T17:15:49.721568Z",
+              "id": "obl-7c5f73be2f5f-52",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748710Z",
-              "id": "obl-e48a437754f5-53",
+              "created_at": "2026-09-25T17:15:49.721594Z",
+              "id": "obl-7c5f73be2f5f-53",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748718Z",
-              "id": "obl-e48a437754f5-54",
+              "created_at": "2026-09-25T17:15:49.721620Z",
+              "id": "obl-7c5f73be2f5f-54",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "loan-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748727Z",
-              "id": "obl-e48a437754f5-55",
+              "created_at": "2026-09-25T17:15:49.721647Z",
+              "id": "obl-7c5f73be2f5f-55",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "reconciliation",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748736Z",
-              "id": "obl-e48a437754f5-56",
+              "created_at": "2026-09-25T17:15:49.721674Z",
+              "id": "obl-7c5f73be2f5f-56",
               "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "reconciliation",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748744Z",
-              "id": "obl-e48a437754f5-57",
+              "created_at": "2026-09-25T17:15:49.721700Z",
+              "id": "obl-7c5f73be2f5f-57",
               "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "reconciliation",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748753Z",
-              "id": "obl-e48a437754f5-58",
+              "created_at": "2026-09-25T17:15:49.721727Z",
+              "id": "obl-7c5f73be2f5f-58",
               "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "reconciliation",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748761Z",
-              "id": "obl-e48a437754f5-59",
+              "created_at": "2026-09-25T17:15:49.721753Z",
+              "id": "obl-7c5f73be2f5f-59",
               "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "reconciliation",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748770Z",
-              "id": "obl-e48a437754f5-60",
+              "created_at": "2026-09-25T17:15:49.721780Z",
+              "id": "obl-7c5f73be2f5f-60",
               "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "reconciliation",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748779Z",
-              "id": "obl-e48a437754f5-61",
+              "created_at": "2026-09-25T17:15:49.721807Z",
+              "id": "obl-7c5f73be2f5f-61",
               "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "reconciliation",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748787Z",
-              "id": "obl-e48a437754f5-62",
+              "created_at": "2026-09-25T17:15:49.721833Z",
+              "id": "obl-7c5f73be2f5f-62",
               "name": "Directly affected by change; Reusing 1 evidence artifacts",
               "status": "OPEN"
             },
             {
               "capability_id": "runtime-verification",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748796Z",
-              "id": "obl-e48a437754f5-63",
+              "created_at": "2026-09-25T17:15:49.721861Z",
+              "id": "obl-7c5f73be2f5f-63",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "runtime-verification",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748805Z",
-              "id": "obl-e48a437754f5-64",
+              "created_at": "2026-09-25T17:15:49.721888Z",
+              "id": "obl-7c5f73be2f5f-64",
               "name": "Directly affected by change",
               "status": "OPEN"
             },
             {
               "capability_id": "balance-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748821Z",
-              "id": "obl-e48a437754f5-65",
+              "created_at": "2026-09-25T17:15:49.721932Z",
+              "id": "obl-7c5f73be2f5f-65",
               "name": "Transitively affected (escalation); Provenance: shared-import:backend/src/config.py",
               "status": "OPEN"
             },
             {
               "capability_id": "balance-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748849Z",
-              "id": "obl-e48a437754f5-66",
+              "created_at": "2026-09-25T17:15:49.721974Z",
+              "id": "obl-7c5f73be2f5f-66",
               "name": "Transitively affected (escalation); Provenance: shared-import:backend/src/config.py",
               "status": "OPEN"
             },
             {
               "capability_id": "balance-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748871Z",
-              "id": "obl-e48a437754f5-67",
+              "created_at": "2026-09-25T17:15:49.722013Z",
+              "id": "obl-7c5f73be2f5f-67",
               "name": "Transitively affected (escalation); Provenance: shared-import:backend/src/config.py",
               "status": "OPEN"
             },
             {
               "capability_id": "balance-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748887Z",
-              "id": "obl-e48a437754f5-68",
+              "created_at": "2026-09-25T17:15:49.722053Z",
+              "id": "obl-7c5f73be2f5f-68",
               "name": "Transitively affected (escalation); Provenance: shared-import:backend/src/config.py",
               "status": "OPEN"
             },
             {
               "capability_id": "balance-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748903Z",
-              "id": "obl-e48a437754f5-69",
+              "created_at": "2026-09-25T17:15:49.722093Z",
+              "id": "obl-7c5f73be2f5f-69",
               "name": "Transitively affected (escalation); Provenance: shared-import:backend/src/config.py",
               "status": "OPEN"
             },
             {
               "capability_id": "balance-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748919Z",
-              "id": "obl-e48a437754f5-70",
+              "created_at": "2026-09-25T17:15:49.722162Z",
+              "id": "obl-7c5f73be2f5f-70",
               "name": "Transitively affected (escalation); Provenance: shared-import:backend/src/config.py",
               "status": "OPEN"
             },
             {
               "capability_id": "balance-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748934Z",
-              "id": "obl-e48a437754f5-71",
+              "created_at": "2026-09-25T17:15:49.722205Z",
+              "id": "obl-7c5f73be2f5f-71",
               "name": "Transitively affected (escalation); Provenance: shared-import:backend/src/config.py",
               "status": "OPEN"
             },
             {
               "capability_id": "credit-card-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748950Z",
-              "id": "obl-e48a437754f5-72",
+              "created_at": "2026-09-25T17:15:49.722245Z",
+              "id": "obl-7c5f73be2f5f-72",
               "name": "Transitively affected (escalation); Provenance: shared-import:backend/src/engines/loan_engine/emi.py",
               "status": "OPEN"
             },
             {
               "capability_id": "credit-card-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748966Z",
-              "id": "obl-e48a437754f5-73",
+              "created_at": "2026-09-25T17:15:49.722284Z",
+              "id": "obl-7c5f73be2f5f-73",
               "name": "Transitively affected (escalation); Provenance: shared-import:backend/src/engines/loan_engine/emi.py",
               "status": "OPEN"
             },
             {
               "capability_id": "credit-card-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748981Z",
-              "id": "obl-e48a437754f5-74",
+              "created_at": "2026-09-25T17:15:49.722324Z",
+              "id": "obl-7c5f73be2f5f-74",
               "name": "Transitively affected (escalation); Provenance: shared-import:backend/src/engines/loan_engine/emi.py",
               "status": "OPEN"
             },
             {
               "capability_id": "credit-card-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.748996Z",
-              "id": "obl-e48a437754f5-75",
+              "created_at": "2026-09-25T17:15:49.722364Z",
+              "id": "obl-7c5f73be2f5f-75",
               "name": "Transitively affected (escalation); Provenance: shared-import:backend/src/engines/loan_engine/emi.py",
               "status": "OPEN"
             },
             {
               "capability_id": "credit-card-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.749012Z",
-              "id": "obl-e48a437754f5-76",
+              "created_at": "2026-09-25T17:15:49.722403Z",
+              "id": "obl-7c5f73be2f5f-76",
               "name": "Transitively affected (escalation); Provenance: shared-import:backend/src/engines/loan_engine/emi.py",
               "status": "OPEN"
             },
             {
               "capability_id": "credit-card-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.749028Z",
-              "id": "obl-e48a437754f5-77",
+              "created_at": "2026-09-25T17:15:49.722445Z",
+              "id": "obl-7c5f73be2f5f-77",
               "name": "Transitively affected (escalation); Provenance: shared-import:backend/src/engines/loan_engine/emi.py",
               "status": "OPEN"
             },
             {
               "capability_id": "credit-card-engine",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.749044Z",
-              "id": "obl-e48a437754f5-78",
+              "created_at": "2026-09-25T17:15:49.722485Z",
+              "id": "obl-7c5f73be2f5f-78",
               "name": "Transitively affected (escalation); Provenance: shared-import:backend/src/engines/loan_engine/emi.py",
               "status": "OPEN"
             },
             {
               "capability_id": "frontend-e2e",
               "closed_at": null,
-              "created_at": "2026-09-25T03:43:49.749060Z",
-              "id": "obl-e48a437754f5-79",
-              "name": "E2E route change detected: /dashboard, /layout.tsx, /platform, /platform/architecture, /platform/capabilities, /platform/capabilities/[capabilityId], /platform/diagnostics, /platform/diagnostics/change, /platform/diagnostics/detail/[id], /platform/errors, ",
+              "created_at": "2026-09-25T17:15:49.722524Z",
+              "id": "obl-7c5f73be2f5f-79",
+              "name": "E2E route change detected: /command-center, /dashboard, /layout.tsx, /platform, /platform/architecture, /platform/capabilities, /platform/capabilities/[capabilityId], /platform/diagnostics, /platform/diagnostics/change, /platform/diagnostics/detail/[id], /",
               "status": "OPEN"
             }
           ],
           "open_count": 80,
-          "plan_fingerprint": "e48a437754f5"
+          "plan_fingerprint": "7c5f73be2f5f"
         },
-        "generated_at": "2026-09-25T03:43:49Z",
-        "id": "sha256:5eefcfa83442064bc672c69f724abc5126ac3deb2da507087342ae67e724155c",
+        "generated_at": "2026-09-25T17:15:49Z",
+        "id": "sha256:2812005aefeba8f1cee2740ab5d6b3b2b09965d43d02cc9979a0ce2c27e8ebdf",
         "kind": "platform.task_list",
         "version": "1.0.0"
       }
     }
   },
-  "generated_at": "2026-09-25T03:43:49Z",
+  "generated_at": "2026-09-25T17:37:17Z",
   "version": "1"
 }
