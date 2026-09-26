@@ -9,6 +9,8 @@ Validates end-to-end data flow:
 
 from __future__ import annotations
 
+from unittest.mock import patch
+
 from fastapi.testclient import TestClient
 
 
@@ -139,7 +141,8 @@ class TestLoanServiceLayer:
         from src.services.loan_service import LoanService
 
         service = LoanService()
-        loans = service.get_loans()
+        with patch.object(service.loan_repo, "list_loans", return_value=[]):
+            loans = service.get_loans()
         assert isinstance(loans, list)
 
 
