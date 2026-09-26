@@ -33,6 +33,12 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Setup Node.js runtime
+        uses: ./.github/actions/setup-node-runtime
+        with:
+          node-version: "24"
+          working-directory: "frontend"
+
       - name: Run canonical verification
         run: .venv/bin/python -m runtime.verify check
         shell: bash
