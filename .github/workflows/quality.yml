@@ -50,6 +50,9 @@ jobs:
           working-directory: "frontend"
 
       - name: Run quality verification (canonical check)
+        env:
+          VERIFICATION_BASE_REF: ${{ github.base_ref || github.event.before }}
+          VERIFICATION_HEAD_REF: ${{ github.sha }}
         run: .venv/bin/python -m runtime.verify check
 
       - name: Upload shared artifact — cross-layer-map
