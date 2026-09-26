@@ -10,6 +10,8 @@ Validates end-to-end data flow:
 
 from __future__ import annotations
 
+from unittest.mock import patch
+
 from fastapi.testclient import TestClient
 
 
@@ -107,7 +109,10 @@ class TestDashboardServiceLayer:
         from src.services.dashboard_service import DashboardService
 
         service = DashboardService()
-        summary = service.get_summary()
+        with patch.object(
+            service.txn_repo, "get_all_transactions_with_bank", return_value=[]
+        ):
+            summary = service.get_summary()
         assert summary is not None
         assert hasattr(summary, "net_cash_flow_paise")
         assert hasattr(summary, "savings_rate")
