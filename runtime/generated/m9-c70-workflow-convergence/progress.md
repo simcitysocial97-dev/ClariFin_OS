@@ -339,4 +339,37 @@ The remaining local blocks were investigated and the GitHub workflows were execu
 
 ### Updated Conclusion
 
-The original environment/service boundaries are resolved. The two remaining items are genuine mutation-detection quality and UI/test-contract gaps, not unresolved environment blocks. C71 should focus on those two items and final GitHub green-state certification.
+## Final Post-Resolution Update — 2026-09-26
+
+**Current status:** `RESOLVED_WITH_TWO_EXPLICIT_PRODUCT_GAPS`
+
+### Green GitHub Workflows
+
+The following runs completed successfully on the pushed branch:
+
+- Backend Verification: `36231192064`
+- Frontend Verification: `36231192038`
+- Quality Gate: `36231192015`
+- API Contract Integrity: `36231192006`
+- Verification Runtime: `36231192130`
+- Golden Dataset Regression: `36233134436`
+- CodeQL Security Analysis: `36237918919`
+- Dependency Updates: `36237917290`
+
+### Resolution Commits
+
+- `c7b5548d` — frontend security upgrades and E2E interpreter path
+- `d6042edc` / `2013dbe` / `5cd4a49` / `c9f37a0` — fresh-CI database test isolation
+- `3e48f6f0` / `85198644` — runtime CI-aware contracts and TypeScript resolver
+- `f39e200a` / `62b14845` — event-delta check scoping and certified empty plans
+- `b7d83af4` — Node provisioning for scheduled validations
+- `9248713e` — final boundary-resolution evidence and progress update
+
+### Remaining Gaps
+
+- Authoritative mutation campaign: targeted `balance_engine` run `36238247482` produced `0.0%` with `285` survivors and correctly failed the `80%` gate. Full run `36233136018` was cancelled after `91m45s`.
+- Playwright full project runs retain visual snapshot and platform console/render contract failures after functional Chromium and mobile suites passed.
+
+No environmental/service boundary remains unresolved. The two open items are genuine mutation-detection quality and UI/test-contract quality gaps, with no threshold suppression or fabricated passes.
+
+**Current pushed HEAD:** `9248713e`
