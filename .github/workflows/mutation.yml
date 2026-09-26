@@ -1,17 +1,32 @@
 # .github/workflows/mutation.yml
 #
-# PURPOSE: Mutation testing — finds gaps in test effectiveness (nightly).
-# RESPONSIBILITY: Run `runtime/verify.py check` — the canonical verification command.
-# Rule 1: no engineering logic in YAML. Rule 2: single responsibility. Rule 8:
-# delegate to runtime/verify.py. Rule 9: append `verify.py status` summary.
-# Concurrency: never cancel (mutation is in the Rule 6 exception list).
+# PURPOSE: Mutation testing — measures test effectiveness and gates quality.
+# RESPONSIBILITY: delegate to the canonical verification runtime. Rule 1: no
+# engineering logic in YAML. Rule 2: single responsibility. Rule 8: delegate to
+# `runtime.verify`. Rule 9: append `runtime.verify doctor` summary.
 #
-# Two jobs:
-#   mutation-smoke — bounded infrastructure health check (seconds). MUST pass
-#                    before the expensive full campaign. Proves the mutation
-#                    pipeline can distinguish killed/survived/no-test.
-#   mutation       — authoritative full campaign (80% gate). needs: mutation-smoke.
-# Both delegate to runtime/verify.py; no mutation logic lives in YAML.
+# M9-C71 — SHARDED AUTHORITATIVE CAMPAIGN
+# --------------------------------------
+# The campaign is sharded by certified component instead of running as one
+# mutmut process. The previous single-process full campaign could not finish
+# inside any job window (GitHub run 36233136018 was cancelled after 91m45s with
+# zero evidence), which made the quality gate permanently unsatisfiable.
+#
+# Three jobs:
+#   mutation-smoke     — bounded infrastructure health check. MUST pass before
+#                        any campaign runs. Proves the pipeline can distinguish
+#                        killed/survived/no-test.
+#   mutation-plan      — emits the shard matrix from ENGINE_SELECTION so the job
+#                        graph and the selection contract cannot drift apart.
+#   mutation-shard[]   — one bounded, independently measured shard per
+#                        certified component.
+#   mutation-aggregate — the single authoritative gate. Requires every planned
+#                        shard to be present, executed, and to have a non-empty
+#                        measured population, then enforces the campaign
+#                        threshold across the combined population.
+#
+# No threshold is lowered, no test is suppressed, no shard is silently skipped:
+# a missing or empty shard is an explicit aggregate failure.
 
 name: Mutation Testing
 
@@ -31,6 +46,9 @@ concurrency:
 
 permissions:
   contents: read
+
+env:
+  MUTATION_COMPONENT: ${{ inputs.engine-name || 'all' }}
 
 jobs:
   mutation-smoke:
@@ -60,11 +78,82 @@ jobs:
       - name: Run bounded mutation smoke (canonical check)
         run: .venv/bin/python -m runtime.verify mutation --smoke
 
+      - name: Upload mutation smoke evidence
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: mutation-smoke-evidence
+          path: |
+            backend/tests/generated/mutation/local-smoke/
+            backend/tests/generated/mutation/mutation-logs/
+            backend/tests/generated/mutation/mutmut-toolchain-contract.json
+          retention-days: 30
+
+      - name: Job Summary
+        if: always()
+        run: |
+          echo "## ${{ github.workflow }} — Run #${{ github.run_number }} — smoke" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
+        shell: bash
+
+  mutation-plan:
+    name: Mutation Campaign Plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      components: ${{ steps.plan.outputs.components }}
+      count: ${{ steps.plan.outputs.count }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      - name: Setup Node.js runtime
+        uses: ./.github/actions/setup-node-runtime
+        with:
+          node-version: "24"
+          working-directory: "frontend"
+
+      - name: Emit canonical shard matrix
+        id: plan
+        shell: bash
+        run: |
+          MATRIX="$(.venv/bin/python -m runtime.verify mutation-plan)"
+          {
+            echo "matrix<<MUTMATRIX_EOF"
+            echo "$MATRIX"
+            echo "MUTMATRIX_EOF"
+            echo "components=$(jq -r '[.include[].component] | join(" ")' <<< "$MATRIX")"
+            echo "count=$(jq -r '.include | length' <<< "$MATRIX")"
+          } >> $GITHUB_OUTPUT
+          {
+            echo "## ${{ github.workflow }} — Run #${{ github.run_number }} — plan"
+            echo ""
+            echo "| Metric | Value |"
+            echo "|--------|-------|"
+            echo "| Requested scope | $MUTATION_COMPONENT |"
+            echo "| Shards | $(jq -r '.include | length' <<< "$MATRIX") |"
+            echo "| Components | $(jq -r '[.include[].component] | join(", ")' <<< "$MATRIX") |"
+            echo ""
+          } >> $GITHUB_STEP_SUMMARY
+
   mutation:
-    name: Mutation Testing (authoritative)
-    needs: mutation-smoke
+    name: Mutation Shard (${{ matrix.shard }})
+    needs: [mutation-smoke, mutation-plan]
+    if: needs.mutation-plan.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      max-parallel: 7
+      matrix: ${{ fromJson(needs.mutation-plan.outputs.matrix) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v7.0.1
@@ -85,161 +174,145 @@ jobs:
       - name: Verify canonical environment
         run: .venv/bin/python -m runtime.verify doctor
 
-      - name: Run mutation testing (canonical check)
-        shell: bash
-        run: |
-          ENGINE_NAME="${{ inputs.engine-name || 'all' }}"
-          if [ "$ENGINE_NAME" = "all" ]; then
-            .venv/bin/python -m runtime.verify mutation
-          else
-            .venv/bin/python -m runtime.verify mutation --target "$ENGINE_NAME"
-          fi
+      - name: Measure shard mutation (canonical check)
+        run: .venv/bin/python -m runtime.verify mutation --shard "${{ matrix.shard }}"
 
-      - name: Upload shared artifact — cross-layer-map
+      - name: Upload shard summary
+        if: always()
         uses: ./.github/actions/upload-runtime
         with:
-          name: cross-layer-map
-          path: runtime/generated/cross-layer-map.json
-          retention-days: 14
-
-      - name: Upload shared artifact — knowledge-index
-        uses: ./.github/actions/upload-runtime
-        with:
-          name: knowledge-index
-          path: runtime/generated/knowledge-index.json
-          retention-days: 14
-
-      - name: Upload shared artifact — verification-cache
-        uses: ./.github/actions/upload-runtime
-        with:
-          name: verification-cache
-          path: runtime/generated/verification-cache.json
-          retention-days: 14
-
-      - name: Upload shared artifact — engineering-history
-        uses: ./.github/actions/upload-runtime
-        with:
-          name: engineering-history
-          path: runtime/generated/engineering-history.json
-          retention-days: 14
-
-      - name: Upload mutation report
-        uses: ./.github/actions/upload-runtime
-        with:
-          name: mutation-report
-          path: backend/tests/generated/mutation/
+          name: mutation-shard-${{ matrix.shard }}
+          path: |
+            backend/tests/generated/mutation/mutation-summary-${{ matrix.shard }}.json
+            backend/tests/generated/mutation/measurement-truth-${{ matrix.shard }}.json
+            backend/tests/generated/mutation/mutation-survivor-intel-${{ matrix.shard }}.json
+            backend/tests/generated/mutation/mutation-survivors-${{ matrix.shard }}.json
+            backend/tests/generated/mutation/mutmut-toolchain-contract.json
+            backend/tests/generated/mutation/mutation-logs/
           retention-days: 90
-
-      - name: Upload mutation evidence
-        uses: ./.github/actions/upload-runtime
-        with:
-          name: mutation-evidence
-          path: backend/tests/generated/mutation/
-          retention-days: 30
-
-      - name: Upload coverage evidence (C55)
-        uses: ./.github/actions/upload-runtime
-        with:
-          name: coverage-evidence
-          path: runtime/generated/m9-c47/coverage/
-          retention-days: 90
-          if-condition: always()
           if-no-files-found: warn
 
-      - name: Classify mutation result
-        id: mutation
+      - name: Upload coverage evidence (C55)
         if: always()
-        env:
-          ENGINE_NAME: ${{ inputs.engine-name || 'all' }}
-        run: |
-          if [ "$ENGINE_NAME" = "all" ]; then
-            SUMMARY="backend/tests/generated/mutation/mutation-summary.json"
-          else
-            SUMMARY="backend/tests/generated/mutation/mutation-summary-${ENGINE_NAME}.json"
-          fi
-          if [ ! -f "$SUMMARY" ]; then
-            echo "mutation_execution_status=INFRASTRUCTURE_FAILURE" >> $GITHUB_OUTPUT
-            echo "mutation_evaluated=false" >> $GITHUB_OUTPUT
-            echo "mutation_score=N/A" >> $GITHUB_OUTPUT
-            echo "mutation_killed=0" >> $GITHUB_OUTPUT
-            echo "mutation_survived=0" >> $GITHUB_OUTPUT
-            echo "mutation_threshold=80" >> $GITHUB_OUTPUT
-            echo "mutation_exit_code=1" >> $GITHUB_OUTPUT
-            echo "mutation_reason=requested mutation summary was not produced (execution did not complete)" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          EXEC=$(jq -r '.execution_status' "$SUMMARY")
-          CLSS=$(jq -r '.classification_status' "$SUMMARY")
-          EVID=$(jq -r '.evidence_complete' "$SUMMARY")
-          SCORE=$(jq -r '.mutation_score' "$SUMMARY")
-          KILLED=$(jq -r '.killed' "$SUMMARY")
-          SURVIVED=$(jq -r '.survived' "$SUMMARY")
-          THRESH=$(jq -r '.threshold_percent' "$SUMMARY")
-          echo "mutation_execution_status=$EXEC" >> $GITHUB_OUTPUT
-          echo "mutation_killed=$KILLED" >> $GITHUB_OUTPUT
-          echo "mutation_survived=$SURVIVED" >> $GITHUB_OUTPUT
-          echo "mutation_threshold=$THRESH" >> $GITHUB_OUTPUT
-          if [ "$EXEC" = "PASS" ] && [ "$CLSS" = "PASS" ] && [ "$EVID" = "true" ]; then
-            echo "mutation_evaluated=true" >> $GITHUB_OUTPUT
-            echo "mutation_score=$SCORE" >> $GITHUB_OUTPUT
-            if [ "$SCORE" != "null" ] && [ "$(echo "$SCORE >= $THRESH" | bc)" -eq 1 ]; then
-              echo "mutation_exit_code=0" >> $GITHUB_OUTPUT
-              echo "mutation_reason=Mutation score meets threshold" >> $GITHUB_OUTPUT
-            else
-              echo "mutation_exit_code=2" >> $GITHUB_OUTPUT
-              echo "mutation_reason=Mutation score below threshold" >> $GITHUB_OUTPUT
-            fi
-          else
-            # Gate A or B failed: mutation was NOT evaluated. Never a 0% score.
-            echo "mutation_evaluated=false" >> $GITHUB_OUTPUT
-            echo "mutation_score=N/A" >> $GITHUB_OUTPUT
-            echo "mutation_exit_code=1" >> $GITHUB_OUTPUT
-            echo "mutation_reason=Mutation testing was not evaluated — execution/evidence integrity failed (no score computed)" >> $GITHUB_OUTPUT
-          fi
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: mutation-coverage-evidence-${{ matrix.shard }}
+          path: runtime/generated/m9-c47/coverage/
+          retention-days: 90
+          if-no-files-found: warn
 
       - name: Job Summary
         if: always()
+        shell: bash
         run: |
-          echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "## ${{ github.workflow }} — Run #${{ github.run_number }} — shard ${{ matrix.shard }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Mutation Testing Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Metric       | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "|--------------|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Score        | ${{ steps.mutation.outputs.mutation_score }}% |" >> $GITHUB_STEP_SUMMARY
-          echo "| Evaluated    | ${{ steps.mutation.outputs.mutation_evaluated }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Killed       | ${{ steps.mutation.outputs.mutation_killed }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Survived     | ${{ steps.mutation.outputs.mutation_survived }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Threshold    | ${{ steps.mutation.outputs.mutation_threshold }}% |" >> $GITHUB_STEP_SUMMARY
-          echo "| Exec status  | ${{ steps.mutation.outputs.mutation_execution_status }} |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          if [ "${{ steps.mutation.outputs.mutation_evaluated }}" = "true" ] && [ "${{ steps.mutation.outputs.mutation_exit_code }}" = "0" ]; then
-            echo "✅ Mutation score meets threshold" >> $GITHUB_STEP_SUMMARY
-          elif [ "${{ steps.mutation.outputs.mutation_evaluated }}" = "true" ]; then
-            echo "❌ Mutation score below threshold" >> $GITHUB_STEP_SUMMARY
+          SUMMARY="backend/tests/generated/mutation/mutation-summary-${{ matrix.shard }}.json"
+          if [ -f "$SUMMARY" ]; then
+            echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Component | ${{ matrix.component }} |" >> $GITHUB_STEP_SUMMARY
+            echo "| Tier | ${{ matrix.tier }} |" >> $GITHUB_STEP_SUMMARY
+            echo "| Source files | ${{ matrix.file_count }} (${{ matrix.byte_size }} bytes) |" >> $GITHUB_STEP_SUMMARY
+            echo "| Generated | $(jq -r '.mutants_generated' "$SUMMARY") |" >> $GITHUB_STEP_SUMMARY
+            echo "| Killed | $(jq -r '.killed' "$SUMMARY") |" >> $GITHUB_STEP_SUMMARY
+            echo "| Survived | $(jq -r '.survived' "$SUMMARY") |" >> $GITHUB_STEP_SUMMARY
+            echo "| Score | $(jq -r '.mutation_score' "$SUMMARY")% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Execution | $(jq -r '.execution_status' "$SUMMARY") |" >> $GITHUB_STEP_SUMMARY
+            echo "| Toolchain | $(jq -r '.toolchain_contract' "$SUMMARY") |" >> $GITHUB_STEP_SUMMARY
           else
-            echo "⚠️ MUTATION NOT EVALUATED — ${{ steps.mutation.outputs.mutation_reason }}" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "No mutation score was computed. This is an infrastructure/evidence" >> $GITHUB_STEP_SUMMARY
-            echo "failure, NOT a 0% quality result." >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ No shard summary was produced — the aggregate gate will fail this shard." >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
-
           .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
-        shell: bash
 
-      - name: Fail if mutation gate not satisfied
-        if: always()
+  mutation-aggregate:
+    name: Mutation Aggregate Gate
+    needs: [mutation]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      - name: Download all shard evidence
+        uses: ./.github/actions/download-runtime
+        with:
+          pattern: "mutation-shard-*"
+          path: runtime/generated/mutation-shards
+          merge-multiple: "true"
+
+      - name: Reconcile shards and enforce the campaign gate
+        id: aggregate
         run: |
-          CODE="${{ steps.mutation.outputs.mutation_exit_code }}"
-          if [ "$CODE" = "0" ]; then
-            echo "✅ Mutation quality gate passed"
-            exit 0
-          elif [ "${{ steps.mutation.outputs.mutation_evaluated }}" = "true" ]; then
-            echo "❌ Mutation score below threshold (${{ steps.mutation.outputs.mutation_score }}% < ${{ steps.mutation.outputs.mutation_threshold }}%)"
+          .venv/bin/python -m runtime.verify mutation-aggregate \
+            --shards-dir runtime/generated/mutation-shards \
+            --json > runtime/generated/mutation-aggregate.json
+          RC=$?
+          cat runtime/generated/mutation-aggregate.json
+          echo "exit_code=$RC" >> $GITHUB_OUTPUT
+          exit $RC
+
+      - name: Upload aggregate evidence
+        if: always()
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: mutation-aggregate-evidence
+          path: |
+            runtime/generated/mutation-aggregate.json
+            backend/tests/generated/mutation/mutation-summary-aggregate.json
+            backend/tests/generated/mutation/mutation-summary-aggregate-result.json
+          retention-days: 90
+          if-no-files-found: warn
+
+      - name: Job Summary
+        if: always()
+        shell: bash
+        run: |
+          echo "## ${{ github.workflow }} — Run #${{ github.run_number }} — aggregate gate" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f runtime/generated/mutation-aggregate.json ]; then
+            echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Shards expected | $(jq -r '.expected_shards | length' runtime/generated/mutation-aggregate.json) |" >> $GITHUB_STEP_SUMMARY
+            echo "| Generated | $(jq -r '.mutants_generated' runtime/generated/mutation-aggregate.json) |" >> $GITHUB_STEP_SUMMARY
+            echo "| Killed | $(jq -r '.killed' runtime/generated/mutation-aggregate.json) |" >> $GITHUB_STEP_SUMMARY
+            echo "| Survived | $(jq -r '.survived' runtime/generated/mutation-aggregate.json) |" >> $GITHUB_STEP_SUMMARY
+            echo "| Score | $(jq -r '.mutation_score' runtime/generated/mutation-aggregate.json)% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Threshold | $(jq -r '.threshold_percent' runtime/generated/mutation-aggregate.json)% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Verdict | $(jq -r '.verdict' runtime/generated/mutation-aggregate.json) |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Shard | Component | Generated | Killed | Survived | Score |" >> $GITHUB_STEP_SUMMARY
+            echo "|-------|-----------|-----------|--------|----------|-------|" >> $GITHUB_STEP_SUMMARY
+            jq -r '.shards[] | "| \(.name) | \(.name) | \(.mutants_generated) | \(.killed) | \(.survived) | \(if .score == null then "N/A" else "\(.score)%" end) |"' runtime/generated/mutation-aggregate.json >> $GITHUB_STEP_SUMMARY
+            FAILURES="$(jq -r '.failures | length' runtime/generated/mutation-aggregate.json)"
+            if [ "$FAILURES" != "0" ]; then
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "### Reconciliation failures" >> $GITHUB_STEP_SUMMARY
+              jq -r '.failures[] | "- \(.)"' runtime/generated/mutation-aggregate.json >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
+
+      - name: Enforce campaign gate
+        if: always()
+        shell: bash
+        run: |
+          RC="${{ steps.aggregate.outputs.exit_code }}"
+          if [ "$RC" = "0" ]; then
+            echo "✅ Mutation campaign gate satisfied"
+          elif [ "$RC" = "2" ]; then
+            echo "❌ Aggregate mutation score below threshold"
             exit 2
           else
-            echo "❌ ${{ steps.mutation.outputs.mutation_reason }}"
+            echo "❌ Mutation campaign NOT EVALUABLE — shard evidence incomplete (see reconciliation failures above)"
             exit 1
           fi

@@ -235,6 +235,11 @@ _CLASSIFICATION: dict[str, str] = {
     "runtime": "CANONICAL_ALIAS",
     "golden": "CANONICAL_ALIAS",
     "playwright": "CANONICAL_ALIAS",
+    # C71: sharded mutation campaign aggregate gate. First-class (not a legacy
+    # token) because the sharded campaign is the authoritative mutation gate;
+    # the single-process `mutation` command is only the per-shard executor.
+    "mutation-aggregate": "CANONICAL",
+    "mutation-plan": "CANONICAL",
 }
 
 

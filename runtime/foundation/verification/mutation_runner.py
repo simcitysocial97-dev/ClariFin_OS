@@ -32,6 +32,7 @@ import os
 import shutil
 import signal
 import subprocess
+import sys
 import time
 import uuid
 from datetime import UTC, datetime
@@ -65,6 +66,12 @@ from runtime.foundation.verification.mutation_contract import (
     parse_mutmut_results,
     reconcile_counts,
     write_backend_mutmut_config,
+)
+from runtime.foundation.verification.mutmut_contract import (
+    MutmutContractError,
+    MutmutTrampolineContract,
+    ensure_mutmut_contract,
+    write_mutmut_contract_evidence,
 )
 from runtime.foundation.verification.survivor_catalog import run_catalog_cli
 from runtime.foundation.verification.survivor_intel import (
@@ -236,13 +243,16 @@ class _MutationSafety:
             atexit.unregister(self._restore_config)
 
 
-# Default bounded runtimes (seconds). CI job timeout is 90 min; the full
-# campaign is intentionally CI-only and expensive.
+# Default bounded runtimes (seconds). The CI shard job window is 90 min, so the
+# per-shard subprocess timeout sits well inside it: a shard that exhausts its
+# budget is reported as an explicit infrastructure failure (with the mutmut
+# transcript attached) rather than being killed by the job runner with no
+# evidence at all. The full campaign is intentionally CI-only and expensive.
 DEFAULT_RUNTIME = {
     "smoke": 600,
-    "target": 1800,
+    "target": 4200,
     "full": 5400,
-    "incremental": 1800,
+    "incremental": 4200,
 }
 
 
@@ -431,10 +441,29 @@ def _config_hash() -> str:
     return hash_file(FULL_CONFIG)
 
 
+def _read_log_tail(path: Path, limit: int = 200_000) -> str:
+    """Read at most *limit* trailing characters of a captured execution log.
+
+    mutmut's transcript is the only witness to how each mutant was dispatched
+    (killed / survived / no tests / not checked). C71 persists the full
+    transcript; this bounded tail is only used for infra-failure detection so a
+    large log can never be pulled into memory wholesale.
+    """
+    try:
+        size = path.stat().st_size
+        with path.open("r", encoding="utf-8", errors="replace") as handle:
+            if size > limit:
+                handle.seek(size - limit)
+            return handle.read()
+    except OSError:
+        return ""
+
+
 def execute_mutation(
     *,
     mode: str,
     target: str | None = None,
+    shard: str | None = None,
     max_runtime: int | None = None,
     max_children: int = 0,
     no_cache: bool = False,
@@ -448,7 +477,30 @@ def execute_mutation(
     - Pre-run capture of backend/pyproject.toml + mutation scope hashes
     - Post-run verification of exact restoration
     - Dirty-worktree refusal (unless allow_dirty=True)
+
+    *shard* selects one bounded unit of the sharded campaign
+    (see `mutation_shards.py`); it implies ``mode="target"`` and its component
+    becomes the reported target so per-component reporting stays intact.
     """
+    if shard:
+        from runtime.foundation.verification.mutation_shards import (
+            MutmutShardError,
+            shard_by_id,
+        )
+
+        try:
+            resolved = shard_by_id(shard)
+        except MutmutShardError as exc:
+            raise MutmutShardError(str(exc)) from exc
+        if resolved is None:
+            raise MutmutShardError(
+                f"unknown mutation shard {shard!r}; run "
+                "`verify.py mutation-plan` to list the certified shards"
+            )
+        shard = resolved.shard_id
+        target = resolved.component
+        mode = "target"
+
     run_id = f"mut-{uuid.uuid4().hex[:12]}"
     sha = _git_sha()
     tree = _git_tree()
@@ -501,6 +553,34 @@ def execute_mutation(
                 target=target,
             )
 
+        # ── C71: enforce the mutation toolchain contract BEFORE executing ──────
+        # mutmut 3.7.0 strips a leading "src." from path-derived mutant module
+        # names, but this repository imports production code as "src.<package>".
+        # With a pristine install every mutant is therefore dispatched to the
+        # ORIGINAL function, the test suite exercises unmutated code, and the
+        # campaign reports a structurally impossible 0.0% score with every mutant
+        # "survived". The contract makes the declared dependency install and the
+        # working toolchain the same thing, locally and in CI. If it cannot be
+        # satisfied we fail as an INFRASTRUCTURE failure — never as a 0% quality
+        # result, and never by mutating the threshold.
+        toolchain: MutmutTrampolineContract | None = None
+        try:
+            toolchain = ensure_mutmut_contract(env.mutmut.version or "")
+            write_mutmut_contract_evidence(toolchain)
+        except MutmutContractError as exc:
+            return build_infrastructure_failure(
+                run_id=run_id,
+                repository_sha=sha,
+                tree_sha=tree,
+                python_version=env.python.version or "unknown",
+                pytest_version=env.pytest.version or "unknown",
+                mutmut_version=env.mutmut.version or "unknown",
+                config_hash=config_hash,
+                error=f"mutation toolchain contract violated: {exc}",
+                mode=mode,
+                target=target,
+            )
+
         # ── C42.7: install canonical, explicit, engine-aware selection config ────
         # The [tool.mutmut] block is rendered ONLY from ENGINE_SELECTION (the single
         # source of truth in mutation_contract.py). This removes the fragile implicit
@@ -523,9 +603,38 @@ def execute_mutation(
                     target=target,
                 )
             try:
-                installed_config_original = write_backend_mutmut_config(
-                    target if mode == "target" else None, FULL_CONFIG
-                )
+                if shard:
+                    from runtime.foundation.verification.mutation_contract import (
+                        install_mutmut_config_block,
+                        render_shard_mutmut_config_block,
+                    )
+                    from runtime.foundation.verification.mutation_shards import (
+                        shard_by_id,
+                    )
+
+                    resolved = shard_by_id(shard)
+                    if resolved is None:  # pragma: no cover - validated above
+                        raise RuntimeError(f"unknown mutation shard: {shard!r}")
+                    installed_config_original = install_mutmut_config_block(
+                        render_shard_mutmut_config_block(resolved), FULL_CONFIG
+                    )
+                    selected_test_scope = ",".join(resolved.test_selection)
+                    source_scope = ",".join(resolved.files)
+                    selection_method = f"{SELECTION_METHOD} + sharded campaign unit {resolved.shard_id}"
+                else:
+                    installed_config_original = write_backend_mutmut_config(
+                        target if mode == "target" else None, FULL_CONFIG
+                    )
+                    selected_test_scope = (
+                        ",".join(ENGINE_SELECTION[target].test_selection)
+                        if mode == "target"
+                        else ""
+                    )
+                    source_scope = (
+                        ",".join(ENGINE_SELECTION[target].source_paths)
+                        if mode == "target"
+                        else ""
+                    )
             except Exception as exc:  # pragma: no cover - defensive
                 return build_infrastructure_failure(
                     run_id=run_id,
@@ -551,13 +660,17 @@ def execute_mutation(
             cache_dir = BACKEND_DIR / ".mutmut-cache"
             if cache_dir.exists():
                 shutil.rmtree(cache_dir)
-            if mode == "target":
+            if mode == "target" and not shard:
                 assert (
                     target is not None
                 )  # guaranteed by the is_valid_engine gate above
                 sel = ENGINE_SELECTION[target]
                 selected_test_scope = " ".join(sel.test_selection)
                 source_scope = " ".join(sel.source_paths)
+            elif mode == "target":
+                # Shard scope was resolved from the certified shard plan above;
+                # it must not be widened back to the whole component.
+                assert shard is not None
             else:
                 selected_test_scope = " ".join(
                     p for s in ENGINE_SELECTION.values() for p in s.test_selection
@@ -605,6 +718,8 @@ def execute_mutation(
         infra_error: str | None = None
         log_tail = ""
         proc = None
+        log_handle = None
+        log_rel = ""
         try:
             # F19: Run mutmut in its own process group so timeout kills entire tree
             # Mutmut changes cwd to `mutants/` before invoking pytest; set PYTHONPATH
@@ -613,29 +728,44 @@ def execute_mutation(
             _pytest_pythonpath = (
                 f"{REPO_ROOT / 'backend' / 'src'}:{REPO_ROOT / 'backend' / 'tests'}"
             )
+            log_path = GENERATED_DIR / "mutation-logs" / f"{run_id}.log"
+            log_path.parent.mkdir(parents=True, exist_ok=True)
+            log_handle = log_path.open("w", encoding="utf-8")
+            log_handle.write(
+                f"# mutmut invocation\n# cwd={cwd}\n# command={' '.join(cmd)}\n"
+                f"# toolchain_contract={toolchain.contract_id if toolchain else ''}"
+                f":{toolchain.status if toolchain else ''}\n"
+                f"# mutmut_version={env.mutmut.version}\n"
+                f"# started_at={datetime.now(UTC).isoformat()}\n\n"
+            )
+            log_handle.flush()
             proc = subprocess.Popen(
                 cmd,
                 cwd=str(cwd),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                stdout=log_handle,
+                stderr=subprocess.STDOUT,
                 text=True,
                 bufsize=1,
                 start_new_session=True,
                 env={
                     **os.environ,
-                    "PATH": f"{VENV_BIN}:{os.environ.get('PATH','')}",
+                    "PATH": f"{VENV_BIN}:{os.environ.get('PATH', '')}",
                     "PYTHONPATH": _pytest_pythonpath,
                 },
             )
+            log_rel = str(log_path.relative_to(REPO_ROOT))
             pgid: int | None = os.getpgid(proc.pid)
 
             try:
-                stdout, stderr = proc.communicate(timeout=timeout)
+                proc.wait(timeout=timeout)
                 rc = proc.returncode
-                log_tail = (stdout or "") + (stderr or "")
+                # C71: mutmut's own output is the only witness to how mutants
+                # were dispatched. Read the tail back for infra-failure
+                # detection; the full transcript stays on disk as evidence.
+                log_tail = _read_log_tail(log_path, limit=200_000)
             except subprocess.TimeoutExpired:
                 # F19: Kill entire process group on timeout
-                assert pgid is not None  # assigned before communicate() above
+                assert pgid is not None  # assigned before wait() above
                 try:
                     os.killpg(pgid, signal.SIGTERM)
                     time.sleep(0.5)
@@ -645,7 +775,7 @@ def execute_mutation(
                 proc.wait(timeout=5)
                 rc = None
                 infra_error = f"mutation run exceeded max_runtime={timeout}s"
-                log_tail = ""
+                log_tail = _read_log_tail(log_path, limit=200_000)
 
             # ── R2 architectural fix ───────────────────────────────────────────
             # Evidence collection occurs HERE, inside the `try` body and BEFORE
@@ -751,6 +881,10 @@ def execute_mutation(
             # evidence can never silently resolve the wrong engine.
             if installed_config_original is not None:
                 FULL_CONFIG.write_text(installed_config_original)
+            if log_handle is not None:
+                with contextlib.suppress(Exception):
+                    log_handle.flush()
+                    log_handle.close()
 
         result = MutationResult(
             run_id=run_id,
@@ -779,6 +913,11 @@ def execute_mutation(
             source_scope=source_scope,
             selection_method=selection_method,
             execution_path="VERIFICATION_CONTROL_PLANE",
+            shard_id=shard or "",
+            toolchain_contract=(
+                f"{toolchain.contract_id}:{toolchain.status}" if toolchain else ""
+            ),
+            execution_log_path=log_rel,
         )
         _write_cache_provenance(cwd, config_hash=config_hash)
 
@@ -875,7 +1014,7 @@ def _write_measurement_truth(
         configuration_fingerprint=result.config_hash or _fp_value("config_hash"),
         toolchain_fingerprint=_fp_value("toolchain", "fingerprint"),
         environment_fingerprint=str(fp) if fp else "",
-        command=f"verify.py mutation{(' --target '+target) if target else ''}",
+        command=f"verify.py mutation{(' --target ' + target) if target else ''}",
         requested_scope=requested_scope,
         actual_scope=actual_scope,
         population=population,
@@ -894,7 +1033,19 @@ def _write_measurement_truth(
         mode=mode,
         target=target,
         error=result.error,
-        note=result.note,
+        note="; ".join(
+            part
+            for part in (
+                result.note,
+                f"toolchain_contract={result.toolchain_contract}"
+                if result.toolchain_contract
+                else "",
+                f"execution_log={result.execution_log_path}"
+                if result.execution_log_path
+                else "",
+            )
+            if part
+        ),
         durable_survivor_evidence=(
             [
                 str(DEFAULT_INTEL_PATH),
@@ -942,6 +1093,9 @@ def _print_report(result: MutationResult) -> None:
     print(f"  Generated        : {result.mutants_generated}")
     print(f"  Mutation score   : {result.mutation_score}")
     print(f"  Threshold        : {result.threshold_percent}%")
+    print(f"  Toolchain        : {result.toolchain_contract or 'n/a'}")
+    if result.execution_log_path:
+        print(f"  Execution log    : {result.execution_log_path}")
     print("-" * 72)
     print(f"  Gate A (Execution Integrity) : {'PASS' if gate_a else 'FAIL'}")
     print(f"  Gate B (Evidence Integrity)  : {'PASS' if gate_b else 'FAIL'}")
@@ -964,7 +1118,7 @@ def get_affected_engines_from_files(changed_files: list[Path]) -> set[str]:
         # Normalize to relative backend path
         rel_path = path_str
         if rel_path.startswith(str(REPO_ROOT)):
-            rel_path = rel_path[len(str(REPO_ROOT)):]
+            rel_path = rel_path[len(str(REPO_ROOT)) :]
         if rel_path.startswith("/"):
             rel_path = rel_path[1:]
 
@@ -1015,10 +1169,21 @@ def run_mutation_cli(argv: list[str]) -> int:
         "--target", default=None, help="incremental target (engine/module)"
     )
     parser.add_argument(
-        "--incremental", action="store_true", help="run mutation only on changed engines"
+        "--shard",
+        default=None,
+        help="run one bounded unit of the sharded campaign "
+        "(see `verify.py mutation-plan`); implies --target <component>",
     )
     parser.add_argument(
-        "--changed-files", nargs="*", default=[], help="list of changed files (for incremental mode)"
+        "--incremental",
+        action="store_true",
+        help="run mutation only on changed engines",
+    )
+    parser.add_argument(
+        "--changed-files",
+        nargs="*",
+        default=[],
+        help="list of changed files (for incremental mode)",
     )
     parser.add_argument(
         "--max-runtime", type=int, default=None, help="hard subprocess timeout (s)"
@@ -1055,7 +1220,9 @@ def run_mutation_cli(argv: list[str]) -> int:
     args = parser.parse_args(argv)
 
     # Determine mode
-    if args.incremental:
+    if args.shard:
+        mode = "target"
+    elif args.incremental:
         mode = "incremental"
     elif args.smoke:
         mode = "smoke"
@@ -1143,13 +1310,10 @@ def run_mutation_cli(argv: list[str]) -> int:
             note=f"Aggregated from {len(all_results)} engine(s)",
             threshold_percent=80,
             source_scope=",".join(
-                ENGINE_SELECTION[e].source_paths[0]
-                for e in affected_engines
+                ENGINE_SELECTION[e].source_paths[0] for e in affected_engines
             ),
             selected_test_scope=" ".join(
-                p
-                for e in affected_engines
-                for p in ENGINE_SELECTION[e].test_selection
+                p for e in affected_engines for p in ENGINE_SELECTION[e].test_selection
             ),
             selection_method=SELECTION_METHOD,
             error=None,
@@ -1172,26 +1336,37 @@ def run_mutation_cli(argv: list[str]) -> int:
         return 0
 
     # Existing mode handling
-    result = execute_mutation(
-        mode=mode,
-        target=args.target,
-        max_runtime=args.max_runtime,
-        max_children=args.max_children,
-        no_cache=args.no_cache,
-        restore_only=args.restore,
-        allow_dirty=args.allow_dirty,
-    )
+    from runtime.foundation.verification.mutation_shards import MutmutShardError
+
+    try:
+        result = execute_mutation(
+            mode=mode,
+            target=args.target,
+            shard=args.shard,
+            max_runtime=args.max_runtime,
+            max_children=args.max_children,
+            no_cache=args.no_cache,
+            restore_only=args.restore,
+            allow_dirty=args.allow_dirty,
+        )
+    except MutmutShardError as exc:
+        print(f"  [shard] {exc}", file=sys.stderr)
+        return 1
+
+    # Evidence is keyed by the shard when the sharded campaign produced it, so
+    # the aggregate gate can reconcile every shard independently.
+    label = result.shard_id or args.target
 
     if not args.json:
         _print_report(result)
 
-    out_path = _write_summary(result, mode, target=args.target)
+    out_path = _write_summary(result, mode, target=label)
     if args.json:
         print(str(out_path))
 
     # M9-C47: persist the canonical measurement-truth record for this run so
     # local and CI can reconcile through one observable, durable truth path.
-    truth_path = _write_measurement_truth(result, out_path, mode, target=args.target)
+    truth_path = _write_measurement_truth(result, out_path, mode, target=label)
     if not args.json:
         print(
             f"  [truth] measurement-truth persisted: "
@@ -1211,8 +1386,8 @@ def run_mutation_cli(argv: list[str]) -> int:
     ):
         try:
             catalog_path = (
-                GENERATED_DIR / f"mutation-survivors-{args.target}.json"
-                if args.target
+                GENERATED_DIR / f"mutation-survivors-{label}.json"
+                if label
                 else GENERATED_DIR / "mutation-survivors.json"
             )
             run_catalog_cli(BACKEND_DIR / "mutants", BACKEND_DIR, out_path=catalog_path)
@@ -1237,8 +1412,8 @@ def run_mutation_cli(argv: list[str]) -> int:
                 max_enrich=args.intel_enrich,
             )
             intel_path = (
-                GENERATED_DIR / f"mutation-survivor-intel-{args.target}.json"
-                if args.target
+                GENERATED_DIR / f"mutation-survivor-intel-{label}.json"
+                if label
                 else DEFAULT_INTEL_PATH
             )
             write_survivor_intel(intel, out_path=intel_path)

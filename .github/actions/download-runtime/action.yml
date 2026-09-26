@@ -1,0 +1,45 @@
+# .github/actions/download-runtime/action.yml
+#
+# Canonical Engineering Runtime artifact downloader.
+#
+# Rule 3 & 4 mirror the upload action: every artifact *download* in a workflow
+# goes through this action, so naming, retention assumptions, and the
+# merge strategy have exactly one implementation. Workflows declare WHAT they
+# need; this action owns HOW it is fetched.
+#
+# Inputs:
+#   name             Exact artifact name to download.
+#   pattern          Artifact-name glob (mutually exclusive with `name`).
+#   path             Destination directory.
+#   merge-multiple   Flatten matching artifacts into one directory (default true).
+#                    The mutation aggregate gate relies on this: every shard
+#                    summary must land in a single reconciliation directory.
+
+name: "Download Runtime Artifacts"
+description: "Standardized artifact download with a single merge strategy."
+
+inputs:
+  name:
+    description: "Exact artifact name to download"
+    required: false
+  pattern:
+    description: "Artifact-name glob to download"
+    required: false
+  path:
+    description: "Destination directory"
+    required: true
+  merge-multiple:
+    description: "Flatten all matching artifacts into `path` (true|false)"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download ${{ inputs.name || inputs.pattern }}
+      uses: actions/download-artifact@v7.0.1
+      with:
+        name: ${{ inputs.name }}
+        pattern: ${{ inputs.pattern }}
+        path: ${{ inputs.path }}
+        merge-multiple: ${{ inputs.merge-multiple }}

@@ -1078,6 +1078,19 @@ def main() -> int:
 
         return main_env_check(args)
 
+    # C71: aggregate gate for the sharded mutation campaign. Dispatched before
+    # the generic `strengthen` route because the aggregate is a reconciliation
+    # over shard evidence, not a test-strengthening execution.
+    if command == "mutation-aggregate":
+        from runtime.foundation.verification.mutation_shards import run_aggregate_cli
+
+        return run_aggregate_cli(args)
+
+    if command == "mutation-plan":
+        from runtime.foundation.verification.mutation_shards import run_plan_cli
+
+        return run_plan_cli(args)
+
     # Handle legacy commands via the migration map
     classification = classification_for(command)
     if classification in ("DEPRECATED", "LEGACY", "COMPATIBILITY"):

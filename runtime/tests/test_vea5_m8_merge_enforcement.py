@@ -38,48 +38,71 @@ ENGINE_CHANGE = ["backend/src/engines/loan_engine/amortization.py"]
 
 
 def test_m81_stale_workflows_use_verification_command_pattern():
-    """Each stale workflow delegates to `runtime/verify.py <profile>` (the VEA-5
-    canonical single-command pattern), uses bootstrap-runtime, uploads the shared
-    artifacts, and appends `verify.py status`. That is the legitimate refactor —
-    NOT something to reset to main's hand-rolled multi-job form.
+    """Each stale workflow delegates to a canonical `runtime.verify <command>`
+    (the VEA-5 canonical single-command pattern), uses bootstrap-runtime, and
+    appends a status/doctor summary. That is the legitimate refactor — NOT
+    something to reset to main's hand-rolled multi-job form.
 
     M9-C43.1: `mutation` legitimately uses the documented smoke-first topology
-    (mutation-smoke MUST pass before the expensive authoritative job — see the
-    mutation.yml header). Every job must still delegate to a single
-    `verify.py <profile>` command, so the VEA-5 pattern holds per job.
+    (mutation-smoke MUST pass before the expensive campaign jobs — see the
+    mutation.yml header).
+
+    M9-C71: the campaign is SHARDED. The previous single-process authoritative
+    job was falsified by evidence — GitHub run 36233136018 was cancelled after
+    91m45s having produced no campaign result at all, so the quality gate was
+    permanently unsatisfiable. The topology is now
+        mutation-smoke -> mutation-plan -> mutation (shard matrix) -> mutation-aggregate
+    which is a STRICTLY stronger invariant than "exactly two jobs": the
+    per-job expected command is pinned, the smoke-first dependency is still
+    required, and the aggregate gate is now part of the asserted topology.
     """
     expected_profiles = {
         "quality": "check",
-        "mutation": "mutation",
         "playwright": "playwright",
         "golden": "golden",
+    }
+    # mutation is pinned per job, because each job owns a distinct canonical
+    # command (shard measurement vs plan emission vs aggregate reconciliation).
+    mutation_job_profiles = {
+        "mutation-smoke": "mutation",
+        "mutation-plan": "mutation-plan",
+        "mutation": "mutation",
+        "mutation-aggregate": "mutation-aggregate",
     }
     for wf in STALE:
         doc = yaml.safe_load((WORKFLOWS / f"{wf}.yml").read_text())
         jobs = doc.get("jobs", {})
         if wf == "mutation":
-            # Smoke-first topology: exactly two jobs with a needs dependency.
-            assert set(jobs) == {
-                "mutation-smoke",
-                "mutation",
-            }, "mutation must keep the smoke-first two-job topology"
-            assert "mutation-smoke" in jobs["mutation"].get(
-                "needs", []
-            ), "authoritative mutation must need mutation-smoke"
+            assert set(jobs) == set(mutation_job_profiles), (
+                "mutation must keep the smoke-first sharded campaign topology: "
+                f"{sorted(mutation_job_profiles)}"
+            )
+            assert "mutation-smoke" in jobs["mutation"].get("needs", []), (
+                "authoritative mutation shards must need mutation-smoke"
+            )
+            assert "mutation-plan" in jobs["mutation"].get("needs", []), (
+                "shards must consume the canonical plan, not a duplicated list"
+            )
+            assert "mutation" in jobs["mutation-aggregate"].get("needs", []), (
+                "the aggregate gate must consume every shard"
+            )
+            expected = mutation_job_profiles
         else:
             # Single job, single command invoking verify.py <profile>.
             assert len(jobs) == 1, f"{wf} should have exactly one job"
-        for job in jobs.values():
+            expected = {next(iter(jobs)): expected_profiles[wf]}
+        for job_id, job in jobs.items():
             run_lines = [s.get("run", "") for s in job.get("steps", []) if "run" in s]
             joined = "\n".join(run_lines)
-            # Accept both script-form (runtime/verify.py <profile>) and
-            # module-form (python -m runtime.verify <profile>).
+            # Accept both script-form (runtime/verify.py <command>) and
+            # module-form (python -m runtime.verify <command>).
+            profile = expected[job_id]
             has_pattern = (
-                f"runtime/verify.py {expected_profiles[wf]}" in joined
-                or f"runtime.verify {expected_profiles[wf]}" in joined
+                f"runtime/verify.py {profile}" in joined
+                or f"runtime.verify {profile}" in joined
             )
             assert has_pattern, (
-                f"{wf} must delegate to verify.py {expected_profiles[wf]} "
+                f"{wf}/{job_id} must delegate to verify.py {profile} "
                 f"(via runtime/verify.py or python -m runtime.verify)"
             )
             # Uses bootstrap-runtime (not hand-rolled setup).

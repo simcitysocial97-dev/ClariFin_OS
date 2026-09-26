@@ -112,6 +112,16 @@ class MutationResult:
     # ── Incremental mode provenance ──────────────────────────────────────────
     # List of engines affected by incremental mutation run.
     affected_engines: list[str] = field(default_factory=list)
+    # ── C71 toolchain + execution provenance ─────────────────────────────────
+    # Bounded campaign shard this measurement belongs to, when the sharded
+    # campaign was used. None for a whole-component or full-scope run.
+    shard_id: str = ""
+    # Status of the mutation toolchain contract (C71). A campaign that did not
+    # satisfy it could not have measured mutants faithfully.
+    toolchain_contract: str = ""
+    # Repo-relative path of the captured mutmut stdout/stderr for this run.
+    # Capturing it is mandatory: without it a mutation failure is undiagnosable.
+    execution_log_path: str = ""
 
     @property
     def mutants_generated(self) -> int:
@@ -156,6 +166,9 @@ class MutationResult:
             "selection_method": self.selection_method,
             "execution_path": self.execution_path,
             "affected_engines": self.affected_engines,
+            "toolchain_contract": self.toolchain_contract,
+            "execution_log_path": self.execution_log_path,
+            "shard_id": self.shard_id,
         }
 
 
@@ -659,17 +672,44 @@ def render_mutmut_config_block(engine: str | None) -> str:
     paths — it can never silently fall back to the entire test suite.
     """
     if engine is None or engine in ("all", "full"):
-        source_paths = _FULL_SOURCE_PATHS
-        test_selection = _FULL_TEST_SELECTION
-        also_copy = ["src"]
-        scope = "full (all engines)"
-    else:
-        sel = ENGINE_SELECTION[engine]
-        source_paths = list(sel.source_paths)
-        test_selection = list(sel.test_selection)
-        also_copy = list(sel.also_copy)
-        scope = engine
+        return _render_config(
+            source_paths=_FULL_SOURCE_PATHS,
+            test_selection=_FULL_TEST_SELECTION,
+            also_copy=["src"],
+            scope="full (all engines)",
+        )
+    sel = ENGINE_SELECTION[engine]
+    return _render_config(
+        source_paths=list(sel.source_paths),
+        test_selection=list(sel.test_selection),
+        also_copy=list(sel.also_copy),
+        scope=engine,
+    )
 
+
+def render_shard_mutmut_config_block(shard) -> str:
+    """Render the `[tool.mutmut]` block for one bounded campaign shard.
+
+    A shard mutates a subset of its component's files but keeps the component's
+    test selection and also-copy contract, so the shards of a component partition
+    that component's population exactly once. See
+    `runtime/foundation/verification/mutation_shards.py` for the packing contract.
+    """
+    return _render_config(
+        source_paths=list(shard.files),
+        test_selection=list(shard.test_selection),
+        also_copy=list(shard.also_copy),
+        scope=f"{shard.shard_id} (component={shard.component}, {len(shard.files)} file(s))",
+    )
+
+
+def _render_config(
+    *,
+    source_paths: list[str],
+    test_selection: list[str],
+    also_copy: list[str],
+    scope: str,
+) -> str:
     src = ", ".join(f'"{p}"' for p in source_paths)
     tests = ",\n    ".join(f'"{p}"' for p in test_selection)
     copy = ", ".join(f'"{p}"' for p in also_copy)
@@ -689,16 +729,14 @@ def render_mutmut_config_block(engine: str | None) -> str:
     )
 
 
-def write_backend_mutmut_config(engine: str | None, backend_pyproject: Path) -> str:
-    """Install the canonical per-engine/full `[tool.mutmut]` config into
-    backend/pyproject.toml, preserving all other sections.
+def install_mutmut_config_block(block: str, backend_pyproject: Path) -> str:
+    """Install a rendered `[tool.mutmut]` block, preserving all other sections.
 
-    Returns the original `[tool.mutmut]` block text so the caller can restore it.
+    Returns the original block text so the caller can restore it.
     """
     import re
 
     text = backend_pyproject.read_text()
-    block = render_mutmut_config_block(engine)
     # Match the [tool.mutmut] section up to the next top-level [section] or EOF.
     pattern = re.compile(r"\[tool\.mutmut\].*?(?=\n\[[^\s]|\Z)", re.S)
     if not pattern.search(text):
@@ -706,6 +744,17 @@ def write_backend_mutmut_config(engine: str | None, backend_pyproject: Path) -> 
     new_text = pattern.sub(block.rstrip("\n") + "\n", text, count=0)
     backend_pyproject.write_text(new_text)
     return text
+
+
+def write_backend_mutmut_config(engine: str | None, backend_pyproject: Path) -> str:
+    """Install the canonical per-engine/full `[tool.mutmut]` config into
+    backend/pyproject.toml, preserving all other sections.
+
+    Returns the original `[tool.mutmut]` block text so the caller can restore it.
+    """
+    return install_mutmut_config_block(
+        render_mutmut_config_block(engine), backend_pyproject
+    )
 
 
 def build_infrastructure_failure(
