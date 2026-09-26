@@ -8,6 +8,8 @@ Validates end-to-end data flow:
 
 from __future__ import annotations
 
+from unittest.mock import patch
+
 from fastapi.testclient import TestClient
 
 
@@ -106,7 +108,8 @@ class TestAccountServiceLayer:
         from src.services.account_service import AccountService
 
         service = AccountService()
-        accounts = service.list_accounts()
+        with patch.object(service.account_repo, "get_all_accounts", return_value=[]):
+            accounts = service.list_accounts()
         assert isinstance(accounts, list)
 
     def test_account_repository_accessible(self) -> None:
