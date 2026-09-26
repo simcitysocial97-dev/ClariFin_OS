@@ -186,6 +186,12 @@ class ControlPlane:
 
         # 5. Execute, with an on_record hook so partial-progress is observable
         #    even if the run is interrupted.
+        if not execution_plan.tasks and not getattr(
+            execution_plan, "mandatory_task_requirements", ()
+        ):
+            print("[check] NO_TASKS_FOR_CHANGE_SCOPE: certified no-op")
+            return 0
+
         run_start = time.monotonic()
         executed_task_ids: list[str] = []
 
