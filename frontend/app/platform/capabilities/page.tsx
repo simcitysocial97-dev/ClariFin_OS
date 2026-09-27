@@ -40,7 +40,7 @@ export default function CapabilitiesPage() {
   }, [items, stageFilter, search]);
 
   return (
-    <div className="flex flex-col gap-4 max-w-6xl">
+    <div data-testid="capabilities-index" className="flex flex-col gap-4 max-w-6xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

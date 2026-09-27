@@ -6,7 +6,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { apiFetchJson } from '@/lib/api/gateway';
+import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
 
 export interface DomainHealth {
   name: string;
@@ -44,11 +44,7 @@ export function usePlatformHealth() {
     queryKey: ['platform', 'health'],
     queryFn: () => apiFetchJson('/platform/v1/health') as Promise<PlatformHealthResponse>,
     staleTime: STALE_TIME_MS,
-    retry: (failureCount, error) => {
-      // Only retry transient errors (network, 5xx). Permanent 4xx errors are not retried.
-      if (error instanceof Error && error.message.includes('4')) return false;
-      return failureCount < 2;
-    },
+    retry: transientRetryPolicy,
   });
 }
 
@@ -56,10 +52,16 @@ export function usePlatformHealth() {
  * Derive a human-readable summary from the health snapshot.
  */
 export function usePlatformHealthSummary() {
-  const { data, isLoading } = usePlatformHealth();
+  const { data, isLoading, error, isError, refetch } = usePlatformHealth();
 
   return {
     isLoading,
+    // M9-C71: consumers must be able to tell "still working" from "cannot
+    // work". The operations dashboard previously had no way to distinguish the
+    // two and rendered an indefinite "Loading platform state…".
+    error,
+    isError,
+    refetch,
     platformStatus: data?.data?.platform ?? 'UNKNOWN',
     frameworkIntegrityStatus: data?.data?.framework_integrity ?? 'UNKNOWN',
     isHealthy: data?.data?.platform === 'HEALTHY',

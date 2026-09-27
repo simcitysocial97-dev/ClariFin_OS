@@ -1,9 +1,17 @@
 /**
- * Platform Console Providers — M9-C57 Phase 5
+ * Platform Console Providers — M9-C57 Phase 5 / M9-C71
  *
  * Client-side providers for the Platform Console.
  * Separated from layout to avoid "use client" on the layout file
  * (which would prevent metadata export).
+ *
+ * M9-C71: this component owns the console's single top-level chrome
+ * (title bar) and the single <main> landmark. `app/platform/layout.tsx` used to
+ * render a *second* <main> around the same children, so every console page
+ * shipped two main landmarks — an accessibility defect that also made
+ * "which main is the page" ambiguous for assistive technology and for the E2E
+ * contract. The title bar stays here, the sidebar stays in the layout, and the
+ * content landmark is declared exactly once.
  */
 
 'use client';
@@ -29,27 +37,32 @@ export function PlatformConsoleProviders({ children }: PlatformConsoleProvidersP
         disableTransitionOnChange
       >
         <QueryProvider>
-          <ErrorBoundary fallback={<div className="flex items-center justify-center h-full text-[var(--text-tertiary)]">Platform Console unavailable</div>}>
+          <ErrorBoundary
+            fallback={
+              <div className="flex h-screen items-center justify-center text-[var(--text-tertiary)]">
+                Platform Console unavailable
+              </div>
+            }
+          >
             <Toaster />
-            <div className="flex flex-col h-screen bg-[var(--surface-base)] text-[var(--text-primary)] overflow-hidden">
-              {/* Title bar — distinct from financial OS header */}
-              <header className="flex items-center gap-3 px-5 h-11 border-b border-[var(--border-subtle)] bg-[var(--surface-raised)] shrink-0">
-                <span className="text-xs font-mono text-[var(--text-tertiary)] uppercase tracking-widest">
+            <div className="flex h-screen flex-col bg-[var(--surface-base)] text-[var(--text-primary)] overflow-hidden">
+              {/* Title bar — distinct from the financial OS header */}
+              <header
+                data-testid="platform-title-bar"
+                className="flex h-11 shrink-0 items-center gap-3 border-b border-[var(--border-subtle)] bg-[var(--surface-raised)] px-5">
+                <span className="font-mono text-xs uppercase tracking-widest text-[var(--text-tertiary)]">
                   Platform
                 </span>
                 <span className="h-4 w-px bg-[var(--border-subtle)]" />
                 <span className="text-sm font-semibold text-[var(--text-primary)]">
                   ClariFin OS
                 </span>
-                <span className="ml-auto text-xs text-[var(--text-tertiary)] font-mono">
+                <span className="ml-auto font-mono text-xs text-[var(--text-tertiary)]">
                   v1.0.0
                 </span>
               </header>
 
-              {/* Main content — fills remaining viewport */}
-              <main className="flex-1 overflow-auto p-5">
-                {children}
-              </main>
+              {children}
             </div>
           </ErrorBoundary>
         </QueryProvider>

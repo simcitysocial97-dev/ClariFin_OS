@@ -95,7 +95,7 @@ export default function VerificationCenterPage() {
   };
 
   return (
-    <div className="flex flex-col gap-4 max-w-6xl mx-auto">
+    <div data-testid="verification-state" className="flex flex-col gap-4 max-w-6xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

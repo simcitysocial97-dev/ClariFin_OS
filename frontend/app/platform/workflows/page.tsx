@@ -24,6 +24,10 @@ import {
   Monitor,
   Cpu,
 } from 'lucide-react';
+import {
+  ConsoleEmptyState,
+  ConsoleUnavailableState,
+} from '@/components/platform/console-state';
 import { cn } from '@/lib/utils';
 
 const BOUNDARY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -71,11 +75,18 @@ export default function PlatformWorkflowsPage() {
   }
 
   if (error) {
-    return <ApiErrorState message={error.message} />;
+    return (
+      <ConsoleUnavailableState
+        heading="Workflows"
+        subject="No workflows to list — the platform API is unreachable, so the inventory cannot be listed."
+        message={error.message}
+      />
+    );
   }
 
   return (
-    <div className="flex flex-col gap-4 max-w-6xl">
+    <div className="flex flex-col gap-4 max-w-6xl"
+      data-testid="workflow-inventory">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -140,7 +151,11 @@ export default function PlatformWorkflowsPage() {
 
       {/* Workflow list */}
       {filtered.length === 0 ? (
-        <EmptyState />
+        <ConsoleEmptyState
+          heading="Workflows"
+          subject="No workflows match your filters"
+          detail="Try adjusting search or boundary filter"
+        />
       ) : (
         <div className="flex flex-col gap-2">
           {filtered.map((workflow) => (
@@ -236,24 +251,3 @@ function LoadingState() {
   );
 }
 
-function ApiErrorState({ message }: { message: string }) {
-  return (
-    <div className="flex flex-col items-center gap-3 py-16 text-center border border-red-500/30 rounded-lg bg-red-500/5">
-      <div className="text-red-400 text-lg font-semibold">API UNAVAILABLE</div>
-      <div className="text-sm text-[var(--text-secondary)] max-w-md">{message}</div>
-      <div className="text-xs text-[var(--text-tertiary)] font-mono">
-        Unable to retrieve workflow inventory from the backend.
-      </div>
-    </div>
-  );
-}
-
-function EmptyState() {
-  return (
-    <div className="flex flex-col items-center gap-2 py-16 text-[var(--text-tertiary)]">
-      <Terminal className="h-8 w-8 opacity-40" />
-      <span className="text-sm">No workflows match your filters</span>
-      <span className="text-xs">Try adjusting search or boundary filter</span>
-    </div>
-  );
-}

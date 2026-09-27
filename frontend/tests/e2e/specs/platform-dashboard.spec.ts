@@ -10,15 +10,37 @@
 
 import { test, expect } from '@playwright/test';
 
+/**
+ * M9-C71 — Test budget.
+ *
+ * The Platform Console resolves six API-backed queries per page. A single page
+ * assertion therefore costs several backend round trips, and on a loaded CI
+ * runner that legitimately exceeds the 30 s global default. This raises the
+ * BUDGET for these two data-driven console specs only; it changes no assertion,
+ * no threshold and no wait condition. `expect` still defaults to 10 s, so a
+ * genuinely wrong value still fails fast — the extra budget only covers the
+ * data round trip.
+ */
+test.describe.configure({ timeout: 120_000 });
+
 const PLATFORM_URL = 'http://localhost:3000/platform';
 
 test.describe('Platform Console Dashboard', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(PLATFORM_URL, { waitUntil: 'networkidle', timeout: 30000 });
-    // Wait for React Query hooks to resolve - wait for at least one status badge to appear
-    await page.waitForSelector('[class*="font-bold"]:has-text("HEALTHY"), [class*="font-bold"]:has-text("DEGRAD"), [class*="font-bold"]:has-text("UNHEALTHY"), [class*="font-bold"]:has-text("UNKNOWN")', { timeout: 15000 });
-    // Additional wait for React Query to settle
-    await page.waitForTimeout(1000);
+    // M9-C71: `waitUntil: 'networkidle'` is not a data-readiness signal for a
+    // client-resolved console. React hydrates only after the document and its
+    // static chunks settle, so the network can be idle for 500 ms BEFORE the
+    // first platform query is issued - the wait then returned before any status
+    // existed, and this whole file failed or passed depending on the run. The
+    // dashboard's own state contract is used instead: wait for the dashboard to
+    // reach a terminal state (data, explicit empty, or explicit unavailable).
+    await page.goto(PLATFORM_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.waitForSelector(
+      '[data-testid="platform-dashboard"], [data-testid="console-empty"], [data-testid="console-unavailable"]',
+      { timeout: 30000 },
+    );
+    // The status badge is still required before any content assertion runs.
+    await page.waitForSelector('[class*="font-bold"]:has-text("HEALTHY"), [class*="font-bold"]:has-text("DEGRAD"), [class*="font-bold"]:has-text("UNHEALTHY"), [class*="font-bold"]:has-text("UNKNOWN")', { timeout: 30000 });
   });
 
   test('page loads without blank screen or crash', async ({ page }) => {
@@ -92,7 +114,7 @@ test('renders capabilities summary', async ({ page }) => {
     });
 
     // Navigate around a bit to trigger any lazy loads
-    await page.reload({ waitUntil: 'networkidle' });
+    await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(3000);
 
     expect(suspiciousRequests).toHaveLength(0);

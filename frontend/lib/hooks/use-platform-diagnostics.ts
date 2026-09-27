@@ -12,7 +12,7 @@
  */
 
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { apiFetchJson, apiFetch } from '@/lib/api/gateway';
+import { apiFetch, apiFetchJson } from '@/lib/api/gateway';
 
 // ---------------------------------------------------------------------------
 // Types matching backend contracts (runtime/platform/api/contracts/diagnostics.py)

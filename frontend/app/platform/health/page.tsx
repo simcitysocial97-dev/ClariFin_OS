@@ -25,6 +25,10 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  ConsoleEmptyState,
+  ConsoleUnavailableState,
+} from '@/components/platform/console-state';
 import { useState } from 'react';
 
 export default function PlatformHealthPage() {
@@ -39,7 +43,9 @@ export default function PlatformHealthPage() {
 
   if (error) {
     return (
-      <ApiErrorState
+      <ConsoleUnavailableState
+        heading="Platform health"
+        subject="No domain statuses to show — the platform API is unreachable, so framework health cannot be read."
         message={error.message}
         onRetry={() => void refetch()}
       />
@@ -48,11 +54,27 @@ export default function PlatformHealthPage() {
 
   const health = data?.data;
   if (!health) {
-    return <EmptyState />;
+    return (
+      <ConsoleEmptyState
+        heading="Platform health"
+        subject="No health data available"
+        detail="The platform API responded without a health snapshot. Run a health check, or retry shortly."
+        action={
+          <button
+            type="button"
+            onClick={() => void refetch()}
+            className="mt-1 inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-default)] px-3 py-1.5 text-sm text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-raised)]"
+          >
+            <RefreshCw className="h-3.5 w-3.5" /> Retry
+          </button>
+        }
+      />
+    );
   }
 
   return (
-    <div className="flex flex-col gap-5 max-w-5xl">
+    <div className="flex flex-col gap-5 max-w-5xl"
+      data-testid="health-report">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -214,30 +236,3 @@ function LoadingState() {
   );
 }
 
-function ApiErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
-  return (
-    <div className="flex flex-col items-center gap-3 py-16 text-center border border-red-500/30 rounded-lg bg-red-500/5">
-      <div className="text-red-400 text-lg font-semibold">API UNAVAILABLE</div>
-      <div className="text-sm text-[var(--text-secondary)] max-w-md">{message}</div>
-      <div className="text-xs text-[var(--text-tertiary)] font-mono">
-        Unable to retrieve health data from the backend.
-      </div>
-      <button
-        onClick={onRetry}
-        className="mt-2 px-4 py-2 text-sm rounded-lg border border-red-500/30 text-red-300 hover:bg-red-500/10 transition-colors flex items-center gap-1"
-      >
-        <RefreshCw className="h-3 w-3" /> Retry
-      </button>
-    </div>
-  );
-}
-
-function EmptyState() {
-  return (
-    <div className="flex flex-col items-center gap-3 py-16 text-center">
-      <HeartPulse className="h-12 w-12 text-[var(--text-tertiary)] opacity-40" />
-      <div className="text-sm text-[var(--text-secondary)]">No health data available</div>
-      <div className="text-xs text-[var(--text-tertiary)]">The backend may not be running or the health endpoint returned empty.</div>
-    </div>
-  );
-}

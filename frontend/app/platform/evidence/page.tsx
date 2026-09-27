@@ -89,7 +89,7 @@ export default function EvidenceExplorerPage() {
     : items.filter((item) => item.status === filterStatus);
 
   return (
-    <div className="flex flex-col gap-4 max-w-6xl">
+    <div data-testid="evidence-index" className="flex flex-col gap-4 max-w-6xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

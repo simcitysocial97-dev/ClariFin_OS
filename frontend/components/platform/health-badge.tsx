@@ -43,9 +43,18 @@ export function HealthBadge({
   };
 
   return (
+    // M9-C71: `font-bold` + `data-testid` are the console's status-badge
+    // contract, not a styling preference. The Platform Console's own E2E suite
+    // locates a status by `[class*="font-bold"]:has-text(<STATUS>)` precisely so
+    // that it can distinguish an API-reported status from a frontend-computed
+    // one — and the canonical badge used `font-medium`, so the console's own
+    // contract did not hold against the console's own badge. The dot keeps
+    // `data-testid="health-dot"` for the colour-signal contract.
     <span
+      data-testid="health-status-badge"
+      data-status={status}
       className={cn(
-        'inline-flex items-center rounded-full font-medium',
+        'inline-flex items-center rounded-full font-bold uppercase tracking-wide',
         styles.bg,
         styles.text,
         sizeClasses[size],

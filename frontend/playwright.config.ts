@@ -94,15 +94,24 @@ export default defineConfig({
   // C38.6 — Deterministic E2E server lifecycle. The frontend is ALWAYS served
   // by `next start` (server mode), identical to local dev and production. We
   // never serve the static `dist` export because middleware (legacy-route
-  // redirects) and SPA routing only work under server mode. `reuseExistingServer`
-  // is intentionally FALSE so a test run can never depend on an accidentally
-  // pre-existing server on :3000 — Playwright owns the lifecycle end to end.
-  // The backend on :8000 is managed by Playwright to ensure deterministic startup.
+  // redirects) and SPA routing only work under server mode.
+  //
+  // M9-C71 — port ownership. The servers are always started fresh in CI, where
+  // the runner is exclusive. Locally, a previous run's orphaned `next start` or
+  // uvicorn still holding :3000/:8000 aborted the whole run with
+  // "http://localhost:8000/ready is already used" before a single assertion
+  // ran — and because the orphans are invisible from the test process, the
+  // failure looked like a configuration problem rather than a stale process.
+  // `!process.env.CI` reuses a healthy local server and is the documented
+  // Playwright pattern for exactly this; CI keeps exclusive ownership, so no
+  // determinism is traded away where determinism is verifiable. The readiness
+  // gates in `tests/global-setup.ts` then prove the reused server really does
+  // serve every exercised route before the suite starts.
   webServer: [
     {
       command: 'npm start',
       url: 'http://localhost:3000',
-      reuseExistingServer: false,
+      reuseExistingServer: !process.env.CI,
       timeout: 120000,
       stdout: 'ignore',
       stderr: 'pipe',
@@ -112,7 +121,7 @@ export default defineConfig({
       // No PYTHONPATH needed: -m uvicorn places cwd on sys.path[0], resolving `src.*`.
       command: 'cd ../backend && "${CLARIFIN_PYTHON:-$(if [ -x ../../.venv/bin/python ]; then echo ../../.venv/bin/python; else command -v python3 || command -v python; fi)}" -m uvicorn src.api:app --host 0.0.0.0 --port 8000',
       url: 'http://localhost:8000/ready',
-      reuseExistingServer: false,
+      reuseExistingServer: !process.env.CI,
       timeout: 60000,
       stdout: 'pipe',
       stderr: 'pipe',

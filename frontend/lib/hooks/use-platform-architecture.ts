@@ -6,7 +6,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { apiFetchJson } from '@/lib/api/gateway';
+import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
 
 export interface AuthoritySummary {
   name: string;
@@ -67,10 +67,7 @@ export function useArchitectureAuthorities() {
     queryFn: () =>
       apiFetchJson('/platform/v1/architecture/authorities') as Promise<AuthoritiesResponse>,
     staleTime: STALE_TIME_MS,
-    retry: (failureCount, error) => {
-      if (error instanceof Error && error.message.includes('4')) return false;
-      return failureCount < 2;
-    },
+    retry: transientRetryPolicy,
   });
 }
 
@@ -83,10 +80,7 @@ export function useAuthorityDetail(name: string | undefined) {
       ) as Promise<AuthorityDetailResponse>,
     enabled: !!name,
     staleTime: STALE_TIME_MS,
-    retry: (failureCount, error) => {
-      if (error instanceof Error && error.message.includes('4')) return false;
-      return failureCount < 2;
-    },
+    retry: transientRetryPolicy,
   });
 }
 
@@ -96,10 +90,7 @@ export function useArchitectureFindings(kind: string) {
     queryFn: () =>
       apiFetchJson(`/platform/v1/architecture/${kind}`) as Promise<FindingsResponse>,
     staleTime: STALE_TIME_MS,
-    retry: (failureCount, error) => {
-      if (error instanceof Error && error.message.includes('4')) return false;
-      return failureCount < 2;
-    },
+    retry: transientRetryPolicy,
   });
 }
 

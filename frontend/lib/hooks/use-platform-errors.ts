@@ -5,7 +5,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { apiFetchJson } from '@/lib/api/gateway';
+import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
 
 export interface PlatformErrorItem {
   id: string;
@@ -38,10 +38,7 @@ export function usePlatformErrors(window = 'current') {
     queryKey: ['platform', 'errors', window],
     queryFn: () => apiFetchJson(url) as Promise<ErrorsListResponse>,
     staleTime: 60_000,
-    retry: (failureCount, error) => {
-      if (error instanceof Error && error.message.includes('4')) return false;
-      return failureCount < 2;
-    },
+    retry: transientRetryPolicy,
   });
 }
 

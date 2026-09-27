@@ -7,7 +7,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { MemberProvider } from '@/lib/context/member-context';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { QueryProvider } from '@/components/query-provider';
-import { AppShell } from '@/components/os-shell';
+import { ShellBoundary } from '@/components/os-shell/shell-boundary';
 import { RuntimeProvider } from '@/lib/runtime';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -38,7 +38,11 @@ export default function RootLayout({
               <MemberProvider>
                 <RuntimeProvider>
                   <ErrorBoundary>
-                    <AppShell>{children}</AppShell>
+                    {/* M9-C71: the Platform Console is a standalone operational
+                        interface (app/platform/layout.tsx invariant: "No AppShell").
+                        ShellBoundary selects the shell by route so that invariant
+                        actually holds. */}
+                    <ShellBoundary>{children}</ShellBoundary>
                   </ErrorBoundary>
                   <Toaster />
                 </RuntimeProvider>

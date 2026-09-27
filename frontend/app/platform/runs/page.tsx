@@ -24,6 +24,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ConsoleUnavailableState } from '@/components/platform/console-state';
 
 const PAGE_SIZE = 20;
 
@@ -41,11 +42,18 @@ export default function PlatformRunsPage() {
   }
 
   if (error) {
-    return <ApiErrorState message={error.message} />;
+    return (
+      <ConsoleUnavailableState
+        heading="Runs"
+        subject="No runs to list — the platform API is unreachable, so run history cannot be listed."
+        message={error.message}
+      />
+    );
   }
 
   return (
-    <div className="flex flex-col gap-4 max-w-5xl">
+    <div className="flex flex-col gap-4 max-w-5xl"
+      data-testid="run-inventory">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -185,18 +193,6 @@ function LoadingState() {
       <div className="flex items-center gap-2 text-sm text-[var(--text-tertiary)]">
         <Loader2 className="h-4 w-4 animate-spin" />
         Loading runs...
-      </div>
-    </div>
-  );
-}
-
-function ApiErrorState({ message }: { message: string }) {
-  return (
-    <div className="flex flex-col items-center gap-3 py-16 text-center border border-red-500/30 rounded-lg bg-red-500/5">
-      <div className="text-red-400 text-lg font-semibold">API UNAVAILABLE</div>
-      <div className="text-sm text-[var(--text-secondary)] max-w-md">{message}</div>
-      <div className="text-xs text-[var(--text-tertiary)] font-mono">
-        Unable to retrieve run history from the backend.
       </div>
     </div>
   );

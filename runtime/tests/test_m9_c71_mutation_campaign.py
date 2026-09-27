@@ -58,8 +58,10 @@ def wrap_in_trampoline(mutants_dict, is_classmethod=False):
             mutated_func = mutants_dict.get(mutant_name)
             if mutated_func is None:
                 # No mutant being tested -> call original function
-                return orig_func(*args, **kwargs)
-            return mutated_func(*args, **kwargs)
+                return orig_func(*call_args, **kwargs)
+            if is_classmethod:
+                mutated_func = getattr(args[0], mutated_func.__name__)
+            return mutated_func(*call_args, **kwargs)
         return trampoline
     return mutmut_mutated
 """
@@ -85,7 +87,25 @@ class TestMutmutToolchainContract:
         state = mc.inspect("mutmut, version 3.7.0")
         assert state.status == "VIOLATED"
         assert state.satisfied is False
-        assert "not applied" in state.detail
+        assert len(state.unsatisfied_clauses) == 2
+
+    def test_both_clauses_are_required_not_just_the_module_one(self, monkeypatch, tmp_path):
+        """A toolchain with only the src.* fix is still not in contract.
+
+        Clause 2 is what makes class-scoped mutants measurable at all: without it
+        mutmut cannot run the *unmodified* suite for any module that uses
+        @classmethod, which includes the canonical Money value object. The shard
+        then fails with "Failed to run clean test" and no score at all.
+        """
+        target = tmp_path / "trampoline.py"
+        target.write_text(_pristine(), encoding="utf-8")
+        monkeypatch.setattr(mc, "resolve_trampoline_path", lambda: target)
+
+        mc.ensure("mutmut, version 3.7.0")
+        source = target.read_text(encoding="utf-8")
+        assert mc._CLAUSE2_BUG not in source
+        assert "return orig_func(*call_args, **kwargs)" in source
+        assert mc.inspect("mutmut, version 3.7.0").unsatisfied_clauses == ()
 
     def test_ensure_applies_the_contract_deterministically(self, monkeypatch, tmp_path):
         target = tmp_path / "trampoline.py"
@@ -134,7 +154,7 @@ class TestMutmutToolchainContract:
 
         state = mc.inspect("mutmut, version 3.7.0")
         assert state.satisfied is False
-        assert "not canonical" in state.detail
+        assert "c71-1-src-module-name-normalisation" in state.unsatisfied_clauses
 
         applied = mc.ensure("mutmut, version 3.7.0")
         assert applied.satisfied is True
@@ -167,10 +187,10 @@ class TestMutmutToolchainContract:
 
     def test_canonical_region_normalises_the_src_prefix(self):
         """The contract must make mutmut's stripped name match Python's real one."""
-        assert 'func_module[len("src.") :]' in mc.CONTRACT_REGION
-        assert "if module != func_module:" in mc.CONTRACT_REGION
+        assert 'func_module.startswith("src.")' in mc._CLAUSE1_BODY
+        assert "if module != func_module:" in mc._CLAUSE1_BODY
         # The pristine rejection is what produced the 0.0% false-negative.
-        assert "if module != decorated_func.__module__:" not in mc.CONTRACT_REGION
+        assert "if module != decorated_func.__module__:" not in mc._CLAUSE1_BODY
 
     def test_installed_toolchain_satisfies_the_contract(self):
         """The canonical venv this suite runs against must be in contract."""
@@ -179,6 +199,7 @@ class TestMutmutToolchainContract:
             "the canonical environment's mutmut trampoline is out of contract: "
             f"{state.detail}"
         )
+        assert state.unsatisfied_clauses == ()
 
     def test_evidence_record_is_durable(self, monkeypatch, tmp_path):
         target = tmp_path / "trampoline.py"
@@ -194,6 +215,10 @@ class TestMutmutToolchainContract:
         assert payload["satisfied"] is True
         assert payload["pinned_mutmut"] == PINNED_MUTMUT
         assert payload["before_sha256"] != payload["after_sha256"]
+        assert payload["unsatisfied_clauses"] == []
+        assert [c["clause_id"] for c in payload["clauses"]] == [
+            c.clause_id for c in mc.CLAUSES
+        ]
         assert payload["recorded_at"]
 
 

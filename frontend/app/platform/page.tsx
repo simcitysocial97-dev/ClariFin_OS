@@ -28,6 +28,10 @@ import { ActivityFeed } from '@/components/platform/activity-feed';
 import { QuickActions } from '@/components/platform/quick-actions';
 import { AlertTriangle, CheckCircle2, Clock, Layers, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  ConsoleLoadingState,
+  ConsoleUnavailableState,
+} from '@/components/platform/console-state';
 
 // ============================================================
 // Sub-components
@@ -216,6 +220,8 @@ function CapabilitiesSummary({ count, stages }: { count: number; stages: number 
 export default function PlatformDashboardPage() {
   const {
     isLoading: healthLoading,
+    error: healthError,
+    refetch: refetchHealth,
     platformStatus,
     frameworkIntegrityStatus,
     unhealthyDomains,
@@ -223,21 +229,41 @@ export default function PlatformDashboardPage() {
   const { data: eventsData, isLoading: eventsLoading } = usePlatformEvents(8);
   const errorCount = useCurrentErrorCount();
   const openObligations = useOpenObligationsCount();
-  const { data: capsData, isLoading: capsLoading } = useCapabilityList();
+  const {
+    data: capsData,
+    isLoading: capsLoading,
+    error: capsError,
+    refetch: refetchCaps,
+  } = useCapabilityList();
+
+  // M9-C71: the primary operations screen must never look busy while it is in
+  // fact unable to report anything. Previously this page gated only on
+  // isLoading, so an unreachable platform API left the dashboard saying
+  // "Loading platform state…" indefinitely.
+  const unavailable = healthError ?? capsError;
+  if (unavailable) {
+    return (
+      <ConsoleUnavailableState
+        heading="Platform"
+        subject="No platform signals to show — the platform API is unreachable, so nothing on this screen can be reported."
+        message={unavailable.message}
+        onRetry={() => {
+          void refetchHealth();
+          void refetchCaps();
+        }}
+      />
+    );
+  }
 
   if (healthLoading || capsLoading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-sm text-[var(--text-tertiary)]">Loading platform state…</div>
-      </div>
-    );
+    return <ConsoleLoadingState label="Loading platform state…" />;
   }
 
   const capabilityCount = capsData?.data?.count ?? 0;
   const capabilityStages = capsData?.data?.categories?.length ?? 0;
 
   return (
-    <div className="flex flex-col gap-5 max-w-6xl mx-auto">
+    <div data-testid="platform-dashboard" className="flex flex-col gap-5 max-w-6xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

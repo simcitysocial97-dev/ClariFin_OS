@@ -17,7 +17,6 @@ import {
   History,
   Shield,
   Layers,
-  Settings,
   ShieldCheck,
   Zap,
   FileText,
@@ -47,7 +46,14 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/platform/evidence', label: 'Evidence', icon: FileText },
   { href: '/platform/capabilities', label: 'Capabilities', icon: Layers },
   { href: '/platform/architecture', label: 'Architecture', icon: GitBranch },
-  { href: '/platform/settings', label: 'Settings', icon: Settings },
+  // M9-C71: the 'Settings' entry pointed at /platform/settings, which has never
+  // existed. A dead sidebar link is not cosmetic: Next prefetches visible
+  // <Link> targets with an RSC request, the 404 for that prefetch never
+  // completes, and the request stays open for the life of the page. Every
+  // /platform page therefore failed Playwright's `waitUntil: 'networkidle'`
+  // (30 s timeouts) regardless of how healthy the backend was. Entries here
+  // must resolve to a real app/platform/** route; see the sidebar-link
+  // invariant in tests/e2e/specs/platform-c67.2.spec.ts.
 ];
 
 export function PlatformSidebar() {

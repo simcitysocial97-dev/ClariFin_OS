@@ -122,7 +122,7 @@ export default function DiagnosticCenterPage() {
   const isExpanded = (category: Category) => expandedCategories.has(category);
 
   return (
-    <div className="flex flex-col gap-4 max-w-6xl">
+    <div data-testid="diagnostics-report" className="flex flex-col gap-4 max-w-6xl">
       {/* Header */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between flex-wrap gap-2">
