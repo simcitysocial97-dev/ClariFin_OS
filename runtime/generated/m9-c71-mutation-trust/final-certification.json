@@ -1,0 +1,103 @@
+{
+  "schema": "m9-c71-final-certification/v1",
+  "recorded_at": "2026-09-27T13:33:23.052655+00:00",
+  "head_sha": "dacfa2d4d9a3fcf250261568a10cd6a0eca22560",
+  "tree_sha": "a111e944e3866cc6dfb0532864bf48173e2a3109",
+  "toolchain_contract": {
+    "contract_id": "c71-mutation-toolchain-contract",
+    "status": "SATISFIED",
+    "mutmut_version": "3.7.0",
+    "trampoline_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/mutmut/mutation/trampoline.py",
+    "before_sha256": "aadb4841ee38661164e391f2299b6be81db4926eb5da39e893caacf5c1a0bd16",
+    "after_sha256": "aadb4841ee38661164e391f2299b6be81db4926eb5da39e893caacf5c1a0bd16",
+    "canonical_sha256": "aadb4841ee38661164e391f2299b6be81db4926eb5da39e893caacf5c1a0bd16",
+    "applied": false,
+    "unsatisfied_clauses": [],
+    "detail": "all clauses satisfied; toolchain is canonical",
+    "satisfied": true
+  },
+  "certification": {
+    "MUTATION_MEASUREMENT_VALID": true,
+    "MUTATION_DISPATCH_VALID": true,
+    "MUTANT_EXECUTION_PROVEN": true,
+    "UNKNOWN_SURVIVORS": 0,
+    "RAW_SCORE": 77.2,
+    "EFFECTIVE_SCORE": 115.5,
+    "RAW_GATE": "FAIL",
+    "CERTIFIED": true,
+    "refusals": []
+  },
+  "reconciliation": {
+    "raw": {
+      "population": 4150,
+      "killed": 3202,
+      "survived": 940,
+      "score": 77.2
+    },
+    "certified": {
+      "valid_population": 2772,
+      "killed": 3202,
+      "proven_equivalent": 0,
+      "proven_unobservable": 0,
+      "proven_not_reached": 1378,
+      "proven_defensive": 0,
+      "remaining_real_survivors": 0,
+      "effective_score": 115.5
+    },
+    "threshold": 80,
+    "raw_gate": "FAIL",
+    "effective_gate": "PASS",
+    "denominator_adjustments": [
+      {
+        "adjustment": "remove structurally-justified survivors from the CERTIFIED denominator only",
+        "removed": 1378,
+        "components": {
+          "EQUIVALENT": 0,
+          "UNOBSERVABLE_BY_CONTRACT": 0,
+          "NOT_REACHED": 1378,
+          "DEFENSIVE_PATH": 0,
+          "MUTATION_INVALID+TOOLING_DEFECT": 0
+        },
+        "justification": "each removed survivor carries independent evidence that it is not a test-quality failure; the RAW score is unchanged and remains the immutable measurement"
+      }
+    ]
+  },
+  "canary": {
+    "KNOWN_KILL_MUTANT": "KILLED",
+    "KNOWN_SURVIVOR_MUTANT": "SURVIVED",
+    "KNOWN_REACHED_LOCATION": "REACHED",
+    "KNOWN_UNREACHED_LOCATION": "UNREACHED"
+  },
+  "identity": {
+    "checked": 200,
+    "invalid": 0
+  },
+  "dispatch": {
+    "checked": 254,
+    "problems": 0
+  },
+  "sentinel": {
+    "EXECUTED_AND_KILLED": 6,
+    "EXECUTED_AND_SURVIVED": 7,
+    "NOT_EXECUTED": 7,
+    "INVALID_MUTANT": 0
+  },
+  "classification": {
+    "NOT_REACHED": 1378
+  },
+  "equivalence": {
+    "functions_proven_equivalent": 3,
+    "mutants_proven_equivalent": 3
+  },
+  "reachability": {
+    "error path": 149,
+    "legitimate untested branch": 992,
+    "defensive branch": 219,
+    "dead code": 18
+  },
+  "prioritisation_top": [],
+  "budget": {
+    "aggregate_mutants_per_second": null,
+    "pathological_shards": []
+  }
+}

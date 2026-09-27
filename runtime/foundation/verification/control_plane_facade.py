@@ -899,7 +899,9 @@ class ControlPlane:
         else:
             print("\nFramework authority integrity: DEGRADED")
             for f in integrity.findings:
-                print(f"  [{f.severity.upper()}] {f.check_name}: {f.detected_component}")
+                print(
+                    f"  [{f.severity.upper()}] {f.check_name}: {f.detected_component}"
+                )
                 print(f"    Expected: {f.expected_authority}")
                 print(f"    Actual:   {f.actual_authority}")
 
@@ -946,7 +948,11 @@ class ControlPlane:
                 source_files = list(changed_files)
 
             # Primary source is deterministic: first sorted source file
-            primary_source = source_files[0] if source_files else (changed_files[0] if changed_files else "unknown")
+            primary_source = (
+                source_files[0]
+                if source_files
+                else (changed_files[0] if changed_files else "unknown")
+            )
 
             # Build rationale with provenance
             reason_parts = []
@@ -1090,6 +1096,15 @@ def main() -> int:
         from runtime.foundation.verification.mutation_shards import run_plan_cli
 
         return run_plan_cli(args)
+
+    # C71: mutation measurement trust. Dispatched before the generic `strengthen`
+    # route because this is a measurement-validity analysis over existing
+    # evidence, not a test-strengthening execution. It must be able to say
+    # "the mutation score is invalid" — not merely report a number.
+    if command == "mutation-trust":
+        from runtime.foundation.verification.mutation_trust import run_trust_cli
+
+        return run_trust_cli(args)
 
     # Handle legacy commands via the migration map
     classification = classification_for(command)
@@ -1388,7 +1403,7 @@ def _find_changed_files_arg(args: list[str]) -> list[str] | None:
             continue
         if a.startswith("--changed-files="):
             # Comma-separated list
-            val = a[len("--changed-files="):]
+            val = a[len("--changed-files=") :]
             files.extend(val.split(","))
             i += 1
             continue

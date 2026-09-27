@@ -122,6 +122,11 @@ class MutationResult:
     # Repo-relative path of the captured mutmut stdout/stderr for this run.
     # Capturing it is mandatory: without it a mutation failure is undiagnosable.
     execution_log_path: str = ""
+    # Repo-relative path of the independent execution-sentinel evidence for this
+    # run (C71). A kill/survive verdict alone does not prove the mutated
+    # implementation executed, so the two are recorded separately and joined by
+    # the mutation trust analysis.
+    execution_sentinel_path: str = ""
 
     @property
     def mutants_generated(self) -> int:
@@ -168,6 +173,7 @@ class MutationResult:
             "affected_engines": self.affected_engines,
             "toolchain_contract": self.toolchain_contract,
             "execution_log_path": self.execution_log_path,
+            "execution_sentinel_path": self.execution_sentinel_path,
             "shard_id": self.shard_id,
         }
 
@@ -721,7 +727,22 @@ def _render_config(
         "[tool.mutmut]\n"
         f"source_paths = [{src}]\n"
         f"also_copy = [{copy}]\n"
-        'runner = "python3 -m pytest"\n'
+        # C71: the independent execution sentinel is loaded as an explicit
+        # pytest plugin via `pytest_add_cli_args`. mutmut 3.7.0 has no `runner`
+        # key at all — it builds its pytest argv from these two lists, so a
+        # `runner` string is silently ignored. That is why the sentinel must be
+        # declared here and not as a plugin flag on a runner line.
+        #
+        # It is also declared as a plugin rather than relying on
+        # tests/conftest.py because mutmut runs pytest from its generated
+        # mutants/ tree with --rootdir=., so tests/conftest.py is discovered
+        # only when the selection lives under tests/. A shard that does not
+        # would silently produce no execution evidence for any mutant, and the
+        # missing evidence would be indistinguishable from "no mutant ran".
+        # The plugin is inert unless mutmut sets MUTANT_UNDER_TEST.
+        "pytest_add_cli_args = [\n"
+        '    "-p", "tests.mutation_trust.canary.sentinel_plugin",\n'
+        "]\n"
         "pytest_add_cli_args_test_selection = [\n"
         f"    {tests}\n"
         "]\n"
@@ -732,13 +753,25 @@ def _render_config(
 def install_mutmut_config_block(block: str, backend_pyproject: Path) -> str:
     """Install a rendered `[tool.mutmut]` block, preserving all other sections.
 
-    Returns the original block text so the caller can restore it.
+    Returns the original text so the caller can restore it.
+
+    The replacement must consume the renderer's PROVENANCE COMMENTS as well as
+    the section itself. They sit immediately before ``[tool.mutmut]``, and
+    mutating only the section left them behind — so every run appended another
+    copy and the file grew by three lines per campaign until it had accreted
+    dozens of stale "Scope: …" headers describing scopes that no longer applied.
+    Restoring then produced a file that was never byte-identical to the original,
+    which is exactly the safety invariant the runner asserts on exit.
     """
     import re
 
     text = backend_pyproject.read_text()
-    # Match the [tool.mutmut] section up to the next top-level [section] or EOF.
-    pattern = re.compile(r"\[tool\.mutmut\].*?(?=\n\[[^\s]|\Z)", re.S)
+    # The block to replace: any run of leading '#' comment lines immediately
+    # followed by the [tool.mutmut] section, up to the next top-level section.
+    pattern = re.compile(
+        r"(?:#[^\n]*\n)*\[tool\.mutmut\].*?(?=\n\[[^\s]|\Z)",
+        re.S,
+    )
     if not pattern.search(text):
         raise RuntimeError("backend/pyproject.toml has no [tool.mutmut] section")
     new_text = pattern.sub(block.rstrip("\n") + "\n", text, count=0)

@@ -506,6 +506,9 @@ def execute_mutation(
     tree = _git_tree()
     env = resolve_environment(config_dir=BACKEND_DIR)
     config_hash = _config_hash()
+    # Assigned before the subprocess starts; the result records it so a shard's
+    # independent execution evidence can always be joined to its verdict.
+    sentinel_sink: Path | None = None
 
     # Initialize safety context
     safety = _MutationSafety(mode=mode, allow_dirty=allow_dirty)
@@ -739,6 +742,14 @@ def execute_mutation(
                 f"# started_at={datetime.now(UTC).isoformat()}\n\n"
             )
             log_handle.flush()
+            # ── C71: independent execution evidence ──────────────────────────────
+            # mutmut's verdict is derived from a test process's exit code, which
+            # answers "did any test fail?" but not "did the mutated code run?".
+            # The sentinel sink lets the mutation trust analysis prove the
+            # latter independently. It is passed to the mutmut process so every
+            # forked mutant test process inherits it; the sentinel itself is a
+            # no-op unless a test opts in by calling `arm()`.
+            sentinel_sink = GENERATED_DIR / f"mutation-sentinel-{run_id}.jsonl"
             proc = subprocess.Popen(
                 cmd,
                 cwd=str(cwd),
@@ -751,6 +762,7 @@ def execute_mutation(
                     **os.environ,
                     "PATH": f"{VENV_BIN}:{os.environ.get('PATH', '')}",
                     "PYTHONPATH": _pytest_pythonpath,
+                    "C71_MUTATION_SENTINEL_SINK": str(sentinel_sink),
                 },
             )
             log_rel = str(log_path.relative_to(REPO_ROOT))
@@ -918,6 +930,9 @@ def execute_mutation(
                 f"{toolchain.contract_id}:{toolchain.status}" if toolchain else ""
             ),
             execution_log_path=log_rel,
+            execution_sentinel_path=(
+                str(sentinel_sink.relative_to(REPO_ROOT)) if sentinel_sink else ""
+            ),
         )
         _write_cache_provenance(cwd, config_hash=config_hash)
 
@@ -1037,12 +1052,16 @@ def _write_measurement_truth(
             part
             for part in (
                 result.note,
-                f"toolchain_contract={result.toolchain_contract}"
-                if result.toolchain_contract
-                else "",
-                f"execution_log={result.execution_log_path}"
-                if result.execution_log_path
-                else "",
+                (
+                    f"toolchain_contract={result.toolchain_contract}"
+                    if result.toolchain_contract
+                    else ""
+                ),
+                (
+                    f"execution_log={result.execution_log_path}"
+                    if result.execution_log_path
+                    else ""
+                ),
             )
             if part
         ),

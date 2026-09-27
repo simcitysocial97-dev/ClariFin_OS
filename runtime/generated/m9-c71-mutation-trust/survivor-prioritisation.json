@@ -1,0 +1,38 @@
+{
+  "schema": "m9-c71-survivor-prioritisation/v1",
+  "recorded_at": "2026-09-27T14:00:44.488142+00:00",
+  "ranking_basis": "survivor count x mutation-operator leverage x business criticality, restricted to proven REAL_TEST_GAP survivors. NOT survivors-per-mutant: the objective is assurance gained per test added, not mutation-score increase per line of test code.",
+  "genuine_gap_locations": 2,
+  "ranked": [
+    {
+      "component": "credit_card_engine",
+      "location": "src/engines/credit_card_engine/b.py::x_high",
+      "survivor_count": 1,
+      "operators": [
+        "arithmetic"
+      ],
+      "business_criticality": 10,
+      "operator_leverage": 5,
+      "reachable_execution": true,
+      "public_contract_importance": 10,
+      "assurance_per_test": 50.0,
+      "assurance_score": 50,
+      "priority_rank": 1
+    },
+    {
+      "component": "behaviour_engine",
+      "location": "src/engines/behaviour_engine/a.py::x_low",
+      "survivor_count": 1,
+      "operators": [
+        "boolean"
+      ],
+      "business_criticality": 5,
+      "operator_leverage": 2,
+      "reachable_execution": true,
+      "public_contract_importance": 5,
+      "assurance_per_test": 10.0,
+      "assurance_score": 10,
+      "priority_rank": 2
+    }
+  ]
+}

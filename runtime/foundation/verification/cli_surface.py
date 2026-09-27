@@ -240,6 +240,10 @@ _CLASSIFICATION: dict[str, str] = {
     # the single-process `mutation` command is only the per-shard executor.
     "mutation-aggregate": "CANONICAL",
     "mutation-plan": "CANONICAL",
+    # C71: mutation measurement trust + survivor forensics. First-class because
+    # the sharded campaign's scores are meaningless unless the measurement
+    # itself is certified; this is the command that can refuse certification.
+    "mutation-trust": "CANONICAL",
 }
 
 

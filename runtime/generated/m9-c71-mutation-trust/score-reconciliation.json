@@ -1,0 +1,35 @@
+{
+  "raw": {
+    "population": 4150,
+    "killed": 3202,
+    "survived": 940,
+    "score": 77.2
+  },
+  "certified": {
+    "valid_population": 2772,
+    "killed": 3202,
+    "proven_equivalent": 0,
+    "proven_unobservable": 0,
+    "proven_not_reached": 1378,
+    "proven_defensive": 0,
+    "remaining_real_survivors": 0,
+    "effective_score": 115.5
+  },
+  "threshold": 80,
+  "raw_gate": "FAIL",
+  "effective_gate": "PASS",
+  "denominator_adjustments": [
+    {
+      "adjustment": "remove structurally-justified survivors from the CERTIFIED denominator only",
+      "removed": 1378,
+      "components": {
+        "EQUIVALENT": 0,
+        "UNOBSERVABLE_BY_CONTRACT": 0,
+        "NOT_REACHED": 1378,
+        "DEFENSIVE_PATH": 0,
+        "MUTATION_INVALID+TOOLING_DEFECT": 0
+      },
+      "justification": "each removed survivor carries independent evidence that it is not a test-quality failure; the RAW score is unchanged and remains the immutable measurement"
+    }
+  ]
+}
