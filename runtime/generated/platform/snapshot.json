@@ -1,9 +1,9 @@
 {
   "domains": {
     "capabilities": {
-      "_c": 87149.386819438,
-      "_ts": "2026-09-28T08:29:57Z",
-      "hash": "c758fee3936b17e5cb2e482f5a9da6bbc43b7f8751284a110dd74ebfb9551366",
+      "_c": 91282.546613102,
+      "_ts": "2026-09-28T09:38:52Z",
+      "hash": "37d69358aff11c1d52d0241de91110d477a08843792fe12f646e402baa71833d",
       "payload": {
         "data": {
           "categories": [
@@ -769,20 +769,107 @@
             }
           ]
         },
-        "generated_at": "2026-09-28T08:29:57Z",
+        "generated_at": "2026-09-28T09:38:52Z",
         "id": "sha256:604de18e19d978fb4d43a3200ec7c8f9552cfd2ba9ffc88a7d31d64d79551925",
         "kind": "platform.capability_list",
         "version": "1.0.0"
       }
     },
     "change": {
-      "_c": 39345.136183369,
-      "_ts": "2026-09-26T02:06:02Z",
-      "hash": "6ec3b0dc586e8330eb70e3a5de0de017969e58a8fd0b08051a7c595c44eedc3d",
+      "_c": 92183.599779661,
+      "_ts": "2026-09-28T09:53:53Z",
+      "hash": "b48274bd0d2c12e59a4beaf63388b2872ab10ccb5392a9526657e57757545406",
       "payload": {
         "data": {
           "affected_capabilities": [
+            "account-engine",
             "api-contracts",
+            "balance-engine",
+            "behaviour-engine",
+            "cashflow-engine",
+            "credit-card-engine",
+            "financial-intelligence",
+            "frontend:component:frontend-accounts:accounts",
+            "frontend:component:frontend-behaviour:behaviour",
+            "frontend:component:frontend-cards:cards",
+            "frontend:component:frontend-cashflow:cashflow",
+            "frontend:component:frontend-command-center:command-center",
+            "frontend:component:frontend-dashboard:dashboard",
+            "frontend:component:frontend-evidence:evidence",
+            "frontend:component:frontend-filters:filters",
+            "frontend:component:frontend-forecast:forecast",
+            "frontend:component:frontend-graph:graph",
+            "frontend:component:frontend-intelligence:intelligence",
+            "frontend:component:frontend-investments:investments",
+            "frontend:component:frontend-layout:layout",
+            "frontend:component:frontend-loading:loading",
+            "frontend:component:frontend-loans:loans",
+            "frontend:component:frontend-networth:net-worth",
+            "frontend:component:frontend-os-shell:os-shell",
+            "frontend:component:frontend-platform:platform",
+            "frontend:component:frontend-primitives:primitives",
+            "frontend:component:frontend-query-provider.tsx:query-provider",
+            "frontend:component:frontend-reconciliation:reconciliation",
+            "frontend:component:frontend-toolbar:toolbar",
+            "frontend:component:frontend-transaction-table:transaction-table",
+            "frontend:component:frontend-ui:ui",
+            "frontend:component:frontend-workspace:workspace",
+            "frontend:hook:frontend-accounts:accounts",
+            "frontend:hook:frontend-behaviour:behavior-score",
+            "frontend:hook:frontend-cards:cards",
+            "frontend:hook:frontend-cashflow:cashflow",
+            "frontend:hook:frontend-dashboard:dashboard-metrics",
+            "frontend:hook:frontend-hooks:analytics",
+            "frontend:hook:frontend-hooks:live-execution",
+            "frontend:hook:frontend-hooks:overview",
+            "frontend:hook:frontend-hooks:platform-runs.test",
+            "frontend:hook:frontend-hooks:platform-status.test",
+            "frontend:hook:frontend-hooks:platform-workflows.test",
+            "frontend:hook:frontend-hooks:query-finance",
+            "frontend:hook:frontend-hooks:verification-center",
+            "frontend:hook:frontend-investments:investments",
+            "frontend:hook:frontend-loans:loans",
+            "frontend:hook:frontend-networth:networth",
+            "frontend:hook:frontend-platform:platform-architecture",
+            "frontend:hook:frontend-platform:platform-capabilities",
+            "frontend:hook:frontend-platform:platform-diagnostics",
+            "frontend:hook:frontend-platform:platform-errors",
+            "frontend:hook:frontend-platform:platform-events",
+            "frontend:hook:frontend-platform:platform-health",
+            "frontend:hook:frontend-platform:platform-runs",
+            "frontend:hook:frontend-platform:platform-status",
+            "frontend:hook:frontend-platform:platform-tasks",
+            "frontend:hook:frontend-platform:platform-workflows",
+            "frontend:hook:frontend-reconciliation:reconciliation",
+            "frontend:route:frontend-api:api/diagnostic-signatures/route.ts",
+            "frontend:route:frontend-command-center:command-center",
+            "frontend:route:frontend-dashboard:dashboard",
+            "frontend:route:frontend-layout.tsx:layout",
+            "frontend:route:frontend-platform:platform",
+            "frontend:route:frontend-platform:platform/architecture",
+            "frontend:route:frontend-platform:platform/capabilities",
+            "frontend:route:frontend-platform:platform/capabilities/[capabilityId]",
+            "frontend:route:frontend-platform:platform/diagnostics",
+            "frontend:route:frontend-platform:platform/diagnostics/change",
+            "frontend:route:frontend-platform:platform/diagnostics/detail/[id]",
+            "frontend:route:frontend-platform:platform/errors",
+            "frontend:route:frontend-platform:platform/evidence",
+            "frontend:route:frontend-platform:platform/framework",
+            "frontend:route:frontend-platform:platform/health",
+            "frontend:route:frontend-platform:platform/history",
+            "frontend:route:frontend-platform:platform/history/compare",
+            "frontend:route:frontend-platform:platform/layout",
+            "frontend:route:frontend-platform:platform/platform-providers",
+            "frontend:route:frontend-platform:platform/runs",
+            "frontend:route:frontend-platform:platform/runs/[runId]",
+            "frontend:route:frontend-platform:platform/verification",
+            "frontend:route:frontend-platform:platform/verification/[capability]",
+            "frontend:route:frontend-platform:platform/verification/history/[runId]",
+            "frontend:route:frontend-platform:platform/verification/run/[capability]",
+            "frontend:route:frontend-platform:platform/workflows",
+            "ledger",
+            "loan-engine",
+            "reconciliation",
             "runtime-verification"
           ],
           "affected_tests": [],
@@ -790,19 +877,11 @@
           "changed_files": [
             {
               "change_type": "modified",
-              "path": "backend/runtime/generated/platform/snapshot.json"
+              "path": "frontend/lib/test_r4_probe.ts"
             },
             {
               "change_type": "modified",
               "path": "runtime/generated/diagnostic-signatures.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/e2e-route-map.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/engineering-events.jsonl"
             },
             {
               "change_type": "modified",
@@ -818,51 +897,11 @@
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/knowledge-index.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c47/coverage/measurement-truth-coverage.json"
-            },
-            {
-              "change_type": "modified",
               "path": "runtime/generated/m9-c47/coverage/raw-coverage.json"
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c48/aggregator-obsolete-disposition.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c48/api-schema-governance.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c48/cli-classification.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c48/frontend-arithmetic-lint.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c48/function-audit.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c48/test-quality-classification.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c49/measurements/measurement-truth-api-contracts-coverage.json"
-            },
-            {
-              "change_type": "modified",
               "path": "runtime/generated/m9-c50.13/junit-invariant-money.xml"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-backend-unit-change.json"
             },
             {
               "change_type": "modified",
@@ -906,10 +945,6 @@
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c50/phase-11/lineage/run-no-change.json"
-            },
-            {
-              "change_type": "modified",
               "path": "runtime/generated/m9-c50/phase-11/lineage/run-rename.json"
             },
             {
@@ -934,7 +969,15 @@
             },
             {
               "change_type": "modified",
-              "path": "runtime/generated/m9-c70-workflow-convergence/progress.md"
+              "path": "runtime/generated/m9-c71-mutation-trust/dispatch-validation.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c71-mutation-trust/mutation-canary.json"
+            },
+            {
+              "change_type": "modified",
+              "path": "runtime/generated/m9-c71-mutation-trust/survivor-prioritisation.json"
             },
             {
               "change_type": "modified",
@@ -943,65 +986,43 @@
             {
               "change_type": "modified",
               "path": "runtime/generated/vea5-reconciliation.pr.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/runtime/generated/m9-c44/cache/index.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c70-workflow-convergence/environment-boundaries.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c70-workflow-convergence/failure-ledger.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c70-workflow-convergence/local-command-matrix.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c70-workflow-convergence/parity-matrix.json"
-            },
-            {
-              "change_type": "modified",
-              "path": "runtime/generated/m9-c70-workflow-convergence/workflow-classification.json"
             }
           ],
-          "generated_from": "2026-09-26T02:06:00.932510+00:00",
-          "recommended_verification": [],
+          "generated_from": "2026-09-28T09:53:48.016647+00:00",
+          "recommended_verification": [
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='UNMAPPED:frontend/lib/test_r4_probe.ts', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability UNMAPPED:frontend/lib/test_r4_probe.ts \u2014 no executable command available', has_executable_command=False)"
+          ],
           "risk": "HIGH",
           "stale_evidence": []
         },
-        "generated_at": "2026-09-26T02:06:02Z",
-        "id": "sha256:865d79d0337bb0f7809c56e35d0b0763b9172b4ab67a965596813a28dd29ac3b",
+        "generated_at": "2026-09-28T09:53:53Z",
+        "id": "sha256:6d8a663628f86691a29ecfe9e69c1384c45abc1253ed6d406ba858989974829c",
         "kind": "platform.change_intelligence",
         "version": "1.0.0"
       }
     },
     "diagnostics": {
-      "_c": 87147.771815114,
-      "_ts": "2026-09-28T08:29:56Z",
-      "hash": "cd0ca44fd79bbc6caf6d82deb980821b48c088c7669143a387256571ec9842a2",
+      "_c": 91280.691092898,
+      "_ts": "2026-09-28T09:38:51Z",
+      "hash": "2012c3a1cb87f907ef49d9bf8ee6a8f45fb990be4ce2738fe98bd44b0d21c272",
       "payload": {
         "data": {
           "classification": "UNHEALTHY",
           "evidence_count": 0,
-          "generated_at": "2026-09-28T08:29:56Z",
+          "generated_at": "2026-09-28T09:38:51Z",
           "summary": {
-            "active_errors": 306,
+            "active_errors": 307,
             "affected_capabilities": [
+              "unmapped:UNMAPPED:frontend/generated/toolchain-lock.json",
               "unmapped:UNMAPPED:frontend/__tests__/api-contracts/platform-c67.2.contract.test.ts",
-              "unmapped:UNMAPPED:frontend/app/api/diagnostic-signatures/route.ts",
+              "unmapped:UNMAPPED:frontend/components/os-shell/shell-boundary.tsx",
               "unmapped:UNMAPPED:frontend/generated/openapi-current.json",
               "unmapped:UNMAPPED:frontend/components/platform/footer-bar.tsx",
+              "unmapped:UNMAPPED:frontend/app/api/diagnostic-signatures/route.ts",
               "unmapped:UNMAPPED:frontend/components/platform/console-state.tsx",
-              "unmapped:UNMAPPED:frontend/components/os-shell/shell-boundary.tsx",
-              "unmapped:UNMAPPED:frontend/generated/toolchain-lock.json",
-              "unmapped:UNMAPPED:frontend/__tests__/utils/createMockResponse.ts",
+              "unmapped:UNMAPPED:frontend/.nvmrc",
               "unmapped:UNMAPPED:frontend/__tests__/simple.test.ts",
-              "unmapped:UNMAPPED:frontend/.nvmrc"
+              "unmapped:UNMAPPED:frontend/__tests__/utils/createMockResponse.ts"
             ],
             "facts": [
               "OBLIGATION_OPEN (platform.tasks): Change resolved to a capability with no verification-registry mapping (UNMAPPED:frontend/.nvmrc); bl",
@@ -1019,8 +1040,8 @@
             ]
           }
         },
-        "generated_at": "2026-09-28T08:29:56Z",
-        "id": "sha256:320b244a40d64f41d01dec64a2d951d9202dec3a28041eab28fd568d94910dfe",
+        "generated_at": "2026-09-28T09:38:51Z",
+        "id": "sha256:24eaccd592c50062c38e8cec7c98b0a2e43f187bd3e6d3b6a0e06f438b5dde0e",
         "kind": "platform.diagnostic_summary",
         "version": "1.0.0"
       }
@@ -2541,9 +2562,9 @@
       }
     },
     "health": {
-      "_c": 87070.730515392,
-      "_ts": "2026-09-28T08:28:39Z",
-      "hash": "a9fcaee58937e2258ea13b185972c670e0c5d8a1c1dd0683c649fa1cfc44e1b6",
+      "_c": 91203.954761601,
+      "_ts": "2026-09-28T09:37:34Z",
+      "hash": "a349a913b6cadd7a40789706b2ef852c2299ab17fa272a801068d2fddf8df5c2",
       "payload": {
         "data": {
           "ai": "READY",
@@ -2553,21 +2574,21 @@
           "domains": [
             {
               "detail": "runs=3 passed=1 failed=2",
-              "last_check": "2026-09-28T08:28:39Z",
+              "last_check": "2026-09-28T09:37:34Z",
               "name": "Verification",
               "source": "/platform/v1/verification",
               "status": "UNHEALTHY"
             },
             {
               "detail": "events=5",
-              "last_check": "2026-09-28T08:28:39Z",
+              "last_check": "2026-09-28T09:37:34Z",
               "name": "EventStore",
               "source": "EngineeringEventStore",
               "status": "HEALTHY"
             },
             {
               "detail": "critical=0 high=0 medium=0 low=0 self_tests=9/9",
-              "last_check": "2026-09-28T08:28:39Z",
+              "last_check": "2026-09-28T09:37:34Z",
               "name": "Framework Integrity",
               "source": "/platform/v1/framework/integrity",
               "status": "HEALTHY"
@@ -2579,8 +2600,8 @@
           "platform": "UNHEALTHY",
           "verification": "CURRENT"
         },
-        "generated_at": "2026-09-28T08:28:39Z",
-        "id": "sha256:1a46068d211639d17a328ae43b9376ce00c7dc12a0300dde8c34bcdf07a5b0ef",
+        "generated_at": "2026-09-28T09:37:34Z",
+        "id": "sha256:1dcbd98fa32160e25c86df6c2244003005d496951ea4860043d0566214bcf409",
         "kind": "platform.health_snapshot",
         "version": "1.0.0"
       }
@@ -5020,6 +5041,6 @@
       }
     }
   },
-  "generated_at": "2026-09-28T08:29:57Z",
+  "generated_at": "2026-09-28T09:53:53Z",
   "version": "1"
 }

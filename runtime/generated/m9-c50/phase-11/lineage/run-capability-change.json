@@ -1,13 +1,13 @@
 {
-  "run_id": "capability_change-b6ba1058",
-  "timestamp": "2026-09-28T07:44:06.177683+00:00",
-  "repository_sha": "ebe3d2e178869075ee3fb8ae1fa16c70de42b464",
+  "run_id": "capability_change-28db723d",
+  "timestamp": "2026-09-28T08:59:19.112714+00:00",
+  "repository_sha": "21a5b6be2ed1463c54bca6f26eb737a3299a13fc",
   "scenario": "capability_change",
   "changed_files": [
     "runtime/foundation/verification/test_r4_probe.py"
   ],
-  "plan_identity": "plan::capability_change-d6f45c69",
-  "execution_identity": "exec::capability_change-39eefcc9",
+  "plan_identity": "plan::capability_change-d7a5fc03",
+  "execution_identity": "exec::capability_change-a645da4c",
   "task_ids": [],
   "task_count": 0,
   "evidence_identities": [],
