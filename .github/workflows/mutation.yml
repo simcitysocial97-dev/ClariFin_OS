@@ -87,7 +87,10 @@ permissions:
   contents: read
 
 env:
-  MUTATION_COMPONENT: ${{ inputs.engine-name || 'all' }}
+  # M9-C72: bracket access is REQUIRED for hyphenated input names. Dotted
+  # access (`inputs.engine-name`) parses as subtraction and silently yields
+  # empty — which was invisible here only because empty equals the default.
+  MUTATION_COMPONENT: ${{ inputs['engine-name'] || 'all' }}
   MUTATION_MODE: ${{ inputs.mode || 'measure' }}
 
 jobs:
@@ -172,7 +175,7 @@ jobs:
           # computed makes the CLI fall back to the FULL plan rather than an
           # empty one, so a shallow clone or a bad ref can never silently skip
           # the campaign.
-          BASE="${{ inputs.base-ref }}"
+          BASE="${{ inputs['base-ref'] }}"
           if [ "$MUTATION_MODE" = "incremental" ]; then
             if [ -z "$BASE" ]; then
               BASE="${{ github.event.before }}"
@@ -347,7 +350,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-          REQUESTED: ${{ inputs.evidence-run-id }}
+          REQUESTED: ${{ inputs['evidence-run-id'] }}
         run: |
           set -euo pipefail
           if [ -n "$REQUESTED" ]; then

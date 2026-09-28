@@ -454,253 +454,24 @@
     "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts": 1789797547.6103573
   },
   "consumer_map": {
-    "/api/v1/import/execute": {
-      "endpoint": "/api/v1/import/execute",
+    "/api/v1/behaviour/wellness-score": {
+      "endpoint": "/api/v1/behaviour/wellness-score",
       "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-behaviour-capability.ts",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-behavior-score.ts"
       ],
       "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8864515
-    },
-    "/api/v1/reconciliation/:param/reject": {
-      "endpoint": "/api/v1/reconciliation/:param/reject",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-reconciliation.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.886476
-    },
-    "/platform/v1/verification/run/full": {
-      "endpoint": "/platform/v1/verification/run/full",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8864841
-    },
-    "/platform/workflows": {
-      "endpoint": "/platform/workflows",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1790585127.8864896
-    },
-    "/api/v1/workspaces/credit-cards:param": {
-      "endpoint": "/api/v1/workspaces/credit-cards:param",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-credit-cards-capability.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.886494
-    },
-    "/api/v1/export/csv": {
-      "endpoint": "/api/v1/export/csv",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8864982
-    },
-    "/platform/v1/diagnose/register": {
-      "endpoint": "/platform/v1/diagnose/register",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-diagnostics.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8865032
-    },
-    "/api/v1/cashflow/monthly": {
-      "endpoint": "/api/v1/cashflow/monthly",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-cashflow.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8865066
-    },
-    "/platform/v1/executions/:param": {
-      "endpoint": "/platform/v1/executions/:param",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/verification/run/[capability]/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1790585127.8865108
-    },
-    "/api/v1/statements": {
-      "endpoint": "/api/v1/statements",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8865144
-    },
-    "/platform/v1/tasks/:param/cancel": {
-      "endpoint": "/platform/v1/tasks/:param/cancel",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.886518
-    },
-    "/platform/v1/evidence/:param": {
-      "endpoint": "/platform/v1/evidence/:param",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/evidence/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1790585127.8865225
-    },
-    "/api/v1/categories": {
-      "endpoint": "/api/v1/categories",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.886526
-    },
-    "/platform/v1/errors/current": {
-      "endpoint": "/platform/v1/errors/current",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-diagnostics.ts"
-      ],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/detail/[id]/page.tsx"
-      ],
       "total_references": 2,
-      "last_scanned": 1790585127.8865306
+      "last_scanned": 1790586519.2913945
     },
-    "/platform/capabilities": {
-      "endpoint": "/platform/capabilities",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/capabilities/[capabilityId]/page.tsx",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/quick-actions.tsx",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
-      ],
-      "total_references": 3,
-      "last_scanned": 1790585127.8865354
-    },
-    "/api/v1/cards": {
-      "endpoint": "/api/v1/cards",
+    "/platform/v1/events": {
+      "endpoint": "/platform/v1/events",
       "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-cards.ts"
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-events.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.8865387
-    },
-    "/platform/v1/architecture/:param": {
-      "endpoint": "/platform/v1/architecture/:param",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-architecture.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8865654
-    },
-    "/api/v1/credit-cards": {
-      "endpoint": "/api/v1/credit-cards",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/gateway.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8865695
-    },
-    "/platform/capabilities/:param": {
-      "endpoint": "/platform/capabilities/:param",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/capabilities/page.tsx",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/change/page.tsx"
-      ],
-      "total_references": 2,
-      "last_scanned": 1790585127.8865736
-    },
-    "/platform/v1/errors/:param": {
-      "endpoint": "/platform/v1/errors/:param",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-errors.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8865774
-    },
-    "/api/v1/dashboard/summary": {
-      "endpoint": "/api/v1/dashboard/summary",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-dashboard-metrics.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.886582
-    },
-    "/api/v1/forecast": {
-      "endpoint": "/api/v1/forecast",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-forecast-capability.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8865857
-    },
-    "/platform/v1/evidence": {
-      "endpoint": "/platform/v1/evidence",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/evidence/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1790585127.886591
-    },
-    "/api/v1/import/detect": {
-      "endpoint": "/api/v1/import/detect",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8865945
-    },
-    "/api/v1/overview": {
-      "endpoint": "/api/v1/overview",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-overview.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8865983
-    },
-    "/api/v1/investments/:param": {
-      "endpoint": "/api/v1/investments/:param",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-investments.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.886603
-    },
-    "/platform/diagnostics/detail/:param": {
-      "endpoint": "/platform/diagnostics/detail/:param",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1790585127.886607
+      "last_scanned": 1790586519.2914112
     },
     "/platform/v1/tasks": {
       "endpoint": "/platform/v1/tasks",
@@ -712,16 +483,53 @@
         "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/detail/[id]/page.tsx"
       ],
       "total_references": 3,
-      "last_scanned": 1790585127.8866115
+      "last_scanned": 1790586519.2914188
     },
-    "/platform/v1/runs": {
-      "endpoint": "/platform/v1/runs",
+    "/platform/v1/capabilities": {
+      "endpoint": "/platform/v1/capabilities",
       "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-runs.ts"
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-capabilities.ts",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
+      ],
+      "component_files": [],
+      "total_references": 2,
+      "last_scanned": 1790586519.2914238
+    },
+    "/api/v1/overview": {
+      "endpoint": "/api/v1/overview",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-overview.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.8866146
+      "last_scanned": 1790586519.291428
+    },
+    "/api/v1/workspaces/investments:param": {
+      "endpoint": "/api/v1/workspaces/investments:param",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-investments-capability.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2914324
+    },
+    "/platform/health": {
+      "endpoint": "/platform/health",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1790586519.2914374
+    },
+    "/platform/v1/history/runs/:param": {
+      "endpoint": "/platform/v1/history/runs/:param",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/verification/history/[runId]/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1790586519.2914414
     },
     "/api/v1/loans/:param": {
       "endpoint": "/api/v1/loans/:param",
@@ -730,35 +538,44 @@
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.886618
+      "last_scanned": 1790586519.2914455
     },
-    "/platform/evidence": {
-      "endpoint": "/platform/evidence",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/runs/[runId]/page.tsx",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
-      ],
-      "total_references": 2,
-      "last_scanned": 1790585127.886622
-    },
-    "/api/v1/loans": {
-      "endpoint": "/api/v1/loans",
+    "/api/v1/reconciliation/:param/confirm": {
+      "endpoint": "/api/v1/reconciliation/:param/confirm",
       "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-loans.ts"
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-reconciliation.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.8866253
+      "last_scanned": 1790586519.2914639
     },
-    "/platform/verification/history/:param": {
-      "endpoint": "/platform/verification/history/:param",
+    "/platform/diagnostics/detail/:param": {
+      "endpoint": "/platform/diagnostics/detail/:param",
       "hook_files": [],
       "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/history/page.tsx"
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/page.tsx"
       ],
       "total_references": 1,
-      "last_scanned": 1790585127.8866284
+      "last_scanned": 1790586519.2914672
+    },
+    "/platform/v1/runs/:param": {
+      "endpoint": "/platform/v1/runs/:param",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-runs.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2914717
+    },
+    "/api/v1/accounts": {
+      "endpoint": "/api/v1/accounts",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-accounts-capability.ts",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-accounts.ts"
+      ],
+      "component_files": [],
+      "total_references": 2,
+      "last_scanned": 1790586519.291476
     },
     "/platform/settings": {
       "endpoint": "/platform/settings",
@@ -767,7 +584,7 @@
         "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/quick-actions.tsx"
       ],
       "total_references": 1,
-      "last_scanned": 1790585127.8866317
+      "last_scanned": 1790586519.2914793
     },
     "/platform/v1/architecture/authorities": {
       "endpoint": "/platform/v1/architecture/authorities",
@@ -776,63 +593,7 @@
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.886635
-    },
-    "/platform/v1/capabilities/:param": {
-      "endpoint": "/platform/v1/capabilities/:param",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-capabilities.ts",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
-      ],
-      "component_files": [],
-      "total_references": 2,
-      "last_scanned": 1790585127.88664
-    },
-    "/api/v1/workspaces/loans:param": {
-      "endpoint": "/api/v1/workspaces/loans:param",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-loans-capability.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8866436
-    },
-    "/platform/runs/:param": {
-      "endpoint": "/platform/runs/:param",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/runs/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1790585127.8866475
-    },
-    "/api/v1/upload": {
-      "endpoint": "/api/v1/upload",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8866508
-    },
-    "/platform/v1/verification/run/group": {
-      "endpoint": "/platform/v1/verification/run/group",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8866546
-    },
-    "/platform/runs": {
-      "endpoint": "/platform/runs",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/runs/[runId]/page.tsx",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
-      ],
-      "total_references": 2,
-      "last_scanned": 1790585127.886658
+      "last_scanned": 1790586519.291483
     },
     "/platform/v1/framework/integrity": {
       "endpoint": "/platform/v1/framework/integrity",
@@ -843,25 +604,359 @@
         "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/framework/page.tsx"
       ],
       "total_references": 2,
-      "last_scanned": 1790585127.8866627
+      "last_scanned": 1790586519.2914867
     },
-    "/platform/v1/errors/frequency": {
-      "endpoint": "/platform/v1/errors/frequency",
+    "/platform/v1/history/baselines": {
+      "endpoint": "/platform/v1/history/baselines",
       "hook_files": [],
       "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/errors/page.tsx"
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/history/page.tsx"
       ],
       "total_references": 1,
-      "last_scanned": 1790585127.8866663
+      "last_scanned": 1790586519.2914903
     },
-    "/api/v1/workspaces/investments:param": {
-      "endpoint": "/api/v1/workspaces/investments:param",
+    "/platform/verification/:param": {
+      "endpoint": "/platform/verification/:param",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/verification/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1790586519.2914932
+    },
+    "/platform/v1/change/intelligence": {
+      "endpoint": "/platform/v1/change/intelligence",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/change/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1790586519.2914965
+    },
+    "/api/v1/loans": {
+      "endpoint": "/api/v1/loans",
       "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-investments-capability.ts"
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-loans.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.886673
+      "last_scanned": 1790586519.2914996
+    },
+    "/api/v1/banks": {
+      "endpoint": "/api/v1/banks",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915025
+    },
+    "/platform/v1/errors/:param": {
+      "endpoint": "/platform/v1/errors/:param",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-errors.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915058
+    },
+    "/platform/v1/verification/run/group": {
+      "endpoint": "/platform/v1/verification/run/group",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.29151
+    },
+    "/platform/v1/diagnose/register": {
+      "endpoint": "/platform/v1/diagnose/register",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-diagnostics.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915127
+    },
+    "/platform/architecture": {
+      "endpoint": "/platform/architecture",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/page.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/quick-actions.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
+      ],
+      "total_references": 3,
+      "last_scanned": 1790586519.291516
+    },
+    "/platform/v1/verification/runs/recent": {
+      "endpoint": "/platform/v1/verification/runs/recent",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915194
+    },
+    "/platform/v1/architecture/:param": {
+      "endpoint": "/platform/v1/architecture/:param",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-architecture.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915225
+    },
+    "/api/v1/cards": {
+      "endpoint": "/api/v1/cards",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-cards.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915258
+    },
+    "/platform/v1/verification/run/affected": {
+      "endpoint": "/platform/v1/verification/run/affected",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915292
+    },
+    "/api/v1/dashboard/summary": {
+      "endpoint": "/api/v1/dashboard/summary",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-dashboard-metrics.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915325
+    },
+    "/api/v1/investments": {
+      "endpoint": "/api/v1/investments",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-investments.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915356
+    },
+    "/platform/v1/tasks/:param/cancel": {
+      "endpoint": "/platform/v1/tasks/:param/cancel",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915387
+    },
+    "/platform/verification/history/:param": {
+      "endpoint": "/platform/verification/history/:param",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/history/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1790586519.291542
+    },
+    "/platform/v1/errors/current": {
+      "endpoint": "/platform/v1/errors/current",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-diagnostics.ts"
+      ],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/detail/[id]/page.tsx"
+      ],
+      "total_references": 2,
+      "last_scanned": 1790586519.2915459
+    },
+    "/platform/runs/:param": {
+      "endpoint": "/platform/runs/:param",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/runs/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915492
+    },
+    "/platform/v1/verification/recommendation": {
+      "endpoint": "/platform/v1/verification/recommendation",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.291552
+    },
+    "/api/v1/reconciliation/:param/reject": {
+      "endpoint": "/api/v1/reconciliation/:param/reject",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-reconciliation.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915552
+    },
+    "/platform/v1/evidence": {
+      "endpoint": "/platform/v1/evidence",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/evidence/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915585
+    },
+    "/platform/v1/runs": {
+      "endpoint": "/platform/v1/runs",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-runs.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915614
+    },
+    "/api/v1/export/csv": {
+      "endpoint": "/api/v1/export/csv",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915647
+    },
+    "/api/v1/import/execute": {
+      "endpoint": "/api/v1/import/execute",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915676
+    },
+    "/platform/history": {
+      "endpoint": "/platform/history",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/history/compare/page.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/runs/page.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/quick-actions.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
+      ],
+      "total_references": 4,
+      "last_scanned": 1790586519.2915714
+    },
+    "/api/v1/workspaces/loans:param": {
+      "endpoint": "/api/v1/workspaces/loans:param",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-loans-capability.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915745
+    },
+    "/api/v1/workspaces/reconciliation:param": {
+      "endpoint": "/api/v1/workspaces/reconciliation:param",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-reconciliation-capability.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915792
+    },
+    "/api/v1/upload": {
+      "endpoint": "/api/v1/upload",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915819
+    },
+    "/platform/v1/framework/self-tests": {
+      "endpoint": "/platform/v1/framework/self-tests",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/framework/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1790586519.291585
+    },
+    "/platform/errors": {
+      "endpoint": "/platform/errors",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/capabilities/[capabilityId]/page.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/page.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/quick-actions.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
+      ],
+      "total_references": 4,
+      "last_scanned": 1790586519.291589
+    },
+    "/api/v1/workspaces/net-worth:param": {
+      "endpoint": "/api/v1/workspaces/net-worth:param",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-net-worth-capability.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915921
+    },
+    "/api/v1/statements": {
+      "endpoint": "/api/v1/statements",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915952
+    },
+    "/platform/history/compare": {
+      "endpoint": "/platform/history/compare",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/history/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1790586519.2915983
+    },
+    "/platform/v1/architecture/authority/:param": {
+      "endpoint": "/platform/v1/architecture/authority/:param",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-architecture.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2916014
+    },
+    "/api/v1/reconciliation/pending": {
+      "endpoint": "/api/v1/reconciliation/pending",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-reconciliation.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2916043
+    },
+    "/api/v1/investments/:param": {
+      "endpoint": "/api/v1/investments/:param",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-investments.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2916071
+    },
+    "/platform/v1/status": {
+      "endpoint": "/platform/v1/status",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-status.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2916105
     },
     "/platform/verification": {
       "endpoint": "/platform/verification",
@@ -878,16 +973,63 @@
         "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
       ],
       "total_references": 9,
-      "last_scanned": 1790585127.8866796
+      "last_scanned": 1790586519.2916162
     },
-    "/api/v1/accounts/:param": {
-      "endpoint": "/api/v1/accounts/:param",
+    "/platform/v1/executions/:param/stream": {
+      "endpoint": "/platform/v1/executions/:param/stream",
       "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-accounts.ts"
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-live-execution.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.8866835
+      "last_scanned": 1790586519.2916193
+    },
+    "/platform/evidence": {
+      "endpoint": "/platform/evidence",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/runs/[runId]/page.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
+      ],
+      "total_references": 2,
+      "last_scanned": 1790586519.2916224
+    },
+    "/api/v1/workspaces/credit-cards:param": {
+      "endpoint": "/api/v1/workspaces/credit-cards:param",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-credit-cards-capability.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2916257
+    },
+    "/api/v1/forecast": {
+      "endpoint": "/api/v1/forecast",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-forecast-capability.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.291629
+    },
+    "/platform/v1/errors/frequency": {
+      "endpoint": "/platform/v1/errors/frequency",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/errors/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1790586519.2916322
+    },
+    "/platform/capabilities/:param": {
+      "endpoint": "/platform/capabilities/:param",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/capabilities/page.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/change/page.tsx"
+      ],
+      "total_references": 2,
+      "last_scanned": 1790586519.291636
     },
     "/platform/v1/workflows": {
       "endpoint": "/platform/v1/workflows",
@@ -896,65 +1038,16 @@
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.8866873
+      "last_scanned": 1790586519.291639
     },
-    "/api/v1/accounts": {
-      "endpoint": "/api/v1/accounts",
+    "/api/v1/loans/:param/prepayment-simulation": {
+      "endpoint": "/api/v1/loans/:param/prepayment-simulation",
       "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-accounts-capability.ts",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-accounts.ts"
-      ],
-      "component_files": [],
-      "total_references": 2,
-      "last_scanned": 1790585127.8866909
-    },
-    "/platform/v1/status": {
-      "endpoint": "/platform/v1/status",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-status.ts"
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-loans.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.8866942
-    },
-    "/platform/v1/capabilities/:param/graph": {
-      "endpoint": "/platform/v1/capabilities/:param/graph",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-capabilities.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8866968
-    },
-    "/platform/health": {
-      "endpoint": "/platform/health",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1790585127.886701
-    },
-    "/platform/v1/health": {
-      "endpoint": "/platform/v1/health",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-diagnostics.ts",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-health.ts"
-      ],
-      "component_files": [],
-      "total_references": 2,
-      "last_scanned": 1790585127.886705
-    },
-    "/platform/framework": {
-      "endpoint": "/platform/framework",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/architecture/page.tsx",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/page.tsx",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
-      ],
-      "total_references": 3,
-      "last_scanned": 1790585127.8867092
+      "last_scanned": 1790586519.291642
     },
     "/api/v1/analytics": {
       "endpoint": "/api/v1/analytics",
@@ -963,83 +1056,43 @@
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.886712
+      "last_scanned": 1790586519.2916453
     },
-    "/api/v1/banks": {
-      "endpoint": "/api/v1/banks",
+    "/api/v1/transactions": {
+      "endpoint": "/api/v1/transactions",
       "hook_files": [
         "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.8867161
+      "last_scanned": 1790586519.2916477
     },
-    "/api/v1/loans/:param/schedule": {
-      "endpoint": "/api/v1/loans/:param/schedule",
+    "/api/v1/import/detect": {
+      "endpoint": "/api/v1/import/detect",
       "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-loans.ts"
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.8867195
+      "last_scanned": 1790586519.2916505
     },
-    "/platform/history": {
-      "endpoint": "/platform/history",
+    "/platform/workflows": {
+      "endpoint": "/platform/workflows",
       "hook_files": [],
       "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/history/compare/page.tsx",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/runs/page.tsx",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/quick-actions.tsx",
         "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
       ],
-      "total_references": 4,
-      "last_scanned": 1790585127.886723
+      "total_references": 1,
+      "last_scanned": 1790586519.2916534
     },
-    "/platform/v1/runs/:param": {
-      "endpoint": "/platform/v1/runs/:param",
+    "/api/v1/members": {
+      "endpoint": "/api/v1/members",
       "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-runs.ts"
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.8867266
-    },
-    "/platform/v1/verification/recommendation": {
-      "endpoint": "/platform/v1/verification/recommendation",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.88673
-    },
-    "/api/v1/behaviour/wellness-score": {
-      "endpoint": "/api/v1/behaviour/wellness-score",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-behaviour-capability.ts",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-behavior-score.ts"
-      ],
-      "component_files": [],
-      "total_references": 2,
-      "last_scanned": 1790585127.8867333
-    },
-    "/platform/v1/events": {
-      "endpoint": "/platform/v1/events",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-events.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8867362
-    },
-    "/platform/v1/verification/run/affected": {
-      "endpoint": "/platform/v1/verification/run/affected",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8867393
+      "last_scanned": 1790586519.2916565
     },
     "/platform/verification/run/:param": {
       "endpoint": "/platform/verification/run/:param",
@@ -1051,7 +1104,65 @@
         "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/verification/[capability]/page.tsx"
       ],
       "total_references": 4,
-      "last_scanned": 1790585127.886743
+      "last_scanned": 1790586519.29166
+    },
+    "/platform/capabilities": {
+      "endpoint": "/platform/capabilities",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/capabilities/[capabilityId]/page.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/quick-actions.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
+      ],
+      "total_references": 3,
+      "last_scanned": 1790586519.2916634
+    },
+    "/api/v1/categories": {
+      "endpoint": "/api/v1/categories",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2916665
+    },
+    "/api/v1/credit-cards": {
+      "endpoint": "/api/v1/credit-cards",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/gateway.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2916696
+    },
+    "/api/v1/accounts/:param": {
+      "endpoint": "/api/v1/accounts/:param",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-accounts.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.291677
+    },
+    "/platform/framework": {
+      "endpoint": "/platform/framework",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/architecture/page.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/page.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
+      ],
+      "total_references": 3,
+      "last_scanned": 1790586519.2916808
+    },
+    "/api/v1/cashflow/monthly": {
+      "endpoint": "/api/v1/cashflow/monthly",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-cashflow.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.291684
     },
     "/platform/diagnostics": {
       "endpoint": "/platform/diagnostics",
@@ -1063,210 +1174,7 @@
         "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
       ],
       "total_references": 4,
-      "last_scanned": 1790585127.8867474
-    },
-    "/platform/v1/framework/self-tests": {
-      "endpoint": "/platform/v1/framework/self-tests",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/framework/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1790585127.8867505
-    },
-    "/platform/v1/executions/:param/stream": {
-      "endpoint": "/platform/v1/executions/:param/stream",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-live-execution.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8867538
-    },
-    "/platform/verification/:param": {
-      "endpoint": "/platform/verification/:param",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/verification/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1790585127.886757
-    },
-    "/platform/v1/history/runs/:param": {
-      "endpoint": "/platform/v1/history/runs/:param",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/verification/history/[runId]/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1790585127.8867602
-    },
-    "/platform/v1/verification/runs/recent": {
-      "endpoint": "/platform/v1/verification/runs/recent",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8867629
-    },
-    "/platform/diagnostics/change": {
-      "endpoint": "/platform/diagnostics/change",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/page.tsx",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/quick-actions.tsx",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
-      ],
-      "total_references": 3,
-      "last_scanned": 1790585127.8867667
-    },
-    "/platform/v1/diagnose": {
-      "endpoint": "/platform/v1/diagnose",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-diagnostics.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.88677
-    },
-    "/platform/v1/change/intelligence": {
-      "endpoint": "/platform/v1/change/intelligence",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/change/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1790585127.886773
-    },
-    "/platform/v1/history/compare": {
-      "endpoint": "/platform/v1/history/compare",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/history/compare/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1790585127.886777
-    },
-    "/api/v1/members": {
-      "endpoint": "/api/v1/members",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8867798
-    },
-    "/platform/v1/architecture/authority/:param": {
-      "endpoint": "/platform/v1/architecture/authority/:param",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-architecture.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.886783
-    },
-    "/api/v1/workspaces/reconciliation:param": {
-      "endpoint": "/api/v1/workspaces/reconciliation:param",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-reconciliation-capability.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8867867
-    },
-    "/api/v1/reconciliation/:param/confirm": {
-      "endpoint": "/api/v1/reconciliation/:param/confirm",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-reconciliation.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8867896
-    },
-    "/platform/v1/verification/run": {
-      "endpoint": "/platform/v1/verification/run",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
-      ],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/verification/run/[capability]/page.tsx"
-      ],
-      "total_references": 2,
-      "last_scanned": 1790585127.886794
-    },
-    "/api/v1/reconciliation": {
-      "endpoint": "/api/v1/reconciliation",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-reconciliation.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.886797
-    },
-    "/platform/v1/history/baselines": {
-      "endpoint": "/platform/v1/history/baselines",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/history/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1790585127.8868108
-    },
-    "/platform/history/compare": {
-      "endpoint": "/platform/history/compare",
-      "hook_files": [],
-      "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/history/page.tsx"
-      ],
-      "total_references": 1,
-      "last_scanned": 1790585127.8868139
-    },
-    "/api/overview": {
-      "endpoint": "/api/overview",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-query-finance.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8868165
-    },
-    "/api/v1/workspaces/cashflow": {
-      "endpoint": "/api/v1/workspaces/cashflow",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-cashflow-capability.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8868194
-    },
-    "/api/v1/transactions": {
-      "endpoint": "/api/v1/transactions",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/api/client.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.886823
-    },
-    "/api/v1/loans/:param/prepayment-simulation": {
-      "endpoint": "/api/v1/loans/:param/prepayment-simulation",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-loans.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.886827
-    },
-    "/platform/v1/capabilities": {
-      "endpoint": "/platform/v1/capabilities",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-capabilities.ts",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
-      ],
-      "component_files": [],
-      "total_references": 2,
-      "last_scanned": 1790585127.886831
+      "last_scanned": 1790586519.2916875
     },
     "/platform/v1/diagnostics/signatures": {
       "endpoint": "/platform/v1/diagnostics/signatures",
@@ -1277,57 +1185,65 @@
         "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/detail/[id]/page.tsx"
       ],
       "total_references": 2,
-      "last_scanned": 1790585127.8868396
+      "last_scanned": 1790586519.2916913
     },
-    "/api/v1/net-worth": {
-      "endpoint": "/api/v1/net-worth",
+    "/platform/v1/verification/run": {
+      "endpoint": "/platform/v1/verification/run",
       "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-networth.ts"
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
+      ],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/verification/run/[capability]/page.tsx"
+      ],
+      "total_references": 2,
+      "last_scanned": 1790586519.2916944
+    },
+    "/api/v1/workspaces/cashflow": {
+      "endpoint": "/api/v1/workspaces/cashflow",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-cashflow-capability.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.8868437
+      "last_scanned": 1790586519.2916973
     },
-    "/api/v1/investments": {
-      "endpoint": "/api/v1/investments",
+    "/platform/v1/verification/run/full": {
+      "endpoint": "/platform/v1/verification/run/full",
       "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-investments.ts"
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.8868477
+      "last_scanned": 1790586519.2916994
     },
-    "/platform/errors": {
-      "endpoint": "/platform/errors",
+    "/platform/v1/capabilities/:param": {
+      "endpoint": "/platform/v1/capabilities/:param",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-capabilities.ts",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-verification-center.ts"
+      ],
+      "component_files": [],
+      "total_references": 2,
+      "last_scanned": 1790586519.2917025
+    },
+    "/platform/runs": {
+      "endpoint": "/platform/runs",
       "hook_files": [],
       "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/capabilities/[capabilityId]/page.tsx",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/page.tsx",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/quick-actions.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/runs/[runId]/page.tsx",
         "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
       ],
-      "total_references": 4,
-      "last_scanned": 1790585127.886852
+      "total_references": 2,
+      "last_scanned": 1790586519.2917054
     },
-    "/api/v1/workspaces/net-worth:param": {
-      "endpoint": "/api/v1/workspaces/net-worth:param",
-      "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/capabilities/use-net-worth-capability.ts"
-      ],
-      "component_files": [],
-      "total_references": 1,
-      "last_scanned": 1790585127.8868556
-    },
-    "/platform/architecture": {
-      "endpoint": "/platform/architecture",
+    "/platform/v1/evidence/:param": {
+      "endpoint": "/platform/v1/evidence/:param",
       "hook_files": [],
       "component_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/page.tsx",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/quick-actions.tsx",
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/evidence/page.tsx"
       ],
-      "total_references": 3,
-      "last_scanned": 1790585127.8868592
+      "total_references": 1,
+      "last_scanned": 1790586519.2917085
     },
     "/platform/v1/history/runs": {
       "endpoint": "/platform/v1/history/runs",
@@ -1336,16 +1252,45 @@
         "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/history/page.tsx"
       ],
       "total_references": 1,
-      "last_scanned": 1790585127.886862
+      "last_scanned": 1790586519.2917116
     },
-    "/api/v1/reconciliation/pending": {
-      "endpoint": "/api/v1/reconciliation/pending",
+    "/platform/v1/capabilities/:param/graph": {
+      "endpoint": "/platform/v1/capabilities/:param/graph",
       "hook_files": [
-        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-reconciliation.ts"
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-capabilities.ts"
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.8868845
+      "last_scanned": 1790586519.2917142
+    },
+    "/platform/diagnostics/change": {
+      "endpoint": "/platform/diagnostics/change",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/diagnostics/page.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/quick-actions.tsx",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/platform/sidebar.tsx"
+      ],
+      "total_references": 3,
+      "last_scanned": 1790586519.291718
+    },
+    "/api/overview": {
+      "endpoint": "/api/overview",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-query-finance.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2917233
+    },
+    "/platform/v1/diagnose": {
+      "endpoint": "/platform/v1/diagnose",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-diagnostics.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.291726
     },
     "/api/v1/reconciliation/scan": {
       "endpoint": "/api/v1/reconciliation/scan",
@@ -1354,7 +1299,62 @@
       ],
       "component_files": [],
       "total_references": 1,
-      "last_scanned": 1790585127.886888
+      "last_scanned": 1790586519.2917285
+    },
+    "/api/v1/net-worth": {
+      "endpoint": "/api/v1/net-worth",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-networth.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.291731
+    },
+    "/platform/v1/history/compare": {
+      "endpoint": "/platform/v1/history/compare",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/history/compare/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1790586519.2917342
+    },
+    "/platform/v1/health": {
+      "endpoint": "/platform/v1/health",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-diagnostics.ts",
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-platform-health.ts"
+      ],
+      "component_files": [],
+      "total_references": 2,
+      "last_scanned": 1790586519.2917376
+    },
+    "/api/v1/reconciliation": {
+      "endpoint": "/api/v1/reconciliation",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-reconciliation.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2917404
+    },
+    "/api/v1/loans/:param/schedule": {
+      "endpoint": "/api/v1/loans/:param/schedule",
+      "hook_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-loans.ts"
+      ],
+      "component_files": [],
+      "total_references": 1,
+      "last_scanned": 1790586519.2917433
+    },
+    "/platform/v1/executions/:param": {
+      "endpoint": "/platform/v1/executions/:param",
+      "hook_files": [],
+      "component_files": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/verification/run/[capability]/page.tsx"
+      ],
+      "total_references": 1,
+      "last_scanned": 1790586519.291746
     }
   }
 }

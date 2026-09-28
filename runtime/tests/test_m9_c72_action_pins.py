@@ -207,6 +207,54 @@ class TestDownloadActionContract:
         assert "v7.0.1" in text, "the trap tag must be named so the history survives"
 
 
+# ── expression syntax: the bug that yields empty instead of failing ───────────
+
+
+class TestDispatchInputExpressions:
+    """Hyphenated `workflow_dispatch` inputs cannot use dotted access.
+
+    `${{ inputs.engine-name }}` parses as `inputs.engine - run - id` and
+    evaluates to EMPTY — it does not error. That is the dangerous part: a
+    silent empty is indistinguishable from a defaulted input.
+
+    It stayed hidden here because the affected input, `engine-name`, has a
+    default of `all` and empty is handled the same way, so the campaign
+    produced a correct full plan and nothing looked wrong. When
+    `evidence-run-id` was added with no default, the replay path resolved an
+    empty run id and failed with "No run with shard evidence was found" while
+    the log showed the correct id in the environment.
+
+    A guard turns a silent wrong value into a failing test.
+    """
+
+    @pytest.mark.parametrize("workflow", sorted(WORKFLOWS.glob("workflows/*.yml")))
+    def test_no_hyphenated_input_uses_dotted_access(self, workflow):
+        # Comment lines are excluded: this file's own documentation quotes the
+        # broken form to explain it, and a guard that flagged its own
+        # explanation would have to be deleted rather than trusted.
+        expressions = [
+            line
+            for line in workflow.read_text(encoding="utf-8").splitlines()
+            if not line.lstrip().startswith("#")
+        ]
+        offenders = {
+            match.group(0)
+            for line in expressions
+            for match in re.finditer(r"inputs\.([A-Za-z0-9_-]*-)", line)
+        }
+
+        assert not offenders, (
+            f"{workflow.name}: dotted access on a hyphenated input name "
+            f"({', '.join(sorted(offenders))}); use inputs['name-with-hyphen']"
+        )
+
+    def test_the_mutation_workflow_reads_its_replay_input(self):
+        """The input that actually broke the replay path must be read correctly."""
+        text = (WORKFLOWS / "workflows" / "mutation.yml").read_text(encoding="utf-8")
+
+        assert "inputs['evidence-run-id']" in text
+
+
 # ── the exit-code contract that made a below-threshold run lie ───────────────
 
 
