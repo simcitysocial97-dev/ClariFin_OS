@@ -63,10 +63,16 @@ def test_m81_stale_workflows_use_verification_command_pattern():
     }
     # mutation is pinned per job, because each job owns a distinct canonical
     # command (shard measurement vs plan emission vs aggregate reconciliation).
+    #
+    # M9-C72 adds `mutation-replay`: a repair path that reconciles a prior run's
+    # shard evidence WITHOUT re-measuring, so a transport fault costs a
+    # re-download rather than a full campaign. It carries its own canonical
+    # command, so it is pinned here like every other mutation job.
     mutation_job_profiles = {
         "mutation-smoke": "mutation",
         "mutation-plan": "mutation-plan",
         "mutation": "mutation",
+        "mutation-replay": "mutation-aggregate",
         "mutation-aggregate": "mutation-aggregate",
     }
     for wf in STALE:

@@ -400,6 +400,12 @@ def freeze_baseline() -> dict:
                 "no_tests": int((payload or {}).get("no_tests") or 0),
                 "timeout": int((payload or {}).get("timeout") or 0),
                 "score": (payload or {}).get("mutation_score"),
+                # M9-C72 (D3): the shard summary DOES record its own wall clock,
+                # but the baseline row never carried it, so measure_shard_budget
+                # found no durations at all and every budget, throughput and
+                # pathological-shard figure was silently null. C71 Phase 15 was
+                # therefore non-functional while appearing to produce output.
+                "duration_seconds": (payload or {}).get("duration_seconds"),
             }
         )
 

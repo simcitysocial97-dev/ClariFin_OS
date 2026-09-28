@@ -1,6 +1,6 @@
 {
   "schema": "m9-c71-equivalence-evidence/v1",
-  "recorded_at": "2026-09-28T03:16:49.649022+00:00",
+  "recorded_at": "2026-09-28T06:50:24.290343+00:00",
   "functions_analysed": 207,
   "functions_proven_equivalent": 4,
   "functions_shown_distinguishable": 0,

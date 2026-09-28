@@ -1,9 +1,9 @@
 {
   "domains": {
     "capabilities": {
-      "_c": 38923.287722572,
-      "_ts": "2026-09-25T18:13:54Z",
-      "hash": "5b3abaeb997c794e2b3a8bc8d5ba783b6e9ba2a8344c48d92e8ebf1ef5e17dba",
+      "_c": 87149.386819438,
+      "_ts": "2026-09-28T08:29:57Z",
+      "hash": "c758fee3936b17e5cb2e482f5a9da6bbc43b7f8751284a110dd74ebfb9551366",
       "payload": {
         "data": {
           "categories": [
@@ -769,7 +769,7 @@
             }
           ]
         },
-        "generated_at": "2026-09-25T18:13:54Z",
+        "generated_at": "2026-09-28T08:29:57Z",
         "id": "sha256:604de18e19d978fb4d43a3200ec7c8f9552cfd2ba9ffc88a7d31d64d79551925",
         "kind": "platform.capability_list",
         "version": "1.0.0"
@@ -981,26 +981,34 @@
       }
     },
     "diagnostics": {
-      "_c": 38960.38647393,
-      "_ts": "2026-09-25T18:14:31Z",
-      "hash": "63b71cd86cc10fb5034701dce4d70f7cab9f38b316a22d641de3b3688e8d6d75",
+      "_c": 87147.771815114,
+      "_ts": "2026-09-28T08:29:56Z",
+      "hash": "cd0ca44fd79bbc6caf6d82deb980821b48c088c7669143a387256571ec9842a2",
       "payload": {
         "data": {
           "classification": "UNHEALTHY",
           "evidence_count": 0,
-          "generated_at": "2026-09-25T18:14:31Z",
+          "generated_at": "2026-09-28T08:29:56Z",
           "summary": {
-            "active_errors": 8,
+            "active_errors": 306,
             "affected_capabilities": [
-              "api-contracts",
-              "runtime-verification"
+              "unmapped:UNMAPPED:frontend/__tests__/api-contracts/platform-c67.2.contract.test.ts",
+              "unmapped:UNMAPPED:frontend/app/api/diagnostic-signatures/route.ts",
+              "unmapped:UNMAPPED:frontend/generated/openapi-current.json",
+              "unmapped:UNMAPPED:frontend/components/platform/footer-bar.tsx",
+              "unmapped:UNMAPPED:frontend/components/platform/console-state.tsx",
+              "unmapped:UNMAPPED:frontend/components/os-shell/shell-boundary.tsx",
+              "unmapped:UNMAPPED:frontend/generated/toolchain-lock.json",
+              "unmapped:UNMAPPED:frontend/__tests__/utils/createMockResponse.ts",
+              "unmapped:UNMAPPED:frontend/__tests__/simple.test.ts",
+              "unmapped:UNMAPPED:frontend/.nvmrc"
             ],
             "facts": [
-              "OBLIGATION_OPEN (platform.tasks): Directly affected by change",
-              "OBLIGATION_OPEN (platform.tasks): Directly affected by change",
-              "OBLIGATION_OPEN (platform.tasks): Directly affected by change",
-              "OBLIGATION_OPEN (platform.tasks): Directly affected by change",
-              "OBLIGATION_OPEN (platform.tasks): Directly affected by change"
+              "OBLIGATION_OPEN (platform.tasks): Change resolved to a capability with no verification-registry mapping (UNMAPPED:frontend/.nvmrc); bl",
+              "OBLIGATION_OPEN (platform.tasks): Change resolved to a capability with no verification-registry mapping (UNMAPPED:frontend/__tests__/a",
+              "OBLIGATION_OPEN (platform.tasks): Change resolved to a capability with no verification-registry mapping (UNMAPPED:frontend/__tests__/s",
+              "OBLIGATION_OPEN (platform.tasks): Change resolved to a capability with no verification-registry mapping (UNMAPPED:frontend/__tests__/u",
+              "OBLIGATION_OPEN (platform.tasks): Change resolved to a capability with no verification-registry mapping (UNMAPPED:frontend/app/api/dia"
             ],
             "level": "L3",
             "recommendations": [
@@ -1011,8 +1019,8 @@
             ]
           }
         },
-        "generated_at": "2026-09-25T18:14:31Z",
-        "id": "sha256:ccb999e8291ad67e2fedb6ea86cd9f193d3140bc1518ce3fffdf060de1048191",
+        "generated_at": "2026-09-28T08:29:56Z",
+        "id": "sha256:320b244a40d64f41d01dec64a2d951d9202dec3a28041eab28fd568d94910dfe",
         "kind": "platform.diagnostic_summary",
         "version": "1.0.0"
       }
@@ -2533,9 +2541,9 @@
       }
     },
     "health": {
-      "_c": 38921.735928124,
-      "_ts": "2026-09-25T18:13:52Z",
-      "hash": "e891c61fc4276fccf97007003a70683ccf3f399eeb6852f19630a967a65c76b9",
+      "_c": 87070.730515392,
+      "_ts": "2026-09-28T08:28:39Z",
+      "hash": "a9fcaee58937e2258ea13b185972c670e0c5d8a1c1dd0683c649fa1cfc44e1b6",
       "payload": {
         "data": {
           "ai": "READY",
@@ -2545,21 +2553,21 @@
           "domains": [
             {
               "detail": "runs=3 passed=1 failed=2",
-              "last_check": "2026-09-25T18:13:52Z",
+              "last_check": "2026-09-28T08:28:39Z",
               "name": "Verification",
               "source": "/platform/v1/verification",
               "status": "UNHEALTHY"
             },
             {
               "detail": "events=5",
-              "last_check": "2026-09-25T18:13:52Z",
+              "last_check": "2026-09-28T08:28:39Z",
               "name": "EventStore",
               "source": "EngineeringEventStore",
               "status": "HEALTHY"
             },
             {
               "detail": "critical=0 high=0 medium=0 low=0 self_tests=9/9",
-              "last_check": "2026-09-25T18:13:52Z",
+              "last_check": "2026-09-28T08:28:39Z",
               "name": "Framework Integrity",
               "source": "/platform/v1/framework/integrity",
               "status": "HEALTHY"
@@ -2571,8 +2579,8 @@
           "platform": "UNHEALTHY",
           "verification": "CURRENT"
         },
-        "generated_at": "2026-09-25T18:13:52Z",
-        "id": "sha256:f487460b7fa9dd08961cfb190074f112c0c50bcc6ed88db417df203c040ce436",
+        "generated_at": "2026-09-28T08:28:39Z",
+        "id": "sha256:1a46068d211639d17a328ae43b9376ce00c7dc12a0300dde8c34bcdf07a5b0ef",
         "kind": "platform.health_snapshot",
         "version": "1.0.0"
       }
@@ -5012,6 +5020,6 @@
       }
     }
   },
-  "generated_at": "2026-09-26T02:06:02Z",
+  "generated_at": "2026-09-28T08:29:57Z",
   "version": "1"
 }

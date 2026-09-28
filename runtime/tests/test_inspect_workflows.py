@@ -49,14 +49,70 @@ class TestInspectWorkflows:
             assert isinstance(w.parity_status, str)
 
     def test_job_metadata_complete(self):
-        """Each job must have id, runs_on, steps, timeout."""
+        """Each job must have id, runs_on, steps, and a usable timeout.
+
+        M9-C72: a job may declare `timeout-minutes` as a GitHub Actions
+        expression — the mutation campaign derives its per-shard budget from
+        measured p95 rather than hard-coding it. The inspector cannot evaluate
+        an expression and reports it as 0, which is this module's standing
+        meaning for "not statically determinable", so 0 is allowed here and the
+        expression itself is asserted separately.
+
+        What this still catches: a job that declares a NEGATIVE or zero budget,
+        which would mean a guaranteed immediate failure.
+        """
         records = enumerate_workflows()
         for w in records:
             for j in w.jobs:
                 assert isinstance(j, WorkflowJob)
                 assert j.job_id, f"job_id empty in {w.workflow_id}"
                 assert isinstance(j.steps, list)
-                assert j.timeout_minutes >= 0
+                assert isinstance(j.timeout_minutes, int), (
+                    f"{w.workflow_id}/{j.job_id} has a non-integer timeout; "
+                    "an expression-valued timeout must be coerced, not passed "
+                    "through, or every downstream comparison breaks"
+                )
+                assert j.timeout_minutes >= 0, (
+                    f"{w.workflow_id}/{j.job_id} declares a negative timeout"
+                )
+    def test_every_job_declares_a_timeout(self):
+        """A job with no timeout runs for GitHub's 6-hour default.
+
+        That is a silent 4x budget increase for any job that simply forgot to
+        set one, so absence is worth failing on now that expression-valued
+        timeouts parse as None.
+        """
+        import yaml
+
+        root = Path(__file__).resolve().parent.parent.parent
+        for path in sorted((root / ".github" / "workflows").glob("*.yml")):
+            workflow = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            for job_id, job in (workflow.get("jobs") or {}).items():
+                if not isinstance(job, dict):
+                    continue
+                assert "timeout-minutes" in job, (
+                    f"{path.name}/{job_id} declares no timeout-minutes; it would "
+                    "silently run to GitHub's 6-hour default"
+                )
+
+    def test_mutation_shard_timeout_is_derived_from_measurement(self):
+        """The shard budget must come from data, not a magic number.
+
+        A flat 90 minutes was 12% utilised against a 693 s slowest shard, which
+        means the setting could not fail usefully. The workflow now consumes
+        the plan job's measured recommendation.
+        """
+        import yaml
+
+        root = Path(__file__).resolve().parent.parent.parent
+        workflow = yaml.safe_load(
+            (root / ".github" / "workflows" / "mutation.yml").read_text()
+        )
+
+        assert (
+            workflow["jobs"]["mutation"]["timeout-minutes"]
+            == "${{ needs.mutation-plan.outputs.timeout }}"
+        )
 
     def test_boundary_classifications_reasonable(self):
         """Known workflows must have plausible boundary classifications."""

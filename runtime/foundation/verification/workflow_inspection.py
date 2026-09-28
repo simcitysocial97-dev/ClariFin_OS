@@ -188,7 +188,22 @@ def enumerate_workflows(workflow_dir: Path | None = None) -> list[WorkflowRecord
                         all_commands.append(run)
                     if uses:
                         step_commands.append(uses)
-            timeout = job.get("timeout-minutes", 0) or 0
+            # M9-C72: `timeout-minutes` may be a GitHub Actions expression, not
+            # a literal. The mutation campaign derives its per-shard budget from
+            # measured p95, so its timeout reads
+            # `${{ needs.mutation-plan.outputs.timeout }}` and cannot be
+            # evaluated here.
+            #
+            # It is coerced rather than passed through, because a string in an
+            # `int` field is worse than useless: it breaks every downstream
+            # comparison and makes the field lie about its own type. An
+            # unevaluable expression is reported as 0, which this module has
+            # always used to mean "not statically determinable".
+            raw_timeout = job.get("timeout-minutes", 0) or 0
+            try:
+                timeout = int(raw_timeout)
+            except (TypeError, ValueError):
+                timeout = 0
             job_records.append(
                 WorkflowJob(
                     job_id=str(job_id),

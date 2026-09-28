@@ -1,11 +1,11 @@
 {
   "schema": "m9-c48/function-audit@1",
-  "generated_at": "2026-09-25T17:54:04+00:00",
-  "total": 1946,
+  "generated_at": "2026-09-28T08:49:43+00:00",
+  "total": 2066,
   "by_disposition": {
-    "UNREACHABLE": 612,
-    "SUPPORTING": 1257,
-    "CANONICAL": 74,
+    "UNREACHABLE": 661,
+    "SUPPORTING": 1325,
+    "CANONICAL": 77,
     "DUPLICATE-AUTHORITY": 3
   },
   "coverage_percent": 100.0,
@@ -565,84 +565,105 @@
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 162,
+      "line": 181,
       "name": "parse_mutmut_results",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 310,
+      "line": 329,
       "name": "_extract_function_name",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 321,
+      "line": 340,
       "name": "collect_mutant_results",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 379,
+      "line": 398,
       "name": "reconcile_counts",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 389,
+      "line": 408,
       "name": "compute_score",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 404,
+      "line": 423,
       "name": "_resolve_mutation_threshold",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 421,
+      "line": 440,
       "name": "classify_gates",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 645,
+      "line": 664,
       "name": "engine_names",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 649,
+      "line": 668,
       "name": "is_valid_engine",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 653,
+      "line": 672,
       "name": "render_mutmut_config_block",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 692,
+      "line": 696,
+      "name": "render_shard_mutmut_config_block",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_contract.py",
+      "line": 712,
+      "name": "_render_config",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_contract.py",
+      "line": 753,
+      "name": "install_mutmut_config_block",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_contract.py",
+      "line": 782,
       "name": "write_backend_mutmut_config",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 711,
+      "line": 793,
       "name": "build_infrastructure_failure",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -663,35 +684,35 @@
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 117,
+      "line": 132,
       "name": "mutants_generated",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 127,
+      "line": 142,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 246,
+      "line": 265,
       "name": "score",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 272,
+      "line": 291,
       "name": "score",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_contract.py",
-      "line": 278,
+      "line": 297,
       "name": "to_dict",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -4135,203 +4156,210 @@
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 249,
+      "line": 259,
       "name": "_git_sha",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 265,
+      "line": 275,
       "name": "_git_tree",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 281,
+      "line": 291,
       "name": "_mutmut_bin",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 288,
+      "line": 298,
       "name": "_pytest_version",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 293,
+      "line": 303,
       "name": "_cache_provenance_path",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 297,
+      "line": 307,
       "name": "_validate_cache",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 328,
+      "line": 338,
       "name": "_write_cache_provenance",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 346,
+      "line": 356,
       "name": "_get_git_status",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 366,
+      "line": 376,
       "name": "_restore_source_tree",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 412,
+      "line": 422,
       "name": "_record_lifecycle_event",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 428,
+      "line": 438,
       "name": "_config_hash",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 434,
+      "line": 444,
+      "name": "_read_log_tail",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_runner.py",
+      "line": 462,
       "name": "execute_mutation",
       "disposition": "CANONICAL",
       "rationale": "canonical authority (declared)"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 798,
+      "line": 952,
       "name": "_write_summary",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 813,
+      "line": 987,
       "name": "_write_measurement_truth",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 924,
+      "line": 1114,
       "name": "_print_report",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 955,
+      "line": 1148,
       "name": "get_affected_engines_from_files",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 990,
+      "line": 1183,
       "name": "_collect_changed_files",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 1011,
+      "line": 1204,
       "name": "run_mutation_cli",
       "disposition": "CANONICAL",
       "rationale": "canonical authority (declared)"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 103,
+      "line": 110,
       "name": "_hash_file",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 108,
+      "line": 115,
       "name": "_capture_hashes",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 120,
+      "line": 127,
       "name": "_hash_dir",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 141,
+      "line": 148,
       "name": "_verify_restoration",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 157,
+      "line": 164,
       "name": "_check_dirty_worktree",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 182,
+      "line": 189,
       "name": "install_signal_handlers",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 197,
+      "line": 204,
       "name": "_restore_config",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 205,
+      "line": 212,
       "name": "enter",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 221,
+      "line": 228,
       "name": "exit",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 832,
+      "line": 1006,
       "name": "_fp_value",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/mutation_runner.py",
-      "line": 187,
+      "line": 194,
       "name": "_signal_handler",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
@@ -4944,6 +4972,440 @@
       "name": "main",
       "disposition": "CANONICAL",
       "rationale": "CLI dispatch / entry point"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 290,
+      "name": "_sha256_text",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 294,
+      "name": "_sha256_file",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 298,
+      "name": "_now",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 302,
+      "name": "_git",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 316,
+      "name": "_display_path",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 328,
+      "name": "_write_json",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 335,
+      "name": "_read_json",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 342,
+      "name": "toolchain_state",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 347,
+      "name": "_declared_mutmut_version",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 366,
+      "name": "_installed_mutmut_version",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 378,
+      "name": "freeze_baseline",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 460,
+      "name": "read_sentinel_sink",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 476,
+      "name": "sentinel_sink_path",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 493,
+      "name": "collect_sentinel_records",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 537,
+      "name": "read_mutant_meta",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 562,
+      "name": "classify_execution",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 594,
+      "name": "execution_basis",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 613,
+      "name": "evaluate_canary",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 699,
+      "name": "_operator_of",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 710,
+      "name": "verify_mutant_identity",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 796,
+      "name": "mutmut_module_name",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 821,
+      "name": "normalise_module_name",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 832,
+      "name": "validate_dispatch",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 951,
+      "name": "execution_sentinel_sample",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1069,
+      "name": "_load_survivor_records",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1100,
+      "name": "load_survivor_verdicts",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1129,
+      "name": "classify_survivor",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1237,
+      "name": "classify_survivors",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1328,
+      "name": "prove_default_argument_equivalence",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1389,
+      "name": "_observable",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1456,
+      "name": "analyse_equivalence",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1607,
+      "name": "_function_names_match",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1626,
+      "name": "_prove_expression_equivalence",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1750,
+      "name": "_names_bound_to_get_default",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1777,
+      "name": "_consumed_as_falsiness_only",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1879,
+      "name": "_fail_uses",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1888,
+      "name": "_membership_excludes",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1945,
+      "name": "_literal_after",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1972,
+      "name": "_norm",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1982,
+      "name": "_literal_value",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 2005,
+      "name": "_extract_function_pair",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 2062,
+      "name": "_operator_class",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 2101,
+      "name": "_bounded_input_domain",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 2148,
+      "name": "analyse_reachability",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 2203,
+      "name": "_reachability_verdict_for",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 2313,
+      "name": "prioritise_survivors",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 2383,
+      "name": "reconcile_scores",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 2505,
+      "name": "certify",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 2582,
+      "name": "measure_shard_budget",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 2647,
+      "name": "_default_mutants_root",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 2653,
+      "name": "run_trust_analysis",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 2770,
+      "name": "_write_final_markdown",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 2837,
+      "name": "run_trust_cli",
+      "disposition": "CANONICAL",
+      "rationale": "CLI dispatch / entry point"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 177,
+      "name": "to_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 219,
+      "name": "to_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 258,
+      "name": "certified",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 273,
+      "name": "to_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 510,
+      "name": "_add",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 626,
+      "name": "_group",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 1617,
+      "name": "_normalise",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 2021,
+      "name": "_grab",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_trust.py",
+      "line": 2076,
+      "name": "_nodes",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/route_authority.py",
@@ -5731,21 +6193,21 @@
     },
     {
       "file": "runtime/foundation/verification/cli_surface.py",
-      "line": 241,
+      "line": 250,
       "name": "classification_for",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/cli_surface.py",
-      "line": 348,
+      "line": 357,
       "name": "migration_map",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/cli_surface.py",
-      "line": 360,
+      "line": 369,
       "name": "canonical_help",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
@@ -5997,14 +6459,14 @@
     },
     {
       "file": "runtime/foundation/verification/workflow_inspection.py",
-      "line": 243,
+      "line": 258,
       "name": "format_workflows_table",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/workflow_inspection.py",
-      "line": 284,
+      "line": 299,
       "name": "cmd_inspect_workflows",
       "disposition": "CANONICAL",
       "rationale": "CLI dispatch / entry point"
@@ -9076,6 +9538,258 @@
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 226,
+      "name": "component_files",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 254,
+      "name": "pack_shards",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 305,
+      "name": "shard_plan",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 313,
+      "name": "shard_by_id",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 320,
+      "name": "component_of",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 330,
+      "name": "shard_names",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 334,
+      "name": "resolve_threshold",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 338,
+      "name": "shard_summary_path",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 350,
+      "name": "shard_fingerprint",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 374,
+      "name": "_hash_paths",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 397,
+      "name": "evidence_registry_path",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 402,
+      "name": "read_cached_evidence",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 445,
+      "name": "record_evidence_fingerprint",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 465,
+      "name": "_installed_mutmut_version",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 471,
+      "name": "aggregate_summary_path",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 482,
+      "name": "_display_path",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 495,
+      "name": "_load_summary",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 502,
+      "name": "collect_shard_summaries",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 532,
+      "name": "_verdict_for",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 599,
+      "name": "aggregate",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 675,
+      "name": "as_mutation_result",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 708,
+      "name": "write_aggregate",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 722,
+      "name": "format_report",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 756,
+      "name": "_expected_from_env",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 773,
+      "name": "_dirname_prefix",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 785,
+      "name": "normalise_repo_path",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 804,
+      "name": "recommended_shard_timeout_minutes",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 844,
+      "name": "affected_shards",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 911,
+      "name": "changed_paths_between",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 935,
+      "name": "run_plan_cli",
+      "disposition": "CANONICAL",
+      "rationale": "CLI dispatch / entry point"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 1036,
+      "name": "run_aggregate_cli",
+      "disposition": "CANONICAL",
+      "rationale": "CLI dispatch / entry point"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 118,
+      "name": "is_whole_component",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 121,
+      "name": "to_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 154,
+      "name": "ok",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 157,
+      "name": "to_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutation_shards.py",
+      "line": 202,
+      "name": "to_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
       "file": "runtime/foundation/verification/generation_engine.py",
       "line": 166,
       "name": "_id",
@@ -9539,49 +10253,49 @@
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 1031,
+      "line": 1043,
       "name": "_find_arg",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 1047,
+      "line": 1059,
       "name": "main",
       "disposition": "CANONICAL",
       "rationale": "CLI dispatch / entry point"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 1112,
+      "line": 1146,
       "name": "_profile_task_timeout_seconds",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 1129,
+      "line": 1163,
       "name": "_run_profile_alias",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 1265,
+      "line": 1299,
       "name": "_format_task_summary",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 1282,
+      "line": 1316,
       "name": "_dispatch_canonical",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 1353,
+      "line": 1387,
       "name": "_find_changed_files_arg",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
@@ -9595,119 +10309,119 @@
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 271,
+      "line": 277,
       "name": "plan",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 303,
+      "line": 309,
       "name": "run",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 378,
+      "line": 384,
       "name": "diagnose",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 399,
+      "line": 405,
       "name": "strengthen",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 456,
+      "line": 462,
       "name": "inspect",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 565,
+      "line": 571,
       "name": "certify",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 573,
+      "line": 579,
       "name": "ci",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 592,
+      "line": 598,
       "name": "_run_exec_evidence_cli",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 690,
+      "line": 696,
       "name": "_run_reconcile_cli_from_args",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 727,
+      "line": 733,
       "name": "_run_reconcile_cli",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 841,
+      "line": 847,
       "name": "_diagnose_framework",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 876,
+      "line": 882,
       "name": "doctor",
       "disposition": "SUPPORTING",
       "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 904,
+      "line": 912,
       "name": "_plan_to_obligations",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 994,
+      "line": 1006,
       "name": "_print_plan_obligations",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 1010,
+      "line": 1022,
       "name": "_print_execution_report",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 192,
+      "line": 198,
       "name": "_capture_record",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
     },
     {
       "file": "runtime/foundation/verification/control_plane_facade.py",
-      "line": 339,
+      "line": 345,
       "name": "_capture_record",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
@@ -10355,6 +11069,132 @@
       "name": "_tee",
       "disposition": "UNREACHABLE",
       "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 133,
+      "name": "_split_region",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 144,
+      "name": "_clause1_render",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 155,
+      "name": "_clause1_satisfied",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 162,
+      "name": "_clause1_locatable",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 166,
+      "name": "_clause2_render",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 185,
+      "name": "_clause2_satisfied",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 192,
+      "name": "_clause2_locatable",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 249,
+      "name": "_sha256",
+      "disposition": "UNREACHABLE",
+      "rationale": "private (underscore) \u2014 not part of public API"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 253,
+      "name": "resolve_trampoline_path",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 294,
+      "name": "render_contract_source",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 313,
+      "name": "inspect",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 367,
+      "name": "ensure",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 421,
+      "name": "ensure_mutmut_contract",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 426,
+      "name": "write_mutmut_contract_evidence",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 431,
+      "name": "evidence_path",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 442,
+      "name": "write_evidence",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 239,
+      "name": "satisfied",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
+    },
+    {
+      "file": "runtime/foundation/verification/mutmut_contract.py",
+      "line": 242,
+      "name": "to_dict",
+      "disposition": "SUPPORTING",
+      "rationale": "public; treated as supporting until canonical authority is recorded"
     },
     {
       "file": "runtime/foundation/verification/totals.py",

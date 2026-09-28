@@ -1,13 +1,13 @@
 {
-  "run_id": "failed_verification-3230ca72",
-  "timestamp": "2026-09-25T17:39:05.755050+00:00",
-  "repository_sha": "ce63c369568cb622498731702bda4a5ce41d8d19",
+  "run_id": "failed_verification-652ebac2",
+  "timestamp": "2026-09-28T07:44:06.177683+00:00",
+  "repository_sha": "ebe3d2e178869075ee3fb8ae1fa16c70de42b464",
   "scenario": "failed_verification",
   "changed_files": [
     "backend/src/engines/test_broken_r4.py"
   ],
-  "plan_identity": "plan::failed_verification-b1d29c45",
-  "execution_identity": "exec::failed_verification-d57db841",
+  "plan_identity": "plan::failed_verification-856906d3",
+  "execution_identity": "exec::failed_verification-e863a733",
   "task_ids": [
     "exec-0001",
     "exec-0002",

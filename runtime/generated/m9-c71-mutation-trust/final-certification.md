@@ -1,8 +1,8 @@
 # M9-C71 — Mutation Measurement Trust & Survivor Forensics
 
-**Recorded:** 2026-09-28T03:16:51.561786+00:00
-**HEAD:** `4f9d3162e3212f2137e5cda9c89a42dcebcb287f`
-**Tree:** `79a43f88bd76857b9cca7a51c54b62833ccbd026`
+**Recorded:** 2026-09-28T06:50:29.758362+00:00
+**HEAD:** `ebe3d2e178869075ee3fb8ae1fa16c70de42b464`
+**Tree:** `8cb70226de8930794f82650c95270364c494c199`
 
 ## Certification
 

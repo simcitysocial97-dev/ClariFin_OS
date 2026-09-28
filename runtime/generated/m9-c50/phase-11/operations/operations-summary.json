@@ -1,27 +1,24 @@
 {
   "runs": [
     {
-      "run_id": "dcc5b6057c42c15c",
-      "timestamp": "2026-09-25T18:02:35.729138+00:00",
-      "repository_sha": "ce63c369568cb622498731702bda4a5ce41d8d19",
-      "scenario": "self_verification",
+      "run_id": "cfcbe1a047ddb9b9",
+      "timestamp": "2026-09-28T08:50:26.004130+00:00",
+      "repository_sha": "ebe3d2e178869075ee3fb8ae1fa16c70de42b464",
+      "scenario": "mutation_sensitive_change",
       "changed_files": [
-        "runtime/foundation/verification/control_plane_facade.py"
+        "backend/src/engines/credit_card_engine.py"
       ],
       "resolved_capabilities": [
-        "verification-runtime",
-        "control-plane"
+        "credit-card-engine"
       ],
       "obligations": [
-        "unit",
-        "property",
-        "invariant"
+        "mutation"
       ],
       "plan_identity": null,
       "execution_identity": null,
       "evidence_identities": [],
       "reconciliation": {},
-      "final_decision": "self_verified",
+      "final_decision": "requires_mutation_campaign",
       "failures": [],
       "reused_evidence": [],
       "invalidated_evidence": []

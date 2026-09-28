@@ -1,17 +1,17 @@
 {
   "schema": "m9-c71-shard-budget/v1",
-  "recorded_at": "2026-09-28T03:16:51.555038+00:00",
+  "recorded_at": "2026-09-28T06:50:29.753061+00:00",
   "shards": [
     {
-      "shard": "account_engine",
+      "shard": "ledger_audit_engine",
       "component": null,
-      "population": 183,
-      "killed": 173,
-      "survived": 10,
-      "score": 94.5,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
+      "population": 190,
+      "killed": 132,
+      "survived": 58,
+      "score": 69.5,
+      "duration_seconds": 693.0,
+      "mutants_per_second": 0.27,
+      "seconds_per_mutant": 3.647
     },
     {
       "shard": "balance_engine",
@@ -20,9 +20,9 @@
       "killed": 272,
       "survived": 13,
       "score": 95.4,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
+      "duration_seconds": 654.0,
+      "mutants_per_second": 0.44,
+      "seconds_per_mutant": 2.295
     },
     {
       "shard": "behaviour_engine-00",
@@ -31,229 +31,9 @@
       "killed": 1682,
       "survived": 398,
       "score": 80.9,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "behaviour_engine-01",
-      "component": null,
-      "population": 1425,
-      "killed": 1098,
-      "survived": 327,
-      "score": 77.1,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "behaviour_engine-02",
-      "component": null,
-      "population": 820,
-      "killed": 649,
-      "survived": 171,
-      "score": 79.1,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "behaviour_engine-03",
-      "component": null,
-      "population": 1034,
-      "killed": 958,
-      "survived": 76,
-      "score": 92.6,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "behaviour_engine-04",
-      "component": null,
-      "population": 606,
-      "killed": 529,
-      "survived": 77,
-      "score": 87.3,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "behaviour_engine-05",
-      "component": null,
-      "population": 945,
-      "killed": 836,
-      "survived": 106,
-      "score": 88.5,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "behaviour_engine-06",
-      "component": null,
-      "population": 303,
-      "killed": 281,
-      "survived": 22,
-      "score": 92.7,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "cashflow_engine",
-      "component": null,
-      "population": 172,
-      "killed": 128,
-      "survived": 44,
-      "score": 74.4,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "common_calculations",
-      "component": null,
-      "population": 376,
-      "killed": 241,
-      "survived": 135,
-      "score": 64.1,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "core_domain_money",
-      "component": null,
-      "population": 103,
-      "killed": 84,
-      "survived": 18,
-      "score": 82.4,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "credit_card_engine",
-      "component": null,
-      "population": 582,
-      "killed": 449,
-      "survived": 133,
-      "score": 77.1,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "financial_events",
-      "component": null,
-      "population": 704,
-      "killed": 505,
-      "survived": 199,
-      "score": 71.7,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "financial_intelligence-00",
-      "component": null,
-      "population": 1244,
-      "killed": 895,
-      "survived": 349,
-      "score": 71.9,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "financial_intelligence-01",
-      "component": null,
-      "population": 803,
-      "killed": 664,
-      "survived": 139,
-      "score": 82.7,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "financial_intelligence-02",
-      "component": null,
-      "population": 627,
-      "killed": 449,
-      "survived": 178,
-      "score": 71.6,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "financial_intelligence-03",
-      "component": null,
-      "population": 715,
-      "killed": 566,
-      "survived": 149,
-      "score": 79.2,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "financial_intelligence-04",
-      "component": null,
-      "population": 319,
-      "killed": 281,
-      "survived": 38,
-      "score": 88.1,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "ledger_audit_engine",
-      "component": null,
-      "population": 190,
-      "killed": 132,
-      "survived": 58,
-      "score": 69.5,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "loan_engine-00",
-      "component": null,
-      "population": 703,
-      "killed": 565,
-      "survived": 131,
-      "score": 80.8,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "loan_engine-01",
-      "component": null,
-      "population": 570,
-      "killed": 498,
-      "survived": 72,
-      "score": 87.4,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
-    },
-    {
-      "shard": "recommendation_engine",
-      "component": null,
-      "population": 282,
-      "killed": 199,
-      "survived": 83,
-      "score": 70.6,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
+      "duration_seconds": 616.0,
+      "mutants_per_second": 3.38,
+      "seconds_per_mutant": 0.296
     },
     {
       "shard": "reconciliation_engine",
@@ -262,9 +42,53 @@
       "killed": 298,
       "survived": 70,
       "score": 81.0,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
+      "duration_seconds": 566.0,
+      "mutants_per_second": 0.65,
+      "seconds_per_mutant": 1.538
+    },
+    {
+      "shard": "loan_engine-01",
+      "component": null,
+      "population": 570,
+      "killed": 498,
+      "survived": 72,
+      "score": 87.4,
+      "duration_seconds": 564.0,
+      "mutants_per_second": 1.01,
+      "seconds_per_mutant": 0.989
+    },
+    {
+      "shard": "financial_events",
+      "component": null,
+      "population": 704,
+      "killed": 505,
+      "survived": 199,
+      "score": 71.7,
+      "duration_seconds": 554.0,
+      "mutants_per_second": 1.27,
+      "seconds_per_mutant": 0.787
+    },
+    {
+      "shard": "behaviour_engine-03",
+      "component": null,
+      "population": 1034,
+      "killed": 958,
+      "survived": 76,
+      "score": 92.6,
+      "duration_seconds": 504.0,
+      "mutants_per_second": 2.05,
+      "seconds_per_mutant": 0.487
+    },
+    {
+      "shard": "loan_engine-00",
+      "component": null,
+      "population": 703,
+      "killed": 565,
+      "survived": 131,
+      "score": 80.8,
+      "duration_seconds": 380.0,
+      "mutants_per_second": 1.85,
+      "seconds_per_mutant": 0.541
     },
     {
       "shard": "transaction_intelligence-00",
@@ -273,9 +97,64 @@
       "killed": 767,
       "survived": 218,
       "score": 77.9,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
+      "duration_seconds": 368.0,
+      "mutants_per_second": 2.68,
+      "seconds_per_mutant": 0.374
+    },
+    {
+      "shard": "financial_intelligence-00",
+      "component": null,
+      "population": 1244,
+      "killed": 895,
+      "survived": 349,
+      "score": 71.9,
+      "duration_seconds": 325.0,
+      "mutants_per_second": 3.83,
+      "seconds_per_mutant": 0.261
+    },
+    {
+      "shard": "behaviour_engine-01",
+      "component": null,
+      "population": 1425,
+      "killed": 1098,
+      "survived": 327,
+      "score": 77.1,
+      "duration_seconds": 314.0,
+      "mutants_per_second": 4.54,
+      "seconds_per_mutant": 0.22
+    },
+    {
+      "shard": "behaviour_engine-05",
+      "component": null,
+      "population": 945,
+      "killed": 836,
+      "survived": 106,
+      "score": 88.5,
+      "duration_seconds": 274.0,
+      "mutants_per_second": 3.45,
+      "seconds_per_mutant": 0.29
+    },
+    {
+      "shard": "financial_intelligence-01",
+      "component": null,
+      "population": 803,
+      "killed": 664,
+      "survived": 139,
+      "score": 82.7,
+      "duration_seconds": 197.0,
+      "mutants_per_second": 4.08,
+      "seconds_per_mutant": 0.245
+    },
+    {
+      "shard": "credit_card_engine",
+      "component": null,
+      "population": 582,
+      "killed": 449,
+      "survived": 133,
+      "score": 77.1,
+      "duration_seconds": 189.0,
+      "mutants_per_second": 3.08,
+      "seconds_per_mutant": 0.325
     },
     {
       "shard": "transaction_intelligence-01",
@@ -284,16 +163,137 @@
       "killed": 335,
       "survived": 145,
       "score": 69.8,
-      "duration_seconds": null,
-      "mutants_per_second": null,
-      "seconds_per_mutant": 0.0
+      "duration_seconds": 186.0,
+      "mutants_per_second": 2.58,
+      "seconds_per_mutant": 0.388
+    },
+    {
+      "shard": "financial_intelligence-02",
+      "component": null,
+      "population": 627,
+      "killed": 449,
+      "survived": 178,
+      "score": 71.6,
+      "duration_seconds": 177.0,
+      "mutants_per_second": 3.54,
+      "seconds_per_mutant": 0.282
+    },
+    {
+      "shard": "behaviour_engine-02",
+      "component": null,
+      "population": 820,
+      "killed": 649,
+      "survived": 171,
+      "score": 79.1,
+      "duration_seconds": 157.0,
+      "mutants_per_second": 5.22,
+      "seconds_per_mutant": 0.191
+    },
+    {
+      "shard": "behaviour_engine-04",
+      "component": null,
+      "population": 606,
+      "killed": 529,
+      "survived": 77,
+      "score": 87.3,
+      "duration_seconds": 124.0,
+      "mutants_per_second": 4.89,
+      "seconds_per_mutant": 0.205
+    },
+    {
+      "shard": "financial_intelligence-03",
+      "component": null,
+      "population": 715,
+      "killed": 566,
+      "survived": 149,
+      "score": 79.2,
+      "duration_seconds": 107.0,
+      "mutants_per_second": 6.68,
+      "seconds_per_mutant": 0.15
+    },
+    {
+      "shard": "common_calculations",
+      "component": null,
+      "population": 376,
+      "killed": 241,
+      "survived": 135,
+      "score": 64.1,
+      "duration_seconds": 89.0,
+      "mutants_per_second": 4.22,
+      "seconds_per_mutant": 0.237
+    },
+    {
+      "shard": "financial_intelligence-04",
+      "component": null,
+      "population": 319,
+      "killed": 281,
+      "survived": 38,
+      "score": 88.1,
+      "duration_seconds": 77.0,
+      "mutants_per_second": 4.14,
+      "seconds_per_mutant": 0.241
+    },
+    {
+      "shard": "behaviour_engine-06",
+      "component": null,
+      "population": 303,
+      "killed": 281,
+      "survived": 22,
+      "score": 92.7,
+      "duration_seconds": 68.0,
+      "mutants_per_second": 4.46,
+      "seconds_per_mutant": 0.224
+    },
+    {
+      "shard": "recommendation_engine",
+      "component": null,
+      "population": 282,
+      "killed": 199,
+      "survived": 83,
+      "score": 70.6,
+      "duration_seconds": 66.0,
+      "mutants_per_second": 4.27,
+      "seconds_per_mutant": 0.234
+    },
+    {
+      "shard": "cashflow_engine",
+      "component": null,
+      "population": 172,
+      "killed": 128,
+      "survived": 44,
+      "score": 74.4,
+      "duration_seconds": 56.0,
+      "mutants_per_second": 3.07,
+      "seconds_per_mutant": 0.326
+    },
+    {
+      "shard": "account_engine",
+      "component": null,
+      "population": 183,
+      "killed": 173,
+      "survived": 10,
+      "score": 94.5,
+      "duration_seconds": 43.0,
+      "mutants_per_second": 4.26,
+      "seconds_per_mutant": 0.235
+    },
+    {
+      "shard": "core_domain_money",
+      "component": null,
+      "population": 103,
+      "killed": 84,
+      "survived": 18,
+      "score": 82.4,
+      "duration_seconds": 30.0,
+      "mutants_per_second": 3.43,
+      "seconds_per_mutant": 0.291
     }
   ],
   "total_population": 16904,
-  "total_measured_seconds": 0.0,
-  "aggregate_mutants_per_second": null,
-  "slowest_shard": "account_engine",
-  "slowest_share_of_wall_clock": null,
+  "total_measured_seconds": 7378.0,
+  "aggregate_mutants_per_second": 2.29,
+  "slowest_shard": "ledger_audit_engine",
+  "slowest_share_of_wall_clock": 0.094,
   "pathological_shards": [],
   "policy": "population, operators and thresholds are never reduced. A shard that is intrinsically too large is split deterministically by the existing engine/function selection mechanism (mutation_shards)."
 }

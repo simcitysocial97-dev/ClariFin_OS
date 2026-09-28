@@ -583,15 +583,48 @@ class TestShardedWorkflowTopology:
 
     def test_smoke_first_sharded_topology(self, mutation_workflow):
         jobs = mutation_workflow["jobs"]
+        # M9-C72 adds `mutation-replay`: a repair path that reconciles a prior
+        # run's evidence without re-measuring. It is a sibling of the measured
+        # campaign, not a stage in it, so the ordering guarantees below are
+        # unchanged.
         assert set(jobs) == {
             "mutation-smoke",
             "mutation-plan",
             "mutation",
+            "mutation-replay",
             "mutation-aggregate",
         }
         assert "mutation-smoke" in jobs["mutation"]["needs"]
         assert "mutation-plan" in jobs["mutation"]["needs"]
         assert "mutation" in jobs["mutation-aggregate"]["needs"]
+
+    def test_replay_never_runs_alongside_measurement(self, mutation_workflow):
+        """Replay and measure are mutually exclusive by construction.
+
+        If both could run, replay could reconcile a stale run's evidence while
+        the campaign measured the current commit, and the gate would report a
+        score for evidence that did not describe the code.
+        """
+        condition = str(mutation_workflow["jobs"]["mutation-replay"]["if"])
+        assert "replay" in condition
+        assert "workflow_dispatch" in condition, (
+            "replay must be reachable only by explicit request, never by the "
+            "nightly schedule or a push"
+        )
+        assert "needs" not in mutation_workflow["jobs"]["mutation-replay"]
+
+    def test_an_empty_incremental_plan_does_not_strand_the_aggregate(
+        self, mutation_workflow
+    ):
+        """If incremental mode selects zero shards, the shard matrix is empty.
+
+        GitHub renders that as an empty matrix, which would otherwise leave the
+        aggregate waiting on a job that never starts. The shard job is skipped
+        and the aggregate is explicitly allowed to proceed on that signal.
+        """
+        assert "!=" in str(mutation_workflow["jobs"]["mutation"]["if"])
+        aggregate_if = str(mutation_workflow["jobs"]["mutation-aggregate"]["if"])
+        assert "skipped" in aggregate_if and "cancelled" in aggregate_if
 
     def test_shards_come_from_the_canonical_plan(self, mutation_workflow):
         matrix = mutation_workflow["jobs"]["mutation"]["strategy"]["matrix"]

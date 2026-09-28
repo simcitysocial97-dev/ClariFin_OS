@@ -960,7 +960,27 @@ def _write_summary(
     else:
         out = GENERATED_DIR / "mutation-summary.json"
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(result.to_dict(), indent=2) + "\n")
+    payload = result.to_dict()
+
+    # M9-C72: stamp the shard's fingerprint so an incremental run can later
+    # PROVE a cached verdict still describes the same source, tests and
+    # toolchain. Without it, reuse is a matter of trust, and a trust-based
+    # cache is indistinguishable from a measurement that silently stopped
+    # running.
+    if target:
+        import contextlib
+
+        from runtime.foundation.verification.mutation_shards import (
+            record_evidence_fingerprint,
+        )
+
+        # A summary that cannot be fingerprinted is still valid evidence for
+        # this run; it just cannot be reused later. Never let this change the
+        # campaign's outcome.
+        with contextlib.suppress(Exception):
+            payload = record_evidence_fingerprint(payload)
+
+    out.write_text(json.dumps(payload, indent=2) + "\n")
     return out
 
 

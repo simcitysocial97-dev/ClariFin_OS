@@ -1,6 +1,6 @@
 {
   "schema": "m9-c48/frontend-financial-arithmetic-lint@1",
-  "generated_at": "2026-09-25T17:53:53+00:00",
+  "generated_at": "2026-09-28T08:49:29+00:00",
   "scanned_files": [
     "frontend/__tests__/api-contracts/analytics.contract.test.ts",
     "frontend/__tests__/api-contracts/banks.contract.test.ts",
@@ -283,6 +283,7 @@
     "frontend/components/os-shell/overlay-layer.tsx",
     "frontend/components/os-shell/resizable-layout.tsx",
     "frontend/components/os-shell/right-inspector.tsx",
+    "frontend/components/os-shell/shell-boundary.tsx",
     "frontend/components/os-shell/shell-provider.tsx",
     "frontend/components/os-shell/timeline-controls.tsx",
     "frontend/components/os-shell/timeline-rail.tsx",
@@ -292,6 +293,8 @@
     "frontend/components/os-shell/workspace-host.tsx",
     "frontend/components/os-shell/workspace-outlet.tsx",
     "frontend/components/platform/activity-feed.tsx",
+    "frontend/components/platform/console-state.tsx",
+    "frontend/components/platform/footer-bar.tsx",
     "frontend/components/platform/health-badge.test.tsx",
     "frontend/components/platform/health-badge.tsx",
     "frontend/components/platform/metric-tile.tsx",
@@ -1826,7 +1829,7 @@
     },
     {
       "file": "frontend/app/platform/runs/page.tsx",
-      "line": 37,
+      "line": 38,
       "column": 37,
       "rule": "no-monetary-arithmetic",
       "snippet": "const totalPages = Math.ceil(total / PAGE_SIZE);",

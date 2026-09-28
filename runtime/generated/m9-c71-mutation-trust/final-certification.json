@@ -1,8 +1,8 @@
 {
   "schema": "m9-c71-final-certification/v1",
-  "recorded_at": "2026-09-28T03:16:51.561786+00:00",
-  "head_sha": "4f9d3162e3212f2137e5cda9c89a42dcebcb287f",
-  "tree_sha": "79a43f88bd76857b9cca7a51c54b62833ccbd026",
+  "recorded_at": "2026-09-28T06:50:29.758362+00:00",
+  "head_sha": "ebe3d2e178869075ee3fb8ae1fa16c70de42b464",
+  "tree_sha": "8cb70226de8930794f82650c95270364c494c199",
   "toolchain_contract": {
     "contract_id": "c71-mutation-toolchain-contract",
     "status": "SATISFIED",
@@ -276,7 +276,7 @@
     }
   ],
   "budget": {
-    "aggregate_mutants_per_second": null,
+    "aggregate_mutants_per_second": 2.29,
     "pathological_shards": []
   }
 }

@@ -10139,6 +10139,58 @@
           "playwright-e2e"
         ]
       }
+    },
+    {
+      "run_id": "075a38f8-c901-4c22-b47b-4a5f152f6631",
+      "timestamp": "2026-09-28T07:28:51.047837+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "ebe3d2e178869075ee3fb8ae1fa16c70de42b464",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "failed",
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 33.58581091600354,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black"
+        ]
+      }
+    },
+    {
+      "run_id": "bca35196-4135-4167-a58d-fdf21f0b9d1a",
+      "timestamp": "2026-09-28T08:05:11.422620+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "ebe3d2e178869075ee3fb8ae1fa16c70de42b464",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "failed",
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 31.949194557004375,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black"
+        ]
+      }
     }
   ],
   "ci": [
@@ -20701,6 +20753,58 @@
       "metadata": {
         "tasks_executed": [
           "playwright-e2e"
+        ]
+      }
+    },
+    {
+      "run_id": "075a38f8-c901-4c22-b47b-4a5f152f6631",
+      "timestamp": "2026-09-28T07:28:51.047837+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "ebe3d2e178869075ee3fb8ae1fa16c70de42b464",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "failed",
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 33.58581091600354,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black"
+        ]
+      }
+    },
+    {
+      "run_id": "bca35196-4135-4167-a58d-fdf21f0b9d1a",
+      "timestamp": "2026-09-28T08:05:11.422620+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "ebe3d2e178869075ee3fb8ae1fa16c70de42b464",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "quick",
+      "status": "failed",
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 31.949194557004375,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black"
         ]
       }
     }

@@ -1,6 +1,6 @@
 {
   "schema": "m9-c71-execution-sentinel/v1",
-  "recorded_at": "2026-09-28T03:16:33.031098+00:00",
+  "recorded_at": "2026-09-28T06:50:06.529436+00:00",
   "sample_classes": {
     "small_engine": "cashflow_engine",
     "medium_engine": "financial_events",

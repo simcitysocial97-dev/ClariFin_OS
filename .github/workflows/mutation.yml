@@ -27,6 +27,28 @@
 #
 # No threshold is lowered, no test is suppressed, no shard is silently skipped:
 # a missing or empty shard is an explicit aggregate failure.
+#
+# M9-C72 — EVIDENCE-FIRST, INCREMENTAL
+# ------------------------------------
+# The 90-minute per-shard timeout was never the problem: the slowest shard
+# measures in 11.5 min locally and 8m07s in CI, so the campaign used 12% of its
+# budget. The failure was a three-minute evidence-TRANSPORT fault that forced a
+# full re-measurement to recover, which is why run 36374920553 spent 26 jobs and
+# an unbounded debugging session on `Unable to resolve action
+# actions/download-artifact@v7.0.1` — a tag that does not exist.
+#
+# Measurement and reconciliation are now separate concerns:
+#
+#   mode=measure      every planned shard is measured, then reconciled
+#   mode=incremental  only shards a diff can affect are measured; the rest come
+#                     from the reuse registry and are FINGERPRINT-VALIDATED.
+#                     A stale entry is an explicit aggregate FAILURE, never a
+#                     silent pass on evidence that no longer describes the code.
+#   mode=replay       no measurement at all: reconcile a prior run's evidence.
+#                     This is the REPAIR path, and it costs a re-download.
+#
+# Typical cost: measure ~15 min / 26 shards, incremental ~2 min / 0-2 shards,
+# replay ~3 min / 0 shards.
 
 name: Mutation Testing
 
@@ -39,6 +61,23 @@ on:
         description: "Specific engine name (e.g. loan, credit_card), or all"
         required: false
         default: "all"
+      mode:
+        description: >-
+          measure = run the campaign for the planned shards;
+          incremental = only shards a diff can affect;
+          replay = re-run NO measurement, reconcile evidence from a prior run
+        required: false
+        default: "measure"
+        type: choice
+        options: [measure, incremental, replay]
+      base-ref:
+        description: "Diff base for incremental mode (default: previous push)"
+        required: false
+        default: ""
+      evidence-run-id:
+        description: "Run whose shard artifacts replay should reconcile (replay mode)"
+        required: false
+        default: ""
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -49,6 +88,7 @@ permissions:
 
 env:
   MUTATION_COMPONENT: ${{ inputs.engine-name || 'all' }}
+  MUTATION_MODE: ${{ inputs.mode || 'measure' }}
 
 jobs:
   mutation-smoke:
@@ -125,31 +165,66 @@ jobs:
         id: plan
         shell: bash
         run: |
-          MATRIX="$(.venv/bin/python -m runtime.verify mutation-plan)"
+          # M9-C72 — incremental mode measures only what a diff can affect.
+          #
+          # The plan CLI is the single source of truth for shard selection, so
+          # the diff logic lives there and not in YAML. A diff that cannot be
+          # computed makes the CLI fall back to the FULL plan rather than an
+          # empty one, so a shallow clone or a bad ref can never silently skip
+          # the campaign.
+          BASE="${{ inputs.base-ref }}"
+          if [ "$MUTATION_MODE" = "incremental" ]; then
+            if [ -z "$BASE" ]; then
+              BASE="${{ github.event.before }}"
+            fi
+            if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+              echo "No usable diff base; falling back to the full plan." >> $GITHUB_STEP_SUMMARY
+              MATRIX="$(.venv/bin/python -m runtime.verify mutation-plan)"
+            else
+              MATRIX="$(.venv/bin/python -m runtime.verify mutation-plan --affected-from "$BASE")"
+            fi
+          else
+            MATRIX="$(.venv/bin/python -m runtime.verify mutation-plan)"
+          fi
           {
             echo "matrix<<MUTMATRIX_EOF"
             echo "$MATRIX"
             echo "MUTMATRIX_EOF"
             echo "components=$(jq -r '[.include[].component] | join(" ")' <<< "$MATRIX")"
             echo "count=$(jq -r '.include | length' <<< "$MATRIX")"
+            echo "total=$(jq -r '.total_shards' <<< "$MATRIX")"
+            echo "diff_safe=$(jq -r '.diff_safe' <<< "$MATRIX")"
+            echo "timeout=$(jq -r '.recommended_timeout_minutes' <<< "$MATRIX")"
           } >> $GITHUB_OUTPUT
           {
             echo "## ${{ github.workflow }} — Run #${{ github.run_number }} — plan"
             echo ""
             echo "| Metric | Value |"
             echo "|--------|-------|"
+            echo "| Mode | $MUTATION_MODE |"
             echo "| Requested scope | $MUTATION_COMPONENT |"
-            echo "| Shards | $(jq -r '.include | length' <<< "$MATRIX") |"
-            echo "| Components | $(jq -r '[.include[].component] | join(", ")' <<< "$MATRIX") |"
+            echo "| Shards selected | $(jq -r '.include | length' <<< "$MATRIX") |"
+            echo "| Shards in full plan | $(jq -r '.total_shards' <<< "$MATRIX") |"
+            echo "| Diff safely computed | $(jq -r '.diff_safe' <<< "$MATRIX") |"
+            echo "| Per-shard timeout | $(jq -r '.recommended_timeout_minutes' <<< "$MATRIX") min |"
+            echo ""
+            echo "| Shard | Component | Selected because |"
+            echo "|-------|-----------|------------------|"
+            jq -r '.include[] | "| \(.shard) | \(.component) | \(.reasons | join(", ") // "full campaign") |"' <<< "$MATRIX" >> $GITHUB_STEP_SUMMARY
             echo ""
           } >> $GITHUB_STEP_SUMMARY
 
   mutation:
     name: Mutation Shard (${{ matrix.shard }})
     needs: [mutation-smoke, mutation-plan]
-    if: needs.mutation-plan.result == 'success'
+    if: needs.mutation-plan.result == 'success' && needs.mutation-plan.outputs.matrix != '[]'
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    # M9-C72 — derived from measured p95 x2 by mutation-plan, not a flat 90.
+    # With the slowest shard measured at 693 s this lands at 21 min, so a
+    # pathological shard fails visibly instead of holding a parallel slot for
+    # 90 minutes and reporting an ambiguous timeout. The plan job always emits
+    # this output, including when the diff lookup fails.
+    timeout-minutes: ${{ needs.mutation-plan.outputs.timeout }}
     strategy:
       fail-fast: false
       max-parallel: 7
@@ -201,6 +276,19 @@ jobs:
           retention-days: 90
           if-no-files-found: warn
 
+      # M9-C72: publish this shard's fingerprinted verdict so the next
+      # incremental run can reuse it PROVABLY rather than trusting it. The
+      # artifact name is unique per shard, so downloading a registry with
+      # merge-multiple cannot collide.
+      - name: Publish shard evidence to the reuse registry
+        if: always()
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: mutation-registry-${{ matrix.shard }}
+          path: backend/tests/generated/mutation/mutation-summary-${{ matrix.shard }}.json
+          retention-days: 90
+          if-no-files-found: warn
+
       - name: Job Summary
         if: always()
         shell: bash
@@ -226,9 +314,125 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
 
+  mutation-replay:
+    name: Mutation Replay (no measurement)
+    # M9-C72 — reconcile evidence from a PRIOR run without re-measuring.
+    #
+    # The D1 incident cost a 15-minute campaign and an unbounded debugging
+    # session for a 3-minute transport fault, because the only recovery path
+    # was to re-measure everything. Replay separates the two concerns: the
+    # aggregate gate is a pure function of the 26 shard summaries, so recovering
+    # from a transport fault must cost a re-download, not a re-measurement.
+    #
+    # This is a REPAIR path, not a substitute for measurement: it proves the
+    # stored evidence reconciles and clears the gate without claiming anything
+    # about the current commit's code beyond what the evidence records.
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'replay'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      - name: Resolve evidence run
+        id: evidence
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          REQUESTED: ${{ inputs.evidence-run-id }}
+        run: |
+          set -euo pipefail
+          if [ -n "$REQUESTED" ]; then
+            RUN_ID="$REQUESTED"
+          else
+            # Most recent run that actually produced shard artifacts. A run that
+            # measured nothing would reconcile vacuously, so the count is the
+            # filter, not recency alone.
+            CANDIDATES=$(gh api "repos/$REPO/actions/workflows/mutation.yml/runs?status=completed&per_page=30" \
+              --jq '[.workflow_runs[].id] | .[]')
+            RUN_ID=""
+            for id in $CANDIDATES; do
+              COUNT=$(gh api "repos/$REPO/actions/runs/$id/artifacts?per_page=100" \
+                --jq '[.artifacts[] | select(.name | startswith("mutation-shard-"))] | length')
+              if [ "$COUNT" -ge 20 ]; then
+                RUN_ID="$id"
+                break
+              fi
+            done
+          fi
+          if [ -z "$RUN_ID" ]; then
+            echo "::error::No run with shard evidence was found. Pass evidence-run-id explicitly."
+            exit 1
+          fi
+          echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
+          echo "Reconciling evidence from run $RUN_ID." >> $GITHUB_STEP_SUMMARY
+
+      - name: Download shard evidence from the prior run
+        uses: actions/download-artifact@v7.0.0
+        with:
+          pattern: "mutation-shard-*"
+          path: runtime/generated/mutation-shards
+          merge-multiple: "true"
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ steps.evidence.outputs.run_id }}
+
+      - name: Report downloaded shard evidence
+        shell: bash
+        run: |
+          DIR=runtime/generated/mutation-shards
+          COUNT=$(find "$DIR" -name 'mutation-summary-*.json' 2>/dev/null | wc -l | tr -d ' ')
+          {
+            echo "## Replay — evidence from run ${{ steps.evidence.outputs.run_id }}"
+            echo ""
+            echo "- shard summaries reconciled: **$COUNT**"
+            echo "- mutation re-measured: **none**"
+            echo ""
+          } >> $GITHUB_STEP_SUMMARY
+          echo "$COUNT" > /tmp/replay_count
+
+      - name: Reconcile replayed evidence and enforce the campaign gate
+        id: aggregate
+        shell: bash
+        run: |
+          set +e
+          .venv/bin/python -m runtime.verify mutation-aggregate \
+            --shards-dir runtime/generated/mutation-shards \
+            --json > runtime/generated/mutation-aggregate.json
+          RC=$?
+          set -e
+          cat runtime/generated/mutation-aggregate.json
+          echo "exit_code=$RC" >> $GITHUB_OUTPUT
+          exit $RC
+
+      - name: Certify the measurement itself
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          .venv/bin/python -m runtime.verify mutation-trust
+          TRUST_RC=$?
+          set -e
+          echo "### Measurement certification (replayed evidence)" >> $GITHUB_STEP_SUMMARY
+          if [ "$TRUST_RC" -eq 0 ]; then
+            echo "✅ Measurement certified: dispatch valid, execution proven, 0 unknown survivors." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Measurement NOT certified (exit $TRUST_RC)." >> $GITHUB_STEP_SUMMARY
+          fi
+          exit $TRUST_RC
+
   mutation-aggregate:
     name: Mutation Aggregate Gate
     needs: [mutation]
+    if: needs.mutation.result != 'skipped' && needs.mutation.result != 'cancelled'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -249,13 +453,66 @@ jobs:
           path: runtime/generated/mutation-shards
           merge-multiple: "true"
 
+      # M9-C72: an incremental run measures only the affected shards, so the
+      # rest come from the registry recorded by the last full campaign. Every
+      # cached entry is fingerprint-validated, and a stale one is a hard
+      # reconciliation failure rather than a silent pass.
+      - name: Restore recorded evidence for unmeasured shards
+        if: env.MUTATION_MODE == 'incremental'
+        uses: ./.github/actions/download-runtime
+        with:
+          pattern: "mutation-registry-*"
+          path: runtime/generated/mutation-cache
+          merge-multiple: "true"
+
+      - name: Report downloaded shard evidence
+        if: always()
+        shell: bash
+        run: |
+          # M9-C72 — a gate must never fail for a reason it does not report.
+          #
+          # The D1 incident cost a full debugging session because the failing
+          # step printed nothing: the download was unresolvable and the only
+          # symptom, one job later, was "evidence missing" in the aggregate.
+          # This step is pure diagnostics — it never changes the verdict — so
+          # that a transport fault and a quality regression are distinguishable
+          # from the log alone.
+          DIR=runtime/generated/mutation-shards
+          echo "### Shard evidence transport" >> $GITHUB_STEP_SUMMARY
+          if [ ! -d "$DIR" ]; then
+            echo "**No evidence directory at \`$DIR\`.**" >> $GITHUB_STEP_SUMMARY
+            echo "The download step did not produce a directory, so no shard" >> $GITHUB_STEP_SUMMARY
+            echo "summary could be read. This is a TRANSPORT fault, not a" >> $GITHUB_STEP_SUMMARY
+            echo "measurement fault." >> $GITHUB_STEP_SUMMARY
+          else
+            COUNT=$(find "$DIR" -name 'mutation-summary-*.json' | wc -l | tr -d ' ')
+            echo "- evidence directory: \`$DIR\`" >> $GITHUB_STEP_SUMMARY
+            echo "- shard summaries downloaded: **$COUNT**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "<details><summary>Downloaded shard summaries</summary>" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            find "$DIR" -name 'mutation-summary-*.json' -printf '%f\n' | sort >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "</details>" >> $GITHUB_STEP_SUMMARY
+          fi
+
       - name: Reconcile shards and enforce the campaign gate
         id: aggregate
+        shell: bash
         run: |
-          .venv/bin/python -m runtime.verify mutation-aggregate \
-            --shards-dir runtime/generated/mutation-shards \
-            --json > runtime/generated/mutation-aggregate.json
+          set +e
+          if [ "$MUTATION_MODE" = "incremental" ] && [ -d runtime/generated/mutation-cache ]; then
+            .venv/bin/python -m runtime.verify mutation-aggregate \
+              --shards-dir runtime/generated/mutation-shards \
+              --cache-dir runtime/generated/mutation-cache \
+              --json > runtime/generated/mutation-aggregate.json
+          else
+            .venv/bin/python -m runtime.verify mutation-aggregate \
+              --shards-dir runtime/generated/mutation-shards \
+              --json > runtime/generated/mutation-aggregate.json
+          fi
           RC=$?
+          set -e
           cat runtime/generated/mutation-aggregate.json
           echo "exit_code=$RC" >> $GITHUB_OUTPUT
           exit $RC
