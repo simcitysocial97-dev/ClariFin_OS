@@ -1,8 +1,8 @@
 {
   "schema": "m9-c71-final-certification/v1",
-  "recorded_at": "2026-09-27T13:33:23.052655+00:00",
-  "head_sha": "dacfa2d4d9a3fcf250261568a10cd6a0eca22560",
-  "tree_sha": "a111e944e3866cc6dfb0532864bf48173e2a3109",
+  "recorded_at": "2026-09-28T00:15:26.632226+00:00",
+  "head_sha": "6319f89b1ce94b4fb62366403fa9a41ca905f74f",
+  "tree_sha": "5df6f84bd126b57dea9c4eafa4edf4df1c915fa2",
   "toolchain_contract": {
     "contract_id": "c71-mutation-toolchain-contract",
     "status": "SATISFIED",
@@ -21,44 +21,52 @@
     "MUTATION_DISPATCH_VALID": true,
     "MUTANT_EXECUTION_PROVEN": true,
     "UNKNOWN_SURVIVORS": 0,
-    "RAW_SCORE": 77.2,
-    "EFFECTIVE_SCORE": 115.5,
+    "RAW_SCORE": 79.1,
+    "EFFECTIVE_SCORE": 79.1,
     "RAW_GATE": "FAIL",
     "CERTIFIED": true,
     "refusals": []
   },
   "reconciliation": {
     "raw": {
-      "population": 4150,
-      "killed": 3202,
-      "survived": 940,
-      "score": 77.2
+      "population": 16904,
+      "killed": 13361,
+      "survived": 3532,
+      "score": 79.1
     },
     "certified": {
-      "valid_population": 2772,
-      "killed": 3202,
-      "proven_equivalent": 0,
+      "valid_population": 16886,
+      "killed": 13361,
+      "proven_equivalent": 18,
       "proven_unobservable": 0,
-      "proven_not_reached": 1378,
+      "proven_not_reached": 0,
       "proven_defensive": 0,
-      "remaining_real_survivors": 0,
-      "effective_score": 115.5
+      "remaining_real_survivors": 3714,
+      "effective_score": 79.1
     },
     "threshold": 80,
     "raw_gate": "FAIL",
-    "effective_gate": "PASS",
+    "effective_gate": "FAIL",
     "denominator_adjustments": [
       {
         "adjustment": "remove structurally-justified survivors from the CERTIFIED denominator only",
-        "removed": 1378,
+        "removed": 18,
         "components": {
-          "EQUIVALENT": 0,
+          "EQUIVALENT": 18,
           "UNOBSERVABLE_BY_CONTRACT": 0,
-          "NOT_REACHED": 1378,
+          "NOT_REACHED": 0,
           "DEFENSIVE_PATH": 0,
           "MUTATION_INVALID+TOOLING_DEFECT": 0
         },
         "justification": "each removed survivor carries independent evidence that it is not a test-quality failure; the RAW score is unchanged and remains the immutable measurement"
+      },
+      {
+        "adjustment": "genuine survivors are RETAINED in the certified denominator",
+        "removed": 0,
+        "components": {
+          "REAL_TEST_GAP+HARNESS+CONTRACT": 3714
+        },
+        "justification": "a genuine test gap is a real shortfall; removing it would be the score-chasing C71 forbids"
       }
     ]
   },
@@ -83,19 +91,190 @@
     "INVALID_MUTANT": 0
   },
   "classification": {
-    "NOT_REACHED": 1378
+    "EQUIVALENT": 18,
+    "REAL_TEST_GAP": 3714
   },
   "equivalence": {
-    "functions_proven_equivalent": 3,
-    "mutants_proven_equivalent": 3
+    "functions_proven_equivalent": 4,
+    "mutants_proven_equivalent": 18
   },
-  "reachability": {
-    "error path": 149,
-    "legitimate untested branch": 992,
-    "defensive branch": 219,
-    "dead code": 18
-  },
-  "prioritisation_top": [],
+  "reachability": {},
+  "prioritisation_top": [
+    {
+      "component": "common_calculations",
+      "location": "src/common/calculations.py::x_compute_behavioral_insights",
+      "survivor_count": 111,
+      "operators": [
+        "arithmetic",
+        "boolean",
+        "comparison",
+        "control_flow"
+      ],
+      "business_criticality": 7,
+      "operator_leverage": 5,
+      "reachable_execution": true,
+      "public_contract_importance": 7,
+      "assurance_per_test": 971.25,
+      "assurance_score": 3885,
+      "priority_rank": 1
+    },
+    {
+      "component": "loan_engine",
+      "location": "src/engines/loan_engine/prepayment.py::x_apply_prepayment_at_month",
+      "survivor_count": 50,
+      "operators": [
+        "arithmetic",
+        "comparison",
+        "control_flow"
+      ],
+      "business_criticality": 10,
+      "operator_leverage": 5,
+      "reachable_execution": true,
+      "public_contract_importance": 10,
+      "assurance_per_test": 833.33,
+      "assurance_score": 2500,
+      "priority_rank": 2
+    },
+    {
+      "component": "transaction_intelligence-00",
+      "location": "src/engines/transaction_intelligence/cash_conversion_detector.py::x_detect",
+      "survivor_count": 163,
+      "operators": [
+        "arithmetic",
+        "boolean",
+        "comparison",
+        "control_flow",
+        "string_literal"
+      ],
+      "business_criticality": 3,
+      "operator_leverage": 5,
+      "reachable_execution": true,
+      "public_contract_importance": 3,
+      "assurance_per_test": 489.0,
+      "assurance_score": 2445,
+      "priority_rank": 3
+    },
+    {
+      "component": "recommendation_engine",
+      "location": "src/engines/recommendation_engine/recommendations.py::x_detect_subscription_growth",
+      "survivor_count": 77,
+      "operators": [
+        "arithmetic",
+        "boolean",
+        "comparison",
+        "control_flow"
+      ],
+      "business_criticality": 6,
+      "operator_leverage": 5,
+      "reachable_execution": true,
+      "public_contract_importance": 6,
+      "assurance_per_test": 577.5,
+      "assurance_score": 2310,
+      "priority_rank": 4
+    },
+    {
+      "component": "financial_events",
+      "location": "src/engines/financial_events/lineage_walker.py::x_detect_revocations",
+      "survivor_count": 63,
+      "operators": [
+        "comparison",
+        "control_flow"
+      ],
+      "business_criticality": 8,
+      "operator_leverage": 4,
+      "reachable_execution": true,
+      "public_contract_importance": 8,
+      "assurance_per_test": 1008.0,
+      "assurance_score": 2016,
+      "priority_rank": 5
+    },
+    {
+      "component": "transaction_intelligence-01",
+      "location": "src/engines/transaction_intelligence/loan_emi_detector.py::x_detect_emi_payment",
+      "survivor_count": 160,
+      "operators": [
+        "boolean",
+        "comparison",
+        "control_flow"
+      ],
+      "business_criticality": 3,
+      "operator_leverage": 4,
+      "reachable_execution": true,
+      "public_contract_importance": 3,
+      "assurance_per_test": 640.0,
+      "assurance_score": 1920,
+      "priority_rank": 6
+    },
+    {
+      "component": "ledger_audit_engine",
+      "location": "src/engines/ledger_audit_engine.py::x_validate_ledger_integrity",
+      "survivor_count": 49,
+      "operators": [
+        "boolean",
+        "comparison",
+        "control_flow"
+      ],
+      "business_criticality": 9,
+      "operator_leverage": 4,
+      "reachable_execution": true,
+      "public_contract_importance": 9,
+      "assurance_per_test": 588.0,
+      "assurance_score": 1764,
+      "priority_rank": 7
+    },
+    {
+      "component": "cashflow_engine",
+      "location": "src/engines/cashflow_engine.py::x_compute_monthly_cashflow",
+      "survivor_count": 44,
+      "operators": [
+        "arithmetic",
+        "boolean",
+        "comparison",
+        "control_flow"
+      ],
+      "business_criticality": 8,
+      "operator_leverage": 5,
+      "reachable_execution": true,
+      "public_contract_importance": 8,
+      "assurance_per_test": 440.0,
+      "assurance_score": 1760,
+      "priority_rank": 8
+    },
+    {
+      "component": "financial_events",
+      "location": "src/engines/financial_events/lineage_walker.py::x_walk_lineage",
+      "survivor_count": 49,
+      "operators": [
+        "comparison",
+        "control_flow"
+      ],
+      "business_criticality": 8,
+      "operator_leverage": 4,
+      "reachable_execution": true,
+      "public_contract_importance": 8,
+      "assurance_per_test": 784.0,
+      "assurance_score": 1568,
+      "priority_rank": 9
+    },
+    {
+      "component": "behaviour_engine-00",
+      "location": "src/engines/behaviour_engine/core.py::x_detect_india_risk_patterns",
+      "survivor_count": 104,
+      "operators": [
+        "arithmetic",
+        "boolean",
+        "comparison",
+        "control_flow"
+      ],
+      "business_criticality": 3,
+      "operator_leverage": 5,
+      "reachable_execution": true,
+      "public_contract_importance": 3,
+      "assurance_per_test": 390.0,
+      "assurance_score": 1560,
+      "priority_rank": 10
+    }
+  ],
   "budget": {
     "aggregate_mutants_per_second": null,
     "pathological_shards": []

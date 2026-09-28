@@ -1,8 +1,8 @@
 # M9-C71 — Mutation Measurement Trust & Survivor Forensics
 
-**Recorded:** 2026-09-27T13:33:23.052655+00:00
-**HEAD:** `dacfa2d4d9a3fcf250261568a10cd6a0eca22560`
-**Tree:** `a111e944e3866cc6dfb0532864bf48173e2a3109`
+**Recorded:** 2026-09-28T00:15:26.632226+00:00
+**HEAD:** `6319f89b1ce94b4fb62366403fa9a41ca905f74f`
+**Tree:** `5df6f84bd126b57dea9c4eafa4edf4df1c915fa2`
 
 ## Certification
 
@@ -11,27 +11,27 @@ MUTATION_MEASUREMENT_VALID = true
 MUTATION_DISPATCH_VALID = true
 MUTANT_EXECUTION_PROVEN = true
 UNKNOWN_SURVIVORS = 0
-RAW_SCORE = 77.2
-EFFECTIVE_SCORE = 115.5
+RAW_SCORE = 79.1
+EFFECTIVE_SCORE = 79.1
 RAW_GATE = FAIL
 ```
 
 ## Raw (immutable evidence)
 
-- population: 4150
-- killed: 3202
-- survived: 940
-- score: 77.2%
+- population: 16904
+- killed: 13361
+- survived: 3532
+- score: 79.1%
 
 ## Certified (evidence-adjusted, never replacing raw)
 
-- valid population: 2772
-- proven equivalent: 0
+- valid population: 16886
+- proven equivalent: 18
 - proven unobservable: 0
-- proven not reached: 1378
+- proven not reached: 0
 - proven defensive: 0
-- remaining real survivors: 0
-- effective score: 115.5%
+- remaining real survivors: 3714
+- effective score: 79.1%
 
 ## Canary
 

@@ -1,6 +1,6 @@
 {
   "schema": "m9-c71-shard-budget/v1",
-  "recorded_at": "2026-09-27T13:33:23.032716+00:00",
+  "recorded_at": "2026-09-28T00:15:26.627753+00:00",
   "shards": [
     {
       "shard": "account_engine",
@@ -27,79 +27,79 @@
     {
       "shard": "behaviour_engine-00",
       "component": null,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
-      "score": null,
+      "population": 2080,
+      "killed": 1668,
+      "survived": 412,
+      "score": 80.2,
       "duration_seconds": null,
       "mutants_per_second": null,
-      "seconds_per_mutant": null
+      "seconds_per_mutant": 0.0
     },
     {
       "shard": "behaviour_engine-01",
       "component": null,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
-      "score": null,
+      "population": 1425,
+      "killed": 1098,
+      "survived": 327,
+      "score": 77.1,
       "duration_seconds": null,
       "mutants_per_second": null,
-      "seconds_per_mutant": null
+      "seconds_per_mutant": 0.0
     },
     {
       "shard": "behaviour_engine-02",
       "component": null,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
-      "score": null,
+      "population": 820,
+      "killed": 649,
+      "survived": 171,
+      "score": 79.1,
       "duration_seconds": null,
       "mutants_per_second": null,
-      "seconds_per_mutant": null
+      "seconds_per_mutant": 0.0
     },
     {
       "shard": "behaviour_engine-03",
       "component": null,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
-      "score": null,
+      "population": 1034,
+      "killed": 958,
+      "survived": 76,
+      "score": 92.6,
       "duration_seconds": null,
       "mutants_per_second": null,
-      "seconds_per_mutant": null
+      "seconds_per_mutant": 0.0
     },
     {
       "shard": "behaviour_engine-04",
       "component": null,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
-      "score": null,
+      "population": 606,
+      "killed": 529,
+      "survived": 77,
+      "score": 87.3,
       "duration_seconds": null,
       "mutants_per_second": null,
-      "seconds_per_mutant": null
+      "seconds_per_mutant": 0.0
     },
     {
       "shard": "behaviour_engine-05",
       "component": null,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
-      "score": null,
+      "population": 945,
+      "killed": 836,
+      "survived": 106,
+      "score": 88.5,
       "duration_seconds": null,
       "mutants_per_second": null,
-      "seconds_per_mutant": null
+      "seconds_per_mutant": 0.0
     },
     {
       "shard": "behaviour_engine-06",
       "component": null,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
-      "score": null,
+      "population": 303,
+      "killed": 281,
+      "survived": 22,
+      "score": 92.7,
       "duration_seconds": null,
       "mutants_per_second": null,
-      "seconds_per_mutant": null
+      "seconds_per_mutant": 0.0
     },
     {
       "shard": "cashflow_engine",
@@ -159,65 +159,65 @@
     {
       "shard": "financial_intelligence-00",
       "component": null,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
-      "score": null,
+      "population": 1244,
+      "killed": 883,
+      "survived": 361,
+      "score": 71.0,
       "duration_seconds": null,
       "mutants_per_second": null,
-      "seconds_per_mutant": null
+      "seconds_per_mutant": 0.0
     },
     {
       "shard": "financial_intelligence-01",
       "component": null,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
-      "score": null,
+      "population": 803,
+      "killed": 619,
+      "survived": 184,
+      "score": 77.1,
       "duration_seconds": null,
       "mutants_per_second": null,
-      "seconds_per_mutant": null
+      "seconds_per_mutant": 0.0
     },
     {
       "shard": "financial_intelligence-02",
       "component": null,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
-      "score": null,
+      "population": 627,
+      "killed": 395,
+      "survived": 232,
+      "score": 63.0,
       "duration_seconds": null,
       "mutants_per_second": null,
-      "seconds_per_mutant": null
+      "seconds_per_mutant": 0.0
     },
     {
       "shard": "financial_intelligence-03",
       "component": null,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
-      "score": null,
+      "population": 715,
+      "killed": 566,
+      "survived": 149,
+      "score": 79.2,
       "duration_seconds": null,
       "mutants_per_second": null,
-      "seconds_per_mutant": null
+      "seconds_per_mutant": 0.0
     },
     {
       "shard": "financial_intelligence-04",
       "component": null,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
-      "score": null,
+      "population": 319,
+      "killed": 281,
+      "survived": 38,
+      "score": 88.1,
       "duration_seconds": null,
       "mutants_per_second": null,
-      "seconds_per_mutant": null
+      "seconds_per_mutant": 0.0
     },
     {
       "shard": "ledger_audit_engine",
       "component": null,
       "population": 190,
-      "killed": 108,
-      "survived": 82,
-      "score": 56.8,
+      "killed": 132,
+      "survived": 58,
+      "score": 69.5,
       "duration_seconds": null,
       "mutants_per_second": null,
       "seconds_per_mutant": 0.0
@@ -269,13 +269,13 @@
     {
       "shard": "transaction_intelligence-00",
       "component": null,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
-      "score": null,
+      "population": 985,
+      "killed": 762,
+      "survived": 223,
+      "score": 77.4,
       "duration_seconds": null,
       "mutants_per_second": null,
-      "seconds_per_mutant": null
+      "seconds_per_mutant": 0.0
     },
     {
       "shard": "transaction_intelligence-01",
@@ -289,7 +289,7 @@
       "seconds_per_mutant": 0.0
     }
   ],
-  "total_population": 4998,
+  "total_population": 16904,
   "total_measured_seconds": 0.0,
   "aggregate_mutants_per_second": null,
   "slowest_shard": "account_engine",

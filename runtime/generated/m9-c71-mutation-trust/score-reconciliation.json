@@ -1,35 +1,43 @@
 {
   "raw": {
-    "population": 4150,
-    "killed": 3202,
-    "survived": 940,
-    "score": 77.2
+    "population": 16904,
+    "killed": 13361,
+    "survived": 3532,
+    "score": 79.1
   },
   "certified": {
-    "valid_population": 2772,
-    "killed": 3202,
-    "proven_equivalent": 0,
+    "valid_population": 16886,
+    "killed": 13361,
+    "proven_equivalent": 18,
     "proven_unobservable": 0,
-    "proven_not_reached": 1378,
+    "proven_not_reached": 0,
     "proven_defensive": 0,
-    "remaining_real_survivors": 0,
-    "effective_score": 115.5
+    "remaining_real_survivors": 3714,
+    "effective_score": 79.1
   },
   "threshold": 80,
   "raw_gate": "FAIL",
-  "effective_gate": "PASS",
+  "effective_gate": "FAIL",
   "denominator_adjustments": [
     {
       "adjustment": "remove structurally-justified survivors from the CERTIFIED denominator only",
-      "removed": 1378,
+      "removed": 18,
       "components": {
-        "EQUIVALENT": 0,
+        "EQUIVALENT": 18,
         "UNOBSERVABLE_BY_CONTRACT": 0,
-        "NOT_REACHED": 1378,
+        "NOT_REACHED": 0,
         "DEFENSIVE_PATH": 0,
         "MUTATION_INVALID+TOOLING_DEFECT": 0
       },
       "justification": "each removed survivor carries independent evidence that it is not a test-quality failure; the RAW score is unchanged and remains the immutable measurement"
+    },
+    {
+      "adjustment": "genuine survivors are RETAINED in the certified denominator",
+      "removed": 0,
+      "components": {
+        "REAL_TEST_GAP+HARNESS+CONTRACT": 3714
+      },
+      "justification": "a genuine test gap is a real shortfall; removing it would be the score-chasing C71 forbids"
     }
   ]
 }

@@ -1,9 +1,9 @@
 {
   "schema": "m9-c71-mutation-trust-baseline/v1",
-  "recorded_at": "2026-09-27T13:37:21.061623+00:00",
+  "recorded_at": "2026-09-28T00:14:38.707592+00:00",
   "identity": {
-    "head_sha": "dacfa2d4d9a3fcf250261568a10cd6a0eca22560",
-    "tree_sha": "a111e944e3866cc6dfb0532864bf48173e2a3109",
+    "head_sha": "6319f89b1ce94b4fb62366403fa9a41ca905f74f",
+    "tree_sha": "5df6f84bd126b57dea9c4eafa4edf4df1c915fa2",
     "branch": "m9c9-merge-authorization-resolution",
     "working_tree_clean": false
   },
@@ -37,47 +37,17 @@
   },
   "population": {
     "shards_expected": 26,
-    "shards_measured": 13,
-    "shards_missing": [
-      "behaviour_engine-00",
-      "behaviour_engine-01",
-      "behaviour_engine-02",
-      "behaviour_engine-03",
-      "behaviour_engine-04",
-      "behaviour_engine-05",
-      "behaviour_engine-06",
-      "financial_intelligence-00",
-      "financial_intelligence-01",
-      "financial_intelligence-02",
-      "financial_intelligence-03",
-      "financial_intelligence-04",
-      "transaction_intelligence-00"
-    ],
-    "generated": 4150,
-    "killed": 3202,
-    "survived": 940,
+    "shards_measured": 26,
+    "shards_missing": [],
+    "generated": 16904,
+    "killed": 13361,
+    "survived": 3532,
     "no_tests": 5,
-    "timeout": 3,
-    "score": 77.2
+    "timeout": 6,
+    "score": 79.1
   },
-  "aggregate_verdict": "NOT EVALUABLE (shard evidence incomplete)",
-  "aggregate_failures": [
-    "behaviour_engine-00: shard produced no mutation summary \u2014 evidence missing",
-    "behaviour_engine-01: shard produced no mutation summary \u2014 evidence missing",
-    "behaviour_engine-02: shard produced no mutation summary \u2014 evidence missing",
-    "behaviour_engine-03: shard produced no mutation summary \u2014 evidence missing",
-    "behaviour_engine-04: shard produced no mutation summary \u2014 evidence missing",
-    "behaviour_engine-05: shard produced no mutation summary \u2014 evidence missing",
-    "behaviour_engine-06: shard produced no mutation summary \u2014 evidence missing",
-    "financial_intelligence-00: shard produced no mutation summary \u2014 evidence missing",
-    "financial_intelligence-01: shard produced no mutation summary \u2014 evidence missing",
-    "financial_intelligence-02: shard produced no mutation summary \u2014 evidence missing",
-    "financial_intelligence-03: shard produced no mutation summary \u2014 evidence missing",
-    "financial_intelligence-04: shard produced no mutation summary \u2014 evidence missing",
-    "reconciliation_engine: shard produced no mutation summary \u2014 evidence missing",
-    "transaction_intelligence-00: shard produced no mutation summary \u2014 evidence missing",
-    "transaction_intelligence-01: shard produced no mutation summary \u2014 evidence missing"
-  ],
+  "aggregate_verdict": "QUALITY FAIL",
+  "aggregate_failures": [],
   "shards": [
     {
       "shard": "account_engine",
@@ -101,73 +71,73 @@
     },
     {
       "shard": "behaviour_engine-00",
-      "present": false,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
+      "present": true,
+      "population": 2080,
+      "killed": 1668,
+      "survived": 412,
       "no_tests": 0,
       "timeout": 0,
-      "score": null
+      "score": 80.2
     },
     {
       "shard": "behaviour_engine-01",
-      "present": false,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
+      "present": true,
+      "population": 1425,
+      "killed": 1098,
+      "survived": 327,
       "no_tests": 0,
       "timeout": 0,
-      "score": null
+      "score": 77.1
     },
     {
       "shard": "behaviour_engine-02",
-      "present": false,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
+      "present": true,
+      "population": 820,
+      "killed": 649,
+      "survived": 171,
       "no_tests": 0,
       "timeout": 0,
-      "score": null
+      "score": 79.1
     },
     {
       "shard": "behaviour_engine-03",
-      "present": false,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
+      "present": true,
+      "population": 1034,
+      "killed": 958,
+      "survived": 76,
       "no_tests": 0,
       "timeout": 0,
-      "score": null
+      "score": 92.6
     },
     {
       "shard": "behaviour_engine-04",
-      "present": false,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
+      "present": true,
+      "population": 606,
+      "killed": 529,
+      "survived": 77,
       "no_tests": 0,
       "timeout": 0,
-      "score": null
+      "score": 87.3
     },
     {
       "shard": "behaviour_engine-05",
-      "present": false,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
+      "present": true,
+      "population": 945,
+      "killed": 836,
+      "survived": 106,
       "no_tests": 0,
-      "timeout": 0,
-      "score": null
+      "timeout": 3,
+      "score": 88.5
     },
     {
       "shard": "behaviour_engine-06",
-      "present": false,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
+      "present": true,
+      "population": 303,
+      "killed": 281,
+      "survived": 22,
       "no_tests": 0,
       "timeout": 0,
-      "score": null
+      "score": 92.7
     },
     {
       "shard": "cashflow_engine",
@@ -221,63 +191,63 @@
     },
     {
       "shard": "financial_intelligence-00",
-      "present": false,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
+      "present": true,
+      "population": 1244,
+      "killed": 883,
+      "survived": 361,
       "no_tests": 0,
       "timeout": 0,
-      "score": null
+      "score": 71.0
     },
     {
       "shard": "financial_intelligence-01",
-      "present": false,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
+      "present": true,
+      "population": 803,
+      "killed": 619,
+      "survived": 184,
       "no_tests": 0,
       "timeout": 0,
-      "score": null
+      "score": 77.1
     },
     {
       "shard": "financial_intelligence-02",
-      "present": false,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
+      "present": true,
+      "population": 627,
+      "killed": 395,
+      "survived": 232,
       "no_tests": 0,
       "timeout": 0,
-      "score": null
+      "score": 63.0
     },
     {
       "shard": "financial_intelligence-03",
-      "present": false,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
+      "present": true,
+      "population": 715,
+      "killed": 566,
+      "survived": 149,
       "no_tests": 0,
       "timeout": 0,
-      "score": null
+      "score": 79.2
     },
     {
       "shard": "financial_intelligence-04",
-      "present": false,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
+      "present": true,
+      "population": 319,
+      "killed": 281,
+      "survived": 38,
       "no_tests": 0,
       "timeout": 0,
-      "score": null
+      "score": 88.1
     },
     {
       "shard": "ledger_audit_engine",
       "present": true,
       "population": 190,
-      "killed": 108,
-      "survived": 82,
+      "killed": 132,
+      "survived": 58,
       "no_tests": 0,
       "timeout": 0,
-      "score": 56.8
+      "score": 69.5
     },
     {
       "shard": "loan_engine-00",
@@ -321,13 +291,13 @@
     },
     {
       "shard": "transaction_intelligence-00",
-      "present": false,
-      "population": 0,
-      "killed": 0,
-      "survived": 0,
+      "present": true,
+      "population": 985,
+      "killed": 762,
+      "survived": 223,
       "no_tests": 0,
       "timeout": 0,
-      "score": null
+      "score": 77.4
     },
     {
       "shard": "transaction_intelligence-01",

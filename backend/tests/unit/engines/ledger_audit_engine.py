@@ -533,3 +533,156 @@ class TestRunFullAudit:
         assert isinstance(result["ledger_integrity"], dict)
         assert isinstance(result["hash_verification"], dict)
         assert result["overall_status"] in ("PASS", "FAIL")
+
+
+# ============================================================
+# M9-C71 — Violation-path coverage for the "defensive" checks
+# ============================================================
+#
+# C71's survivor forensics found 73 of this module's 82 surviving mutants in
+# `_validate_ledger_integrity`, and asked why four branches were unreachable.
+# The answer, established by running the audit against the existing
+# `db_with_violations` fixture, is that this fixture does not actually violate
+# the three predicates it appears to:
+#
+#   * "Neg Debit"  is inserted with amount_paise = +50000  → debit  = +50000
+#   * "Neg Credit" is inserted with amount_paise = +50000  → credit = +50000
+#   * "Dual Entry" uses type = '' so BOTH generated columns are 0
+#
+# so `WHERE debit < 0`, `WHERE credit < 0` and
+# `WHERE debit > 0 AND credit > 0` have never returned a single row. Only
+# NULL_ACCOUNT_ID and NULL_HASH were ever exercised. The pre-existing
+# `test_validate_ledger_integrity_defensive_checks_exist` could not detect this
+# because it runs the same predicates against a CLEAN database and asserts the
+# violations are absent — which is true whether or not the checks work.
+#
+# These tests supply rows the predicates actually match. They are written
+# against the audit's published contract (which violation types exist, and what
+# each report must identify), not against any mutant.
+
+
+@pytest.fixture
+def db_with_amount_violations(temp_db: str) -> str:
+    """A database whose rows actually violate the amount predicates.
+
+    `amount_paise` carries the sign, and `debit`/`credit` are STORED generated
+    columns derived from `type`, so a negative debit is a negative
+    `amount_paise` on a `debit` row. That is the only way the schema permits the
+    condition the audit looks for.
+    """
+    from src.core.db.connection import get_connection
+
+    conn = get_connection(temp_db)
+    conn.executescript("""
+        INSERT INTO statements (id, bank, file_name) VALUES (1, 'HDFC', 'stmt1.pdf');
+
+        INSERT INTO transactions
+            (statement_id, date, date_iso, description, amount_paise, type,
+             account_id, hash_signature, sequence_num)
+        VALUES
+            -- negative debit: type='debit' with a negative amount
+            (1, '01/01/2025', '2025-01-01', 'NegDebit', -50000, 'debit',  'HDFC', 'h-neg-debit',  0),
+            -- negative credit: type='credit' with a negative amount
+            (1, '02/01/2025', '2025-01-02', 'NegCredit', -30000, 'credit', 'HDFC', 'h-neg-credit', 1);
+    """)
+    conn.commit()
+    conn.close()
+    return temp_db
+
+
+class TestLedgerIntegrityAmountViolations:
+    """The negative-amount audit checks, exercised against rows that match them.
+
+    `DUAL_ENTRY` is absent by design: `debit` and `credit` are mutually
+    exclusive generated columns, so no row can satisfy both predicates. That
+    invariant is asserted in `test_dual_entry_is_unreachable_by_construction`
+    so a future schema change that breaks it fails loudly instead of silently
+    leaving an audit check unexercised.
+    """
+
+    def test_negative_debit_is_reported_with_its_transaction_id(
+        self, db_with_amount_violations
+    ):
+        result = validate_ledger_integrity(db_with_amount_violations)
+
+        assert result["status"] == "FAIL"
+        negative_debits = [
+            v for v in result["violations"] if v["type"] == "NEGATIVE_DEBIT"
+        ]
+        assert len(negative_debits) == 1
+        # The report must name the offending row, or an operator cannot act on
+        # it; a wrong dict key is exactly what survived mutation testing here.
+        assert negative_debits[0]["transaction_id"] == 1
+        assert "-50000" in negative_debits[0]["message"]
+
+    def test_negative_credit_is_reported_with_its_transaction_id(
+        self, db_with_amount_violations
+    ):
+        result = validate_ledger_integrity(db_with_amount_violations)
+
+        assert result["status"] == "FAIL"
+        negative_credits = [
+            v for v in result["violations"] if v["type"] == "NEGATIVE_CREDIT"
+        ]
+        assert len(negative_credits) == 1
+        assert negative_credits[0]["transaction_id"] == 2
+        assert "-30000" in negative_credits[0]["message"]
+
+    def test_both_amount_violations_are_reported_together(
+        self, db_with_amount_violations
+    ):
+        """The audit must not stop at the first corrupted row."""
+        result = validate_ledger_integrity(db_with_amount_violations)
+
+        types = {v["type"] for v in result["violations"]}
+        assert {"NEGATIVE_DEBIT", "NEGATIVE_CREDIT"} <= types
+        assert result["violation_count"] == len(result["violations"]) == 2
+
+    def test_every_violation_identifies_its_transaction(
+        self, db_with_amount_violations
+    ):
+        """Each report must be actionable: a row id is the only useful handle."""
+        result = validate_ledger_integrity(db_with_amount_violations)
+
+        for violation in result["violations"]:
+            assert violation.get("transaction_id") or violation.get(
+                "transaction_ids"
+            ), violation
+            assert str(violation["transaction_id"]) in violation["message"], (
+                "the message must name the row it reports, since the id is the "
+                "only thing an operator can look up"
+            )
+
+    def test_dual_entry_is_unreachable_by_construction(self, temp_db):
+        """Assert WHY DUAL_ENTRY never fires, so the gap cannot go unnoticed.
+
+        `debit` and `credit` are STORED generated columns selected by a single
+        `type` discriminator, so at most one is non-zero. This test fails if a
+        future migration makes them independently settable — at which point the
+        audit's fourth check becomes reachable and needs its own coverage.
+        """
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db)
+        conn.executescript("""
+            INSERT INTO statements (id, bank, file_name) VALUES (1, 'HDFC', 'stmt1.pdf');
+            INSERT INTO transactions
+                (statement_id, date, date_iso, description, amount_paise, type,
+                 account_id, hash_signature, sequence_num)
+            VALUES
+                (1, '01/01/2025', '2025-01-01', 'D', 100000, 'debit',  'HDFC', 'h1', 0),
+                (1, '02/01/2025', '2025-01-02', 'C', 100000, 'credit', 'HDFC', 'h2', 1),
+                (1, '03/01/2025', '2025-01-03', 'N', 100000, '',       'HDFC', 'h3', 2);
+        """)
+        conn.commit()
+        rows = conn.execute(
+            "SELECT COUNT(*) FROM transactions WHERE debit > 0 AND credit > 0"
+        ).fetchone()[0]
+        conn.close()
+
+        assert rows == 0, (
+            "a row now has both debit and credit; DUAL_ENTRY is reachable and "
+            "needs a test that supplies one"
+        )
+        result = validate_ledger_integrity(temp_db)
+        assert "DUAL_ENTRY" not in {v["type"] for v in result["violations"]}

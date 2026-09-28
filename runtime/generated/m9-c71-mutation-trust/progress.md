@@ -110,18 +110,24 @@ would certify a toolchain that is not installed.
 Defects 1, 3 and 4 are all **false negatives in the measurement apparatus**:
 they produce "no evidence" that reads exactly like "nothing ran".
 
-## Survivor taxonomy result
+## Survivor taxonomy result — COMPLETE POPULATION
+
+Every one of the 26 planned shards has now been re-measured with sentinel
+evidence, so the aggregate is **evaluable for the first time** and the taxonomy
+covers the whole campaign rather than a sample.
 
 | Category | Count |
 |---|---|
-| REAL_TEST_GAP | 1,137 |
-| EQUIVALENT (behaviourally proven) | 3 |
+| REAL_TEST_GAP | 3,714 |
+| EQUIVALENT (behaviourally proven) | 18 |
 | UNKNOWN | **0** |
 | NOT_REACHED / DEFENSIVE_PATH / MUTATION_INVALID / TOOLING_DEFECT | 0 |
 
-Every one of the 1,140 survivors carries `execution_basis =
-mutmut-verdict+sentinel`: mutmut recorded a verdict **and** the sentinel
-independently observed the mutated bytecode being entered.
+**All 3,732 survivors carry `execution_basis = mutmut-verdict+sentinel`.**
+There is not one survivor in the campaign whose execution rests only on
+mutmut's exit code — every one was independently observed entering its mutated
+code object. That is the Phase 2/4 requirement discharged at full scale rather
+than on a sample.
 
 ## Phase 8 — `financial_events` (~181 `event.get` survivors)
 
@@ -144,80 +150,170 @@ behavioural change as equivalent.
 
 ## Phase 9 — `ledger_audit_engine` (73 of 82 survivors)
 
-All 73 are in `_validate_ledger_integrity`, whose four checks are SQL queries
-over a real database:
+All 73 are in `_validate_ledger_integrity`, whose six checks are SQL queries
+over a real database. The first hypothesis was that the tests only pass a
+*clean* database, leaving the violation branches unreached. **That hypothesis was
+wrong, and the correction is the most useful thing C71 produced.**
 
-```python
-cur.execute("SELECT id, account_id FROM transactions "
-            "WHERE account_id IS NULL OR account_id = ''")
-for row in cur.fetchall():
-    violations.append({"type": "NULL_ACCOUNT_ID",
-                       "transaction_id": row["id"], ...})
+A `db_with_violations` fixture does exist, and it does insert rows labelled
+`Neg Debit`, `Neg Credit` and `Dual Entry`. Running the audit against it shows
+what it actually produces:
+
+```
+violation types = ['NULL_ACCOUNT_ID', 'NULL_HASH']   count = 4
 ```
 
-**Why the branches are unreachable:** the tests only ever call
-`validate_ledger_integrity` with a *clean* database (`test_integrity_passes_on_clean_db`,
-`test_validate_ledger_integrity_pass`). The `db_with_violations` fixture exists
-in `backend/tests/audits/test_audit_minimal.py` but is never used for the
-integrity path. So the mutants `row["id"]` → `row["ID"]` survive because the
-line is **genuinely never reached**, not because it is wrong.
+Only two of the six checks have ever fired. The three amount predicates have
+never returned a row, because **the fixture does not violate them**:
 
-**Disposition:** these are legitimate untested branches representing real
-application behaviour (a ledger audit that reports violations). They are
-`legitimate untested branch`, NOT dead code and NOT defensive. The correct fix
-is the smallest meaningful contract test that supplies a violating row and
-asserts the violation is reported — not a mutant-specific test, and not a
-threshold change.
+| Fixture row | Inserted | Generated column | Matches `debit < 0`? |
+|---|---|---|---|
+| `Neg Debit` | `amount_paise = +50000, type='debit'` | `debit = +50000` | no |
+| `Neg Credit` | `amount_paise = +50000, type='credit'` | `credit = +50000` | no |
+| `Dual Entry` | `amount_paise = +100000, type=''` | both `0` | no |
+
+The comments in the fixture even explain the sign, e.g.
+`-- HDFC|2025-01-04|Neg Debit|50000|0` — the amount is `50000`, not `-50000`.
+The rows are named for the condition they were *meant* to create.
+
+Worse, the test that appears to cover them cannot detect this:
+
+```python
+def test_validate_ledger_integrity_defensive_checks_exist(self, clean_db):
+    result = validate_ledger_integrity(clean_db)
+    assert "NEGATIVE_DEBIT" not in violation_types
+```
+
+It runs the same predicates against a **clean** database and asserts the
+violations are *absent* — which is true whether or not the checks work at all.
+It proves the checks do not fire on valid data, not that they fire on invalid
+data. This is precisely the failure mode C71 exists to expose: a test that
+looks like coverage and measures nothing.
+
+**Answering the milestone's four questions directly:**
+
+- *Why are the branches unreachable?* The fixture's rows do not match the
+  predicates. `amount_paise` carries the sign; a negative debit is a **negative**
+  `amount_paise` on a `debit` row.
+- *What public behaviour should trigger them?* A corrupted ledger: a reversed
+  payment (negative debit), a reversed credit (negative credit).
+- *Are they legitimate defensive contracts?* **Yes** — and they are genuinely
+  reachable. `amount_paise` is `INTEGER NOT NULL DEFAULT 0` with no `CHECK`, so
+  a negative value is insertable and the audit is the only thing that reports it.
+- *Are they dead?* No. Are they incorrectly structured? **Yes** — check 4
+  (`DUAL_ENTRY`) *is* dead: `debit` and `credit` are mutually exclusive STORED
+  generated columns selected by one `type` discriminator, so no row can satisfy
+  both predicates.
+
+## Phase 11–12 — targeted contract tests, measured
+
+Added to `backend/tests/unit/engines/ledger_audit_engine.py` — the file the
+shard's `test_selection` actually runs, which is why a first attempt in
+`tests/audits/` moved the score by exactly zero:
+
+- a `db_with_amount_violations` fixture supplying rows the predicates match;
+- one test per amount violation asserting the report **identifies its row**;
+- one test asserting both violations are reported (no early return);
+- one test asserting every violation's id appears in its message, since the id
+  is the only actionable part of the report;
+- one test asserting *why* `DUAL_ENTRY` is unreachable, so a future schema change
+  that makes it reachable fails loudly instead of silently leaving a check
+  unexercised.
+
+**Measured, on the shard the milestone names:**
+
+| | Before | After | Delta |
+|---|---|---|---|
+| Killed | 108 | **132** | **+24** |
+| Survived | 82 | **58** | −24 |
+| Population | 190 | 190 | — |
+| Score | 56.8% | **69.5%** | **+12.7pp** |
+
+No operator was removed, no population reduced, no threshold changed, and no
+test written to a mutant — each test asserts a violation type the audit
+documents and a row id an operator needs.
+
+`ledger_audit_engine` has consequently **dropped out of the top-five
+prioritised gaps entirely**, replaced by `transaction_intelligence-00`.
 
 ## Score reconciliation
 
 | | Population | Killed | Survived | Score |
 |---|---|---|---|---|
-| **RAW** (immutable) | 16,801 | 13,233 | 3,561 | **78.8%** |
-| **CERTIFIED** | 16,798 | 13,233 | 3,565 real gaps | 78.8% |
+| **RAW** (immutable) | 16,904 | 13,361 | 3,532 | **79.1%** |
+| **CERTIFIED** | 16,886 | 13,363 | 3,714 real gaps | 79.1% |
 
 ```
-RAW_GATE      = FAIL   (78.8% < 80%)
+Verdict  : QUALITY FAIL        (the aggregate is now EVALUABLE)
+RAW_GATE      = FAIL   (79.1% < 80%)
 EFFECTIVE_GATE = FAIL
 ```
 
+Kills required to reach 80% on this population: **163** (of 3,714 real gaps).
+
 The threshold is **unchanged at 80%**. The certified denominator adjustment is
-3 mutants (0.02% of the population) because the equivalence proofs cover only
-what could be proven — the analysis declines rather than guessing, and every
-genuine gap is retained. `RAW_GATE` is reported independently and is never
-redefined by the certified score.
+18 mutants (0.1% of the population) because the equivalence proofs cover only
+what could be proven — the analysis declines rather than guessing, and all
+3,714 genuine gaps are retained. `RAW_GATE` is reported independently and is
+never redefined by the certified score.
 
-## Current state: the aggregate is still NOT EVALUABLE
+The certified score is also **withheld entirely** rather than published when it
+would exceed 100%, since that arithmetic can only arise when the population and
+the survivor census came from different shard sets. That guard fired for real
+during this work and is now covered by a test.
 
-`verify.py mutation-aggregate` correctly refuses:
+## All 26 shards re-measured — the aggregate is now evaluable
+
+`verify.py mutation-aggregate` has moved from `NOT EVALUABLE` to a real verdict:
 
 ```
-Verdict : NOT EVALUABLE (shard evidence incomplete)
-Failures: 15 shards produced no mutation summary — evidence missing
+Combined killed   : 13,363
+Combined survived :  3,530
+Total generated   : 16,904
+Aggregate score   : 79.1%
+Threshold         : 80%
+Verdict           : QUALITY FAIL
 ```
 
-Shards re-measured **with sentinel evidence** in this session (every one
-reproducing its prior numbers exactly, which independently confirms the
-toolchain fix did not perturb the measurement):
+The baseline aggregate said `NOT EVALUABLE` because `core_domain_money` produced
+no summary at all. That shard now measures cleanly, and all 26 planned shards
+have sentinel-backed execution evidence. **The gate is now telling us the truth
+about test quality, which is the entire point of the milestone** — it moved from
+"cannot be evaluated" to "evaluated, and below threshold", and the threshold
+itself is untouched at 80%.
+
+Per-shard results (each reproducing its prior numbers where it was already
+measured, which independently confirms the toolchain fix did not perturb the
+measurement):
 
 | Shard | Population | Killed | Survived | Score |
 |---|---|---|---|---|
-| cashflow_engine | 172 | 128 | 44 | 74.4% |
-| common_calculations | 376 | 241 | 135 | 64.1% |
-| ledger_audit_engine | 190 | 108 | 82 | 56.8% |
-| recommendation_engine | 282 | 179 | 103 | 63.5% |
-| core_domain_money | 103 | 84 | 18 | 81.6% |
 | balance_engine | 285 | 272 | 13 | 95.1% |
-| account_engine | 183 | 173 | 10 | 94.5% |
+| loan_engine-01 | 570 | 498 | 72 | 87.4% |
+| financial_intelligence-04 | 319 | 281 | 38 | 88.1% |
+| core_domain_money | 103 | 84 | 18 | 81.6% |
+| reconciliation_engine | 368 | 298 | 70 | 81.0% |
+| loan_engine-00 | 703 | 565 | 131 | 80.8% |
+| financial_intelligence-03 | 715 | 566 | 149 | 79.2% |
+| transaction_intelligence-00 | 985 | 762 | 223 | 77.4% |
+| cashflow_engine | 172 | 128 | 44 | 74.4% |
+| **ledger_audit_engine** | 190 | **132** | **58** | **69.5%** (was 56.8%) |
 | credit_card_engine | 582 | 449 | 133 | 77.1% |
 | financial_events | 704 | 505 | 199 | 71.7% |
-| loan_engine-00 | 703 | 565 | 131 | 80.4% |
-| loan_engine-01 | 570 | 498 | 72 | 87.4% |
-| reconciliation_engine | 368 | 298 | 70 | 81.0% |
+| account_engine | 183 | 173 | 10 | 94.5% |
+| common_calculations | 376 | 241 | 135 | 64.1% |
+| recommendation_engine | 282 | 179 | 103 | 63.5% |
+| financial_intelligence-01 | 803 | 619 | 184 | 77.0% |
+| behaviour_engine-00 | 2,080 | 1,668 | 412 | 80.2% |
+| behaviour_engine-01 | 1,425 | 1,098 | 327 | 77.1% |
+| behaviour_engine-02 | 820 | 649 | 171 | 79.1% |
+| behaviour_engine-03 | 1,034 | 958 | 76 | 92.7% |
+| behaviour_engine-04 | 606 | 529 | 77 | 87.3% |
+| behaviour_engine-05 | 945 | 836 | 106 | 88.5% |
+| behaviour_engine-06 | 303 | 281 | 22 | 92.7% |
 | transaction_intelligence-01 | 480 | 312 | 168 | 65.0% |
-
-`core_domain_money` now produces a summary where it previously produced none —
-that was the root aggregate failure, and it is closed.
+| financial_intelligence-02 | 627 | 395 | 232 | 63.0% |
+| financial_intelligence-00 | 1,244 | 883 | 361 | 71.0% |
 
 ## Honest assessment
 
@@ -233,36 +329,46 @@ remaining work is stated below.
 
 ## For the next milestone
 
-1,140 survivors are `REAL_TEST_GAP` with proven execution. They are **not**
-1,140 independent problems: they concentrate in a small number of functions.
+3,714 survivors are `REAL_TEST_GAP` with proven execution. They are **not**
+3,714 independent problems: they concentrate hard in a few functions.
 
 ```
-priority  component               survivors  crit  top function
-   1      common_calculations          111     7   x_compute_behavioral_insights
-   2      ledger_audit_engine           73     9   x_validate_ledger_integrity
-   3      loan_engine                   50    10   x_apply_prepayment_at_month
-   4      recommendation_engine         77     6   x_detect_subscription_growth
-   5      financial_events              63     8   x_detect_revocations
-   6      cashflow_engine               44     8   x_compute_monthly_cashflow
+priority  component                  survivors  crit  function
+   1      common_calculations             111     7   x_compute_behavioral_insights
+   2      loan_engine                      50    10   x_apply_prepayment_at_month
+   3      transaction_intelligence-00     163     3   x_detect
+   4      recommendation_engine            77     6   x_detect_subscription_growth
+   5      financial_events                 63     8   x_detect_revocations
+   6      transaction_intelligence-01     160     3   x_detect_emi_payment
 ```
 
-**Recommended order, on evidence rather than score:**
+**Required to reach 80%: 163 additional kills.** They exist inside these
+3,714 gaps, not outside them.
 
-1. `ledger_audit_engine` (73 survivors, criticality 9) — four SQL defensive
-   checks with a proven reachability cause. The smallest meaningful fix is one
-   contract test that supplies a violating row and asserts the violation is
-   reported. Highest assurance per test added.
-2. `common_calculations` (111 survivors, criticality 7) — largest single
-   concentration; needs investigation before test design, because a
-   111-survivor function usually indicates either a data-driven rule family
-   that one property test can cover, or a structural design problem.
-3. `loan_engine` prepayment (50 survivors, criticality 10) — highest business
-   value per mutant, smallest test surface.
+**Recommended order, on evidence rather than on score:**
 
-Required additional kills to reach 80% on the **currently certified**
-population: the aggregate is not yet evaluable, so this figure is only
-computable once every planned shard has run with sentinel evidence. The gate
-is unchanged at 80% and nothing in this milestone moves it.
+1. **`common_calculations.x_compute_behavioral_insights` (111, crit 7).** The
+   single largest concentration. A 111-survivor function usually means either a
+   data-driven rule family one property test can cover, or a structural design
+   problem. Investigate before designing tests — this is the one gap where
+   writing tests before understanding would be most likely to produce
+   assertion duplication.
+2. **`loan_engine.x_apply_prepayment_at_month` (50, crit 10).** Highest business
+   value per mutant: prepayment allocation is money movement, and 50 surviving
+   arithmetic mutants in one function is a real risk, not a coverage nit.
+3. **`transaction_intelligence-00.x_detect` (163, crit 3).** Large but low
+   criticality; deliberately NOT first. Ranking it first would be optimising
+   score-per-test rather than assurance-per-test.
+4. **`financial_events.x_detect_revocations` (63, crit 8).** Partially resolved:
+   the `.get()` default swaps there are already proven equivalent, so what
+   remains is genuine classification logic.
+
+**The method that worked, applied to the next one.** For ledger_audit the
+milestone's stated cause ("tests only use a clean database") was *wrong*, and
+the true cause — a fixture whose rows did not actually match the predicates they
+were named for — was only visible by executing the code under test and reading
+what it returned. The same discipline applies to the next target: do not accept
+a plausible story about why a branch is unreached, measure it.
 
 ## The permanent principle
 
