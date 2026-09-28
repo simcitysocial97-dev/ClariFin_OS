@@ -10217,6 +10217,33 @@
           "quick-black"
         ]
       }
+    },
+    {
+      "run_id": "d519b0b2-8eff-40dd-8047-76e7aebad8c5",
+      "timestamp": "2026-09-28T11:01:16.991588+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "f9b001d97ce08119f3e7e1924514240672d12894",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "check",
+      "status": "failed",
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 4.90887902599934,
+      "blast_radius": {},
+      "evidence_count": 2,
+      "cache_hit": false,
+      "metadata": {
+        "task_states": {
+          "failed": 1
+        },
+        "plan_id": "execplan-f9f47bf6d40d",
+        "report_id": "report-856d8b8223e2"
+      }
     }
   ],
   "ci": [
@@ -20858,6 +20885,33 @@
           "quick-ruff",
           "quick-black"
         ]
+      }
+    },
+    {
+      "run_id": "d519b0b2-8eff-40dd-8047-76e7aebad8c5",
+      "timestamp": "2026-09-28T11:01:16.991588+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "f9b001d97ce08119f3e7e1924514240672d12894",
+      "branch": "m9c9-merge-authorization-resolution",
+      "profile": "check",
+      "status": "failed",
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "duration_seconds": 4.90887902599934,
+      "blast_radius": {},
+      "evidence_count": 2,
+      "cache_hit": false,
+      "metadata": {
+        "task_states": {
+          "failed": 1
+        },
+        "plan_id": "execplan-f9f47bf6d40d",
+        "report_id": "report-856d8b8223e2"
       }
     }
   ]

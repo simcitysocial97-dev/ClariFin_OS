@@ -220,7 +220,16 @@ jobs:
   mutation:
     name: Mutation Shard (${{ matrix.shard }})
     needs: [mutation-smoke, mutation-plan]
-    if: needs.mutation-plan.result == 'success' && needs.mutation-plan.outputs.matrix != '[]'
+    # Replay mode must SKIP measurement explicitly. Leaving the job merely
+    # un-runnable produced a run whose conclusion was `failure` while every job
+    # reported success: the aggregate gate's `needs: [mutation]` had no job to
+    # resolve against, and GitHub scored the run as failed with nothing to fix.
+    # The whole point of replay is that no shard runs, and the job graph has to
+    # say so.
+    if: >-
+      env.MUTATION_MODE != 'replay'
+      && needs.mutation-plan.result == 'success'
+      && needs.mutation-plan.outputs.matrix != '[]'
     runs-on: ubuntu-latest
     # M9-C72 — derived from measured p95 x2 by mutation-plan, not a flat 90.
     # With the slowest shard measured at 693 s this lands at 21 min, so a
@@ -464,6 +473,9 @@ jobs:
   mutation-aggregate:
     name: Mutation Aggregate Gate
     needs: [mutation]
+    # When the shard matrix is empty (incremental with no affected shard) the
+    # matrix job is skipped; the gate must proceed on that signal rather than
+    # waiting for a job that will never start.
     if: needs.mutation.result != 'skipped' && needs.mutation.result != 'cancelled'
     runs-on: ubuntu-latest
     timeout-minutes: 15

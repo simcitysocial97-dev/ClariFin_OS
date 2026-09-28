@@ -613,6 +613,22 @@ class TestShardedWorkflowTopology:
         )
         assert "needs" not in mutation_workflow["jobs"]["mutation-replay"]
 
+    def test_replay_explicitly_skips_the_shard_matrix(self, mutation_workflow):
+        """Replay must SKIP measurement, not merely fail to schedule it.
+
+        Leaving the shard job un-runnable produced a run GitHub scored as
+        `failure` while every individual job reported success: the aggregate's
+        `needs: [mutation]` had nothing to resolve against, so the run failed
+        with no failing job to point at. The job graph has to state the
+        intent, not imply it.
+        """
+        condition = str(mutation_workflow["jobs"]["mutation"]["if"])
+
+        assert "MUTATION_MODE" in condition
+        assert "replay" in condition, (
+            "the shard matrix must be explicitly skipped in replay mode"
+        )
+
     def test_an_empty_incremental_plan_does_not_strand_the_aggregate(
         self, mutation_workflow
     ):
