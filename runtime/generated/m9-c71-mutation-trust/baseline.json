@@ -1,9 +1,9 @@
 {
   "schema": "m9-c71-mutation-trust-baseline/v1",
-  "recorded_at": "2026-09-28T00:14:38.707592+00:00",
+  "recorded_at": "2026-09-28T03:16:20.987893+00:00",
   "identity": {
-    "head_sha": "6319f89b1ce94b4fb62366403fa9a41ca905f74f",
-    "tree_sha": "5df6f84bd126b57dea9c4eafa4edf4df1c915fa2",
+    "head_sha": "4f9d3162e3212f2137e5cda9c89a42dcebcb287f",
+    "tree_sha": "79a43f88bd76857b9cca7a51c54b62833ccbd026",
     "branch": "m9c9-merge-authorization-resolution",
     "working_tree_clean": false
   },
@@ -40,13 +40,13 @@
     "shards_measured": 26,
     "shards_missing": [],
     "generated": 16904,
-    "killed": 13361,
-    "survived": 3532,
+    "killed": 13534,
+    "survived": 3359,
     "no_tests": 5,
     "timeout": 6,
-    "score": 79.1
+    "score": 80.1
   },
-  "aggregate_verdict": "QUALITY FAIL",
+  "aggregate_verdict": "PASS",
   "aggregate_failures": [],
   "shards": [
     {
@@ -73,11 +73,11 @@
       "shard": "behaviour_engine-00",
       "present": true,
       "population": 2080,
-      "killed": 1668,
-      "survived": 412,
+      "killed": 1682,
+      "survived": 398,
       "no_tests": 0,
       "timeout": 0,
-      "score": 80.2
+      "score": 80.9
     },
     {
       "shard": "behaviour_engine-01",
@@ -193,31 +193,31 @@
       "shard": "financial_intelligence-00",
       "present": true,
       "population": 1244,
-      "killed": 883,
-      "survived": 361,
+      "killed": 895,
+      "survived": 349,
       "no_tests": 0,
       "timeout": 0,
-      "score": 71.0
+      "score": 71.9
     },
     {
       "shard": "financial_intelligence-01",
       "present": true,
       "population": 803,
-      "killed": 619,
-      "survived": 184,
+      "killed": 664,
+      "survived": 139,
       "no_tests": 0,
       "timeout": 0,
-      "score": 77.1
+      "score": 82.7
     },
     {
       "shard": "financial_intelligence-02",
       "present": true,
       "population": 627,
-      "killed": 395,
-      "survived": 232,
+      "killed": 449,
+      "survived": 178,
       "no_tests": 0,
       "timeout": 0,
-      "score": 63.0
+      "score": 71.6
     },
     {
       "shard": "financial_intelligence-03",
@@ -273,11 +273,11 @@
       "shard": "recommendation_engine",
       "present": true,
       "population": 282,
-      "killed": 179,
-      "survived": 103,
+      "killed": 199,
+      "survived": 83,
       "no_tests": 0,
       "timeout": 0,
-      "score": 63.5
+      "score": 70.6
     },
     {
       "shard": "reconciliation_engine",
@@ -293,21 +293,21 @@
       "shard": "transaction_intelligence-00",
       "present": true,
       "population": 985,
-      "killed": 762,
-      "survived": 223,
+      "killed": 767,
+      "survived": 218,
       "no_tests": 0,
       "timeout": 0,
-      "score": 77.4
+      "score": 77.9
     },
     {
       "shard": "transaction_intelligence-01",
       "present": true,
       "population": 480,
-      "killed": 312,
-      "survived": 168,
+      "killed": 335,
+      "survived": 145,
       "no_tests": 0,
       "timeout": 0,
-      "score": 65.0
+      "score": 69.8
     }
   ]
 }

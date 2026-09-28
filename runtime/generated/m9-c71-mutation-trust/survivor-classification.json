@@ -1,14 +1,14 @@
 {
   "schema": "m9-c71-survivor-classification/v1",
-  "recorded_at": "2026-09-28T00:15:26.551697+00:00",
-  "survivors_classified": 3732,
+  "recorded_at": "2026-09-28T03:16:51.343593+00:00",
+  "survivors_classified": 3559,
   "by_category": {
     "MUTATION_INVALID": 0,
     "NOT_REACHED": 0,
     "EQUIVALENT": 18,
     "UNOBSERVABLE_BY_CONTRACT": 0,
     "DEFENSIVE_PATH": 0,
-    "REAL_TEST_GAP": 3714,
+    "REAL_TEST_GAP": 3541,
     "TEST_HARNESS_GAP": 0,
     "PRODUCT_CONTRACT_GAP": 0,
     "TOOLING_DEFECT": 0,
@@ -22,7 +22,7 @@
       "REAL_TEST_GAP": 13
     },
     "behaviour_engine-00": {
-      "REAL_TEST_GAP": 412
+      "REAL_TEST_GAP": 398
     },
     "behaviour_engine-01": {
       "REAL_TEST_GAP": 327
@@ -59,13 +59,13 @@
       "REAL_TEST_GAP": 196
     },
     "financial_intelligence-00": {
-      "REAL_TEST_GAP": 361
+      "REAL_TEST_GAP": 349
     },
     "financial_intelligence-01": {
-      "REAL_TEST_GAP": 184
+      "REAL_TEST_GAP": 139
     },
     "financial_intelligence-02": {
-      "REAL_TEST_GAP": 232
+      "REAL_TEST_GAP": 178
     },
     "financial_intelligence-03": {
       "REAL_TEST_GAP": 134,
@@ -87,20 +87,20 @@
       "REAL_TEST_GAP": 72
     },
     "recommendation_engine": {
-      "REAL_TEST_GAP": 103
+      "REAL_TEST_GAP": 83
     },
     "reconciliation_engine": {
       "REAL_TEST_GAP": 70
     },
     "transaction_intelligence-00": {
-      "REAL_TEST_GAP": 223
+      "REAL_TEST_GAP": 218
     },
     "transaction_intelligence-01": {
-      "REAL_TEST_GAP": 168
+      "REAL_TEST_GAP": 145
     }
   },
   "unknown_survivors": 0,
-  "genuine_gap_survivors": 3714,
+  "genuine_gap_survivors": 3541,
   "structural_survivors": 18,
   "verdicts": [
     {
@@ -548,66 +548,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.behaviour_engine.core.x__get_monthly_category_spending_data__mutmut_33",
-      "component": "behaviour_engine-00",
-      "source_file": "src/engines/behaviour_engine/core.py",
-      "function": "x__get_monthly_category_spending_data",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.behaviour_engine.core.x__get_monthly_category_spending_data__mutmut_35",
-      "component": "behaviour_engine-00",
-      "source_file": "src/engines/behaviour_engine/core.py",
-      "function": "x__get_monthly_category_spending_data",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.behaviour_engine.core.x__get_monthly_category_spending_data__mutmut_38",
-      "component": "behaviour_engine-00",
-      "source_file": "src/engines/behaviour_engine/core.py",
-      "function": "x__get_monthly_category_spending_data",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.behaviour_engine.core.x__get_monthly_category_spending_data__mutmut_39",
-      "component": "behaviour_engine-00",
-      "source_file": "src/engines/behaviour_engine/core.py",
-      "function": "x__get_monthly_category_spending_data",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.behaviour_engine.core.x__get_monthly_category_spending_data__mutmut_40",
-      "component": "behaviour_engine-00",
-      "source_file": "src/engines/behaviour_engine/core.py",
-      "function": "x__get_monthly_category_spending_data",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.behaviour_engine.core.x__get_monthly_category_spending_data__mutmut_45",
       "component": "behaviour_engine-00",
       "source_file": "src/engines/behaviour_engine/core.py",
@@ -649,42 +589,6 @@
       "source_file": "src/engines/behaviour_engine/core.py",
       "function": "x__get_monthly_category_spending_data",
       "operator": "arithmetic",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.behaviour_engine.core.x__get_monthly_income_expenses_data__mutmut_11",
-      "component": "behaviour_engine-00",
-      "source_file": "src/engines/behaviour_engine/core.py",
-      "function": "x__get_monthly_income_expenses_data",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.behaviour_engine.core.x__get_monthly_income_expenses_data__mutmut_13",
-      "component": "behaviour_engine-00",
-      "source_file": "src/engines/behaviour_engine/core.py",
-      "function": "x__get_monthly_income_expenses_data",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.behaviour_engine.core.x__get_monthly_income_expenses_data__mutmut_16",
-      "component": "behaviour_engine-00",
-      "source_file": "src/engines/behaviour_engine/core.py",
-      "function": "x__get_monthly_income_expenses_data",
-      "operator": "control_flow",
       "execution": "EXECUTED_AND_SURVIVED",
       "execution_basis": "mutmut-verdict+sentinel",
       "category": "REAL_TEST_GAP",
@@ -800,43 +704,7 @@
       "justification": ""
     },
     {
-      "mutant": "engines.behaviour_engine.core.x__get_monthly_income_expenses_data__mutmut_45",
-      "component": "behaviour_engine-00",
-      "source_file": "src/engines/behaviour_engine/core.py",
-      "function": "x__get_monthly_income_expenses_data",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.behaviour_engine.core.x__get_monthly_income_expenses_data__mutmut_46",
-      "component": "behaviour_engine-00",
-      "source_file": "src/engines/behaviour_engine/core.py",
-      "function": "x__get_monthly_income_expenses_data",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.behaviour_engine.core.x__get_monthly_income_expenses_data__mutmut_50",
-      "component": "behaviour_engine-00",
-      "source_file": "src/engines/behaviour_engine/core.py",
-      "function": "x__get_monthly_income_expenses_data",
-      "operator": "arithmetic",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.behaviour_engine.core.x__get_monthly_income_expenses_data__mutmut_54",
       "component": "behaviour_engine-00",
       "source_file": "src/engines/behaviour_engine/core.py",
       "function": "x__get_monthly_income_expenses_data",
@@ -3633,42 +3501,6 @@
     },
     {
       "mutant": "engines.behaviour_engine.core.x__compute_savings_discipline_score__mutmut_76",
-      "component": "behaviour_engine-00",
-      "source_file": "src/engines/behaviour_engine/core.py",
-      "function": "x__compute_savings_discipline_score",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.behaviour_engine.core.x__compute_savings_discipline_score__mutmut_82",
-      "component": "behaviour_engine-00",
-      "source_file": "src/engines/behaviour_engine/core.py",
-      "function": "x__compute_savings_discipline_score",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.behaviour_engine.core.x__compute_savings_discipline_score__mutmut_83",
-      "component": "behaviour_engine-00",
-      "source_file": "src/engines/behaviour_engine/core.py",
-      "function": "x__compute_savings_discipline_score",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.behaviour_engine.core.x__compute_savings_discipline_score__mutmut_84",
       "component": "behaviour_engine-00",
       "source_file": "src/engines/behaviour_engine/core.py",
       "function": "x__compute_savings_discipline_score",
@@ -21596,30 +21428,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_15",
-      "component": "financial_intelligence-00",
-      "source_file": "src/engines/financial_intelligence/optimization.py",
-      "function": "x_rank_debt_payoff_strategy",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_16",
-      "component": "financial_intelligence-00",
-      "source_file": "src/engines/financial_intelligence/optimization.py",
-      "function": "x_rank_debt_payoff_strategy",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_25",
       "component": "financial_intelligence-00",
       "source_file": "src/engines/financial_intelligence/optimization.py",
@@ -21765,30 +21573,6 @@
     },
     {
       "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_58",
-      "component": "financial_intelligence-00",
-      "source_file": "src/engines/financial_intelligence/optimization.py",
-      "function": "x_rank_debt_payoff_strategy",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_66",
-      "component": "financial_intelligence-00",
-      "source_file": "src/engines/financial_intelligence/optimization.py",
-      "function": "x_rank_debt_payoff_strategy",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_67",
       "component": "financial_intelligence-00",
       "source_file": "src/engines/financial_intelligence/optimization.py",
       "function": "x_rank_debt_payoff_strategy",
@@ -22364,42 +22148,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_190",
-      "component": "financial_intelligence-00",
-      "source_file": "src/engines/financial_intelligence/optimization.py",
-      "function": "x_rank_debt_payoff_strategy",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_191",
-      "component": "financial_intelligence-00",
-      "source_file": "src/engines/financial_intelligence/optimization.py",
-      "function": "x_rank_debt_payoff_strategy",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_192",
-      "component": "financial_intelligence-00",
-      "source_file": "src/engines/financial_intelligence/optimization.py",
-      "function": "x_rank_debt_payoff_strategy",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_193",
       "component": "financial_intelligence-00",
       "source_file": "src/engines/financial_intelligence/optimization.py",
@@ -22413,30 +22161,6 @@
     },
     {
       "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_194",
-      "component": "financial_intelligence-00",
-      "source_file": "src/engines/financial_intelligence/optimization.py",
-      "function": "x_rank_debt_payoff_strategy",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_195",
-      "component": "financial_intelligence-00",
-      "source_file": "src/engines/financial_intelligence/optimization.py",
-      "function": "x_rank_debt_payoff_strategy",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_196",
       "component": "financial_intelligence-00",
       "source_file": "src/engines/financial_intelligence/optimization.py",
       "function": "x_rank_debt_payoff_strategy",
@@ -22581,42 +22305,6 @@
     },
     {
       "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_220",
-      "component": "financial_intelligence-00",
-      "source_file": "src/engines/financial_intelligence/optimization.py",
-      "function": "x_rank_debt_payoff_strategy",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_223",
-      "component": "financial_intelligence-00",
-      "source_file": "src/engines/financial_intelligence/optimization.py",
-      "function": "x_rank_debt_payoff_strategy",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_227",
-      "component": "financial_intelligence-00",
-      "source_file": "src/engines/financial_intelligence/optimization.py",
-      "function": "x_rank_debt_payoff_strategy",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.optimization.x_rank_debt_payoff_strategy__mutmut_228",
       "component": "financial_intelligence-00",
       "source_file": "src/engines/financial_intelligence/optimization.py",
       "function": "x_rank_debt_payoff_strategy",
@@ -26396,114 +26084,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_34",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_35",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_36",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "boolean",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_37",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "string_literal",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_38",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "string_literal",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_43",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_44",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_45",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_46",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_51",
       "component": "financial_intelligence-01",
       "source_file": "src/engines/financial_intelligence/intelligence.py",
@@ -26708,198 +26288,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_85",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "comparison",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_93",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_94",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_95",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_96",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_97",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_98",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_99",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_100",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_101",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_102",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_103",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_104",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_105",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_106",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_107",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_112",
       "component": "financial_intelligence-01",
       "source_file": "src/engines/financial_intelligence/intelligence.py",
@@ -26937,246 +26325,6 @@
     },
     {
       "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_118",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_126",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_127",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_128",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_129",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_130",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_131",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_132",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_133",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_134",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_135",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_136",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_137",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_149",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_150",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_151",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_152",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_153",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_154",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_155",
-      "component": "financial_intelligence-01",
-      "source_file": "src/engines/financial_intelligence/intelligence.py",
-      "function": "x__aggregate_risks",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.intelligence.x__aggregate_risks__mutmut_156",
       "component": "financial_intelligence-01",
       "source_file": "src/engines/financial_intelligence/intelligence.py",
       "function": "x__aggregate_risks",
@@ -28040,78 +27188,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_10",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_11",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_12",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_15",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_16",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_17",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_23",
       "component": "financial_intelligence-02",
       "source_file": "src/engines/financial_intelligence/goal_planner.py",
@@ -28496,42 +27572,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_95",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_96",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_97",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_104",
       "component": "financial_intelligence-02",
       "source_file": "src/engines/financial_intelligence/goal_planner.py",
@@ -28820,30 +27860,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_140",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_141",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_142",
       "component": "financial_intelligence-02",
       "source_file": "src/engines/financial_intelligence/goal_planner.py",
@@ -28856,79 +27872,7 @@
       "justification": ""
     },
     {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_143",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_144",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_145",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_146",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_147",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_148",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_149",
       "component": "financial_intelligence-02",
       "source_file": "src/engines/financial_intelligence/goal_planner.py",
       "function": "x_calculate_debt_payoff_projection",
@@ -29048,150 +27992,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_224",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_debt_payoff_projection__mutmut_225",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_debt_payoff_projection",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_2",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_30",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "comparison",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_32",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_41",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_42",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_43",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_44",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_45",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_47",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "comparison",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_53",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "arithmetic",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_54",
       "component": "financial_intelligence-02",
       "source_file": "src/engines/financial_intelligence/goal_planner.py",
@@ -29205,30 +28005,6 @@
     },
     {
       "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_55",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "arithmetic",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_56",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "comparison",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_62",
       "component": "financial_intelligence-02",
       "source_file": "src/engines/financial_intelligence/goal_planner.py",
       "function": "x_calculate_goal_health",
@@ -29269,18 +28045,6 @@
       "source_file": "src/engines/financial_intelligence/goal_planner.py",
       "function": "x_calculate_goal_health",
       "operator": "arithmetic",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_78",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "boolean",
       "execution": "EXECUTED_AND_SURVIVED",
       "execution_basis": "mutmut-verdict+sentinel",
       "category": "REAL_TEST_GAP",
@@ -29348,42 +28112,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_105",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "comparison",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_106",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_110",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_111",
       "component": "financial_intelligence-02",
       "source_file": "src/engines/financial_intelligence/goal_planner.py",
@@ -29420,71 +28148,11 @@
       "justification": ""
     },
     {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_114",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "comparison",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_115",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_119",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_123",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_124",
       "component": "financial_intelligence-02",
       "source_file": "src/engines/financial_intelligence/goal_planner.py",
       "function": "x_calculate_goal_health",
       "operator": "comparison",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_130",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
       "execution": "EXECUTED_AND_SURVIVED",
       "execution_basis": "mutmut-verdict+sentinel",
       "category": "REAL_TEST_GAP",
@@ -29744,78 +28412,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_152",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_153",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_154",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_155",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_156",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_157",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_158",
       "component": "financial_intelligence-02",
       "source_file": "src/engines/financial_intelligence/goal_planner.py",
@@ -29857,30 +28453,6 @@
       "source_file": "src/engines/financial_intelligence/goal_planner.py",
       "function": "x_calculate_goal_health",
       "operator": "comparison",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_162",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_163",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
       "execution": "EXECUTED_AND_SURVIVED",
       "execution_basis": "mutmut-verdict+sentinel",
       "category": "REAL_TEST_GAP",
@@ -29972,54 +28544,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_171",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_172",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_173",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_174",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_175",
       "component": "financial_intelligence-02",
       "source_file": "src/engines/financial_intelligence/goal_planner.py",
@@ -30045,30 +28569,6 @@
     },
     {
       "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_177",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_182",
-      "component": "financial_intelligence-02",
-      "source_file": "src/engines/financial_intelligence/goal_planner.py",
-      "function": "x_calculate_goal_health",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.financial_intelligence.goal_planner.x_calculate_goal_health__mutmut_183",
       "component": "financial_intelligence-02",
       "source_file": "src/engines/financial_intelligence/goal_planner.py",
       "function": "x_calculate_goal_health",
@@ -38132,18 +36632,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.recommendation_engine.recommendations.x_check_debt_dependency__mutmut_10",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_check_debt_dependency",
-      "operator": "arithmetic",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.recommendation_engine.recommendations.x_check_debt_dependency__mutmut_24",
       "component": "recommendation_engine",
       "source_file": "src/engines/recommendation_engine/recommendations.py",
@@ -38192,18 +36680,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.recommendation_engine.recommendations.x_check_foir__mutmut_18",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_check_foir",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.recommendation_engine.recommendations.x_check_foir__mutmut_30",
       "component": "recommendation_engine",
       "source_file": "src/engines/recommendation_engine/recommendations.py",
@@ -38233,18 +36709,6 @@
       "source_file": "src/engines/recommendation_engine/recommendations.py",
       "function": "x_check_foir",
       "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_check_liquidity__mutmut_6",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_check_liquidity",
-      "operator": "arithmetic",
       "execution": "EXECUTED_AND_SURVIVED",
       "execution_basis": "mutmut-verdict+sentinel",
       "category": "REAL_TEST_GAP",
@@ -38324,54 +36788,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_15",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_16",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "arithmetic",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_17",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_18",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_27",
       "component": "recommendation_engine",
       "source_file": "src/engines/recommendation_engine/recommendations.py",
@@ -38409,18 +36825,6 @@
     },
     {
       "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_30",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "arithmetic",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_31",
       "component": "recommendation_engine",
       "source_file": "src/engines/recommendation_engine/recommendations.py",
       "function": "x_detect_subscription_growth",
@@ -38529,150 +36933,6 @@
     },
     {
       "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_47",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_48",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "comparison",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_49",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_50",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_51",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_52",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "arithmetic",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_53",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_54",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_55",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_56",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_57",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "arithmetic",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_58",
-      "component": "recommendation_engine",
-      "source_file": "src/engines/recommendation_engine/recommendations.py",
-      "function": "x_detect_subscription_growth",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_59",
       "component": "recommendation_engine",
       "source_file": "src/engines/recommendation_engine/recommendations.py",
       "function": "x_detect_subscription_growth",
@@ -42296,18 +40556,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.transaction_intelligence.cc_payment_detector.x_classify_cc_payment__mutmut_12",
-      "component": "transaction_intelligence-00",
-      "source_file": "src/engines/transaction_intelligence/cc_payment_detector.py",
-      "function": "x_classify_cc_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.transaction_intelligence.cc_payment_detector.x_classify_cc_payment__mutmut_23",
       "component": "transaction_intelligence-00",
       "source_file": "src/engines/transaction_intelligence/cc_payment_detector.py",
@@ -42392,18 +40640,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.transaction_intelligence.cc_payment_detector.x_classify_cc_payment__mutmut_67",
-      "component": "transaction_intelligence-00",
-      "source_file": "src/engines/transaction_intelligence/cc_payment_detector.py",
-      "function": "x_classify_cc_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.transaction_intelligence.cc_payment_detector.x_classify_cc_payment__mutmut_80",
       "component": "transaction_intelligence-00",
       "source_file": "src/engines/transaction_intelligence/cc_payment_detector.py",
@@ -42441,18 +40677,6 @@
     },
     {
       "mutant": "engines.transaction_intelligence.cc_payment_detector.x_classify_cc_payment__mutmut_104",
-      "component": "transaction_intelligence-00",
-      "source_file": "src/engines/transaction_intelligence/cc_payment_detector.py",
-      "function": "x_classify_cc_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.cc_payment_detector.x_classify_cc_payment__mutmut_108",
       "component": "transaction_intelligence-00",
       "source_file": "src/engines/transaction_intelligence/cc_payment_detector.py",
       "function": "x_classify_cc_payment",
@@ -42584,18 +40808,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.transaction_intelligence.cc_payment_detector.x_classify_cc_payment__mutmut_140",
-      "component": "transaction_intelligence-00",
-      "source_file": "src/engines/transaction_intelligence/cc_payment_detector.py",
-      "function": "x_classify_cc_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.transaction_intelligence.cc_payment_detector.x_classify_cc_payment__mutmut_141",
       "component": "transaction_intelligence-00",
       "source_file": "src/engines/transaction_intelligence/cc_payment_detector.py",
@@ -42609,18 +40821,6 @@
     },
     {
       "mutant": "engines.transaction_intelligence.cc_payment_detector.x_classify_cc_payment__mutmut_143",
-      "component": "transaction_intelligence-00",
-      "source_file": "src/engines/transaction_intelligence/cc_payment_detector.py",
-      "function": "x_classify_cc_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.cc_payment_detector.x_classify_cc_payment__mutmut_145",
       "component": "transaction_intelligence-00",
       "source_file": "src/engines/transaction_intelligence/cc_payment_detector.py",
       "function": "x_classify_cc_payment",
@@ -42920,18 +41120,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_24",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_28",
       "component": "transaction_intelligence-01",
       "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
@@ -43045,42 +41233,6 @@
       "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
       "function": "x_detect_emi_payment",
       "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_64",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_65",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_70",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "comparison",
       "execution": "EXECUTED_AND_SURVIVED",
       "execution_basis": "mutmut-verdict+sentinel",
       "category": "REAL_TEST_GAP",
@@ -43316,18 +41468,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_217",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "boolean",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_223",
       "component": "transaction_intelligence-01",
       "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
@@ -43412,30 +41552,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_240",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_241",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_244",
       "component": "transaction_intelligence-01",
       "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
@@ -43489,54 +41605,6 @@
       "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
       "function": "x_detect_emi_payment",
       "operator": "comparison",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_262",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_263",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_264",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_265",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
       "execution": "EXECUTED_AND_SURVIVED",
       "execution_basis": "mutmut-verdict+sentinel",
       "category": "REAL_TEST_GAP",
@@ -43964,31 +42032,7 @@
       "justification": ""
     },
     {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_320",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_322",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_324",
       "component": "transaction_intelligence-01",
       "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
       "function": "x_detect_emi_payment",
@@ -44072,18 +42116,6 @@
       "justification": ""
     },
     {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_346",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_347",
       "component": "transaction_intelligence-01",
       "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
@@ -44097,30 +42129,6 @@
     },
     {
       "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_349",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_350",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_351",
       "component": "transaction_intelligence-01",
       "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
       "function": "x_detect_emi_payment",
@@ -44312,43 +42320,7 @@
       "justification": ""
     },
     {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_382",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_383",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
       "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_386",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_388",
       "component": "transaction_intelligence-01",
       "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
       "function": "x_detect_emi_payment",
@@ -44401,54 +42373,6 @@
       "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
       "function": "x_detect_emi_payment",
       "operator": "comparison",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_404",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_405",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_406",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
-      "execution": "EXECUTED_AND_SURVIVED",
-      "execution_basis": "mutmut-verdict+sentinel",
-      "category": "REAL_TEST_GAP",
-      "evidence": "the mutated implementation was proven to execute and the suite observed no behavioural difference; the behaviour is inside the module under test and is not classified as equivalent without behavioural proof",
-      "justification": ""
-    },
-    {
-      "mutant": "engines.transaction_intelligence.loan_emi_detector.x_detect_emi_payment__mutmut_407",
-      "component": "transaction_intelligence-01",
-      "source_file": "src/engines/transaction_intelligence/loan_emi_detector.py",
-      "function": "x_detect_emi_payment",
-      "operator": "control_flow",
       "execution": "EXECUTED_AND_SURVIVED",
       "execution_basis": "mutmut-verdict+sentinel",
       "category": "REAL_TEST_GAP",

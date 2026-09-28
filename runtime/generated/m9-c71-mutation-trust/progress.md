@@ -240,16 +240,16 @@ prioritised gaps entirely**, replaced by `transaction_intelligence-00`.
 
 | | Population | Killed | Survived | Score |
 |---|---|---|---|---|
-| **RAW** (immutable) | 16,904 | 13,361 | 3,532 | **79.1%** |
-| **CERTIFIED** | 16,886 | 13,363 | 3,714 real gaps | 79.1% |
+| **RAW** (immutable) | 16,904 | 13,534 | 3,359 | **80.1%** |
+| **CERTIFIED** | 16,886 | 13,534 | 3,341 real gaps | 80.1% |
 
 ```
-Verdict  : QUALITY FAIL        (the aggregate is now EVALUABLE)
-RAW_GATE      = FAIL   (79.1% < 80%)
-EFFECTIVE_GATE = FAIL
+Verdict  : PASS
+RAW_GATE      = PASS   (80.1% >= 80%)
+EFFECTIVE_GATE = PASS
 ```
 
-Kills required to reach 80% on this population: **163** (of 3,714 real gaps).
+The gate was reached by killing 173 real mutants, not by moving the threshold.
 
 The threshold is **unchanged at 80%**. The certified denominator adjustment is
 18 mutants (0.1% of the population) because the equivalence proofs cover only
