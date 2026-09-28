@@ -147,6 +147,7 @@ jobs:
       matrix: ${{ steps.plan.outputs.matrix }}
       components: ${{ steps.plan.outputs.components }}
       count: ${{ steps.plan.outputs.count }}
+      mode: ${{ steps.plan.outputs.mode }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v7.0.1
@@ -198,6 +199,7 @@ jobs:
             echo "total=$(jq -r '.total_shards' <<< "$MATRIX")"
             echo "diff_safe=$(jq -r '.diff_safe' <<< "$MATRIX")"
             echo "timeout=$(jq -r '.recommended_timeout_minutes' <<< "$MATRIX")"
+            echo "mode=$MUTATION_MODE"
           } >> $GITHUB_OUTPUT
           {
             echo "## ${{ github.workflow }} — Run #${{ github.run_number }} — plan"
@@ -224,10 +226,13 @@ jobs:
     # un-runnable produced a run whose conclusion was `failure` while every job
     # reported success: the aggregate gate's `needs: [mutation]` had no job to
     # resolve against, and GitHub scored the run as failed with nothing to fix.
-    # The whole point of replay is that no shard runs, and the job graph has to
-    # say so.
+    #
+    # The mode arrives as a job OUTPUT, not as `env`: the `env` context is not
+    # available in a job-level `if:`, and using it makes the workflow file
+    # unparseable ("Unrecognized named-value: 'env'"). `needs.<job>.outputs` is
+    # available there, so the plan job is the right place to publish it.
     if: >-
-      env.MUTATION_MODE != 'replay'
+      needs.mutation-plan.outputs.mode != 'replay'
       && needs.mutation-plan.result == 'success'
       && needs.mutation-plan.outputs.matrix != '[]'
     runs-on: ubuntu-latest

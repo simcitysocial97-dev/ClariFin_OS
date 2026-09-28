@@ -624,10 +624,25 @@ class TestShardedWorkflowTopology:
         """
         condition = str(mutation_workflow["jobs"]["mutation"]["if"])
 
-        assert "MUTATION_MODE" in condition
         assert "replay" in condition, (
             "the shard matrix must be explicitly skipped in replay mode"
         )
+
+    def test_a_job_level_if_never_uses_the_env_context(self, mutation_workflow):
+        """`env` is not available in a job-level `if:`.
+
+        Referencing it does not warn — the whole workflow file simply fails to
+        parse, so the dispatch is rejected with HTTP 422 before a single job
+        runs. That cost a full debugging cycle on the replay path, so it is
+        asserted rather than rediscovered.
+        """
+        for job_id, job in mutation_workflow["jobs"].items():
+            condition = str(job.get("if", ""))
+            assert "env." not in condition, (
+                f"job {job_id!r} uses the env context in its if: — unavailable "
+                "there and makes the workflow unparseable; use "
+                "needs.<job>.outputs.<name> instead"
+            )
 
     def test_an_empty_incremental_plan_does_not_strand_the_aggregate(
         self, mutation_workflow
