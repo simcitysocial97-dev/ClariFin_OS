@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import subprocess
 from collections.abc import Iterator
 from dataclasses import dataclass, field
@@ -159,6 +160,22 @@ def decision_to_status(final_decision: str | None) -> str:
 
 
 def _resolve_repository_identity() -> tuple[str, str]:
+    """Resolve the commit and branch this run is executing against.
+
+    The branch needs care because ``git branch --show-current`` returns an
+    EMPTY STRING on a detached HEAD — and a detached HEAD is exactly what a
+    ``pull_request`` checkout produces, since GitHub checks out the synthetic
+    merge commit. So on every pull request the identity was blank, which made
+    the recorded event unattributable precisely when attribution matters most,
+    and failed the C57 self-contract tests (O2-G9: "identity not empty").
+
+    Precedence:
+      1. the checked-out branch, when HEAD is attached;
+      2. ``GITHUB_HEAD_REF`` — the PR's source branch, the most useful answer;
+      3. ``GITHUB_REF_NAME`` — the workflow's ref;
+      4. ``detached@<short sha>`` — a stable, non-blank sentinel that still says
+         something true, rather than an empty field.
+    """
     try:
         commit_result = subprocess.run(
             ["git", "rev-parse", "HEAD"],
@@ -179,8 +196,37 @@ def _resolve_repository_identity() -> tuple[str, str]:
         commit_sha = (getattr(commit_result, "stdout", "") or "").strip()
         branch = (getattr(branch_result, "stdout", "") or "").strip()
     except (OSError, subprocess.SubprocessError):
-        return "", ""
+        return "", _detached_branch_fallback()
+
+    if not branch:
+        branch = (
+            os.environ.get("GITHUB_HEAD_REF", "").strip()
+            or os.environ.get("GITHUB_REF_NAME", "").strip()
+            or _detached_branch_fallback()
+        )
     return commit_sha, branch
+
+
+def _git_short_sha() -> str:
+    """Short commit SHA, or "" when git cannot answer."""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+        return (getattr(result, "stdout", "") or "").strip()
+    except (OSError, subprocess.SubprocessError):
+        return ""
+
+
+def _detached_branch_fallback() -> str:
+    """A non-blank identifier for a run with no branch and no CI hint."""
+    short = _git_short_sha()
+    return f"detached@{short}" if short else "detached"
 
 
 def record_verification_event(
