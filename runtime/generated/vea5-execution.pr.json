@@ -1,0 +1,409 @@
+{
+  "schema": "vea5-execution-evidence/v2",
+  "policy_version": "vea5-tier-policy-v2",
+  "tier": "pr",
+  "plan_fingerprint": "c6d9506ad1150d70",
+  "commit": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "generated_at": "2026-08-27T01:17:27.599694+00:00",
+  "units": [
+    {
+      "unit_id": "unit-targeted",
+      "provenance": {
+        "category": "unit",
+        "source": "ownership",
+        "capabilities": [
+          "capability:useAccountsCapability",
+          "capability:useBehaviourCapability",
+          "capability:useCashflowCapability",
+          "capability:useCreditCardsCapability",
+          "capability:useForecastCapability",
+          "capability:useInvestmentsCapability",
+          "capability:useLoansCapability",
+          "capability:useNetWorthCapability",
+          "capability:useReconciliationCapability",
+          "capability:useTransactionCapability"
+        ],
+        "impact_kinds": [
+          "engine"
+        ],
+        "command": "python3 -m pytest backend/tests/audits/test_audit_minimal.py backend/tests/capability/financial_events/__init__.py backend/tests/capability/financial_events/test_capability.py backend/tests/capability/financial_events/test_revocation.py backend/tests/capability/household_cashflow/test_capability.py backend/tests/capability/pattern_analysis/test_capability.py backend/tests/capability/transaction_intelligence/__init__.py backend/tests/capability/transaction_intelligence/test_capability.py backend/tests/contract/generated/test_financial_events.py backend/tests/invariants/financial_events.py backend/tests/invariants/test_determinism.py backend/tests/invariants/test_reconciliation_determinism.py backend/tests/invariants/test_reconciliation_properties.py backend/tests/properties/behaviour/test_engine_properties.py backend/tests/properties/cashflow/test_engine_properties.py backend/tests/properties/credit_card_engine/__init__.py backend/tests/properties/credit_card_engine/test_billing_properties.py backend/tests/properties/credit_card_engine/test_emi_properties.py backend/tests/properties/credit_card_engine/test_interest_properties.py backend/tests/properties/credit_cards/test_engine_properties.py backend/tests/properties/financial_events/__init__.py backend/tests/properties/financial_events/test_engine_properties.py backend/tests/properties/financial_events/test_lineage_properties.py backend/tests/properties/forecasting/test_engine_properties.py backend/tests/properties/lending/test_engine_properties.py backend/tests/properties/loan_engine/__init__.py backend/tests/properties/loan_engine/test_amortization_properties.py backend/tests/properties/loan_engine/test_emi_properties.py backend/tests/properties/loan_engine/test_floating_rate_properties.py backend/tests/properties/loan_engine/test_foreclosure_properties.py backend/tests/properties/loan_engine/test_metrics_properties.py backend/tests/properties/loan_engine/test_prepayment_properties.py backend/tests/properties/recommendations/test_engine_properties.py backend/tests/properties/reconciliation/test_engine_properties.py backend/tests/properties/transaction_intelligence/__init__.py backend/tests/properties/transaction_intelligence/test_engine_properties.py backend/tests/unit/engines/account/test_account_engine.py backend/tests/unit/engines/behavior/test_behavior_engine.py backend/tests/unit/engines/behaviour/test_core.py backend/tests/unit/engines/behaviour/test_integration.py backend/tests/unit/engines/behaviour/test_metrics.py backend/tests/unit/engines/behaviour/test_patterns.py backend/tests/unit/engines/credit_card/test_credit_card_engine.py backend/tests/unit/engines/financial_events/__init__.py backend/tests/unit/engines/financial_events/test_financial_events.py backend/tests/unit/engines/loan/test_amortization.py backend/tests/unit/engines/loan/test_loan_engine.py backend/tests/unit/engines/recommendation/test_recommendation_engine.py backend/tests/unit/engines/reconciliation/test_reconciliation.py backend/tests/unit/engines/transaction_intelligence/__init__.py -q",
+        "reason": "50 test file(s) are recorded by the provider as verifying an impacted engine"
+      },
+      "attempts": [
+        {
+          "attempt_index": 0,
+          "command": "python3 -m pytest backend/tests/audits/test_audit_minimal.py backend/tests/capability/financial_events/__init__.py backend/tests/capability/financial_events/test_capability.py backend/tests/capability/financial_events/test_revocation.py backend/tests/capability/household_cashflow/test_capability.py backend/tests/capability/pattern_analysis/test_capability.py backend/tests/capability/transaction_intelligence/__init__.py backend/tests/capability/transaction_intelligence/test_capability.py backend/tests/contract/generated/test_financial_events.py backend/tests/invariants/financial_events.py backend/tests/invariants/test_determinism.py backend/tests/invariants/test_reconciliation_determinism.py backend/tests/invariants/test_reconciliation_properties.py backend/tests/properties/behaviour/test_engine_properties.py backend/tests/properties/cashflow/test_engine_properties.py backend/tests/properties/credit_card_engine/__init__.py backend/tests/properties/credit_card_engine/test_billing_properties.py backend/tests/properties/credit_card_engine/test_emi_properties.py backend/tests/properties/credit_card_engine/test_interest_properties.py backend/tests/properties/credit_cards/test_engine_properties.py backend/tests/properties/financial_events/__init__.py backend/tests/properties/financial_events/test_engine_properties.py backend/tests/properties/financial_events/test_lineage_properties.py backend/tests/properties/forecasting/test_engine_properties.py backend/tests/properties/lending/test_engine_properties.py backend/tests/properties/loan_engine/__init__.py backend/tests/properties/loan_engine/test_amortization_properties.py backend/tests/properties/loan_engine/test_emi_properties.py backend/tests/properties/loan_engine/test_floating_rate_properties.py backend/tests/properties/loan_engine/test_foreclosure_properties.py backend/tests/properties/loan_engine/test_metrics_properties.py backend/tests/properties/loan_engine/test_prepayment_properties.py backend/tests/properties/recommendations/test_engine_properties.py backend/tests/properties/reconciliation/test_engine_properties.py backend/tests/properties/transaction_intelligence/__init__.py backend/tests/properties/transaction_intelligence/test_engine_properties.py backend/tests/unit/engines/account/test_account_engine.py backend/tests/unit/engines/behavior/test_behavior_engine.py backend/tests/unit/engines/behaviour/test_core.py backend/tests/unit/engines/behaviour/test_integration.py backend/tests/unit/engines/behaviour/test_metrics.py backend/tests/unit/engines/behaviour/test_patterns.py backend/tests/unit/engines/credit_card/test_credit_card_engine.py backend/tests/unit/engines/financial_events/__init__.py backend/tests/unit/engines/financial_events/test_financial_events.py backend/tests/unit/engines/loan/test_amortization.py backend/tests/unit/engines/loan/test_loan_engine.py backend/tests/unit/engines/recommendation/test_recommendation_engine.py backend/tests/unit/engines/reconciliation/test_reconciliation.py backend/tests/unit/engines/transaction_intelligence/__init__.py -q",
+          "started_at": null,
+          "ended_at": null,
+          "duration_seconds": 0.0,
+          "exit_code": 0,
+          "status": "pass",
+          "stdout_ref": null,
+          "stderr_ref": null,
+          "artifacts": [
+            {
+              "kind": "report",
+              "ref": "runtime/generated/verification-report.md",
+              "checksum": null,
+              "metadata": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit_id": "backend-unit",
+      "provenance": {
+        "category": "unit",
+        "source": "chain-map+blast-radius",
+        "capabilities": [
+          "capability:useAccountsCapability",
+          "capability:useBehaviourCapability",
+          "capability:useCashflowCapability",
+          "capability:useCreditCardsCapability",
+          "capability:useForecastCapability",
+          "capability:useInvestmentsCapability",
+          "capability:useLoansCapability",
+          "capability:useNetWorthCapability",
+          "capability:useReconciliationCapability",
+          "capability:useTransactionCapability"
+        ],
+        "impact_kinds": [
+          "dto",
+          "engine",
+          "engine_module",
+          "mapper",
+          "router",
+          "service"
+        ],
+        "command": "python3 -m pytest backend/tests/unit/ -q",
+        "reason": "91 backend entity/entities impacted (kinds: ['dto', 'engine', 'engine_module', 'mapper', 'router', 'service'])"
+      },
+      "attempts": [
+        {
+          "attempt_index": 0,
+          "command": "python3 -m pytest backend/tests/unit/ -q",
+          "started_at": null,
+          "ended_at": null,
+          "duration_seconds": 0.0,
+          "exit_code": 0,
+          "status": "pass",
+          "stdout_ref": null,
+          "stderr_ref": null,
+          "artifacts": [
+            {
+              "kind": "report",
+              "ref": "runtime/generated/verification-report.md",
+              "checksum": null,
+              "metadata": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit_id": "backend-integration",
+      "provenance": {
+        "category": "integration",
+        "source": "chain-map+blast-radius",
+        "capabilities": [
+          "capability:useAccountsCapability",
+          "capability:useBehaviourCapability",
+          "capability:useCashflowCapability",
+          "capability:useCreditCardsCapability",
+          "capability:useForecastCapability",
+          "capability:useInvestmentsCapability",
+          "capability:useLoansCapability",
+          "capability:useNetWorthCapability",
+          "capability:useReconciliationCapability",
+          "capability:useTransactionCapability"
+        ],
+        "impact_kinds": [
+          "router",
+          "service",
+          "repository"
+        ],
+        "command": "python3 -m pytest backend/tests/integration/ -q",
+        "reason": "29 router/service/repository entities impacted"
+      },
+      "attempts": [
+        {
+          "attempt_index": 0,
+          "command": "python3 -m pytest backend/tests/integration/ -q",
+          "started_at": null,
+          "ended_at": null,
+          "duration_seconds": 0.0,
+          "exit_code": 0,
+          "status": "pass",
+          "stdout_ref": null,
+          "stderr_ref": null,
+          "artifacts": [
+            {
+              "kind": "report",
+              "ref": "runtime/generated/verification-report.md",
+              "checksum": null,
+              "metadata": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit_id": "contracts-schemathesis",
+      "provenance": {
+        "category": "contract",
+        "source": "chain-map+blast-radius",
+        "capabilities": [
+          "capability:useAccountsCapability",
+          "capability:useBehaviourCapability",
+          "capability:useCashflowCapability",
+          "capability:useCreditCardsCapability",
+          "capability:useForecastCapability",
+          "capability:useInvestmentsCapability",
+          "capability:useLoansCapability",
+          "capability:useNetWorthCapability",
+          "capability:useReconciliationCapability",
+          "capability:useTransactionCapability"
+        ],
+        "impact_kinds": [
+          "endpoint",
+          "dto"
+        ],
+        "command": "python3 -m pytest backend/tests/contract/ -q",
+        "reason": "80 endpoint(s) are in the blast radius"
+      },
+      "attempts": [
+        {
+          "attempt_index": 0,
+          "command": "python3 -m pytest backend/tests/contract/ -q",
+          "started_at": null,
+          "ended_at": null,
+          "duration_seconds": 0.0,
+          "exit_code": 0,
+          "status": "pass",
+          "stdout_ref": null,
+          "stderr_ref": null,
+          "artifacts": [
+            {
+              "kind": "report",
+              "ref": "runtime/generated/verification-report.md",
+              "checksum": null,
+              "metadata": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit_id": "frontend-unit",
+      "provenance": {
+        "category": "frontend",
+        "source": "chain-map+blast-radius",
+        "capabilities": [
+          "capability:useAccountsCapability",
+          "capability:useBehaviourCapability",
+          "capability:useCashflowCapability",
+          "capability:useCreditCardsCapability",
+          "capability:useForecastCapability",
+          "capability:useInvestmentsCapability",
+          "capability:useLoansCapability",
+          "capability:useNetWorthCapability",
+          "capability:useReconciliationCapability",
+          "capability:useTransactionCapability"
+        ],
+        "impact_kinds": [
+          "capability",
+          "workspace",
+          "component",
+          "view_model",
+          "mapper"
+        ],
+        "command": "npm --prefix frontend run test",
+        "reason": "28 frontend entities impacted"
+      },
+      "attempts": [
+        {
+          "attempt_index": 0,
+          "command": "npm --prefix frontend run test",
+          "started_at": null,
+          "ended_at": null,
+          "duration_seconds": 0.0,
+          "exit_code": 0,
+          "status": "pass",
+          "stdout_ref": null,
+          "stderr_ref": null,
+          "artifacts": [
+            {
+              "kind": "report",
+              "ref": "runtime/generated/verification-report.md",
+              "checksum": null,
+              "metadata": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit_id": "frontend-typecheck-build",
+      "provenance": {
+        "category": "frontend",
+        "source": "chain-map+blast-radius",
+        "capabilities": [
+          "capability:useAccountsCapability",
+          "capability:useBehaviourCapability",
+          "capability:useCashflowCapability",
+          "capability:useCreditCardsCapability",
+          "capability:useForecastCapability",
+          "capability:useInvestmentsCapability",
+          "capability:useLoansCapability",
+          "capability:useNetWorthCapability",
+          "capability:useReconciliationCapability",
+          "capability:useTransactionCapability"
+        ],
+        "impact_kinds": [
+          "capability",
+          "workspace",
+          "component",
+          "view_model",
+          "mapper"
+        ],
+        "command": "cd frontend && npx tsc --noEmit && npm run build",
+        "reason": "frontend entity/contract/capability impacted by backend or frontend change \u2014 type compatibility must be verified"
+      },
+      "attempts": [
+        {
+          "attempt_index": 0,
+          "command": "cd frontend && npx tsc --noEmit && npm run build",
+          "started_at": null,
+          "ended_at": null,
+          "duration_seconds": 0.0,
+          "exit_code": 0,
+          "status": "pass",
+          "stdout_ref": null,
+          "stderr_ref": null,
+          "artifacts": [
+            {
+              "kind": "report",
+              "ref": "runtime/generated/verification-report.md",
+              "checksum": null,
+              "metadata": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit_id": "playwright-e2e",
+      "provenance": {
+        "category": "e2e",
+        "source": "chain-map+blast-radius",
+        "capabilities": [
+          "capability:useAccountsCapability",
+          "capability:useBehaviourCapability",
+          "capability:useCashflowCapability",
+          "capability:useCreditCardsCapability",
+          "capability:useForecastCapability",
+          "capability:useInvestmentsCapability",
+          "capability:useLoansCapability",
+          "capability:useNetWorthCapability",
+          "capability:useReconciliationCapability",
+          "capability:useTransactionCapability"
+        ],
+        "impact_kinds": [
+          "workspace"
+        ],
+        "command": "npm --prefix frontend run test:e2e",
+        "reason": "8 user-facing workspace(s) impacted"
+      },
+      "attempts": [
+        {
+          "attempt_index": 0,
+          "command": "npm --prefix frontend run test:e2e",
+          "started_at": null,
+          "ended_at": null,
+          "duration_seconds": 0.0,
+          "exit_code": 0,
+          "status": "pass",
+          "stdout_ref": null,
+          "stderr_ref": null,
+          "artifacts": [
+            {
+              "kind": "report",
+              "ref": "runtime/generated/verification-report.md",
+              "checksum": null,
+              "metadata": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit_id": "runtime-self-test",
+      "provenance": {
+        "category": "runtime",
+        "source": "runtime-change",
+        "capabilities": [],
+        "impact_kinds": [
+          "runtime"
+        ],
+        "command": "python3 -m pytest runtime/tests/ -q",
+        "reason": "the Engineering Runtime itself changed"
+      },
+      "attempts": [
+        {
+          "attempt_index": 0,
+          "command": "python3 -m pytest runtime/tests/ -q",
+          "started_at": null,
+          "ended_at": null,
+          "duration_seconds": 0.0,
+          "exit_code": 0,
+          "status": "pass",
+          "stdout_ref": null,
+          "stderr_ref": null,
+          "artifacts": [
+            {
+              "kind": "report",
+              "ref": "runtime/generated/verification-report.md",
+              "checksum": null,
+              "metadata": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit_id": "mutation-run",
+      "provenance": {
+        "category": "mutation",
+        "source": "tier-eligibility",
+        "capabilities": [],
+        "impact_kinds": [
+          "engine"
+        ],
+        "command": "bash .github/scripts/run_mutation_selective.sh",
+        "reason": "PR tier: critical logic change in backend engine \u2192 targeted mutation eligible"
+      },
+      "attempts": [
+        {
+          "attempt_index": 0,
+          "command": "bash .github/scripts/run_mutation_selective.sh",
+          "started_at": null,
+          "ended_at": null,
+          "duration_seconds": 0.0,
+          "exit_code": 0,
+          "status": "pass",
+          "stdout_ref": null,
+          "stderr_ref": null,
+          "artifacts": [
+            {
+              "kind": "report",
+              "ref": "runtime/generated/verification-report.md",
+              "checksum": null,
+              "metadata": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

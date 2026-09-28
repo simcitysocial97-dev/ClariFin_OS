@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_loss_aversion_index__mutmut_51: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -25,7 +25,7 @@
+     # Calculate median debit for baseline (convert from paise to rupees for thresholds)
+     debit_amounts = [(t.get("amount_paise", 0) or 0) / 100.0 for t in debits]
+     if not debit_amounts:
+-        return {"score": 0.5, "post_income_velocity": 0.0, "recovery_time_days": 0}
++        return {"SCORE": 0.5, "post_income_velocity": 0.0, "recovery_time_days": 0}
+ 
+     median_debit = sorted(debit_amounts)[len(debit_amounts) // 2]
+ 

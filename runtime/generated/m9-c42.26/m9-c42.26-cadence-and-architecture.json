@@ -1,0 +1,128 @@
+{
+  "title": "M9-C42.26 — Full-Campaign Decision Gate, Measurement Cadence, and Verification Architecture Forward Dependency",
+  "generated_at": "2026-08-26T07:50:00+05:30",
+  "run_id": "m9-c42.26-cadence",
+  "milestone": "M26.10 + M26.11 + M26.12",
+
+  "full_campaign_decision_gate": {
+    "milestone": "M26.10",
+    "decision": "NO 14-component full mutation campaign is required for C42.26.",
+    "rationale": "M26.10 explicitly enumerates the trigger conditions for a fresh repository-wide campaign. None of them are met.",
+    "trigger_conditions_checklist": {
+      "production_source_changed_materially_across_existing_components": {
+        "status": "NO",
+        "evidence": "git diff 6bb27a89..HEAD -- src/engines/ is empty. No source changes to any 12-component engine source file."
+      },
+      "mutation_configuration_changed_materially": {
+        "status": "NO",
+        "evidence": "mutmut 3.7.0, pytest 9.1.1, Python 3.12.3, config_hash unchanged since C42.24-B. mutation_contract.py got +3 lines (behaviour_engine discovery repair) which is already in C42.24-B's measured state."
+      },
+      "mutation_infrastructure_changed": {
+        "status": "NO",
+        "evidence": "No infrastructure change since C42.24-B measurement. Runtime foundation lint edits (F841/B007/C401/I001/F821) are non-behavioral."
+      },
+      "population_fingerprints_changed": {
+        "status": "NO",
+        "evidence": "C42.24-B 12-component population identity preserved; 2 intelligence components ADDED (not modified). C42.25 targeted evidence is for the new components only and is internally consistent."
+      },
+      "C42_25_evidence_cannot_be_reconciled": {
+        "status": "NO",
+        "evidence": "C42.25 evidence reconciles cleanly: not_checked=0 for both, comprehensive operator coverage, capability binding + discovery validated."
+      },
+      "evidence_schemas_are_incompatible": {
+        "status": "NO",
+        "evidence": "Both evidence sources use the same mutmut summary schema (killed/survived/no_tests/timeout/suspicious/not_checked/total_mutants/mutation_score). Schema-compatible."
+      },
+      "targeted_measurements_reveal_cross_component_interference": {
+        "status": "NO",
+        "evidence": "No targeted measurement has indicated cross-component interference. The 12 components and 2 intelligence components are independent code paths."
+      },
+      "future_milestone_explicitly_requires_fresh_repository_wide_snapshot": {
+        "status": "NOT APPLICABLE FOR C42.26",
+        "evidence": "C42.26's purpose is population expansion and intelligence certification. No future milestone forces a fresh full campaign at this point."
+      }
+    },
+    "all_triggers_clear": true,
+    "verdict": "REUSE C42.24-B + C42.25 certified evidence and mathematically reconcile. This is the correct, forensic-rigorous operation."
+  },
+
+  "measurement_cadence": {
+    "milestone": "M26.11",
+    "principle": "Do not run the entire population merely because several tests were added. This saves substantial execution time while preserving evidentiary rigor.",
+
+    "targeted_mutation": {
+      "scope": "ONE component (or sub-component) at a time. Bounded by mutmut 3.7.0 targeted mode.",
+      "typical_duration_seconds": "10-1200 depending on engine size and test scope",
+      "use_after": [
+        "a bounded test-strengthening batch (per-component)",
+        "a discovery repair (no_tests -> 0 for a module)",
+        "a mutation-infrastructure change (e.g., mutmut version bump, config_hash change)",
+        "a specific production component change (single-engine source modification)",
+        "intelligence population entry (C42.25 used this)"
+      ],
+      "evidence_artifact": "runtime/generated/<milestone>/<engine>-mutation-summary.json",
+      "evidence_quality": "AUTHORITATIVE TARGETED MEASURED"
+    },
+
+    "full_mutation_campaign": {
+      "scope": "Entire declared population (currently 14 components, but conceptually 'all engines in current population').",
+      "typical_duration_seconds": "3000-4500 (full repo full campaign, C42.21 was 4419 mutants / C42.24-B was 11730 mutants ~3360s)",
+      "use_only_at": [
+        "POPULATION EXPANSION (new components admitted to the mutation scope; C42.26 was the only one to date)",
+        "MAJOR ARCHITECTURE CHANGES (refactor that changes module boundaries or test selection)",
+        "VERIFICATION FRAMEWORK CHANGES (mutmut version bump, mutation_contract.py material change)",
+        "PERIODIC CONVERGENCE CHECKPOINT (e.g., every 3-6 months or per-milestone)",
+        "FINAL CERTIFICATION (pre-release / pre-merge gate)"
+      ],
+      "evidence_artifact": "runtime/generated/<milestone>/full-campaign-mutation-summary.json + per-engine summaries",
+      "evidence_quality": "AUTHORITATIVE MEASURED"
+    },
+
+    "do_not_run_full_merely_because": [
+      "several tests were added in a single bounded strengthening batch (use targeted)",
+      "a small module was refactored (use targeted on that engine)",
+      "a survivor inventory is needed (use per-mutant dump from existing run, no re-execute)",
+      "a confidence check is wanted (use targeted on a sub-population)"
+    ],
+
+    "trigger_for_full_campaign": "Any of: (a) population expansion; (b) material mutation config change; (c) material infrastructure change; (d) periodic convergence checkpoint; (e) explicit final-certification requirement. C42.26 met none of these for the 14-component population."
+  },
+
+  "verification_architecture_implication": {
+    "milestone": "M26.12",
+    "principle": "Capture the architectural requirement emerging from the C42.26 workflow. Do not implement the architecture in this phase unless required; record it as a forward dependency.",
+
+    "current_gap": "The verification framework has no first-class concept of evidence reuse. Each new phase must re-establish baseline integrity manually, decide whether to rerun, and produce a fresh artifact. This is correct for forensic rigor but expensive and prone to inconsistency.",
+
+    "forward_required_concepts": [
+      {
+        "concept": "EvidenceReuse",
+        "purpose": "Formal declaration that a prior component measurement remains valid for the current population scope. Includes: measurement run_id, source_commit, source_tree, config_hash, mutmut_version, pytest_version. Reusable across population expansions.",
+        "consumers": "population_expansion, mathematical_reconciliation, capability_matrix, cross-dimension_reconciliation"
+      },
+      {
+        "concept": "ComponentMeasurement",
+        "purpose": "A first-class object representing a single component's mutation evidence. Fields: component, source_paths, test_paths, generated, killed, survived, no_tests, timeout, not_checked, score_pct, evidence_kind, run_id, frozen_at, freshness_window.",
+        "consumers": "ComponentMatrix, EvidenceReuse, MeasurementInvalidation"
+      },
+      {
+        "concept": "PopulationSnapshot",
+        "purpose": "A first-class object representing a frozen declaration of the mutation population at a point in time. Fields: population_id, components, declared_at, declared_by, predecessor_population_id, population_kind (full, targeted, hybrid).",
+        "consumers": "PopulationReconciliation, ForwardConvergence"
+      },
+      {
+        "concept": "DerivedAggregate",
+        "purpose": "A first-class object representing an aggregate that is NOT a measurement but a deterministic combination of inputs. Fields: aggregate_id, inputs (list of ComponentMeasurement ids), formula, raw_value, rounded_value, disclaimers.",
+        "consumers": "MathematicalReconciliation, PopulationLedger, CrossDimensionReconciliation"
+      },
+      {
+        "concept": "MeasurementInvalidation",
+        "purpose": "A formal signal that a prior ComponentMeasurement is no longer valid for a given PopulationSnapshot. Fields: component, prior_measurement_id, invalidation_reason, evidence (source diff, config diff, etc.), invalidation_date, suggested_remediation.",
+        "consumers": "BaselinePreservation, EvidenceReuse, ForwardConvergence"
+      }
+    ],
+
+    "implementation_dependency": "Forward-deferred to M9-C42.28+ (Unified Evidence Architecture) and M9-C42.27 (Verification Graph + Planner). These already exist in the C42.21 forward-architecture-scan as future workstreams.",
+    "recording": "Recorded here as a C42.26 forward convergence dependency. Not implemented in C42.26."
+  }
+}

@@ -19,6 +19,7 @@ tables) — using the registry as the canonical source.
 
 from __future__ import annotations
 
+from pathlib import Path
 
 from runtime.foundation.repository.scanner.base import BaseScanner, ScanResult
 
@@ -293,7 +294,6 @@ class MetadataScanner(BaseScanner):
             for ln in block.group(1).splitlines()
             if ln.strip().lstrip().startswith(('"', "'"))
         ]
-
 
     def _scan_package_json(self, result: ScanResult) -> None:
         """Load frontend package.json for dependency metadata."""

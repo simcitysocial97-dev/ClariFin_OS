@@ -9,7 +9,7 @@ All returns use _bps suffix (basis points, 1% = 100 bps).
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 # ===== Investment Types =====
 
@@ -166,8 +166,8 @@ class InvestmentsDTO(BaseModel):
         default=None, description="Evidence chain for explainability"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "investments": [],
                 "total_value_paise": 20000000,  # ₹2,00,000.00
@@ -178,6 +178,7 @@ class InvestmentsDTO(BaseModel):
                 "evidence_chain": None,
             }
         }
+    )
 
 
 # ===== Investments Response Types =====

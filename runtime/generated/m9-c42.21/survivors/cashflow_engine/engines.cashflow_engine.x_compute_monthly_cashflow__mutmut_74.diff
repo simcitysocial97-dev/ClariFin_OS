@@ -1,0 +1,14 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_74: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -64,8 +64,7 @@
+             total_liability_increase += event_amount
+ 
+         if (
+-            event_type in ("cash_advance", "credit_card_cash_advance")
+-            and event_amount > 0
++            event_type in ("cash_advance", "credit_card_cash_advance") or event_amount > 0
+             and asset_change > 0
+         ):
+             # Fee = amount_transacted - asset_received

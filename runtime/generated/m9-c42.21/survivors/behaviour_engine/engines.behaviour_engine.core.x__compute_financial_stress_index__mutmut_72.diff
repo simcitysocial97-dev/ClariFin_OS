@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_72: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -36,7 +36,7 @@
+     running_balance: list[float] = []
+     balance: float = 0.0
+     for date in sorted_dates:
+-        balance += daily_net[date]
++        balance = daily_net[date]
+         running_balance.append(balance)
+ 
+     # Balance volatility

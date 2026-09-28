@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # .github/scripts/run_golden_tests.sh
 # Golden dataset regression tests + capability tests.
-# Invoked by: python runtime/verify.py golden
+# Invoked by: python -m runtime.verify golden
 # Exit code: 0 = pass, non-zero = fail
 
 set -euo pipefail
@@ -9,6 +9,13 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_ROOT/backend"
+
+# Canonical Python resolver (venv-first)
+if [ -x "$REPO_ROOT/.venv/bin/python" ]; then
+  PY="$REPO_ROOT/.venv/bin/python"
+else
+  PY="$(command -v python3 || command -v python)"
+fi
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -25,7 +32,7 @@ mkdir -p tests/generated/golden
 
 # ── Golden regression tests ───────────────────────
 echo -e "\n${YELLOW}[1/2] Golden regression tests...${NC}"
-if pytest tests/golden/ \
+if "$PY" -m pytest tests/golden/ \
     --timeout=120 \
     --tb=short \
     -v \
@@ -39,7 +46,7 @@ fi
 
 # ── Capability smoke tests ────────────────────────
 echo -e "\n${YELLOW}[2/2] Capability tests...${NC}"
-if pytest tests/capability/ \
+if "$PY" -m pytest tests/capability/ \
     --timeout=120 \
     --tb=short \
     -v \

@@ -1,0 +1,21 @@
+{
+  "manifest": [
+    {
+      "file": "runtime/platform/ai/agents.py",
+      "lines": 292,
+      "sha256": "f4d147a1057717b4f48e93ceeb0586cc68e15681294924094bbfaca1fa759e10"
+    },
+    {
+      "file": "runtime/platform/api/services/application.py",
+      "lines": 116,
+      "sha256": "7b48c41a6b57b4da9a04fba0c30f6592d1d2bd25d4927dfe56b08efba946f16c"
+    },
+    {
+      "file": "backend/src/routers/platform.py",
+      "lines": 1542,
+      "sha256": "3f293dfad034c5d45909b3e672174aa9d4b027bd02438b61610e5d92184ebe9b"
+    }
+  ],
+  "total_lines": 1950,
+  "generated_at": "2026-09-06T05:00:00Z"
+}

@@ -1,0 +1,216 @@
+{
+  "schema": "m9-c66-runtime-authority-contract/v1",
+  "generated_at": "2026-09-20T14:50:00Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "milestone": "M9-C66",
+  "predecessor": "M9-C65 (CERTIFIED)",
+  "contract_version": "1.0.0",
+  "authority": {
+    "source_of_truth": "runtime/foundation/verification/canonical_control_plane.py",
+    "entry_point": "runtime/verify.py (module execution from repo root)",
+    "interpreter": ".venv/bin/python (repository-managed virtualenv)",
+    "fallback": "system python3 (not recommended)"
+  },
+  "commands": {
+    "canonical_operations": [
+      {
+        "name": "check",
+        "description": "Primary verification entrypoint - plan and execute for current change",
+        "boundary": "EXTERNAL_BOUNDARY (exceeds 30s timeout on large repos)",
+        "exit_codes": {"0": "PASS", "124": "EXTERNAL_BOUNDARY_TIMEOUT", "1": "FAILED"}
+      },
+      {
+        "name": "plan",
+        "description": "Plan-only mode - enumerate obligations without execution",
+        "deterministic": true,
+        "exit_codes": {"0": "PASS"}
+      },
+      {
+        "name": "run",
+        "description": "Execute an explicit plan",
+        "boundary": "EXTERNAL_BOUNDARY (full execution exceeds timeout)",
+        "exit_codes": {"0": "PASS", "124": "EXTERNAL_BOUNDARY_TIMEOUT"}
+      },
+      {
+        "name": "diagnose",
+        "description": "Failure/survivor diagnostic",
+        "exit_codes": {"0": "PASS"}
+      },
+      {
+        "name": "strengthen",
+        "description": "Test-strengthening control plane",
+        "exit_codes": {"0": "PASS"}
+      },
+      {
+        "name": "inspect",
+        "description": "Read-only inspection queries",
+        "subqueries": [
+          {"name": "capabilities", "exit_code": 0},
+          {"name": "evidence", "exit_code": 0},
+          {"name": "plan", "exit_code": 0},
+          {"name": "mutation", "exit_code": 0},
+          {"name": "workflows", "exit_code": 0},
+          {"name": "health", "exit_code": 0},
+          {"name": "evidence-cleanup", "exit_code": 0}
+        ]
+      },
+      {
+        "name": "certify",
+        "description": "Certification gate - evidence-gated",
+        "boundary": "EXTERNAL_BOUNDARY (requires full test suite)",
+        "exit_codes": {"0": "CERTIFIED", "124": "EXTERNAL_BOUNDARY_TIMEOUT"}
+      },
+      {
+        "name": "ci",
+        "description": "CI orchestration / reconciliation",
+        "exit_codes": {"0": "PASS", "1": "FAILED (missing CI artifacts)"}
+      },
+      {
+        "name": "doctor",
+        "description": "Framework health / integrity check",
+        "exit_codes": {"0": "PASS"}
+      }
+    ],
+    "compatibility_aliases": [
+      {"alias": "status", "canonical": "doctor"},
+      {"alias": "metrics", "canonical": "doctor"},
+      {"alias": "history", "canonical": "doctor"},
+      {"alias": "deps", "canonical": "doctor"},
+      {"alias": "verify-status", "canonical": "doctor"},
+      {"alias": "integrity", "canonical": "doctor"},
+      {"alias": "env-check", "canonical": "doctor"},
+      {"alias": "mutation", "canonical": "strengthen"}
+    ],
+    "profiles": [
+      {"name": "quick", "scope": "QUICK", "local": true},
+      {"name": "backend", "scope": "BACKEND", "local": true},
+      {"name": "frontend", "scope": "FRONTEND", "local": false, "boundary": "ENVIRONMENT_BOUNDARY"},
+      {"name": "contracts", "scope": "CONTRACTS", "local": false, "boundary": "EXTERNAL_SERVICE"},
+      {"name": "graph", "scope": "REPOSITORY", "local": true},
+      {"name": "full", "scope": "FULL", "local": false, "boundary": "ENVIRONMENT_BOUNDARY"},
+      {"name": "runtime", "scope": "RUNTIME", "local": false, "boundary": "EXTERNAL_TOOLING"},
+      {"name": "golden", "scope": "GOLDEN", "local": false, "boundary": "ENVIRONMENT_BOUNDARY"},
+      {"name": "playwright", "scope": "PLAYWRIGHT", "local": false, "boundary": "BROWSER"}
+    ]
+  },
+  "data_models": {
+    "Command": {
+      "identity_fields": ["name", "arguments"],
+      "producer": "CLI dispatcher",
+      "consumer": "ControlPlane",
+      "lifecycle": "parse -> route -> execute -> classify -> record"
+    },
+    "Plan": {
+      "identity_fields": ["plan_id", "commit_sha"],
+      "producer": "Planner",
+      "consumer": "Executor, Platform Console",
+      "lifecycle": "discover -> classify -> enumerate -> fingerprint",
+      "deterministic": true
+    },
+    "Capability": {
+      "identity_fields": ["id", "stage", "category"],
+      "producer": "CapabilityRegistry",
+      "consumer": "Planner, Executor",
+      "lifecycle": "discover -> register -> resolve -> execute"
+    },
+    "Profile": {
+      "identity_fields": ["name"],
+      "producer": "profiles.py",
+      "consumer": "CLI facade",
+      "lifecycle": "define -> expand -> execute"
+    },
+    "Execution": {
+      "identity_fields": ["run_id", "commit_sha", "profile"],
+      "producer": "Executor",
+      "consumer": "Evidence store, Analytics",
+      "lifecycle": "receive plan -> dispatch -> monitor -> complete -> record"
+    },
+    "Measurement": {
+      "identity_fields": ["capability_id", "type"],
+      "producer": "Measurement modules",
+      "consumer": "Certification engine",
+      "lifecycle": "collect -> validate -> fingerprint -> persist"
+    },
+    "Evidence": {
+      "identity_fields": ["run_id", "evidence_type", "status"],
+      "producer": "Execution adapters",
+      "consumer": "Aggregator, Certification",
+      "lifecycle": "generate -> checksum -> persist -> aggregate",
+      "invalidators": ["commit_change", "config_change", "source_change"]
+    },
+    "Diagnosis": {
+      "identity_fields": ["diagnostic_id", "related_run_id"],
+      "producer": "DiagnosticAgent",
+      "consumer": "Platform Console, Operator",
+      "lifecycle": "receive failure -> analyze -> classify -> report"
+    },
+    "Run": {
+      "identity_fields": ["run_id", "timestamp"],
+      "producer": "EventStore",
+      "consumer": "History, Analytics, Platform API",
+      "lifecycle": "start -> record -> complete -> persist"
+    },
+    "History": {
+      "identity_fields": ["run_ids"],
+      "producer": "MetricsRepository",
+      "consumer": "Doctor, Analytics",
+      "lifecycle": "append -> index -> query"
+    },
+    "Artifact": {
+      "identity_fields": ["path", "checksum"],
+      "producer": "Various execution modules",
+      "consumer": "Evidence aggregator, Platform Console",
+      "lifecycle": "generate -> checksum -> persist -> version",
+      "invalidators": ["commit_change", "config_change", "retention_expiry"]
+    },
+    "Workflow": {
+      "identity_fields": ["name"],
+      "producer": "WorkflowInspector",
+      "consumer": "CI parity checker, Platform Console",
+      "boundary_classification": ["LOCAL", "GITHUB_ONLY", "ENVIRONMENT_BOUNDARY", "EXTERNAL_SERVICE", "EXTERNAL_TOOLING", "BROWSER"]
+    },
+    "Boundary": {
+      "types": ["LOCAL", "GITHUB_ONLY", "ENVIRONMENT_BOUNDARY", "EXTERNAL_SERVICE", "EXTERNAL_TOOLING", "BROWSER", "NETWORK", "HARDWARE", "RESOURCE_LIMIT"],
+      "semantic": "External constraint preventing local reproduction"
+    },
+    "Classification": {
+      "vocabulary": ["passed", "failed", "blocked", "interrupted", "completed", "unknown"],
+      "policy": "Never silently reinterpret legacy states"
+    },
+    "Certification": {
+      "identity_fields": ["milestone", "commit_sha", "gates_passed"],
+      "producer": "CertificationEngine",
+      "consumer": "Platform Console (read-only)",
+      "gates": ["G1_command_enumeration", "G2_command_execution", "G3_output_quality", "G4_exit_code_truth", "G5_no_unexplained", "G6_no_false_pass", "G7_check_scenarios", "G8_plan_deterministic", "G9_run_completeness", "G10_diagnose_truth", "G11_doctor_truth", "G12_inspect_correct", "G13_certify_conservative", "G14_strengthen_smoke", "G15_ci_parity", "G16_local_ci_executable", "G17_nonlocal_classified", "G18_ci_local_parity", "G19_artifact_ownership", "G20_cross_surface_truth", "G21_repeatability", "G22_controlled_failure", "G23_timeout_semantics", "G24_interruption_semantics", "G25_config_divergence", "G26_authority_drift", "G27_artifact_integrity", "G28_no_new_defects", "G29_no_unexplained_warnings"],
+      "failure_semantics": "Any gate failure = certification blocked"
+    }
+  },
+  "fingerprints": {
+    "plan": "SHA-256 of plan structure (deterministic for same repo state)",
+    "capability_catalog": "SHA-256 of capability registry contents",
+    "workflow_inventory": "SHA-256 of workflow metadata",
+    "evidence": "SHA-256 of evidence content + run_id"
+  },
+  "invalidators": {
+    "plan": ["commit_change", "config_change", "capability_registry_change"],
+    "evidence": ["commit_change", "source_change", "test_change"],
+    "artifact": ["commit_change", "config_change", "retention_days_elapsed"]
+  },
+  "platform_console_contract": {
+    "read_only_apis": [
+      "GET /health",
+      "GET /plan",
+      "GET /capabilities",
+      "GET /workflows",
+      "GET /evidence",
+      "GET /history",
+      "GET /certification"
+    ],
+    "write_apis": [
+      "POST /run (trigger verification)",
+      "POST /strengthen (trigger test strengthening)"
+    ],
+    "authority_boundary": "Console MUST NOT implement verification logic. All answers come from runtime.",
+    "data_ownership": "Runtime owns all verification data. Console is a view/control surface only."
+  }
+}

@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_65: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -56,7 +56,7 @@
+ 
+         if event_type in (
+             "cash_advance",
+-            "credit_card_cash_advance",
++            "CREDIT_CARD_CASH_ADVANCE",
+             "liability_increase",
+         ):
+             # Cash advance adds to credit-funded pool

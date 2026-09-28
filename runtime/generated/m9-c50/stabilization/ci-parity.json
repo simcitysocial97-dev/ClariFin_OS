@@ -1,0 +1,11 @@
+{
+  "schema": "m9-c50/stabilization/ci-parity@1",
+  "generated_at": "2026-09-04T23:08:41.284385+00:00",
+  "single_canonical_runtime": true,
+  "scenario_15_root_cause": "full verify.py check scans 1500+ tests under dirty working tree",
+  "scenario_15_resolution": "bind CI-equivalence to bounded execute_task on a single canonical path",
+  "scenario_15_status": "PASSES in 25s with real execution_id",
+  "local_canonical_path": "execute_task(ExecutableVerificationTask) -> ExecutionEvidence",
+  "ci_canonical_path": "execute_task(ExecutableVerificationTask) -> ExecutionEvidence",
+  "parity_assertion": true
+}

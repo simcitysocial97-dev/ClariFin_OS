@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.emi.x_compute_tenure_from_emi__mutmut_2: survived
+--- src/engines/loan_engine/emi.py
++++ src/engines/loan_engine/emi.py
+@@ -4,7 +4,7 @@
+     emi_paise: int,
+ ) -> int:
+     """Compute tenure from principal, rate, and EMI."""
+-    if principal_paise <= 0:
++    if principal_paise <= 1:
+         raise ValueError("Principal must be positive")
+ 
+     if emi_paise <= 0:

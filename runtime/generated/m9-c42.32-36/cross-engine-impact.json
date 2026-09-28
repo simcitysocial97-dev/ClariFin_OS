@@ -1,0 +1,137 @@
+{
+  "schema": "m9-c42.32-36-cross-engine-impact/v1",
+  "generated_at": "2026-08-26T07:20:00.000000+00:00",
+  "phase": "M9-C42.34 Phase 4",
+  "repository_sha": "084359346b3b14792c5bd38e159932f6c42922fd",
+  "baseline_reference": "runtime/generated/m9-c42.32-36/baseline.json",
+  "audit_methodology": "Analyzed cross-layer-map.json, ENGINE_TO_CAPABILITY mapping, verification graph, and planner dependency chains to identify actual verified dependencies between engines",
+  "engine_dependency_analysis": {
+    "total_engines": 14,
+    "engines": [
+      "credit_card_engine",
+      "account_engine",
+      "loan_engine",
+      "reconciliation_engine",
+      "behaviour_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine",
+      "financial_events",
+      "core_domain_money",
+      "common_calculations",
+      "recommendation_engine",
+      "transaction_intelligence",
+      "financial_intelligence"
+    ],
+    "capability_mapping": {
+      "credit_card": "credit-card-risk",
+      "account": "account-management",
+      "loan": "loan-management",
+      "reconciliation": "reconciliation",
+      "behaviour": "behaviour-analytics",
+      "balance": "balance-engine",
+      "ledger_audit": "ledger-audit",
+      "cashflow": "cashflow",
+      "financial_events": "financial-events",
+      "common_calculations": "common-calculations",
+      "recommendation": "recommendation",
+      "transaction_intelligence": "transaction-intelligence",
+      "financial_intelligence": "financial-intelligence",
+      "core_domain_money": "core-domain-money"
+    }
+  },
+  "verified_dependencies": {
+    "direct_dependencies": [],
+    "indirect_dependencies": [],
+    "shared_infrastructure": [
+      "core_domain_money - shared domain models for monetary values (used by credit_card_engine, account_engine, loan_engine, balance_engine, cashflow_engine)",
+      "common_calculations - shared financial calculation utilities (used by multiple engines)",
+      "financial_events - event sourcing infrastructure (used by reconciliation_engine, transaction_intelligence, financial_intelligence)"
+    ],
+    "shared_contracts": [
+      "Capability interfaces defined in cross-layer-map.json capabilities section",
+      "DTO models in backend/src/models/ (shared across engines)",
+      "Router/service contracts in backend/src/routers/ and backend/src/services/"
+    ],
+    "shared_domain_invariants": [
+      "Monetary precision and rounding rules (core_domain_money)",
+      "Account balance consistency (account_engine + balance_engine + ledger_audit_engine)",
+      "Transaction atomicity (reconciliation_engine + transaction_intelligence)",
+      "Credit risk calculation consistency (credit_card_engine + loan_engine)"
+    ],
+    "no_verified_dependency": [
+      "behaviour_engine - analytics-only, no direct financial mutations",
+      "recommendation_engine - reads-only, no financial state changes",
+      "nudge_engine - notification-only",
+      "insight_generator - read-only analytics"
+    ]
+  },
+  "impact_resolution_precision": {
+    "current_mechanism": "C42.27 EvidenceAwarePlanner -> graph.capability_to_surface -> ENGINE_TO_CAPABILITY mapping",
+    "precision_level": "CAPABILITY_LEVEL - changes to an engine invalidate only that engine's capability evidence",
+    "limitation": "Shared infrastructure (core_domain_money, common_calculations, financial_events) changes do NOT automatically invalidate dependent engine evidence unless explicitly modeled",
+    "risk": "Changes to shared infrastructure may silently bypass invalidation for dependent engines"
+  },
+  "strengthening_proposal_safety_analysis": {
+    "step_1_affected_capabilities": "Planner determines affected capabilities from changed files via ENGINE_TO_CAPABILITY",
+    "step_2_affected_components": "Direct mapping from capability to engine component",
+    "step_3_dependent_invariants": "NOT CURRENTLY AUTOMATED - requires manual identification of shared domain invariants",
+    "step_4_targeted_revalidation_safety": "Only the explicitly affected component is revalidated; shared infrastructure dependencies are not automatically included",
+    "step_5_escalation": "Only when evidence requires broader verification (not automated)"
+  },
+  "regression_scenarios_needed": [
+    {
+      "name": "unrelated_engine_change_does_not_expand_scope",
+      "description": "Change to credit_card_engine/risk.py should only invalidate credit-card-risk capability",
+      "expected": "Scope = [credit_card_engine]; other 13 engines evidence reused",
+      "status": "VERIFIED - C42.27 blast radius tests pass"
+    },
+    {
+      "name": "genuine_cross_engine_dependency_expands_scope",
+      "description": "Change to core_domain_money/precision.py should invalidate all engines using monetary values",
+      "expected": "Scope = [credit_card_engine, account_engine, loan_engine, balance_engine, cashflow_engine, ...]",
+      "status": "NOT_VERIFIED - No automatic dependency on shared infrastructure"
+    },
+    {
+      "name": "shared_infrastructure_change_invalidates_correct_population",
+      "description": "Change to common_calculations/interest.py should invalidate engines using interest calculations",
+      "expected": "Scope = [credit_card_engine, loan_engine, balance_engine, cashflow_engine]",
+      "status": "NOT_VERIFIED - No automatic dependency on shared utilities"
+    },
+    {
+      "name": "strengthening_cannot_silently_ignore_dependent_capability",
+      "description": "Class-A proposal for credit_card_engine should not silently ignore impact on loan_engine if they share invariants",
+      "expected": "Proposal validation checks dependent capabilities or escalates",
+      "status": "NOT_VERIFIED - No cross-capability check in strengthening validation"
+    }
+  ],
+  "gaps_identified": [
+    {
+      "gap": "Shared infrastructure changes do not propagate invalidation",
+      "severity": "HIGH",
+      "components_affected": ["core_domain_money", "common_calculations", "financial_events"],
+      "impact": "Dependent engine evidence may be incorrectly reused after infrastructure change"
+    },
+    {
+      "gap": "No automated shared domain invariant tracking",
+      "severity": "MEDIUM",
+      "components_affected": ["All engines using shared invariants"],
+      "impact": "Strengthening proposals may miss cross-engine behavioral constraints"
+    },
+    {
+      "gap": "Dependency inference only from imports, not declared derivation rules",
+      "severity": "MEDIUM",
+      "components_affected": "All engines",
+      "impact": "Imports may not reflect actual behavioral dependencies"
+    }
+  ],
+  "recommendations": [
+    "Explicitly declare shared infrastructure dependencies in evidence_reuse.py or graph model",
+    "Add invalidation rule for shared infrastructure changes (R-SHARED-001)",
+    "Enhance planner to trace shared infrastructure -> dependent engines",
+    "Add cross-capability validation to targeted_revalidation() for strengthening proposals",
+    "Create regression test scenarios for each gap identified"
+  ],
+  "status": "AUDIT_COMPLETE - Gaps identified in shared infrastructure dependency tracking",
+  "next_action": "Implement shared infrastructure invalidation rule and enhance planner dependency resolution"
+}

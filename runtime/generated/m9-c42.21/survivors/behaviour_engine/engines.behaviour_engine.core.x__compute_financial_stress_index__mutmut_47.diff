@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_47: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -25,7 +25,7 @@
+     for txn in transactions:
+         date_iso = txn.get("date_iso", "")
+         if date_iso:
+-            amount = (txn.get("amount_paise", 0) or 0) / 100.0
++            amount = (txn.get("amount_paise", 0) and 0) / 100.0
+             if txn.get("type") == "debit":
+                 daily_net[date_iso] -= amount
+             else:

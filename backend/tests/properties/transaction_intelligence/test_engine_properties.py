@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 # --- Strategies ---
@@ -27,20 +27,20 @@ def transaction_description(draw):
 class TestTransactionIntelligenceProperties:
     """Property-based tests for transaction intelligence engine."""
 
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     @given(transaction_amount())
     def test_amount_non_negative(self, amount):
         """Transaction amounts must be non-negative."""
         assert amount >= 0
 
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     @given(transaction_description())
     def test_description_is_string(self, desc):
         """Transaction descriptions must be strings."""
         assert isinstance(desc, str)
         assert len(desc) > 0
 
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     @given(transaction_amount())
     def test_amount_is_integer(self, amount):
         """Transaction amounts must be integers (paise)."""

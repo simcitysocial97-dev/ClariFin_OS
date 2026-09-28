@@ -1,0 +1,11 @@
+# status: survived
+# engines.loan_engine.floating_rate.x_apply_floating_rate_change__mutmut_69: survived
+--- src/engines/loan_engine/floating_rate.py
++++ src/engines/loan_engine/floating_rate.py
+@@ -49,5 +49,5 @@
+             original_tenure=None,
+         )
+ 
+-    prefix = schedule[: change_month - 1] if change_month > 1 else []
++    prefix = schedule[: change_month - 1] if change_month >= 1 else []
+     return prefix + tail

@@ -28,7 +28,7 @@ from src.models.loan_simulation import (
 from src.services import LoanAnalysisService, LoanService, LoanSimulationService
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/api", tags=["loans"])
+router = APIRouter(prefix="/api/v1", tags=["loans"])
 
 
 def _timed_log(

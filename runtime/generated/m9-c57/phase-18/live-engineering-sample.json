@@ -1,0 +1,30 @@
+{
+  "kind": "platform.engineering_result",
+  "version": "1.0.0",
+  "generated_at": "2026-09-06T05:20:47Z",
+  "id": "sha256:b9144c03729a1b483f10cfe550d24838ebc596a6e1183492d83b3d17fb6dc6af",
+  "data": {
+    "kind": "platform.engineering_result",
+    "lifecycle": [
+      "REQUEST",
+      "UNDERSTAND",
+      "INSPECT",
+      "PLAN",
+      "AUTHORIZE",
+      "CHANGE",
+      "EXECUTE",
+      "VERIFY",
+      "RECONCILE",
+      "DECIDE",
+      "LEARN"
+    ],
+    "run_id": null,
+    "patch_id": "patch-fc7df9ecd358",
+    "execution_id": "exec-aea46e77",
+    "evidence_id": "ev-ca827fe1a00c",
+    "decision": "PENDING_VERIFICATION",
+    "requires": "post-change verification via /platform/v1/verification/run",
+    "authorization_required": true,
+    "note": "Patch not applied \u2014 human authorization required. Success requires post-change evidence."
+  }
+}

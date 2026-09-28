@@ -1,0 +1,13 @@
+# status: survived
+# core.domain.money.xǁMoneyǁcompare__mutmut_3: survived
+--- src/core/domain/money.py
++++ src/core/domain/money.py
+@@ -9,7 +9,7 @@
+             -1 if self < other, 0 if equal, 1 if self > other
+         """
+     if not isinstance(other, Money):
+-        raise TypeError(f"Cannot compare Money with {type(other).__name__}")
++        raise TypeError(f"Cannot compare Money with {type(None).__name__}")
+     if self._paise < other._paise:
+         return -1
+     elif self._paise > other._paise:

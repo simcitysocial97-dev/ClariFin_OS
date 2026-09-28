@@ -1,0 +1,20 @@
+{
+  "schema": "m9-c55/c53-reproducibility-integration/v1",
+  "generated_at": "2026-09-01T19:57:01+00:00",
+  "integration_check": "all_C53_modules_importable_and_unchanged",
+  "modules_verified": [
+    "runtime/foundation/verification/candidate_validation.py",
+    "runtime/foundation/verification/generation_engine.py",
+    "runtime/foundation/verification/c53_certification.py",
+    "runtime/foundation/verification/c53_scenarios.py",
+    "runtime/foundation/verification/authorization_boundary.py"
+  ],
+  "compatibility": "C55 env_contract extends without modifying C53 modules",
+  "generation_safe_under_contract": true,
+  "human_authorization_mandatory": true,
+  "tests_in_scope": [
+    "generate-test",
+    "c53-scenarios",
+    "c53-certify"
+  ]
+}

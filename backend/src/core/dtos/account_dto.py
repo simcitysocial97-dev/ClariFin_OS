@@ -6,7 +6,7 @@ Data Transfer Objects for account-related API responses.
 All monetary fields use _paise suffix for explicit units.
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class AccountDTO(BaseModel):
@@ -31,8 +31,8 @@ class AccountDTO(BaseModel):
         default=None, description="Balance in rupees (DEPRECATED - use balance_paise)"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "id": "acc_123",
                 "name": "Primary Savings",
@@ -43,6 +43,7 @@ class AccountDTO(BaseModel):
                 "last_updated": "2026-07-05T10:30:00",
             }
         }
+    )
 
 
 class AccountListResponse(BaseModel):
@@ -54,7 +55,8 @@ class AccountListResponse(BaseModel):
         description="Total balance across all accounts in paise"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {"accounts": [], "total_accounts": 0, "total_balance_paise": 0}
         }
+    )

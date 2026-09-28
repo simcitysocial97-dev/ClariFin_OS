@@ -6,7 +6,7 @@ Data Transfer Objects for statement-related API responses.
 All monetary fields use _paise suffix for explicit units.
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class StatementDTO(BaseModel):
@@ -54,8 +54,8 @@ class StatementDTO(BaseModel):
     badge_text: str = Field(description="Badge display text")
     badge_color: str = Field(description="Badge color")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "id": 1,
                 "bank": "HDFC Bank",
@@ -83,3 +83,4 @@ class StatementDTO(BaseModel):
                 "badge_color": "green",
             }
         }
+    )

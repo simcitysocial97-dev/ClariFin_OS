@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.foreclosure.x_compute_card_foreclosure__mutmut_5: survived
+--- src/engines/credit_card_engine/foreclosure.py
++++ src/engines/credit_card_engine/foreclosure.py
+@@ -26,7 +26,7 @@
+     INVARIANT 1: All monetary values in integer paise.
+     """
+     if outstanding_paise < 0:
+-        raise ValueError("outstanding_paise must be non-negative")
++        raise ValueError("XXoutstanding_paise must be non-negativeXX")
+     if annual_rate_bps < 0:
+         raise ValueError("annual_rate_bps must be non-negative")
+     if remaining_months < 0:

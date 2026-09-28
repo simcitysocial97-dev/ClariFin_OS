@@ -1,0 +1,27 @@
+{
+  "schema": "m9-c56/environment-baseline/v1",
+  "generated_at": "2026-09-02T00:16:24.511473+00:00",
+  "python": {
+    "version": "Python 3.12.3",
+    "source": "venv",
+    "path": ".venv/bin/python3"
+  },
+  "pytest": {
+    "version": "pytest 9.1.1",
+    "source": "venv"
+  },
+  "mutmut": {
+    "version": "mutmut 3.7.0",
+    "source": "venv",
+    "pinned": "3.7.0"
+  },
+  "node": {
+    "version": "v24.20.0"
+  },
+  "npm": {
+    "version": "11.19.0"
+  },
+  "forbidden_venvs": [],
+  "consistent": true,
+  "venv_bin": ".venv/bin"
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "m9-c64-final-clean-state/v1",
+  "generated_at": "2026-09-20T11:08:42Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "pre_test_state": {
+    "modified_tracked_files": 2,
+    "orphan_processes": 0
+  },
+  "post_test_state": {
+    "controlled_faults_restored": true,
+    "services_stopped": true,
+    "orphan_processes": 0
+  },
+  "git_state": {
+    "working_tree_clean_except_generated": true,
+    "no_source_modifications": true
+  },
+  "final_doctor_run": {
+    "exit_code": 0,
+    "framework_integrity": "HEALTHY"
+  },
+  "final_diagnose_run": {
+    "exit_code": 0,
+    "output_valid": true
+  }
+}

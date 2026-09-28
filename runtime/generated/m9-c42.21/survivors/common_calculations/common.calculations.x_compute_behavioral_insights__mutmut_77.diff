@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_77: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -30,7 +30,7 @@
+             other_months = [v for k, v in monthly_data.items() if k != this_month]
+             if other_months:
+                 avg_other = sum(other_months) / len(other_months)
+-                if avg_other > 0:
++                if avg_other >= 0:
+                     pct_change = ((this_month_cat - avg_other) / avg_other) * 100
+                     if pct_change > 30:
+                         insights.append(

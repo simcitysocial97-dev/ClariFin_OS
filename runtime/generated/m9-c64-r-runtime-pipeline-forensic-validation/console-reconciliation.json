@@ -1,0 +1,116 @@
+{
+  "audit_date": "2026-09-20T03:28:56.643482+00:00",
+  "comparisons": [
+    {
+      "scenario": "D-backend-unit",
+      "files": [
+        "backend/src/engines/loan_engine/emi.py"
+      ],
+      "api_truth": {
+        "set_id": "set-d5c82369932d",
+        "count": 27,
+        "capabilities": [
+          "api-contracts",
+          "credit-card-engine",
+          "financial-intelligence",
+          "loan-engine"
+        ]
+      },
+      "cli_truth": {
+        "exit_code": 0,
+        "truncated": true
+      },
+      "evidence_truth": {
+        "ai_runs_count": 240
+      },
+      "console_truth": {
+        "exit_code": 0,
+        "health": "HEALTHY"
+      },
+      "four_source_match": true,
+      "discrepancies": []
+    },
+    {
+      "scenario": "E-backend-router",
+      "files": [
+        "backend/src/routers/accounts.py"
+      ],
+      "api_truth": {
+        "set_id": "set-d6195ae21498",
+        "count": 6,
+        "capabilities": [
+          "api-contracts"
+        ]
+      },
+      "cli_truth": {
+        "exit_code": 0,
+        "truncated": true
+      },
+      "evidence_truth": {
+        "ai_runs_count": 240
+      },
+      "console_truth": {
+        "exit_code": 0,
+        "health": "HEALTHY"
+      },
+      "four_source_match": true,
+      "discrepancies": []
+    },
+    {
+      "scenario": "G-unmapped",
+      "files": [
+        "/tmp/nonexistent_file_xyz_12345.py"
+      ],
+      "api_truth": {
+        "set_id": "set-dc3bc965666d",
+        "count": 0,
+        "capabilities": []
+      },
+      "cli_truth": {
+        "exit_code": 0,
+        "truncated": true
+      },
+      "evidence_truth": {
+        "ai_runs_count": 240
+      },
+      "console_truth": {
+        "exit_code": 0,
+        "health": "HEALTHY"
+      },
+      "four_source_match": true,
+      "discrepancies": []
+    },
+    {
+      "scenario": "J-cross-layer",
+      "files": [
+        "frontend/lib/capabilities/use-accounts-capability.ts",
+        "backend/src/engines/account_engine/lifecycle.py"
+      ],
+      "api_truth": {
+        "set_id": "set-8961ca2f7ad7",
+        "count": 6,
+        "capabilities": [
+          "api-contracts"
+        ]
+      },
+      "cli_truth": {
+        "exit_code": 0,
+        "truncated": true
+      },
+      "evidence_truth": {
+        "ai_runs_count": 240
+      },
+      "console_truth": {
+        "exit_code": 0,
+        "health": "HEALTHY"
+      },
+      "four_source_match": true,
+      "discrepancies": []
+    }
+  ],
+  "summary": {
+    "total": 4,
+    "consistent": true,
+    "discrepancies": 0
+  }
+}

@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_75: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -41,7 +41,7 @@
+ 
+     # Balance volatility
+     if running_balance:
+-        balance_cv = _coefficient_of_variation([abs(b) for b in running_balance])
++        balance_cv = None
+     else:
+         balance_cv = 0
+ 

@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_211: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -148,7 +148,7 @@
+     new_interest = total_interest_paise(new_schedule)
+     interest_saved = original_interest - new_interest
+ 
+-    new_emi = tail[0].emi_paise if tail else 0
++    new_emi = tail[0].emi_paise if tail else 1
+ 
+     return new_schedule, PrepaymentResult(
+         prepayment_paise=prepayment_paise,

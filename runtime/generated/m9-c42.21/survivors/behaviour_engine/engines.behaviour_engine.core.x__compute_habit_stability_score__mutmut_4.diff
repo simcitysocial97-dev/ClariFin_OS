@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_habit_stability_score__mutmut_4: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -10,7 +10,7 @@
+     - Behavioral rhythm regularity
+     """
+     if not transactions:
+-        return {"score": 0.5, "category_cv": 0.0, "recurring_predictability": 0.0}
++        return {"score": 1.5, "category_cv": 0.0, "recurring_predictability": 0.0}
+ 
+     debits = [t for t in transactions if t.get("type") == "debit"]
+     if not debits:

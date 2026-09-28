@@ -9,7 +9,6 @@ Run: cd backend && ./venv/bin/python3 -m pytest tests/test_account_link_reposito
 import sqlite3
 
 import pytest
-
 from src.repositories.account_link_repository import AccountLinkRepository
 
 

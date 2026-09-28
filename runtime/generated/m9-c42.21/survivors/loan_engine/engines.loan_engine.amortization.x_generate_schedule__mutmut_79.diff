@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.amortization.x_generate_schedule__mutmut_79: survived
+--- src/engines/loan_engine/amortization.py
++++ src/engines/loan_engine/amortization.py
+@@ -77,7 +77,7 @@
+ 
+         if month == tenure_months:
+             # Last month: settle the exact remaining balance (absorbs any drift)
+-            principal_component_paise = max(0, reported_balance)
++            principal_component_paise = max(1, reported_balance)
+             interest_paise = interest_rounded
+             actual_emi_paise = principal_component_paise + interest_paise
+             reported_balance = 0

@@ -1,0 +1,80 @@
+{
+  "all_healthy": true,
+  "generated_at": "2026-09-05T02:58:38.332884+00:00",
+  "healthy_count": 14,
+  "repository": {
+    "branch": "m9c9-merge-authorization-resolution",
+    "sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde"
+  },
+  "schema": "m9-c50/final-freeze/runtime-health-acceptance@1",
+  "sections": [
+    {
+      "domain": "control_plane",
+      "status": "HEALTHY",
+      "test": "single canonical execute_task dispatcher exists"
+    },
+    {
+      "domain": "capability_authority",
+      "status": "HEALTHY"
+    },
+    {
+      "domain": "planner",
+      "status": "HEALTHY"
+    },
+    {
+      "domain": "obligation_model",
+      "status": "HEALTHY"
+    },
+    {
+      "domain": "task_model",
+      "status": "HEALTHY"
+    },
+    {
+      "domain": "executor",
+      "status": "HEALTHY"
+    },
+    {
+      "details": {
+        "count": 8
+      },
+      "domain": "adapter_registry",
+      "status": "HEALTHY"
+    },
+    {
+      "domain": "execution_lifecycle",
+      "status": "HEALTHY"
+    },
+    {
+      "details": {
+        "kind_count": 27
+      },
+      "domain": "evidence_contract",
+      "status": "HEALTHY"
+    },
+    {
+      "domain": "reconciliation",
+      "status": "HEALTHY"
+    },
+    {
+      "domain": "cache",
+      "status": "HEALTHY"
+    },
+    {
+      "domain": "ci_parity",
+      "status": "HEALTHY"
+    },
+    {
+      "domain": "legacy_bypass",
+      "status": "HEALTHY"
+    },
+    {
+      "details": {
+        "detected": 10,
+        "total": 10
+      },
+      "domain": "lineage_integrity",
+      "status": "HEALTHY"
+    }
+  ],
+  "total_count": 14
+}

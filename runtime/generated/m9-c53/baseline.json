@@ -1,0 +1,29 @@
+{
+  "schema": "m9-c53-baseline/v1",
+  "generated_at": "2026-09-01T11:16:05.310060+00:00",
+  "predecessors": {
+    "C42": "FINAL VERIFICATION SYSTEM CERTIFIED",
+    "C50": "change/blast-radius infrastructure certified",
+    "C51": "capability discovery/pipeline discoverability certified",
+    "C52": "verification/command intelligence certified (30/30 gates)"
+  },
+  "c53_objective": "Automatic Test Generation & Evidence-Driven Strengthening",
+  "taxonomy": {
+    "A": "genuine behavioral verification gap; potentially eligible for test generation",
+    "B": "equivalent/non-distinguishable mutation; do not generate a test",
+    "C": "defensive/intentional behavior; do not manufacture a test for score",
+    "D": "discovery/test-selection gap; fix at discovery/planning level",
+    "E": "historical/repeated survivor; generation depends on accumulated evidence",
+    "F": "measurement/infrastructure failure; repair measurement, do not generate",
+    "G": "legitimate missing regression; potentially eligible, subject to authorization"
+  },
+  "components": [
+    "gap_classification.py",
+    "generation_eligibility.py",
+    "candidate_validation.py",
+    "authorization_boundary.py",
+    "generation_engine.py",
+    "c53_scenarios.py",
+    "c53_certification.py"
+  ]
+}

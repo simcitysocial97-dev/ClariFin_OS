@@ -108,7 +108,7 @@ export interface IAccountsMapper {
   /**
    * Map a single Accounts DTO to ViewModel
    */
-  mapAccountsDTO(dto: AccountsDTO): AccountsViewModel;
+  mapAccountsDTO(dto: AccountsDTO | AccountDetailDTO[]): AccountsViewModel;
 
   /**
    * Map account details DTOs to ViewModels
@@ -149,11 +149,25 @@ export interface IAccountsMapper {
  */
 export class AccountsMapper implements IAccountsMapper {
   /**
-   * Map a single Accounts DTO to ViewModel
-   * @param dto - Accounts data from API
-   * @returns AccountsViewModel for presentation
+   * Map the canonical v1 account collection or workspace DTO to a ViewModel.
    */
-  mapAccountsDTO(dto: AccountsDTO): AccountsViewModel {
+  mapAccountsDTO(dto: AccountsDTO | AccountDetailDTO[]): AccountsViewModel {
+    if (Array.isArray(dto)) {
+      const totalBalance = dto.reduce((sum, account) => sum + account.balance_paise, 0);
+      return {
+        accounts: this.mapAccountDetails(dto),
+        total_balance_paise: totalBalance,
+        account_count: dto.length,
+        type_breakdown: [],
+        balance_history: [],
+        transactions: [],
+        insights: [],
+        evidence_chain: undefined,
+        filters: this.createDefaultFilters(),
+        navigation: this.createDefaultNavigation(),
+      };
+    }
+
     return {
       accounts: this.mapAccountDetails(dto.accounts),
       total_balance_paise: dto.total_balance_paise,

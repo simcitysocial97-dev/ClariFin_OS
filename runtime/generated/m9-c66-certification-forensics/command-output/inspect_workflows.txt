@@ -1,0 +1,36 @@
+=== Command: verify inspect workflows ===
+Exit: 0
+Class: PASS
+Duration: 0.997s
+
+--- STDOUT ---
+================================================================================
+  CI WORKFLOW INVENTORY
+  Total workflows: 14
+================================================================================
+  Workflow                       Canonical Command         Local  Boundary              
+--------------------------------------------------------------------------------
+  api-contracts                  -                         no     EXTERNAL_SERVICE      
+  backend-verify                 -                         yes    LOCAL                 
+  dependency-update              -                         no     GITHUB_ONLY           
+  frontend-verify                -                         no     ENVIRONMENT_BOUNDARY  
+  golden                         -                         no     ENVIRONMENT_BOUNDARY  
+  m9-forensic-diagnostic-lab     verify doctor             yes    LOCAL                 
+  mutation-pr                    -                         no     EXTERNAL_TOOLING      
+  mutation                       -                         no     EXTERNAL_TOOLING      
+  playwright                     verify inspect evidence   no     BROWSER               
+  quality                        -                         no     ENVIRONMENT_BOUNDARY  
+  release                        -                         no     GITHUB_ONLY           
+  security-codeql                -                         no     GITHUB_ONLY           
+  verification-reconcile         -                         yes    LOCAL                 
+  verification-runtime           -                         yes    LOCAL                 
+--------------------------------------------------------------------------------
+  Local executable: 4
+  GitHub-only: 3
+  Environment boundary: 4
+  External service/tooling: 3
+================================================================================
+
+
+--- STDERR ---
+

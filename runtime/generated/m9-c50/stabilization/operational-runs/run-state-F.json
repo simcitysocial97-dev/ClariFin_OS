@@ -1,0 +1,21 @@
+{
+  "run_id": "run::state::F",
+  "timestamp": "2026-09-04T23:07:16.731634+00:00",
+  "state": "F_frontend",
+  "expected": "real frontend verification (capability adapter)",
+  "payload": {
+    "state": "F_frontend",
+    "expected": "real frontend verification (capability adapter)",
+    "task": "exec::state::capability::",
+    "execution_id": "runtime.verification::exec::4e629cd0adaf3cb1",
+    "exit_code": 0,
+    "artifact_paths": [
+      "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-capability-all.xml"
+    ]
+  },
+  "execution_identity": "runtime.verification::exec::4e629cd0adaf3cb1",
+  "task_identity": "exec::state::capability::",
+  "evidence_artifact_paths": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-capability-all.xml"
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "audit_date": "2026-09-20T03:28:31.093012+00:00",
+  "truth_table": [
+    {
+      "row": 1,
+      "execution": "All tasks pass (planned)",
+      "expected": "PASS",
+      "method": "Backend engine change",
+      "observed": "27 obligations, 4 capabilities",
+      "match": true
+    },
+    {
+      "row": 2,
+      "execution": "Intentional failing test (Phase L)",
+      "expected": "FAIL",
+      "method": "assert False test",
+      "observed": "pytest exit 1",
+      "match": true
+    },
+    {
+      "row": 3,
+      "execution": "Sleep(120) with timeout=5s (Phase M)",
+      "expected": "BLOCKED",
+      "method": "pytest-timeout=5",
+      "observed": "exit 1, timeout captured",
+      "match": true
+    },
+    {
+      "row": 4,
+      "execution": "SIGINT during run (Phase N)",
+      "expected": "INTERRUPTED",
+      "method": "Popen.send_signal(SIGINT)",
+      "observed": "exit -2 vs expected 130",
+      "match": false,
+      "notes": "Signal handling variance"
+    },
+    {
+      "row": 5,
+      "execution": "Tampered symbol-cache.json (Phase Q)",
+      "expected": "STALE",
+      "method": "ArtifactFreshnessDetector",
+      "observed": "3 findings detected",
+      "match": true
+    },
+    {
+      "row": 6,
+      "execution": "coverage_threshold=999 (Phase K)",
+      "expected": "DIVERGED",
+      "method": "verify doctor after yaml edit",
+      "observed": "HEALTHY, no detection",
+      "match": false,
+      "notes": "No config threshold check at plan time"
+    },
+    {
+      "row": 7,
+      "execution": "Empty changed_files",
+      "expected": "UNKNOWN",
+      "method": "plan([])",
+      "observed": "plan_id=e3b0c44298fc, 0 tasks",
+      "match": true
+    },
+    {
+      "row": 8,
+      "execution": "Single backend change, base=HEAD",
+      "expected": "PASS",
+      "method": "verify plan with VERIFICATION_BASE_REF=HEAD",
+      "observed": "exit=0",
+      "match": true
+    },
+    {
+      "row": 9,
+      "execution": "Unmapped file path",
+      "expected": "UNMAPPED",
+      "method": "plan with /tmp/nonexistent",
+      "observed": "0 obligations",
+      "match": true
+    }
+  ],
+  "summary": {
+    "total": 9,
+    "matches": 7,
+    "mismatches": 2
+  }
+}

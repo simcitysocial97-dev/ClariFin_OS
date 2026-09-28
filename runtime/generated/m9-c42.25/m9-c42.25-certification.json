@@ -1,0 +1,75 @@
+{
+  "run_id": "m9-c42.25",
+  "generated_at": "2026-08-26T05:00:00+05:30",
+  "title": "M9-C42.25 \u2014 Certification",
+  "predecessor": "M9-C42.24-B \u2014 CERTIFIED",
+  "certification_verdict": "CERTIFIED",
+  "exit_state": "Outcome A \u2014 Both READY",
+  "gates": {
+    "G1_Baseline_Integrity": {
+      "requirement": "C42.24-B preserved",
+      "status": "PASS"
+    },
+    "G2_Transaction_Inventory": {
+      "requirement": "Complete behavioral inventory",
+      "status": "PASS"
+    },
+    "G3_Financial_Inventory": {
+      "requirement": "Complete behavioral inventory",
+      "status": "PASS"
+    },
+    "G4_Transaction_Test_Surface": {
+      "requirement": "Direct behavioral suite established",
+      "status": "PASS",
+      "details": "157 unit + 20 property + 5 capability"
+    },
+    "G5_Financial_Test_Surface": {
+      "requirement": "Direct behavioral suite established",
+      "status": "PASS",
+      "details": "245 unit + 22 property + 6 capability"
+    },
+    "G6_Capability_Binding": {
+      "requirement": "Both correctly mapped",
+      "status": "PASS"
+    },
+    "G7_Discovery_Integrity": {
+      "requirement": "Tests demonstrably reach intended source",
+      "status": "PASS"
+    },
+    "G8_Transaction_Coverage": {
+      "requirement": "\u226570% meaningful direct coverage",
+      "status": "PASS",
+      "value": "98.6%"
+    },
+    "G9_Financial_Coverage": {
+      "requirement": "\u226570% meaningful direct coverage",
+      "status": "PASS",
+      "value": "94.4%"
+    },
+    "G10_Mutation_Smoke": {
+      "requirement": "Both meaningful, not_checked=0",
+      "status": "PASS",
+      "txn": "70.2%",
+      "fin": "73.0%"
+    },
+    "G11_Regression": {
+      "requirement": "Existing verification layers remain healthy",
+      "status": "PASS",
+      "total": 529
+    },
+    "G12_No_Scope_Contamination": {
+      "requirement": "12-component certified population unchanged",
+      "status": "PASS"
+    },
+    "G13_Evidence_Completeness": {
+      "requirement": "No unexplained missing evidence",
+      "status": "PASS"
+    },
+    "G14_Forward_Convergence": {
+      "requirement": "Downstream integration requirements documented",
+      "status": "PASS"
+    }
+  },
+  "what_this_certifies": "Intelligence components are sufficiently instrumented and behaviorally tested to enter the mutation population without producing meaningless no_tests evidence.",
+  "next": "M9-C42.26 \u2014 Repository-Wide Mutation Population Expansion & Intelligence Certification"
+}

@@ -1,0 +1,23 @@
+{
+  "schema": "m9-c71-dispatch-validation/v1",
+  "recorded_at": "2026-09-28T09:38:56.767801+00:00",
+  "files_checked": 254,
+  "files_importable": 254,
+  "files_with_dispatch_match": 254,
+  "problems": [],
+  "dispatch_valid": true,
+  "toolchain_contract": {
+    "contract_id": "c71-mutation-toolchain-contract",
+    "status": "SATISFIED",
+    "mutmut_version": "3.7.0",
+    "trampoline_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/mutmut/mutation/trampoline.py",
+    "before_sha256": "aadb4841ee38661164e391f2299b6be81db4926eb5da39e893caacf5c1a0bd16",
+    "after_sha256": "aadb4841ee38661164e391f2299b6be81db4926eb5da39e893caacf5c1a0bd16",
+    "canonical_sha256": "aadb4841ee38661164e391f2299b6be81db4926eb5da39e893caacf5c1a0bd16",
+    "applied": false,
+    "unsatisfied_clauses": [],
+    "detail": "all clauses satisfied; toolchain is canonical",
+    "satisfied": true
+  },
+  "note": "Reproduces mutmut's path-derived module name (including the 'src.' strip) and asserts it resolves to the real importable module whose functions the trampoline compares against."
+}

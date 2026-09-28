@@ -17,13 +17,14 @@ from __future__ import annotations
 
 import json
 from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Set, Tuple
+from typing import Any
 
 from runtime.foundation.repository.graph.schema import (
-    GraphNode,
     GraphEdge,
+    GraphNode,
     RepositoryGraph,
 )
 
@@ -32,20 +33,20 @@ from runtime.foundation.repository.graph.schema import (
 class GraphServiceCache:
     """Simple deterministic in-memory caches for RepositoryGraphService."""
 
-    node_cache: Dict[str, GraphNode] = field(default_factory=dict)
-    edge_cache: Dict[str, list[GraphEdge]] = field(
+    node_cache: dict[str, GraphNode] = field(default_factory=dict)
+    edge_cache: dict[str, list[GraphEdge]] = field(
         default_factory=lambda: defaultdict(list)
     )
-    successor_cache: Dict[Tuple[str, str | None], List[str]] = field(
+    successor_cache: dict[tuple[str, str | None], list[str]] = field(
         default_factory=dict
     )
-    predecessor_cache: Dict[Tuple[str, str | None], List[str]] = field(
+    predecessor_cache: dict[tuple[str, str | None], list[str]] = field(
         default_factory=dict
     )
-    neighbor_cache: Dict[str, Set[str]] = field(
+    neighbor_cache: dict[str, set[str]] = field(
         default_factory=dict
     )  # Empty dict, populated lazily
-    gaps: Dict[str, Any] = field(default_factory=dict)  # Store gap metadata
+    gaps: dict[str, Any] = field(default_factory=dict)  # Store gap metadata
 
     def clear(self) -> None:
         self.node_cache.clear()
@@ -65,7 +66,7 @@ class RepositoryGraphService:
     """
 
     def __init__(
-        self, graph: RepositoryGraph | None = None, index_path: Path | None = None
+        self, graph: RepositoryGraph | None = None, index_path: Path | str | None = None
     ):
         """Construct from an existing RepositoryGraph or load from index path.
 
@@ -92,6 +93,7 @@ class RepositoryGraphService:
 
         # Lazily load when first method is called
         self._ensure_loaded()
+        assert self._graph is not None
 
     def _ensure_loaded(self) -> None:
         """Load the index from disk if constructed with index_path.
@@ -250,6 +252,7 @@ class RepositoryGraphService:
         Returns the node if found, otherwise None.
         """
         self._ensure_loaded()
+        assert self._graph is not None
         return self._cache.node_cache.get(node_id)
 
     def get_nodes(self, node_type: str | None = None) -> list[GraphNode]:
@@ -262,6 +265,7 @@ class RepositoryGraphService:
             List of matching GraphNode objects (empty list if none match).
         """
         self._ensure_loaded()
+        assert self._graph is not None
         if node_type is None:
             return list(self._cache.node_cache.values())
         return [n for n in self._cache.node_cache.values() if n.type == node_type]
@@ -276,6 +280,7 @@ class RepositoryGraphService:
             List of all nodes for which predicate returns True.
         """
         self._ensure_loaded()
+        assert self._graph is not None
         return [n for n in self._cache.node_cache.values() if predicate(n)]
 
     def get_edge(self, edge_id: str) -> GraphEdge | None:
@@ -285,6 +290,7 @@ class RepositoryGraphService:
         source:target:relationship triplet. Returns None if not found.
         """
         self._ensure_loaded()
+        assert self._graph is not None
         parts = edge_id.split(":", 2)
         if len(parts) != 3:
             return None
@@ -310,6 +316,7 @@ class RepositoryGraphService:
             List of unique successor node IDs (sorted for determinism).
         """
         self._ensure_loaded()
+        assert self._graph is not None
 
         cache_key = (node_id, edge_type)
         if cache_key in self._cache.successor_cache:
@@ -336,6 +343,7 @@ class RepositoryGraphService:
             List of unique predecessor node IDs (sorted for determinism).
         """
         self._ensure_loaded()
+        assert self._graph is not None
 
         cache_key = (node_id, edge_type)
         if cache_key in self._cache.predecessor_cache:
@@ -362,6 +370,7 @@ class RepositoryGraphService:
             List of unique neighbor node IDs (sorted for determinism).
         """
         self._ensure_loaded()
+        assert self._graph is not None
         succ = self.successors(node_id)
         pred = self.predecessors(node_id)
         # Combine and deduplicate while preserving sorted order
@@ -373,7 +382,7 @@ class RepositoryGraphService:
         source: str,
         target: str,
         max_depth: int = 8,
-    ) -> List[List[str]]:
+    ) -> list[list[str]]:
         """Find all simple paths from source to target up to max_depth.
 
         Uses BFS to enumerate all simple paths (no repeated nodes) from the
@@ -390,13 +399,14 @@ class RepositoryGraphService:
             determinism.
         """
         self._ensure_loaded()
+        assert self._graph is not None
 
         if source not in self._cache.node_cache or target not in self._cache.node_cache:
             return []
 
-        results: List[List[str]] = []
+        results: list[list[str]] = []
         # Stack contains (current_id, path_as_list_of_ids)
-        stack: List[Tuple[str, List[str]]] = [(source, [source])]
+        stack: list[tuple[str, list[str]]] = [(source, [source])]
 
         while stack:
             current, path = stack.pop()
@@ -437,6 +447,7 @@ class RepositoryGraphService:
             lists are sorted by relationship then target/source for determinism.
         """
         self._ensure_loaded()
+        assert self._graph is not None
 
         outgoing = [e for e in self._graph.edges if e.source == node_id]
         incoming = [e for e in self._graph.edges if e.target == node_id]
@@ -447,7 +458,7 @@ class RepositoryGraphService:
 
         return outgoing, incoming
 
-    def get_gaps(self) -> Dict[str, Any]:
+    def get_gaps(self) -> dict[str, Any]:
         """Return gap detection metadata from the index (if available).
 
         Returns:
@@ -456,6 +467,7 @@ class RepositoryGraphService:
             Empty dict if no gaps data is available.
         """
         self._ensure_loaded()
+        assert self._graph is not None
         if self._cache is None:
             return {}
         return self._cache.gaps.copy()
@@ -468,6 +480,7 @@ class RepositoryGraphService:
             relationship types, and distribution of ownership classes.
         """
         self._ensure_loaded()
+        assert self._graph is not None
 
         if self._graph is None:
             return {}
@@ -509,6 +522,7 @@ class RepositoryGraphService:
             "warnings" (list of strings).
         """
         self._ensure_loaded()
+        assert self._graph is not None
 
         errors: list[str] = []
         warnings: list[str] = []

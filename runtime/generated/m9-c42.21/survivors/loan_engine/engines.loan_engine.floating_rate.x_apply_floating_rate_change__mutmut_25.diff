@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.floating_rate.x_apply_floating_rate_change__mutmut_25: survived
+--- src/engines/loan_engine/floating_rate.py
++++ src/engines/loan_engine/floating_rate.py
+@@ -21,7 +21,7 @@
+     # of the tenure, leaving trailing zero-payment rows. A rate change has no
+     # effect on a closed loan, so the schedule is returned unchanged instead of
+     # regenerating an empty tail (which would silently truncate the schedule).
+-    if opening_balance <= 0:
++    if opening_balance <= 1:
+         return list(schedule)
+ 
+     # Determine mode for regeneration

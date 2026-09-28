@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x__compute_tenure_from_emi__mutmut_17: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -9,7 +9,7 @@
+     principal = Decimal(principal_paise)
+     emi = Decimal(emi_paise)
+ 
+-    if emi <= principal * monthly_rate:
++    if emi < principal * monthly_rate:
+         return 999
+ 
+     numerator = emi / (emi - principal * monthly_rate)

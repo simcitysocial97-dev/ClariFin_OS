@@ -1,0 +1,26 @@
+{
+  "manifest": [
+    {
+      "file": "runtime/platform/ai/agents.py",
+      "lines": 292,
+      "sha256": "f4d147a1057717b4f48e93ceeb0586cc68e15681294924094bbfaca1fa759e10"
+    },
+    {
+      "file": "runtime/platform/ai/context/builder.py",
+      "lines": 326,
+      "sha256": "07c2222aa98e595960bcbac5d38d36a0ef098046ef8296a6798ee183f0c08ab3"
+    },
+    {
+      "file": "runtime/platform/diagnostics/engine.py",
+      "lines": 230,
+      "sha256": "33db6f5618327da9f0d51f96bcd585e36766b367291a2ea075dc9f48f3c1f9e8"
+    },
+    {
+      "file": "backend/src/routers/platform.py",
+      "lines": 1542,
+      "sha256": "3f293dfad034c5d45909b3e672174aa9d4b027bd02438b61610e5d92184ebe9b"
+    }
+  ],
+  "total_lines": 2390,
+  "generated_at": "2026-09-06T05:00:00Z"
+}

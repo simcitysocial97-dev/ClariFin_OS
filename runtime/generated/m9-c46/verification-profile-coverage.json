@@ -1,0 +1,87 @@
+{
+  "schema": "m9-c46-verification-profile-coverage/v1",
+  "milestone": "M46.4",
+  "objective": "For each meaningful capability family, establish appropriate verification profile coverage with minimum required evidence by capability risk.",
+  "generated_at": "2026-09-03T07:45:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "available_profiles": [
+    {"name": "quick", "scope": "quick", "tasks": 4, "purpose": "Fast lint+format+typecheck+unit"},
+    {"name": "backend", "scope": "backend", "tasks": 7, "purpose": "Full backend verification (lint, typecheck, unit, contract, property, architecture, coverage)"},
+    {"name": "frontend", "scope": "frontend", "tasks": 5, "purpose": "Frontend lint+typecheck+build+tests"},
+    {"name": "contracts", "scope": "contracts", "tasks": 3, "purpose": "Contract verification"},
+    {"name": "graph", "scope": "repository", "tasks": 3, "purpose": "Capability graph verification"},
+    {"name": "full", "scope": "full", "tasks": 11, "purpose": "Combined verification suite"},
+    {"name": "integration", "scope": "integration", "tasks": 1, "purpose": "Integration tests"},
+    {"name": "mutation", "scope": "mutation", "tasks": 2, "purpose": "Mutation smoke + full campaign"},
+    {"name": "runtime", "scope": "runtime", "tasks": 2, "purpose": "Runtime tests (foundation/verification)"},
+    {"name": "golden", "scope": "golden", "tasks": 2, "purpose": "Golden regression suite"},
+    {"name": "playwright", "scope": "playwright", "tasks": 2, "purpose": "Frontend E2E"}
+  ],
+  "profile_to_production_coverage": [
+    {
+      "production_area": "backend/src/engines/*",
+      "criticality": "critical",
+      "applicable_profiles": ["backend", "full", "mutation", "golden", "runtime"],
+      "verification_strength": "STRONG — multiple profiles overlap",
+      "mutation_status": "authoritative scope per C45"
+    },
+    {
+      "production_area": "backend/src/services/*",
+      "criticality": "high",
+      "applicable_profiles": ["backend", "full", "contracts", "integration"],
+      "verification_strength": "PARTIAL — covered indirectly via contract + integration",
+      "mutation_status": "not yet in mutation scope"
+    },
+    {
+      "production_area": "backend/src/repositories/*",
+      "criticality": "high",
+      "applicable_profiles": ["backend", "full", "integration"],
+      "verification_strength": "PARTIAL — covered via integration tests, no repository-specific mutation",
+      "mutation_status": "not yet in mutation scope"
+    },
+    {
+      "production_area": "backend/src/common/*",
+      "criticality": "high",
+      "applicable_profiles": ["backend", "full"],
+      "verification_strength": "INDIRECT — used by engines but no direct tests",
+      "mutation_status": "mutated via engines/* (cascades)"
+    },
+    {
+      "production_area": "backend/src/routers/*",
+      "criticality": "high",
+      "applicable_profiles": ["contracts", "full", "integration"],
+      "verification_strength": "STRONG via contracts + integration"
+    },
+    {
+      "production_area": "frontend/lib/*",
+      "criticality": "medium-high",
+      "applicable_profiles": ["frontend", "playwright"],
+      "verification_strength": "PARTIAL — 15% test ratio; 106 test files for ~700 source files"
+    }
+  ],
+  "minimum_evidence_by_risk": {
+    "critical_business_logic": ["unit", "property", "contract", "golden", "mutation", "integration"],
+    "high_risk_services": ["unit", "contract", "integration"],
+    "medium_risk_api": ["contract", "integration"],
+    "frontend_behavioral": ["unit", "playwright"],
+    "configuration_only": ["static"]
+  },
+  "missing_profiles_identified": [
+    {
+      "name": "repository-mutation",
+      "rationale": "No current profile targets repository/data-access mutation testing.",
+      "priority": "M46.14"
+    },
+    {
+      "name": "frontend-financial-display",
+      "rationale": "Frontend profile does not specifically target financial-display correctness.",
+      "priority": "M46.15"
+    },
+    {
+      "name": "cross-layer-journey",
+      "rationale": "No profile assembles a full-stack financial journey test (frontend → API → service → DB → response → render).",
+      "priority": "M46.16"
+    }
+  ],
+  "verdict": "M46.4 COMPLETE. 11 profiles exist; coverage matrix mapped. 3 missing profile classes identified for M46.14-16."
+}

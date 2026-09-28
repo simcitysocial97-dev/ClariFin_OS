@@ -15,7 +15,7 @@ from src.errors import (
     AppError,
     DatabaseError,
     FileError,
-    ImportError,
+    StatementImportError,
     NotFoundError,
     ValidationError,
     format_error_response,
@@ -131,13 +131,13 @@ class TestErrorHierarchy:
         assert err.status_code == 400
 
     def test_import_error_is_app_error(self) -> None:
-        """ImportError should be an AppError."""
-        err = ImportError("Import failed")
+        """StatementImportError should be an AppError."""
+        err = StatementImportError("Import failed")
         assert isinstance(err, AppError)
 
     def test_import_error_status_code(self) -> None:
-        """ImportError should have status 400."""
-        err = ImportError("Import failed")
+        """StatementImportError should have status 400."""
+        err = StatementImportError("Import failed")
         assert err.status_code == 400
 
     def test_not_found_error_is_app_error(self) -> None:

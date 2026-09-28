@@ -1,0 +1,229 @@
+{
+  "title": "M9-C42.28 \u2014 Authoritative Baseline (M28.1 freeze of C42.27)",
+  "milestone": "M9-C42.28",
+  "phase": "M28.1 \u2014 Freeze and Audit the C42.27 Verification Architecture",
+  "generated_at": "2026-08-26T04:26:22.771136+00:00",
+  "git_head": "523637b8de928565ee19fbcff2b5645fbd85a2ce",
+  "freeze_semantics": "All paths under frozen_artifacts are frozen. C42.28 must not change the behavior or contents of these artifacts. Any mutation, deletion, or new dependency on these paths is a C42.28 violation. The runtime_surface entries are not frozen but are fingerprinted; any silent drift in those files invalidates this baseline.",
+  "frozen_artifact_count": 19,
+  "frozen_artifact_bytes": 542408,
+  "frozen_aggregate_sha256": "3401e197d75156c982738fa5fa10c07d2b266ccdba69bc7409405c6964bac90f",
+  "missing_frozen_artifacts": [],
+  "runtime_surface_count": 9,
+  "runtime_surface_bytes": 261700,
+  "runtime_surface_aggregate_sha256": "bc3974d62dadc35d853afa355c34b5d67870a298167e3254b2054dd4ad36ea6f",
+  "missing_runtime_surface": [],
+  "frozen_artifacts": [
+    {
+      "kind": "certification",
+      "path": "runtime/generated/m9-c42.27/m9-c42.27-certification.json",
+      "exists": true,
+      "sha256": "69e145c758403f68e730d7663c670159b442c46d1f727028ab10f5fdb1e77dc5",
+      "bytes": 4437
+    },
+    {
+      "kind": "certification",
+      "path": "runtime/generated/m9-c42.27/m9-c42.27-baseline.json",
+      "exists": true,
+      "sha256": "dcb568a55faef9a3311553bf1f97b5cb2609990d1dc7d9948099245530fd6bc0",
+      "bytes": 7346
+    },
+    {
+      "kind": "graph_inventory",
+      "path": "runtime/generated/m9-c42.27/m9-c42.27-graph-inventory.json",
+      "exists": true,
+      "sha256": "38b5ed6514dc00f73cec9bafd350eee858a387ccd5f80b3670ae71c6ff057dd5",
+      "bytes": 239464
+    },
+    {
+      "kind": "derivation_manifest",
+      "path": "runtime/generated/m9-c42.27/m9-c42.27-graph-derivation-manifest.json",
+      "exists": true,
+      "sha256": "2b2b55821a801761a06f0c4ddfe27080234c7ab6e70485dd980123f7c4c1e272",
+      "bytes": 1241
+    },
+    {
+      "kind": "scenarios",
+      "path": "runtime/generated/m9-c42.27/m9-c42.27-scenarios.json",
+      "exists": true,
+      "sha256": "003ff91539acc25bab101c17eded0ae18ae747d3fca05f238f4250202be1a481",
+      "bytes": 113239
+    },
+    {
+      "kind": "scenarios_module",
+      "path": "runtime/generated/m9-c42.27/m27_11_scenarios.py",
+      "exists": true,
+      "sha256": "b056bb4e530889ed48aed3a316a7ce30d78bfbd91a404e393854146031871f60",
+      "bytes": 9156
+    },
+    {
+      "kind": "population_snapshot",
+      "path": "runtime/generated/m9-c42.27/snapshots/pop-12-c42.24-B.json",
+      "exists": true,
+      "sha256": "a16449f7bf04ab25ca014cb22e842aaa34563fcb99ceeb47e4c1e51bed601646",
+      "bytes": 10797
+    },
+    {
+      "kind": "population_snapshot",
+      "path": "runtime/generated/m9-c42.27/snapshots/pop-14-c42.26.json",
+      "exists": true,
+      "sha256": "7b5204c67061003446655c12c83d9421f526530625a555380c08797212445000",
+      "bytes": 12334
+    },
+    {
+      "kind": "population_snapshot",
+      "path": "runtime/generated/m9-c42.27/snapshots/pop-txn-c42.25.json",
+      "exists": true,
+      "sha256": "cdf920e8e6d427c749aad1eef0316fa627e093c947a2326604b8b6d8157a1d5f",
+      "bytes": 2277
+    },
+    {
+      "kind": "population_snapshot",
+      "path": "runtime/generated/m9-c42.27/snapshots/c42.26-derived-aggregate.json",
+      "exists": true,
+      "sha256": "60844453d631117a9007e060ca0fc1d893880e31d6ad6d7cadeb9b8d0c660855",
+      "bytes": 997
+    },
+    {
+      "kind": "evidence_reuse_module",
+      "path": "runtime/foundation/verification/evidence_reuse.py",
+      "exists": true,
+      "sha256": "03d5939893079e285b4533d6a4fb3a7caceb0f2c42a9ab3fe7057af6a6e4ad81",
+      "bytes": 34645
+    },
+    {
+      "kind": "evidence_planner_module",
+      "path": "runtime/foundation/verification/evidence_planner.py",
+      "exists": true,
+      "sha256": "18245fbb90306e1e07aa153c5e026dcbe886f3e767eac671a0ae6a50c9985edb",
+      "bytes": 26627
+    },
+    {
+      "kind": "correlation_module",
+      "path": "runtime/foundation/verification/correlation.py",
+      "exists": true,
+      "sha256": "25af9ddf0b4856ebd14ab51f5a8260d328efccd728c4a2eb549fa81eb8b5a8a5",
+      "bytes": 7358
+    },
+    {
+      "kind": "graph_model_module",
+      "path": "runtime/foundation/verification/graph_model.py",
+      "exists": true,
+      "sha256": "4bd704594b34620778383cf6c4762f2553ed21d8a95d8fe020c2552509e3c45d",
+      "bytes": 16285
+    },
+    {
+      "kind": "test_suite",
+      "path": "runtime/tests/test_m9_c42_27.py",
+      "exists": true,
+      "sha256": "1734040ef031be9b0f528815ea5dc4ed4919545fa0def5abdfea643d0c606d06",
+      "bytes": 22865
+    },
+    {
+      "kind": "correlation_output",
+      "path": "runtime/generated/m9-c42.27/correlation-A_no_change.json",
+      "exists": true,
+      "sha256": "0f12d414caff66ed65635e2a6b302b13265f702e514ae3bb16ec2f9a2851727f",
+      "bytes": 8448
+    },
+    {
+      "kind": "correlation_output",
+      "path": "runtime/generated/m9-c42.27/correlation-B_source_change.json",
+      "exists": true,
+      "sha256": "427df1fe7c38707c10557ae972404091fcb35632d8ea5cc4925289a34899cdc6",
+      "bytes": 8181
+    },
+    {
+      "kind": "correlation_output",
+      "path": "runtime/generated/m9-c42.27/correlation-C_test_change.json",
+      "exists": true,
+      "sha256": "a8da07b58ece5adec956efd90ead6325410ba5187c926636520d66e09de436ff",
+      "bytes": 8199
+    },
+    {
+      "kind": "correlation_output",
+      "path": "runtime/generated/m9-c42.27/correlation-D_config_change.json",
+      "exists": true,
+      "sha256": "02fe5a9c4582d87d0573f7ccc6209e1850be244c9f3724cb38a8ff563a0cb541",
+      "bytes": 8512
+    }
+  ],
+  "runtime_surface": [
+    {
+      "kind": "registry",
+      "path": "runtime/foundation/verification/registry/registry.py",
+      "exists": true,
+      "sha256": "a82469d4914e676185c926cb5baeae717f2b64ca114d78ecd506cff3ca7d3017",
+      "bytes": 54083
+    },
+    {
+      "kind": "registry_config",
+      "path": "runtime/foundation/verification/verification.yaml",
+      "exists": true,
+      "sha256": "24cbea2b723a4bd861862e0e53ca4deaf1cabb72c25eb82ed9628f5e24dc7a44",
+      "bytes": 11355
+    },
+    {
+      "kind": "mutation_contract",
+      "path": "runtime/foundation/verification/mutation_contract.py",
+      "exists": true,
+      "sha256": "caf44e6ee563d7817d0212caa703c4a26c35bc12c98438179bba9d42ed574d91",
+      "bytes": 19127
+    },
+    {
+      "kind": "mutation_runner",
+      "path": "runtime/foundation/verification/mutation_runner.py",
+      "exists": true,
+      "sha256": "1f5dc9c71a4c6a0dd353d347a3c00d3dc4fa4110bb340c217c6576e5759ae4d5",
+      "bytes": 31664
+    },
+    {
+      "kind": "executor",
+      "path": "runtime/foundation/verification/executor.py",
+      "exists": true,
+      "sha256": "61f3111eef7ec915167da0f471ebcf4942e2017920ecc90b20fd8c89e77c0c28",
+      "bytes": 12723
+    },
+    {
+      "kind": "verify_entrypoint",
+      "path": "runtime/verify.py",
+      "exists": true,
+      "sha256": "4783cbc2e25fa7d1a239100c1559eb2f03c4dae99e67f72c2dfaad259f4998a4",
+      "bytes": 56783
+    },
+    {
+      "kind": "profiles",
+      "path": "runtime/foundation/verification/profiles.py",
+      "exists": true,
+      "sha256": "d52fa4a0efe437e80085978271f5d47497910b11e4b922836d4daf836996d18e",
+      "bytes": 19453
+    },
+    {
+      "kind": "test_suite_mutation_infra",
+      "path": "runtime/tests/test_mutation_infra.py",
+      "exists": true,
+      "sha256": "eede33367655dd74ca2958ee189e6749f85f2ab853699f30aacd1f48e2b2e7b5",
+      "bytes": 13032
+    },
+    {
+      "kind": "test_suite_orchestrator",
+      "path": "runtime/tests/test_orchestrator.py",
+      "exists": true,
+      "sha256": "505c4e32d4265255f2db1fb539f66da60a4befe95b98f0098bf0c108a78d2ce9",
+      "bytes": 43480
+    }
+  ],
+  "snapshot_of": {
+    "c42_27_certification": "runtime/generated/m9-c42.27/m9-c42.27-certification.json",
+    "c42_27_gates_passed": 24,
+    "c42_27_scenarios_pass": "5/5",
+    "c42_27_graph_inventory": {
+      "sources": 411,
+      "capabilities": 14,
+      "test_surfaces": 57,
+      "tasks": 13
+    },
+    "c42_27_planner_dispositions": 9,
+    "c42_27_invalidation_rules": 14
+  }
+}

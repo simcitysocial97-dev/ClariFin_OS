@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x__generate_explanation__mutmut_11: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -7,7 +7,7 @@
+     """Generate human-readable explanation for a match."""
+     amount_rupees = amount_paise / 100
+ 
+-    date_debit = debit_txn.get("date_iso", "?")
++    date_debit = debit_txn.get("date_iso", "XX?XX")
+     date_credit = credit_txn.get("date_iso", "?")
+ 
+     account_debit = debit_txn.get("account_id", "?")

@@ -1,0 +1,13 @@
+# status: survived
+# engines.ledger_audit_engine.x_verify_hash_signatures__mutmut_23: survived
+--- src/engines/ledger_audit_engine.py
++++ src/engines/ledger_audit_engine.py
+@@ -32,7 +32,7 @@
+         # Recompute hash
+         hash_input = f"{row['account_id']}|{row['date_iso']}|{row['description']}|{row['debit']}|{row['credit']}"
+         computed_hash = hashlib.sha256(hash_input.encode()).hexdigest().lower()
+-        stored_hash = row["hash_signature"].lower()
++        stored_hash = row["HASH_SIGNATURE"].lower()
+ 
+         if computed_hash != stored_hash:
+             tampered.append(

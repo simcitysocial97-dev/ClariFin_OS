@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.emi.x_compute_principal_from_emi__mutmut_69: survived
+--- src/engines/loan_engine/emi.py
++++ src/engines/loan_engine/emi.py
+@@ -44,7 +44,7 @@
+         distance = abs(candidate - base_principal)
+ 
+         # Prefer smaller diff, then smaller distance from base_principal
+-        if diff < min_diff or (diff == min_diff and distance < best_distance):
++        if diff < min_diff and (diff == min_diff and distance < best_distance):
+             min_diff = diff
+             best_distance = distance
+             best_principal = candidate

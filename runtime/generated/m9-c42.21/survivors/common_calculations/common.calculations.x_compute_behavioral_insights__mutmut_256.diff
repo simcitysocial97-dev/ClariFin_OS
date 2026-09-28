@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_256: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -98,7 +98,7 @@
+             {
+                 "title": "Largest Expense",
+                 "description": f"Your biggest: {desc} at {amt}",
+-                "severity": "info",
++                "SEVERITY": "info",
+                 "icon": "zap",
+             }
+         )

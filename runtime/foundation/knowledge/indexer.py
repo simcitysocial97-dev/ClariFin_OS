@@ -7,7 +7,7 @@ Consumes only existing artifacts. Never generates new facts.
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -226,7 +226,9 @@ def _extract_components(cross_layer_map: dict[str, Any]) -> list[ComponentEntry]
     return components
 
 
-def _extract_graph_renderers(cross_layer_map: dict[str, Any]) -> list[GraphRendererEntry]:
+def _extract_graph_renderers(
+    cross_layer_map: dict[str, Any],
+) -> list[GraphRendererEntry]:
     renderers: list[GraphRendererEntry] = []
     seen: set[str] = set()
     for file_path, entry in cross_layer_map.items():
@@ -300,18 +302,32 @@ def _extract_integrity_rules() -> list[IntegrityRuleEntry]:
 
         registry = get_constitution()
         for rule in registry.rules:
-            rule_id = rule.id if hasattr(rule, "id") else rule.rule_id
+            rule_id = rule.id
             references = {
                 "rule_id": rule_id,
                 "name": rule.name,
-                "category": rule.category.value if hasattr(rule.category, "value") else str(rule.category),
-                "severity": rule.severity.value if hasattr(rule.severity, "value") else str(rule.severity),
+                "category": (
+                    rule.category.value
+                    if hasattr(rule.category, "value")
+                    else str(rule.category)
+                ),
+                "severity": (
+                    rule.severity.value
+                    if hasattr(rule.severity, "value")
+                    else str(rule.severity)
+                ),
             }
             rules.append(
                 IntegrityRuleEntry(
                     rule_id=rule_id,
                     references=references,
-                    tags=(rule.category.value if hasattr(rule.category, "value") else str(rule.category),),
+                    tags=(
+                        (
+                            rule.category.value
+                            if hasattr(rule.category, "value")
+                            else str(rule.category)
+                        ),
+                    ),
                 )
             )
     except Exception:
@@ -343,7 +359,10 @@ def _merge_from_provider(
     endpoints: list[EndpointEntry],
     capabilities: list[CapabilityEntry],
     workspaces: list[WorkspaceEntry],
-) -> tuple[list[EndpointEntry], list[CapabilityEntry], list[WorkspaceEntry]]:
+    mappers: list[MapperEntry],
+    view_models: list[ViewModelEntry],
+    components: list[ComponentEntry],
+) -> tuple[list[EndpointEntry], list[CapabilityEntry], list[WorkspaceEntry], list[MapperEntry], list[ViewModelEntry], list[ComponentEntry]]:
     """Augment the cross-layer extracted entries with canonical-provider entities.
 
     Program 13.2: the canonical provider is the single source of architectural
@@ -358,12 +377,18 @@ def _merge_from_provider(
     existing_eps = {(e.method, e.path) for e in endpoints}
     existing_caps = {c.name for c in capabilities}
     existing_ws = {w.name for w in workspaces}
+    existing_mps = {m.name for m in mappers}
+    existing_vms = {v.name for v in view_models}
+    existing_comps = {c.name for c in components}
 
     out_eps = list(endpoints)
     out_caps = list(capabilities)
     out_ws = list(workspaces)
+    out_mps = list(mappers)
+    out_vms = list(view_models)
+    out_comps = list(components)
 
-    for sig, ep in arch.endpoints.items():
+    for _sig, ep in arch.endpoints.items():
         if (ep.method, ep.path) in existing_eps:
             continue
         existing_eps.add((ep.method, ep.path))
@@ -372,18 +397,25 @@ def _merge_from_provider(
             refs[f"engine:{eng}"] = f"engine:{eng}"
         for cap in ep.capabilities:
             refs[f"capability:{cap}"] = f"capability:{cap}"
-        out_eps.append(EndpointEntry(path=ep.path, method=ep.method, references=refs, tags=("provider",)))
+        out_eps.append(
+            EndpointEntry(
+                path=ep.path, method=ep.method, references=refs, tags=("provider",)
+            )
+        )
 
-    for name, cap in arch.capabilities.items():
+    for name, cap_entry in arch.capabilities.items():
         if name in existing_caps:
             continue
         existing_caps.add(name)
-        refs = {"source_file": cap.path or "", "provider": "architecture-provider"}
-        for eng in cap.engines:
+        refs = {
+            "source_file": cap_entry.path or "",
+            "provider": "architecture-provider",
+        }
+        for eng in cap_entry.engines:
             refs[f"engine:{eng}"] = f"engine:{eng}"
-        for ep in cap.endpoints:
-            refs[f"endpoint:{ep}"] = f"endpoint:{ep}"
-        tag = "provider" if cap.engines else "provider-frontend-only"
+        for endpoint in cap_entry.endpoints:
+            refs[f"endpoint:{endpoint}"] = f"endpoint:{endpoint}"
+        tag = "provider" if cap_entry.engines else "provider-frontend-only"
         out_caps.append(CapabilityEntry(name=name, references=refs, tags=(tag,)))
 
     for name, ws in arch.workspaces.items():
@@ -393,7 +425,39 @@ def _merge_from_provider(
         refs = {"source_file": ws.path, "provider": "architecture-provider"}
         out_ws.append(WorkspaceEntry(name=name, references=refs, tags=("provider",)))
 
-    return out_eps, out_caps, out_ws
+    for name, mp in arch.mappers.items():
+        if name in existing_mps:
+            continue
+        existing_mps.add(name)
+        refs = {
+            "source_file": mp.path or "",
+            "provider": "architecture-provider",
+        }
+        out_mps.append(MapperEntry(name=name, references=refs, tags=("provider",)))
+
+    for name, vm in arch.view_models.items():
+        if name in existing_vms:
+            continue
+        existing_vms.add(name)
+        refs = {
+            "source_file": vm.path or "",
+            "provider": "architecture-provider",
+        }
+        out_vms.append(ViewModelEntry(name=name, references=refs, tags=("provider",)))
+
+    for name, comp in arch.components.items():
+        if name in existing_comps:
+            continue
+        existing_comps.add(name)
+        refs = {
+            "source_file": comp.path or "",
+            "provider": "architecture-provider",
+        }
+        for ws in comp.workspaces:
+            refs[f"workspace:{ws}"] = f"workspace:{ws}"
+        out_comps.append(ComponentEntry(name=name, references=refs, tags=("provider",)))
+
+    return out_eps, out_caps, out_ws, out_mps, out_vms, out_comps
 
 
 def build_index() -> KnowledgeIndex:
@@ -417,7 +481,9 @@ def build_index() -> KnowledgeIndex:
     workspaces = _extract_workspaces(cross_layer_map)
     components = _extract_components(cross_layer_map)
     graph_renderers = _extract_graph_renderers(cross_layer_map)
-    endpoints, capabilities, workspaces = _merge_from_provider(endpoints, capabilities, workspaces)
+    endpoints, capabilities, workspaces, mappers, view_models, components = _merge_from_provider(
+        endpoints, capabilities, workspaces, mappers, view_models, components
+    )
     runtime_artifacts = _extract_runtime_artifacts()
     documentation = _extract_documentation()
     integrity_rules = _extract_integrity_rules()
@@ -425,13 +491,17 @@ def build_index() -> KnowledgeIndex:
 
     catalog = KnowledgeCatalog(
         endpoints=tuple(sorted(endpoints, key=lambda e: e.path)),
-        capabilities=tuple(sorted(capabilities, key=lambda c: getattr(c, "name", str(c)))),
+        capabilities=tuple(
+            sorted(capabilities, key=lambda c: getattr(c, "name", str(c)))
+        ),
         mappers=tuple(sorted(mappers, key=lambda m: m.name)),
         view_models=tuple(sorted(view_models, key=lambda v: v.name)),
         workspaces=tuple(sorted(workspaces, key=lambda w: w.name)),
         components=tuple(sorted(components, key=lambda c: c.name)),
         graph_renderers=tuple(sorted(graph_renderers, key=lambda g: g.name)),
-        verification_profiles=tuple(sorted(verification_profiles, key=lambda v: v.name)),
+        verification_profiles=tuple(
+            sorted(verification_profiles, key=lambda v: v.name)
+        ),
         integrity_rules=tuple(sorted(integrity_rules, key=lambda r: r.rule_id)),
         runtime_artifacts=tuple(sorted(runtime_artifacts, key=lambda r: r.path)),
         documentation=tuple(sorted(documentation, key=lambda d: d.path)),
@@ -463,7 +533,7 @@ def build_index() -> KnowledgeIndex:
         integrity_rules=catalog.integrity_rules,
         runtime_artifacts=catalog.runtime_artifacts,
         documentation=catalog.documentation,
-        indexed_at=datetime.now(timezone.utc).isoformat(),
+        indexed_at=datetime.now(UTC).isoformat(),
         source_artifacts=tuple(source_artifacts),
     )
 

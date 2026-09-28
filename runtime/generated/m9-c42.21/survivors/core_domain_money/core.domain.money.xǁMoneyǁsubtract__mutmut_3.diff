@@ -1,0 +1,11 @@
+# status: survived
+# core.domain.money.xǁMoneyǁsubtract__mutmut_3: survived
+--- src/core/domain/money.py
++++ src/core/domain/money.py
+@@ -9,5 +9,5 @@
+             New Money instance with difference
+         """
+     if not isinstance(other, Money):
+-        raise TypeError(f"Cannot subtract {type(other).__name__} from Money")
++        raise TypeError(f"Cannot subtract {type(None).__name__} from Money")
+     return Money(self._paise - other._paise)

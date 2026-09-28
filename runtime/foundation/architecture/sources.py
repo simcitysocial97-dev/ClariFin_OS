@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -80,7 +80,7 @@ NONE = ()
 CATALOGUE: tuple[DiscoverySource, ...] = (
     # ---------------------------------------------------------------- pipeline
     DiscoverySource(
-        "runtime/analyze_architecture.py",
+        "runtime/archive/analysis_scripts/analyze_architecture.py",
         "Phase 1 of the single discovery pipeline: classify every module into one canonical node type.",
         ("engine_discovery", "package_discovery"),
         NONE,
@@ -89,16 +89,21 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "Pipeline stage. Registered in runtime.foundation.architecture.discovery.PHASES.",
     ),
     DiscoverySource(
-        "runtime/analyze_engine_topology.py",
+        "runtime/archive/analysis_scripts/analyze_engine_topology.py",
         "Phase 2: discover canonical engines (package roots + designated single files).",
-        ("engine_discovery", "package_discovery", "router_mapping", "capability_mapping"),
+        (
+            "engine_discovery",
+            "package_discovery",
+            "router_mapping",
+            "capability_mapping",
+        ),
         NONE,
         "runtime/generated/engine-topology.json",
         STATUS_PIPELINE,
         "Pipeline stage.",
     ),
     DiscoverySource(
-        "runtime/analyze_ownership.py",
+        "runtime/archive/analysis_scripts/analyze_ownership.py",
         "Phase 3: build the evidence-backed ownership graph.",
         ("ownership_discovery",),
         NONE,
@@ -107,7 +112,7 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "Pipeline stage.",
     ),
     DiscoverySource(
-        "runtime/analyze_execution.py",
+        "runtime/archive/analysis_scripts/analyze_execution.py",
         "Phase 4: build the runtime execution graph.",
         ("execution_graph_generation",),
         NONE,
@@ -116,7 +121,7 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "Pipeline stage.",
     ),
     DiscoverySource(
-        "runtime/analyze_engine_normalization.py",
+        "runtime/archive/analysis_scripts/analyze_engine_normalization.py",
         "Phase 5: classify engine migration status.",
         ("engine_discovery",),
         NONE,
@@ -125,7 +130,7 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "Pipeline stage.",
     ),
     DiscoverySource(
-        "runtime/analyze_knowledge.py",
+        "runtime/archive/analysis_scripts/analyze_knowledge.py",
         "Phase 6: reconstruct knowledge entities from the ownership graph.",
         ("knowledge_reconstruction",),
         NONE,
@@ -134,7 +139,7 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "Pipeline stage.",
     ),
     DiscoverySource(
-        "runtime/analyze_artifacts.py",
+        "runtime/archive/analysis_scripts/analyze_artifacts.py",
         "Phase 7: assign full ownership metadata to every generated artifact.",
         ("artifact_ownership",),
         NONE,
@@ -143,7 +148,7 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "Pipeline stage.",
     ),
     DiscoverySource(
-        "runtime/analyze_gap.py",
+        "runtime/archive/analysis_scripts/analyze_gap.py",
         "Phase 8: certification gap analysis (old model vs canonical model).",
         ("certification_graph",),
         NONE,
@@ -349,7 +354,9 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "runtime/foundation/audit/planner.py",
         "Verification planner certification audit.",
         ("verification_planning", "certification_graph"),
-        ("Probed the planner with the phantom path `backend/src/engines/loan_engine.py`.",),
+        (
+            "Probed the planner with the phantom path `backend/src/engines/loan_engine.py`.",
+        ),
         CANONICAL_PROVIDER,
         STATUS_MIGRATED,
         "Probes now use a canonical engine implementation module.",
@@ -387,7 +394,9 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "runtime/foundation/intelligence/risk.py",
         "Change risk analysis.",
         ("affected_analysis",),
-        ("Risk weighted by count of 'changed engines' that included submodules and phantoms.",),
+        (
+            "Risk weighted by count of 'changed engines' that included submodules and phantoms.",
+        ),
         CANONICAL_PROVIDER,
         STATUS_CONSUMER,
     ),
@@ -442,7 +451,9 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "runtime/foundation/audit/evidence.py",
         "Evidence aggregator certification audit.",
         ("certification_graph",),
-        ("Sample cross-layer map used the phantom key `backend/src/engines/account_engine.py`.",),
+        (
+            "Sample cross-layer map used the phantom key `backend/src/engines/account_engine.py`.",
+        ),
         CANONICAL_PROVIDER,
         STATUS_MIGRATED,
     ),
@@ -450,7 +461,9 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "runtime/foundation/audit/failure_injection.py",
         "Failure injection certification audit.",
         ("certification_graph",),
-        ("Synthetic capability registry referenced `backend/src/engines/transfer_engine` (non-existent).",),
+        (
+            "Synthetic capability registry referenced `backend/src/engines/transfer_engine` (non-existent).",
+        ),
         CANONICAL_PROVIDER,
         STATUS_MIGRATED,
         "Synthetic fixtures are now labelled as fixtures, not architecture.",
@@ -459,7 +472,9 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "runtime/foundation/audit/pipeline.py",
         "Pipeline validation audit (pipeline graph).",
         ("pipeline_graph", "certification_graph"),
-        ("Stage list hardcoded; knowledge/artifact stages validated against legacy artifacts.",),
+        (
+            "Stage list hardcoded; knowledge/artifact stages validated against legacy artifacts.",
+        ),
         CANONICAL_PROVIDER,
         STATUS_CONSUMER,
     ),
@@ -511,7 +526,9 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "runtime/foundation/workspace/workspace.py",
         "Workspace cross-layer status panel.",
         ("engine_discovery",),
-        ("Counted one engine per legacy map key, so phantoms and submodules inflated the total.",),
+        (
+            "Counted one engine per legacy map key, so phantoms and submodules inflated the total.",
+        ),
         CANONICAL_PROVIDER,
         STATUS_MIGRATED,
     ),
@@ -528,7 +545,9 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "tools/development/mutation_discovery.py",
         "Mutation target discovery.",
         ("engine_discovery",),
-        ("Walks `backend/src/engines` and treats each `.py` as a mutation engine target.",),
+        (
+            "Walks `backend/src/engines` and treats each `.py` as a mutation engine target.",
+        ),
         CANONICAL_PROVIDER,
         STATUS_CONSUMER,
         "Operates on files for mutation purposes; makes no architectural claim.",
@@ -577,14 +596,14 @@ SIGNAL_ALLOWLIST = {
     "runtime/foundation/architecture/cross_layer.py",
     "runtime/foundation/architecture/artifacts.py",
     "runtime/foundation/architecture/knowledge_migration.py",
-    "runtime/analyze_architecture.py",
-    "runtime/analyze_engine_topology.py",
-    "runtime/analyze_engine_normalization.py",
-    "runtime/analyze_ownership.py",
-    "runtime/analyze_execution.py",
-    "runtime/analyze_knowledge.py",
-    "runtime/analyze_artifacts.py",
-    "runtime/analyze_gap.py",
+    "runtime/archive/analysis_scripts/analyze_architecture.py",
+    "runtime/archive/analysis_scripts/analyze_engine_topology.py",
+    "runtime/archive/analysis_scripts/analyze_engine_normalization.py",
+    "runtime/archive/analysis_scripts/analyze_ownership.py",
+    "runtime/archive/analysis_scripts/analyze_execution.py",
+    "runtime/archive/analysis_scripts/analyze_knowledge.py",
+    "runtime/archive/analysis_scripts/analyze_artifacts.py",
+    "runtime/archive/analysis_scripts/analyze_gap.py",
 }
 
 
@@ -644,7 +663,7 @@ def build(repo_root: Path | None = None) -> dict[str, Any]:
             by_concern.setdefault(concern, []).append(entry.file)
 
     return {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "phase": "Program 13.2 — Phase 1: Locate Every Legacy Architecture Builder",
         "rule": (
             "Exactly one architecture discovery pipeline may exist. Every other "
@@ -665,7 +684,9 @@ def build(repo_root: Path | None = None) -> dict[str, Any]:
             )
         },
         "sources": [c.to_dict(root) for c in CATALOGUE],
-        "sources_by_concern": {k: sorted(set(v)) for k, v in sorted(by_concern.items())},
+        "sources_by_concern": {
+            k: sorted(set(v)) for k, v in sorted(by_concern.items())
+        },
         "residual_legacy_signals": residual,
         "uncatalogued_runtime_signals": uncatalogued,
         "notes": [

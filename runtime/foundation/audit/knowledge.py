@@ -5,12 +5,26 @@ import time
 from pathlib import Path
 from typing import Any
 
-from runtime.foundation.audit.models import AuditFinding, AuditPriority, AuditSeverity, AuditStatus
+from runtime.foundation.audit.models import (
+    AuditFinding,
+    AuditPriority,
+    AuditSeverity,
+    AuditStatus,
+)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
 
-def _f(check_id: str, name: str, status: str, severity: str, priority: str, message: str, details: dict[str, Any] = None, recommendation: str = "") -> AuditFinding:
+def _f(
+    check_id: str,
+    name: str,
+    status: str,
+    severity: str,
+    priority: str,
+    message: str,
+    details: dict[str, Any] | None = None,
+    recommendation: str = "",
+) -> AuditFinding:
     return AuditFinding(
         section="knowledge",
         check_id=check_id,
@@ -140,7 +154,7 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
             )
 
     references_found = False
-    for obj_key, entries in categories.items():
+    for _obj_key, entries in categories.items():
         for entry in entries:
             if isinstance(entry, dict) and "references" in entry:
                 refs = entry["references"]
@@ -177,7 +191,7 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
         )
 
     broken_links = 0
-    for obj_key, entries in categories.items():
+    for _obj_key, entries in categories.items():
         for entry in entries:
             if not isinstance(entry, dict):
                 continue
@@ -231,7 +245,7 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
     duplicates_found = 0
     seen_paths: dict[str, list[str]] = {}
     seen_names: dict[str, list[str]] = {}
-    for obj_key, entries in categories.items():
+    for _obj_key, entries in categories.items():
         for entry in entries:
             if not isinstance(entry, dict):
                 continue
@@ -240,7 +254,13 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
                 method = entry.get("method", "")
                 identifier = f"{method} {path}"
                 seen_paths.setdefault(identifier, []).append(obj_key)
-            elif obj_key in ("capabilities", "workspaces", "mappers", "view_models", "components"):
+            elif obj_key in (
+                "capabilities",
+                "workspaces",
+                "mappers",
+                "view_models",
+                "components",
+            ):
                 name = entry.get("name", "")
                 seen_names.setdefault(name, []).append(obj_key)
             elif obj_key == "integrity_rules":
@@ -253,10 +273,10 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
                 doc_path = entry.get("path", "")
                 seen_paths.setdefault(doc_path, []).append(obj_key)
 
-    for identifier, keys in seen_paths.items():
+    for _identifier, keys in seen_paths.items():
         if len(keys) > 1:
             duplicates_found += 1
-    for name, keys in seen_names.items():
+    for _name, keys in seen_names.items():
         if len(keys) > 1:
             duplicates_found += 1
 

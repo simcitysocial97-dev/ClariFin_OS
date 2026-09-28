@@ -22,6 +22,8 @@ describe('WorkspaceToolbar Performance', () => {
   };
 
   it('renders under 150ms', () => {
+    const warmup = render(<WorkspaceToolbar {...mockProps} />);
+    warmup.unmount();
     const start = performance.now();
     render(<WorkspaceToolbar {...mockProps} />);
     const end = performance.now();

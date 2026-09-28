@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { apiFetch } from '@/lib/api/gateway';
 import {
   fetchTransactions,
   fetchStatements,
@@ -39,7 +40,7 @@ export async function fetchOverview(params?: {
   if (params?.exclude_transfers) query.set('exclude_transfers', 'true');
   if (params?.member) query.set('member', params.member);
   
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/overview?${query}`);
+  const res = await apiFetch(`/api/overview?${query}`);
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }

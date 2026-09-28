@@ -1,0 +1,90 @@
+{
+  "audit_date": "2026-09-20T06:00:00Z",
+  "c64_r_predecessor_commit": "8990f3ae16e664d9b0f58737bd4f556bc82f52c9",
+  "c64_r2_base_commit": "8990f3ae16e664d9b0f58737bd4f556bc82f52c9",
+  "remediation_summary": {
+    "F001": {
+      "description": "Per-file obligation provenance",
+      "status": "FIXED",
+      "changes": [
+        "Added source_paths and primary_source_path to Change dataclass in obligation.py",
+        "Modified _plan_to_obligations in control_plane_facade.py to map obligations to source files",
+        "Fixed --changed-files argument parsing in CLI dispatch"
+      ],
+      "test_coverage": ["F001-A through F001-F"]
+    },
+    "F002": {
+      "description": "Frontend source classification",
+      "status": "FIXED",
+      "changes": [
+        "Added frontend/app/, frontend/components/, frontend/hooks/ to SOURCE_CHANGE classification",
+        "Integrated cross-layer graph for frontend capability resolution",
+        "Added route/hook/component to backend capability mapping"
+      ],
+      "test_coverage": ["F002-A through F002-G"]
+    },
+    "F003": {
+      "description": "Router-to-capability authority reconciliation",
+      "status": "FIXED",
+      "changes": [
+        "Added router-to-capability mapping from cross-layer graph",
+        "Router files now correctly map to engine capabilities",
+        "Platform router mapped to runtime-verification capability"
+      ],
+      "test_coverage": ["F003-A through F003-F"]
+    },
+    "F005": {
+      "description": "Large-file performance boundary",
+      "status": "FIXED",
+      "changes": [
+        "Fixed O(n²) AST walk in symbol_resolver.py - replaced with O(n) single-pass traversal using class stack",
+        "Symbol extraction: ~1s for 15k-line files (was timing out >120s)",
+        "Total blast radius with graph traversal: ~11s for 15k-line file"
+      ],
+      "test_coverage": ["test_blast_radius_with_very_large_file"]
+    },
+    "F006": {
+      "description": "Configuration divergence detection",
+      "status": "FIXED",
+      "changes": [
+        "Added check_configuration_divergence() to config_loader.py",
+        "Implements CONSISTENT/DIVERGED/UNKNOWN states",
+        "Validates threshold ranges and ordering"
+      ],
+      "test_coverage": ["test_configuration_divergence_*"]
+    }
+  },
+  "data_gaps_identified": [
+    {
+      "id": "DG-1",
+      "severity": "MEDIUM",
+      "description": "account-engine capability missing from contract registry",
+      "resolution": "Added account-engine to verification.yaml capabilities section"
+    },
+    {
+      "id": "DG-2",
+      "severity": "LOW",
+      "description": "Platform console frontend paths lack backend capability mapping",
+      "resolution": "Documented as known gap - platform hooks exist but have no backend dependencies"
+    }
+  ],
+  "verification_results": {
+    "tests_run": [
+      "test_large_changeset.py: 5 passed",
+      "test_f006_configuration_divergence.py: 3 passed",
+      "test_blast_radius_integration.py: 5 passed",
+      "test_cross_layer_planner.py: 13 passed",
+      "test_endpoint_normalization.py: 47 passed",
+      "test_evidence_frontend_units.py: 8 passed",
+      "test_config_consistency.py: 3 passed",
+      "test_cli_contract.py: 10 passed"
+    ],
+    "regression_status": "PASS"
+  },
+  "canonical_pipeline_verified": true,
+  "artifacts_generated": [
+    "baseline.json",
+    "progress.md",
+    "remediation-ledger.json"
+  ]
+}

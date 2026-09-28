@@ -52,6 +52,32 @@ def run_startup_validation() -> bool:
             log_error(f"Cannot create upload directory: {upload_dir}", error=e)
             raise RuntimeError(f"Cannot create upload directory: {e}") from e
 
+    # Initialize the SQLite schema before serving (idempotent):
+    # CREATE IF NOT EXISTS tables/indexes/triggers + guarded data/schema
+    # migrations. This is the single canonical owner of schema initialization
+    # (core/db/schema.py); the test suite and any operator bootstrap must use the
+    # same path. Safe to run on an existing populated database.
+    try:
+        from src.core.db.connection import get_connection_context
+        from src.core.db.migrations import apply_pending_migrations
+        from src.core.db.schema import create_all, verify_schema
+
+        db_path = str(settings.database_path)
+        create_all(db_path)
+        with get_connection_context(db_path) as conn:
+            applied = apply_pending_migrations(conn)
+            if applied:
+                log_info(f"Applied migrations: {applied}")
+        try:
+            verify_schema(db_path)
+            log_info("Database schema initialized and verified")
+        except RuntimeError as e:
+            log_error("Database schema verification failed", error=e)
+            raise
+    except Exception as e:
+        log_error("Database schema initialization failed", error=e)
+        raise RuntimeError(f"Database schema initialization failed: {e}") from e
+
     # Check database connectivity (if exists)
     if settings.database_path.exists():
         try:

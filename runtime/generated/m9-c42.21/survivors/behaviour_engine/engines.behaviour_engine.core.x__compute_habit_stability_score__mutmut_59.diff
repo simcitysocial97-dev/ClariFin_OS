@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_habit_stability_score__mutmut_59: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -26,7 +26,7 @@
+             month = date_iso[:7]  # YYYY-MM
+             category = txn.get("category", "Uncategorized")
+             monthly_category[month][category] += (
+-                txn.get("amount_paise", 0) or 0
++                txn.get("amount_paise", ) or 0
+             ) / 100.0
+ 
+     # Category CV across months

@@ -11,12 +11,12 @@ Consumers import :func:`get_architecture` and read; they never rediscover.
 from __future__ import annotations
 
 from runtime.foundation.architecture.models import (  # noqa: F401
+    DTO,
     Architecture,
     Artifact,
     Capability,
     Component,
     Detector,
-    DTO,
     Endpoint,
     Engine,
     Facade,

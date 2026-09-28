@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_impulsivity_score__mutmut_163: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -69,7 +69,7 @@
+     # Compute composite score
+     micro_score = _normalize_score(micro_ratio, 0, 0.8)
+     weekend_score = _normalize_score(weekend_ratio, 0.5, 2.0)
+-    disc_score = _normalize_score(disc_ratio, 0, 0.6)
++    disc_score = _normalize_score(disc_ratio, 0.6)
+ 
+     impulsivity = micro_score * 0.35 + weekend_score * 0.35 + disc_score * 0.30
+ 

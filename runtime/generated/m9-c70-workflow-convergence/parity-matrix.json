@@ -1,0 +1,23 @@
+{
+  "schema_version": 2,
+  "milestone": "M9-C70",
+  "source_commit": "b7d83af4ee5104a9021724d28f7dfd55eb3fd69c",
+  "rows": [
+    {"workflow":"backend","job":"verify","classification":"LOCAL_REPRODUCIBLE_WITH_SETUP","result":"PASS","github_evidence":"36231192064"},
+    {"workflow":"frontend","job":"verify","classification":"LOCAL_REPRODUCIBLE_WITH_SETUP","result":"PASS","github_evidence":"36231192038"},
+    {"workflow":"runtime","job":"verify","classification":"LOCAL_REPRODUCIBLE_WITH_SETUP","result":"PASS","github_evidence":"36231192130"},
+    {"workflow":"quality","job":"check","classification":"PARTIALLY_REPRODUCIBLE","result":"PASS","github_evidence":"36231192015","notes":"Event-delta bounded; workflow-only no-op certified."},
+    {"workflow":"api-contracts","job":"api-contracts","classification":"LOCAL_REPRODUCIBLE_WITH_SETUP","result":"PASS","github_evidence":"36231192006"},
+    {"workflow":"reconcile","job":"reconcile-gate","classification":"PARTIALLY_REPRODUCIBLE","result":"PASS","notes":"Canonical check shares delta boundary."},
+    {"workflow":"mutation","job":"smoke","classification":"LOCAL_REPRODUCIBLE","result":"PASS"},
+    {"workflow":"mutation","job":"full/targeted","classification":"PARTIALLY_REPRODUCIBLE","result":"FAIL","github_evidence":"36238247482","notes":"0.0%, 285 survivors, 80% gate failed; full run cancelled at 91m45s."},
+    {"workflow":"golden","job":"regression","classification":"LOCAL_REPRODUCIBLE_WITH_SETUP","result":"PASS","github_evidence":"36233134436"},
+    {"workflow":"playwright","job":"functional-chromium","classification":"LOCAL_REPRODUCIBLE_WITH_SETUP","result":"PASS","notes":"225 tests."},
+    {"workflow":"playwright","job":"functional-mobile","classification":"LOCAL_REPRODUCIBLE_WITH_SETUP","result":"PASS","notes":"196 tests."},
+    {"workflow":"playwright","job":"visual/platform-console","classification":"PARTIALLY_REPRODUCIBLE","result":"FAIL","notes":"Baseline/UI contract gap, not browser/port setup."},
+    {"workflow":"dependency","job":"audit","classification":"EXTERNAL_SERVICE","result":"PASS","github_evidence":"36237917290"},
+    {"workflow":"codeql","job":"analyze","classification":"GITHUB_ONLY","result":"PASS","github_evidence":"36237918919"},
+    {"workflow":"release","job":"build","classification":"PARTIALLY_REPRODUCIBLE","result":"PASS_LOCAL_BUILD","notes":"No publication implementation."},
+    {"workflow":"forensic","job":"diagnostician","classification":"GITHUB_ONLY","result":"GITHUB_ONLY"}
+  ]
+}

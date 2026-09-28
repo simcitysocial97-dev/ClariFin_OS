@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_walk_lineage__mutmut_17: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -42,7 +42,7 @@
+     processed_pairs: set[tuple[int, int, str]] = set()
+ 
+     for event in events:
+-        event.get("event_type", "")
++        event.get(None, "")
+         event_id = event.get("id", 0)
+         account_id = event.get("account_id", "")
+         event_date_iso = event.get("date_iso", "")

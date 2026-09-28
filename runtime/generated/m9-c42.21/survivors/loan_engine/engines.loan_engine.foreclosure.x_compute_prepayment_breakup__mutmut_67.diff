@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.foreclosure.x_compute_prepayment_breakup__mutmut_67: survived
+--- src/engines/loan_engine/foreclosure.py
++++ src/engines/loan_engine/foreclosure.py
+@@ -35,7 +35,7 @@
+             Decimal(prepayment_penalty_bps)
+             * Decimal(outstanding_paise)
+             / Decimal(10000)
+-        ).quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
++        ).quantize(Decimal(2), rounding=ROUND_HALF_EVEN)
+     )
+ 
+     return {

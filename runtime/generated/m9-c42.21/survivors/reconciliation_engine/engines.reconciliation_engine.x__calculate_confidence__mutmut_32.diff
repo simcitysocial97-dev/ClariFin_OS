@@ -1,0 +1,10 @@
+# status: survived
+# engines.reconciliation_engine.x__calculate_confidence__mutmut_32: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -40,4 +40,4 @@
+     confidence = min(confidence, 1.0)
+ 
+     # Round to 4 decimals for determinism
+-    return round(confidence, 4)
++    return round(confidence, 5)

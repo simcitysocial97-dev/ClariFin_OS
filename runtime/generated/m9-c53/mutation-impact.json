@@ -1,0 +1,16 @@
+{
+  "schema": "m9-c53-mutation-impact/v1",
+  "generated_at": "2026-09-01T11:16:07.134516+00:00",
+  "note": "Mutation impact is measured independently from coverage impact",
+  "mutation_dimension": "measured_via_distinguishing_power_validation",
+  "distinguishing_power": {
+    "dimension": "distinguishing_power",
+    "passed": true,
+    "evidence": "candidate has discriminating assertion form",
+    "details": {
+      "candidate_id": "6e24e773b1c6",
+      "has_discriminating_assertion": true,
+      "has_boundary_pattern": true
+    }
+  }
+}

@@ -245,16 +245,23 @@ class TransactionRepository(BaseRepository):
                 if not date:
                     continue
 
-                # Phase 2A.1: Compute hash_signature
+                # Phase 2A.1: Compute hash_signature (old formula — unchanged;
+                # M05: also written for rollback safety, dedup now on v2)
                 hash_input = f"{account_id}|{date_iso}|{description}|{debit_paise}|{credit_paise}"
                 hash_signature = hashlib.sha256(hash_input.encode()).hexdigest().lower()
+                # M05 (BE-001): widened hash incl. sequence_num — stops the
+                # collision on legitimately distinct same-hash-input rows.
+                hash_input_v2 = f"{hash_input}|{seq}"
+                hash_signature_v2 = (
+                    hashlib.sha256(hash_input_v2.encode()).hexdigest().lower()
+                )
 
                 cur = conn.execute(
                     """
                     INSERT OR IGNORE INTO transactions
                         (statement_id, sequence_num, date, description, type, category, subcategory,
-                         amount_paise, date_iso, hash_signature, account_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                         amount_paise, date_iso, hash_signature, hash_signature_v2, account_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         statement_id,
@@ -267,6 +274,7 @@ class TransactionRepository(BaseRepository):
                         amount_paise,
                         date_iso,
                         hash_signature,
+                        hash_signature_v2,
                         account_id,
                     ),
                 )
@@ -506,11 +514,17 @@ class TransactionRepository(BaseRepository):
                 # Phase 2A.1: Compute date_iso
                 date_iso = _parse_date_to_ymd(date) if date else ""
 
-                # Phase 2A.1: Compute hash_signature
+                # Phase 2A.1: Compute hash_signature (old formula — unchanged;
+                # M05: also written for rollback safety, dedup now on v2)
                 hash_input = (
                     f"{bank}|{date_iso}|{description}|{debit_paise}|{credit_paise}"
                 )
                 hash_signature = hashlib.sha256(hash_input.encode()).hexdigest().lower()
+                # M05 (BE-001): widened hash incl. sequence_num.
+                hash_input_v2 = f"{hash_input}|{seq}"
+                hash_signature_v2 = (
+                    hashlib.sha256(hash_input_v2.encode()).hexdigest().lower()
+                )
 
                 if not date:
                     continue
@@ -520,8 +534,8 @@ class TransactionRepository(BaseRepository):
                     INSERT OR IGNORE INTO transactions
                         (statement_id, sequence_num, date, description, type,
                          category, subcategory, member, source, original_description,
-                         amount_paise, date_iso, hash_signature, account_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                         amount_paise, date_iso, hash_signature, hash_signature_v2, account_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         statement_id,
@@ -537,6 +551,7 @@ class TransactionRepository(BaseRepository):
                         amount_paise,
                         date_iso,
                         hash_signature,
+                        hash_signature_v2,
                         bank,  # account_id = bank for CSV imports
                     ),
                 )

@@ -8,7 +8,7 @@ No side effects. No file I/O. Deterministic output.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal, Optional
+from typing import Literal
 
 
 @dataclass(frozen=True)
@@ -16,9 +16,11 @@ class ChangeClassification:
     """Classification of a file change for verification planning."""
 
     file_path: str
-    change_type: Literal["engine", "service", "router", "model", "test", "config", "other"]
-    engine_name: Optional[str] = None
-    router_name: Optional[str] = None
+    change_type: Literal[
+        "engine", "service", "router", "model", "test", "config", "other"
+    ]
+    engine_name: str | None = None
+    router_name: str | None = None
     blast_radius: Literal["low", "medium", "high", "full"] = "low"
 
 
@@ -50,22 +52,21 @@ def test_changed(file_path: str) -> bool:
     """Rule 5: Returns True if file is in backend/tests/ (excluding generated artifacts)"""
     if not file_path.startswith("backend/tests/"):
         return False
-    if file_path.startswith("backend/tests/generated/"):
-        return False
-    return True
+    return not file_path.startswith("backend/tests/generated/")
 
 
 def config_changed(file_path: str) -> bool:
     """Rule 6: Returns True if file is a config file (pyproject.toml, .coveragerc, ruff.toml, or *.cfg)"""
     return (
         file_path == "backend/pyproject.toml"
+        or file_path == "pyproject.toml"
         or file_path == "backend/.coveragerc"
         or file_path == "backend/ruff.toml"
         or (file_path.endswith(".cfg") and file_path.startswith("backend/"))
     )
 
 
-def extract_engine_name(file_path: str) -> Optional[str]:
+def extract_engine_name(file_path: str) -> str | None:
     if not engine_changed(file_path):
         return None
     parts = file_path.split("/")
@@ -79,7 +80,7 @@ def extract_engine_name(file_path: str) -> Optional[str]:
     return None
 
 
-def extract_router_name(file_path: str) -> Optional[str]:
+def extract_router_name(file_path: str) -> str | None:
     """Extract router name from path. Returns None if not a router file."""
     if not router_changed(file_path):
         return None

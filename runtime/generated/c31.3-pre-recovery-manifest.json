@@ -1,0 +1,46 @@
+{
+  "phase": "0",
+  "title": "Pre-Recovery State Freeze",
+  "timestamp": "2026-08-18T22:57:00Z",
+  "repository_identity": {
+    "HEAD_SHA": "8fc2cd9ecf6939517246a695bd043318dc8f9184",
+    "HEAD_tree_SHA": "28bf5dc45305674ed9e1cb2acd96172a8d9c633c",
+    "branch": "m9c9-merge-authorization-resolution",
+    "merge_base_with_main": "fe654f27541d41671d9039a7a1a2215d2ee86687"
+  },
+  "modified_tracked_files": [
+    {"path": "backend/tests/generated/openapi-current.json", "sha256": "0c55b7eb8d38b2fe18100b774f5fd289bad32218698a507a7aa4090889b092f0", "size": 300108},
+    {"path": "frontend/generated/openapi-current.json", "sha256": "0c55b7eb8d38b2fe18100b774f5fd289bad32218698a507a7aa4090889b092f0", "size": 300108},
+    {"path": "frontend/types/api-generated.ts", "sha256": "e083951d3154632b20d0dbfaa732d7cb2c02233af8c6a5ec5dcb7ce91230ad6a", "size": 259683},
+    {"path": "runtime/generated/knowledge-index.json", "sha256": "01f9890b95879f4d41f629b4793a19ddc6920f3d3913d496c4ac792d1d7a29e6", "size": 526808},
+    {"path": "runtime/tests/test_backend_evidence.py", "sha256": "ec8b3f7653f8c66710b9bfe0e6ef8c632ff97fc321702a1f440e97b5e3ac6e31", "size": 17604},
+    {"path": "runtime/verify.py", "sha256": "0c83b04695402377ef01e4ca4944c73c146cbef859d5a0e53bb609af08b1e856", "size": 52987}
+  ],
+  "untracked_files": [
+    {"path": ".github/scripts/run_api_contracts.sh", "sha256": "a11b732559e892d6d96e3cbad5471cd0240352983cd17d158da4f584bbcbc48e", "size": 1691},
+    {"path": ".github/workflows/api-contracts.yml", "sha256": "d53700951e3e06a843861796f03355332d65187aea73eda5bf73a30f3f83eb40", "size": 2085},
+    {"path": "activeContext.md", "sha256": "2a4554ed515fa58c109b8dacb4aff18b36fe78e6e9dbedc46d6edf6d47265522", "size": 3546},
+    {"path": "docs/M9-C10-forensic-report.md", "sha256": "cfffee4a0181900012e5fc17d2f8a5c42d6299088904c4455142d31c5b643f06", "size": 28436},
+    {"path": "runtime/foundation/verification/api_contracts/__init__.py", "sha256": "b9e1d74911646806b11a4fd6e528dc40b5f9b0dc97a3e59d6694a900805bd40c", "size": 931},
+    {"path": "runtime/foundation/verification/api_contracts/c30_certification.py", "sha256": "56b06bd8a482b63462f2866ef66a483e8fbb20354a14da0316f727747035c8a1", "size": 43773},
+    {"path": "runtime/foundation/verification/api_contracts/fixture.py", "sha256": "bfb28b7f714666dab509c9fc32f0178651d8e1bf559dfc03cbc9bbec9a0b9c69", "size": 3087},
+    {"path": "runtime/foundation/verification/api_contracts/gate.py", "sha256": "bf789f834a99005a8aeb487508495d90dc05c6947247ce6796d0225ce6b76908", "size": 33991},
+    {"path": "runtime/foundation/verification/api_contracts/inventory.py", "sha256": "4c89399754b7d4d8dcc2f93d87e237b7007a3ec4ff30135c0f04caf9e879e2a2", "size": 11990},
+    {"path": "runtime/foundation/verification/api_contracts/mutations.py", "sha256": "dfa13a936200fce5d9b82510af27b687e9dfd2ed69e8f5c111a573b041fe9f91", "size": 8783},
+    {"path": "runtime/foundation/verification/api_contracts/normalize.py", "sha256": "ea4ab1e720d8b979e0c9925b43202e2d269cc80714935d469a1717b2cb66657e", "size": 3513},
+    {"path": "runtime/foundation/verification/api_contracts/taxonomy.py", "sha256": "4298958f990875af882f42998c353df06b90ce63cdec0429821c1c3eaade481f", "size": 6946},
+    {"path": "runtime/generated/api-contract-evidence.json", "sha256": "b7711b097ec8a3460241e2441fcb94a02ae3d9d492f7b195108b4aac20d3950a", "size": 12926},
+    {"path": "runtime/generated/c30-certification.json", "sha256": "2bfa27b37cd34b845ac385f0a56dfdcd7d62719eeee183139fdc3c580addf6c5", "size": 10174},
+    {"path": "runtime/generated/c31-certification.json", "sha256": "3665f8668ba2cf34d429d0731bae0a7017f30f37e96d2bd9497cd831859a976a", "size": 13082},
+    {"path": "runtime/generated/c31-certification.md", "sha256": "1ce16b3fc665344333defde0a5ea3ae71abb10592d1a23f5f364656bdc3deb1a", "size": 10345},
+    {"path": "runtime/generated/c31.1-provenance.json", "sha256": "507b0a4f7d8792ebf562eb2beb6819a64101546621214c30e310ae808dd680a9", "size": 24366},
+    {"path": "runtime/generated/c31.1-provenance.md", "sha256": "7f0ebf1078faf77d52bb0b6d09c9dff182d4ae8a21c69e5500145b7270b6bb34", "size": 12410},
+    {"path": "runtime/generated/c31.2-change-preservation.json", "sha256": "522d4d740b4e3a096724833a111e5d19986e3e5350a38a6f7008882acd37e370", "size": 20618},
+    {"path": "runtime/generated/c31.2-change-preservation.md", "sha256": "2b66f08ced2566525aae74ca6aa9158dc1331bfb4ea521cbf658ce89702c5e2e", "size": 11653}
+  ],
+  "summary": {
+    "modified_tracked": 6,
+    "untracked": 20,
+    "total_pending": 26
+  }
+}

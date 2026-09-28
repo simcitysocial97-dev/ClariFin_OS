@@ -1,0 +1,53 @@
+{
+  "title": "M9-C42.21 \u2014 loan_engine reproducibility variance measurement",
+  "evidence": [
+    "loan_engine-status-map-run1.json",
+    "loan_engine-status-map-run2.json"
+  ],
+  "runs": {
+    "pilot_m9_c42_19": {
+      "killed": 1066,
+      "survived": 199,
+      "timeout": 4,
+      "no_tests": 4,
+      "not_checked": 0,
+      "score": 84.0
+    },
+    "c42_21_run1": {
+      "killed": 1063,
+      "survived": 203,
+      "timeout": 3,
+      "no_tests": 4,
+      "not_checked": 0,
+      "score": 83.8
+    },
+    "c42_21_run2": {
+      "killed": 1066,
+      "survived": 200,
+      "timeout": 3,
+      "no_tests": 4,
+      "not_checked": 0,
+      "score": 84.0
+    }
+  },
+  "population_identity": "identical across all three runs: 1273 mutants, same names",
+  "flipped_mutants_run1_to_run2": [
+    "engines.loan_engine.amortization.x_generate_schedule__mutmut_15 (survived->killed)",
+    "engines.loan_engine.amortization.x_generate_schedule__mutmut_17 (survived->killed)",
+    "engines.loan_engine.emi.x_compute_tenure_from_emi__mutmut_18 (survived->killed)",
+    "engines.loan_engine.foreclosure.x_compute_prepayment_breakup__mutmut_6 (killed->survived)",
+    "engines.loan_engine.prepayment.x_regenerate_schedule__mutmut_61 (survived->killed)"
+  ],
+  "flip_count": 5,
+  "flip_fraction_of_population": 0.39,
+  "score_band_pct": [
+    83.8,
+    84.0
+  ],
+  "root_causes": [
+    "hypothesis fast profile uses phases=[Phase.generate] without derandomize or explicit seeds -> property-test kills are probabilistic per run",
+    "wall-clock timing jitter around the mutmut worst-case-time timeout boundary for slow numeric hotspots (timeout<->killed edges)"
+  ],
+  "verdict": "DISCREPANCY INVESTIGATED AND EXPLAINED: population identity exactly reproducible; kill-level nondeterminism bounded to 5 mutants (0.39%); pilot 84.0% within measured band. Not silently normalized; band recorded in certification.",
+  "recommendation_for_later_phases": "candidate hardening (NOT executed in measurement phase): derandomize hypothesis mutation profile or pin seeds; increase mutant timeout margin for known hotspots"
+}

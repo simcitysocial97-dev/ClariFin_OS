@@ -18,7 +18,6 @@ from datetime import datetime
 import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
-
 from repositories.statement_repository import StatementRepository
 from src.engines.reconciliation_engine import find_potential_matches
 
@@ -85,12 +84,7 @@ def transactions_strategy():
         transaction_strategy(),
         min_size=2,
         max_size=20,
-        unique_by=lambda txn: (
-            txn["date_iso"],
-            txn["amount_paise"],
-            txn["account_id"],
-            txn["type"],
-        ),
+        unique_by=lambda txn: txn["statement_id"],
     ).filter(
         lambda txns: any(txn["type"] == "debit" for txn in txns)
         and any(txn["type"] == "credit" for txn in txns)

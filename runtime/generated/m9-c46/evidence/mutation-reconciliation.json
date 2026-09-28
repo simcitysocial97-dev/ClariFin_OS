@@ -1,0 +1,107 @@
+{
+  "schema": "m9-c46-mutation-evidence-reconciliation/v1",
+  "generated_at": "2026-08-30T03:30:00Z",
+  "repository_sha": "f92363b914353063b8813f5d61862197957ee7bd",
+  "code_quality_changes_impact_on_mutation_evidence": {
+    "backend_src_modified": true,
+    "mutation_population_affected": false,
+    "evidence_validity": "PRESERVED — only authorized production defect fixes in backend/src (C43-E1, TXN-E1, FIN-E1..E5). No test-strengthening changes to production logic. All C46 test additions are in test files only.",
+    "certified_architecture_changes": {
+      "mutation_contract.py": "Type narrowing only: `if engine in (None, 'all', 'full')` → `if engine is None or engine in ('all', 'full')`. Logically equivalent; no behavior change to engine selection or scope rendering.",
+      "mutation_runner.py": "Removed duplicate `installed_config_original` declaration (same type, same initial value). Added `assert target is not None` before index (invariant already guaranteed by is_valid_engine gate). Added `pgid: int | None` annotation. No execution logic changed.",
+      "executor_pipeline.py": "wrapped `components` list in `tuple()` at call site (call signature requires tuple), `int(x or 0)` pattern for summary.get() (identical behavior for valid inputs). No planning, reconciliation, or scoring logic changed.",
+      "verdict": "C42.38 certified architecture semantics UNCHANGED. All mutations that were killed/survived in C42-C45 runs would produce identical outcomes on the same codebase."
+    }
+  },
+  "current_mutation_evidence_state": {
+    "repository_wide": {
+      "projected_score_pct": 83.6,
+      "authoritative": "NOT_MEASURED (CI-designated)",
+      "basis": "C43 full-campaign baseline (16905 generated, 11925 killed) + 9 authoritative component re-measurements + 2 targeted golden test campaigns",
+      "threshold": 80.0,
+      "margin_above_threshold_pct": 3.6,
+      "margin_above_threshold_kills": 603
+    },
+    "components_authoritatively_measured": {
+      "behaviour_engine": {"score": 83.5, "generated": 7213, "killed": 6021, "survived": 1189, "verdict": "ACHIEVED"},
+      "financial_intelligence": {"score": 73.9, "generated": 3710, "killed": 2743, "survived": 967, "verdict": "STRENGTHENED +38"},
+      "common_calculations": {"score": 64.1, "generated": 376, "killed": 241, "survived": 135, "verdict": "HONEST CEILING"},
+      "transaction_intelligence": {"score": 73.6, "generated": 1465, "killed": 1078, "survived": 387, "verdict": "STRENGTHENED +50 from 57 golden tests"},
+      "financial_events": {"score": 65.2, "generated": 704, "killed": 459, "survived": 245, "verdict": "STRENGTHENED +9 from 44 golden tests"},
+      "loan_engine": {"score": 83.8, "generated": 1273, "killed": 1064, "survived": 202, "verdict": "ACHIEVED"},
+      "reconciliation_engine": {"score": 81.0, "generated": 368, "killed": 298, "survived": 70, "verdict": "ACHIEVED"},
+      "account_engine": {"score": 94.5, "generated": 183, "killed": 173, "survived": 10, "verdict": "ACHIEVED"},
+      "credit_card_engine": {"score": 77.1, "generated": 582, "killed": 449, "survived": 133, "verdict": "BELOW THRESHOLD BUT SMALL COMPONENT"}
+    },
+    "components_derived_only": {
+      "ledger_audit_engine": {"survived_c43": 82, "class_a_derived": 70, "measured": false},
+      "financial_events": {"survived_c43": 250, "class_a_derived": 200, "measured": true},
+      "balance_engine": {"survived_c43": 15, "class_a_derived": 10, "measured": false},
+      "cashflow_engine": {"survived_c43": 44, "class_a_derived": 35, "measured": false},
+      "core_domain_money": {"survived_c43": 18, "class_a_derived": 14, "measured": false},
+      "recommendation_engine": {"survived_c43": 103, "class_a_derived": 80, "measured": false}
+    }
+  },
+  "targeted_strengthening_summary": {
+    "transaction_intelligence": {
+      "golden_tests_added": 57,
+      "score_before": "unknown (C43 derived 437 survivors)",
+      "score_after": 73.6,
+      "kills_gained": 50,
+      "assessment": "Honest gain; remaining 387 survivors dominated by control_flow (313) label/default mutations"
+    },
+    "financial_events": {
+      "golden_tests_added": 44,
+      "score_before": 64.3,
+      "score_after": 65.2,
+      "kills_gained": 9,
+      "assessment": "Low gain; 245 survivors dominated by .get() default mutations (Class B misclassified as A)"
+    },
+    "credit_card_engine": {
+      "golden_tests_added": 0,
+      "score_before": "C42.17 measured",
+      "score_after": 77.1,
+      "kills_gained": "N/A",
+      "assessment": "Below threshold (77.1%); 133 survivors dominated by arithmetic mutations (81) in financial math functions"
+    },
+    "loan_engine": {
+      "golden_tests_added": 0,
+      "score_before": "C42.17 measured",
+      "score_after": 83.8,
+      "kills_gained": "N/A (already >80%)",
+      "assessment": "Already above threshold"
+    },
+    "reconciliation_engine": {
+      "golden_tests_added": 0,
+      "score_before": "C42.17 measured",
+      "score_after": 81.0,
+      "kills_gained": "N/A (already >80%)",
+      "assessment": "Already above threshold"
+    },
+    "account_engine": {
+      "golden_tests_added": 0,
+      "score_before": "C42.17 measured",
+      "score_after": 94.5,
+      "kills_gained": "N/A (already >80%)",
+      "assessment": "Already above threshold"
+    }
+  },
+  "production_defect_fixes_authorized": {
+    "C43-E1": {"component": "common_calculations", "function": "compute_is_large", "fix": "threshold = avg_debit * 2.5 (was 250000)"},
+    "TXN-E1": {"component": "transaction_intelligence", "function": "detect unknown-provider selection", "fix": "_calculate_fee_bps(debit, credit) - target_bps (was credit - target_bps)"},
+    "FIN-E1": {"component": "financial_intelligence", "function": "scenario.compare_scenario FOIR risk", "fix": "float(FOIR_SAFE_THRESHOLD) < scenario_val <= float(FOIR_WARNING_THRESHOLD) (was WARNING < val <= WARNING)"},
+    "FIN-E2": {"component": "financial_intelligence", "function": "optimization.deadline_score", "fix": "Removed dead code (unused helper)"},
+    "FIN-E3": {"component": "financial_intelligence", "locations": 3, "fix": "Added decimal.InvalidOperation to except clauses"},
+    "FIN-E4": {"component": "financial_intelligence", "function": "_compute_health_score", "fix": "Explicit None-check instead of falsy coalescing"},
+    "FIN-E5": {"component": "financial_intelligence", "function": "optimize_surplus_allocation.expected_impact", "fix": "total_allocated_paise = sum(allocation amounts) (was monthly_surplus - remaining)"}
+  },
+  "c42_38_integrity_check": {
+    "planner_behaviour_unchanged": true,
+    "evidence_semantics_unchanged": true,
+    "invalidation_rules_unchanged": true,
+    "scope_enforcement_unchanged": true,
+    "forensic_record_contract_unchanged": true,
+    "strengthening_authorization_boundary_unchanged": true,
+    "certification_logic_unchanged": true
+  }
+}

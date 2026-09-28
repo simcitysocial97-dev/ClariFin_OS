@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
-from .base import EvidenceCollector, EvidenceArtifact
+from .base import EvidenceArtifact, EvidenceCollector
 
 
 @dataclass(frozen=True, slots=True)
@@ -30,9 +30,7 @@ class CoverageCollector(EvidenceCollector):
     def name(self) -> str:
         return "Coverage Collector"
 
-    def collect(
-        self, artifact_path: Path | None = None
-    ) -> CoverageEvidence:
+    def collect(self, artifact_path: Path | None = None) -> CoverageEvidence:
         if artifact_path is None:
             artifact_path = (
                 self.workspace_root
@@ -45,7 +43,7 @@ class CoverageCollector(EvidenceCollector):
         if not artifact_path.exists():
             return CoverageEvidence(
                 overall_pct=0.0,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
 
         try:
@@ -53,13 +51,13 @@ class CoverageCollector(EvidenceCollector):
         except (json.JSONDecodeError, OSError):
             return CoverageEvidence(
                 overall_pct=0.0,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
 
         if data is None:
             return CoverageEvidence(
                 overall_pct=0.0,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
 
         totals = data.get("totals", {})
@@ -68,9 +66,7 @@ class CoverageCollector(EvidenceCollector):
         covered_branches = totals.get("covered_branches", 0)
         num_branches = totals.get("num_branches", 0)
         branch_pct = (
-            round(covered_branches / num_branches * 100, 2)
-            if num_branches > 0
-            else 0.0
+            round(covered_branches / num_branches * 100, 2) if num_branches > 0 else 0.0
         )
 
         files_data = data.get("files", {})
@@ -105,7 +101,7 @@ class CoverageCollector(EvidenceCollector):
             per_engine=engine_coverage,
             uncovered_lines=uncovered_lines,
             branch_coverage=branch_pct,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
     def collect_artifacts(self) -> list[EvidenceArtifact]:

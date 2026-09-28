@@ -4,7 +4,7 @@ from fastapi import APIRouter
 
 from src.services.bank_service import BankService
 
-router = APIRouter(prefix="/api", tags=["banks"])
+router = APIRouter(prefix="/api/v1", tags=["banks"])
 
 
 @router.get("/banks")

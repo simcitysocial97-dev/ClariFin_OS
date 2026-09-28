@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 
-describe('GET /api/categories/list contract', () => {
+describe('GET /api/v1/categories/list contract', () => {
   it('returns an object with categories array', async () => {
-    const response = await fetch('/api/categories/list')
+    const response = await fetch('/api/v1/categories/list')
     const data = await response.json()
 
     expect(data).toHaveProperty('categories')
@@ -10,7 +10,7 @@ describe('GET /api/categories/list contract', () => {
   })
 
   it('categories array contains strings', async () => {
-    const response = await fetch('/api/categories/list')
+    const response = await fetch('/api/v1/categories/list')
     const data = await response.json()
 
     data.categories.forEach((cat: string) => {

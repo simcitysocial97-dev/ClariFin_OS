@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x__merge_lifecycle_update__mutmut_43: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -19,7 +19,7 @@
+         return existing
+     # Same state rank: prefer smaller outstanding balance
+     existing_out = int(existing.get("outstanding_paise", 0) or 0)
+-    candidate_out = int(candidate.get("outstanding_paise", 0) or 0)
++    candidate_out = None
+     if candidate_out < existing_out:
+         return candidate
+     return existing

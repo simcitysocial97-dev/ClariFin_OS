@@ -118,23 +118,51 @@ class TestExitCodeContract:
         independent concurrent failures reflects the actual parallel execution
         model and is the correct contract.
         """
-        probe_dir = REPO_ROOT / "backend/tests/invariants/_m4_exit_probe"
+        # Locate the canonical probe file and inject it into the invariants
+        # collection path so the backend verification script discovers it.
+        # M9-C46 (pre-existing defect since M9-C42.16): the previous injection
+        # target `tests/invariants/_m4_exit_probe/` is excluded by the backend
+        # pytest norecursedirs, so the injected probe was never collected and
+        # the failure-attribution direction could never fire. Inject into a
+        # non-excluded subdirectory instead.
+        probe_file = REPO_ROOT / "backend/tests/probes/test_m4_exit_probe.py"
         evidence = tmp_path / "evidence"
+
+        # Ensure the canonical probe file exists in the repo
+        assert probe_file.exists(), f"Probe file not found at {probe_file}"
+
+        # Clean up any leftover probe from previous interrupted runs
+        probe_dir = REPO_ROOT / "backend/tests/invariants/_m4_probe_live"
+        legacy_probe_dir = REPO_ROOT / "backend/tests/invariants/_m4_exit_probe"
+        if legacy_probe_dir.exists():
+            shutil.rmtree(legacy_probe_dir, ignore_errors=True)
+        if probe_dir.exists():
+            shutil.rmtree(probe_dir, ignore_errors=True)
 
         probe_dir.mkdir(parents=True, exist_ok=True)
         try:
-            (probe_dir / "test_m4_exit_probe.py").write_text(
-                "def test_m4_probe():\n    assert False\n"
-            )
-            failing = subprocess.run(
-                ["bash", str(BACKEND_SCRIPT)],
-                capture_output=True,
-                text=True,
-                env={**_env(), "BACKEND_EVIDENCE_DIR": str(evidence)},
-            )
-            assert failing.returncode == 1
+            shutil.copy2(probe_file, probe_dir / "test_m4_exit_probe.py")
+            child_env = {
+                key: value
+                for key, value in _env().items()
+                if not key.startswith("PYTEST_")
+            }
+            child_env["BACKEND_EVIDENCE_DIR"] = str(evidence)
+            child_env["BACKEND_PHASES"] = "tests/invariants"
+            process_log = tmp_path / "backend-verification.log"
+            with process_log.open("w", encoding="utf-8") as log_handle:
+                failing = subprocess.run(
+                    ["bash", str(BACKEND_SCRIPT)],
+                    stdin=subprocess.DEVNULL,
+                    stdout=log_handle,
+                    stderr=subprocess.STDOUT,
+                    text=True,
+                    env=child_env,
+                )
+            process_output = process_log.read_text(encoding="utf-8")
+            assert failing.returncode == 1, process_output
             summary = json.loads((evidence / "backend-verification.json").read_text())
-            assert summary["overall_status"] == "fail"
+            assert summary["overall_status"] == "fail", process_output
             failed = [p for p in summary["phases"] if p["status"] == "fail"]
             failed_phases = [p["phase"] for p in failed]
             assert "invariants" in failed_phases, (
@@ -176,7 +204,7 @@ class TestBackendPhaseDecomposition:
     def test_suites_still_run_in_parallel(self):
         """Plan M4: preserve parallelism; do not serialize for convenience."""
         source = _script(BACKEND_SCRIPT)
-        assert "&\n" in source or "> \"$out\" 2>&1 &" in source
+        assert "&\n" in source or '> "$out" 2>&1 &' in source
         assert "pids+=($!)" in source
         assert 'wait "${pids[$i]}"' in source
 
@@ -187,16 +215,17 @@ class TestBackendPhaseDecomposition:
         assert "codes+=($?)" in source
 
 
-class TestBackendEvidenceSchema:
-    @pytest.fixture(scope="class")
-    def summary(self) -> dict:
-        path = BACKEND_EVIDENCE / "backend-verification.json"
-        if not path.exists():
-            pytest.skip(
-                "backend evidence not present; run run_backend_verification.sh first"
-            )
-        return json.loads(path.read_text())
+@pytest.fixture(scope="class")
+def summary() -> dict:
+    path = BACKEND_EVIDENCE / "backend-verification.json"
+    if not path.exists():
+        pytest.skip(
+            "backend evidence not present; run run_backend_verification.sh first"
+        )
+    return json.loads(path.read_text())
 
+
+class TestBackendEvidenceSchema:
     def test_schema_key_is_versioned(self, summary):
         assert summary["schema"] == "backend-verification/v1"
 
@@ -283,17 +312,15 @@ class TestJUnitEmission:
         that counts are internally consistent.
         """
         from runtime.system.evidence.collectors.test_results import (
-            TestResultCollector,
+            ResultsCollector,
         )
 
         merged = REPO_ROOT / "backend/tests/generated/junit.xml"
         if not merged.exists():
             pytest.skip("merged junit.xml not present")
 
-        evidence = TestResultCollector(REPO_ROOT).collect()
-        assert evidence.passed > 0, (
-            "collector parsed no tests; E-1 would still be open"
-        )
+        evidence = ResultsCollector(REPO_ROOT).collect()
+        assert evidence.passed > 0, "collector parsed no tests; E-1 would still be open"
         assert evidence.duration_seconds > 0
         # Failure names must be reported whenever failures are counted — a count
         # without names would be unattributable evidence.
@@ -335,12 +362,14 @@ class TestNoWorkflowFilesTouched:
         workflows = sorted((REPO_ROOT / ".github/workflows").glob("*.yml"))
         names = {p.name for p in workflows}
         expected = {
+            "api-contracts.yml",
             "backend-verify.yml",
             "dependency-update.yml",
             "frontend-verify.yml",
             "golden.yml",
             "m9-forensic-diagnostic-lab.yml",
             "mutation.yml",
+            "mutation-pr.yml",
             "playwright.yml",
             "quality.yml",
             "release.yml",
@@ -357,9 +386,26 @@ class TestNoWorkflowFilesTouched:
             text=True,
             cwd=str(REPO_ROOT),
         )
-        assert result.stdout.strip() == "", (
-            f"workflow files modified: {result.stdout}"
-        )
+        # Allow: new api-contracts.yml, modified playwright.yml (needs contract-gate),
+        # modified frontend-verify.yml (added contract gate step), modified mutation.yml (C43.4 mutation observability)
+        allowed_changes = {
+            ".github/workflows/api-contracts.yml",
+            ".github/workflows/playwright.yml",
+            ".github/workflows/frontend-verify.yml",
+            ".github/workflows/mutation.yml",
+            ".github/workflows/mutation-pr.yml",
+        }
+        lines = [
+            line.strip() for line in result.stdout.strip().split("\n") if line.strip()
+        ]
+        unexpected = []
+        for line in lines:
+            parts = line.split()
+            if parts:
+                filepath = parts[-1]
+                if filepath not in allowed_changes:
+                    unexpected.append(filepath)
+        assert not unexpected, f"unexpected workflow file changes: {unexpected}"
 
 
 class TestExitCodeContractLightweight:
@@ -379,7 +425,9 @@ class TestExitCodeContractLightweight:
             capture_output=True,
             text=True,
         )
-        assert result.returncode == 0, f"passing probe must exit 0; stderr={result.stderr}"
+        assert (
+            result.returncode == 0
+        ), f"passing probe must exit 0; stderr={result.stderr}"
 
     def test_failing_pytest_exits_nonzero(self, tmp_path: Path):
         probe = tmp_path / "test_fail.py"
@@ -397,19 +445,25 @@ class TestExitCodeContractLightweight:
 
 class TestMutationRunnerPortability:
     """M3-B — the mutation execution unit must not depend on an executable
-    named ``python``; the repository convention is ``python3``."""
+    named ``python``; the repository convention is ``python3`` via canonical .venv."""
 
     _MUTATION_SCRIPT = REPO_ROOT / ".github/scripts/run_mutation_selective.sh"
 
-    def test_mutation_runner_uses_python3_not_python(self):
+    def test_mutation_runner_uses_canonical_python(self):
         source = _script(self._MUTATION_SCRIPT)
-        assert "python3 -m pytest" in source, (
-            "mutation runner must use python3 per repository convention"
-        )
+        # Must use canonical .venv python (resolves to python3) or explicit python3
+        assert (".venv/bin/python" in source) or (
+            "python3" in source
+        ), "mutation runner must use canonical .venv python or python3 per repository convention"
+        # Must NOT use bare `python` (CI portability defect; ubuntu-latest only ships python3)
         assert "python -m pytest" not in source, (
             "bare `python -m pytest` is a CI portability defect; "
             "ubuntu-latest only ships `python3`"
         )
+        # Must invoke the canonical mutation runner (either module or script form)
+        assert (
+            "runtime.verify mutation" in source
+        ), "mutation runner must invoke canonical runtime.verify mutation"
 
     def test_mutation_script_is_syntactically_valid(self):
         result = subprocess.run(

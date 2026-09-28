@@ -1,0 +1,22 @@
+{
+  "schema": "m9-c53-generation-strategy/v1",
+  "generated_at": "2026-09-01T11:16:05.312074+00:00",
+  "strategies": {
+    "example_based_unit": "Generate a unit test from a concrete example",
+    "parameterized_test": "Generate a parameterized test for multiple inputs",
+    "boundary_test": "Generate a boundary-value test",
+    "property_based": "Generate a property-based test (invariant)",
+    "regression_test": "Generate a regression test for a known bug",
+    "contract_test": "Generate a contract test for an API endpoint",
+    "invariant_test": "Generate an invariant test for a property"
+  },
+  "class_strategy_mapping": {
+    "A": "example_based_unit",
+    "B": "NONE",
+    "C": "NONE",
+    "D": "NONE",
+    "E": "NONE",
+    "F": "NONE",
+    "G": "regression_test"
+  }
+}

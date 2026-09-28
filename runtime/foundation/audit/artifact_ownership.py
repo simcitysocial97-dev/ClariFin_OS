@@ -17,96 +17,448 @@ GENERATED_DIR = REPO_ROOT / "runtime" / "generated"
 WORKFLOW_DIR = REPO_ROOT / ".github" / "workflows"
 
 ARTIFACT_OWNERS = {
-    "cross-layer-map.json": {"owner": "platform", "creator": "build_cross_layer_map", "consumer": "diagnostics,planner,reporting"},
-    "knowledge-index.json": {"owner": "platform", "creator": "knowledge_indexer", "consumer": "query_engine,workspace"},
-    "verification-cache.json": {"owner": "runtime", "creator": "verification_runtime", "consumer": "orchestrator,cache_checker"},
-    "engineering-history.json": {"owner": "platform", "creator": "observability", "consumer": "reporting,dashboard"},
-    "dashboard.json": {"owner": "platform", "creator": "dashboard_generator", "consumer": "workspace,reporting"},
-    "verification-report.md": {"owner": "runtime", "creator": "orchestrator", "consumer": "reporting,ci_summary"},
-    "verification-pipeline.md": {"owner": "runtime", "creator": "planner", "consumer": "documentation"},
-    "verification-profile-matrix.md": {"owner": "platform", "creator": "profile_manager", "consumer": "documentation"},
-    "verification-quality.md": {"owner": "platform", "creator": "quality_gate", "consumer": "reporting"},
-    "dependency-growth.json": {"owner": "platform", "creator": "dependency_tracker", "consumer": "reporting"},
-    "cost-analysis.json": {"owner": "platform", "creator": "cost_analyzer", "consumer": "reporting"},
-    "engineering-analytics.json": {"owner": "platform", "creator": "analytics_engine", "consumer": "reporting,dashboard"},
-    "engineering-events.jsonl": {"owner": "platform", "creator": "event_collector", "consumer": "analytics,reporting"},
-    "flaky-tests.json": {"owner": "runtime", "creator": "test_runner", "consumer": "quality_gate"},
-    "github-workflow-inventory.json": {"owner": "platform", "creator": "workflow_scanner", "consumer": "reporting"},
-    "program8-completion-report.md": {"owner": "platform", "creator": "program8", "consumer": "documentation"},
-    "validation-summary.md": {"owner": "platform", "creator": "validator", "consumer": "documentation"},
-    "acceptance_planner.py": {"owner": "platform", "creator": "planner", "consumer": "workspace"},
-    "artifact-ownership.json": {"owner": "platform", "creator": "audit", "consumer": "reporting"},
-    "certification-dashboard.json": {"owner": "platform", "creator": "certification_tracker", "consumer": "reporting,dashboard"},
-    "certification-history.json": {"owner": "platform", "creator": "certification_tracker", "consumer": "reporting"},
-    "certification-progress.json": {"owner": "platform", "creator": "certification_tracker", "consumer": "reporting"},
-    "contract.json": {"owner": "platform", "creator": "contract_generator", "consumer": "reporting"},
-    "contract_empty.json": {"owner": "platform", "creator": "contract_generator", "consumer": "reporting"},
-    "contract_invalid.json": {"owner": "platform", "creator": "contract_generator", "consumer": "reporting"},
-    "contract_partial.json": {"owner": "platform", "creator": "contract_generator", "consumer": "reporting"},
-    "contract_valid.json": {"owner": "platform", "creator": "contract_generator", "consumer": "reporting"},
-    "coverage.json": {"owner": "platform", "creator": "coverage_collector", "consumer": "reporting"},
-    "coverage_empty.json": {"owner": "platform", "creator": "coverage_collector", "consumer": "reporting"},
-    "coverage_invalid.json": {"owner": "platform", "creator": "coverage_collector", "consumer": "reporting"},
-    "coverage_partial.json": {"owner": "platform", "creator": "coverage_collector", "consumer": "reporting"},
-    "coverage_valid.json": {"owner": "platform", "creator": "coverage_collector", "consumer": "reporting"},
-    "dependency-health.json": {"owner": "platform", "creator": "dependency_tracker", "consumer": "reporting"},
-    "engineering-health.md": {"owner": "platform", "creator": "health_report", "consumer": "reporting"},
-    "engineering-platform-audit.json": {"owner": "platform", "creator": "audit", "consumer": "reporting"},
-    "engineering-platform-audit.md": {"owner": "platform", "creator": "audit", "consumer": "reporting"},
-    "engineering-platform-audit-v2.json": {"owner": "certification", "creator": "runtime/foundation/audit/certification.py", "consumer": "reporting"},
-    "engineering-platform-audit-v3.json": {"owner": "certification", "creator": "runtime/foundation/audit/certification.py", "consumer": "reporting"},
-    "engineering-platform-audit-v3.md": {"owner": "certification", "creator": "runtime/foundation/audit/certification.py", "consumer": "reporting"},
-    "runtime-migration-report.md": {"owner": "certification", "creator": "runtime/foundation/architecture", "consumer": "documentation"},
-    "provider-consumer-inventory.json": {"owner": "certification", "creator": "runtime/foundation/architecture", "consumer": "documentation"},
-    "runtime-id-consistency.json": {"owner": "certification", "creator": "runtime/foundation/architecture", "consumer": "documentation"},
-    "provider-performance.json": {"owner": "certification", "creator": "runtime/foundation/architecture", "consumer": "documentation"},
-    "runtime-retirement-plan.json": {"owner": "certification", "creator": "runtime/foundation/architecture", "consumer": "documentation"},
-    "runtime-constitution.json": {"owner": "certification", "creator": "runtime/foundation/architecture", "consumer": "documentation"},
-    "runtime-consumer-migration.md": {"owner": "certification", "creator": "runtime/foundation/architecture", "consumer": "documentation"},
+    "cross-layer-map.json": {
+        "owner": "platform",
+        "creator": "build_cross_layer_map",
+        "consumer": "diagnostics,planner,reporting",
+    },
+    "knowledge-index.json": {
+        "owner": "platform",
+        "creator": "knowledge_indexer",
+        "consumer": "query_engine,workspace",
+    },
+    "verification-cache.json": {
+        "owner": "runtime",
+        "creator": "verification_runtime",
+        "consumer": "orchestrator,cache_checker",
+    },
+    "engineering-history.json": {
+        "owner": "platform",
+        "creator": "observability",
+        "consumer": "reporting,dashboard",
+    },
+    "dashboard.json": {
+        "owner": "platform",
+        "creator": "dashboard_generator",
+        "consumer": "workspace,reporting",
+    },
+    "verification-report.md": {
+        "owner": "runtime",
+        "creator": "orchestrator",
+        "consumer": "reporting,ci_summary",
+    },
+    "verification-pipeline.md": {
+        "owner": "runtime",
+        "creator": "planner",
+        "consumer": "documentation",
+    },
+    "verification-profile-matrix.md": {
+        "owner": "platform",
+        "creator": "profile_manager",
+        "consumer": "documentation",
+    },
+    "verification-quality.md": {
+        "owner": "platform",
+        "creator": "quality_gate",
+        "consumer": "reporting",
+    },
+    "dependency-growth.json": {
+        "owner": "platform",
+        "creator": "dependency_tracker",
+        "consumer": "reporting",
+    },
+    "cost-analysis.json": {
+        "owner": "platform",
+        "creator": "cost_analyzer",
+        "consumer": "reporting",
+    },
+    "engineering-analytics.json": {
+        "owner": "platform",
+        "creator": "analytics_engine",
+        "consumer": "reporting,dashboard",
+    },
+    "engineering-events.jsonl": {
+        "owner": "platform",
+        "creator": "event_collector",
+        "consumer": "analytics,reporting",
+    },
+    "flaky-tests.json": {
+        "owner": "runtime",
+        "creator": "test_runner",
+        "consumer": "quality_gate",
+    },
+    "github-workflow-inventory.json": {
+        "owner": "platform",
+        "creator": "workflow_scanner",
+        "consumer": "reporting",
+    },
+    "program8-completion-report.md": {
+        "owner": "platform",
+        "creator": "program8",
+        "consumer": "documentation",
+    },
+    "validation-summary.md": {
+        "owner": "platform",
+        "creator": "validator",
+        "consumer": "documentation",
+    },
+    "acceptance_planner.py": {
+        "owner": "platform",
+        "creator": "planner",
+        "consumer": "workspace",
+    },
+    "artifact-ownership.json": {
+        "owner": "platform",
+        "creator": "audit",
+        "consumer": "reporting",
+    },
+    "certification-dashboard.json": {
+        "owner": "platform",
+        "creator": "certification_tracker",
+        "consumer": "reporting,dashboard",
+    },
+    "certification-history.json": {
+        "owner": "platform",
+        "creator": "certification_tracker",
+        "consumer": "reporting",
+    },
+    "certification-progress.json": {
+        "owner": "platform",
+        "creator": "certification_tracker",
+        "consumer": "reporting",
+    },
+    "contract.json": {
+        "owner": "platform",
+        "creator": "contract_generator",
+        "consumer": "reporting",
+    },
+    "contract_empty.json": {
+        "owner": "platform",
+        "creator": "contract_generator",
+        "consumer": "reporting",
+    },
+    "contract_invalid.json": {
+        "owner": "platform",
+        "creator": "contract_generator",
+        "consumer": "reporting",
+    },
+    "contract_partial.json": {
+        "owner": "platform",
+        "creator": "contract_generator",
+        "consumer": "reporting",
+    },
+    "contract_valid.json": {
+        "owner": "platform",
+        "creator": "contract_generator",
+        "consumer": "reporting",
+    },
+    "coverage.json": {
+        "owner": "platform",
+        "creator": "coverage_collector",
+        "consumer": "reporting",
+    },
+    "coverage_empty.json": {
+        "owner": "platform",
+        "creator": "coverage_collector",
+        "consumer": "reporting",
+    },
+    "coverage_invalid.json": {
+        "owner": "platform",
+        "creator": "coverage_collector",
+        "consumer": "reporting",
+    },
+    "coverage_partial.json": {
+        "owner": "platform",
+        "creator": "coverage_collector",
+        "consumer": "reporting",
+    },
+    "coverage_valid.json": {
+        "owner": "platform",
+        "creator": "coverage_collector",
+        "consumer": "reporting",
+    },
+    "dependency-health.json": {
+        "owner": "platform",
+        "creator": "dependency_tracker",
+        "consumer": "reporting",
+    },
+    "engineering-health.md": {
+        "owner": "platform",
+        "creator": "health_report",
+        "consumer": "reporting",
+    },
+    "engineering-platform-audit.json": {
+        "owner": "platform",
+        "creator": "audit",
+        "consumer": "reporting",
+    },
+    "engineering-platform-audit.md": {
+        "owner": "platform",
+        "creator": "audit",
+        "consumer": "reporting",
+    },
+    "engineering-platform-audit-v2.json": {
+        "owner": "certification",
+        "creator": "runtime/foundation/audit/certification.py",
+        "consumer": "reporting",
+    },
+    "engineering-platform-audit-v3.json": {
+        "owner": "certification",
+        "creator": "runtime/foundation/audit/certification.py",
+        "consumer": "reporting",
+    },
+    "engineering-platform-audit-v3.md": {
+        "owner": "certification",
+        "creator": "runtime/foundation/audit/certification.py",
+        "consumer": "reporting",
+    },
+    "runtime-migration-report.md": {
+        "owner": "certification",
+        "creator": "runtime/foundation/architecture",
+        "consumer": "documentation",
+    },
+    "provider-consumer-inventory.json": {
+        "owner": "certification",
+        "creator": "runtime/foundation/architecture",
+        "consumer": "documentation",
+    },
+    "runtime-id-consistency.json": {
+        "owner": "certification",
+        "creator": "runtime/foundation/architecture",
+        "consumer": "documentation",
+    },
+    "provider-performance.json": {
+        "owner": "certification",
+        "creator": "runtime/foundation/architecture",
+        "consumer": "documentation",
+    },
+    "runtime-retirement-plan.json": {
+        "owner": "certification",
+        "creator": "runtime/foundation/architecture",
+        "consumer": "documentation",
+    },
+    "runtime-constitution.json": {
+        "owner": "certification",
+        "creator": "runtime/foundation/architecture",
+        "consumer": "documentation",
+    },
+    "runtime-consumer-migration.md": {
+        "owner": "certification",
+        "creator": "runtime/foundation/architecture",
+        "consumer": "documentation",
+    },
     # --- Program 14.0: Engineering Intelligence Layer ---
-    "change-intelligence.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/change.py", "consumer": "blast_radius,verification_optimizer,platform_state"},
-    "blast-radius.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/blast.py", "consumer": "verification_optimizer,risk_engine,repair_intelligence"},
-    "verification-plan.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/optimizer.py", "consumer": "verification_cost,platform_state"},
-    "engineering-risk.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/risk.py", "consumer": "platform_state,reporting"},
-    "repair-intelligence.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/repair.py", "consumer": "platform_state,reporting"},
-    "engineering-memory.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/memory.py", "consumer": "risk_engine,platform_state"},
-    "github-intelligence.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/ci.py", "consumer": "platform_state,reporting"},
-    "verification-cost.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/cost.py", "consumer": "platform_state,reporting"},
-    "platform-state.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/state.py", "consumer": "dashboard,reporting"},
-    "engineering-platform-audit-v4.json": {"owner": "certification", "creator": "runtime/foundation/intelligence/platform/certification.py", "consumer": "reporting"},
-    "engineering-platform-audit-v5.json": {"owner": "certification", "creator": "runtime/foundation/intelligence/platform/certification.py", "consumer": "reporting"},
-    "program14-certification.md": {"owner": "certification", "creator": "runtime/foundation/intelligence/platform/certification.py", "consumer": "documentation"},
-    "program14.1-certification.md": {"owner": "certification", "creator": "runtime/foundation/intelligence/platform/certification.py", "consumer": "documentation"},
-    "intelligence-inventory.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/migration.py", "consumer": "documentation"},
-    "intelligence-duplication.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/migration.py", "consumer": "documentation"},
-    "test-resolution.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/migration.py", "consumer": "verification"},
-    "cli-consistency.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/migration.py", "consumer": "documentation"},
-    "intelligence-api.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/migration.py", "consumer": "documentation"},
-    "intelligence-retirement-plan.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/migration.py", "consumer": "documentation"},
-    "intelligence-constitution.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/migration.py", "consumer": "documentation"},
-    "runtime-simplification.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/migration.py", "consumer": "documentation"},
-    "github-actions-health.json": {"owner": "platform", "creator": "github_health", "consumer": "reporting"},
-    "index.json": {"owner": "platform", "creator": "repository_indexer", "consumer": "graph_service"},
-    "junit-property.xml": {"owner": "runtime", "creator": "test_runner", "consumer": "quality_gate"},
-    "junit.xml": {"owner": "runtime", "creator": "test_runner", "consumer": "quality_gate"},
-    "junit_empty.xml": {"owner": "runtime", "creator": "test_runner", "consumer": "quality_gate"},
-    "junit_invalid.xml": {"owner": "runtime", "creator": "test_runner", "consumer": "quality_gate"},
-    "junit_partial.xml": {"owner": "runtime", "creator": "test_runner", "consumer": "quality_gate"},
-    "junit_valid.xml": {"owner": "runtime", "creator": "test_runner", "consumer": "quality_gate"},
-    "loan-results.txt": {"owner": "platform", "creator": "loan_engine", "consumer": "reporting"},
-    "mutation-summary.json": {"owner": "platform", "creator": "mutation_runner", "consumer": "reporting"},
-    "normalized-issues.json": {"owner": "platform", "creator": "audit_normalizer", "consumer": "reporting"},
-    "pipeline-certification.md": {"owner": "platform", "creator": "pipeline", "consumer": "documentation"},
-    "pipeline-validation.json": {"owner": "platform", "creator": "pipeline", "consumer": "reporting"},
+    "change-intelligence.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/change.py",
+        "consumer": "blast_radius,verification_optimizer,platform_state",
+    },
+    "blast-radius.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/blast.py",
+        "consumer": "verification_optimizer,risk_engine,repair_intelligence",
+    },
+    "verification-plan.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/optimizer.py",
+        "consumer": "verification_cost,platform_state",
+    },
+    "engineering-risk.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/risk.py",
+        "consumer": "platform_state,reporting",
+    },
+    "repair-intelligence.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/repair.py",
+        "consumer": "platform_state,reporting",
+    },
+    "engineering-memory.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/memory.py",
+        "consumer": "risk_engine,platform_state",
+    },
+    "github-intelligence.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/ci.py",
+        "consumer": "platform_state,reporting",
+    },
+    "verification-cost.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/cost.py",
+        "consumer": "platform_state,reporting",
+    },
+    "platform-state.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/state.py",
+        "consumer": "dashboard,reporting",
+    },
+    "engineering-platform-audit-v4.json": {
+        "owner": "certification",
+        "creator": "runtime/foundation/intelligence/platform/certification.py",
+        "consumer": "reporting",
+    },
+    "engineering-platform-audit-v5.json": {
+        "owner": "certification",
+        "creator": "runtime/foundation/intelligence/platform/certification.py",
+        "consumer": "reporting",
+    },
+    "program14-certification.md": {
+        "owner": "certification",
+        "creator": "runtime/foundation/intelligence/platform/certification.py",
+        "consumer": "documentation",
+    },
+    "program14.1-certification.md": {
+        "owner": "certification",
+        "creator": "runtime/foundation/intelligence/platform/certification.py",
+        "consumer": "documentation",
+    },
+    "intelligence-inventory.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/migration.py",
+        "consumer": "documentation",
+    },
+    "intelligence-duplication.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/migration.py",
+        "consumer": "documentation",
+    },
+    "test-resolution.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/migration.py",
+        "consumer": "verification",
+    },
+    "cli-consistency.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/migration.py",
+        "consumer": "documentation",
+    },
+    "intelligence-api.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/migration.py",
+        "consumer": "documentation",
+    },
+    "intelligence-retirement-plan.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/migration.py",
+        "consumer": "documentation",
+    },
+    "intelligence-constitution.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/migration.py",
+        "consumer": "documentation",
+    },
+    "runtime-simplification.json": {
+        "owner": "intelligence",
+        "creator": "runtime/foundation/intelligence/platform/migration.py",
+        "consumer": "documentation",
+    },
+    "github-actions-health.json": {
+        "owner": "platform",
+        "creator": "github_health",
+        "consumer": "reporting",
+    },
+    "index.json": {
+        "owner": "platform",
+        "creator": "repository_indexer",
+        "consumer": "graph_service",
+    },
+    "junit-property.xml": {
+        "owner": "runtime",
+        "creator": "test_runner",
+        "consumer": "quality_gate",
+    },
+    "junit.xml": {
+        "owner": "runtime",
+        "creator": "test_runner",
+        "consumer": "quality_gate",
+    },
+    "junit_empty.xml": {
+        "owner": "runtime",
+        "creator": "test_runner",
+        "consumer": "quality_gate",
+    },
+    "junit_invalid.xml": {
+        "owner": "runtime",
+        "creator": "test_runner",
+        "consumer": "quality_gate",
+    },
+    "junit_partial.xml": {
+        "owner": "runtime",
+        "creator": "test_runner",
+        "consumer": "quality_gate",
+    },
+    "junit_valid.xml": {
+        "owner": "runtime",
+        "creator": "test_runner",
+        "consumer": "quality_gate",
+    },
+    "loan-results.txt": {
+        "owner": "platform",
+        "creator": "loan_engine",
+        "consumer": "reporting",
+    },
+    "mutation-summary.json": {
+        "owner": "platform",
+        "creator": "mutation_runner",
+        "consumer": "reporting",
+    },
+    "normalized-issues.json": {
+        "owner": "platform",
+        "creator": "audit_normalizer",
+        "consumer": "reporting",
+    },
+    "pipeline-certification.md": {
+        "owner": "platform",
+        "creator": "pipeline",
+        "consumer": "documentation",
+    },
+    "pipeline-validation.json": {
+        "owner": "platform",
+        "creator": "pipeline",
+        "consumer": "reporting",
+    },
     "plan.json": {"owner": "platform", "creator": "planner", "consumer": "workspace"},
-    "platform-remediation.md": {"owner": "platform", "creator": "remediation_engine", "consumer": "documentation"},
-    "repair-order.json": {"owner": "platform", "creator": "repair_orderer", "consumer": "reporting"},
-    "root-cause-clusters.json": {"owner": "platform", "creator": "cluster_analyzer", "consumer": "reporting"},
-    "runtime-defects.json": {"owner": "platform", "creator": "defect_detector", "consumer": "reporting"},
-    "summary.json": {"owner": "platform", "creator": "aggregator", "consumer": "reporting"},
-    "summary.md": {"owner": "platform", "creator": "aggregator", "consumer": "reporting"},
-    "system-health-score.json": {"owner": "platform", "creator": "health_scorer", "consumer": "reporting,dashboard"},
-    "verification-performance.json": {"owner": "runtime", "creator": "performance_tracker", "consumer": "reporting"},
+    "platform-remediation.md": {
+        "owner": "platform",
+        "creator": "remediation_engine",
+        "consumer": "documentation",
+    },
+    "repair-order.json": {
+        "owner": "platform",
+        "creator": "repair_orderer",
+        "consumer": "reporting",
+    },
+    "root-cause-clusters.json": {
+        "owner": "platform",
+        "creator": "cluster_analyzer",
+        "consumer": "reporting",
+    },
+    "runtime-defects.json": {
+        "owner": "platform",
+        "creator": "defect_detector",
+        "consumer": "reporting",
+    },
+    "summary.json": {
+        "owner": "platform",
+        "creator": "aggregator",
+        "consumer": "reporting",
+    },
+    "summary.md": {
+        "owner": "platform",
+        "creator": "aggregator",
+        "consumer": "reporting",
+    },
+    "system-health-score.json": {
+        "owner": "platform",
+        "creator": "health_scorer",
+        "consumer": "reporting,dashboard",
+    },
+    "verification-performance.json": {
+        "owner": "runtime",
+        "creator": "performance_tracker",
+        "consumer": "reporting",
+    },
 }
 
 RETENTION_POLICIES = {
@@ -311,13 +663,17 @@ def _load_v3_by_name(repo_root: Path) -> dict[str, dict[str, Any]]:
     return by_name
 
 
-def _record_for(name: str, v3_by_name: dict[str, dict[str, Any]]) -> dict[str, Any] | None:
+def _record_for(
+    name: str, v3_by_name: dict[str, dict[str, Any]]
+) -> dict[str, Any] | None:
     if name in v3_by_name:
         rec = v3_by_name[name]
         return {
             "owner": rec.get("owner", ""),
             "creator": rec.get("creator") or rec.get("producer", ""),
-            "consumer": ",".join(rec.get("consumers", [])) if rec.get("consumers") else "",
+            "consumer": (
+                ",".join(rec.get("consumers", [])) if rec.get("consumers") else ""
+            ),
             "retention": rec.get("retention", ""),
             "source": "artifact-ownership-v3",
         }
@@ -326,7 +682,9 @@ def _record_for(name: str, v3_by_name: dict[str, dict[str, Any]]) -> dict[str, A
     return None
 
 
-def _check_ownership(artifact_files: list[Path], v3_by_name: dict[str, dict[str, Any]]) -> dict[str, Any]:
+def _check_ownership(
+    artifact_files: list[Path], v3_by_name: dict[str, dict[str, Any]]
+) -> dict[str, Any]:
     findings: list[dict[str, Any]] = []
     metrics: dict[str, Any] = {}
 
@@ -431,7 +789,9 @@ def _check_overwrites(artifact_files: list[Path]) -> dict[str, Any]:
     return {"findings": findings, "metrics": metrics}
 
 
-def _check_retention_policies(artifact_files: list[Path], v3_by_name: dict[str, dict[str, Any]]) -> dict[str, Any]:
+def _check_retention_policies(
+    artifact_files: list[Path], v3_by_name: dict[str, dict[str, Any]]
+) -> dict[str, Any]:
     findings: list[dict[str, Any]] = []
     metrics: dict[str, Any] = {}
 
@@ -483,6 +843,7 @@ def _check_duplicates(generated_dir: Path) -> dict[str, Any]:
         try:
             content = artifact.read_bytes()
             import hashlib
+
             h = hashlib.md5(content).hexdigest()
             key = f"{artifact.name}:{h}"
             if key not in content_hashes:
@@ -566,7 +927,9 @@ def _check_workflow_references(repo_root: Path) -> dict[str, Any]:
         try:
             content = wf.read_text(encoding="utf-8")
             for artifact_name in ARTIFACT_OWNERS:
-                if artifact_name.replace(".json", "").replace(".md", "") in content.replace(".json", "").replace(".md", ""):
+                if artifact_name.replace(".json", "").replace(
+                    ".md", ""
+                ) in content.replace(".json", "").replace(".md", ""):
                     if artifact_name not in artifact_refs_in_workflows:
                         artifact_refs_in_workflows[artifact_name] = []
                     artifact_refs_in_workflows[artifact_name].append(wf.name)
@@ -595,7 +958,9 @@ def _check_workflow_references(repo_root: Path) -> dict[str, Any]:
     return {"findings": findings, "metrics": metrics}
 
 
-def _check_consumers(artifact_files: list[Path], v3_by_name: dict[str, dict[str, Any]]) -> dict[str, Any]:
+def _check_consumers(
+    artifact_files: list[Path], v3_by_name: dict[str, dict[str, Any]]
+) -> dict[str, Any]:
     findings: list[dict[str, Any]] = []
     metrics: dict[str, Any] = {}
 
@@ -607,7 +972,9 @@ def _check_consumers(artifact_files: list[Path], v3_by_name: dict[str, dict[str,
         if rec and (not consumers or consumers.strip() == ""):
             artifacts_without_consumers.append(name)
 
-    metrics["artifacts_with_consumers"] = len(artifact_files) - len(artifacts_without_consumers)
+    metrics["artifacts_with_consumers"] = len(artifact_files) - len(
+        artifacts_without_consumers
+    )
     metrics["artifacts_without_consumers"] = len(artifacts_without_consumers)
 
     if artifacts_without_consumers:

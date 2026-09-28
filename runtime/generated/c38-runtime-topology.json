@@ -1,0 +1,159 @@
+{
+  "browser": "Chromium/Firefox/WebKit/Mobile via Playwright",
+  "nextjs_runtime": {
+    "mode": "server",
+    "command": "npm start (= next start)",
+    "port": 3000,
+    "config": "frontend/next.config.ts (output removed, distDir='dist', trailingSlash=true)",
+    "build_artifact": "frontend/dist/ (.next/ for SSR; public pages static-generated)"
+  },
+  "backend": {
+    "runtime": "FastAPI via uvicorn",
+    "command": "uvicorn src.api:app --host 0.0.0.0 --port 8000",
+    "port": 8000,
+    "cors_origins_env": "CORS_ORIGINS (backend/src/config.py settings.cors_origins)",
+    "database": "SQLite backend/data/finance.db"
+  },
+  "api_gateway": {
+    "file": "frontend/lib/api/gateway.ts",
+    "exports": [
+      "apiFetch",
+      "apiFetchJson",
+      "ApiError",
+      "isTransientError",
+      "transientRetryPolicy",
+      "API_BACKEND_URL"
+    ],
+    "url_resolution": "API_BACKEND_URL env var (default http://localhost:8000); path joined without double-slash trim",
+    "retry_ownership": "React Query layer ONLY; gateway itself does not retry",
+    "error_classification": "5xx/429 transient; all other 4xx permanent"
+  },
+  "middleware": {
+    "file": "frontend/middleware.ts",
+    "matcher": "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    "function": "ROUTE_REDIRECTS map from lib/config/navigation.ts strips trailing slash then 308 redirects legacy routes",
+    "scope": "Legacy route compatibility only (non-API paths)"
+  },
+  "playwright_lifecycle": {
+    "webServer_command": "npm start",
+    "webServer_url": "http://localhost:3000",
+    "reuseExistingServer": false,
+    "global_setup": "tests/global-setup.ts \u2014 starts FastAPI backend on :8000 if port free, seeds fixture SQL, writes setup-status.json",
+    "projects": [
+      "chromium",
+      "firefox",
+      "webkit",
+      "mobile-chrome",
+      "mobile-safari",
+      "tablet"
+    ]
+  },
+  "verification_runtime": {
+    "orchestrator": "python runtime/verify.py <scope>",
+    "profiles_mapped": {
+      "quick": [
+        "lint",
+        "typecheck",
+        "architecture scan",
+        "meta"
+      ],
+      "backend": [
+        "backend pytest",
+        "frontend vitest 1238",
+        "lint",
+        "typecheck",
+        "build"
+      ],
+      "frontend": [
+        "lint",
+        "typecheck",
+        "build",
+        "test (vitest)"
+      ],
+      "contracts": [
+        "structural freshness",
+        "generated types regen",
+        "consumer integrity",
+        "wire validation"
+      ],
+      "golden": [
+        "capability integration (28 tests)"
+      ],
+      "mutation": [
+        "selective backend mutation matrix (CI-only 90min)"
+      ],
+      "playwright": [
+        "E2E suite (sharded by project)"
+      ],
+      "runtime": [
+        "integrity scan + all runtime checks"
+      ],
+      "graph": [
+        "cross-layer dependency graph"
+      ],
+      "integration": [
+        "backend+frontend integration"
+      ],
+      "full": [
+        "all above minus mutation/playwright heavy"
+      ]
+    }
+  },
+  "ci_parities": {
+    "rule": "Every workflow YAML calls exactly one command: python runtime/verify.py <scope>",
+    "no_duplicate_logic": "Engineering logic lives exclusively in verify.py profiles + supporting modules in runtime/foundation/",
+    "workflows": [
+      {
+        "name": "frontend-verify.yml",
+        "cmd": "python runtime/verify.py frontend"
+      },
+      {
+        "name": "backend-verify.yml",
+        "cmd": "python runtime/verify.py backend"
+      },
+      {
+        "name": "api-contracts.yml",
+        "cmd": "python runtime/verify.py api-contracts"
+      },
+      {
+        "name": "quality.yml",
+        "cmd": "python runtime/verify.py quick"
+      },
+      {
+        "name": "golden.yml",
+        "cmd": "python runtime/verify.py golden"
+      },
+      {
+        "name": "mutation.yml",
+        "cmd": "python runtime/verify.py mutation"
+      },
+      {
+        "name": "playwright.yml",
+        "cmd": "python runtime/verify.py playwright"
+      },
+      {
+        "name": "verification-runtime.yml",
+        "cmd": "python runtime/verify.py runtime"
+      },
+      {
+        "name": "verification-reconcile.yml",
+        "cmd": "python runtime/verify.py reconcile"
+      }
+    ]
+  },
+  "evidence_provenance": {
+    "baseline_head": "ae00171454952e97319260ab2b9bcaf7436c6947",
+    "baseline_tree": "e9074cb5dcf0ddafcf340b41a8f9c2c057db9d7c",
+    "current_head": "ae00171454952e97319260ab2b9bcaf7436c6947",
+    "current_tree": "e9074cb5dcf0ddafcf340b41a8f9c2c057db9d7c",
+    "openapi_hash": "495cc05c32249c8a",
+    "gateway_hash": "50f2274e03f75877",
+    "next_config_hash": "c4b12d5680f07995",
+    "playwright_config_hash": "acf5e8144b6a35f3",
+    "middleware_hash": "0626bcd82c217002",
+    "client_hash": "844e38ab7ea0618d",
+    "types_hash": "b47d7e386b6dbd61",
+    "mutations_py_hash": "11834f7cef8c4001",
+    "invariant_test_hash": "f74d387fd8554e14"
+  }
+}

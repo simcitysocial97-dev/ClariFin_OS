@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_190: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -80,7 +80,7 @@
+                     insights.append(
+                         {
+                             "title": "Spending Down",
+-                            "description": f"Spending is down {int(abs(pct_change_total))}%",
++                            "DESCRIPTION": f"Spending is down {int(abs(pct_change_total))}%",
+                             "severity": "positive",
+                             "icon": "check-circle",
+                         }

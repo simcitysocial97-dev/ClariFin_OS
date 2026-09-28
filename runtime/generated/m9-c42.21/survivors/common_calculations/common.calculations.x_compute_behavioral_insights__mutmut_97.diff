@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_97: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -38,7 +38,7 @@
+                                 "title": f"{cat} Spending Up",
+                                 "description": f"You spent {int(pct_change)}% more on {cat} this month",
+                                 "severity": "warning",
+-                                "icon": "trending-up",
++                                "ICON": "trending-up",
+                             }
+                         )
+                     elif pct_change < -30:

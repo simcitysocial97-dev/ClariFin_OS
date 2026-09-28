@@ -10,13 +10,12 @@ from __future__ import annotations
 import json
 from collections import defaultdict
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from .event_store import EngineeringEventStore
 from .repository import RunRecord
-
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 ANALYTICS_PATH = REPO_ROOT / "runtime" / "generated" / "engineering-analytics.json"
@@ -45,7 +44,7 @@ class AnalyticsReport:
     local: dict[str, Any] = field(default_factory=dict)
     ci: dict[str, Any] = field(default_factory=dict)
     combined: dict[str, Any] = field(default_factory=dict)
-    generated_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    generated_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -70,8 +69,12 @@ class AnalyticsEngine:
 
     def compute(self) -> AnalyticsReport:
         events = self._event_store.load_events()
-        local_events = [e for e in events if e.execution_context.get("environment") == "local"]
-        ci_events = [e for e in events if e.execution_context.get("environment") == "ci"]
+        local_events = [
+            e for e in events if e.execution_context.get("environment") == "local"
+        ]
+        ci_events = [
+            e for e in events if e.execution_context.get("environment") == "ci"
+        ]
 
         local_metrics = self._compute_for_events(local_events)
         ci_metrics = self._compute_for_events(ci_events)
@@ -116,6 +119,11 @@ class AnalyticsEngine:
         for event in events:
             if event.event_type == "VerificationCompleted":
                 payload = event.payload
+                # Skip plan-only stubs that never executed verification.
+                # These are emitted by verification_write.py with
+                # executed=false and must not pollute any metric.
+                if payload.get("executed") is False:
+                    continue
                 ctx = event.execution_context
                 records.append(
                     RunRecord(
@@ -144,16 +152,36 @@ class AnalyticsEngine:
 
     def _compute_verification_metrics(self, records: list[RunRecord]) -> dict[str, Any]:
         if not records:
-            return {"total_runs": 0, "success_rate": 0.0}
+            return {
+                "total_runs": 0,
+                "success_rate": 0.0,
+                "blocked_runs": 0,
+                "interrupted_runs": 0,
+            }
         passed = sum(1 for r in records if r.status == "passed")
         failed = sum(1 for r in records if r.status == "failed")
+        blocked = sum(1 for r in records if r.status == "blocked")
+        interrupted = sum(1 for r in records if r.status == "interrupted")
+        legacy_completed = sum(
+            1 for r in records if r.status in ("completed", "unknown")
+        )
         durations = [r.duration_seconds for r in records if r.duration_seconds > 0]
         avg_duration = sum(durations) / len(durations) if durations else 0.0
+        # Outcome denominator excludes non-outcome states: legacy/unresolved
+        # lifecycle states (Policy C) and blocked/interrupted runs (O-2 — a
+        # run that never verified is neither a success nor a failure).
+        outcome_denominator = passed + failed
+        success_rate = (
+            round(passed / outcome_denominator, 4) if outcome_denominator > 0 else 0.0
+        )
         return {
             "total_runs": len(records),
             "passed_runs": passed,
             "failed_runs": failed,
-            "success_rate": round(passed / len(records), 4) if records else 0.0,
+            "blocked_runs": blocked,
+            "interrupted_runs": interrupted,
+            "legacy_completed": legacy_completed,
+            "success_rate": success_rate,
             "avg_duration_seconds": round(avg_duration, 2),
             "min_duration_seconds": round(min(durations), 2) if durations else 0.0,
             "max_duration_seconds": round(max(durations), 2) if durations else 0.0,
@@ -200,6 +228,9 @@ class AnalyticsEngine:
         total = 0
         for event in events:
             if event.event_type == "VerificationCompleted":
+                # Exclude plan-only stubs that were filtered from run records.
+                if event.payload.get("executed") is False:
+                    continue
                 total += 1
                 if event.payload.get("cache_hit"):
                     hits += 1
@@ -235,7 +266,12 @@ class AnalyticsEngine:
 
     def _compute_blast_radius(self, records: list[RunRecord]) -> dict[str, Any]:
         if not records:
-            return {"avg_engines": 0, "avg_services": 0, "avg_endpoints": 0, "avg_components": 0}
+            return {
+                "avg_engines": 0,
+                "avg_services": 0,
+                "avg_endpoints": 0,
+                "avg_components": 0,
+            }
         total_engines = 0
         total_services = 0
         total_endpoints = 0
@@ -250,7 +286,12 @@ class AnalyticsEngine:
                 total_components += len(br.get("affected_components", []))
                 count += 1
         if count == 0:
-            return {"avg_engines": 0, "avg_services": 0, "avg_endpoints": 0, "avg_components": 0}
+            return {
+                "avg_engines": 0,
+                "avg_services": 0,
+                "avg_endpoints": 0,
+                "avg_components": 0,
+            }
         return {
             "avg_engines": round(total_engines / count, 2),
             "avg_services": round(total_services / count, 2),
@@ -270,19 +311,47 @@ class AnalyticsEngine:
 
     def _compute_trends(self, records: list[RunRecord]) -> dict[str, Any]:
         if len(records) < 2:
-            return {"duration_trend": "stable", "success_rate_trend": "stable", "data_points": len(records)}
+            return {
+                "duration_trend": "stable",
+                "success_rate_trend": "stable",
+                "data_points": len(records),
+            }
         sorted_records = sorted(records, key=lambda r: r.timestamp)
         mid = len(sorted_records) // 2
         first_half = sorted_records[:mid]
         second_half = sorted_records[mid:]
-        first_durations = [r.duration_seconds for r in first_half if r.duration_seconds > 0]
-        second_durations = [r.duration_seconds for r in second_half if r.duration_seconds > 0]
-        first_avg = sum(first_durations) / len(first_durations) if first_durations else 0.0
-        second_avg = sum(second_durations) / len(second_durations) if second_durations else 0.0
-        duration_trend = "increasing" if second_avg > first_avg * 1.1 else "decreasing" if second_avg < first_avg * 0.9 else "stable"
-        first_pass_rate = sum(1 for r in first_half if r.status == "passed") / len(first_half) if first_half else 0.0
-        second_pass_rate = sum(1 for r in second_half if r.status == "passed") / len(second_half) if second_half else 0.0
-        success_trend = "improving" if second_pass_rate > first_pass_rate else "degrading" if second_pass_rate < first_pass_rate else "stable"
+        first_durations = [
+            r.duration_seconds for r in first_half if r.duration_seconds > 0
+        ]
+        second_durations = [
+            r.duration_seconds for r in second_half if r.duration_seconds > 0
+        ]
+        first_avg = (
+            sum(first_durations) / len(first_durations) if first_durations else 0.0
+        )
+        second_avg = (
+            sum(second_durations) / len(second_durations) if second_durations else 0.0
+        )
+        duration_trend = (
+            "increasing"
+            if second_avg > first_avg * 1.1
+            else "decreasing" if second_avg < first_avg * 0.9 else "stable"
+        )
+        first_pass_rate = (
+            sum(1 for r in first_half if r.status == "passed") / len(first_half)
+            if first_half
+            else 0.0
+        )
+        second_pass_rate = (
+            sum(1 for r in second_half if r.status == "passed") / len(second_half)
+            if second_half
+            else 0.0
+        )
+        success_trend = (
+            "improving"
+            if second_pass_rate > first_pass_rate
+            else "degrading" if second_pass_rate < first_pass_rate else "stable"
+        )
         return {
             "duration_trend": duration_trend,
             "success_rate_trend": success_trend,
@@ -290,7 +359,9 @@ class AnalyticsEngine:
         }
 
 
-def generate_analytics(event_store: EngineeringEventStore | None = None) -> AnalyticsReport:
+def generate_analytics(
+    event_store: EngineeringEventStore | None = None,
+) -> AnalyticsReport:
     engine = AnalyticsEngine(event_store)
     report = engine.compute()
     report.save()

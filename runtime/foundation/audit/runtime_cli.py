@@ -34,7 +34,18 @@ ALL_COMMANDS = [
     "dashboard",
 ]
 
-VERIFICATION_PROFILES = ["quick", "backend", "frontend", "runtime", "golden", "mutation", "playwright", "full", "graph", "contracts"]
+VERIFICATION_PROFILES = [
+    "quick",
+    "backend",
+    "frontend",
+    "runtime",
+    "golden",
+    "mutation",
+    "playwright",
+    "full",
+    "graph",
+    "contracts",
+]
 
 
 def _run_command(*args: str, timeout: int = 30) -> tuple[int, str, str, float]:
@@ -65,7 +76,9 @@ def _audit_command(cmd: str) -> dict[str, Any]:
                 "priority": "low",
                 "message": f"'{cmd}' returned exit code {returncode}",
                 "details": {"returncode": returncode, "stderr": stderr.strip()[:200]},
-                "recommendation": "" if returncode == 0 else f"Investigate why '{cmd}' exits non-zero",
+                "recommendation": (
+                    "" if returncode == 0 else f"Investigate why '{cmd}' exits non-zero"
+                ),
             }
         )
         return {
@@ -73,7 +86,10 @@ def _audit_command(cmd: str) -> dict[str, Any]:
             "name": f"Command: {cmd}",
             "status": "pass" if returncode == 0 else "fail",
             "findings": findings,
-            "metrics": {"duration_seconds": round(duration, 3), "exists": returncode == 0},
+            "metrics": {
+                "duration_seconds": round(duration, 3),
+                "exists": returncode == 0,
+            },
             "duration_seconds": duration,
         }
 
@@ -112,9 +128,14 @@ def _audit_command(cmd: str) -> dict[str, Any]:
             "status": "pass" if (returncode == 0 or is_deps_no_arg) else "fail",
             "severity": "info",
             "priority": "low",
-            "message": f"'{cmd}' returned exit code {returncode}" + (" (expected non-zero for deps without args)" if is_deps_no_arg else ""),
+            "message": f"'{cmd}' returned exit code {returncode}"
+            + (" (expected non-zero for deps without args)" if is_deps_no_arg else ""),
             "details": {"returncode": returncode},
-            "recommendation": "" if returncode == 0 or is_deps_no_arg else f"Investigate why '{cmd}' exits non-zero",
+            "recommendation": (
+                ""
+                if returncode == 0 or is_deps_no_arg
+                else f"Investigate why '{cmd}' exits non-zero"
+            ),
         }
     )
 
@@ -127,9 +148,15 @@ def _audit_command(cmd: str) -> dict[str, Any]:
             "status": "pass" if has_output else "fail",
             "severity": "info",
             "priority": "low",
-            "message": f"'{cmd}' produced {len(stdout)} bytes of output" if has_output else f"'{cmd}' produced no stdout output",
+            "message": (
+                f"'{cmd}' produced {len(stdout)} bytes of output"
+                if has_output
+                else f"'{cmd}' produced no stdout output"
+            ),
             "details": {"stdout_length": len(stdout), "has_output": has_output},
-            "recommendation": "" if has_output else f"Ensure '{cmd}' produces meaningful output",
+            "recommendation": (
+                "" if has_output else f"Ensure '{cmd}' produces meaningful output"
+            ),
         }
     )
 
@@ -160,12 +187,18 @@ def _audit_command(cmd: str) -> dict[str, Any]:
                 "priority": "medium",
                 "message": f"'deps' without argument returned exit code {returncode} (expected non-zero)",
                 "details": {"returncode": returncode},
-                "recommendation": "" if returncode != 0 else "Verify that deps requires a file_path argument",
+                "recommendation": (
+                    ""
+                    if returncode != 0
+                    else "Verify that deps requires a file_path argument"
+                ),
             }
         )
 
     if cmd == "knowledge":
-        sub_returncode, sub_stdout, sub_stderr, sub_duration = _run_command("knowledge", "endpoint", "test/path", timeout=30)
+        sub_returncode, sub_stdout, sub_stderr, sub_duration = _run_command(
+            "knowledge", "endpoint", "test/path", timeout=30
+        )
         findings.append(
             {
                 "section": "runtime_cli",
@@ -175,7 +208,10 @@ def _audit_command(cmd: str) -> dict[str, Any]:
                 "severity": "info",
                 "priority": "low",
                 "message": f"'knowledge endpoint' subcommand executed (exit {sub_returncode})",
-                "details": {"subcommand": "knowledge endpoint", "returncode": sub_returncode},
+                "details": {
+                    "subcommand": "knowledge endpoint",
+                    "returncode": sub_returncode,
+                },
                 "recommendation": "",
             }
         )
@@ -190,7 +226,11 @@ def _audit_command(cmd: str) -> dict[str, Any]:
                 "severity": "info",
                 "priority": "low",
                 "message": f"'ci-doctor' executed and returned exit code {returncode}",
-                "details": {"returncode": returncode, "has_stdout": bool(stdout.strip()), "has_stderr": bool(stderr.strip())},
+                "details": {
+                    "returncode": returncode,
+                    "has_stdout": bool(stdout.strip()),
+                    "has_stderr": bool(stderr.strip()),
+                },
                 "recommendation": "",
             }
         )
@@ -224,13 +264,25 @@ def _audit_arguments() -> dict[str, Any]:
             "status": "pass" if returncode != 0 else "fail",
             "severity": "high",
             "priority": "high",
-            "message": f"Running without arguments exits with code {returncode} (expected non-zero)" if returncode != 0 else "Running without arguments should exit non-zero",
+            "message": (
+                f"Running without arguments exits with code {returncode} (expected non-zero)"
+                if returncode != 0
+                else "Running without arguments should exit non-zero"
+            ),
             "details": {"returncode": returncode},
-            "recommendation": "" if returncode != 0 else "Verify that no-args invocation shows usage and exits non-zero",
+            "recommendation": (
+                ""
+                if returncode != 0
+                else "Verify that no-args invocation shows usage and exits non-zero"
+            ),
         }
     )
 
-    has_usage = "Usage" in combined_output or "usage" in combined_output or "profiles" in combined_output.lower()
+    has_usage = (
+        "Usage" in combined_output
+        or "usage" in combined_output
+        or "profiles" in combined_output.lower()
+    )
     findings.append(
         {
             "section": "runtime_cli",
@@ -241,11 +293,15 @@ def _audit_arguments() -> dict[str, Any]:
             "priority": "high",
             "message": f"Usage information {'present' if has_usage else 'missing'} in output",
             "details": {"has_usage": has_usage},
-            "recommendation": "" if has_usage else "Ensure no-args output includes usage information",
+            "recommendation": (
+                "" if has_usage else "Ensure no-args output includes usage information"
+            ),
         }
     )
 
-    returncode, stdout, stderr, duration = _run_command("invalid-profile-xyz", timeout=10)
+    returncode, stdout, stderr, duration = _run_command(
+        "invalid-profile-xyz", timeout=10
+    )
     findings.append(
         {
             "section": "runtime_cli",
@@ -255,8 +311,15 @@ def _audit_arguments() -> dict[str, Any]:
             "severity": "high",
             "priority": "high",
             "message": f"Invalid profile exits with code {returncode} (expected non-zero)",
-            "details": {"returncode": returncode, "stderr_preview": stderr.strip()[:200]},
-            "recommendation": "" if returncode != 0 else "Ensure invalid profiles produce an error and non-zero exit",
+            "details": {
+                "returncode": returncode,
+                "stderr_preview": stderr.strip()[:200],
+            },
+            "recommendation": (
+                ""
+                if returncode != 0
+                else "Ensure invalid profiles produce an error and non-zero exit"
+            ),
         }
     )
 
@@ -277,7 +340,9 @@ def _audit_performance() -> dict[str, Any]:
     cmd_results: list[dict[str, Any]] = []
     for cmd in ["status", "metrics", "history", "verify-status", "integrity"]:
         returncode, stdout, stderr, duration = _run_command(cmd, timeout=30)
-        cmd_results.append({"command": cmd, "duration": duration, "returncode": returncode})
+        cmd_results.append(
+            {"command": cmd, "duration": duration, "returncode": returncode}
+        )
 
     if cmd_results:
         durations = [r["duration"] for r in cmd_results]
@@ -295,8 +360,15 @@ def _audit_performance() -> dict[str, Any]:
                     "severity": "info",
                     "priority": "low",
                     "message": f"{r['command']} completed in {r['duration']:.3f}s",
-                    "details": {"duration_seconds": round(r["duration"], 3), "exit_code": r["returncode"]},
-                    "recommendation": "" if r["duration"] < 30 else f"Investigate slow performance for {r['command']}",
+                    "details": {
+                        "duration_seconds": round(r["duration"], 3),
+                        "exit_code": r["returncode"],
+                    },
+                    "recommendation": (
+                        ""
+                        if r["duration"] < 30
+                        else f"Investigate slow performance for {r['command']}"
+                    ),
                 }
             )
 
@@ -309,7 +381,11 @@ def _audit_performance() -> dict[str, Any]:
                 "severity": "info",
                 "priority": "low",
                 "message": f"Avg: {avg_duration:.3f}s, Min: {min_duration:.3f}s, Max: {max_duration:.3f}s",
-                "details": {"avg_seconds": round(avg_duration, 3), "min_seconds": round(min_duration, 3), "max_seconds": round(max_duration, 3)},
+                "details": {
+                    "avg_seconds": round(avg_duration, 3),
+                    "min_seconds": round(min_duration, 3),
+                    "max_seconds": round(max_duration, 3),
+                },
                 "recommendation": "",
             }
         )

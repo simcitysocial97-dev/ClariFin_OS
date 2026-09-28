@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.amortization.x__required_emi__mutmut_1: survived
+--- src/engines/loan_engine/amortization.py
++++ src/engines/loan_engine/amortization.py
+@@ -4,7 +4,7 @@
+     Rounded up, so the instalment is never short: paying it can only bring the
+     payoff forward, never leave a balloon.
+     """
+-    if months <= 1:
++    if months < 1:
+         return int(
+             (balance * (Decimal(1) + monthly_rate)).to_integral_value(
+                 rounding=ROUND_CEILING

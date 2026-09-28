@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from collections import deque
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from runtime.foundation.intelligence.platform.change import ChangeIntelligence
@@ -190,7 +190,7 @@ def _enrich_dto_mapper_impact(
 
         if chain is None:
             engine_name = _infer_engine_from_dto(dto_ref, chain_map)
-            for eng_path, cm_chain in chain_map.items():
+            for _eng_path, cm_chain in chain_map.items():
                 if cm_chain.get("engineName") == engine_name:
                     chain = cm_chain
                     break
@@ -272,7 +272,7 @@ def _enrich_backend_bridge_impact(
         if chain is None:
             engine_name = _infer_engine_from_dto(ref, chain_map)
             if engine_name is not None:
-                for eng_path, cm_chain in chain_map.items():
+                for _eng_path, cm_chain in chain_map.items():
                     if cm_chain.get("engineName") == engine_name:
                         chain = cm_chain
                         break
@@ -370,7 +370,7 @@ def _infer_engine_from_dto(dto_ref: Any, chain_map: dict) -> str | None:
     """
     dto_path_lower = dto_ref.path.lower()
 
-    for eng_path, chain in chain_map.items():
+    for _eng_path, chain in chain_map.items():
         eng_name = chain.get("engineName", "")
         if eng_name and eng_name.lower() in dto_path_lower:
             return eng_name
@@ -483,14 +483,14 @@ def compute_blast_radius(
     )
     # C4: standalone backend mapper / router changes must propagate to the
     # frontend entities the same chain records.
-    _enrich_backend_bridge_impact(
-        impacted, seeds, res, visited, frontier
-    )
+    _enrich_backend_bridge_impact(impacted, seeds, res, visited, frontier)
 
     direct = tuple(
         sorted(
             (
-                ImpactNode(ref=r, depth=0, graph="change", via="changed", relation="changed")
+                ImpactNode(
+                    ref=r, depth=0, graph="change", via="changed", relation="changed"
+                )
                 for r in seeds
             ),
             key=lambda n: n.ref.ref,
@@ -505,12 +505,10 @@ def compute_blast_radius(
     user_visible = tuple(
         n for n in (*direct, *indirect) if n.ref.kind in _USER_VISIBLE_KINDS
     )
-    developer = tuple(
-        n for n in (*direct, *indirect) if n.ref.kind in _DEVELOPER_KINDS
-    )
+    developer = tuple(n for n in (*direct, *indirect) if n.ref.kind in _DEVELOPER_KINDS)
 
     return BlastRadius(
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
         seeds=seeds,
         direct=direct,
         indirect=indirect,

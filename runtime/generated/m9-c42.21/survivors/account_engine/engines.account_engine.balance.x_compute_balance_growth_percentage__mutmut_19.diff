@@ -1,0 +1,10 @@
+# status: survived
+# engines.account_engine.balance.x_compute_balance_growth_percentage__mutmut_19: survived
+--- src/engines/account_engine/balance.py
++++ src/engines/account_engine/balance.py
+@@ -23,4 +23,4 @@
+     change = current_balance_paise - previous_balance_paise
+     growth_decimal = Decimal(change) * Decimal(10000) / Decimal(previous_balance_paise)
+ 
+-    return int(growth_decimal.quantize(Decimal(1), rounding=ROUND_HALF_UP))
++    return int(growth_decimal.quantize(Decimal(2), rounding=ROUND_HALF_UP))

@@ -1,0 +1,179 @@
+{
+  "schema": "m9-c54/workflow-convergence/v1",
+  "generated_at": "2026-09-11T04:18:27.335967+00:00",
+  "repository_sha": "543917c3529012c7a3148a3fea3a25f0ec9d0bba",
+  "finding_count": 11,
+  "findings": [
+    {
+      "category": "verification_command",
+      "description": "task::mutation::full executed in 2 places",
+      "workflows_involved": [
+        "mutation.yml",
+        "mutation-pr.yml"
+      ],
+      "commands": [
+        "task::mutation::full"
+      ],
+      "classification": "intentional",
+      "notes": "Multiple workflows legitimately run the same verification for different triggers/path-filters"
+    },
+    {
+      "category": "verification_command",
+      "description": "task::quality::quick executed in 2 places",
+      "workflows_involved": [
+        "m9-forensic-diagnostic-lab.yml",
+        "quality.yml"
+      ],
+      "commands": [
+        "task::quality::quick"
+      ],
+      "classification": "intentional",
+      "notes": "Multiple workflows legitimately run the same verification for different triggers/path-filters"
+    },
+    {
+      "category": "verification_command",
+      "description": "task::static::env-check executed in 3 places",
+      "workflows_involved": [
+        "mutation.yml",
+        "mutation-pr.yml"
+      ],
+      "commands": [
+        "task::static::env-check"
+      ],
+      "classification": "intentional",
+      "notes": "Multiple workflows legitimately run the same verification for different triggers/path-filters"
+    },
+    {
+      "category": "verification_command",
+      "description": "task::static::runtime-check executed in 2 places",
+      "workflows_involved": [
+        "verification-reconcile.yml",
+        "verification-runtime.yml"
+      ],
+      "commands": [
+        "task::static::runtime-check"
+      ],
+      "classification": "intentional",
+      "notes": "Multiple workflows legitimately run the same verification for different triggers/path-filters"
+    },
+    {
+      "category": "verification_command",
+      "description": "task::static::status-summary executed in 10 places",
+      "workflows_involved": [
+        "playwright.yml",
+        "verification-reconcile.yml",
+        "api-contracts.yml",
+        "quality.yml",
+        "backend-verify.yml",
+        "dependency-update.yml",
+        "frontend-verify.yml",
+        "mutation.yml",
+        "verification-runtime.yml",
+        "golden.yml"
+      ],
+      "commands": [
+        "task::static::status-summary"
+      ],
+      "classification": "intentional",
+      "notes": "Multiple workflows legitimately run the same verification for different triggers/path-filters"
+    },
+    {
+      "category": "verification_command",
+      "description": "task::unit::backend-suite executed in 2 places",
+      "workflows_involved": [
+        "backend-verify.yml",
+        "m9-forensic-diagnostic-lab.yml"
+      ],
+      "commands": [
+        "task::unit::backend-suite"
+      ],
+      "classification": "intentional",
+      "notes": "Multiple workflows legitimately run the same verification for different triggers/path-filters"
+    },
+    {
+      "category": "artifact_upload",
+      "description": "Upload 'Upload mutation report' appears in 2 workflows",
+      "workflows_involved": [
+        "mutation-pr.yml",
+        "mutation.yml"
+      ],
+      "commands": [
+        "Upload mutation report"
+      ],
+      "classification": "useful",
+      "notes": "Each workflow uploads its own artifacts with unique names; this is intentional for isolation"
+    },
+    {
+      "category": "artifact_upload",
+      "description": "Upload 'Upload shared artifact \u2014 cross-layer-map' appears in 7 workflows",
+      "workflows_involved": [
+        "backend-verify.yml",
+        "frontend-verify.yml",
+        "golden.yml",
+        "mutation.yml",
+        "playwright.yml",
+        "quality.yml",
+        "verification-runtime.yml"
+      ],
+      "commands": [
+        "Upload shared artifact \u2014 cross-layer-map"
+      ],
+      "classification": "useful",
+      "notes": "Each workflow uploads its own artifacts with unique names; this is intentional for isolation"
+    },
+    {
+      "category": "artifact_upload",
+      "description": "Upload 'Upload shared artifact \u2014 engineering-history' appears in 7 workflows",
+      "workflows_involved": [
+        "backend-verify.yml",
+        "frontend-verify.yml",
+        "golden.yml",
+        "mutation.yml",
+        "playwright.yml",
+        "quality.yml",
+        "verification-runtime.yml"
+      ],
+      "commands": [
+        "Upload shared artifact \u2014 engineering-history"
+      ],
+      "classification": "useful",
+      "notes": "Each workflow uploads its own artifacts with unique names; this is intentional for isolation"
+    },
+    {
+      "category": "artifact_upload",
+      "description": "Upload 'Upload shared artifact \u2014 knowledge-index' appears in 7 workflows",
+      "workflows_involved": [
+        "backend-verify.yml",
+        "frontend-verify.yml",
+        "golden.yml",
+        "mutation.yml",
+        "playwright.yml",
+        "quality.yml",
+        "verification-runtime.yml"
+      ],
+      "commands": [
+        "Upload shared artifact \u2014 knowledge-index"
+      ],
+      "classification": "useful",
+      "notes": "Each workflow uploads its own artifacts with unique names; this is intentional for isolation"
+    },
+    {
+      "category": "artifact_upload",
+      "description": "Upload 'Upload shared artifact \u2014 verification-cache' appears in 7 workflows",
+      "workflows_involved": [
+        "backend-verify.yml",
+        "frontend-verify.yml",
+        "golden.yml",
+        "mutation.yml",
+        "playwright.yml",
+        "quality.yml",
+        "verification-runtime.yml"
+      ],
+      "commands": [
+        "Upload shared artifact \u2014 verification-cache"
+      ],
+      "classification": "useful",
+      "notes": "Each workflow uploads its own artifacts with unique names; this is intentional for isolation"
+    }
+  ]
+}

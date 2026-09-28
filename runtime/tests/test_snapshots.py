@@ -7,20 +7,16 @@ and verification report outputs.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from unittest.mock import patch
 
-
 from runtime.foundation.verification.models import VerificationScope, VerificationStatus
+from runtime.foundation.verification.orchestrator import VerificationOrchestrator
 from runtime.foundation.verification.planner import (
     CrossLayerImpactPlanner,
     VerificationPlanner,
 )
-from runtime.foundation.verification.orchestrator import VerificationOrchestrator
-
-
-import re
-
 
 SNAPSHOT_DIR = Path(__file__).parent / "snapshots"
 
@@ -47,7 +43,11 @@ def _read_snapshot(name: str):
 
 
 def _sanitize_markdown(text: str) -> str:
-    text = re.sub(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+\+\d{2}:\d{2}", "2026-01-01T00:00:00+00:00", text)
+    text = re.sub(
+        r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+\+\d{2}:\d{2}",
+        "2026-01-01T00:00:00+00:00",
+        text,
+    )
     text = re.sub(r"plan-\d{8}-\d{6}", "plan-20260101-000000", text)
     return text
 
@@ -107,6 +107,7 @@ class TestSnapshots:
             "runtime.foundation.verification.planner.planner.datetime"
         ) as mock_dt:
             import datetime as dt
+
             mock_dt.utcnow.return_value = dt.datetime(2026, 1, 1, 0, 0, 0)
             mock_dt.datetime = dt.datetime
             plan = planner.plan(context)
@@ -150,23 +151,31 @@ class TestSnapshots:
         map_path = tmp_path / "cross-layer-map.json"
         map_path.write_text(json.dumps(map_data, indent=2), encoding="utf-8")
 
-        with patch(
-            "runtime.foundation.verification.orchestrator._find_repo_root",
-            return_value=tmp_path,
-        ), patch(
-            "runtime.foundation.verification.orchestrator.VERIFICATION_REPORT_PATH",
-            tmp_path / "verification-report.md",
-        ), patch(
-            "runtime.foundation.verification.orchestrator.VERIFICATION_CACHE_PATH",
-            tmp_path / "verification-cache.json",
-        ), patch(
-            "runtime.foundation.verification.orchestrator.datetime"
-        ) as mock_dt:
+        with (
+            patch(
+                "runtime.foundation.verification.orchestrator._find_repo_root",
+                return_value=tmp_path,
+            ),
+            patch(
+                "runtime.foundation.verification.orchestrator.VERIFICATION_REPORT_PATH",
+                tmp_path / "verification-report.md",
+            ),
+            patch(
+                "runtime.foundation.verification.orchestrator.VERIFICATION_CACHE_PATH",
+                tmp_path / "verification-cache.json",
+            ),
+            patch("runtime.foundation.verification.orchestrator.datetime") as mock_dt,
+        ):
             import datetime as dt
-            mock_dt.now.return_value = dt.datetime(2026, 1, 1, 0, 0, 0, tzinfo=dt.timezone.utc)
+
+            mock_dt.now.return_value = dt.datetime(2026, 1, 1, 0, 0, 0, tzinfo=dt.UTC)
             mock_dt.timezone = dt.timezone
-            orchestrator = VerificationOrchestrator(repo_root=tmp_path, map_path=map_path)
-            orchestrator._changed_files = ["backend/src/engines/loan_engine/amortization.py"]
+            orchestrator = VerificationOrchestrator(
+                repo_root=tmp_path, map_path=map_path
+            )
+            orchestrator._changed_files = [
+                "backend/src/engines/loan_engine/amortization.py"
+            ]
             orchestrator.analyze_cross_layer()
             plan = orchestrator.generate_plan(scope=VerificationScope.QUICK)
             new_steps = []
@@ -187,15 +196,20 @@ class TestSnapshots:
                     )
                 )
             from dataclasses import replace
+
             plan = replace(plan, steps=new_steps)
             orchestrator._plan = plan
             orchestrator._results = [
-                type("R", (), {
-                    "task_id": s.id,
-                    "command": s.command or "no-op",
-                    "status": VerificationStatus.SKIPPED,
-                    "duration_seconds": 0.0,
-                })()
+                type(
+                    "R",
+                    (),
+                    {
+                        "task_id": s.id,
+                        "command": s.command or "no-op",
+                        "status": VerificationStatus.SKIPPED,
+                        "duration_seconds": 0.0,
+                    },
+                )()
                 for s in plan.steps
             ]
 

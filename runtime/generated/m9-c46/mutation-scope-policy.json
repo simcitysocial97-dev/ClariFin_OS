@@ -1,0 +1,108 @@
+{
+  "schema": "m9-c46-mutation-scope-policy/v1",
+  "milestone": "M46.8",
+  "objective": "Define mutation applicability per repository layer, distinguishing where mutation is technically valuable vs inappropriate.",
+  "generated_at": "2026-09-03T09:00:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "scope_decision_table": [
+    {
+      "layer": "backend/src/engines/*",
+      "current_status": "Authoritative mutation scope per C45",
+      "mutation_applicable": true,
+      "rationale": "Pure business logic; high test effectiveness; tests directly assert on engine outputs. mutmut 3.7.0 successfully mutates.",
+      "expected_population": "~3000-4000 mutants (per C44/C45 measurements)",
+      "execution_cost": "~27 min full campaign",
+      "certification_value": "HIGH"
+    },
+    {
+      "layer": "backend/src/common/*",
+      "current_status": "Mutated via engines/* cascade",
+      "mutation_applicable": true,
+      "rationale": "Pure calculation utilities; cascade mutation from engines/* implicitly tests. Direct mutation has minimal additional value.",
+      "recommended_action": "INHERIT from engine mutation; no separate scope."
+    },
+    {
+      "layer": "backend/src/services/*",
+      "current_status": "Not in authoritative mutation scope",
+      "mutation_applicable": true,
+      "rationale": "Service layer contains authorization, persistence, orchestration — high criticality. Currently 0-9% line coverage (M46.6). Mutation without tests is meaningless (all no-test mutants).",
+      "prerequisite": "M46.14 must add tests first; mutation afterwards."
+    },
+    {
+      "layer": "backend/src/repositories/*",
+      "current_status": "Not in authoritative mutation scope",
+      "mutation_applicable": true,
+      "rationale": "Persistence integrity is critical for financial correctness. Many repositories at 0-40% coverage.",
+      "prerequisite": "Integration tests + repository mocks needed (M46.14)."
+    },
+    {
+      "layer": "backend/src/routers/*",
+      "current_status": "Not in mutation scope; contract-tested",
+      "mutation_applicable": false,
+      "rationale": "Routers are thin orchestration layers (route → service call). Mutation testing would produce mostly equivalent mutants (param parsing, response wrapping). Contract tests provide better evidence.",
+      "recommended_action": "RETAIN contract-test evidence; exclude from mutation."
+    },
+    {
+      "layer": "backend/src/models/*",
+      "current_status": "Not in mutation scope",
+      "mutation_applicable": false,
+      "rationale": "Dataclasses/Pydantic models are largely declarative. Mutation produces equivalent mutants.",
+      "recommended_action": "EXCLUDE; covered indirectly."
+    },
+    {
+      "layer": "backend/src/core/db, dtos, mappers",
+      "current_status": "Not in mutation scope",
+      "mutation_applicable": "PARTIAL — mappers YES, dtos/db NO",
+      "rationale": "Mappers transform between representations — high mutation value if business semantics differ. DTOs are declarative (skip).",
+      "recommended_action": "Consider mapper-only mutation in future; not in current scope."
+    },
+    {
+      "layer": "backend/src/extraction/*",
+      "current_status": "Not in mutation scope",
+      "mutation_applicable": true,
+      "rationale": "Parsing logic for SMS/statements — high mutation value. Currently 0% coverage.",
+      "prerequisite": "Tests first."
+    },
+    {
+      "layer": "runtime/foundation/verification/*",
+      "current_status": "Not in mutation scope",
+      "mutation_applicable": false,
+      "rationale": "Verification framework is verified by its own tests. Mutation would be self-referential.",
+      "recommended_action": "EXCLUDE."
+    },
+    {
+      "layer": "frontend/lib/*",
+      "current_status": "Vitest/Jest testing observed (lib/simulation, lib/timeline, etc.)",
+      "mutation_applicable": "DEFERRED — no JS/TS mutation engine currently configured",
+      "rationale": "Frontend mutation would require Stryker or similar JS/TS mutation tool. Not configured in repository. Formatters, calculations in TypeScript may benefit.",
+      "recommended_action": "DEFER until JS/TS mutation infrastructure is established."
+    }
+  ],
+  "policy_decisions": [
+    {
+      "decision": "D-M46.8-1: Retain engines/* as authoritative mutation scope per C45.",
+      "justification": "C45 certified this scope; 83.6% derived score is the best current measurement."
+    },
+    {
+      "decision": "D-M46.8-2: Services and repositories are NOT in the current authoritative mutation scope; coverage test (M46.14) is the right next step BEFORE mutation is attempted there.",
+      "justification": "Mutation without tests is meaningless. Coverage gap (M46.6) confirms need for tests first."
+    },
+    {
+      "decision": "D-M46.8-3: Routers, models, dtos, db, runtime/* are NOT in mutation scope by policy.",
+      "justification": "Equivalent mutants would dominate; better evidence via contract/unit tests."
+    },
+    {
+      "decision": "D-M46.8-4: Frontend mutation is DEFERRED until a JS/TS mutation engine is added.",
+      "justification": "No current infrastructure. M46.15 will assess frontend verification with available tools."
+    }
+  ],
+  "scope_summary": {
+    "authoritative_scope": "backend/src/engines/*",
+    "scope_size_files": 64,
+    "scope_size_loc": 13957,
+    "deferred_for_test_development": ["services/*", "repositories/*", "extraction/*", "orchestration/*"],
+    "excluded_by_policy": ["routers/*", "models/*", "core/dtos", "core/db", "runtime/foundation/*"],
+    "deferred_no_tooling": ["frontend/*"]
+  },
+  "verdict": "M46.8 COMPLETE. Mutation scope policy defined: engines/* authoritative; services/repositories/extraction/orchestration require test development first; routers/models/db/dtos excluded by policy; frontend deferred until JS/TS tooling added."
+}

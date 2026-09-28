@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_79: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -43,7 +43,7 @@
+     if running_balance:
+         balance_cv = _coefficient_of_variation([abs(b) for b in running_balance])
+     else:
+-        balance_cv = 0
++        balance_cv = 1
+ 
+     # Credit dependency (convert amount_paise to rupees)
+     total_credit = sum((t.get("amount_paise", 0) or 0) / 100.0 for t in credits)

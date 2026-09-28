@@ -1,0 +1,11 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_impulsivity_score__mutmut_204: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -78,5 +78,5 @@
+         "micro_txn_ratio": round(micro_ratio, 4),
+         "weekend_ratio": round(weekend_ratio, 4),
+         "discretionary_ratio": round(disc_ratio, 4),
+-        "micro_txn_count": len(micro_txns),
++        "XXmicro_txn_countXX": len(micro_txns),
+     }

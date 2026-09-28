@@ -1,0 +1,11 @@
+{
+  "schema": "m9-c53-cross-capability-impact/v1",
+  "generated_at": "2026-09-01T11:16:07.136315+00:00",
+  "note": "Cross-capability dependencies are resolved via C51 capability graph",
+  "impact_classifications": [
+    "DIRECTLY_AFFECTED",
+    "DEPENDENCY_AFFECTED",
+    "SHARED_INFRASTRUCTURE_AFFECTED",
+    "UNAFFECTED"
+  ]
+}

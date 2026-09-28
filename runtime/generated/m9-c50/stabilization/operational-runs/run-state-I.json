@@ -1,0 +1,13 @@
+{
+  "run_id": "run::state::I",
+  "timestamp": "2026-09-04T23:07:16.732056+00:00",
+  "state": "I_failure",
+  "expected": "FAILED (never CERTIFIED)",
+  "payload": {
+    "state": "I_failure",
+    "expected": "FAILED (never CERTIFIED)",
+    "exit_code": 42,
+    "failure_kind": "verification_failure",
+    "decision_status": "FAILED"
+  }
+}

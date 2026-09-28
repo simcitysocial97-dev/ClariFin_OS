@@ -1,0 +1,517 @@
+[
+  {
+    "token": "affected",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "analytics",
+    "classification": "COMPATIBILITY",
+    "canonical_operation": "doctor"
+  },
+  {
+    "token": "api-contracts",
+    "classification": "DEPRECATED",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "audit",
+    "classification": "DEPRECATED",
+    "canonical_operation": "diagnose"
+  },
+  {
+    "token": "backend",
+    "classification": "CANONICAL_ALIAS",
+    "canonical_operation": null
+  },
+  {
+    "token": "blast-radius",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "bypass-audit",
+    "classification": "DEPRECATED",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "bypass-enforcement",
+    "classification": "DEPRECATED",
+    "canonical_operation": "certify"
+  },
+  {
+    "token": "c53-certify",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "c53-scenarios",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "capabilities",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "capability-for",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "capability-graph",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "capability-inventory",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "certify",
+    "classification": "CANONICAL",
+    "canonical_operation": null
+  },
+  {
+    "token": "certify-v4",
+    "classification": "COMPATIBILITY",
+    "canonical_operation": "certify"
+  },
+  {
+    "token": "certify-v5",
+    "classification": "COMPATIBILITY",
+    "canonical_operation": "certify"
+  },
+  {
+    "token": "check",
+    "classification": "CANONICAL",
+    "canonical_operation": null
+  },
+  {
+    "token": "ci",
+    "classification": "CANONICAL",
+    "canonical_operation": null
+  },
+  {
+    "token": "ci-doctor",
+    "classification": "COMPATIBILITY",
+    "canonical_operation": "doctor"
+  },
+  {
+    "token": "config-authority",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "config-authority-verify",
+    "classification": "DEPRECATED",
+    "canonical_operation": "certify"
+  },
+  {
+    "token": "contract-governance",
+    "classification": "DEPRECATED",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "contracts",
+    "classification": "CANONICAL_ALIAS",
+    "canonical_operation": null
+  },
+  {
+    "token": "control-plane-plan",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "converge",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "convergence-plan",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "convergence-status",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "coverage-analysis",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "cross-capability-impact",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "dashboard",
+    "classification": "DEPRECATED",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "deep-contract",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "deps",
+    "classification": "COMPATIBILITY",
+    "canonical_operation": "doctor"
+  },
+  {
+    "token": "diagnose",
+    "classification": "CANONICAL",
+    "canonical_operation": null
+  },
+  {
+    "token": "diagnose-failures",
+    "classification": "DEPRECATED",
+    "canonical_operation": "diagnose"
+  },
+  {
+    "token": "doctor",
+    "classification": "CANONICAL",
+    "canonical_operation": null
+  },
+  {
+    "token": "efficiency",
+    "classification": "DEPRECATED",
+    "canonical_operation": "certify"
+  },
+  {
+    "token": "enforce",
+    "classification": "DEPRECATED",
+    "canonical_operation": "run"
+  },
+  {
+    "token": "env-check",
+    "classification": "COMPATIBILITY",
+    "canonical_operation": "doctor"
+  },
+  {
+    "token": "env-contract",
+    "classification": "DEPRECATED",
+    "canonical_operation": "doctor"
+  },
+  {
+    "token": "evidence-certify",
+    "classification": "DEPRECATED",
+    "canonical_operation": "certify"
+  },
+  {
+    "token": "evidence-execute",
+    "classification": "DEPRECATED",
+    "canonical_operation": "run"
+  },
+  {
+    "token": "evidence-integrity",
+    "classification": "DEPRECATED",
+    "canonical_operation": "diagnose"
+  },
+  {
+    "token": "evidence-plan",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "evidence-reconcile",
+    "classification": "DEPRECATED",
+    "canonical_operation": "ci"
+  },
+  {
+    "token": "exec-evidence",
+    "classification": "DEPRECATED",
+    "canonical_operation": "ci"
+  },
+  {
+    "token": "execute",
+    "classification": "DEPRECATED",
+    "canonical_operation": "run"
+  },
+  {
+    "token": "execution-plan",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "execution-report",
+    "classification": "DEPRECATED",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "execution-status",
+    "classification": "DEPRECATED",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "forensic-diagnose",
+    "classification": "DEPRECATED",
+    "canonical_operation": "diagnose"
+  },
+  {
+    "token": "forensic-report",
+    "classification": "DEPRECATED",
+    "canonical_operation": "diagnose"
+  },
+  {
+    "token": "frontend",
+    "classification": "CANONICAL_ALIAS",
+    "canonical_operation": null
+  },
+  {
+    "token": "full",
+    "classification": "CANONICAL_ALIAS",
+    "canonical_operation": null
+  },
+  {
+    "token": "gap-analysis",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "generate-test",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "golden",
+    "classification": "CANONICAL_ALIAS",
+    "canonical_operation": null
+  },
+  {
+    "token": "graph",
+    "classification": "CANONICAL_ALIAS",
+    "canonical_operation": null
+  },
+  {
+    "token": "health",
+    "classification": "COMPATIBILITY",
+    "canonical_operation": "doctor"
+  },
+  {
+    "token": "help-resolve",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "history",
+    "classification": "COMPATIBILITY",
+    "canonical_operation": "doctor"
+  },
+  {
+    "token": "inspect",
+    "classification": "CANONICAL",
+    "canonical_operation": null
+  },
+  {
+    "token": "integrity",
+    "classification": "DEPRECATED",
+    "canonical_operation": "doctor"
+  },
+  {
+    "token": "intelligence",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "intelligence-audit",
+    "classification": "DEPRECATED",
+    "canonical_operation": "diagnose"
+  },
+  {
+    "token": "knowledge",
+    "classification": "DEPRECATED",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "latent-audit",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "local-gate",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "measurement",
+    "classification": "DEPRECATED",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "measurement-truth",
+    "classification": "DEPRECATED",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "measurement-truth-report",
+    "classification": "DEPRECATED",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "metrics",
+    "classification": "COMPATIBILITY",
+    "canonical_operation": "doctor"
+  },
+  {
+    "token": "mutation",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "mutation-analysis",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "mutation-intel",
+    "classification": "DEPRECATED",
+    "canonical_operation": "diagnose"
+  },
+  {
+    "token": "mutation-inventory",
+    "classification": "DEPRECATED",
+    "canonical_operation": "diagnose"
+  },
+  {
+    "token": "pipeline-enforcement",
+    "classification": "DEPRECATED",
+    "canonical_operation": "certify"
+  },
+  {
+    "token": "plan",
+    "classification": "CANONICAL",
+    "canonical_operation": null
+  },
+  {
+    "token": "playwright",
+    "classification": "CANONICAL_ALIAS",
+    "canonical_operation": null
+  },
+  {
+    "token": "quick",
+    "classification": "CANONICAL_ALIAS",
+    "canonical_operation": null
+  },
+  {
+    "token": "reconcile",
+    "classification": "DEPRECATED",
+    "canonical_operation": "ci"
+  },
+  {
+    "token": "regression",
+    "classification": "DEPRECATED",
+    "canonical_operation": "run"
+  },
+  {
+    "token": "repair",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "resolve-capabilities",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "risk",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "run",
+    "classification": "CANONICAL",
+    "canonical_operation": null
+  },
+  {
+    "token": "runtime",
+    "classification": "CANONICAL_ALIAS",
+    "canonical_operation": null
+  },
+  {
+    "token": "scenarios",
+    "classification": "DEPRECATED",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "status",
+    "classification": "COMPATIBILITY",
+    "canonical_operation": "doctor"
+  },
+  {
+    "token": "strengthen",
+    "classification": "CANONICAL",
+    "canonical_operation": null
+  },
+  {
+    "token": "strengthen-analyze",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "strengthen-capability",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "strengthen-discover",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "strengthen-propose",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "strengthen-report",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "strengthen-survivor",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "strengthen-survivor-forensic",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "strengthen-validate",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "strengthening-integration",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "threshold-assessment",
+    "classification": "DEPRECATED",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "verification-contract",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "verify-status",
+    "classification": "COMPATIBILITY",
+    "canonical_operation": "doctor"
+  },
+  {
+    "token": "what-should-i-run",
+    "classification": "DEPRECATED",
+    "canonical_operation": "plan"
+  }
+]

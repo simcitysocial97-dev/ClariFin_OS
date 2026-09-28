@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_regenerate_schedule__mutmut_40: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -52,7 +52,7 @@
+         if original_tenure is None:
+             raise ValueError("original_tenure is required for reduce_emi mode")
+         new_tenure = original_tenure
+-        new_emi = compute_emi_fixed(new_principal_paise, annual_rate_bps, new_tenure)
++        new_emi = None
+ 
+     # Generate new tail
+     new_tail = generate_schedule(

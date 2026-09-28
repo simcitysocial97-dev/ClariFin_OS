@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x__check_match__mutmut_1: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -4,7 +4,7 @@
+ 
+ 
+ def _check_match(
+-    txn_a: dict[str, Any], txn_b: dict[str, Any], max_date_window_days: int = 3
++    txn_a: dict[str, Any], txn_b: dict[str, Any], max_date_window_days: int = 4
+ ) -> dict[str, Any] | None:
+     """
+     Check if two transactions match as potential transfer pair.

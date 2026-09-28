@@ -1,0 +1,46 @@
+{
+  "phase": "C47",
+  "title": "Measurement Truth Baseline",
+  "commit": "b8914c4333c48d36d9db2805c04d8775bedba86a",
+  "timestamp": "2026-08-31T06:35:00Z",
+  "objective": "Harden the existing C42.38 verification architecture so that coverage, mutation, CI evidence and execution status have ONE authoritative, observable, durable and reproducible measurement path.",
+  "constraints_preserved": [
+    "C42.38 certified architecture intact",
+    "No parallel verification/evidence architecture introduced",
+    "No repository-wide mutation campaign required",
+    "Coverage and mutation explicitly separated",
+    "Production functionality not deleted"
+  ],
+  "measurement_truth_records_emitted": [
+    {
+      "kind": "mutation",
+      "mode": "smoke",
+      "path": "backend/tests/generated/mutation/local-smoke/measurement-truth.json",
+      "completion_status": "DERIVED_ONLY",
+      "authoritative": false,
+      "certifiable": false,
+      "population": {
+        "requested": 6,
+        "processed": 6,
+        "killed": 2,
+        "survived": 2,
+        "no_tests": 2
+      }
+    },
+    {
+      "kind": "coverage",
+      "mode": "coverage",
+      "scope": "tests/unit/engines/credit_card",
+      "path": "runtime/generated/m9-c47/coverage/measurement-truth-coverage.json",
+      "completion_status": "INFRASTRUCTURE_FAILURE",
+      "authoritative": false,
+      "certifiable": false
+    }
+  ],
+  "canonical_commands_added": [
+    "verify.py measurement coverage <scope>",
+    "verify.py measurement-truth <record.json> [--json]"
+  ],
+  "evidence_classification_machine_readable": true,
+  "partial_timeout_corrupt_cannot_certify": true
+}

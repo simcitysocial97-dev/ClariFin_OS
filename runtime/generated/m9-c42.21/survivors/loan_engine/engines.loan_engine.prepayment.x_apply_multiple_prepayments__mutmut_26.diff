@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_multiple_prepayments__mutmut_26: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -23,7 +23,7 @@
+             annual_rate_bps,
+             prepayment_penalty_bps,
+             mode,
+-            start_date,
++            None,
+         )
+         current_schedule = new_schedule
+         results.append(result)

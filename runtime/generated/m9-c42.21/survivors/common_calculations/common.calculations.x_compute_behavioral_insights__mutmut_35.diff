@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_35: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -19,7 +19,7 @@
+     # Category drift (use amount_paise, convert to rupees for percentage)
+     cat_monthly: dict[str, Any] = defaultdict(lambda: defaultdict(float))
+     for t in debit_txns:
+-        mk = t.get("month_key", "")
++        mk = t.get("month_key", None)
+         cat = t.get("category", "Uncategorized")
+         if mk:
+             cat_monthly[cat][mk] += (t.get("amount_paise", 0) or 0) / 100.0

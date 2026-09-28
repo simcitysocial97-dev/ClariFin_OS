@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 
-describe('GET /api/cards contract', () => {
+describe('GET /api/v1/cards contract', () => {
   it('returns an object with cards array', async () => {
-    const response = await fetch('/api/cards')
+    const response = await fetch('/api/v1/cards')
     const data = await response.json()
 
     expect(data).toHaveProperty('cards')
@@ -10,7 +10,7 @@ describe('GET /api/cards contract', () => {
   })
 
   it('each card has required fields', async () => {
-    const response = await fetch('/api/cards')
+    const response = await fetch('/api/v1/cards')
     const data = await response.json()
 
     const card = data.cards[0]
@@ -33,7 +33,7 @@ describe('GET /api/cards contract', () => {
   })
 
   it('utilization_percent is between 0-100', async () => {
-    const response = await fetch('/api/cards')
+    const response = await fetch('/api/v1/cards')
     const data = await response.json()
 
     for (const card of data.cards) {
@@ -43,7 +43,7 @@ describe('GET /api/cards contract', () => {
   })
 
   it('days_until_due is a number or null', async () => {
-    const response = await fetch('/api/cards')
+    const response = await fetch('/api/v1/cards')
     const data = await response.json()
 
     for (const card of data.cards) {
@@ -54,7 +54,7 @@ describe('GET /api/cards contract', () => {
   })
 
   it('monetary values are correct type', async () => {
-    const response = await fetch('/api/cards')
+    const response = await fetch('/api/v1/cards')
     const data = await response.json()
 
     for (const card of data.cards) {
@@ -65,7 +65,7 @@ describe('GET /api/cards contract', () => {
   })
 
   it('response has summary fields', async () => {
-    const response = await fetch('/api/cards')
+    const response = await fetch('/api/v1/cards')
     const data = await response.json()
 
     expect(data).toHaveProperty('total_cards')

@@ -6,7 +6,9 @@ and to_github_outputs(). No filesystem access — string inputs only.
 
 import json
 
-from runtime.foundation.verification.planner.impact_rules import test_changed as _test_changed
+from runtime.foundation.verification.planner.impact_rules import (
+    test_changed as _test_changed,
+)
 from runtime.foundation.verification.planner.plan_models import (
     VerificationPlan,
 )
@@ -45,9 +47,7 @@ class TestFromChangedFilestRouterChange:
     """A router change triggers contract and unit tests — but NOT mutation."""
 
     def setup_plan(self):
-        return VerificationPlan.from_changed_files(
-            ["backend/src/routers/loans.py"]
-        )
+        return VerificationPlan.from_changed_files(["backend/src/routers/loans.py"])
 
     def test_contract_tests_run_is_true(self):
         assert self.setup_plan().contract_tests.run is True
@@ -84,9 +84,7 @@ class TestFromChangedFilesConfigChange:
     """A config change triggers all test suites with full blast radius."""
 
     def setup_plan(self):
-        return VerificationPlan.from_changed_files(
-            ["backend/.coveragerc"]
-        )
+        return VerificationPlan.from_changed_files(["backend/.coveragerc"])
 
     def test_all_tests_run(self):
         plan = self.setup_plan()
@@ -210,9 +208,7 @@ class TestToGithubOutputs:
         assert json.loads(outputs["affected_engines"]) == ["loan"]
 
     def test_affected_routers_is_json_list(self):
-        plan = VerificationPlan.from_changed_files(
-            ["backend/src/routers/loans.py"]
-        )
+        plan = VerificationPlan.from_changed_files(["backend/src/routers/loans.py"])
         outputs = plan.to_github_outputs()
         assert isinstance(json.loads(outputs["affected_routers"]), list)
 

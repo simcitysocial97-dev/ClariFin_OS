@@ -26,7 +26,9 @@ def _run_verify(*args: str) -> tuple[int, str, str]:
     return proc.returncode, proc.stdout, proc.stderr
 
 
-def _check_command(name: str, *args: str, expect_nonzero: bool = False) -> dict[str, Any]:
+def _check_command(
+    name: str, *args: str, expect_nonzero: bool = False
+) -> dict[str, Any]:
     start = time.monotonic()
     returncode, stdout, stderr = _run_verify(*args)
     duration = time.monotonic() - start
@@ -124,12 +126,12 @@ def _check_terminal_formatting() -> dict[str, Any]:
         from runtime.foundation.workspace.formatter import (
             _USE_UNICODE,
             _supports_unicode,
-            render_table,
-            render_section,
-            format_status,
             format_duration,
-            format_percent,
             format_number,
+            format_percent,
+            format_status,
+            render_section,
+            render_table,
         )
     except ImportError as exc:
         findings.append(
@@ -179,7 +181,11 @@ def _check_terminal_formatting() -> dict[str, Any]:
             "priority": "low",
             "message": f"Unicode terminal support detected: {unicode_supported}",
             "details": {"unicode_supported": unicode_supported},
-            "recommendation": "Run in a Unicode-capable terminal for best formatting" if not unicode_supported else "",
+            "recommendation": (
+                "Run in a Unicode-capable terminal for best formatting"
+                if not unicode_supported
+                else ""
+            ),
         }
     )
 
@@ -313,11 +319,11 @@ def _check_unicode_ascii_handling() -> dict[str, Any]:
 
     try:
         from runtime.foundation.workspace.formatter import (
-            _supports_unicode,
             _H,
-            _V,
             _TL,
             _TR,
+            _V,
+            _supports_unicode,
         )
     except ImportError as exc:
         findings.append(
@@ -413,7 +419,9 @@ def _check_unicode_ascii_handling() -> dict[str, Any]:
             "priority": "low",
             "message": f"ASCII fallback mode active: {is_ascii_fallback}",
             "details": {"ascii_fallback": is_ascii_fallback},
-            "recommendation": "" if is_ascii_fallback else "Verify Unicode/ASCII fallback logic",
+            "recommendation": (
+                "" if is_ascii_fallback else "Verify Unicode/ASCII fallback logic"
+            ),
         }
     )
 

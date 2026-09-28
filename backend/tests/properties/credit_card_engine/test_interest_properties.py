@@ -8,9 +8,8 @@ interest calculations using property-based testing techniques.
 from datetime import date, timedelta
 from decimal import Decimal
 
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
-
 from src.engines.credit_card_engine.interest import (
     bps_to_daily_rate,
     compute_daily_interest,
@@ -28,7 +27,11 @@ MIN_DAYS_IN_CYCLE = 28
 
 
 @given(st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS))
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_bps_to_daily_rate_invariants(rate_bps):
     """Property: bps_to_daily_rate must satisfy all invariants."""
     # Compute daily rate
@@ -50,7 +53,11 @@ def test_bps_to_daily_rate_invariants(rate_bps):
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
-@settings(max_examples=50, deadline=None)
+@settings(
+    max_examples=50,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_daily_interest_invariants(balance_paise, rate_bps):
     """Property: compute_daily_interest must satisfy all invariants."""
     # Compute daily interest
@@ -82,7 +89,11 @@ def test_compute_daily_interest_invariants(balance_paise, rate_bps):
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_daily_interest_math_accuracy(balance_paise, rate_bps):
     """Property: compute_daily_interest math must be accurate."""
     # Compute daily interest
@@ -126,7 +137,11 @@ def daily_balances_strategy(draw):
     daily_balances_strategy(),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_monthly_interest_charge_invariants(daily_balances, rate_bps):
     """Property: compute_monthly_interest_charge must satisfy all invariants."""
     # Compute monthly interest
@@ -164,7 +179,11 @@ def test_compute_monthly_interest_charge_invariants(daily_balances, rate_bps):
     daily_balances_strategy(),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_monthly_interest_charge_math_accuracy(daily_balances, rate_bps):
     """Property: compute_monthly_interest_charge math must be accurate."""
     # Compute monthly interest
@@ -184,7 +203,11 @@ def test_compute_monthly_interest_charge_math_accuracy(daily_balances, rate_bps)
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_DAYS_IN_CYCLE, max_value=MAX_DAYS_IN_CYCLE),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_monthly_interest_simple_invariants(
     avg_balance, rate_bps, days_in_cycle
 ):
@@ -234,7 +257,11 @@ def test_compute_monthly_interest_simple_invariants(
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_DAYS_IN_CYCLE, max_value=MAX_DAYS_IN_CYCLE),
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_monthly_interest_simple_math_accuracy(
     avg_balance, rate_bps, days_in_cycle
 ):
@@ -258,7 +285,11 @@ def test_compute_monthly_interest_simple_math_accuracy(
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_DAYS_IN_CYCLE, max_value=MAX_DAYS_IN_CYCLE),
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_interest_methods_consistency(avg_balance, rate_bps, days_in_cycle):
     """Property: Simple and detailed interest methods are consistent for constant balance."""
     # Create daily balances with constant balance
@@ -282,7 +313,11 @@ def test_interest_methods_consistency(avg_balance, rate_bps, days_in_cycle):
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_zero_interest_scenarios(balance, rate_bps):
     """Property: Zero interest scenarios produce correct results."""
     # Zero rate
@@ -301,7 +336,11 @@ def test_zero_interest_scenarios(balance, rate_bps):
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_rounding_consistency(balance, rate_bps):
     """Property: Rounding is consistent across calculations."""
     # Compute daily interest
@@ -318,7 +357,11 @@ def test_rounding_consistency(balance, rate_bps):
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_interest_proportionality(balance, rate_bps):
     """Property: Interest is approximately proportional to balance and rate."""
     base_interest = compute_daily_interest(balance, rate_bps)
@@ -347,7 +390,11 @@ def test_interest_proportionality(balance, rate_bps):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_DAYS_IN_CYCLE, max_value=MAX_DAYS_IN_CYCLE),
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_large_balance_scenarios(balance, rate_bps, days_in_cycle):
     """Property: Monthly interest is exactly daily interest multiplied by days."""
     interest = compute_monthly_interest_simple(balance, rate_bps, days_in_cycle)
@@ -359,7 +406,11 @@ def test_large_balance_scenarios(balance, rate_bps, days_in_cycle):
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_edge_case_rates(balance, rate_bps):
     """Property: Edge case rates produce correct results."""
     # Test minimum rate

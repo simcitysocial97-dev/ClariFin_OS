@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x__check_match__mutmut_39: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -31,7 +31,7 @@
+     credit_txn = None
+     amount_paise = 0
+ 
+-    if a_debit > 0 and b_credit > 0 and a_debit == b_credit:
++    if a_debit > 0 and b_credit >= 0 and a_debit == b_credit:
+         debit_txn = txn_a
+         credit_txn = txn_b
+         amount_paise = a_debit

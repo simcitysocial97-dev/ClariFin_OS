@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_98: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -71,7 +71,7 @@
+         # Loan closed
+         new_schedule = schedule[:prepayment_month]
+         original_interest = total_interest_paise(schedule)
+-        new_interest = total_interest_paise(new_schedule)
++        new_interest = total_interest_paise(None)
+         interest_saved = original_interest - new_interest
+ 
+         return new_schedule, PrepaymentResult(

@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from src.core.dtos.investments_dto import InvestmentsDTO
 from src.services.investment_service import InvestmentService
 
-router = APIRouter(prefix="/api", tags=["investments"])
+router = APIRouter(prefix="/api/v1", tags=["investments"])
 
 
 class InvestmentCreate(BaseModel):

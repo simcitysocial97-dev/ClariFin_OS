@@ -39,6 +39,8 @@ export const ReconciliationMatchSchema = z.object({
 
 export const ReconciliationsDataSchema = z.object({
   reconciliations: z.array(ReconciliationMatchSchema),
+  pending_count: z.number().int().default(0),
+  total_count: z.number().int().default(0),
 })
 
 export type TransactionDetail = z.infer<typeof TransactionDetailSchema>

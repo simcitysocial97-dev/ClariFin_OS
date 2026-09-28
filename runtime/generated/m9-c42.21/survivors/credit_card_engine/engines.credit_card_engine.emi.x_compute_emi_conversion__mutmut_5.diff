@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.emi.x_compute_emi_conversion__mutmut_5: survived
+--- src/engines/credit_card_engine/emi.py
++++ src/engines/credit_card_engine/emi.py
+@@ -5,7 +5,7 @@
+ ) -> dict[str, int]:
+     """Compute EMI for a credit card conversion independently."""
+     if amount_paise < 0:
+-        raise ValueError("amount_paise must be non-negative")
++        raise ValueError("AMOUNT_PAISE MUST BE NON-NEGATIVE")
+     if annual_rate_bps < 0:
+         raise ValueError("annual_rate_bps must be non-negative")
+     if tenure_months <= 0:

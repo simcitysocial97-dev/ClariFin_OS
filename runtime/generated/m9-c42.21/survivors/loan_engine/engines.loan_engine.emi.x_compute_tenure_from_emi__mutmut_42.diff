@@ -1,0 +1,12 @@
+# status: survived
+# engines.loan_engine.emi.x_compute_tenure_from_emi__mutmut_42: survived
+--- src/engines/loan_engine/emi.py
++++ src/engines/loan_engine/emi.py
+@@ -24,6 +24,6 @@
+ 
+     # High-precision Decimal logarithm computation to eliminate float drift
+     n = ratio.ln() / (one + monthly_rate).ln()
+-    tenure = int(n.quantize(Decimal("1"), rounding=ROUND_HALF_EVEN))
++    tenure = int(n.quantize(Decimal("1"), ))
+ 
+     return min(999, max(1, tenure))

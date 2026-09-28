@@ -1,0 +1,589 @@
+{
+  "schema": "m9-c43-component-matrix/v1",
+  "generated_at": "2026-09-02T23:38:17.920658+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "fresh_measurement": {
+    "line_pct": 80.64864032046837,
+    "branch_pct": 76.02189781021897
+  },
+  "components": [
+    {
+      "component": "account_engine",
+      "name": "Account Engine",
+      "type": "financial_engine",
+      "criticality": "P0",
+      "source_files": 7,
+      "loc": 479,
+      "coverage": {
+        "statements": 88,
+        "covered_lines": 87,
+        "missing_lines": 1,
+        "line_pct": 98.86,
+        "branches": 28,
+        "partial_branches": 1,
+        "branch_pct": 96.43
+      },
+      "mutation": {
+        "engine": "account_engine",
+        "name": "Account Engine",
+        "mutants_generated": 183,
+        "killed": 173,
+        "survived": 10,
+        "no_tests": 0,
+        "timeout": 0,
+        "score": 94.5,
+        "survivor_categories": {
+          "control_flow": 9,
+          "arithmetic": 1
+        }
+      }
+    },
+    {
+      "component": "credit_card_engine",
+      "name": "Credit Card Engine",
+      "type": "financial_engine",
+      "criticality": "P0",
+      "source_files": 8,
+      "loc": 726,
+      "coverage": {
+        "statements": 189,
+        "covered_lines": 177,
+        "missing_lines": 12,
+        "line_pct": 93.65,
+        "branches": 96,
+        "partial_branches": 12,
+        "branch_pct": 87.5
+      },
+      "mutation": {
+        "engine": "credit_card_engine",
+        "name": "Credit Card Engine",
+        "mutants_generated": 582,
+        "killed": 449,
+        "survived": 133,
+        "no_tests": 0,
+        "timeout": 0,
+        "score": 77.1,
+        "survivor_categories": {
+          "arithmetic": 81,
+          "control_flow": 45,
+          "comparison": 4,
+          "boolean": 3
+        }
+      }
+    },
+    {
+      "component": "financial_events",
+      "name": "Financial Events",
+      "type": "financial_engine",
+      "criticality": "P0",
+      "source_files": 2,
+      "loc": 476,
+      "coverage": {
+        "statements": 184,
+        "covered_lines": 178,
+        "missing_lines": 6,
+        "line_pct": 96.74,
+        "branches": 78,
+        "partial_branches": 6,
+        "branch_pct": 92.31
+      },
+      "mutation": {
+        "engine": "financial_events",
+        "name": "Financial Events",
+        "mutants_generated": 704,
+        "killed": 459,
+        "survived": 245,
+        "no_tests": 0,
+        "timeout": 0,
+        "score": 65.2,
+        "survivor_categories": {
+          "control_flow": 233,
+          "comparison": 7,
+          "boolean": 5
+        }
+      }
+    },
+    {
+      "component": "loan_engine",
+      "name": "Loan Engine",
+      "type": "financial_engine",
+      "criticality": "P0",
+      "source_files": 9,
+      "loc": 1400,
+      "coverage": {
+        "statements": 472,
+        "covered_lines": 466,
+        "missing_lines": 6,
+        "line_pct": 98.73,
+        "branches": 164,
+        "partial_branches": 7,
+        "branch_pct": 95.73
+      },
+      "mutation": {
+        "engine": "loan_engine",
+        "name": "Loan Engine",
+        "mutants_generated": 1273,
+        "killed": 1067,
+        "survived": 200,
+        "no_tests": 4,
+        "timeout": 2,
+        "score": 84.1,
+        "survivor_categories": {
+          "control_flow": 119,
+          "arithmetic": 52,
+          "comparison": 25,
+          "boolean": 3,
+          "numeric_literal": 1
+        }
+      }
+    },
+    {
+      "component": "financial_intelligence",
+      "name": "Financial Intelligence",
+      "type": "intelligence",
+      "criticality": "P1",
+      "source_files": 8,
+      "loc": 3093,
+      "coverage": {
+        "statements": 807,
+        "covered_lines": 771,
+        "missing_lines": 36,
+        "line_pct": 95.54,
+        "branches": 332,
+        "branch_pct": 95.78
+      },
+      "mutation": {}
+    },
+    {
+      "component": "transaction_intelligence",
+      "name": "Transaction Intelligence",
+      "type": "intelligence",
+      "criticality": "P1",
+      "source_files": 5,
+      "loc": 1082,
+      "coverage": {
+        "statements": 367,
+        "covered_lines": 365,
+        "missing_lines": 2,
+        "line_pct": 99.46,
+        "branches": 148,
+        "branch_pct": 96.62
+      },
+      "mutation": {}
+    },
+    {
+      "component": "behaviour_engine",
+      "name": "Behaviour Engine",
+      "type": "behaviour",
+      "criticality": "P2",
+      "source_files": 18,
+      "loc": 5190,
+      "coverage": {
+        "statements": 1649,
+        "covered_lines": 1435,
+        "missing_lines": 214,
+        "line_pct": 87.02,
+        "branches": 786,
+        "branch_pct": 83.46
+      },
+      "mutation": {}
+    },
+    {
+      "component": "recommendation_engine",
+      "name": "Recommendation Engine",
+      "type": "advisory",
+      "criticality": "P2",
+      "source_files": 2,
+      "loc": 289,
+      "coverage": {
+        "statements": 73,
+        "covered_lines": 70,
+        "missing_lines": 3,
+        "line_pct": 95.89,
+        "branches": 30,
+        "branch_pct": 93.33
+      },
+      "mutation": {}
+    },
+    {
+      "component": "services",
+      "name": "Services Layer",
+      "type": "service",
+      "criticality": "P1",
+      "source_files": 32,
+      "loc": 7519,
+      "coverage": {
+        "statements": 2047,
+        "covered_lines": 1357,
+        "missing_lines": 690,
+        "line_pct": 66.29,
+        "branches": 510,
+        "branch_pct": 75.69
+      },
+      "mutation": {}
+    },
+    {
+      "component": "repositories",
+      "name": "Repositories",
+      "type": "data",
+      "criticality": "P1",
+      "source_files": 27,
+      "loc": 4606,
+      "coverage": {
+        "statements": 1366,
+        "covered_lines": 757,
+        "missing_lines": 609,
+        "line_pct": 55.42,
+        "branches": 228,
+        "branch_pct": 80.26
+      },
+      "mutation": {}
+    },
+    {
+      "component": "core.dtos",
+      "name": "Core DTOs",
+      "type": "core",
+      "criticality": "P1",
+      "source_files": 15,
+      "loc": 2810,
+      "coverage": {
+        "statements": 922,
+        "covered_lines": 856,
+        "missing_lines": 66,
+        "line_pct": 92.84,
+        "branches": 0,
+        "branch_pct": null
+      },
+      "mutation": {}
+    },
+    {
+      "component": "core.mappers",
+      "name": "Core Mappers",
+      "type": "core",
+      "criticality": "P1",
+      "source_files": 14,
+      "loc": 1497,
+      "coverage": {
+        "statements": 295,
+        "covered_lines": 106,
+        "missing_lines": 189,
+        "line_pct": 35.93,
+        "branches": 26,
+        "branch_pct": 100.0
+      },
+      "mutation": {}
+    },
+    {
+      "component": "core.db",
+      "name": "Core DB",
+      "type": "core",
+      "criticality": "P1",
+      "source_files": 6,
+      "loc": 1199,
+      "coverage": {
+        "statements": 214,
+        "covered_lines": 158,
+        "missing_lines": 56,
+        "line_pct": 73.83,
+        "branches": 40,
+        "branch_pct": 70.0
+      },
+      "mutation": {}
+    },
+    {
+      "component": "core.domain",
+      "name": "Core Domain",
+      "type": "core",
+      "criticality": "P1",
+      "source_files": 2,
+      "loc": 346,
+      "coverage": {
+        "statements": 105,
+        "covered_lines": 105,
+        "missing_lines": 0,
+        "line_pct": 100.0,
+        "branches": 38,
+        "branch_pct": 100.0
+      },
+      "mutation": {}
+    },
+    {
+      "component": "models",
+      "name": "Domain Models",
+      "type": "core",
+      "criticality": "P1",
+      "source_files": 22,
+      "loc": 1713,
+      "coverage": {
+        "statements": 738,
+        "covered_lines": 654,
+        "missing_lines": 84,
+        "line_pct": 88.62,
+        "branches": 40,
+        "branch_pct": 100.0
+      },
+      "mutation": {}
+    },
+    {
+      "component": "common",
+      "name": "Common Utilities",
+      "type": "core",
+      "criticality": "P1",
+      "source_files": 5,
+      "loc": 339,
+      "coverage": {
+        "statements": 160,
+        "covered_lines": 159,
+        "missing_lines": 1,
+        "line_pct": 99.38,
+        "branches": 68,
+        "branch_pct": 88.24
+      },
+      "mutation": {}
+    },
+    {
+      "component": "orchestration",
+      "name": "Orchestration",
+      "type": "core",
+      "criticality": "P2",
+      "source_files": 2,
+      "loc": 191,
+      "coverage": {
+        "statements": 71,
+        "covered_lines": 57,
+        "missing_lines": 14,
+        "line_pct": 80.28,
+        "branches": 2,
+        "branch_pct": 50.0
+      },
+      "mutation": {}
+    },
+    {
+      "component": "root",
+      "name": "Root Config",
+      "type": "core",
+      "criticality": "P2",
+      "source_files": 8,
+      "loc": 1313,
+      "coverage": {
+        "statements": 10238,
+        "covered_lines": 8164,
+        "missing_lines": 2074,
+        "line_pct": 79.74,
+        "branches": 2740,
+        "branch_pct": 85.91
+      },
+      "mutation": {}
+    },
+    {
+      "component": "services",
+      "name": "Application Services",
+      "type": "service",
+      "criticality": "P1",
+      "source_files": 32,
+      "loc": "~3200",
+      "coverage": {
+        "line_pct": null,
+        "branch_pct": null,
+        "note": "unmeasured"
+      },
+      "mutation": {},
+      "test_coverage": "partial"
+    },
+    {
+      "component": "repositories",
+      "name": "Data Repositories",
+      "type": "data_access",
+      "criticality": "P1",
+      "source_files": 27,
+      "loc": "~1800",
+      "coverage": {
+        "line_pct": null,
+        "branch_pct": null,
+        "note": "unmeasured"
+      },
+      "mutation": {},
+      "test_coverage": "partial"
+    },
+    {
+      "component": "routers",
+      "name": "API Routers",
+      "type": "interface",
+      "criticality": "P2",
+      "source_files": 29,
+      "loc": "~4200",
+      "coverage": {
+        "line_pct": "excluded",
+        "branch_pct": "HTTP layer",
+        "note": "partial"
+      },
+      "mutation": {},
+      "test_coverage": "partial"
+    },
+    {
+      "component": "models",
+      "name": "Domain Models",
+      "type": "core",
+      "criticality": "P1",
+      "source_files": 22,
+      "loc": 1713,
+      "coverage": {
+        "line_pct": 88.62,
+        "branch_pct": 100.0,
+        "note": "partial"
+      },
+      "mutation": {},
+      "test_coverage": "partial"
+    },
+    {
+      "component": "common",
+      "name": "Common Utilities",
+      "type": "core",
+      "criticality": "P1",
+      "source_files": 5,
+      "loc": 339,
+      "coverage": {
+        "line_pct": 99.38,
+        "branch_pct": 88.24,
+        "note": "partial"
+      },
+      "mutation": {},
+      "test_coverage": "partial"
+    },
+    {
+      "component": "core/db",
+      "name": "Database Layer",
+      "type": "infrastructure",
+      "criticality": "P1",
+      "source_files": 5,
+      "loc": 214,
+      "coverage": {
+        "line_pct": 73.83,
+        "branch_pct": null,
+        "note": "partial"
+      },
+      "mutation": {},
+      "test_coverage": "partial"
+    },
+    {
+      "component": "core/dtos",
+      "name": "DTOs",
+      "type": "core",
+      "criticality": "P1",
+      "source_files": 15,
+      "loc": 922,
+      "coverage": {
+        "line_pct": 92.84,
+        "branch_pct": null,
+        "note": "partial"
+      },
+      "mutation": {},
+      "test_coverage": "partial"
+    },
+    {
+      "component": "core/mappers",
+      "name": "Mappers",
+      "type": "core",
+      "criticality": "P2",
+      "source_files": 14,
+      "loc": 295,
+      "coverage": {
+        "line_pct": null,
+        "branch_pct": null,
+        "note": "unmeasured"
+      },
+      "mutation": {},
+      "test_coverage": "partial"
+    },
+    {
+      "component": "orchestration",
+      "name": "Orchestration",
+      "type": "core",
+      "criticality": "P2",
+      "source_files": 2,
+      "loc": 191,
+      "coverage": {
+        "line_pct": 80.28,
+        "branch_pct": 50.0,
+        "note": "partial"
+      },
+      "mutation": {},
+      "test_coverage": "partial"
+    },
+    {
+      "component": "extraction",
+      "name": "Data Extraction",
+      "type": "service",
+      "criticality": "P2",
+      "source_files": 11,
+      "loc": 5586,
+      "coverage": {
+        "line_pct": "excluded",
+        "branch_pct": "PDF/binary I/O",
+        "note": "partial"
+      },
+      "mutation": {},
+      "test_coverage": "partial"
+    },
+    {
+      "component": "structural",
+      "name": "Structural Analysis",
+      "type": "core",
+      "criticality": "P2",
+      "source_files": 2,
+      "loc": 843,
+      "coverage": {
+        "line_pct": "excluded",
+        "branch_pct": "Static analysis tooling",
+        "note": "partial"
+      },
+      "mutation": {},
+      "test_coverage": "partial"
+    },
+    {
+      "component": "frontend/lib",
+      "name": "Frontend Library",
+      "type": "frontend",
+      "criticality": "P2",
+      "source_files": 262,
+      "loc": "~45000",
+      "coverage": {
+        "line_pct": null,
+        "branch_pct": null,
+        "note": "unmeasured"
+      },
+      "mutation": {},
+      "test_coverage": "none"
+    },
+    {
+      "component": "frontend/components",
+      "name": "Frontend Components",
+      "type": "frontend",
+      "criticality": "P3",
+      "source_files": 345,
+      "loc": "~33000",
+      "coverage": {
+        "line_pct": null,
+        "branch_pct": null,
+        "note": "unmeasured"
+      },
+      "mutation": {},
+      "test_coverage": "none"
+    },
+    {
+      "component": "frontend/hooks",
+      "name": "Frontend Hooks",
+      "type": "frontend",
+      "criticality": "P3",
+      "source_files": 15,
+      "loc": "~800",
+      "coverage": {
+        "line_pct": null,
+        "branch_pct": null,
+        "note": "unmeasured"
+      },
+      "mutation": {},
+      "test_coverage": "none"
+    }
+  ]
+}

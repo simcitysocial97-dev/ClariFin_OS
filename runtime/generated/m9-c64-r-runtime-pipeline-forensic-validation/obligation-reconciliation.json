@@ -1,0 +1,35 @@
+{
+  "audit_date": "2026-09-20T02:50:00Z",
+  "commit": "8990f3ae",
+  "test_case": "backend_unit_change_loan_engine",
+  "input_file": "backend/src/engines/loan_engine/emi.py",
+  "expected_obligations": {
+    "directly_affected": ["loan-engine", "api-contracts"],
+    "transitively_affected": ["credit-card-engine", "financial-intelligence"],
+    "total_expected_tasks": "~27"
+  },
+  "actual_obligations": {
+    "plan_id": "d5c82369932d",
+    "set_id": "set-d5c82369932d",
+    "total_tasks": 27,
+    "by_capability": {
+      "api-contracts": 6,
+      "loan-engine": 7,
+      "credit-card-engine": 7,
+      "financial-intelligence": 7
+    },
+    "by_kind": {
+      "contract": 4,
+      "unit": 15,
+      "property": 4,
+      "e2e": 4
+    }
+  },
+  "reconciliation": {
+    "capability_attribution": "PASS",
+    "blast_radius": "PASS",
+    "task_count_match": "PASS",
+    "obligation_path_bug": "FAIL - all obligations use changed_files[0]"
+  },
+  "verdict": "PIPELINE_FUNCTIONAL_WITH_DEFECT"
+}

@@ -16,8 +16,8 @@ from __future__ import annotations
 
 import ast
 from pathlib import Path
-
 from typing import Any
+
 from runtime.foundation.repository.scanner.base import BaseScanner, ScanResult
 
 # Directories under src/ that map to a module type
@@ -220,9 +220,10 @@ class BackendScanner(BaseScanner):
     def _is_inside_function(node: ast.AST, tree: ast.AST) -> bool:
         """Check if an AST node is inside a function/method definition."""
         for parent in ast.walk(tree):
-            if isinstance(parent, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                if node in ast.walk(parent):
-                    return True
+            if isinstance(
+                parent, (ast.FunctionDef, ast.AsyncFunctionDef)
+            ) and node in ast.walk(parent):
+                return True
         return False
 
     # -- helpers -------------------------------------------------------------
@@ -311,18 +312,24 @@ class BackendScanner(BaseScanner):
                     ):
                         func = node.value.func
                         is_router = False
-                        if isinstance(func, ast.Name) and func.id == "APIRouter":
-                            is_router = True
-                        elif (
-                            isinstance(func, ast.Attribute) and func.attr == "APIRouter"
+                        if (
+                            isinstance(func, ast.Name)
+                            and func.id == "APIRouter"
+                            or (
+                                isinstance(func, ast.Attribute)
+                                and func.attr == "APIRouter"
+                            )
                         ):
                             is_router = True
 
                         if is_router:
                             for kw in node.value.keywords:
-                                if kw.arg == "prefix":
-                                    if isinstance(kw.value, ast.Constant):
-                                        return kw.value.value
+                                if kw.arg == "prefix" and isinstance(
+                                    kw.value, ast.Constant
+                                ):
+                                    prefix_value = kw.value.value
+                                    if isinstance(prefix_value, str):
+                                        return prefix_value
         return None
 
     def _extract_endpoints(
@@ -372,7 +379,9 @@ class BackendScanner(BaseScanner):
             return None, None
 
         if decorator.args and isinstance(decorator.args[0], ast.Constant):
-            return method, decorator.args[0].value
+            path_value = decorator.args[0].value
+            if isinstance(path_value, str):
+                return method, path_value
 
         return None, None
 

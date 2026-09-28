@@ -1,0 +1,109 @@
+>> pytest tests/contract (parallel, phase=contract)
+>> pytest tests/invariants (parallel, phase=invariants)
+>> pytest tests/properties (parallel, phase=properties)
+>> pytest tests/unit/engines (parallel, phase=unit-engines)
+--- phase: contract ---
+........................................................................ [ 44%]
+........................................................................ [ 89%]
+.................                                                        [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+161 passed, 1 warning in 84.00s (0:01:24)
+<< contract: pass (exit=0, 86s)
+--- phase: invariants ---
+..........................                                               [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+26 passed, 1 warning in 43.34s
+<< invariants: pass (exit=0, 86s)
+--- phase: properties ---
+........................................................................ [ 24%]
+........................................................................ [ 49%]
+...................................................x.F.................. [ 74%]
+........................................................................ [ 99%]
+.                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_simulate_floating_rate_schedule_rate_application _____________
+tests/properties/loan_engine/test_floating_rate_properties.py:289: in test_simulate_floating_rate_schedule_rate_application
+    @settings(
+               
+tests/properties/loan_engine/test_floating_rate_properties.py:333: in test_simulate_floating_rate_schedule_rate_application
+    assert emi_after != emi_before, (
+E   AssertionError: adjust_emi at month 2 with rate 501 did not change EMI (was 25261, now 25261)
+E   assert 25261 != 25261
+E   Failing test case: test_simulate_floating_rate_schedule_rate_application(
+E       rate_change_params=,
+E   )
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+tests/properties/forecasting/test_engine_properties.py::TestForecastEngineProperties::test_goal_achievability_deterministic
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/hypothesis/strategies/_internal/core.py:1872: HypothesisDeprecationWarning: 0.1 cannot be exactly represented as a decimal with places=None
+    min_value = _as_finite_decimal(min_value, "min_value", allow_infinity, places)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/properties/loan_engine/test_floating_rate_properties.py::test_simulate_floating_rate_schedule_rate_application
+1 failed, 287 passed, 1 xfailed, 2 warnings in 18.80s
+<< properties: fail (exit=1, 86s)
+--- phase: unit-engines ---
+........................................................................ [  2%]
+........................................................................ [  5%]
+........................................................................ [  8%]
+........................................................................ [ 11%]
+........................................................................ [ 13%]
+........................................................................ [ 16%]
+........................................................................ [ 19%]
+........................................................................ [ 22%]
+........................................................................ [ 25%]
+........................................................................ [ 27%]
+........................................................................ [ 30%]
+........................................................................ [ 33%]
+........................................................................ [ 36%]
+........................................................................ [ 39%]
+........................................................................ [ 41%]
+........................................................................ [ 44%]
+........................................................................ [ 47%]
+........................................................................ [ 50%]
+........................................................................ [ 52%]
+........................................................................ [ 55%]
+........................................................................ [ 58%]
+........................................................................ [ 61%]
+........................................................................ [ 64%]
+........................................................................ [ 66%]
+........................................................................ [ 69%]
+........................................................................ [ 72%]
+........................................................................ [ 75%]
+........................................................................ [ 78%]
+........................................................................ [ 80%]
+........................................................................ [ 83%]
+........................................................................ [ 86%]
+........................................................................ [ 89%]
+........................................................................ [ 91%]
+........................................................................ [ 94%]
+........................................................................ [ 97%]
+................................................................         [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2584 passed, 1 warning in 25.80s
+<< unit-engines: pass (exit=0, 86s)
+
+Phase summary: /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/backend-verification.json
+  contract       pass  exit=0 86s
+  invariants     pass  exit=0 86s
+  properties     fail  exit=1 86s
+  unit-engines   pass  exit=0 86s

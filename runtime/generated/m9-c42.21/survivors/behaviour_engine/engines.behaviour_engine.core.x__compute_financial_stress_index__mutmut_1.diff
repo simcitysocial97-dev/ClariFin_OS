@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_1: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -10,7 +10,7 @@
+     - Credit dependency ratio
+     - Buffer adequacy (days covered)
+     """
+-    if not transactions:
++    if transactions:
+         return {"score": 0.5, "balance_volatility": 0.0, "credit_dependency": 0.0}
+ 
+     # Separate credits and debits

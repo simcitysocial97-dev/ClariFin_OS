@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from typing import List
+from pathlib import Path
 
-from .base import EvidenceCollector, EvidenceArtifact
+from .base import EvidenceArtifact, EvidenceCollector
 
 
 class PropertyTestCollector(EvidenceCollector):
@@ -18,8 +18,8 @@ class PropertyTestCollector(EvidenceCollector):
     def name(self) -> str:
         return "Property Test Results"
 
-    def collect(self) -> List[EvidenceArtifact]:
-        artifacts = []
+    def collect(self, artifact_path: Path | None = None) -> list[EvidenceArtifact]:
+        artifacts: list[EvidenceArtifact] = []
 
         # Property test results
         prop_dir = self.workspace_root / "backend" / "tests" / "generated"
@@ -63,5 +63,5 @@ class PropertyTestCollector(EvidenceCollector):
 
         return artifacts
 
-    def collect_artifacts(self) -> List[EvidenceArtifact]:
+    def collect_artifacts(self) -> list[EvidenceArtifact]:
         return self.collect()

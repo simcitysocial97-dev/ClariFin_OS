@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.interest.x_compute_daily_interest__mutmut_4: survived
+--- src/engines/credit_card_engine/interest.py
++++ src/engines/credit_card_engine/interest.py
+@@ -18,7 +18,7 @@
+     INVARIANT 6: Interest calculations use banker's rounding.
+     """
+     if outstanding_paise < 0:
+-        raise ValueError("outstanding_paise must be non-negative")
++        raise ValueError("XXoutstanding_paise must be non-negativeXX")
+     if annual_rate_bps < 0:
+         raise ValueError("annual_rate_bps must be non-negative")
+ 

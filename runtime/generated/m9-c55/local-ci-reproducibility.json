@@ -1,0 +1,60 @@
+{
+  "schema": "m9-c55/local-ci-reproducibility/v1",
+  "generated_at": "2026-09-01T19:57:01+00:00",
+  "taxonomy": {
+    "equivalent": "Same repository state + environment contract + toolchain + configuration \u2192 evidence accepted as directly comparable",
+    "reproducibly_different": "Environment valid but measurement has explicitly quantified accepted variance (e.g. execution time \u00b110%%)",
+    "incompatible": "Material identity mismatch that invalidates evidence comparison (SHA, tool version, config hash, dependency lock)"
+  },
+  "dimensions": [
+    {
+      "name": "repository SHA",
+      "severity": "INCOMPATIBLE"
+    },
+    {
+      "name": "repository tree SHA",
+      "severity": "INCOMPATIBLE"
+    },
+    {
+      "name": "Python version",
+      "severity": "INCOMPATIBLE"
+    },
+    {
+      "name": "toolchain versions (pytest, coverage, mutmut, ruff, black, mypy, hypothesis)",
+      "severity": "INCOMPATIBLE"
+    },
+    {
+      "name": "Node version",
+      "severity": "INCOMPATIBLE"
+    },
+    {
+      "name": "npm version",
+      "severity": "INCOMPATIBLE"
+    },
+    {
+      "name": "requirements.lock hash",
+      "severity": "INCOMPATIBLE"
+    },
+    {
+      "name": "frontend/package-lock.json hash",
+      "severity": "INCOMPATIBLE"
+    },
+    {
+      "name": "pyproject.toml hash",
+      "severity": "INCOMPATIBLE"
+    },
+    {
+      "name": "backend/pyproject.toml hash",
+      "severity": "INCOMPATIBLE"
+    },
+    {
+      "name": "execution time",
+      "severity": "REPRODUCIBLY_DIFFERENT"
+    },
+    {
+      "name": "mutation score",
+      "severity": "REPRODUCIBLY_DIFFERENT"
+    }
+  ],
+  "ci_path_note": "Live GitHub Actions execution is an environmental limitation; workflows are validated by static parsing only in this session"
+}

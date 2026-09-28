@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_149: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -61,7 +61,7 @@
+ 
+         if date_iso:
+             try:
+-                dt = datetime.strptime(date_iso, "%Y-%m-%d")
++                dt = datetime.strptime(date_iso, "%Y-%M-%D")
+                 if dt.day >= 26:  # Last 5 days
+                     eom_spending += amount
+             except (ValueError, TypeError):

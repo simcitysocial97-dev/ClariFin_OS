@@ -1,0 +1,12 @@
+{
+  "schema": "m9-c50/stabilization/evidence-integrity@1",
+  "generated_at": "2026-09-04T22:55:51.787413+00:00",
+  "artifact_sha256_self": "776fb5c7805f7156b47e4aa0ad65898781713ad10b2d48acb198c91fde469f77",
+  "real_execution_proof": {
+    "task_id": "exec::probe::lineage::money",
+    "exit_code": 0,
+    "artifact": [
+      "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-invariant-money.xml"
+    ]
+  }
+}

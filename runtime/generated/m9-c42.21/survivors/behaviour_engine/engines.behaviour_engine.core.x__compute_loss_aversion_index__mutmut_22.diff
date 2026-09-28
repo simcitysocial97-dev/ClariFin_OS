@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_loss_aversion_index__mutmut_22: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -17,7 +17,7 @@
+ 
+     # Find income credits (salary, transfers in)
+     credits = [t for t in transactions if t.get("type") == "credit"]
+-    debits = [t for t in transactions if t.get("type") == "debit"]
++    debits = [t for t in transactions if t.get("type") != "debit"]
+ 
+     if not credits or not debits:
+         return {"score": 0.5, "post_income_velocity": 0.0, "recovery_time_days": 0}

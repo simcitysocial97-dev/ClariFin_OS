@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_166: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -70,7 +70,7 @@
+                 if pct_change_total > 15:
+                     insights.append(
+                         {
+-                            "title": "Spending Trending Up",
++                            "title": "XXSpending Trending UpXX",
+                             "description": f"Overall spending is up {int(pct_change_total)}%",
+                             "severity": "warning",
+                             "icon": "alert-triangle",

@@ -7,6 +7,7 @@ If it grows beyond 200, split by sub-domain.
 from decimal import Decimal
 from typing import Any
 
+from src.core.domain.household import DEFAULT_HOUSEHOLD_ID, resolve_household_id
 from src.repositories.base import BaseRepository
 
 
@@ -27,7 +28,7 @@ class BehaviourRepository(BaseRepository):
             """,
                 (
                     snapshot_data["snapshot_date"],
-                    snapshot_data.get("household_id", "default"),
+                    snapshot_data.get("household_id", DEFAULT_HOUSEHOLD_ID),
                     snapshot_data["savings_discipline_score_bps"],
                     snapshot_data["cashflow_stability_score_bps"],
                     snapshot_data["salary_dependence_ratio_bps"],
@@ -59,7 +60,7 @@ class BehaviourRepository(BaseRepository):
         self, household_id: str | None = None
     ) -> dict[str, Any] | None:
         """Get the most recent behaviour snapshot."""
-        household_id = household_id or "default"
+        household_id = resolve_household_id(household_id)
         with self._get_conn() as conn:
             row = conn.execute(
                 """
@@ -80,7 +81,7 @@ class BehaviourRepository(BaseRepository):
         self, start_date: str, end_date: str, household_id: str | None = None
     ) -> list[dict[str, Any]]:
         """Get behaviour snapshots within a date range."""
-        household_id = household_id or "default"
+        household_id = resolve_household_id(household_id)
         with self._get_conn() as conn:
             rows = conn.execute(
                 """
@@ -97,7 +98,7 @@ class BehaviourRepository(BaseRepository):
         self, metric: str, months: int = 6, household_id: str | None = None
     ) -> list[dict[str, Any]]:
         """Get trend data for a specific metric."""
-        household_id = household_id or "default"
+        household_id = resolve_household_id(household_id)
         valid_metrics = [
             "savings_discipline_score_bps",
             "cashflow_stability_score_bps",

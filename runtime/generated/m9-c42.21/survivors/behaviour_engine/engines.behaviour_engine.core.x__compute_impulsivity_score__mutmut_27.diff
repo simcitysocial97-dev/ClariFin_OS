@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_impulsivity_score__mutmut_27: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -13,7 +13,7 @@
+ 
+     debits = [t for t in transactions if t.get("type") == "debit"]
+     if not debits:
+-        return {"score": 0.5, "micro_txn_ratio": 0.0, "late_night_ratio": 0.0}
++        return {"score": 0.5, "micro_txn_ratio": 0.0, "late_night_ratio": 1.0}
+ 
+     total_debits = len(debits)
+ 

@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.amortization.x_validate_schedule__mutmut_19: survived
+--- src/engines/loan_engine/amortization.py
++++ src/engines/loan_engine/amortization.py
+@@ -56,7 +56,7 @@
+     # 4. EMI consistency (same EMI for all rows except last)
+     if len(schedule) > 1:
+         first_emi = schedule[0].emi_paise
+-        for row in schedule[:-1]:  # exclude last row
++        for row in schedule[:-2]:  # exclude last row
+             if row.emi_paise != first_emi:
+                 errors.append(
+                     f"EMI inconsistency at month {row.month_number}: "

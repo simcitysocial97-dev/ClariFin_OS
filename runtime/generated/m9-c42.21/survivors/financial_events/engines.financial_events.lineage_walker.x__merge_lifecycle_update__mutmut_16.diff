@@ -1,0 +1,15 @@
+# status: survived
+# engines.financial_events.lineage_walker.x__merge_lifecycle_update__mutmut_16: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -10,9 +10,7 @@
+     existing_rank = _LIFECYCLE_STATE_RANK.get(
+         existing.get("lifecycle_state", "open"), 0
+     )
+-    candidate_rank = _LIFECYCLE_STATE_RANK.get(
+-        candidate.get("lifecycle_state", "open"), 0
+-    )
++    candidate_rank = None
+     if candidate_rank > existing_rank:
+         return candidate
+     if candidate_rank < existing_rank:

@@ -9,7 +9,7 @@ All scores use _bps suffix (basis points, 0-10000 for 0-100%).
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 # ===== Behaviour Score Types =====
 
@@ -168,8 +168,8 @@ class BehaviourDTO(BaseModel):
         default=None, description="Evidence chain for explainability"
     )
 
-    class Config:
-        json_schema_extra: dict[str, Any] = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "wellness_score": {
                     "score": 7500,
@@ -184,6 +184,7 @@ class BehaviourDTO(BaseModel):
                 "evidence_chain": None,
             }
         }
+    )
 
 
 # ===== Behaviour Response Types =====

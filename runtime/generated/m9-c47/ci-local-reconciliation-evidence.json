@@ -1,0 +1,91 @@
+{
+  "ci_local_reconciliation": "M9-C47 CI/Local Reconciliation Evidence",
+  "commit": "b8914c4333c48d36d9db2805c04d8775bedba86a",
+  "timestamp": "2026-08-31T06:35:00Z",
+  "workflow_analysis": {
+    "mutation.yml": {
+      "job": "mutation",
+      "timeout_minutes": 90,
+      "command": "python runtime/verify.py mutation",
+      "artifacts": [
+        "cross-layer-map.json",
+        "knowledge-index.json",
+        "verification-cache.json",
+        "engineering-history.json",
+        "mutation-report.md",
+        "mutation-summary.json",
+        "mutation-evidence (full backend/tests/generated/mutation/)"
+      ],
+      "classification_step": {
+        "reads": "backend/tests/generated/mutation/mutation-summary.json",
+        "jq_extracts": [
+          "execution_status",
+          "classification_status",
+          "evidence_complete",
+          "mutation_score",
+          "killed",
+          "survived",
+          "threshold_percent"
+        ],
+        "gate_logic": {
+          "PASS+PASS+true": "evaluated=true",
+          "score >= threshold (bc)": "exit_code=0",
+          "score < threshold": "exit_code=2",
+          "any_gate_fail": "exit_code=1 (evaluated=false)"
+        },
+        "double_summary_bug": "FIXED (commit 34d22cb7) - was mutation-summary-summary.json, now mutation-summary.json"
+      }
+    },
+    "verification-reconcile.yml": {
+      "job": "reconcile-gate",
+      "timeout_minutes": 30,
+      "path_filters": "runtime/**, backend/**",
+      "steps": [
+        "emit plan: verify.py plan --tier pr --base ${GITHUB_BASE_REF:-main} --head $GITHUB_SHA",
+        "execute: verify.py runtime (continue-on-error)",
+        "emit evidence: verify.py exec-evidence",
+        "reconcile: verify.py reconcile --plan --evidence --report"
+      ],
+      "reconciliation_outcomes": "M5 exit contract: 0=pass, 1=env-divergence, 2=planning-divergence"
+    },
+    "verification-runtime.yml": {
+      "job": "verify-runtime",
+      "timeout_minutes": 30,
+      "command": "verify.py runtime",
+      "artifacts": "cross-layer-map, knowledge-index, verification-cache, engineering-history, runtime-quality, runtime-performance"
+    },
+    "quality.yml": {
+      "job": "quality",
+      "timeout_minutes": 10,
+      "command": "verify.py quick",
+      "artifacts": "shared + quality-report + fast-checks-evidence"
+    }
+  },
+  "ci_evidence_classification_states": [
+    "AUTHORITATIVE_COMPLETE - mutation-full job completed, gates passed",
+    "PARTIAL - mutation run did not process full population",
+    "TIMEOUT - 90min job timeout exceeded",
+    "INFRASTRUCTURE_FAILURE - runner lost power, oom, checkout failed, action failed",
+    "EVIDENCE_FAILURE - mutation-summary.json missing/corrupt, jq extraction failed",
+    "INVALID_SCOPE - execution_mode mismatch, scope drift",
+    "DERIVED_ONLY - reconciliation-only, no fresh measurement"
+  ],
+  "why_25percent_result_untrusted": [
+    "The ~25% CI result was from an earlier workflow version with the double-summary bug",
+    "jq extraction on mutation-summary-summary.json returned null, causing gate logic to misclassify",
+    "Current mutation.yml uses correct mutation-summary.json path",
+    "No authoritative complete campaign has run in CI since the bug fix",
+    "Previous 90min run may have timed out (INFRASTRUCTURE_FAILURE) or hit EVIDENCE_FAILURE",
+    "The mutation-truth record now explicitly classifies completion status, so CI output is machine-readable"
+  ],
+  "reconciliation_mechanism": {
+    "local_measurement_truth": "verify.py mutation emits measurement-truth*.json locally",
+    "ci_measurement_truth": "CI mutation job produces mutation-summary.json + measurement-truth.json",
+    "evidence_reuse": "evidence_reuse.py INVALIDATION_RULES applied to both local and CI changes",
+    "ci_evidence_pipeline": "ci_evidence.py: build_ci_bindings -> validate_ci_evidence -> ci_reuse_decision -> ingest_ci_evidence -> ci_measurement",
+    "fingerprint_identity": "repository_sha + toolchain_hash + config_hash + source_fingerprint + test_fingerprint",
+    "staleness_guard": "ComponentMeasurement.fingerprint() includes repository_sha - drift blocks reuse"
+  },
+  "machine_readable_distinction_implemented": true,
+  "ci_timeout_90min_documented": true
+}

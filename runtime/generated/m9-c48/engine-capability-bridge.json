@@ -1,0 +1,22 @@
+{
+  "newly_registered": 13,
+  "ok": true,
+  "missing": [],
+  "capability_ids": [
+    "account-engine",
+    "balance-engine",
+    "behaviour-engine",
+    "cashflow-engine",
+    "common-calculations",
+    "core-domain-money",
+    "credit-card-engine",
+    "financial-events",
+    "financial-intelligence",
+    "ledger-audit-engine",
+    "loan-engine",
+    "recommendation-engine",
+    "reconciliation-engine",
+    "transaction-intelligence"
+  ],
+  "total": 23
+}

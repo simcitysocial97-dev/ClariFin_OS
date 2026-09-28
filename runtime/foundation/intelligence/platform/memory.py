@@ -15,7 +15,7 @@ from __future__ import annotations
 import json
 from collections import Counter
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -203,7 +203,7 @@ def build_memory(generated_dir: Path | None = None) -> EngineeringMemory:
         notes.append("no memory source artifacts found")
 
     return EngineeringMemory(
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
         sources=tuple(sorted(set(sources))),
         recurring_failures=tuple(_top(failure_sigs, "signature")),
         recurring_repairs=tuple(_top(repair_sigs, "signature")),

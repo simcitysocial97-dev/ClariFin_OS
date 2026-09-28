@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_42: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -23,7 +23,7 @@
+     # Daily net flow (convert amount_paise to rupees for analysis)
+     daily_net: defaultdict[str, float] = defaultdict(float)
+     for txn in transactions:
+-        date_iso = txn.get("date_iso", "")
++        date_iso = txn.get("XXdate_isoXX", "")
+         if date_iso:
+             amount = (txn.get("amount_paise", 0) or 0) / 100.0
+             if txn.get("type") == "debit":

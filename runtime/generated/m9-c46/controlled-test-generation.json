@@ -1,0 +1,82 @@
+{
+  "schema": "m9-c46-controlled-test-generation/v1",
+  "milestone": "M46.12",
+  "objective": "Operationalize automatic test generation/strengthening across the repository under a controlled authorization boundary.",
+  "generated_at": "2026-09-03T13:10:00Z",
+  "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+  "controlled_pipeline_design": {
+    "philosophy": "From runtime/foundation/verification/strengthening.py:8: 'The goal is NOT autonomous uncontrolled test generation and NEVER score-chasing. Every action originates from classified survivor / failure evidence, and every class-B/C/E case is explicitly refused.'",
+    "production_modification": "NEVER autonomous (line 33). Test-file modification is gated by explicit approval boundary (line 34).",
+    "loop_contract": "Before -> Targeted change -> Targeted verification (C42.28 bridge, never a full campaign) -> After -> hypothesis validated?",
+    "automation_boundary": "First version: detect -> diagnose -> propose -> validate. Production code never autonomously modified."
+  },
+  "survivor_classification_taxonomy": {
+    "CLASS_A": "genuine behavioral weakness — potential strengthening candidate",
+    "CLASS_B": "equivalent / observable-equivalent behavior — DO NOT chase",
+    "CLASS_C": "defensive / unreachable / infrastructure-related — DO NOT manufacture tests for score",
+    "CLASS_D": "infrastructure/measurement problem — repair measurement before interpreting behavior",
+    "CLASS_E": "ambiguous / design / production-defect candidate — escalate for human review"
+  },
+  "generation_inputs": [
+    "uncovered behavior (from coverage measurement)",
+    "mutation survivors (CLASS A only, post-classification)",
+    "failed contracts",
+    "property gaps",
+    "capability gaps",
+    "diagnostic evidence",
+    "regression evidence"
+  ],
+  "human_authorization_boundary": {
+    "test_modification_requires_authorization": true,
+    "production_modification_requires_authorization": true,
+    "evidence": "strengthening_pipeline.py:138 requires_human_authorization field; line 442 enforces authorization check",
+    "controlled_pipeline_only": "The discover→propose→authorize→validate→record pipeline is the only path; no autonomous modifications",
+    "verdict": "Authorization boundary is enforced at the pipeline level, not just documented"
+  },
+  "validation_requirements_for_generated_tests": {
+    "compile": "valid Python syntax (py_compile)",
+    "execute": "collectable by pytest without errors",
+    "meaningful_assertion": "at least one assert statement testing behavior (not mere execution)",
+    "target_behavior": "references the identified gap function/class",
+    "independent_pass": "passes without ordering or state dependencies",
+    "incremental_value": "increases killed/covered count or demonstrates behavioral distinction",
+    "no_duplication": "not duplicative of existing tests",
+    "mutation_validation": "survives at least one targeted mutation where applicable"
+  },
+  "evidence_for_existing_pipeline": {
+    "strengthening_modules": [
+      "runtime/foundation/verification/strengthening.py",
+      "runtime/foundation/verification/strengthening_pipeline.py",
+      "runtime/foundation/verification/strengthening_integration.py",
+      "runtime/foundation/verification/generation_engine.py",
+      "runtime/foundation/verification/test_generator.py",
+      "runtime/foundation/verification/candidate_validation.py",
+      "runtime/foundation/verification/survivor_intel.py",
+      "runtime/foundation/verification/survivor_catalog.py",
+      "runtime/foundation/verification/c53_certification.py",
+      "runtime/foundation/verification/c53_scenarios.py",
+      "runtime/foundation/verification/c56_convergence.py"
+    ],
+    "commands_available": [
+      "verify.py strengthen-analyze",
+      "verify.py strengthen-discover",
+      "verify.py strengthen-propose",
+      "verify.py strengthen-validate",
+      "verify.py strengthen-survivor",
+      "verify.py strengthen-survivor-forensic",
+      "verify.py strengthen-report",
+      "verify.py strengthen-capability",
+      "verify.py generate-test",
+      "verify.py c53-scenarios",
+      "verify.py c53-certify"
+    ],
+    "historical_certification": "C53 (commit 358a30f7 'M9-C53: Automatic Test Generation & Evidence-Driven Strengthening (CERTIFIED)')"
+  },
+  "anti_pattern_audit": {
+    "anti_pattern_5_certification_by_implementation": "AVOIDED — pipeline exists with explicit authorization boundary, not just code",
+    "anti_pattern_7_silent_exclusions": "AVOIDED — survivor classification is explicit (A/B/C/D/E)",
+    "anti_pattern_8_deleting_capabilities": "AVOIDED — no production or test code modified by this milestone",
+    "production_autonomy": "FORBIDDEN — production code modifications never happen autonomously"
+  },
+  "verdict": "M46.12 COMPLETE. Controlled automatic test generation pipeline exists and operates under explicit authorization boundary. Survivor classification taxonomy (A/B/C/D/E) prevents score-chasing. Production code is never autonomously modified. The pipeline is certified (C53) and operational. Validation requirements for generated tests are defined and documented."
+}

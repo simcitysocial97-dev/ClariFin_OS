@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_impulsivity_score__mutmut_126: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -57,7 +57,7 @@
+         "Shopping",
+         "Travel",
+         "Lifestyle",
+-        "Groceries",
++        "GROCERIES",
+         "Online Shopping",
+     ]
+ 

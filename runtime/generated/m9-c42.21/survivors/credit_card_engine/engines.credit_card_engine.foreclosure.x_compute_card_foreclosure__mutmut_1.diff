@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.foreclosure.x_compute_card_foreclosure__mutmut_1: survived
+--- src/engines/credit_card_engine/foreclosure.py
++++ src/engines/credit_card_engine/foreclosure.py
+@@ -2,7 +2,7 @@
+     outstanding_paise: int,
+     annual_rate_bps: int,
+     remaining_months: int,
+-    penalty_bps: int = 0,
++    penalty_bps: int = 1,
+ ) -> dict[str, int]:
+     """
+     Compute foreclosure payoff amount for a credit card EMI.

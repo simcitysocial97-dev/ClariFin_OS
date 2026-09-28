@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_impulsivity_score__mutmut_129: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -58,7 +58,7 @@
+         "Travel",
+         "Lifestyle",
+         "Groceries",
+-        "Online Shopping",
++        "ONLINE SHOPPING",
+     ]
+ 
+     discretionary_txns = [

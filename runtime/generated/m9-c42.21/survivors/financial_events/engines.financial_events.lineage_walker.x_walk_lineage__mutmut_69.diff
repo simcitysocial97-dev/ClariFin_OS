@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_walk_lineage__mutmut_69: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -54,7 +54,7 @@
+ 
+         # Only process open/partially_settled repayments looking for advances to settle
+         if lifecycle_state not in ("open", "partially_settled"):
+-            continue
++            break
+ 
+         if not _is_repayment_event(event):
+             continue

@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_157: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -109,7 +109,7 @@
+     )
+ 
+     # Combine prefix and tail
+-    prefix = schedule[:tail_start_index] if tail_start_index > 0 else []
++    prefix = schedule[:tail_start_index] if tail_start_index > 1 else []
+     new_schedule = prefix + tail
+ 
+     # C39: for reduce_emi, ensure two invariants hold on the regenerated tail:

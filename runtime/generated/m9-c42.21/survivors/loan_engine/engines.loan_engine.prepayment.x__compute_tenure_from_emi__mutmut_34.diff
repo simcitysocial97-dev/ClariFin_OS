@@ -1,0 +1,11 @@
+# status: survived
+# engines.loan_engine.prepayment.x__compute_tenure_from_emi__mutmut_34: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -16,5 +16,5 @@
+     denominator = Decimal(1) + monthly_rate
+     months = numerator.ln() / denominator.ln()
+     return max(
+-        1, min(999, int(months.quantize(Decimal("1"), rounding=ROUND_HALF_EVEN)))
++        2, min(999, int(months.quantize(Decimal("1"), rounding=ROUND_HALF_EVEN)))
+     )

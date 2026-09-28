@@ -1,0 +1,13 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_112: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -63,7 +63,7 @@
+             )
+ 
+     # Check for new subscriptions (not in previous period)
+-    previous_merchants = {sub.get("merchant", "") for sub in previous_subscriptions}
++    previous_merchants = {sub.get("merchant", ) for sub in previous_subscriptions}
+     new_subscriptions = [
+         sub
+         for sub in current_subscriptions

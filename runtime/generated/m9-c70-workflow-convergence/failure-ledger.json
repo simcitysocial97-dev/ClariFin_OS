@@ -1,0 +1,25 @@
+{
+  "schema_version": 2,
+  "milestone": "M9-C70",
+  "updated_at": "2026-09-26T11:36:00Z",
+  "source_commit": "b7d83af4ee5104a9021724d28f7dfd55eb3fd69c",
+  "previous_ledger": "runtime/generated/m9-c70-workflow-convergence/failure-ledger.json@C70-certified",
+  "records": [
+    {"id":"C70-F001","category":"PRODUCT_DEFECT","scope":"check recorder","failure":"Missing execution recorder.","resolution":"FIXED","status":"RESOLVED"},
+    {"id":"C70-F002","category":"CI_CONFIGURATION_DEFECT","scope":"CI environment","failure":"CI lacked root .venv.","resolution":"FIXED","status":"RESOLVED"},
+    {"id":"C70-F003","category":"CI_CONFIGURATION_DEFECT","scope":"workflow commands","failure":"Direct script invocation.","resolution":"Canonical module invocation everywhere.","status":"RESOLVED"},
+    {"id":"C70-F004","category":"STALE_WORKFLOW","scope":"aggregate/reconcile/contract tasks","failure":"Legacy commands reported misleading results.","resolution":"Retired or corrected.","status":"RESOLVED"},
+    {"id":"C70-F005","category":"PRODUCT_DEFECT","scope":"environment/platform performance","failure":"Evidence graph traversal, event cache, API reads, and coverage routing.","resolution":"Fixed with focused regression tests.","status":"RESOLVED"},
+    {"id":"C70-F006","category":"DEPENDENCY_DRIFT","scope":"frontend security","failure":"Next/pdfjs/npm audit findings.","resolution":"Upgraded and verified npm audit zero vulnerabilities.","status":"RESOLVED"},
+    {"id":"C70-F007","category":"CI_CONFIGURATION_DEFECT","scope":"E2E interpreter path","failure":"Relative CLARIFIN_PYTHON failed from backend cwd.","resolution":"Absolute workspace interpreter in CI; functional E2E green.","status":"RESOLVED"},
+    {"id":"C70-F008","category":"CI_CONFIGURATION_DEFECT","scope":"Node provisioning","failure":"Quality, Runtime, Golden, and Mutation workflows omitted npm ci.","resolution":"Shared Node setup added; relevant GitHub runs are green.","status":"RESOLVED"},
+    {"id":"C70-F009","category":"CI_CONFIGURATION_DEFECT","scope":"check delta","failure":"Push checks expanded across the whole branch and failed empty plans.","resolution":"PR base/before SHA bounding and certified no-op plans.","status":"RESOLVED"},
+    {"id":"C70-F010","category":"TEST_DEFECT","scope":"fresh CI database","failure":"Cross-layer tests assumed local SQLite schema.","resolution":"Repository boundaries mocked/isolated; Backend/API/Quality/Runtime GitHub runs green.","status":"RESOLVED"},
+    {"id":"C70-F011","category":"PRODUCT_DEFECT","scope":"TypeScript resolver","failure":"ts-morph ESM resolution failed in fresh Actions checkout.","resolution":"Frontend-context module loading; Runtime GitHub run green.","status":"RESOLVED"},
+    {"id":"C70-F012","category":"TEST_DEFECT","scope":"CI-aware contracts","failure":"Runtime tests assumed local history/ESLint 9.","resolution":"CI-aware buckets and current toolchain assertion; Runtime run green.","status":"RESOLVED"},
+    {"id":"C70-F013","category":"REAL_PRODUCT_GAP","scope":"full mutation","failure":"Full campaign exceeded 90m; targeted balance_engine scored 0% with 285 survivors.","resolution":"Not hidden or threshold-lowered; remains the sole authoritative mutation failure.","status":"OPEN"},
+    {"id":"C70-F014","category":"UI_CONTRACT_GAP","scope":"Playwright visual/platform console","failure":"Functional flows pass, but visual snapshots and platform console/render assertions fail.","resolution":"Classified separately; no assertion suppression.","status":"OPEN"},
+    {"id":"C70-F015","category":"GITHUB_NATIVE","scope":"CodeQL/dependency audit","failure":"Previously external.","resolution":"Both manual GitHub dispatches succeeded.","status":"RESOLVED"}
+  ],
+  "counts": {"resolved": 13, "open": 2, "unexplained": 0}
+}

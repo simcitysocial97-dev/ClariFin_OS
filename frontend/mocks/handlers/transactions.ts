@@ -2,7 +2,7 @@ import { http, HttpResponse } from 'msw'
 import { mockTransactionList } from '../fixtures/transactions'
 
 export const transactionHandlers = [
-  http.get('/api/transactions', ({ request }) => {
+  http.get('/api/v1/transactions', ({ request }) => {
     const url = new URL(request.url)
     const search = url.searchParams.get('search')
     const bank = url.searchParams.get('bank')

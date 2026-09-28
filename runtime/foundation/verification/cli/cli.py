@@ -30,25 +30,18 @@ def _find_repo_root() -> Path:
     return Path.cwd()
 
 
-# Ensure repository root is in sys.path for imports
-REPO_ROOT = _find_repo_root()
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
-
 from runtime.foundation.verification.models import (  # noqa: E402
+    VerificationPlan,
     VerificationScope,
 )
-from runtime.foundation.verification.planner import plan_verification  # noqa: E402
-from runtime.foundation.verification.planner.plan_models import (  # noqa: E402
-    VerificationPlan,
-)
-from runtime.foundation.verification.registry import VerificationRegistry  # noqa: E402
 from runtime.foundation.verification.models.scope import (  # noqa: E402
     SCOPE_EXPLANATIONS,
     explain_frontend_api_change,
     explain_loan_engine,
     get_scope_resolver,
 )
+from runtime.foundation.verification.planner import plan_verification  # noqa: E402
+from runtime.foundation.verification.registry import VerificationRegistry  # noqa: E402
 
 
 @click.group()
@@ -163,11 +156,11 @@ def resolve(file_paths: tuple[str, ...]):
     all_modules = resolver.get_affected_modules(list(file_paths))
 
     click.echo("\nSummary:")
-    click.echo("  Affected scopes: {0}".format(", ".join(s.value for s in all_scopes)))
+    click.echo("  Affected scopes: {}".format(", ".join(s.value for s in all_scopes)))
     click.echo(
-        "  Affected capabilities: {0}".format(", ".join(all_capabilities) or "none")
+        "  Affected capabilities: {}".format(", ".join(all_capabilities) or "none")
     )
-    click.echo("  Affected modules: {0}".format(", ".join(all_modules) or "none"))
+    click.echo("  Affected modules: {}".format(", ".join(all_modules) or "none"))
 
 
 @cli.command()
@@ -377,8 +370,12 @@ def print_plan_table(plan: VerificationPlan) -> None:
 
 @cli.command(name="backend")
 @click.option("--deep", is_flag=True, help="Run full verification by triggering CI")
-@click.option("--affected", is_flag=True, help="Run only for changed files since last commit")
-@click.option("--plan", is_flag=True, help="Show verification plan without running tests")
+@click.option(
+    "--affected", is_flag=True, help="Run only for changed files since last commit"
+)
+@click.option(
+    "--plan", is_flag=True, help="Show verification plan without running tests"
+)
 def backend_cli_cmd(
     deep: bool,
     affected: bool,
@@ -392,8 +389,6 @@ def backend_cli_cmd(
     verify backend --plan    Show plan without running
     """
     repo_root = _find_repo_root()
-    if str(repo_root) not in sys.path:
-        sys.path.insert(0, str(repo_root))
 
     from runtime.foundation.verification.planner.plan_models import (
         VerificationPlan as SelectivePlan,
@@ -407,26 +402,42 @@ def backend_cli_cmd(
         click.echo(f"Verification Plan: {verification_plan.plan_id}")
         click.echo(f"Changed files: {len(verification_plan.changed_files)}")
         click.echo(f"Blast radius: {verification_plan.impact.blast_radius}")
-        click.echo(f"Affected engines: {', '.join(verification_plan.impact.engines) or 'none'}")
-        click.echo(f"Affected services: {', '.join(verification_plan.impact.services) or 'none'}")
-        click.echo(f"Affected routers: {', '.join(verification_plan.impact.routers) or 'none'}")
+        click.echo(
+            f"Affected engines: {', '.join(verification_plan.impact.engines) or 'none'}"
+        )
+        click.echo(
+            f"Affected services: {', '.join(verification_plan.impact.services) or 'none'}"
+        )
+        click.echo(
+            f"Affected routers: {', '.join(verification_plan.impact.routers) or 'none'}"
+        )
         click.echo()
         click.echo("What will run:")
-        click.echo(f"  Unit tests: {'YES' if verification_plan.unit_tests.run else 'no'}")
+        click.echo(
+            f"  Unit tests: {'YES' if verification_plan.unit_tests.run else 'no'}"
+        )
         if verification_plan.unit_tests.run:
             for p in verification_plan.unit_tests.paths:
                 click.echo(f"    - {p}")
-        click.echo(f"  Property tests: {'YES' if verification_plan.property_tests.run else 'no'}")
+        click.echo(
+            f"  Property tests: {'YES' if verification_plan.property_tests.run else 'no'}"
+        )
         if verification_plan.property_tests.run:
             for p in verification_plan.property_tests.paths:
                 click.echo(f"    - {p}")
-        click.echo(f"  Contract tests: {'YES' if verification_plan.contract_tests.run else 'no'}")
+        click.echo(
+            f"  Contract tests: {'YES' if verification_plan.contract_tests.run else 'no'}"
+        )
         click.echo(f"  Mutation: {'YES' if verification_plan.mutation.run else 'no'}")
         if verification_plan.mutation.run:
             for t in verification_plan.mutation.targets:
                 click.echo(f"    - {t}")
-        click.echo(f"  Integration tests: {'YES' if verification_plan.integration_tests.run else 'no'}")
-        click.echo(f"  Golden tests: {'YES' if verification_plan.golden_tests.run else 'no'}")
+        click.echo(
+            f"  Integration tests: {'YES' if verification_plan.integration_tests.run else 'no'}"
+        )
+        click.echo(
+            f"  Golden tests: {'YES' if verification_plan.golden_tests.run else 'no'}"
+        )
         return
 
     if deep:
@@ -501,8 +512,6 @@ def backend_cli_cmd(
 def evidence_cli():
     """Download and display latest verification evidence from GitHub Actions."""
     repo_root = _find_repo_root()
-    if str(repo_root) not in sys.path:
-        sys.path.insert(0, str(repo_root))
 
     gh_check = subprocess.run(
         ["which", "gh"],
@@ -532,7 +541,15 @@ def evidence_cli():
         shutil.rmtree(dl_dir)
 
     dl_result = subprocess.run(
-        ["gh", "run", "download", "--name", "evidence-summary*", "--dir", "evidence-download/"],
+        [
+            "gh",
+            "run",
+            "download",
+            "--name",
+            "evidence-summary*",
+            "--dir",
+            "evidence-download/",
+        ],
         capture_output=True,
         text=True,
         cwd=str(repo_root),
@@ -549,7 +566,14 @@ def evidence_cli():
             if runs:
                 run_id = runs[0]["databaseId"]
                 subprocess.run(
-                    ["gh", "run", "download", str(run_id), "--dir", "evidence-download/"],
+                    [
+                        "gh",
+                        "run",
+                        "download",
+                        str(run_id),
+                        "--dir",
+                        "evidence-download/",
+                    ],
                     cwd=str(repo_root),
                 )
 
@@ -575,10 +599,14 @@ def evidence_cli():
 
     backend = summary.get("backend", {})
     ut = backend.get("unit_tests", {})
-    click.echo(f"Unit Tests: {ut.get('status', 'N/A')} (passed={ut.get('passed', 0)}, failed={ut.get('failed', 0)})")
+    click.echo(
+        f"Unit Tests: {ut.get('status', 'N/A')} (passed={ut.get('passed', 0)}, failed={ut.get('failed', 0)})"
+    )
 
     cov = backend.get("coverage", {})
-    click.echo(f"Coverage: {cov.get('overall_pct', 0):.1f}% overall, {cov.get('engines_pct', 0):.1f}% engines")
+    click.echo(
+        f"Coverage: {cov.get('overall_pct', 0):.1f}% overall, {cov.get('engines_pct', 0):.1f}% engines"
+    )
 
     mut = backend.get("mutation", {})
     for engine, data in mut.items():
@@ -590,7 +618,9 @@ def evidence_cli():
     if attention:
         click.echo("\nAttention needed:")
         for item in attention:
-            click.echo(f"  - {item.get('type', 'unknown')}: {item.get('details', item.get('action', ''))}")
+            click.echo(
+                f"  - {item.get('type', 'unknown')}: {item.get('details', item.get('action', ''))}"
+            )
     else:
         click.echo("\nNo issues found.")
 
@@ -657,6 +687,7 @@ def _get_repo_url() -> str:
             url = url.replace(":", "/", 1).replace("git@", "https://")
         return url
     return "github.com/unknown/repo"
+
 
 if __name__ == "__main__":
     cli()

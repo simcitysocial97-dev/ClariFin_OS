@@ -1,0 +1,13 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_127: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -72,7 +72,7 @@
+ 
+     if len(new_subscriptions) > 0:
+         return Recommendation(
+-            title="Review Subscriptions",
++            title=None,
+             reason="New subscription services detected",
+             metric=f"{len(new_subscriptions)} new subscriptions added",
+             severity="LOW",

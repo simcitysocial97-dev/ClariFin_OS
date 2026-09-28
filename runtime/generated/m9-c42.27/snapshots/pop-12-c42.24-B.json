@@ -1,0 +1,281 @@
+{
+  "snapshot": {
+    "population_id": "pop-12-c42.24-B",
+    "created_at": "2026-08-24T18:00:00+00:00",
+    "components": [
+      "account_engine",
+      "balance_engine",
+      "behaviour_engine",
+      "cashflow_engine",
+      "common_calculations",
+      "core_domain_money",
+      "credit_card_engine",
+      "financial_events",
+      "ledger_audit_engine",
+      "loan_engine",
+      "recommendation_engine",
+      "reconciliation_engine"
+    ],
+    "component_fingerprints": {
+      "account_engine": "src::account_engine",
+      "balance_engine": "src::balance_engine",
+      "behaviour_engine": "src::behaviour_engine",
+      "cashflow_engine": "src::cashflow_engine",
+      "common_calculations": "src::common_calculations",
+      "core_domain_money": "src::core_domain_money",
+      "credit_card_engine": "src::credit_card_engine",
+      "financial_events": "src::financial_events",
+      "ledger_audit_engine": "src::ledger_audit_engine",
+      "loan_engine": "src::loan_engine",
+      "recommendation_engine": "src::recommendation_engine",
+      "reconciliation_engine": "src::reconciliation_engine"
+    },
+    "config_hash": "c42-24-B-config-v1",
+    "toolchain_hash": "mutmut-3.7.0|pytest-8.x",
+    "repository_sha": "6bb27a89",
+    "notes": "12-component population from C42.24-B authoritative campaign.",
+    "population_fingerprint": "9c8d151043db7e823d3513bebc933bc4daabf2339ebba64ce50b35904e88b5a3"
+  },
+  "measurements": [
+    {
+      "measurement_id": "meas::account_engine::c42.24-B",
+      "component": "account_engine",
+      "population_id": "pop-12-c42.24-B",
+      "kind": "mutation",
+      "run_id": "c42.24-B-full",
+      "measured_at": "2026-08-24T18:00:00+00:00",
+      "repository_sha": "6bb27a89",
+      "source_fingerprint": "src::account_engine",
+      "test_fingerprint": "tests::account_engine",
+      "config_hash": "c42-24-B-config-v1",
+      "toolchain_hash": "mutmut-3.7.0|pytest-8.x",
+      "summary": {
+        "scored": 183,
+        "killed": 163,
+        "mutation_score_pct": 89.07
+      },
+      "notes": "C42.24-B authoritative full campaign measurement",
+      "measurement_fingerprint": "0e9f2ede10af6daef2b6f24ba0ade48b2e251453d6b33228da7e740c606d177a"
+    },
+    {
+      "measurement_id": "meas::balance_engine::c42.24-B",
+      "component": "balance_engine",
+      "population_id": "pop-12-c42.24-B",
+      "kind": "mutation",
+      "run_id": "c42.24-B-full",
+      "measured_at": "2026-08-24T18:00:00+00:00",
+      "repository_sha": "6bb27a89",
+      "source_fingerprint": "src::balance_engine",
+      "test_fingerprint": "tests::balance_engine",
+      "config_hash": "c42-24-B-config-v1",
+      "toolchain_hash": "mutmut-3.7.0|pytest-8.x",
+      "summary": {
+        "scored": 285,
+        "killed": 270,
+        "mutation_score_pct": 94.74
+      },
+      "notes": "C42.24-B authoritative full campaign measurement",
+      "measurement_fingerprint": "55d1f299bcc6333d0e79f26fa38b42edebe7dd8d03a0caadf77dd3d3434833c4"
+    },
+    {
+      "measurement_id": "meas::behaviour_engine::c42.24-B",
+      "component": "behaviour_engine",
+      "population_id": "pop-12-c42.24-B",
+      "kind": "mutation",
+      "run_id": "c42.24-B-full",
+      "measured_at": "2026-08-24T18:00:00+00:00",
+      "repository_sha": "6bb27a89",
+      "source_fingerprint": "src::behaviour_engine",
+      "test_fingerprint": "tests::behaviour_engine",
+      "config_hash": "c42-24-B-config-v1",
+      "toolchain_hash": "mutmut-3.7.0|pytest-8.x",
+      "summary": {
+        "scored": 5258,
+        "killed": 1875,
+        "mutation_score_pct": 35.66
+      },
+      "notes": "C42.24-B authoritative full campaign measurement",
+      "measurement_fingerprint": "91d7e851d1f5488193b0bf3981c33093aef58c07c8064d6f0ba4b3673073c3fc"
+    },
+    {
+      "measurement_id": "meas::cashflow_engine::c42.24-B",
+      "component": "cashflow_engine",
+      "population_id": "pop-12-c42.24-B",
+      "kind": "mutation",
+      "run_id": "c42.24-B-full",
+      "measured_at": "2026-08-24T18:00:00+00:00",
+      "repository_sha": "6bb27a89",
+      "source_fingerprint": "src::cashflow_engine",
+      "test_fingerprint": "tests::cashflow_engine",
+      "config_hash": "c42-24-B-config-v1",
+      "toolchain_hash": "mutmut-3.7.0|pytest-8.x",
+      "summary": {
+        "scored": 172,
+        "killed": 128,
+        "mutation_score_pct": 74.42
+      },
+      "notes": "C42.24-B authoritative full campaign measurement",
+      "measurement_fingerprint": "94c299a7b76add29ace08c6391d06da41c0a61f06bc151d9b3590173c8421814"
+    },
+    {
+      "measurement_id": "meas::common_calculations::c42.24-B",
+      "component": "common_calculations",
+      "population_id": "pop-12-c42.24-B",
+      "kind": "mutation",
+      "run_id": "c42.24-B-full",
+      "measured_at": "2026-08-24T18:00:00+00:00",
+      "repository_sha": "6bb27a89",
+      "source_fingerprint": "src::common_calculations",
+      "test_fingerprint": "tests::common_calculations",
+      "config_hash": "c42-24-B-config-v1",
+      "toolchain_hash": "mutmut-3.7.0|pytest-8.x",
+      "summary": {
+        "scored": 377,
+        "killed": 213,
+        "mutation_score_pct": 56.5
+      },
+      "notes": "C42.24-B authoritative full campaign measurement",
+      "measurement_fingerprint": "a62d74e7395badcb33328e11f60b5cc748efed356638f22127e3bb9704798dc7"
+    },
+    {
+      "measurement_id": "meas::core_domain_money::c42.24-B",
+      "component": "core_domain_money",
+      "population_id": "pop-12-c42.24-B",
+      "kind": "mutation",
+      "run_id": "c42.24-B-full",
+      "measured_at": "2026-08-24T18:00:00+00:00",
+      "repository_sha": "6bb27a89",
+      "source_fingerprint": "src::core_domain_money",
+      "test_fingerprint": "tests::core_domain_money",
+      "config_hash": "c42-24-B-config-v1",
+      "toolchain_hash": "mutmut-3.7.0|pytest-8.x",
+      "summary": {
+        "scored": 102,
+        "killed": 84,
+        "mutation_score_pct": 82.35
+      },
+      "notes": "C42.24-B authoritative full campaign measurement",
+      "measurement_fingerprint": "d6d6906d08fd46d99954396d9a677797d8d74f67ab4c6ba203eb61aee7474aac"
+    },
+    {
+      "measurement_id": "meas::credit_card_engine::c42.24-B",
+      "component": "credit_card_engine",
+      "population_id": "pop-12-c42.24-B",
+      "kind": "mutation",
+      "run_id": "c42.24-B-full",
+      "measured_at": "2026-08-24T18:00:00+00:00",
+      "repository_sha": "6bb27a89",
+      "source_fingerprint": "src::credit_card_engine",
+      "test_fingerprint": "tests::credit_card_engine",
+      "config_hash": "c42-24-B-config-v1",
+      "toolchain_hash": "mutmut-3.7.0|pytest-8.x",
+      "summary": {
+        "scored": 582,
+        "killed": 440,
+        "mutation_score_pct": 75.6
+      },
+      "notes": "C42.24-B authoritative full campaign measurement",
+      "measurement_fingerprint": "a9658f8258f2b2a79b4e6a97be8e8c198d10db320f6e8d961ce9e0c1feb2696f"
+    },
+    {
+      "measurement_id": "meas::financial_events::c42.24-B",
+      "component": "financial_events",
+      "population_id": "pop-12-c42.24-B",
+      "kind": "mutation",
+      "run_id": "c42.24-B-full",
+      "measured_at": "2026-08-24T18:00:00+00:00",
+      "repository_sha": "6bb27a89",
+      "source_fingerprint": "src::financial_events",
+      "test_fingerprint": "tests::financial_events",
+      "config_hash": "c42-24-B-config-v1",
+      "toolchain_hash": "mutmut-3.7.0|pytest-8.x",
+      "summary": {
+        "scored": 704,
+        "killed": 454,
+        "mutation_score_pct": 64.49
+      },
+      "notes": "C42.24-B authoritative full campaign measurement",
+      "measurement_fingerprint": "c9a7cf8711a0c523fdee25ac1a997a7db4015fa788cc5a55d91f7455884b105e"
+    },
+    {
+      "measurement_id": "meas::ledger_audit_engine::c42.24-B",
+      "component": "ledger_audit_engine",
+      "population_id": "pop-12-c42.24-B",
+      "kind": "mutation",
+      "run_id": "c42.24-B-full",
+      "measured_at": "2026-08-24T18:00:00+00:00",
+      "repository_sha": "6bb27a89",
+      "source_fingerprint": "src::ledger_audit_engine",
+      "test_fingerprint": "tests::ledger_audit_engine",
+      "config_hash": "c42-24-B-config-v1",
+      "toolchain_hash": "mutmut-3.7.0|pytest-8.x",
+      "summary": {
+        "scored": 190,
+        "killed": 108,
+        "mutation_score_pct": 56.84
+      },
+      "notes": "C42.24-B authoritative full campaign measurement",
+      "measurement_fingerprint": "6a5c8d2dac154d96b6fb2480bf1f9b6f0ab9e0659adc5aa5679090391b242bef"
+    },
+    {
+      "measurement_id": "meas::loan_engine::c42.24-B",
+      "component": "loan_engine",
+      "population_id": "pop-12-c42.24-B",
+      "kind": "mutation",
+      "run_id": "c42.24-B-full",
+      "measured_at": "2026-08-24T18:00:00+00:00",
+      "repository_sha": "6bb27a89",
+      "source_fingerprint": "src::loan_engine",
+      "test_fingerprint": "tests::loan_engine",
+      "config_hash": "c42-24-B-config-v1",
+      "toolchain_hash": "mutmut-3.7.0|pytest-8.x",
+      "summary": {
+        "scored": 1273,
+        "killed": 1066,
+        "mutation_score_pct": 83.74
+      },
+      "notes": "C42.24-B authoritative full campaign measurement",
+      "measurement_fingerprint": "6c84e251eb4b762c9a244d0c185fd9236768e769fed6f28c6a1d863cbbebbdd0"
+    },
+    {
+      "measurement_id": "meas::recommendation_engine::c42.24-B",
+      "component": "recommendation_engine",
+      "population_id": "pop-12-c42.24-B",
+      "kind": "mutation",
+      "run_id": "c42.24-B-full",
+      "measured_at": "2026-08-24T18:00:00+00:00",
+      "repository_sha": "6bb27a89",
+      "source_fingerprint": "src::recommendation_engine",
+      "test_fingerprint": "tests::recommendation_engine",
+      "config_hash": "c42-24-B-config-v1",
+      "toolchain_hash": "mutmut-3.7.0|pytest-8.x",
+      "summary": {
+        "scored": 282,
+        "killed": 179,
+        "mutation_score_pct": 63.48
+      },
+      "notes": "C42.24-B authoritative full campaign measurement",
+      "measurement_fingerprint": "76f888e883d75abdd82dc26ed947fe8e945ef30b09dd0ff3e5101f8c0f5d12de"
+    },
+    {
+      "measurement_id": "meas::reconciliation_engine::c42.24-B",
+      "component": "reconciliation_engine",
+      "population_id": "pop-12-c42.24-B",
+      "kind": "mutation",
+      "run_id": "c42.24-B-full",
+      "measured_at": "2026-08-24T18:00:00+00:00",
+      "repository_sha": "6bb27a89",
+      "source_fingerprint": "src::reconciliation_engine",
+      "test_fingerprint": "tests::reconciliation_engine",
+      "config_hash": "c42-24-B-config-v1",
+      "toolchain_hash": "mutmut-3.7.0|pytest-8.x",
+      "summary": {
+        "scored": 368,
+        "killed": 297,
+        "mutation_score_pct": 80.71
+      },
+      "notes": "C42.24-B authoritative full campaign measurement",
+      "measurement_fingerprint": "1e5b13dfc1acfc27e0b70d177c9422d0bbe6b7537190392423b48a7164db47fd"
+    }
+  ]
+}

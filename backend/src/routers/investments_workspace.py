@@ -15,7 +15,7 @@ from src.services.investments_workspace_service import InvestmentsWorkspaceServi
 # This import matches the actual file name
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/api/v1", tags=["investments-workspace"])
+router = APIRouter(prefix="/api/v1/workspaces", tags=["investments-workspace"])
 
 
 def _timed_log(

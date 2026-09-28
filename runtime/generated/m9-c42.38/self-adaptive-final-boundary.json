@@ -1,0 +1,36 @@
+{
+  "schema": "m9-c42.38-self-adaptive-final-boundary/v1",
+  "generated_at": "2026-08-27T01:48:00.000000+00:00",
+  "phase": "M9-C42.38",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "methodology": "Verify the complete strengthening chain against runtime/foundation/verification/strengthening.py and the executable C42.31 test suite (27 passed). No calibration of Class-E thresholds by inventing data.",
+  "chain_checks": [
+    {"step": "survivor -> classification", "mechanism": "classify_survivor(s)", "verified": true},
+    {"step": "classification -> evidence-derived proposal", "mechanism": "generate_proposal(s) -> StrengtheningProposal for Class A", "verified": true},
+    {"step": "human authorization boundary", "mechanism": "evaluate_auto_approval_eligibility -> approved=False (hardcoded)", "verified": true},
+    {"step": "targeted revalidation", "mechanism": "targeted_revalidation() runs executor on component only; accepts if target killed + zero regressions; used_full_campaign always False", "verified": true},
+    {"step": "regression check", "mechanism": "kill_regressions==0 required for acceptance", "verified": true},
+    {"step": "accept/reject", "mechanism": "proposal accepted only with hypothesis_validated and zero regressions", "verified": true}
+  ],
+  "class_handling": [
+    {"class": "A", "behavior": "proposal generated", "result": "PASS", "evidence": "generate_proposal returns StrengtheningProposal for Class A (C42.31 master scenario prop::193ca2a5e7e1 accepted)"},
+    {"class": "B", "behavior": "refused (equivalent/observable-equivalent)", "result": "PASS", "evidence": "generate_proposal returns RejectionRecord('B')"},
+    {"class": "C", "behavior": "refused (defensive/observability)", "result": "PASS", "evidence": "generate_proposal returns RejectionRecord('C')"},
+    {"class": "D", "behavior": "refused; requires measurement repair", "result": "PASS", "evidence": "generate_proposal returns RejectionRecord('D')"},
+    {"class": "E", "behavior": "refused; requires human escalation", "result": "PASS", "evidence": "generate_proposal returns RejectionRecord('E')"}
+  ],
+  "boundary_guards": [
+    {"guard": "score improvement alone cannot trigger work", "result": "PASS", "evidence": "gate_full_campaign: 'score_improvement_desire' in NOT_TRIGGERS -> rejected"},
+    {"guard": "test addition alone cannot trigger full mutation", "result": "PASS", "evidence": "gate_full_campaign: 'test_addition' in NOT_TRIGGERS -> rejected"},
+    {"guard": "incomplete campaign justification is rejected", "result": "PASS", "evidence": "gate_full_campaign requires FullCampaignJustification with why_mathematical_reconciliation_cannot_answer; missing -> not permitted"},
+    {"guard": "production modification cannot occur autonomously", "result": "PASS", "evidence": "strengthening.py has no production write path; ApprovalDecision.approved always False"}
+  ],
+  "class_e_calibration": {
+    "status": "DEFERRED_FOR_DATA",
+    "classification": "DEFERRED",
+    "evidence": "CLASS-E ESCALATION contract defined in C42.32-36/repeated-survivor-analysis.json; threshold conditions (observation_count>=3, independent_change_count>=2) proposed. Requires real historical data accumulation for empirical validation. Not calibrated by inventing data (per M38.7 rule).",
+    "is_blocker": false
+  },
+  "verdict": "CERTIFIED_WITH_LIMITATION",
+  "test_evidence": "runtime/tests/test_m9_c42_31.py: 27 passed"
+}

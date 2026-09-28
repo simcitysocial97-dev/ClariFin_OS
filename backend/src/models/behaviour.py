@@ -9,6 +9,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from src.core.domain.household import DEFAULT_HOUSEHOLD_ID
 from src.models.base import DomainModel
 
 # Type aliases for common types
@@ -118,7 +119,7 @@ class BehaviourSnapshotCreate(DomainModel):
     """Input model for creating a behaviour snapshot."""
 
     snapshot_date: str
-    household_id: str = "default"
+    household_id: str = DEFAULT_HOUSEHOLD_ID
     savings_discipline_score_bps: int
     cashflow_stability_score_bps: int
     salary_dependence_ratio_bps: int

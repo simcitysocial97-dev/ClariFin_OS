@@ -20,10 +20,12 @@ dependency any more; this script documents and verifies that state.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 GENERATED = PROJECT_ROOT / "runtime" / "generated"
@@ -43,7 +45,7 @@ PROVIDER_MODULE = "runtime.foundation.architecture.get_architecture"
 
 
 def _now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 # ---------------------------------------------------------------------------
@@ -72,7 +74,9 @@ def _scan_consumers() -> list[dict]:
                         "module": rel,
                         "current_source": art,
                         "migration_target": PROVIDER_MODULE,
-                        "remaining_legacy_logic": "" if migrated else "reads legacy artifact directly",
+                        "remaining_legacy_logic": (
+                            "" if migrated else "reads legacy artifact directly"
+                        ),
                         "duplicated_discovery": False,
                         "migration_status": "migrated" if migrated else "review",
                     }
@@ -93,9 +97,7 @@ def _is_migrated(rel: str, art: str) -> bool:
         return True
     if rel.startswith("tools/generators/build_cross_layer_map.py"):
         return True
-    if rel.startswith("runtime/analyze_"):
-        return True
-    return False
+    return bool(rel.startswith("runtime/analyze_"))
 
 
 def build_provider_consumer_inventory() -> dict:
@@ -208,7 +210,7 @@ def build_performance() -> dict:
 
 
 def build_retirement_plan() -> dict:
-    candidates = [
+    candidates: list[dict[str, Any]] = [
         {
             "file": "tools/generators/build_cross_layer_map.py",
             "role": "Legacy cross-layer map generator (now a delegating shim)",
@@ -417,10 +419,8 @@ def main() -> int:
     status = "CERTIFIED"
     ap = GENERATED / "engineering-platform-audit-v3.json"
     if ap.exists():
-        try:
+        with contextlib.suppress(OSError, json.JSONDecodeError):
             status = json.loads(ap.read_text()).get("certification_status", status)
-        except (OSError, json.JSONDecodeError):
-            pass
     (GENERATED / "runtime-consumer-migration.md").write_text(build_narrative(status))
     print("Program 13.3 deliverables written to runtime/generated/")
     return 0

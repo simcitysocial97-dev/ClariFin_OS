@@ -1,0 +1,81 @@
+{
+  "schema": "m9-c45-evidence-and-boundary/v1",
+  "milestones": ["M45.11", "M45.12"],
+  "M45.11_evidence_certification": {
+    "objective": "Audit downstream code paths to verify they consume ONLY canonical mutmut evidence (via mutation_summary.json, measurement_truth.json, survivor_catalog, survivor_intel).",
+    "audit_method": "Repository-wide grep for: (a) subprocess calls with 'mutmut' as executable, (b) status-string parsing (killed/survived/timeout/suspicious), (c) .meta/.spans file reads, (d) mutmut mutant-ID construction/parsing.",
+    "canonical_consumers": [
+      {"module": "mutation_runner.py", "role": "Authoritative runner — owns subprocess invocations of mutmut", "classification": "CANONICAL"},
+      {"module": "mutation_contract.py", "role": "Status vocabulary (parse_mutmut_results, _MUTMUT_EXIT_CODE_TO_STATUS)", "classification": "CANONICAL"},
+      {"module": "mutation_execution.mutmut_adapter", "role": "Adapter behind MutationBackendBase", "classification": "ADAPTER_ISOLATED"},
+      {"module": "mutation_execution.evidence", "role": "Adapter-side evidence aggregation", "classification": "ADAPTER_ISOLATED"},
+      {"module": "survivor_catalog", "role": "libcst-based reconstruction post-run", "classification": "CANONICAL_VIA_COMPOSITION"},
+      {"module": "survivor_intel", "role": "Opt-in enrichment via mutmut tests-for-mutant; never feeds verdict", "classification": "ADAPTER_ISOLATED_SUPPLEMENTARY"},
+      {"module": "forensic_cli", "role": "Manual forensic analysis only (show, tests-for-mutant)", "classification": "ADAPTER_ISOLATED_SUPPLEMENTARY"}
+    ],
+    "test_only_consumers": [
+      "runtime/tests/test_mutation_infra.py — hermetic tmp-path cache provenance tests",
+      "runtime/tests/test_survivor_intel.py — monkey-patches tests-for-mutant",
+      "backend/tests/conftest.py — in-process mutmut.__main__ import shim (no subprocess)"
+    ],
+    "delegating_wrappers": [
+      ".github/scripts/run_mutation_selective.sh — exec verify.py mutation (no parsing)"
+    ],
+    "toolchain_guards": [
+      "scripts/env-doctor.sh — runs 'mutmut --version' only"
+    ],
+    "violations": [
+      {
+        "module": "runtime/foundation/verification/mutation_inventory.py",
+        "lines": "73-187 (collect_results, show_mutant, _parse_diff)",
+        "issue": "Calls subprocess.run([mutmut, 'results', '--all', 'true']) and subprocess.run([mutmut, 'show', ...]) directly; parses status strings. Duplicates canonical _MUTMUT_EXIT_CODE_TO_STATUS and parse_mutmut_results.",
+        "impact": "Does NOT feed the campaign verdict. The PURE classify() function IS consumed by survivor_intel (canonical reuse).",
+        "remediation": "REFACTOR: Have collect_results() and show_mutant() consume canonical mutation-summary.json + mutation-survivors.json. Deferred to follow-up — out of scope for M45.11 audit.",
+        "severity": "MEDIUM (architectural debt, no campaign-verdict impact)"
+      }
+    ],
+    "diagnostic_agent_consumption": {
+      "module": "measurement_truth.py",
+      "consumes": "Artifact paths only",
+      "subprocess": "NONE",
+      "verdict": "CANONICAL"
+    },
+    "survivor_intelligence_consumption": {
+      "module": "survivor_intel.py",
+      "consumes": "Canonical survivor_catalog + canonical mutation_inventory.classify (pure)",
+      "subprocess": "Optional enrich via 'mutmut tests-for-mutant' (opt-in, never feeds verdict)",
+      "verdict": "CANONICAL with documented opt-in forensic enrichment"
+    },
+    "strengthening_pipeline_consumption": {
+      "module": "convergence_pipeline.py",
+      "consumes": "Canonical mutation-summary.json + mutation-survivors.json + survivor-intel.json",
+      "subprocess": "NONE",
+      "verdict": "CANONICAL"
+    },
+    "verdict": "QUALIFIED_WITH_KNOWN_VIOLATIONS",
+    "summary": "The Diagnostic Agent, Survivor Intelligence, and Strengthening Pipeline all consume canonical evidence. One violation: mutation_inventory.py has direct mutmut IO functions — kept for now because the PURE classify() function is heavily used.",
+    "next_step": "M45.23 (architecture doc) declares the canonical evidence boundary; migration of mutation_inventory IO functions is deferred to a future milestone."
+  },
+  "M45.12_legacy_boundary": {
+    "objective": "Enforce a clear execution-path boundary between canonical (verify.py mutation) and legacy direct-mutmut invocations.",
+    "implementation": {
+      "field_added": "execution_path: str = 'VERIFICATION_CONTROL_PLANE'",
+      "where_added": "runtime/foundation/verification/mutation_contract.py — MutationResult dataclass (frozen, slots)",
+      "canonical_value": "VERIFICATION_CONTROL_PLANE",
+      "legacy_value": "LEGACY_DIRECT_BACKEND",
+      "where_set_to_canonical": "runtime/foundation/verification/mutation_runner.py — explicit kwarg in MutationResult(...) call",
+      "summary_emission": "execution_path is included in MutationResult.to_dict() and therefore in every mutation-summary.json and measurement-truth.json written by the runner."
+    },
+    "shell_script_wrapper_audit": {
+      "run_mutation_selective_sh": "Delegates to 'verify.py mutation' (--full argparser-rejected flag removed M9-C45.9). Its invocation never produces LEGACY_DIRECT_BACKEND evidence.",
+      "workflow_yml": "Both mutation-smoke and mutation jobs invoke 'python runtime/verify.py mutation' — canonical. No LEGACY_DIRECT_BACKEND value is ever produced."
+    },
+    "boundary_invariants": {
+      "every_evidence_file_has_execution_path_field": "PASS — to_dict() includes execution_path",
+      "canonical_runner_always_sets_canonical_value": "PASS — explicit kwarg",
+      "no_legacy_path_wired_into_workflows": "PASS — audit of .github/workflows/*.yml finds zero direct mutmut invocations"
+    },
+    "verdict": "QUALIFIED",
+    "decision": "M45.12 boundary enforced. Every evidence file produced by the canonical runner carries execution_path='VERIFICATION_CONTROL_PLANE'. Any future direct-mutmut consumer can be detected by absence of this field or by the LEGACY_DIRECT_BACKEND value, and explicitly excluded from certification verdicts."
+  }
+}

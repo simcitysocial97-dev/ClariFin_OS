@@ -1,0 +1,174 @@
+{
+  "account_engine": {
+    "also_copy": [
+      "src"
+    ],
+    "engine": "account_engine",
+    "source_paths": [
+      "src/engines/account_engine"
+    ],
+    "test_selection": [
+      "tests/unit/engines/account",
+      "tests/capability/account_management"
+    ],
+    "tier": "P0"
+  },
+  "balance_engine": {
+    "also_copy": [
+      "src"
+    ],
+    "engine": "balance_engine",
+    "source_paths": [
+      "src/engines/balance_engine.py"
+    ],
+    "test_selection": [
+      "tests/unit/engines/balance_engine.py"
+    ],
+    "tier": "P0"
+  },
+  "behaviour_engine": {
+    "also_copy": [
+      "src"
+    ],
+    "engine": "behaviour_engine",
+    "source_paths": [
+      "src/engines/behaviour_engine"
+    ],
+    "test_selection": [
+      "tests/unit/engines/behaviour",
+      "tests/unit/engines/behaviour/test_metrics.py",
+      "tests/unit/engines/behaviour/test_integration.py",
+      "tests/properties/behaviour",
+      "tests/capability/pattern_analysis"
+    ],
+    "tier": "P1"
+  },
+  "cashflow_engine": {
+    "also_copy": [
+      "src"
+    ],
+    "engine": "cashflow_engine",
+    "source_paths": [
+      "src/engines/cashflow_engine.py"
+    ],
+    "test_selection": [
+      "tests/properties/cashflow"
+    ],
+    "tier": "P0"
+  },
+  "common_calculations": {
+    "also_copy": [
+      "src"
+    ],
+    "engine": "common_calculations",
+    "source_paths": [
+      "src/common/calculations.py"
+    ],
+    "test_selection": [
+      "tests/unit/test_calculations.py"
+    ],
+    "tier": "P0"
+  },
+  "core_domain_money": {
+    "also_copy": [
+      "src"
+    ],
+    "engine": "core_domain_money",
+    "source_paths": [
+      "src/core/domain"
+    ],
+    "test_selection": [
+      "tests/unit/test_money.py",
+      "tests/properties/test_money_invariants.py",
+      "tests/invariants/test_money.py"
+    ],
+    "tier": "P0"
+  },
+  "credit_card_engine": {
+    "also_copy": [
+      "src"
+    ],
+    "engine": "credit_card_engine",
+    "source_paths": [
+      "src/engines/credit_card_engine"
+    ],
+    "test_selection": [
+      "tests/unit/engines/credit_card",
+      "tests/properties/credit_card_engine",
+      "tests/capability/credit_cards"
+    ],
+    "tier": "P0"
+  },
+  "financial_events": {
+    "also_copy": [
+      "src"
+    ],
+    "engine": "financial_events",
+    "source_paths": [
+      "src/engines/financial_events"
+    ],
+    "test_selection": [
+      "tests/unit/engines/financial_events",
+      "tests/properties/financial_events",
+      "tests/capability/financial_events"
+    ],
+    "tier": "P1"
+  },
+  "ledger_audit_engine": {
+    "also_copy": [
+      "src"
+    ],
+    "engine": "ledger_audit_engine",
+    "source_paths": [
+      "src/engines/ledger_audit_engine.py"
+    ],
+    "test_selection": [
+      "tests/unit/engines/ledger_audit_engine.py"
+    ],
+    "tier": "P0"
+  },
+  "loan_engine": {
+    "also_copy": [
+      "src"
+    ],
+    "engine": "loan_engine",
+    "source_paths": [
+      "src/engines/loan_engine"
+    ],
+    "test_selection": [
+      "tests/unit/engines/loan",
+      "tests/properties/loan_engine"
+    ],
+    "tier": "P1"
+  },
+  "recommendation_engine": {
+    "also_copy": [
+      "src"
+    ],
+    "engine": "recommendation_engine",
+    "source_paths": [
+      "src/engines/recommendation_engine"
+    ],
+    "test_selection": [
+      "tests/unit/engines/recommendation",
+      "tests/capability/recommendations"
+    ],
+    "tier": "P1"
+  },
+  "reconciliation_engine": {
+    "also_copy": [
+      "src",
+      "tests"
+    ],
+    "engine": "reconciliation_engine",
+    "source_paths": [
+      "src/engines/reconciliation_engine.py"
+    ],
+    "test_selection": [
+      "tests/unit/engines/reconciliation",
+      "tests/properties/reconciliation",
+      "tests/capability/reconciliation"
+    ],
+    "tier": "P0"
+  }
+}

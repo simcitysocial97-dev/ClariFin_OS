@@ -1,0 +1,71 @@
+{
+  "milestone": "M9-C69",
+  "phase": "PHASE_1_API_CONTRACT_RECONCILIATION",
+  "generated_at": "2026-09-21T07:15:00Z",
+  "summary": {
+    "backend_endpoints_total": 189,
+    "frontend_consumed_paths": 56,
+    "generated_types_paths": 90,
+    "contract_mismatches": 0,
+    "stale_types": true,
+    "types_last_generated": "2026-08-20T15:04:00Z",
+    "c68_artifacts_generated": "2026-09-21T05:30:00Z"
+  },
+  "classification": {
+    "CONTRACT_MISMATCHES": 0,
+    "STALE_GENERATED_TYPES": true,
+    "NOTES": [
+      "Generated TypeScript types from 2026-08-20 are older than C68 artifacts (2026-09-21)",
+      "All 189 backend endpoints are registered in api.py",
+      "Frontend consumes 56 unique API paths via hooks and capabilities",
+      "No endpoint path mismatches detected between backend routers and frontend consumption"
+    ]
+  },
+  "mismatches": [],
+  "endpoint_coverage": {
+    "USER_FACING": {
+      "total": 99,
+      "consumed_by_frontend": 56,
+      "consumption_rate": "56.6%"
+    },
+    "PLATFORM_FACING": {
+      "total": 76,
+      "consumed_by_platform_console": 38,
+      "consumption_rate": "50.0%"
+    },
+    "INTERNAL": {
+      "total": 8,
+      "consumed_by_frontend": 0,
+      "consumption_rate": "0.0%",
+      "classification": "INTERNAL"
+    },
+    "DEPRECATED": {
+      "total": 6,
+      "consumed_by_frontend": 0,
+      "consumption_rate": "0.0%",
+      "classification": "LEGACY_ENDPOINT"
+    }
+  },
+  "generated_types_status": {
+    "file": "frontend/types/api-generated.ts",
+    "size_bytes": 259892,
+    "last_modified": "2026-08-20T15:04:00Z",
+    "paths_declared": 90,
+    "needs_regeneration": true,
+    "regeneration_command": "npm run gen:types --prefix frontend",
+    "regeneration_note": "Types are 32 days older than C68 baseline; regeneration recommended before final certification"
+  },
+  "path_alignment": {
+    "aligned_paths": 56,
+    "backend_only_paths": 133,
+    "frontend_only_paths": 0,
+    "mismatched_methods": 0,
+    "mismatched_params": 0
+  },
+  "drift_analysis": {
+    "api_path_drift": "NONE",
+    "method_drift": "NONE",
+    "param_drift": "NONE",
+    "response_schema_drift": "UNKNOWN - requires regeneration"
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "title": "M9-C42.27 — Final Certification",
+  "milestone": "M9-C42.27",
+  "phase": "Verification Graph + Planner Hardening",
+  "branch": "m9c9-merge-authorization-resolution",
+  "date": "2026-08-26",
+  "status": "CERTIFIED",
+  "certification_label": "VERIFICATION GRAPH + PLANNER HARDENING — 24/24 GATES PASSED",
+  "summary": {
+    "new_modules": [
+      "runtime/foundation/verification/graph_model.py",
+      "runtime/foundation/verification/evidence_reuse.py",
+      "runtime/foundation/verification/evidence_planner.py",
+      "runtime/foundation/verification/correlation.py"
+    ],
+    "new_tests": "runtime/tests/test_m9_c42_27.py (38 tests, 100% pass, 2.58s)",
+    "new_artifacts": "runtime/generated/m9-c42.27/ (8 JSON + 2 MD + 5 snapshot files)",
+    "production_code_modified": false,
+    "existing_test_failures_introduced": 0,
+    "scenarios_pass": "5/5"
+  },
+  "architecture_outcome": {
+    "graph_inventory": {
+      "sources": 411,
+      "capabilities": 14,
+      "test_surfaces": 57,
+      "tasks": 13,
+      "edges_source_to_capability": 59
+    },
+    "invalidation_rules": 14,
+    "reuse_dispositions": 9,
+    "scenarios": {
+      "A_test_only_change": "PASS",
+      "B_engine_source_change": "PASS",
+      "C_verification_config_change": "PASS",
+      "D_new_component_admission": "PASS",
+      "E_C42_24_discovery_defect": "PASS"
+    },
+    "derived_aggregate": {
+      "population": "pop-14-c42.26",
+      "result": 60.297,
+      "matches_c42_26_certification": true
+    }
+  },
+  "gates": {
+    "G1_C42_26_baseline_preserved": "PASS",
+    "G2_verification_graph_inventory_complete": "PASS",
+    "G3_canonical_graph_model_established": "PASS",
+    "G4_evidence_reuse_implemented": "PASS",
+    "G5_population_snapshots_implemented": "PASS",
+    "G6_measurement_records_implemented": "PASS",
+    "G7_evidence_invalidation_rules_implemented": "PASS",
+    "G8_planner_deterministic": "PASS",
+    "G9_selected_task_explainable": "PASS",
+    "G10_excluded_task_explainable": "PASS",
+    "G11_C42_24_discovery_regression_tested": "PASS",
+    "G12_targeted_vs_reusable_distinguished": "PASS",
+    "G13_derived_aggregate_distinguished": "PASS",
+    "G14_capability_level_impact_demonstrated": "PASS",
+    "G15_CI_evidence_integration_documented": "PASS",
+    "G16_scenarios_A_E_pass": "PASS",
+    "G17_existing_verification_gates_unchanged": "PASS",
+    "G18_existing_certified_evidence_intact": "PASS",
+    "G19_no_production_business_logic_modified": "PASS",
+    "G20_no_repository_code_deleted": "PASS",
+    "G21_no_arbitrary_mutation_score_target": "PASS",
+    "G22_no_broad_test_generation": "PASS",
+    "G23_no_intelligence_runtime_redesign": "PASS",
+    "G24_forward_convergence_report_updated": "PASS"
+  },
+  "measurement_policy": {
+    "targeted_mutation": "when a specific component has materially changed",
+    "full_mutation_campaign": [
+      "population expansion",
+      "major verification architecture change",
+      "mutation infrastructure/toolchain change",
+      "mutation configuration semantics change",
+      "significant cross-component architectural change",
+      "periodic measurement checkpoint",
+      "final certification milestone"
+    ]
+  },
+  "pre_existing_test_failures_out_of_scope": [
+    {
+      "test": "runtime/tests/test_backend_evidence.py::TestExitCodeContract::test_backend_exit_contract_holds_both_directions",
+      "reason": "runs real backend verification script (60-140s); pre-existing on clean branch"
+    },
+    {
+      "test": "runtime/tests/test_m9c5_gate_topology.py::test_quick_profile_task_ids_are_primary_gate_checks",
+      "reason": "expects quick-mypy in fast profile; actual is quick-black; pre-existing on clean branch"
+    },
+    {
+      "test": "runtime/tests/test_mutation_infra.py::test_smoke_end_to_end_distinguishes_classifications",
+      "reason": "mutmut execution leaves unexpected file modifications; pre-existing on clean branch"
+    },
+    {
+      "test": "runtime/tests/test_mutation_infra.py::test_r2_evidence_collected_with_target_config_active",
+      "reason": "runs real mutmut results subprocess; times out under default pytest timeout; pre-existing on clean branch"
+    },
+    {
+      "test": "runtime/tests/test_vea5_m8_merge_enforcement.py::test_m81_stale_workflows_use_verification_command_pattern",
+      "reason": "expects 1 mutation job; C42.5 split into smoke + authoritative (2 jobs); pre-existing on clean branch"
+    }
+  ]
+}

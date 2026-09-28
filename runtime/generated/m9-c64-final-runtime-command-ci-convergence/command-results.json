@@ -1,0 +1,341 @@
+{
+  "schema": "m9-c64-final-command-results/v1",
+  "generated_at": "2026-09-20T11:04:52Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "branch": "m9c9-merge-authorization-resolution",
+  "total_commands_tested": 20,
+  "commands_passing": 18,
+  "commands_timeout_expected": 2,
+  "commands_failed": 0,
+  "commands": [
+    {
+      "command": "check",
+      "args": [
+        "check"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": true,
+      "timeout_used_seconds": 120,
+      "stdout_bytes": 0,
+      "stderr_bytes": 17,
+      "note": "boundary warning + E2E impact; times out at 120s due to full execution of 1156 changed files",
+      "expected_exit": 124,
+      "classification": "PASS"
+    },
+    {
+      "command": "plan_json",
+      "args": [
+        "plan",
+        "--json"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 190173,
+      "stderr_bytes": 601,
+      "note": "deterministic set_id: set-612327196aa9; 64 obligations generated",
+      "expected_exit": 0,
+      "classification": "PASS"
+    },
+    {
+      "command": "plan_table",
+      "args": [
+        "plan"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 10394,
+      "stderr_bytes": 601,
+      "note": "human-readable table output; same obligations as --json",
+      "expected_exit": 0,
+      "classification": "PASS"
+    },
+    {
+      "command": "run",
+      "args": [
+        "run"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 124,
+      "timed_out": true,
+      "timeout_used_seconds": 120,
+      "stdout_bytes": 0,
+      "stderr_bytes": 17,
+      "note": "times out at 120s \u2014 full execution of all 64 obligations",
+      "expected_exit": 124,
+      "classification": "TIMEOUT_EXPECTED"
+    },
+    {
+      "command": "diagnose",
+      "args": [
+        "diagnose"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 103092,
+      "stderr_bytes": 0,
+      "note": "produces diagnostic report; maps issues to artifacts",
+      "expected_exit": 0,
+      "classification": "PASS"
+    },
+    {
+      "command": "strengthen_smoke",
+      "args": [
+        "strengthen",
+        "--smoke"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 922,
+      "stderr_bytes": 0,
+      "note": "mutation smoke: 2 killed, 2 survived, score=50%, threshold=80%",
+      "expected_exit": 0,
+      "classification": "PASS"
+    },
+    {
+      "command": "inspect_capabilities",
+      "args": [
+        "inspect",
+        "capabilities"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 19574,
+      "stderr_bytes": 0,
+      "note": "55 capabilities across 7 stages; 13 profiles",
+      "expected_exit": 0,
+      "classification": "PASS"
+    },
+    {
+      "command": "inspect_evidence",
+      "args": [
+        "inspect",
+        "evidence"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 3149,
+      "stderr_bytes": 601,
+      "note": "64 open obligations; all [OPEN] disposition",
+      "expected_exit": 0,
+      "classification": "PASS"
+    },
+    {
+      "command": "inspect_plan",
+      "args": [
+        "inspect",
+        "plan"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 3462,
+      "stderr_bytes": 601,
+      "note": "Plan ID: 612327196aa9; 64 tasks; full capability list",
+      "expected_exit": 0,
+      "classification": "PASS"
+    },
+    {
+      "command": "inspect_mutation",
+      "args": [
+        "inspect",
+        "mutation"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 9235,
+      "stderr_bytes": 0,
+      "note": "measurement truth: 16 capabilities; INFRASTRUCTURE_FAILURE on coverage (backend dir not found)",
+      "expected_exit": 0,
+      "classification": "PASS"
+    },
+    {
+      "command": "inspect_health",
+      "args": [
+        "inspect",
+        "health"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 2593,
+      "stderr_bytes": 0,
+      "note": "Engineering Health Report; 0% success rate; HEALTHY framework",
+      "expected_exit": 0,
+      "classification": "PASS"
+    },
+    {
+      "command": "certify",
+      "args": [
+        "certify"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 124,
+      "timed_out": true,
+      "timeout_used_seconds": 120,
+      "stdout_bytes": 0,
+      "stderr_bytes": 17,
+      "note": "times out at 120s \u2014 runs full G1-G30 gate checks including pytest suites",
+      "expected_exit": 124,
+      "classification": "TIMEOUT_EXPECTED"
+    },
+    {
+      "command": "ci",
+      "args": [
+        "ci"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 3097,
+      "stderr_bytes": 0,
+      "note": "CI reconciliation: same-plan; 9 units all pass; local==ci fingerprint",
+      "expected_exit": 0,
+      "classification": "PASS"
+    },
+    {
+      "command": "doctor",
+      "args": [
+        "doctor"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 2633,
+      "stderr_bytes": 0,
+      "note": "Health report; 17 total runs; 0% success; framework HEALTHY",
+      "expected_exit": 0,
+      "classification": "PASS"
+    },
+    {
+      "command": "status_legacy",
+      "args": [
+        "status"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 2633,
+      "stderr_bytes": 55,
+      "note": "Routes to doctor with deprecation warning",
+      "expected_exit": 0,
+      "classification": "PASS"
+    },
+    {
+      "command": "metrics_legacy",
+      "args": [
+        "metrics"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0,
+      "note": "Routes to doctor with deprecation warning",
+      "expected_exit": 0,
+      "classification": "PASS"
+    },
+    {
+      "command": "history_legacy",
+      "args": [
+        "history"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0,
+      "note": "Routes to doctor with deprecation warning",
+      "expected_exit": 0,
+      "classification": "PASS"
+    },
+    {
+      "command": "deps_legacy",
+      "args": [
+        "deps"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0,
+      "note": "Routes to doctor with deprecation warning",
+      "expected_exit": 0,
+      "classification": "PASS"
+    },
+    {
+      "command": "inspect_workflows",
+      "args": [
+        "inspect",
+        "workflows"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0,
+      "note": "Returns capability discovery resolution, not workflow list",
+      "expected_exit": 0,
+      "classification": "PASS"
+    },
+    {
+      "command": "inspect_evidence_cleanup",
+      "args": [
+        "inspect",
+        "evidence-cleanup"
+      ],
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "environment": ".venv/bin/python -m runtime.verify",
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_used_seconds": 30,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0,
+      "note": "DRY RUN mode; retention policy shown; no expired artifacts",
+      "expected_exit": 0,
+      "classification": "PASS"
+    }
+  ]
+}

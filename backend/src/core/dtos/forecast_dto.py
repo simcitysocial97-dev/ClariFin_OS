@@ -9,7 +9,7 @@ All confidence levels use _bps suffix (basis points, 0-10000 for 0-100%).
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 # ===== Forecast Projection Types =====
 
@@ -177,8 +177,8 @@ class ForecastDTO(BaseModel):
         default=None, description="Evidence chain for explainability"
     )
 
-    class Config:
-        json_schema_extra: dict[str, Any] = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "summary": {
                     "horizon_months": 12,
@@ -195,6 +195,7 @@ class ForecastDTO(BaseModel):
                 "evidence_chain": None,
             }
         }
+    )
 
 
 # ===== Forecast Response Types =====

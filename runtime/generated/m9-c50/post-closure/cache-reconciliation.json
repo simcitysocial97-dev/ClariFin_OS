@@ -1,0 +1,35 @@
+{
+  "schema": "m9-c50/post-closure/cache-reconciliation@1",
+  "generated_at": "2026-09-04T21:30:00+00:00",
+  "purpose": "Reconcile cache correctness vs effectiveness claims.",
+  "cache_correctness": {
+    "status": "PROVEN",
+    "evidence": "Phase 5 gate tests (12 passed): stale commit rejection, wrong-content rejection, wrong-config fingerprint rejection, corrupted/truncated JSON rejection, status-field corruption protection, reuse classification, lineage completeness.",
+    "invariants_proven": [
+      "Different commit SHA → reusable=False",
+      "Same commit, edited file content → reusable=False (tree_digest mismatch)",
+      "Different config fingerprint → reusable=False",
+      "Different toolchain fingerprint → reusable=False",
+      "Corrupted JSON → reusable=False",
+      "Truncated JSON → reusable=False",
+      "Status field flip from fail to pass → detected and rejected"
+    ]
+  },
+  "cache_effectiveness": {
+    "status": "POOR",
+    "current_hit_rate": "16.0% combined / 16.2% local",
+    "phase_0_baseline": "<50%",
+    "trend": "REGRESSED — hit rate worsened from <50% to 16%",
+    "root_cause_analysis": {
+      "high_change_volume": "806 dirty files trigger full-pipeline execution on every check()",
+      "low_reuse_opportunities": "Each test scenario creates unique temp files → unique cache keys → cache misses",
+      "fingerprint_sensitivity": "Config/toolchain fingerprints change between runs (pytest version, environment)"
+    },
+    "verdict": "Cache CORRECTNESS is proven. Cache EFFECTIVENESS is poor but architecturally explainable: the pipeline correctly invalidates on every change, and with 806 dirty files there are few reuse opportunities. This is not a bug — it is correct behavior under high churn."
+  },
+  "claim_reconciliation": {
+    "original_phase_0_claim": "Cache hit rate <50% (operational instability)",
+    "phase_11_remediation_claim": "Operational validation demonstrates cache reuse and invalidation",
+    "honest_assessment": "Phase 5 proves cache validity (correctness). Phase 11 proves the mechanism works (planning + dry-run). But cache hit rate remains at 16% because the environment has high change volume. Calling cache 'resolved' conflates correctness with effectiveness — these are distinct dimensions."
+  }
+}

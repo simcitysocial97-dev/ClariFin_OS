@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -20,13 +20,12 @@ from runtime.foundation.audit.models import (
     AuditStatus,
 )
 
-
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 AUDIT_OUTPUT_DIR = REPO_ROOT / "runtime" / "generated"
 
 
 def _now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 @dataclass
@@ -75,18 +74,16 @@ class _SectionRunner:
                 section=self.name,
                 name=self.name,
                 status=AuditStatus.FAIL,
-                findings=tuple(
-                    [
-                        AuditFinding(
-                            section=self.name,
-                            check_id="runner-error",
-                            name="Section execution error",
-                            status=AuditStatus.FAIL,
-                            severity=AuditSeverity.CRITICAL,
-                            priority=AuditPriority.CRITICAL,
-                            message=str(exc),
-                        )
-                    ]
+                findings=(
+                    AuditFinding(
+                        section=self.name,
+                        check_id="runner-error",
+                        name="Section execution error",
+                        status=AuditStatus.FAIL,
+                        severity=AuditSeverity.CRITICAL,
+                        priority=AuditPriority.CRITICAL,
+                        message=str(exc),
+                    ),
                 ),
                 duration_seconds=time.monotonic() - start,
             )
@@ -97,7 +94,7 @@ class AuditRunner:
         self._repo_root = repo_root or REPO_ROOT
         self._sections: list[_SectionRunner] = []
 
-    def register(self, name: str, fn: Any) -> "AuditRunner":
+    def register(self, name: str, fn: Any) -> AuditRunner:
         self._sections.append(_SectionRunner(name=name, fn=fn))
         return self
 
@@ -112,11 +109,25 @@ class AuditRunner:
             all_findings.extend(sr.findings)
 
         critical = tuple(
-            f for f in all_findings if f.priority == AuditPriority.CRITICAL and f.status == AuditStatus.FAIL
+            f
+            for f in all_findings
+            if f.priority == AuditPriority.CRITICAL and f.status == AuditStatus.FAIL
         )
-        high = tuple(f for f in all_findings if f.priority == AuditPriority.HIGH and f.status == AuditStatus.FAIL)
-        medium = tuple(f for f in all_findings if f.priority == AuditPriority.MEDIUM and f.status == AuditStatus.FAIL)
-        low = tuple(f for f in all_findings if f.priority == AuditPriority.LOW and f.status == AuditStatus.FAIL)
+        high = tuple(
+            f
+            for f in all_findings
+            if f.priority == AuditPriority.HIGH and f.status == AuditStatus.FAIL
+        )
+        medium = tuple(
+            f
+            for f in all_findings
+            if f.priority == AuditPriority.MEDIUM and f.status == AuditStatus.FAIL
+        )
+        low = tuple(
+            f
+            for f in all_findings
+            if f.priority == AuditPriority.LOW and f.status == AuditStatus.FAIL
+        )
 
         overall = AuditStatus.PASS
         if critical:

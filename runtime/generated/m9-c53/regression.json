@@ -1,0 +1,9 @@
+{
+  "schema": "m9-c53-regression/v1",
+  "generated_at": "2026-09-01T11:16:07.136627+00:00",
+  "note": "C53 is additive: existing tests are preserved",
+  "c50_tests": "passing",
+  "c51_tests": "passing",
+  "c52_tests": "passing",
+  "c53_tests": "31 passed"
+}

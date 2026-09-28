@@ -93,13 +93,15 @@ def _measure_without_runtime(repo_root: Path) -> dict[str, Any]:
     result["time_to_identify_required_tests_seconds"] = 450.0
     result["time_to_identify_repair_location_seconds"] = 300.0
     result["time_to_identify_affected_workflows_seconds"] = 180.0
-    result["total_manual_time_seconds"] = sum([
-        result["time_to_identify_failing_component_seconds"],
-        result["time_to_identify_blast_radius_seconds"],
-        result["time_to_identify_required_tests_seconds"],
-        result["time_to_identify_repair_location_seconds"],
-        result["time_to_identify_affected_workflows_seconds"],
-    ])
+    result["total_manual_time_seconds"] = sum(
+        [
+            result["time_to_identify_failing_component_seconds"],
+            result["time_to_identify_blast_radius_seconds"],
+            result["time_to_identify_required_tests_seconds"],
+            result["time_to_identify_repair_location_seconds"],
+            result["time_to_identify_affected_workflows_seconds"],
+        ]
+    )
 
     return result
 
@@ -114,13 +116,15 @@ def _measure_with_runtime(repo_root: Path) -> dict[str, Any]:
     result["time_to_identify_required_tests_seconds"] = 8.0
     result["time_to_identify_repair_location_seconds"] = 5.0
     result["time_to_identify_affected_workflows_seconds"] = 3.0
-    result["total_runtime_time_seconds"] = sum([
-        result["time_to_identify_failing_component_seconds"],
-        result["time_to_identify_blast_radius_seconds"],
-        result["time_to_identify_required_tests_seconds"],
-        result["time_to_identify_repair_location_seconds"],
-        result["time_to_identify_affected_workflows_seconds"],
-    ])
+    result["total_runtime_time_seconds"] = sum(
+        [
+            result["time_to_identify_failing_component_seconds"],
+            result["time_to_identify_blast_radius_seconds"],
+            result["time_to_identify_required_tests_seconds"],
+            result["time_to_identify_repair_location_seconds"],
+            result["time_to_identify_affected_workflows_seconds"],
+        ]
+    )
 
     return result
 
@@ -131,10 +135,18 @@ def _measure_manual_inspection(repo_root: Path) -> dict[str, Any]:
     repo_files = list(repo_root.rglob("*.py"))
     result["total_python_files"] = len(repo_files)
 
-    backend_files = list((repo_root / "backend").rglob("*.py")) if (repo_root / "backend").exists() else []
+    backend_files = (
+        list((repo_root / "backend").rglob("*.py"))
+        if (repo_root / "backend").exists()
+        else []
+    )
     result["backend_python_files"] = len(backend_files)
 
-    runtime_files = list((repo_root / "runtime").rglob("*.py")) if (repo_root / "runtime").exists() else []
+    runtime_files = (
+        list((repo_root / "runtime").rglob("*.py"))
+        if (repo_root / "runtime").exists()
+        else []
+    )
     result["runtime_python_files"] = len(runtime_files)
 
     result["manual_inspection_time_per_file_seconds"] = 120.0
@@ -154,10 +166,12 @@ def _measure_commands_executed(repo_root: Path) -> dict[str, Any]:
     result["runtime_command_average_duration_seconds"] = 5.0
 
     result["manual_total_command_time_seconds"] = (
-        result["manual_commands_per_session"] * result["manual_command_average_duration_seconds"]
+        result["manual_commands_per_session"]
+        * result["manual_command_average_duration_seconds"]
     )
     result["runtime_total_command_time_seconds"] = (
-        result["runtime_commands_per_session"] * result["runtime_command_average_duration_seconds"]
+        result["runtime_commands_per_session"]
+        * result["runtime_command_average_duration_seconds"]
     )
 
     return result
@@ -169,10 +183,13 @@ def _measure_time_to_failure(repo_root: Path) -> dict[str, Any]:
     result["manual_time_to_failure_seconds"] = 300.0
     result["runtime_time_to_failure_seconds"] = 5.0
     result["time_saved_failure_seconds"] = (
-        result["manual_time_to_failure_seconds"] - result["runtime_time_to_failure_seconds"]
+        result["manual_time_to_failure_seconds"]
+        - result["runtime_time_to_failure_seconds"]
     )
     result["improvement_factor_failure"] = round(
-        result["manual_time_to_failure_seconds"] / result["runtime_time_to_failure_seconds"], 1
+        result["manual_time_to_failure_seconds"]
+        / result["runtime_time_to_failure_seconds"],
+        1,
     )
 
     return result
@@ -184,10 +201,13 @@ def _measure_time_to_blast_radius(repo_root: Path) -> dict[str, Any]:
     result["manual_time_to_blast_radius_seconds"] = 600.0
     result["runtime_time_to_blast_radius_seconds"] = 10.0
     result["time_saved_blast_radius_seconds"] = (
-        result["manual_time_to_blast_radius_seconds"] - result["runtime_time_to_blast_radius_seconds"]
+        result["manual_time_to_blast_radius_seconds"]
+        - result["runtime_time_to_blast_radius_seconds"]
     )
     result["improvement_factor_blast_radius"] = round(
-        result["manual_time_to_blast_radius_seconds"] / result["runtime_time_to_blast_radius_seconds"], 1
+        result["manual_time_to_blast_radius_seconds"]
+        / result["runtime_time_to_blast_radius_seconds"],
+        1,
     )
 
     return result
@@ -202,7 +222,9 @@ def _measure_time_to_tests(repo_root: Path) -> dict[str, Any]:
         result["manual_time_to_tests_seconds"] - result["runtime_time_to_tests_seconds"]
     )
     result["improvement_factor_tests"] = round(
-        result["manual_time_to_tests_seconds"] / result["runtime_time_to_tests_seconds"], 1
+        result["manual_time_to_tests_seconds"]
+        / result["runtime_time_to_tests_seconds"],
+        1,
     )
 
     return result
@@ -214,10 +236,13 @@ def _measure_time_to_repair(repo_root: Path) -> dict[str, Any]:
     result["manual_time_to_repair_seconds"] = 300.0
     result["runtime_time_to_repair_seconds"] = 5.0
     result["time_saved_repair_seconds"] = (
-        result["manual_time_to_repair_seconds"] - result["runtime_time_to_repair_seconds"]
+        result["manual_time_to_repair_seconds"]
+        - result["runtime_time_to_repair_seconds"]
     )
     result["improvement_factor_repair"] = round(
-        result["manual_time_to_repair_seconds"] / result["runtime_time_to_repair_seconds"], 1
+        result["manual_time_to_repair_seconds"]
+        / result["runtime_time_to_repair_seconds"],
+        1,
     )
 
     return result
@@ -229,10 +254,13 @@ def _measure_time_to_workflows(repo_root: Path) -> dict[str, Any]:
     result["manual_time_to_workflows_seconds"] = 180.0
     result["runtime_time_to_workflows_seconds"] = 3.0
     result["time_saved_workflows_seconds"] = (
-        result["manual_time_to_workflows_seconds"] - result["runtime_time_to_workflows_seconds"]
+        result["manual_time_to_workflows_seconds"]
+        - result["runtime_time_to_workflows_seconds"]
     )
     result["improvement_factor_workflows"] = round(
-        result["manual_time_to_workflows_seconds"] / result["runtime_time_to_workflows_seconds"], 1
+        result["manual_time_to_workflows_seconds"]
+        / result["runtime_time_to_workflows_seconds"],
+        1,
     )
 
     return result
@@ -257,11 +285,13 @@ def _calculate_roi(
     result["improvement_percent"] = improvement_percent
     result["time_saved_per_session_minutes"] = round(time_saved / 60, 1)
 
-    result["annual_savings_hours"] = round(
-        (time_saved * 50) / 3600, 1
-    )
+    result["annual_savings_hours"] = round((time_saved * 50) / 3600, 1)
 
-    result["roi_value"] = "high" if improvement_percent > 80 else "medium" if improvement_percent > 40 else "low"
+    result["roi_value"] = (
+        "high"
+        if improvement_percent > 80
+        else "medium" if improvement_percent > 40 else "low"
+    )
 
     return result
 

@@ -12,22 +12,20 @@ from pathlib import Path
 from typing import Any
 
 from runtime.foundation.verification.models import (
+    ScopeResolver,
     VerificationPlan,
     VerificationScope,
+    get_scope_resolver,
+    reset_scope_resolver,
 )
 from runtime.foundation.verification.planner import (
-    VerificationPlanner,
     PlanningContext,
+    VerificationPlanner,
 )
 from runtime.foundation.verification.registry import (
     VerificationRegistry,
     get_registry,
     reset_registry,
-)
-from runtime.foundation.verification.models import (
-    ScopeResolver,
-    get_scope_resolver,
-    reset_scope_resolver,
 )
 from runtime.foundation.verification.validation import (
     ValidationFinding,
@@ -92,6 +90,7 @@ class VerificationRuntime:
         """Get the verification registry."""
         if not self._loaded:
             self.load()
+        assert self._registry is not None
         return self._registry
 
     @property
@@ -99,6 +98,7 @@ class VerificationRuntime:
         """Get the scope resolver."""
         if not self._loaded:
             self.load()
+        assert self._scope_resolver is not None
         return self._scope_resolver
 
     @property
@@ -106,6 +106,7 @@ class VerificationRuntime:
         """Get the verification planner."""
         if not self._loaded:
             self.load()
+        assert self._planner is not None
         return self._planner
 
     @property
@@ -273,6 +274,7 @@ class VerificationRuntime:
     def get_registry_summary(self) -> dict[str, Any]:
         """Get a summary of the registry."""
         self.load()
+        assert self._registry is not None
         return {
             "workflows": len(self._registry._workflows),
             "scripts": len(self._registry._scripts),

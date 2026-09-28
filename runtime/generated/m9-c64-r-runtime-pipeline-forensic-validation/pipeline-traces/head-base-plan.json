@@ -1,0 +1,17 @@
+{
+  "set_id": "set-e3b0c44298fc",
+  "obligations": [],
+  "generated_at": "2026-09-20T02:26:05.315821+00:00",
+  "repository_sha": "8990f3ae16e664d9b0f58737bd4f556bc82f52c9",
+  "plan_fingerprint": "e3b0c44298fc",
+  "set_fingerprint": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "summary": {
+    "total": 0,
+    "closed": 0,
+    "open": 0,
+    "blocked": 0,
+    "failed": 0,
+    "reused": 0,
+    "invalidated": 0
+  }
+}

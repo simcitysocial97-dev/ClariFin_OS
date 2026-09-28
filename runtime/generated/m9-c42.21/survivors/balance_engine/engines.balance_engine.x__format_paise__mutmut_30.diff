@@ -1,0 +1,13 @@
+# status: survived
+# engines.balance_engine.x__format_paise__mutmut_30: survived
+--- src/engines/balance_engine.py
++++ src/engines/balance_engine.py
+@@ -29,7 +29,7 @@
+         remaining = s[:-3]
+         groups = []
+         while remaining:
+-            groups.append(remaining[-2:] if len(remaining) >= 2 else remaining)
++            groups.append(remaining[-2:] if len(remaining) > 2 else remaining)
+             remaining = remaining[:-2]
+         groups.reverse()
+         formatted = ",".join(groups) + "," + last3

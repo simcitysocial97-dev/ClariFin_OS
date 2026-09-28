@@ -1,0 +1,26 @@
+{
+  "schema": "m9-c53-generation-contract/v1",
+  "generated_at": "2026-09-01T11:16:05.310362+00:00",
+  "pipeline_stages": [
+    "gap_classification",
+    "generation_eligibility",
+    "test_generation_strategy",
+    "candidate_test",
+    "static_validation",
+    "focused_execution",
+    "regression_validation",
+    "coverage_measurement",
+    "mutation_distinguishing_validation",
+    "evidence_reconciliation",
+    "human_authorization_boundary",
+    "targeted_revalidation",
+    "candidate_accepted_or_rejected",
+    "updated_certification_evidence"
+  ],
+  "hard_boundaries": {
+    "self_approval": "FORBIDDEN",
+    "production_modification": "FORBIDDEN",
+    "test_deletion_or_weakening": "FORBIDDEN",
+    "acceptance_authority": "human authorization gate"
+  }
+}

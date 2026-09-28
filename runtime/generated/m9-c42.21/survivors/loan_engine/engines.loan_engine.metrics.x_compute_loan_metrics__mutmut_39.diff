@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.metrics.x_compute_loan_metrics__mutmut_39: survived
+--- src/engines/loan_engine/metrics.py
++++ src/engines/loan_engine/metrics.py
+@@ -28,7 +28,7 @@
+ 
+     effective_ratio = (
+         total_interest / original_principal_paise
+-        if original_principal_paise > 0
++        if original_principal_paise >= 0
+         else 0.0
+     )
+ 

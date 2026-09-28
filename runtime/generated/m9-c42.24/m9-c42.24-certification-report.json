@@ -1,0 +1,134 @@
+{
+  "title": "M9-C42.24 — Final Report",
+  "generated_at": "2026-08-25T19:00:00.000000+00:00",
+  "run_id": "m9-c42.24",
+  "certification_verdict": "NOT CERTIFIED",
+  "historical_baseline": {
+    "c42_21": {
+      "population": "12 components",
+      "mutation": {
+        "generated": 11730,
+        "evaluated": 8862,
+        "killed": 4419,
+        "survived": 4438,
+        "timeout": 4,
+        "no_tests": 2868,
+        "aggregate_score": 49.9
+      },
+      "coverage": "65.59%"
+    }
+  },
+  "strengthening_input": {
+    "c42_22": {
+      "discovery_repairs": ["financial_events: TestInternalHelpers class (7 helper tests)", "behaviour_engine: test_selection extension NOT implemented"],
+      "validation": "financial_events: PASS (no_tests 29->0). behaviour_engine: FAIL (no_tests unchanged at 2835)"
+    },
+    "c42_23": {
+      "tests_added": 42,
+      "targeted_effectiveness": {
+        "cashflow": "78 genuine mutants killed (Class A)",
+        "recommendation": "16 genuine mutants killed (Class A)",
+        "common_calculations": "0 additional kills (Class C)",
+        "credit_card": "0 additional kills (Class C)",
+        "reconciliation": "1 additional kill (Class B/C)",
+        "ledger_audit": "0 new tests, 82 survivors (Class C)",
+        "loan": "0 new tests, stable (Class C)"
+      }
+    }
+  },
+  "authoritative_remeasurement": {
+    "population": "12 components",
+    "generated": 11730,
+    "evaluated": 8891,
+    "killed": 4658,
+    "survived": 4228,
+    "timeout": 5,
+    "no_tests": 2839,
+    "not_checked": 0,
+    "aggregate_mutation": 52.4
+  },
+  "component_delta": [
+    {"component": "cashflow", "old": 29.1, "new": 74.4, "explanation": "C42.23 Batch 2: 10 behavioral tests killed 78 genuine mutants"},
+    {"component": "recommendation", "old": 57.8, "new": 63.5, "explanation": "C42.23 Batch 3: 9 tests killed 16 genuine mutants"},
+    {"component": "common_calculations", "old": 56.4, "new": 56.4, "explanation": "C42.23 Batch 4: 4 tests added, no additional kills (Class C)"},
+    {"component": "credit_card", "old": 75.6, "new": 75.6, "explanation": "C42.23 Batch 4: 9 tests added, no additional kills (Class C)"},
+    {"component": "reconciliation", "old": 80.4, "new": 80.7, "explanation": "C42.23 Batch 5: 10 tests killed 1 additional mutant"},
+    {"component": "loan", "old": 84.0, "new": 84.0, "explanation": "Stable, 0 new tests, 5 nondeterministic preserved"},
+    {"component": "ledger_audit", "old": 56.8, "new": 56.8, "explanation": "0 new tests, 82 survivors classified C/B"},
+    {"component": "balance", "old": 95.4, "new": 94.7, "explanation": "2 timeout mutants (nondeterministic), within variance"},
+    {"component": "account", "old": 89.1, "new": 89.1, "explanation": "Stable, no new tests"},
+    {"component": "core_money", "old": 82.4, "new": 82.4, "explanation": "Stable, no new tests"},
+    {"component": "financial_events", "old": 59.0, "new": 64.5, "explanation": "C42.22 discovery repair: no_tests 29->0, 56 additional kills"},
+    {"component": "behaviour", "old": 28.8, "new": 28.8, "explanation": "C42.22 discovery repair NOT implemented in ENGINE_SELECTION; no_tests unchanged at 2835"}
+    ],
+  "discovery_delta": {
+    "behaviour": {
+      "previous_no_tests": 2835,
+      "selection_repair": "Claimed but NOT implemented",
+      "new_no_tests": 2835,
+      "genuine_missing_tests": "Unknown — repair incomplete",
+      "wrong_source_binding": "0",
+      "infrastructure_exclusions": "0"
+    },
+    "financial_events": {
+      "previous_no_tests": 29,
+      "selection_repair": "TestInternalHelpers class added",
+      "new_no_tests": 0,
+      "genuine_missing_tests": "0",
+      "wrong_source_binding": "0",
+      "infrastructure_exclusions": "0"
+    }
+  },
+  "survivor_intelligence": {
+    "class_a_genuine": 987,
+    "class_b_equivalent": 1919,
+    "class_c_intentional": 903,
+    "class_d_infrastructure": 321,
+    "class_e_ambiguous": 0,
+    "note": "Class A/B/C split: ~23%/45%/21% of survived population"
+  },
+  "coverage_reconciliation": {
+    "c42_21": "65.59%",
+    "c42_24": "65.56%",
+    "threshold": "40% (unchanged)",
+    "key_signals": [
+      "HIGH COVERAGE + WEAK MUTATION: common_calculations (98.8%/56.4%), ledger_audit (93.5%/56.8%)",
+      "LOW COVERAGE + STRONG MUTATION: balance (49.1%/94.7%)",
+      "MODERATE COVERAGE + WEAK MUTATION: behaviour (73.7%/28.8%)"
+    ]
+  },
+  "capability_reconciliation": {
+    "strong_capabilities": ["loan-engine", "reconciliation", "api-contracts", "migrations", "runtime-verification", "golden-regression", "money-domain"],
+    "moderate_capabilities": ["mutation-analysis", "e2e-tests"],
+    "weak_capabilities": ["ledger", "financial-calculations"],
+    "discovery_limited": ["behaviour-analysis"],
+    "unmapped": ["transaction_intelligence", "financial_intelligence"]
+  },
+  "deferred_intelligence": {
+    "transaction_intelligence": {
+      "decision": "NOT READY",
+      "unit_tests": 0,
+      "property_tests": 3,
+      "coverage_pct": 29.1,
+      "reason": "Fails all readiness conditions"
+    },
+    "financial_intelligence": {
+      "decision": "NOT READY",
+      "unit_tests": 0,
+      "property_tests": 0,
+      "coverage_pct": 35.4,
+      "reason": "Fails all readiness conditions"
+    }
+  },
+  "repository_mutation_status": "NOT CERTIFIED",
+  "forward_convergence": {
+    "next_phase": "M9-C42.24-B — Bounded Intelligence-Specific Strengthening",
+    "objective": "Build direct test suites for transaction_intelligence and financial_intelligence",
+    "trigger": "Both components reach READY status",
+    "subsequent_phase": "M9-C42.25 — Deferred Intelligence Test-Surface Integration & Repository-Wide Mutation Expansion"
+  },
+  "hard_blocker": {
+    "issue": "C42.22 behaviour_engine discovery repair not implemented in ENGINE_SELECTION",
+    "required_action": "Update ENGINE_SELECTION['behaviour_engine'].test_selection to include test_metrics.py, test_integration.py, and capability/pattern_analysis"
+  }
+}

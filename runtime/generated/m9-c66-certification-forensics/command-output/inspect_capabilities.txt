@@ -1,0 +1,419 @@
+=== Command: verify inspect capabilities ===
+Exit: 0
+Class: PASS
+Duration: 1.051s
+
+--- STDOUT ---
+==============================================================================
+  CANONICAL VERIFICATION CAPABILITY CATALOG  (M9-C51)
+==============================================================================
+  Generated:   2026-09-20T14:10:22.510047+00:00
+  Capabilities:55  Profiles: 13  Issues: 0
+------------------------------------------------------------------------------
+
+  DISCOVERY  (7)
+    [discover.blast-radius]  Blast-Radius Contract (C50)
+        command:    python runtime/verify.py blast-radius [--files FILE...] [--base REF] [--head REF] [--json] [--out PATH]
+        stage:      discovery
+        authority:  runtime/foundation/verification/verification.yaml, pyproject.toml
+        triggers:   changed_file, proposed_change
+        produces:   blast_radius_contract, evidence_invalidations
+        authorization: none  cost: low
+    [discover.capability-for]  Capability-For (problem -> capability resolver)
+        command:    python runtime/verify.py capability-for --type <problem> [--changed FILE] [--test PATH] [--survivor ID] [--capability ID] [--engine NAME] [--scope SCOPE] [--workflow ID] [--record PATH] [--error TEXT] [--json] [--out PATH]
+        stage:      discovery
+        authority:  -
+        triggers:   changed_file, test_failure, mutation_survivor, coverage_drop, workflow_failure, quality_failure, proposed_change, stale_evidence, unknown_failure
+        produces:   capability_resolution, blast_radius_contract
+        authorization: none  cost: low
+    [discover.capability-graph]  Capability Dependency Graph (C51)
+        command:    python runtime/verify.py capability-graph [--json] [--out PATH]
+        stage:      discovery
+        authority:  -
+        triggers:   changed_file
+        produces:   blast_radius_contract
+        authorization: none  cost: low
+    [discover.capability-inventory]  Command Inventory (C48)
+        command:    python runtime/verify.py capability-inventory [--capability X] [--profile X] [--category X] [--json] | capabilities [--stage X] [--json]
+        stage:      discovery
+        authority:  -
+        triggers:   changed_file
+        produces:   capability_catalog
+        authorization: none  cost: low
+    [discover.latent-capability-audit]  Latent Capability Audit (C51)
+        command:    python runtime/verify.py latent-audit [--json] [--out PATH]
+        stage:      discovery
+        authority:  -
+        triggers:   proposed_change
+        produces:   diagnostic_report
+        authorization: none  cost: low
+    [discover.resolve-capabilities]  Capability Resolution (C48)
+        command:    python runtime/verify.py resolve-capabilities FILE... [--json] [--out PATH]
+        stage:      discovery
+        authority:  -
+        triggers:   changed_file, proposed_change
+        produces:   capability_resolution, evidence_invalidations
+        authorization: none  cost: low
+    [discover.what-should-i-run]  What-Should-I-Run (C50)
+        command:    python runtime/verify.py what-should-i-run [--files FILE...] [--json]
+        stage:      discovery
+        authority:  -
+        triggers:   changed_file, proposed_change
+        produces:   blast_radius_contract
+        authorization: none  cost: low
+
+  PLANNING  (5)
+    [plan.control-plane]  Control-Plane Plan (C48)
+        command:    python runtime/verify.py control-plane-plan FILE... [--json] [--out PATH]
+        stage:      planning
+        authority:  -
+        triggers:   changed_file, proposed_change
+        produces:   control_plane_plan
+        authorization: none  cost: low
+    [plan.deep-contract]  Deep Contract Manifest
+        command:    python runtime/verify.py deep-contract [--out PATH]
+        stage:      planning
+        authority:  -
+        triggers:   -
+        produces:   certification_report
+        authorization: none  cost: low
+    [plan.execution-plan]  Execution Plan (C49)
+        command:    python runtime/verify.py execution-plan FILE... [--json] [--out PATH]
+        stage:      planning
+        authority:  -
+        triggers:   changed_file, proposed_change
+        produces:   execution_plan
+        authorization: none  cost: low
+    [plan.local-gate]  Local Gate (pre-push)
+        command:    python runtime/verify.py local-gate [--out PATH]
+        stage:      planning
+        authority:  -
+        triggers:   changed_file
+        produces:   tier_plan_manifest
+        authorization: none  cost: low
+    [plan.tier-plan]  Tier-Aware Plan (VEA-5)
+        command:    python runtime/verify.py plan --tier <local|pr|deep> [--base REF] [--changed FILE...]
+        stage:      planning
+        authority:  runtime/foundation/verification/verification.yaml
+        triggers:   changed_file, proposed_change
+        produces:   tier_plan_manifest
+        authorization: none  cost: low
+
+  EXECUTION  (21)
+    [evidence.pipeline-plan]  Evidence Plan Pipeline (C42)
+        command:    python runtime/verify.py evidence-plan
+        stage:      execution
+        authority:  -
+        triggers:   changed_file
+        produces:   execution_report, evidence_invalidations
+        authorization: operator  cost: low
+    [exec.environment-check]  Canonical Environment Check (C42.5)
+        command:    python runtime/verify.py env-check
+        stage:      execution
+        authority:  -
+        triggers:   quality_failure, workflow_failure
+        produces:   environment_fingerprint
+        authorization: none  cost: low
+    [exec.evidence-execute]  Evidence Pipeline Execute (C42.28)
+        command:    python runtime/verify.py evidence-execute [--run-mutation]
+        stage:      execution
+        authority:  -
+        triggers:   changed_file
+        produces:   execution_report
+        authorization: operator  cost: low
+    [exec.execution-evidence]  Execution Evidence Emission (VEA-5 M5-C)
+        command:    python runtime/verify.py exec-evidence
+        stage:      execution
+        authority:  -
+        triggers:   changed_file
+        produces:   execution_report
+        authorization: none  cost: low
+    [exec.orchestrator]  Execution Orchestrator (C49)
+        command:    python runtime/verify.py execute FILE... [--json] [--out PATH]
+        stage:      execution
+        authority:  -
+        triggers:   changed_file
+        produces:   execution_report, evidence_invalidations
+        authorization: operator  cost: low
+    [quality.black]  Black Format (repository-wide)
+        command:    python -m black --check --diff .
+        stage:      execution
+        authority:  pyproject.toml
+        triggers:   quality_failure
+        produces:   format_report
+        authorization: none  cost: low
+    [quality.mypy]  Mypy Typecheck (scoped boundaries)
+        command:    python -m mypy .  # repo boundary;  python -m mypy src/  # backend strict boundary (rootdir=backend)
+        stage:      execution
+        authority:  pyproject.toml, backend/pyproject.toml
+        triggers:   quality_failure
+        produces:   typecheck_report
+        authorization: none  cost: low
+    [quality.pytest]  Pytest (backend + runtime suites)
+        command:    python -m pytest tests/unit/ -x -q  # backend (rootdir=backend);  python -m pytest runtime/tests/  # runtime
+        stage:      execution
+        authority:  pyproject.toml, backend/pyproject.toml
+        triggers:   test_failure
+        produces:   test_pass
+        authorization: none  cost: low
+    [quality.ruff]  Ruff Lint (repository-wide)
+        command:    python -m ruff check . --output-format=github
+        stage:      execution
+        authority:  pyproject.toml
+        triggers:   quality_failure
+        produces:   lint_report
+        authorization: none  cost: low
+    [exec.profile.quick]  Profile: Quick Verification
+        command:    python runtime/verify.py quick
+        stage:      execution
+        authority:  runtime/foundation/verification/verification.yaml
+        triggers:   changed_file
+        produces:   execution_report, test_pass
+        authorization: none  cost: moderate
+    [exec.profile.backend]  Profile: Backend Verification
+        command:    python runtime/verify.py backend
+        stage:      execution
+        authority:  runtime/foundation/verification/verification.yaml
+        triggers:   changed_file
+        produces:   execution_report, test_pass
+        authorization: none  cost: moderate
+    [exec.profile.frontend]  Profile: Frontend Verification
+        command:    python runtime/verify.py frontend
+        stage:      execution
+        authority:  runtime/foundation/verification/verification.yaml
+        triggers:   changed_file
+        produces:   execution_report, test_pass
+        authorization: none  cost: moderate
+    [exec.profile.contracts]  Profile: Contract Verification
+        command:    python runtime/verify.py contracts
+        stage:      execution
+        authority:  runtime/foundation/verification/verification.yaml
+        triggers:   changed_file
+        produces:   execution_report, test_pass
+        authorization: none  cost: moderate
+    [exec.profile.property]  Profile: Property Testing
+        command:    python runtime/verify.py property
+        stage:      execution
+        authority:  runtime/foundation/verification/verification.yaml
+        triggers:   changed_file
+        produces:   execution_report, test_pass
+        authorization: none  cost: moderate
+    [exec.profile.integration]  Profile: Integration Tests
+        command:    python runtime/verify.py integration
+        stage:      execution
+        authority:  runtime/foundation/verification/verification.yaml
+        triggers:   changed_file
+        produces:   execution_report, test_pass
+        authorization: none  cost: high
+    [exec.profile.migration]  Profile: Migration Verification
+        command:    python runtime/verify.py migration
+        stage:      execution
+        authority:  runtime/foundation/verification/verification.yaml
+        triggers:   changed_file
+        produces:   execution_report, test_pass
+        authorization: none  cost: moderate
+    [exec.profile.repository]  Profile: Repository Verification
+        command:    python runtime/verify.py repository
+        stage:      execution
+        authority:  runtime/foundation/verification/verification.yaml
+        triggers:   changed_file
+        produces:   execution_report, test_pass
+        authorization: none  cost: high
+    [exec.profile.full]  Profile: Full Verification
+        command:    python runtime/verify.py full
+        stage:      execution
+        authority:  runtime/foundation/verification/verification.yaml
+        triggers:   changed_file
+        produces:   execution_report, test_pass
+        authorization: none  cost: extreme
+    [exec.profile.runtime]  Profile: Runtime Verification
+        command:    python runtime/verify.py runtime
+        stage:      execution
+        authority:  runtime/foundation/verification/verification.yaml
+        triggers:   changed_file
+        produces:   execution_report, test_pass
+        authorization: none  cost: moderate
+    [exec.profile.golden]  Profile: Golden Regression
+        command:    python runtime/verify.py golden
+        stage:      execution
+        authority:  runtime/foundation/verification/verification.yaml
+        triggers:   changed_file
+        produces:   execution_report, test_pass
+        authorization: none  cost: high
+    [exec.profile.playwright]  Profile: Playwright E2E
+        command:    python runtime/verify.py playwright
+        stage:      execution
+        authority:  runtime/foundation/verification/verification.yaml
+        triggers:   changed_file
+        produces:   execution_report, test_pass
+        authorization: none  cost: high
+
+  MEASUREMENT  (4)
+    [measure.coverage]  Coverage Measurement (C47 canonical)
+        command:    python runtime/verify.py measurement coverage <SCOPE> [--json]
+        stage:      measurement
+        authority:  backend/pyproject.toml, pyproject.toml
+        triggers:   coverage_drop, stale_evidence
+        produces:   coverage_measurement
+        authorization: none  cost: low
+    [measure.mutation]  Mutation Testing (C47 authoritative)
+        command:    python runtime/verify.py mutation [--smoke | --target <engine>] [--restore] [--json]
+        stage:      measurement
+        authority:  backend/pyproject.toml, pyproject.toml
+        triggers:   mutation_survivor
+        produces:   mutation_score, survivor_intel
+        authorization: human  cost: low
+    [measure.mutation-inventory]  Mutation Population Inventory
+        command:    python runtime/verify.py mutation-inventory [--json]
+        stage:      measurement
+        authority:  -
+        triggers:   mutation_survivor
+        produces:   capability_catalog
+        authorization: none  cost: low
+    [measure.truth-report]  Measurement Truth Report (C47/C48)
+        command:    python runtime/verify.py measurement-truth-report
+        stage:      measurement
+        authority:  -
+        triggers:   coverage_drop, stale_evidence, mutation_survivor
+        produces:   certification_report
+        authorization: none  cost: low
+
+  DIAGNOSIS  (3)
+    [diagnose.bypass-audit]  Control-Plane Bypass Audit (C51)
+        command:    python runtime/verify.py bypass-audit [--json] [--out PATH]
+        stage:      diagnosis
+        authority:  -
+        triggers:   unknown_failure
+        produces:   forensic_report
+        authorization: none  cost: low
+    [diagnose.failure-attribution]  Pipeline Failure Attribution (VEA-2 M6)
+        command:    python runtime/verify.py diagnose-failures
+        stage:      diagnosis
+        authority:  -
+        triggers:   workflow_failure, unknown_failure
+        produces:   diagnostic_report
+        authorization: none  cost: low
+    [diagnose.intelligence]  Engineering Intelligence Layer
+        command:    python runtime/verify.py intelligence [--logs] [--no-ci]
+        stage:      diagnosis
+        authority:  -
+        triggers:   changed_file
+        produces:   diagnostic_report, blast_radius_contract
+        authorization: none  cost: low
+
+  STRENGTHENING  (3)
+    [strengthen.capability-pipeline]  Capability-Aware Strengthening Pipeline (C48)
+        command:    python runtime/verify.py strengthen-capability <CAPABILITY_ID> [--max-survivors N] [--json] | strengthen-survivor <SURVIVOR_ID> [--json] [--out PATH]
+        stage:      strengthening
+        authority:  -
+        triggers:   mutation_survivor
+        produces:   strengthening_proposal, survivor_intel
+        authorization: human  cost: low
+    [strengthen.forensic]  Forensic Diagnostic Lab (C42.30)
+        command:    python runtime/verify.py forensic-diagnose <ENGINE> | forensic-report | strengthen-discover <ENGINE> | strengthen-propose <ENGINE> | strengthen-validate <ENGINE> | strengthen-survivor-forensic <SURVIVOR_ID> [--json] | strengthen-analyze <ENGINE> | strengthen-report
+        stage:      strengthening
+        authority:  -
+        triggers:   mutation_survivor
+        produces:   forensic_report, strengthening_proposal
+        authorization: human  cost: low
+    [strengthen.survivor-intel]  Durable Survivor Intelligence (C45)
+        command:    python runtime/verify.py mutation-intel [SURVIVOR_ID] [--json]
+        stage:      strengthening
+        authority:  -
+        triggers:   mutation_survivor
+        produces:   survivor_intel
+        authorization: none  cost: low
+
+  EVIDENCE_INSPECTION  (7)
+    [evidence.config-authority]  Configuration Authority Verification (C51)
+        command:    python runtime/verify.py config-authority [--validate] [--json] [--out PATH]
+        stage:      evidence_inspection
+        authority:  -
+        triggers:   quality_failure
+        produces:   environment_fingerprint
+        authorization: none  cost: low
+    [evidence.execution-status]  Execution Report Status
+        command:    python runtime/verify.py execution-status [--plan PLAN] [--latest] [--json] | execution-report [--plan PLAN] [--latest] [--json]
+        stage:      evidence_inspection
+        authority:  -
+        triggers:   -
+        produces:   -
+        authorization: none  cost: low
+    [evidence.inspect-truth]  Measurement Truth Inspection (C47)
+        command:    python runtime/verify.py measurement-truth <RECORD_PATH> [--json]
+        stage:      evidence_inspection
+        authority:  -
+        triggers:   stale_evidence
+        produces:   -
+        authorization: none  cost: low
+    [evidence.knowledge-base]  Verification Knowledge Base (C3/C42)
+        command:    python runtime/verify.py knowledge [endpoint|capability|workspace|rule|component] [--json] [--out PATH]
+        stage:      evidence_inspection
+        authority:  -
+        triggers:   unknown_failure
+        produces:   diagnostic_report
+        authorization: none  cost: low
+    [evidence.reconcile]  VEA-5 Plan Reconciliation Gate (C42.27)
+        command:    python runtime/verify.py reconcile --plan PATH [--evidence PATH] [--local] [--json]
+        stage:      evidence_inspection
+        authority:  -
+        triggers:   workflow_failure, stale_evidence
+        produces:   reconciliation_report
+        authorization: none  cost: low
+    [evidence.reconcile-pipeline]  Evidence Pipeline Reconciliation (C42.28)
+        command:    python runtime/verify.py evidence-reconcile
+        stage:      evidence_inspection
+        authority:  -
+        triggers:   changed_file
+        produces:   reconciliation_report
+        authorization: none  cost: low
+    [evidence.workspace-status]  Workspace Status & Metrics
+        command:    python runtime/verify.py status | metrics | history | deps | verify-status
+        stage:      evidence_inspection
+        authority:  -
+        triggers:   -
+        produces:   environment_fingerprint
+        authorization: none  cost: low
+
+  CERTIFICATION  (5)
+    [certify.api-contracts]  API Contract Integrity Gate (C27)
+        command:    python runtime/verify.py api-contracts
+        stage:      certification
+        authority:  runtime/foundation/verification/verification.yaml
+        triggers:   changed_file, proposed_change
+        produces:   certification_report
+        authorization: none  cost: low
+    [certify.audit]  Engineering Platform Certification Audit
+        command:    python runtime/verify.py audit
+        stage:      certification
+        authority:  -
+        triggers:   unknown_failure, stale_evidence
+        produces:   certification_report
+        authorization: none  cost: low
+    [certify.contract-governance]  Contract Governance Certification (C30)
+        command:    python runtime/verify.py contract-governance
+        stage:      certification
+        authority:  -
+        triggers:   stale_evidence
+        produces:   certification_report
+        authorization: none  cost: low
+    [certify.evidence-pipeline]  Evidence Pipeline Certification (C42.28)
+        command:    python runtime/verify.py evidence-certify
+        stage:      certification
+        authority:  -
+        triggers:   changed_file
+        produces:   certification_report
+        authorization: none  cost: low
+    [certify.integrity]  Architecture Integrity Verification
+        command:    python runtime/verify.py integrity
+        stage:      certification
+        authority:  -
+        triggers:   quality_failure, unknown_failure
+        produces:   certification_report
+        authorization: none  cost: low
+------------------------------------------------------------------------------
+==============================================================================
+
+
+--- STDERR ---
+

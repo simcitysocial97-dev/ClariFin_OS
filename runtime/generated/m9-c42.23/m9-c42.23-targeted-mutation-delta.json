@@ -1,0 +1,49 @@
+{
+  "artifact": "m9-c42.23-targeted-mutation-delta",
+  "description": "Targeted mutation delta for M9-C42.23 batches. Full per-component re-measurement is performed by the authoritative CI campaign (Batch 6 trigger), consistent with program policy (local full campaign is CI-scoped). cashflow was fully re-measured locally; other components validated via targeted spot-checks (representative mutant killed by new test) plus the C42.21 baseline for reference.",
+  "batches": {
+    "batch_2_cashflow": {
+      "baseline_c42_21": {"generated": 172, "killed": 50, "survived": 122, "score_pct": 29.1},
+      "after_local_full_run": {"generated": 172, "killed": 128, "survived": 44, "score_pct": 74.4},
+      "killed_delta": 78,
+      "measurement": "FULL local mutmut run (backend/mutants cache cleared before measurement)",
+      "remaining_44_classified": {"class_C_unreachable_defensive_get": 25, "class_C_unreachable_wrong_literal": 6, "class_B_equivalent_boundary": 13}
+    },
+    "batch_3_recommendation": {
+      "baseline_c42_21": {"generated": 282, "killed": 163, "survived": 119, "score_pct": 57.8},
+      "after": "pending authoritative CI full campaign",
+      "validation": "Targeted spot-check: manual mutant int(ratio*100)+1 killed by test_debt_dependency_metric_string_is_exact_percentage",
+      "new_tests": 9
+    },
+    "batch_4_common_calculations": {
+      "baseline_c42_21": {"generated": 376, "killed": 212, "survived": 164, "score_pct": 56.4},
+      "after": "pending authoritative CI full campaign",
+      "validation": "Targeted spot-check: manual mutant pct_change > 30 -> >= 30 killed by test_category_drift_exactly_30_percent_not_flagged",
+      "new_tests": 4
+    },
+    "batch_4_credit_card": {
+      "baseline_c42_21": {"generated": 582, "killed": 440, "survived": 142, "score_pct": 75.6},
+      "after": "pending authoritative CI full campaign",
+      "validation": "Targeted spot-check: manual mutant 3650000 -> 3600000 denominator killed by test_bps_to_daily_rate_uses_365_day_year",
+      "new_tests": 9
+    },
+    "batch_5_reconciliation": {
+      "baseline_c42_21": {"generated": 368, "killed": 296, "survived": 72, "score_pct": 80.4},
+      "after": "pending authoritative CI full campaign",
+      "validation": "Targeted spot-check: manual mutant description_similarity > 0.7 -> >= 0.7 killed by test_confidence_similarity_boundary_exactly_0_7_excluded",
+      "new_tests": 10
+    },
+    "batch_3_ledger_audit": {
+      "baseline_c42_21": {"generated": 190, "killed": 108, "survived": 82, "score_pct": 56.8},
+      "current_fresh_run": "captured at end of this phase (see batch-3-ledger-recommendation/ledger-certification.json once run completes)",
+      "new_tests": 0,
+      "note": "Reachable contract already covered by 25-test suite; remaining survivors are defensive SQL on generated debit/credit columns (unreachable via application layer). No redundant tests added (anti-gaming)."
+    },
+    "batch_5_loan": {
+      "baseline_c42_21": {"generated": 1273, "killed": 1066, "survived": 200, "score_pct": 84.0},
+      "after": "pending authoritative CI full campaign",
+      "new_tests": 0,
+      "note": "Already strong; 5 nondeterministic mutants preserved as reproducibility evidence (hypothesis fast-profile + timeout jitter)."
+    }
+  }
+}

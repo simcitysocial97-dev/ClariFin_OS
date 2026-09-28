@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.amortization.x_validate_schedule_invariants__mutmut_9: survived
+--- src/engines/loan_engine/amortization.py
++++ src/engines/loan_engine/amortization.py
+@@ -22,7 +22,7 @@
+     total_principal = sum(row.principal_paise for row in schedule)
+     if total_principal != original_principal_paise:
+         raise ValueError(
+-            f"Principal sum mismatch: {total_principal} != {original_principal_paise}"
++            None
+         )
+ 
+     return True

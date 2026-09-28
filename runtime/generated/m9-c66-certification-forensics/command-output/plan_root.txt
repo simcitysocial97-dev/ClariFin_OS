@@ -1,0 +1,405 @@
+=== Command: verify plan  ===
+Exit: 0
+Class: PASS
+Duration: 13.267s
+
+--- STDOUT ---
+Verification Plan ID: set-0b15bfffde0e
+Repository: 23e4b661
+Generated: 2026-09-20T14:09:22.490332+00:00
+
+Obligations:
+  [OPEN] obl-0b15bfffde0e-0
+    Capability: account-engine
+    Kind: property
+    Target: property
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-1
+    Capability: account-engine
+    Kind: contract
+    Target: contracts
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-2
+    Capability: account-engine
+    Kind: unit
+    Target: backend
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-3
+    Capability: account-engine
+    Kind: unit
+    Target: run_property_tests
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-4
+    Capability: account-engine
+    Kind: unit
+    Target: run_contract_tests
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-5
+    Capability: account-engine
+    Kind: unit
+    Target: run_backend_verification
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-6
+    Capability: account-engine
+    Kind: unit
+    Target: run_fast_checks
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-7
+    Capability: api-contracts
+    Kind: contract
+    Target: contracts
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-8
+    Capability: api-contracts
+    Kind: unit
+    Target: frontend
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-9
+    Capability: api-contracts
+    Kind: unit
+    Target: backend
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-10
+    Capability: api-contracts
+    Kind: unit
+    Target: run_contract_tests
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-11
+    Capability: api-contracts
+    Kind: unit
+    Target: run_frontend_verification
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-12
+    Capability: api-contracts
+    Kind: unit
+    Target: run_backend_verification
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-13
+    Capability: behaviour-engine
+    Kind: property
+    Target: property
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-14
+    Capability: behaviour-engine
+    Kind: contract
+    Target: contracts
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-15
+    Capability: behaviour-engine
+    Kind: unit
+    Target: backend
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-16
+    Capability: behaviour-engine
+    Kind: unit
+    Target: run_property_tests
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-17
+    Capability: behaviour-engine
+    Kind: unit
+    Target: run_contract_tests
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-18
+    Capability: behaviour-engine
+    Kind: unit
+    Target: run_backend_verification
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-19
+    Capability: behaviour-engine
+    Kind: unit
+    Target: run_fast_checks
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-20
+    Capability: cashflow-engine
+    Kind: property
+    Target: property
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-21
+    Capability: cashflow-engine
+    Kind: contract
+    Target: contracts
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-22
+    Capability: cashflow-engine
+    Kind: unit
+    Target: backend
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-23
+    Capability: cashflow-engine
+    Kind: unit
+    Target: run_property_tests
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-24
+    Capability: cashflow-engine
+    Kind: unit
+    Target: run_contract_tests
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-25
+    Capability: cashflow-engine
+    Kind: unit
+    Target: run_backend_verification
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-26
+    Capability: cashflow-engine
+    Kind: unit
+    Target: run_fast_checks
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-27
+    Capability: credit-card-engine
+    Kind: property
+    Target: property
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-28
+    Capability: credit-card-engine
+    Kind: contract
+    Target: contracts
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-29
+    Capability: credit-card-engine
+    Kind: unit
+    Target: backend
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-30
+    Capability: credit-card-engine
+    Kind: unit
+    Target: run_property_tests
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-31
+    Capability: credit-card-engine
+    Kind: unit
+    Target: run_contract_tests
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-32
+    Capability: credit-card-engine
+    Kind: unit
+    Target: run_backend_verification
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-33
+    Capability: credit-card-engine
+    Kind: unit
+    Target: run_fast_checks
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-34
+    Capability: financial-intelligence
+    Kind: property
+    Target: property
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-35
+    Capability: financial-intelligence
+    Kind: contract
+    Target: contracts
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-36
+    Capability: financial-intelligence
+    Kind: unit
+    Target: backend
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-37
+    Capability: financial-intelligence
+    Kind: unit
+    Target: run_property_tests
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-38
+    Capability: financial-intelligence
+    Kind: unit
+    Target: run_contract_tests
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-39
+    Capability: financial-intelligence
+    Kind: unit
+    Target: run_backend_verification
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-40
+    Capability: financial-intelligence
+    Kind: unit
+    Target: run_fast_checks
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-41
+    Capability: ledger
+    Kind: contract
+    Target: contracts
+    Reason: Directly affected by change; Reusing 1 evidence artifacts
+
+  [OPEN] obl-0b15bfffde0e-42
+    Capability: ledger
+    Kind: unit
+    Target: backend
+    Reason: Directly affected by change; Reusing 1 evidence artifacts
+
+  [OPEN] obl-0b15bfffde0e-43
+    Capability: ledger
+    Kind: integration
+    Target: integration
+    Reason: Directly affected by change; Reusing 1 evidence artifacts
+
+  [OPEN] obl-0b15bfffde0e-44
+    Capability: ledger
+    Kind: unit
+    Target: run_contract_tests
+    Reason: Directly affected by change; Reusing 1 evidence artifacts
+
+  [OPEN] obl-0b15bfffde0e-45
+    Capability: ledger
+    Kind: unit
+    Target: run_backend_verification
+    Reason: Directly affected by change; Reusing 1 evidence artifacts
+
+  [OPEN] obl-0b15bfffde0e-46
+    Capability: ledger
+    Kind: unit
+    Target: run_fast_checks
+    Reason: Directly affected by change; Reusing 1 evidence artifacts
+
+  [OPEN] obl-0b15bfffde0e-47
+    Capability: loan-engine
+    Kind: property
+    Target: property
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-48
+    Capability: loan-engine
+    Kind: contract
+    Target: contracts
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-49
+    Capability: loan-engine
+    Kind: unit
+    Target: backend
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-50
+    Capability: loan-engine
+    Kind: unit
+    Target: run_property_tests
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-51
+    Capability: loan-engine
+    Kind: unit
+    Target: run_contract_tests
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-52
+    Capability: loan-engine
+    Kind: unit
+    Target: run_backend_verification
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-53
+    Capability: loan-engine
+    Kind: unit
+    Target: run_fast_checks
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-54
+    Capability: reconciliation
+    Kind: property
+    Target: property
+    Reason: Directly affected by change; Reusing 1 evidence artifacts
+
+  [OPEN] obl-0b15bfffde0e-55
+    Capability: reconciliation
+    Kind: contract
+    Target: contracts
+    Reason: Directly affected by change; Reusing 1 evidence artifacts
+
+  [OPEN] obl-0b15bfffde0e-56
+    Capability: reconciliation
+    Kind: unit
+    Target: backend
+    Reason: Directly affected by change; Reusing 1 evidence artifacts
+
+  [OPEN] obl-0b15bfffde0e-57
+    Capability: reconciliation
+    Kind: unit
+    Target: run_property_tests
+    Reason: Directly affected by change; Reusing 1 evidence artifacts
+
+  [OPEN] obl-0b15bfffde0e-58
+    Capability: reconciliation
+    Kind: unit
+    Target: run_contract_tests
+    Reason: Directly affected by change; Reusing 1 evidence artifacts
+
+  [OPEN] obl-0b15bfffde0e-59
+    Capability: reconciliation
+    Kind: unit
+    Target: run_backend_verification
+    Reason: Directly affected by change; Reusing 1 evidence artifacts
+
+  [OPEN] obl-0b15bfffde0e-60
+    Capability: reconciliation
+    Kind: unit
+    Target: run_fast_checks
+    Reason: Directly affected by change; Reusing 1 evidence artifacts
+
+  [OPEN] obl-0b15bfffde0e-61
+    Capability: runtime-verification
+    Kind: unit
+    Target: runtime
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-62
+    Capability: runtime-verification
+    Kind: unit
+    Target: run_runtime_verification
+    Reason: Directly affected by change
+
+  [OPEN] obl-0b15bfffde0e-63
+    Capability: frontend-e2e
+    Kind: e2e
+    Target: playwright
+    Reason: E2E route change detected: /dashboard, /layout.tsx, /platform, /platform/architecture, /platform/capabilities, /platform/capabilities/[capabilityId], /platform/diagnostics, /platform/diagnostics/change, /platform/diagnostics/detail/[id], /platform/errors, /platform/evidence, /platform/framework, /platform/history, /platform/history/compare, /platform/platform-providers.tsx, /platform/verification, /platform/verification/[capability], /platform/verification/history/[runId], /platform/verification/run/[capability]. Requires 4 E2E test(s).
+
+Summary: {'total': 64, 'closed': 0, 'open': 64, 'blocked': 0, 'failed': 0, 'reused': 0, 'invalidated': 0}
+
+
+--- STDERR ---
+
+E2E IMPACT:
+   19 route(s) changed
+   4 E2E test(s) required
+   Added E2E verification task for routes: /dashboard, /layout.tsx, /platform, /platform/architecture, /platform/capabilities, /platform/capabilities/[capabilityId], /platform/diagnostics, /platform/diagnostics/change, /platform/diagnostics/detail/[id], /platform/errors, /platform/evidence, /platform/framework, /platform/history, /platform/history/compare, /platform/platform-providers.tsx, /platform/verification, /platform/verification/[capability], /platform/verification/history/[runId], /platform/verification/run/[capability]
+

@@ -1,0 +1,13 @@
+# status: survived
+# engines.ledger_audit_engine.x_validate_ledger_integrity__mutmut_90: survived
+--- src/engines/ledger_audit_engine.py
++++ src/engines/ledger_audit_engine.py
+@@ -105,7 +105,7 @@
+         violations.append(
+             {
+                 "type": "DUPLICATE_HASH",
+-                "hash_signature": row["hash_signature"],
++                "HASH_SIGNATURE": row["hash_signature"],
+                 "transaction_ids": [int(x) for x in row["ids"].split(",")],
+                 "message": f"Duplicate hash_signature found in transactions: {row['ids']}",
+             }

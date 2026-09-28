@@ -1,0 +1,106 @@
+{
+  "scenarios": [
+    {
+      "id": "D-backend-unit-change",
+      "file": "backend/src/engines/loan_engine/emi.py",
+      "status": "COMPLETED",
+      "expected_capability": "loan-engine",
+      "actual_capabilities": ["loan-engine", "api-contracts", "credit-card-engine", "financial-intelligence"],
+      "obligation_count": 27,
+      "attributed_to_api_contracts": true,
+      "defect": "C64R-F001 - all obligations use changed_files[0]",
+      "result": "PARTIAL_PASS"
+    },
+    {
+      "id": "E-backend-router-change",
+      "file": "backend/src/routers/accounts.py",
+      "status": "COMPLETED",
+      "expected_capability": "account-engine",
+      "actual_capabilities": ["api-contracts"],
+      "obligation_count": 6,
+      "defect": "C64R-F003 - router not mapped to engine capability",
+      "result": "FAIL"
+    },
+    {
+      "id": "F-frontend-component-change",
+      "file": "frontend/app/accounts/page.tsx",
+      "status": "COMPLETED",
+      "expected_capability": "useAccountsCapability -> account-engine",
+      "actual_capabilities": [],
+      "obligation_count": 0,
+      "defect": "C64R-F002 - frontend/app not in SOURCE_CHANGE paths",
+      "result": "FAIL"
+    },
+    {
+      "id": "G-unmapped-file",
+      "file": "/tmp/nonexistent_file_xyz_12345.py",
+      "status": "COMPLETED",
+      "expected_classification": "UNMAPPED",
+      "actual_classification": "UNMAPPED (empty obligations)",
+      "obligation_count": 0,
+      "result": "PASS"
+    },
+    {
+      "id": "H-platform-boundary",
+      "file": "backend/src/routers/platform.py",
+      "status": "COMPLETED",
+      "expected_engines": [],
+      "actual_capabilities": ["api-contracts"],
+      "defect": "platform.py attributed to api-contracts, not runtime-verification",
+      "result": "FAIL"
+    },
+    {
+      "id": "I-platform-console-change",
+      "file": "frontend/app/platform/framework/page.tsx",
+      "status": "COMPLETED",
+      "change_type": "one-line-comment",
+      "expected_capabilities": ["api-contracts", "platform-related"],
+      "actual_capabilities": [],
+      "obligation_count": 0,
+      "defect": "C64R-F002 - frontend/app paths not classified as SOURCE_CHANGE",
+      "result": "FAIL"
+    },
+    {
+      "id": "J-cross-layer-change",
+      "files": ["frontend/lib/capabilities/use-accounts-capability.ts", "backend/src/engines/account_engine/lifecycle.py"],
+      "status": "COMPLETED",
+      "expected_capabilities": ["account-engine", "api-contracts"],
+      "actual_capabilities": ["api-contracts"],
+      "obligation_count": 6,
+      "duplicates": 0,
+      "defect": "C64R-F003 - backend lifecycle.py not mapped to account-engine; frontend lib hook only maps to api-contracts",
+      "result": "PARTIAL_PASS"
+    },
+    {
+      "id": "K-config-fault",
+      "file": "runtime/foundation/verification/verification.yaml",
+      "status": "COMPLETED",
+      "divergence": "coverage_threshold: 999",
+      "framework_detected": false,
+      "doctor_exit_code": 0,
+      "obligation_count": 27,
+      "defect": "C64R-F006 - Framework does not detect configuration threshold divergence at plan time",
+      "classification": "OPAQUE_PIPELINE",
+      "result": "FAIL"
+    },
+    {
+      "id": "Q-artifact-fault",
+      "file": "runtime/generated/symbol-cache.json",
+      "status": "COMPLETED",
+      "tamper_description": "Added spurious symbol entry",
+      "original_sha": "39b8f68629b70bb3",
+      "tampered_sha": "6d690661294f9c1b",
+      "freshness_findings": 3,
+      "detector_caught_it": true,
+      "result": "PASS"
+    }
+  ],
+  "summary": {
+    "total_scenarios": 9,
+    "passed": 2,
+    "failed": 5,
+    "partial": 2,
+    "critical_defects": 4,
+    "pipeline_status": "NOT TRUSTWORTHY"
+  }
+}

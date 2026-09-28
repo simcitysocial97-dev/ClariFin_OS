@@ -1,0 +1,13 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_49: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -37,7 +37,7 @@
+ 
+     if total_previous == 0:
+         # Previous had no subscriptions but current does
+-        if len(current_subscriptions) >= 2:
++        if len(current_subscriptions) >= 3:
+             return Recommendation(
+                 title="Review Subscriptions",
+                 reason="New subscriptions detected",

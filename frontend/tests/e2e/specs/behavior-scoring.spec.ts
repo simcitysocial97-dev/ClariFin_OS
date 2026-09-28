@@ -187,7 +187,7 @@ test.describe('Score Stability', () => {
     captureErrors(page);
     
     // Navigate first
-    await page.goto('/behavior');
+    await page.goto('/behaviour');
     await page.waitForLoadState('networkidle');
     
     // Seed data (wrapped in try-catch)
@@ -231,7 +231,7 @@ test.describe('Score Stability', () => {
     captureErrors(page);
     
     // Navigate first
-    await page.goto('/behavior');
+    await page.goto('/behaviour');
     await page.waitForLoadState('networkidle');
     
     // Seed Personal mode data (wrapped in try-catch)

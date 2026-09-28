@@ -1,0 +1,8 @@
+{
+  "schema": "m9-c71-reachability-evidence/v1",
+  "recorded_at": "2026-09-28T06:50:29.739186+00:00",
+  "not_reached_mutants": 0,
+  "not_reached_locations": 0,
+  "by_reachability": {},
+  "locations": []
+}

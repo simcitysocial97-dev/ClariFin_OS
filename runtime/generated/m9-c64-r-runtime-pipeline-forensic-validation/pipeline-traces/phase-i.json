@@ -1,0 +1,15 @@
+{
+  "phase": "I",
+  "target_file": "/home/vasantha/AI-Projects/ClariFin_OS/frontend/app/platform/framework/page.tsx",
+  "change": "one-line-comment",
+  "plan_id": "8d4e166c5e36",
+  "set_id": "set-8d4e166c5e36",
+  "obligation_count": 0,
+  "capabilities": [],
+  "has_obligations": false,
+  "c64r_f002_impacted": true,
+  "result": "FAIL",
+  "defect": "C64R-F002",
+  "elapsed_seconds": 1.719,
+  "status": "COMPLETED"
+}

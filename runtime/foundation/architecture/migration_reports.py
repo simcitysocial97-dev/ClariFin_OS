@@ -164,7 +164,7 @@ def build_knowledge_migration_report(arch=None) -> dict[str, Any]:
             }
         )
 
-    for name, svc in sorted(arch.services.items()):
+    for _name, svc in sorted(arch.services.items()):
         entities.append(
             {
                 "id": svc.id,
@@ -175,7 +175,7 @@ def build_knowledge_migration_report(arch=None) -> dict[str, Any]:
             }
         )
 
-    for name, rtr in sorted(arch.routers.items()):
+    for _name, rtr in sorted(arch.routers.items()):
         entities.append(
             {
                 "id": rtr.id,
@@ -197,7 +197,9 @@ def build_knowledge_migration_report(arch=None) -> dict[str, Any]:
             }
         )
 
-    unresolved_caps = [e["name"] for e in entities if e["type"] == "Capability" and not e["resolved"]]
+    unresolved_caps = [
+        e["name"] for e in entities if e["type"] == "Capability" and not e["resolved"]
+    ]
     return {
         "generated_at": arch.generated_at,
         "schema": "knowledge-migration-report",
@@ -244,17 +246,22 @@ def build_runtime_consistency(arch=None) -> dict[str, Any]:
     #    public API (not a non-existent <engine>.py file).
     phantom = []
     for name, eng in arch.engines.items():
-        if eng.style == "package" and not eng.entry_point.endswith("__init__.py"):
-            phantom.append(name)
-        elif eng.style == "single_file" and not eng.path.endswith(".py"):
+        if (
+            eng.style == "package"
+            and not eng.entry_point.endswith("__init__.py")
+            or eng.style == "single_file"
+            and not eng.path.endswith(".py")
+        ):
             phantom.append(name)
     add(
         "no_phantom_engine_keys",
         not phantom,
-        "All package engines resolve to a real __init__.py; single-file engines "
-        "resolve to a real .py file. No phantom <engine>.py keys exist."
-        if not phantom
-        else f"Phantom keys: {phantom}",
+        (
+            "All package engines resolve to a real __init__.py; single-file engines "
+            "resolve to a real .py file. No phantom <engine>.py keys exist."
+            if not phantom
+            else f"Phantom keys: {phantom}"
+        ),
     )
 
     # 2. Every endpoint is owned by exactly one router.
@@ -262,9 +269,11 @@ def build_runtime_consistency(arch=None) -> dict[str, Any]:
     add(
         "endpoints_single_router",
         not orphan_ep,
-        "Every endpoint is owned by exactly one router."
-        if not orphan_ep
-        else f"Endpoints without a router: {orphan_ep}",
+        (
+            "Every endpoint is owned by exactly one router."
+            if not orphan_ep
+            else f"Endpoints without a router: {orphan_ep}"
+        ),
     )
 
     # 3. Every router is owned by at least one engine.
@@ -272,9 +281,11 @@ def build_runtime_consistency(arch=None) -> dict[str, Any]:
     add(
         "routers_have_engine",
         not orphan_rtr,
-        "All routers resolve to an owning engine."
-        if not orphan_rtr
-        else f"Orphan routers: {orphan_rtr}",
+        (
+            "All routers resolve to an owning engine."
+            if not orphan_rtr
+            else f"Orphan routers: {orphan_rtr}"
+        ),
     )
 
     # 4. No implementation module is an ownership root (engine).
@@ -286,9 +297,11 @@ def build_runtime_consistency(arch=None) -> dict[str, Any]:
     add(
         "modules_not_engines",
         not mod_as_engine,
-        "No implementation module is treated as an engine root."
-        if not mod_as_engine
-        else f"Modules registered as engines: {mod_as_engine}",
+        (
+            "No implementation module is treated as an engine root."
+            if not mod_as_engine
+            else f"Modules registered as engines: {mod_as_engine}"
+        ),
     )
 
     # 5. Capability alias folding: declared symbol wins.
@@ -304,9 +317,11 @@ def build_runtime_consistency(arch=None) -> dict[str, Any]:
     add(
         "reconciliation_capability_linked",
         linked,
-        "useReconciliationCapability is linked to reconciliation_engine."
-        if linked
-        else "reconciliation capability still unlinked.",
+        (
+            "useReconciliationCapability is linked to reconciliation_engine."
+            if linked
+            else "reconciliation capability still unlinked."
+        ),
     )
 
     passed = sum(1 for c in checks if c["passed"])
@@ -330,7 +345,9 @@ def build_runtime_consistency(arch=None) -> dict[str, Any]:
 def _write(payload: dict[str, Any], name: str) -> Path:
     target = GENERATED_DIR / name
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(payload, indent=2, sort_keys=False) + "\n", encoding="utf-8")
+    target.write_text(
+        json.dumps(payload, indent=2, sort_keys=False) + "\n", encoding="utf-8"
+    )
     return target
 
 
@@ -338,10 +355,18 @@ def generate_all() -> dict[str, str]:
     """Produce Phases 4, 5, 6 and 9 deliverables. Returns artifact -> path."""
     arch = get_architecture(refresh=True)
     out = {
-        "knowledge-migration-report.json": _write(build_knowledge_migration_report(arch), "knowledge-migration-report.json"),
-        "artifact-ownership-v3.json": _write(build_artifact_ownership_v3(arch), "artifact-ownership-v3.json"),
-        "dependency-graph-v2.json": _write(build_dependency_graph_v2(arch), "dependency-graph-v2.json"),
-        "runtime-consistency.json": _write(build_runtime_consistency(arch), "runtime-consistency.json"),
+        "knowledge-migration-report.json": _write(
+            build_knowledge_migration_report(arch), "knowledge-migration-report.json"
+        ),
+        "artifact-ownership-v3.json": _write(
+            build_artifact_ownership_v3(arch), "artifact-ownership-v3.json"
+        ),
+        "dependency-graph-v2.json": _write(
+            build_dependency_graph_v2(arch), "dependency-graph-v2.json"
+        ),
+        "runtime-consistency.json": _write(
+            build_runtime_consistency(arch), "runtime-consistency.json"
+        ),
     }
     return {k: str(v) for k, v in out.items()}
 

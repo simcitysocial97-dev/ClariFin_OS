@@ -1,0 +1,32 @@
+{
+  "schema": "m9-c50/phase-0/capability-inventory@1",
+  "generated_at": "2026-09-04T11:08:00+00:00",
+  "capability_catalog_source": "runtime/foundation/verification/capability_catalog.py / capability_catalog_data.py",
+  "catalog_summary": {
+    "capabilities": 55,
+    "profiles": 13,
+    "issues": 10,
+    "coverages_stages_present": ["discovery", "diagnosis", "execution", "evidence", "certification", "strengthening"]
+  },
+  "representative_capabilities": [
+    "discover.blast-radius", "discover.capability-for", "discover.capability-graph",
+    "discover.capability-inventory", "discover.latent-capability-audit",
+    "exec.evidence-execute", "exec.execution-evidence",
+    "diagnose.bypass-audit", "evidence.config-authority", "evidence.knowledge-base",
+    "evidence.reconcile", "evidence.reconcile-pipeline", "certify.evidence-pipeline"
+  ],
+  "capability_issues": [
+    {"capability": "discover.capability-graph", "issue": "unknown_evidence_kind 'capability_graph'"},
+    {"capability": "discover.latent-capability-audit", "issue": "unknown_evidence_kind 'latent_capability_audit'"},
+    {"capability": "exec.evidence-execute", "issue": "unknown_evidence_kind 'execution_evidence'"},
+    {"capability": "exec.execution-evidence", "issue": "unknown_evidence_kind 'execution_evidence'"},
+    {"capability": "diagnose.bypass-audit", "issue": "unknown_evidence_kind 'bypass_risk_analysis'"},
+    {"capability": "evidence.config-authority", "issue": "unknown_evidence_kind 'configuration_authority_report'"},
+    {"capability": "evidence.knowledge-base", "issue": "unknown_evidence_kind 'knowledge_report'"},
+    {"capability": "evidence.reconcile", "issue": "unknown_evidence_kind 'execution_evidence'"},
+    {"capability": "evidence.reconcile-pipeline", "issue": "unknown_evidence_kind 'execution_evidence'"},
+    {"capability": "certify.evidence-pipeline", "issue": "unknown_evidence_kind 'execution_evidence'"}
+  ],
+  "closed_evidence_kind_authority": "runtime/foundation/verification/capability_catalog.py::EVIDENCE_KINDS",
+  "conclusion": "C49 catalog reports 55 capabilities but 10 capabilities emit evidence kinds outside the closed EVIDENCE_KINDS vocabulary. This is a genuine architecture inconsistency (evidence contract drift), NOT a cosmetic issue. It contradicts a strict reading of 'no successful status without valid evidence' and 'evidence enters the common evidence model'."
+}

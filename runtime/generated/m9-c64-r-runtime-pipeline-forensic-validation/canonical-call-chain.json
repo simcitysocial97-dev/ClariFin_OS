@@ -1,0 +1,141 @@
+{
+  "audit_date": "2026-09-20T02:45:00Z",
+  "commit": "8990f3ae",
+  "description": "Actual runtime call graph for check/run commands",
+  "entries": [
+    {
+      "step": 1,
+      "caller": "runtime/verify.py:349",
+      "callee": "runtime/foundation/verification/control_plane_facade.py:986 main()",
+      "input": "sys.argv[1:] = ['check'|'plan'|'run'|...]",
+      "output": "int exit code",
+      "side_effects": "prints to stdout/stderr",
+      "evidence": "None directly"
+    },
+    {
+      "step": 2,
+      "caller": "control_plane_facade.py:986 main()",
+      "callee": "control_plane_facade.py:1207 _dispatch_canonical(operation, args)",
+      "input": "operation str, args list",
+      "output": "int exit code",
+      "side_effects": "creates ControlPlane() instance",
+      "evidence": "classification_for() lookup"
+    },
+    {
+      "step": 3,
+      "caller": "control_plane_facade.py:1235-1270 _dispatch_canonical()",
+      "callee": "control_plane_facade.py:137 ControlPlane.check() or .plan() or .run()",
+      "input": "changed_files list | None",
+      "output": "int exit code",
+      "side_effects": "calls orchestrator.execute()",
+      "evidence": "report.final_decision"
+    },
+    {
+      "step": 4,
+      "caller": "control_plane_facade.py:148",
+      "callee": "orchestrator.py:311 _collect_changed_files()",
+      "input": "none",
+      "output": "_ChangedFilesResult(files, source, base, head)",
+      "side_effects": "git diff calls, git fetch",
+      "evidence": "git-fetch-events.jsonl entries"
+    },
+    {
+      "step": 5,
+      "caller": "control_plane_facade.py:176",
+      "callee": "control_plane.py:169 ControlPlanePlanner.plan(changed_files)",
+      "input": "list[str]",
+      "output": "ControlPlanePlan(plan_id, changed_files, capability_resolution, tasks)",
+      "side_effects": "resolves capabilities, builds tasks",
+      "evidence": "plan.tasks list"
+    },
+    {
+      "step": 6,
+      "caller": "control_plane.py:176",
+      "callee": "capability_resolver.py:189 CapabilityResolver.resolve(changed_files)",
+      "input": "list[str]",
+      "output": "CapabilityResolution(direct_caps, transitive_caps, ...)",
+      "side_effects": "blast radius analysis",
+      "evidence": "cross-layer-graph.json"
+    },
+    {
+      "step": 7,
+      "caller": "control_plane.py:283",
+      "callee": "control_plane.py:323 _build_capability_tasks(contract, resolution, ...)",
+      "input": "OperationalCapability, CapabilityResolution",
+      "output": "list[VerificationTask]",
+      "side_effects": "maps workflows to tasks",
+      "evidence": "plan.tasks"
+    },
+    {
+      "step": 8,
+      "caller": "control_plane_facade.py:183",
+      "callee": "execution_orchestrator.py:572 ExecutionOrchestrator.build_execution_plan(changed_files)",
+      "input": "list[str]",
+      "output": "ExecutionPlan(tasks, fingerprint, ...)",
+      "side_effects": "captures RepositoryFingerprint, deduplicates",
+      "evidence": "plan_id, plan_fingerprint"
+    },
+    {
+      "step": 9,
+      "caller": "control_plane_facade.py:183",
+      "callee": "control_plane_facade.py:883 _plan_to_obligations(plan, changed_files)",
+      "input": "ControlPlanePlan, list[str]",
+      "output": "ObligationSet(set_id, obligations)",
+      "side_effects": "MAPPED_TO_STEP_8_CONTRACT_MISMATCH",
+      "evidence": "obligations[].change.path == changed_files[0] BUG"
+    },
+    {
+      "step": 10,
+      "caller": "control_plane_facade.py:202",
+      "callee": "execution_orchestrator.py:1127 ExecutionOrchestrator.execute(plan, authorize, ...)",
+      "input": "ExecutionPlan, authorize set",
+      "output": "ExecutionReport(records, final_decision, efficiency)",
+      "side_effects": "subprocess.run per task, evidence capture",
+      "evidence": "records[], completion_state"
+    },
+    {
+      "step": 11,
+      "caller": "execution_orchestrator.py:1318",
+      "callee": "execution_orchestrator.py:1341 _execute_shell_task(spec, plan)",
+      "input": "ExecutionTaskSpec, ExecutionPlan",
+      "output": "TaskExecutionRecord",
+      "side_effects": "subprocess.run(command, shell=True, timeout=spec.timeout_seconds)",
+      "evidence": "stdout_path, stderr_path, exit_code"
+    },
+    {
+      "step": 12,
+      "caller": "control_plane_facade.py:226",
+      "callee": "verify.py:289 record_execution_report(profile, report, elapsed)",
+      "input": "ExecutionReport",
+      "output": "None",
+      "side_effects": "EngineeringEventStore.append(), LocalMetricsRepository.append(RunRecord)",
+      "evidence": "ai-runs/*.json events"
+    },
+    {
+      "step": 13,
+      "caller": "control_plane_facade.py:231",
+      "callee": "control_plane_facade.py:1190 _format_task_summary(report)",
+      "input": "ExecutionReport",
+      "output": "str (console output)",
+      "side_effects": "prints per-task summary",
+      "evidence": "stdout line: task_id | state | duration | reason"
+    }
+  ],
+  "contract_mismatches": [
+    {
+      "transition": "step 5 -> step 9",
+      "expected": "_plan_to_obligations receives ControlPlanePlan from planner",
+      "actual": "_plan_to_obligations uses plan.tasks but attributes ALL obligations to changed_files[0]",
+      "severity": "HIGH"
+    },
+    {
+      "transition": "step 8 -> step 10",
+      "expected": "build_execution_plan returns ExecutionPlan consumed by execute()",
+      "actual": "Facade calls build_execution_plan but then _plan_to_obligations operates on ControlPlanePlan separately",
+      "severity": "LOW"
+    }
+  ],
+  "pipeline_status": "FUNCTIONAL_WITH_DEFECTS",
+  "broken_transitions": ["A -> B obligation attribution"],
+  "opaque_transitions": []
+}

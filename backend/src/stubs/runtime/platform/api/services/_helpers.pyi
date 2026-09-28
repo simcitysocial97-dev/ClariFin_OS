@@ -1,0 +1,6 @@
+from __future__ import annotations
+
+from typing import Any
+
+def envelope(*, kind: str, data: Any) -> dict[str, Any]: ...
+def now_iso() -> str: ...

@@ -255,9 +255,7 @@ _STRUCTURAL_RULES: tuple[IntegrityRule, ...] = (
         ),
         severity=ViolationSeverity.MEDIUM,
         category=ViolationCategory.STRUCTURAL,
-        examples=(
-            "frontend/lib/workspace/... importing from @/lib/mappers/...",
-        ),
+        examples=("frontend/lib/workspace/... importing from @/lib/mappers/...",),
         check="check_workspace_not_import_mapper",
         affected_layers=(
             ArchitectureLayer.FRONTEND_WORKSPACE,
@@ -273,9 +271,7 @@ _STRUCTURAL_RULES: tuple[IntegrityRule, ...] = (
         ),
         severity=ViolationSeverity.HIGH,
         category=ViolationCategory.STRUCTURAL,
-        examples=(
-            "frontend/components/... importing backend/src/engines/...",
-        ),
+        examples=("frontend/components/... importing backend/src/engines/...",),
         check="check_component_not_import_engine",
         affected_layers=(
             ArchitectureLayer.FRONTEND_COMPONENT,
@@ -291,9 +287,7 @@ _STRUCTURAL_RULES: tuple[IntegrityRule, ...] = (
         ),
         severity=ViolationSeverity.MEDIUM,
         category=ViolationCategory.STRUCTURAL,
-        examples=(
-            "backend/src/core/dtos/... importing backend/src/routers/...",
-        ),
+        examples=("backend/src/core/dtos/... importing backend/src/routers/...",),
         check="check_dto_not_import_router",
         affected_layers=(
             ArchitectureLayer.BACKEND_DTO,
@@ -310,9 +304,7 @@ _STRUCTURAL_RULES: tuple[IntegrityRule, ...] = (
         ),
         severity=ViolationSeverity.MEDIUM,
         category=ViolationCategory.STRUCTURAL,
-        examples=(
-            "frontend/lib/capabilities/... importing from @/components/...",
-        ),
+        examples=("frontend/lib/capabilities/... importing from @/components/...",),
         check="check_capability_not_import_component",
         affected_layers=(
             ArchitectureLayer.FRONTEND_CAPABILITY,
@@ -368,9 +360,7 @@ _OWNERSHIP_RULES: tuple[IntegrityRule, ...] = (
         ),
         severity=ViolationSeverity.MEDIUM,
         category=ViolationCategory.OWNERSHIP,
-        examples=(
-            "loans-mapper.ts with no import from types/*-view-model",
-        ),
+        examples=("loans-mapper.ts with no import from types/*-view-model",),
         check="check_mapper_returns_viewmodel",
     ),
     IntegrityRule(
@@ -428,9 +418,7 @@ _OWNERSHIP_RULES: tuple[IntegrityRule, ...] = (
         ),
         severity=ViolationSeverity.MEDIUM,
         category=ViolationCategory.OWNERSHIP,
-        examples=(
-            "AmortizationTable component not listed under any workspace",
-        ),
+        examples=("AmortizationTable component not listed under any workspace",),
         check="check_component_one_workspace",
     ),
     IntegrityRule(
@@ -442,9 +430,7 @@ _OWNERSHIP_RULES: tuple[IntegrityRule, ...] = (
         ),
         severity=ViolationSeverity.LOW,
         category=ViolationCategory.OWNERSHIP,
-        examples=(
-            "Workspace with empty components list in cross-layer map",
-        ),
+        examples=("Workspace with empty components list in cross-layer map",),
         check="check_workspace_has_component",
     ),
 )
@@ -465,9 +451,7 @@ _EVOLUTION_RULES: tuple[IntegrityRule, ...] = (
         ),
         severity=ViolationSeverity.HIGH,
         category=ViolationCategory.EVOLUTION,
-        examples=(
-            "frontend/app/loans/page.tsx without useWorkspaceRegistration call",
-        ),
+        examples=("frontend/app/loans/page.tsx without useWorkspaceRegistration call",),
         check="check_page_registers_workspace",
         affected_layers=(ArchitectureLayer.FRONTEND_PAGE,),
     ),
@@ -481,9 +465,7 @@ _EVOLUTION_RULES: tuple[IntegrityRule, ...] = (
         ),
         severity=ViolationSeverity.MEDIUM,
         category=ViolationCategory.EVOLUTION,
-        examples=(
-            "Endpoint GET /api/v1/accounts not found in any cross-layer chain",
-        ),
+        examples=("Endpoint GET /api/v1/accounts not found in any cross-layer chain",),
         check="check_endpoint_in_cross_layer_map",
     ),
     IntegrityRule(
@@ -495,9 +477,7 @@ _EVOLUTION_RULES: tuple[IntegrityRule, ...] = (
         ),
         severity=ViolationSeverity.LOW,
         category=ViolationCategory.EVOLUTION,
-        examples=(
-            "LoanGraphRenderer listed without a workspace in the chain",
-        ),
+        examples=("LoanGraphRenderer listed without a workspace in the chain",),
         check="check_graph_renderer_owned_by_workspace",
     ),
     IntegrityRule(
@@ -509,9 +489,7 @@ _EVOLUTION_RULES: tuple[IntegrityRule, ...] = (
         ),
         severity=ViolationSeverity.MEDIUM,
         category=ViolationCategory.EVOLUTION,
-        examples=(
-            "Endpoint with empty tests list in cross-layer map",
-        ),
+        examples=("Endpoint with empty tests list in cross-layer map",),
         check="check_endpoint_has_test_coverage",
     ),
     IntegrityRule(
@@ -523,9 +501,7 @@ _EVOLUTION_RULES: tuple[IntegrityRule, ...] = (
         ),
         severity=ViolationSeverity.MEDIUM,
         category=ViolationCategory.EVOLUTION,
-        examples=(
-            "Capability with empty tests list in cross-layer map",
-        ),
+        examples=("Capability with empty tests list in cross-layer map",),
         check="check_capability_has_test_coverage",
     ),
     IntegrityRule(
@@ -551,9 +527,7 @@ _EVOLUTION_RULES: tuple[IntegrityRule, ...] = (
         ),
         severity=ViolationSeverity.LOW,
         category=ViolationCategory.EVOLUTION,
-        examples=(
-            "frontend/app/incomplete/ directory without a page.tsx",
-        ),
+        examples=("frontend/app/incomplete/ directory without a page.tsx",),
         check="check_no_orphaned_pages",
     ),
 )

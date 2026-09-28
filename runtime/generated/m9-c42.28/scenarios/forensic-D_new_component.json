@@ -1,0 +1,102 @@
+{
+  "record_id": "forensic::555911fffacc",
+  "generated_at": "2026-08-26T04:26:34.511871+00:00",
+  "repository_sha": "523637b8de928565ee19fbcff2b5645fbd85a2ce",
+  "change": {
+    "changed_files": [],
+    "affected_components": [],
+    "affected_capabilities": []
+  },
+  "affected_graph_nodes": {
+    "sources": [],
+    "capabilities": []
+  },
+  "invalidations": {
+    "by_component": {
+      "credit_card_engine": [],
+      "account_engine": [],
+      "loan_engine": [],
+      "reconciliation_engine": [],
+      "behaviour_engine": [],
+      "balance_engine": [],
+      "ledger_audit_engine": [],
+      "cashflow_engine": [],
+      "financial_events": [],
+      "core_domain_money": [],
+      "common_calculations": [],
+      "recommendation_engine": [],
+      "transaction_intelligence": [],
+      "financial_intelligence": [],
+      "new_engine": []
+    }
+  },
+  "reused_evidence": {
+    "count": 14,
+    "components": [
+      "credit_card_engine",
+      "account_engine",
+      "loan_engine",
+      "reconciliation_engine",
+      "behaviour_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine",
+      "financial_events",
+      "core_domain_money",
+      "common_calculations",
+      "recommendation_engine",
+      "transaction_intelligence",
+      "financial_intelligence"
+    ]
+  },
+  "selected_tasks": {
+    "count": 1,
+    "components": [
+      "new_engine"
+    ]
+  },
+  "executed_tasks": {
+    "count": 0,
+    "components": []
+  },
+  "execution_results": {
+    "by_component": {}
+  },
+  "new_evidence": {
+    "count": 0,
+    "components": []
+  },
+  "derived_evidence": {
+    "aggregate": {
+      "label": "MATHEMATICALLY_RECONCILED",
+      "result": 60.297,
+      "numerator": 9015,
+      "denominator": 14951,
+      "scope": "pop-15-c42.28",
+      "decided_at": "2026-08-26T04:26:34.509537+00:00",
+      "rationale": "derived from 14 reused component(s) over population pop-15-c42.28; no fresh measurement"
+    }
+  },
+  "failures": {
+    "by_component": {},
+    "count": 0
+  },
+  "uncertainties": {
+    "no_evidence": [],
+    "invalidated": [
+      "new_engine"
+    ],
+    "drift_blockers": [
+      "capability cap::new-engine declared in population but not present in verification graph"
+    ],
+    "certification_gaps": [
+      "missing measurement for new_engine"
+    ]
+  },
+  "certification_decision": {
+    "certifiable": false,
+    "rationale": "NOT certifiable: 1 invalidated component(s)",
+    "aggregate_label": "MATHEMATICALLY_RECONCILED",
+    "aggregate_result": 60.297
+  }
+}

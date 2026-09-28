@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x__check_match__mutmut_55: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -40,7 +40,7 @@
+         credit_txn = txn_a
+         amount_paise = a_credit
+ 
+-    if debit_txn is None or credit_txn is None:
++    if debit_txn is None and credit_txn is None:
+         return None  # No match
+ 
+     # Check dates

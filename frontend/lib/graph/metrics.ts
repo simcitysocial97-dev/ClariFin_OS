@@ -5,6 +5,11 @@
  * Provides insights into graph structure, connectivity, and composition.
  *
  * Architecture: Runtime → Metrics Engine → GraphMetrics
+ *
+ * APPROVED EXCEPTION (M9-C50 Phase 7):
+ * Lines 169, 187: Percentage calculations for visualization (count/total * 100).
+ * Pure display formatting for chart labels — no financial decisions.
+ * Disposition: APPROVED_EXCEPTION — display formatting only.
  */
 
 import type {

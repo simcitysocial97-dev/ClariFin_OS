@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_detect_revocations__mutmut_120: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -68,7 +68,7 @@
+             original_transfer.get("date_iso", ""), date_iso
+         )
+         if days_diff < 0 or days_diff > lookback_days:
+-            continue  # Outside revocation window
++            break  # Outside revocation window
+ 
+         # Check for duplicate revocation
+         revocation_key = (event_id, original_transfer_id)

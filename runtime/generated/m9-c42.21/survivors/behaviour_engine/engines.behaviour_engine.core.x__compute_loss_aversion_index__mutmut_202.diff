@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_loss_aversion_index__mutmut_202: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -76,7 +76,7 @@
+     # Normalize to 0-1 score
+     # Higher velocity = higher loss aversion (spending gains quickly)
+     velocity_score = _normalize_score(avg_velocity, 0, 1.5)
+-    recovery_score = _normalize_score(recovery_days, 0, 30)
++    recovery_score = _normalize_score(recovery_days, 30)
+ 
+     loss_aversion = velocity_score * 0.6 + recovery_score * 0.4
+ 

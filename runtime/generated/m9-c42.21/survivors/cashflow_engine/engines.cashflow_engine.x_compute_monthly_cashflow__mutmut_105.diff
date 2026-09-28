@@ -1,0 +1,17 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_105: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -92,11 +92,7 @@
+     net_worth_impact = total_asset_change - total_liability_increase
+ 
+     # Month classification
+-    has_credit_events = any(
+-        e.get("event_type")
+-        in ("cash_advance", "credit_card_cash_advance", "liability_increase")
+-        for e in financial_events
+-    )
++    has_credit_events = None
+ 
+     if cash_surplus > 0 and not has_credit_events:
+         month_classification = MonthClassification.SURPLUS

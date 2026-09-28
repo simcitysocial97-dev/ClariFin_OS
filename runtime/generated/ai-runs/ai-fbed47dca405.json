@@ -1,0 +1,25 @@
+{
+  "id": "ai-fbed47dca405",
+  "symptom": "test",
+  "mode": "MANUAL",
+  "capability_id": null,
+  "status": "CANCELLED",
+  "steps": [],
+  "created_at": "2026-09-19T15:50:40.120890Z",
+  "updated_at": "2026-09-19T15:50:40.121367Z",
+  "completed_at": "2026-09-19T15:50:40.121367Z",
+  "error": null,
+  "audit_trail": [
+    {
+      "event_id": "audit-951295322051",
+      "event_type": "run_created",
+      "run_id": "ai-fbed47dca405",
+      "timestamp": "2026-09-19T15:50:40.121342Z",
+      "payload": {
+        "symptom": "test",
+        "mode": "MANUAL",
+        "capability_id": null
+      }
+    }
+  ]
+}

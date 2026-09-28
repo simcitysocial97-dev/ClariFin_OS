@@ -1,0 +1,76 @@
+{
+  "audit_date": "2026-09-20T03:30:14.932965+00:00",
+  "phases": {
+    "R": {
+      "phase": "R",
+      "result": "PASS",
+      "transitions_documented": 7
+    },
+    "S": {
+      "phase": "S",
+      "result": "PARTIAL",
+      "tests": 9
+    },
+    "T": {
+      "phase": "T",
+      "result": "PASS",
+      "rows": 9
+    },
+    "U": {
+      "phase": "U",
+      "result": "PASS",
+      "tests": 4
+    },
+    "V": {
+      "phase": "V",
+      "result": "PASS",
+      "scenarios": 4
+    },
+    "W": {
+      "phase": "W",
+      "result": "PARTIAL",
+      "checks": 5
+    },
+    "X": {
+      "phase": "X",
+      "target": "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/behaviour_engine/core.py",
+      "change": "one-line-comment",
+      "plan_id": "eacd9679f009",
+      "obligations": 13,
+      "capabilities": [
+        "api-contracts",
+        "behaviour-engine"
+      ],
+      "exec_tasks": 7,
+      "final_decision": "diagnostic",
+      "result": "PASS"
+    },
+    "Y": {
+      "phase": "Y",
+      "result": "PARTIAL",
+      "checks": 5
+    },
+    "Z": {
+      "phase": "Z",
+      "result": "PASS",
+      "scenarios": 7
+    },
+    "AB": {
+      "phase": "AB",
+      "result": "PASS",
+      "evidence_files": 240
+    },
+    "AC": {
+      "phase": "AC",
+      "result": "PASS",
+      "scenarios": 7
+    }
+  },
+  "summary": {
+    "total": 11,
+    "passed": 8,
+    "partial": 3,
+    "failed": 0,
+    "skipped": 0
+  }
+}

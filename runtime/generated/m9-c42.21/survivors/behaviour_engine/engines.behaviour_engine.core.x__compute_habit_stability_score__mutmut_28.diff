@@ -1,0 +1,15 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_habit_stability_score__mutmut_28: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -17,9 +17,7 @@
+         return {"score": 0.5, "category_cv": 0.0, "recurring_predictability": 0.0}
+ 
+     # Monthly category spending (use amount_paise, convert to rupees for analysis)
+-    monthly_category: defaultdict[str, defaultdict[str, float]] = defaultdict(
+-        lambda: defaultdict(float)
+-    )
++    monthly_category: defaultdict[str, defaultdict[str, float]] = None
+     for txn in debits:
+         date_iso = txn.get("date_iso", "")
+         if date_iso:

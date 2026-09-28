@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_61: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -22,7 +22,7 @@
+         mk = t.get("month_key", "")
+         cat = t.get("category", "Uncategorized")
+         if mk:
+-            cat_monthly[cat][mk] += (t.get("amount_paise", 0) or 0) / 100.0
++            cat_monthly[cat][mk] += (t.get("amount_paise", 1) or 0) / 100.0
+ 
+     for cat, monthly_data in cat_monthly.items():
+         if len(monthly_data) >= 2:

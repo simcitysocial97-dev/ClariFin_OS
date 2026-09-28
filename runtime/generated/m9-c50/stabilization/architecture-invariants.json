@@ -1,0 +1,20 @@
+{
+  "schema": "m9-c50/stabilization/architecture-invariants@1",
+  "generated_at": "2026-09-04T22:55:51.787201+00:00",
+  "invariants": [
+    "single_control_plane_class",
+    "closed_evidence_vocabulary",
+    "deterministic_identity_per_kind",
+    "lifecycle_transitions_enforced",
+    "lineage_chain_required_for_decision",
+    "fail_closed_on_invalid_lineage",
+    "no_silent_obligation_drop",
+    "no_evidence_without_execution",
+    "no_decision_without_reconciliation",
+    "no_execution_without_task",
+    "cache_REUSE_requires_valid_evidence",
+    "cache_INVALIDATE_on_environment_change",
+    "fault_injection_detects_all_10_classes",
+    "8_of_8_adapters_are_real_executable"
+  ]
+}

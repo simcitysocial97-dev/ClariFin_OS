@@ -1,0 +1,41 @@
+{
+  "manifest": [
+    {
+      "file": "runtime/platform/ai/providers/base.py",
+      "lines": 191,
+      "sha256": "9117340d60eb4a20d6300021b7ab666b0cb67c31510987a7a7ccc0d8ea89c925"
+    },
+    {
+      "file": "runtime/platform/ai/providers/local.py",
+      "lines": 401,
+      "sha256": "71adb04b1b9f71be8a6885ad2815479f6a39c707207c0aa83cefba34039a11db"
+    },
+    {
+      "file": "runtime/platform/ai/providers/router.py",
+      "lines": 207,
+      "sha256": "0069e628446e8cf4b4fe4c63f592422a29ba75cf236ecc865b180e3acb5792d1"
+    },
+    {
+      "file": "runtime/platform/ai/providers/__init__.py",
+      "lines": 57,
+      "sha256": "897614b4e9aed3dc19003f165ce07d7b5dc3c035bfc89473fea15ec90e6c203a"
+    },
+    {
+      "file": "runtime/platform/ai/config.py",
+      "lines": 242,
+      "sha256": "c55aacba71538e61bc8d53266d735bb91d35ecd40242fd6598d42f8a4b68b6f5"
+    },
+    {
+      "file": "runtime/platform/ai/__init__.py",
+      "lines": 126,
+      "sha256": "44de86e7799788a5900993952f53b26640b767d1d0e1e61e2c72c02a41687471"
+    },
+    {
+      "file": "backend/src/routers/platform.py",
+      "lines": 1542,
+      "sha256": "3f293dfad034c5d45909b3e672174aa9d4b027bd02438b61610e5d92184ebe9b"
+    }
+  ],
+  "total_lines": 2766,
+  "generated_at": "2026-09-06T05:00:00Z"
+}

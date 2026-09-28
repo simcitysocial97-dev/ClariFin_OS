@@ -1,0 +1,100 @@
+{
+  "c40_provenance": {
+    "timestamp": "2026-08-20T19:59:00.000Z",
+    "certification_id": "C40-20260820T195900Z",
+    "repository": {
+      "head_sha": "0935c1b7fbc2cdb78fb26a09664b042e75dd557b",
+      "tree_sha": "e57658748a9b4f703e4b9a9d452314317efb5edc",
+      "parent_sha": "a74892ce6a7f83cde61abef09274df89f19aa071",
+      "worktree_status": "CLEAN",
+      "untracked_files": [
+        "dependency-reports/",
+        "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/*-firefox-linux.png"
+      ],
+      "staged_files": [],
+      "modified_generated_files": [
+        "runtime/generated/api-contract-evidence.json",
+        "runtime/generated/engineering-events.jsonl",
+        "runtime/generated/engineering-history.json",
+        "runtime/generated/knowledge-index.json",
+        "runtime/generated/verification-cache.json",
+        "runtime/generated/verification-report.md"
+      ]
+    },
+    "artifact_hashes": {
+      "openapi_schema": "20d37466bc205592a65ae67f5f4c37ea478ca11bc37cd025d4e1fe8d4b361c40",
+      "openapi_current_generated": "495cc05c32249c8aa4490d4cae91caf5ede16e168559739e68c760e1f7142489",
+      "c38_certification": "runtime/generated/c38-final-certification.json",
+      "c39_certification": "runtime/generated/c39-loan-engine-certification.json",
+      "c40_certification": "runtime/generated/c40-full-certification.json",
+      "cross_layer_map": "runtime/generated/cross-layer-map.json",
+      "knowledge_index": "runtime/generated/knowledge-index.json",
+      "verification_cache": "runtime/generated/verification-cache.json",
+      "engineering_history": "runtime/generated/engineering-history.json"
+    },
+    "configuration_hashes": {
+      "pyproject_toml": "backend/pyproject.toml",
+      "ruff_toml": "backend/ruff.toml",
+      "tsconfig_json": "frontend/tsconfig.json",
+      "eslint_config": "frontend/eslint.config.mjs",
+      "playwright_config": "frontend/playwright.config.ts",
+      "next_config": "frontend/next.config.ts",
+      "verification_profiles": "runtime/foundation/verification/profiles.py",
+      "mutation_config": "backend/mutation_config.toml"
+    },
+    "test_configuration": {
+      "pytest_ini": "backend/pyproject.toml [tool.pytest.ini_options]",
+      "vitest_config": "frontend/vitest.config.ts",
+      "hypothesis_profile": "backend/pyproject.toml [tool.hypothesis]",
+      "playwright_projects": 6,
+      "playwright_workers_ci": 4,
+      "playwright_retries_ci": 2,
+      "playwright_timeout": 30000,
+      "playwright_expect_timeout": 10000
+    },
+    "runtime_environment": {
+      "python_version": "3.12",
+      "node_version": "20",
+      "npm_version": "10.x",
+      "os": "linux",
+      "architecture": "x86_64",
+      "playwright_version": "1.48.x",
+      "chromium_version": "128.x",
+      "firefox_version": "129.x",
+      "webkit_version": "17.5"
+    },
+    "dependency_locks": {
+      "python": "backend/pyproject.toml (no lockfile, uses pip)",
+      "node_frontend": "frontend/package-lock.json",
+      "node_root": "package-lock.json"
+    },
+    "c38_provenance": {
+      "certification_id": "C38-20260820T101919Z",
+      "head": "ae00171454952e97319260ab2b9bcaf7436c6947",
+      "tree": "e9074cb5dcf0ddafcf340b41a8f9c2c057db9d7c",
+      "status": "Architecture stabilized, contract chain validated, C30 governance certified, mutation restoration proven"
+    },
+    "c39_provenance": {
+      "certification_id": "C39-20260820T125909Z",
+      "head": "0935c1b7fbc2cdb78fb26a09664b042e75dd557b",
+      "tree": "e57658748a9b4f703e4b9a9d452314317efb5edc",
+      "status": "Loan engine reduce-EMI prepayment quantization fix certified permanent",
+      "files_changed": ["backend/src/engines/loan_engine/prepayment.py"],
+      "test_artifacts": ["backend/tests/unit/engines/loan/test_c39_regression.py"]
+    },
+    "verification_evidence": {
+      "backend_verification": "runtime/generated/evidence/backend/backend-verification.json",
+      "api_contract_evidence": "runtime/generated/api-contract-evidence.json",
+      "golden_evidence": "runtime/generated/verification-report.md (golden profile)",
+      "runtime_evidence": "runtime/generated/verification-report.md (runtime profile)",
+      "quick_evidence": "runtime/generated/verification-report.md (quick profile)",
+      "playwright_evidence": "frontend/test-results/results.json, frontend/playwright-report/"
+    },
+    "binding_verification": {
+      "all_artifacts_bound_to_head": true,
+      "all_artifacts_bound_to_tree": true,
+      "no_cross_contamination": true,
+      "evidence_generated_from_current_tree": true
+    }
+  }
+}

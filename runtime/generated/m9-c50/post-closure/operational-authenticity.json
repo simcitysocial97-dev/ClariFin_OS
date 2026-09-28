@@ -1,0 +1,78 @@
+{
+  "schema": "m9-c50/post-closure/operational-authenticity@1",
+  "generated_at": "2026-09-04T20:05:00+00:00",
+  "purpose": "Determine which Phase 11 operational runs were genuinely exercised through the canonical pipeline versus pre-scripted planning probes.",
+  "lineage_requirement": "scenario → change → capability → obligation → plan → executor → real execution → evidence → reconciliation → decision",
+  "directory_inspection": {
+    "path": "runtime/generated/m9-c50/phase-11/operations/",
+    "run_files_count": 54,
+    "summary_file": "operations-summary.json",
+    "summary_run_count": 1
+  },
+  "claim_reconciliation": {
+    "claimed_run_count": 24,
+    "claimed_in": [
+      "EXECUTION_PROGRESS.md Phase 11",
+      "FINAL_CONVERGENCE_REPORT.md (multiple places)",
+      "execution-state.json phase_11_evidence_artifacts.run_count",
+      "final-convergence-summary.json end_state_matrix Operational Validation"
+    ],
+    "actual_run_files": 54,
+    "actual_summary_entries": 1,
+    "verdict": "COUNT INCONSISTENT — The '24' figure is reproduced everywhere as authoritative but does not match either the on-disk file count (54) or the summary (1). At least one of {24, 54, 1} is wrong; the report cannot be relied upon for an honest count."
+  },
+  "lineage_audit": {
+    "plan_identity_populated_count": 0,
+    "execution_identity_populated_count": 0,
+    "evidence_identities_populated_count": 0,
+    "scenario_decision_distribution": {
+      "planned": 26,
+      "cache_reused": 4,
+      "cache_invalidated": 4,
+      "stale": 4,
+      "failed": 4,
+      "blocked_unmapped": 3,
+      "requires_mutation_campaign": 1,
+      "executed_or_certified_or_completed": 0,
+      "self_verified": 1,
+      "no_work_required": 1,
+      "passed": 0,
+      "passed_or_completed": 0
+    },
+    "verdict": "ZERO operational runs reached the execution → evidence → reconciliation → decision stages of the canonical pipeline. Every run terminates at the planning stage or at a synthetic decision label. There is no evidence that ANY scenario actually exercised the canonical executor pipeline against a real obligation with real adapter invocation producing real evidence."
+  },
+  "scenarios_15_and_others_re_executed": {
+    "scenarios_passed_in_re_run": 15,
+    "scenarios_failed_in_re_run": 1,
+    "failed_scenario": "test_scenario_15_ci_equivalent_execution (60s pytest-timeout exceeded — invokes the full verify.py check pipeline and hangs)",
+    "verdict": "Test-level execution against the canonical pipeline WORKS for 15 of 16 scenarios when re-run in this session. However, the recorded run-record JSONs (54 files) do not reflect real runs — they were produced by the prior test session without populated plan/exec/evidence fields. The 24/54/1 count mismatch and the empty plan/exec fields are evidence that the recorded operational history is NOT a faithful representation of actual runs."
+  },
+  "scenario_15_root_cause": {
+    "description": "test_scenario_15_ci_equivalent_execution invokes subprocess.run('python runtime/verify.py check') which hangs beyond pytest-timeout=60s.",
+    "implication": "Either (a) the canonical verify.py check actually hangs in this environment, or (b) the test invokes a longer-running subprocess than expected. This contradicts the Phase 8 + Phase 11 claims that CI and local verify are equivalent and fast, and contradicts Phase 12's claim of '216 passed' which cannot be re-confirmed in a single test invocation due to scenario 15 hang.",
+    "verdict": "CI/LOCAL EQUIVALENCE IS NOT INDEPENDENTLY VERIFIABLE — at least one operational scenario cannot complete a real CI-equivalent subprocess invocation within timeout."
+  },
+  "operational_validation_verdict": "PARTIALLY AUTHENTIC. The test suite (19 tests, of which 15 pass under pytest-timeout=60) genuinely invokes ControlPlane.plan() against synthetic temp-file changes for scenarios 1–14 and 16. But: (a) only .plan() is invoked, not .run() or .execute(); (b) the recorded JSON artifacts are decoupled from actual execution (plan_identity / execution_identity / evidence_identities are all null in 54/54 files); (c) the count is inconsistent (claimed 24, actual files 54, summary 1); (d) scenario 15 (CI-equivalent) cannot complete; (e) cache_reused, cache_invalidated, stale_evidence scenarios invoke cache methods directly rather than through the canonical pipeline.",
+  "self_verification_authenticity": {
+    "claimed": "Verifier-verifies-verifier — framework runs its own canonical pipeline against its own architecture with negative detection",
+    "what_the_tests_actually_do": [
+      "TestSelfVerificationControlPlane: instantiates ControlPlane() and asserts class structure (single-class check via type equality of two instances — does not actually detect a real duplicate authority)",
+      "TestSelfVerificationNegativeDetection.test_framework_detects_duplicate_authority_violation: instantiates two ControlPlanes and asserts type(cp1)==type(cp2) — this proves the class is shared, NOT that the framework can detect a real duplicate-authority injection",
+      "test_framework_detects_legacy_bypass: checks that legacy command names are present in migration_map() — this proves the map exists, NOT that bypass is actually detected at runtime",
+      "test_framework_detects_stale_evidence_reuse: checks that 'stale_evidence_reuse' is in a hardcoded list in the bypass report — this proves the report mentions it, NOT that bypass enforcement actively prevents it"
+    ],
+    "verdict": "STRUCTURAL SELF-TESTS ONLY — the Phase 10 suite asserts the SHAPE of the architecture (single class, registered adapters, known mappings) but does NOT inject real violations and prove detection. The 'negative detection' claim is weak: it checks that detection names exist in code, not that detection actually triggers on real violations."
+  },
+  "cache_claims": {
+    "phase_0_finding": "Cache hit rate <50% (operational instability)",
+    "phase_11_remediation_claim": "Operational validation demonstrates cache reuse and invalidation scenarios",
+    "current_cache_hit_rate": "16.0% combined / 16.2% local (verify.py env-check)",
+    "phase_5_correctness_evidence": "Cache invalidation on commit SHA, changed files, configuration fingerprint, toolchain fingerprint, corrupted JSON — proven live by Phase 5 test suite",
+    "cache_distinction": {
+      "cache_correctness_invalidation": "PROVEN — stale evidence is rejected; wrong-SHA evidence is rejected; wrong-config evidence is rejected; corrupted evidence is rejected (Phase 5 tests)",
+      "cache_correctness_reuse_classification": "PROVEN — replay-pass and cache-invalid-or-missing reason codes explicitly classify reuse",
+      "cache_effectiveness_performance": "NOT IMPROVED — hit rate declined from <50% baseline to 16% in the same operational environment. Effectiveness is unrelated to correctness."
+    },
+    "verdict": "The original Phase-0 'cache <50%' concern is about effectiveness, not correctness. Phase 5+11 prove correctness. Effectiveness (hit rate) is unchanged and remains poor. Calling cache performance 'resolved' is unsupported."
+  }
+}

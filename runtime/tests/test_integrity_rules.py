@@ -6,31 +6,35 @@ scan results. Deterministic. No network. No git mutation.
 
 from __future__ import annotations
 
-from runtime.foundation.integrity.scanner import (
-    ArchitecturalGraph,
-    ImportRecord,
-    ScannedFile,
-)
+from typing import Any
+
 from runtime.foundation.integrity.models import (
     ArchitectureLayer,
     ViolationSeverity,
 )
 from runtime.foundation.integrity.rules import (
-    check_router_not_import_engine,
-    check_component_not_api_direct,
-    check_mapper_not_react,
-    check_workspace_not_fetch,
-    check_no_circular_dependencies,
-    check_component_not_import_engine,
     check_capability_for_every_endpoint,
     check_capability_has_exactly_one_mapper,
+    check_component_not_api_direct,
+    check_component_not_import_engine,
+    check_mapper_not_react,
     check_mapper_returns_viewmodel,
+    check_no_circular_dependencies,
     check_no_duplicate_endpoint_ownership,
     check_page_registers_workspace,
+    check_router_not_import_engine,
+    check_workspace_not_fetch,
+)
+from runtime.foundation.integrity.scanner import (
+    ArchitecturalGraph,
+    ImportRecord,
+    ScannedFile,
 )
 
 
-def _make_graph(files: list[ScannedFile], cross_layer_map: dict = None) -> ArchitecturalGraph:
+def _make_graph(
+    files: list[ScannedFile], cross_layer_map: dict[str, Any] | None = None
+) -> ArchitecturalGraph:
     return ArchitecturalGraph(
         files=tuple(files),
         cross_layer_map=cross_layer_map or {},
@@ -491,6 +495,6 @@ class TestAllRuleChecksExist:
 
         registry = get_constitution()
         for rule in registry.all_rules():
-            assert rule.id in _RULE_CHECKS, (
-                f"Missing check function for {rule.id}: {rule.check}"
-            )
+            assert (
+                rule.id in _RULE_CHECKS
+            ), f"Missing check function for {rule.id}: {rule.check}"

@@ -1,0 +1,13 @@
+# status: survived
+# engines.balance_engine.x_compute_running_balance__mutmut_46: survived
+--- src/engines/balance_engine.py
++++ src/engines/balance_engine.py
+@@ -75,7 +75,7 @@
+             {
+                 "transaction_id": row["id"],
+                 "date": row["date"],
+-                "date_iso": row.get("date_iso") or _parse_date_to_ymd(row["date"]),
++                "date_iso": row.get("DATE_ISO") or _parse_date_to_ymd(row["date"]),
+                 "description": row["description"],
+                 "debit_paise": debit,
+                 "credit_paise": credit,

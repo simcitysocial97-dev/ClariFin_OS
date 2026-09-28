@@ -1,0 +1,13 @@
+# status: survived
+# engines.balance_engine.x_validate_statement_balance__mutmut_31: survived
+--- src/engines/balance_engine.py
++++ src/engines/balance_engine.py
+@@ -52,7 +52,7 @@
+     difference = abs(computed_balance - claimed_closing_balance_paise)
+ 
+     return {
+-        "statement_id": statement_id,
++        "XXstatement_idXX": statement_id,
+         "status": "match" if difference == 0 else "mismatch",
+         "computed_balance_paise": computed_balance,
+         "computed_balance_display": _format_paise(computed_balance),

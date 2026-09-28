@@ -1,7 +1,7 @@
 # .github/workflows/golden.yml
 #
 # PURPOSE: Golden dataset regression tests (nightly).
-# RESPONSIBILITY: Run `runtime/verify.py golden` — the ONLY verification command.
+# RESPONSIBILITY: Run `runtime/verify.py check` — the canonical verification command.
 # Rule 1: no engineering logic in YAML. Rule 2: single responsibility. Rule 8:
 # delegate to runtime/verify.py. Rule 9: append `verify.py status` summary.
 # Concurrency: never cancel (golden is in the Rule 6 exception list).
@@ -12,11 +12,6 @@ on:
   schedule:
     - cron: "0 3 * * *"
   workflow_dispatch:
-    inputs:
-      dataset:
-        description: "Specific dataset (or 'all')"
-        required: false
-        default: "all"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -32,7 +27,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
@@ -41,8 +36,14 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Run golden verification
-        run: python runtime/verify.py golden
+      - name: Setup Node.js runtime
+        uses: ./.github/actions/setup-node-runtime
+        with:
+          node-version: "24"
+          working-directory: "frontend"
+
+      - name: Run golden verification (canonical check)
+        run: .venv/bin/python -m runtime.verify golden
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
@@ -91,5 +92,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          python runtime/verify.py status >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
         shell: bash

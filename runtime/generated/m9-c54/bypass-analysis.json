@@ -1,0 +1,56 @@
+{
+  "schema": "m9-c54/workflow-convergence/v1",
+  "generated_at": "2026-09-11T04:18:27.335967+00:00",
+  "repository_sha": "543917c3529012c7a3148a3fea3a25f0ec9d0bba",
+  "finding_count": 6,
+  "findings": [
+    {
+      "workflow": "dependency-update.yml",
+      "job": "dependency-health",
+      "step": "Run dependency checks",
+      "risk": "CONTROLLED",
+      "bypassed_stage": "change_detection",
+      "rationale": "shell script invocation outside verify.py control plane"
+    },
+    {
+      "workflow": "m9-forensic-diagnostic-lab.yml",
+      "job": "diagnostician",
+      "step": "Capture verify.py source and configuration",
+      "risk": "BYPASS_RISK",
+      "bypassed_stage": "control_plane",
+      "rationale": "verify.py invocation not in command matcher table: {\n  echo \"=== verify.py identity ===\"\n  sha256sum python -m runtime.verify\n  git"
+    },
+    {
+      "workflow": "m9-forensic-diagnostic-lab.yml",
+      "job": "diagnostician",
+      "step": "Bootstrap runtime",
+      "risk": "CONTROLLED",
+      "bypassed_stage": "change_detection",
+      "rationale": "shell script invocation outside verify.py control plane"
+    },
+    {
+      "workflow": "m9-forensic-diagnostic-lab.yml",
+      "job": "diagnostician",
+      "step": "Black run_fast_checks diagnostic",
+      "risk": "CONTROLLED",
+      "bypassed_stage": "change_detection",
+      "rationale": "shell script invocation outside verify.py control plane"
+    },
+    {
+      "workflow": "m9-forensic-diagnostic-lab.yml",
+      "job": "diagnostician",
+      "step": "Shell behaviour differential",
+      "risk": "CONTROLLED",
+      "bypassed_stage": "change_detection",
+      "rationale": "shell script invocation outside verify.py control plane"
+    },
+    {
+      "workflow": "release.yml",
+      "job": "build",
+      "step": "Generate release notes",
+      "risk": "CONTROLLED",
+      "bypassed_stage": "change_detection",
+      "rationale": "shell script invocation outside verify.py control plane"
+    }
+  ]
+}

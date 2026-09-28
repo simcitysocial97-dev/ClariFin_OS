@@ -1,0 +1,14 @@
+{
+  "run_id": "run::state::G",
+  "timestamp": "2026-09-04T23:07:16.731785+00:00",
+  "state": "G_mutation",
+  "expected": "real mutation path is executable",
+  "payload": {
+    "state": "G_mutation",
+    "expected": "real mutation path is executable",
+    "task": "exec::state::G::mutation",
+    "execution_command": ".venv/bin/python runtime/verify.py mutation --target account_engine --json",
+    "executable": "executable"
+  },
+  "task_identity": "exec::state::G::mutation"
+}

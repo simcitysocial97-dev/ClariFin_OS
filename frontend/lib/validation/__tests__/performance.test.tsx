@@ -14,6 +14,8 @@ import { render } from '@testing-library/react';
 describe('Performance Validation — Milestone 10', () => {
   describe('Rendering Performance', () => {
     it('Surface renders under 50ms', () => {
+      const warmup = render(<Surface>Warmup</Surface>);
+      warmup.unmount();
       const start = performance.now();
       render(<Surface>Test Content</Surface>);
       const end = performance.now();

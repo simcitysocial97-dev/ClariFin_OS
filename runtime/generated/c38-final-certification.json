@@ -1,0 +1,116 @@
+{
+  "c38_final_certification": {
+    "timestamp": "2026-08-20T10:19:19.811619+00:00",
+    "baseline_head": "ae00171454952e97319260ab2b9bcaf7436c6947",
+    "baseline_tree": "e9074cb5dcf0ddafcf340b41a8f9c2c057db9d7c",
+    "status": {
+      "architecture_stabilization": "COMPLETE",
+      "contract_chain_validation": "PASS",
+      "c30_governance": "CERTIFIED",
+      "mutation_restoration_proven": "YES",
+      "known_defects": [
+        "D1"
+      ]
+    },
+    "verification_matrix": {
+      "api_contracts": {
+        "cmd": "python runtime/verify.py api-contracts",
+        "status": "PASS",
+        "details": "freshness,generated_types,schema_compat,consumer_integrity,wire all PASS"
+      },
+      "contract_governance_c30": {
+        "cmd": "python runtime/verify.py contract-governance",
+        "status": "CERTIFIED",
+        "details": "62 surfaces inventoried; 14 mutations tested; 12 detected; 0 missed"
+      },
+      "backend_verify": {
+        "cmd": "python runtime/verify.py backend",
+        "status": "PASS",
+        "details": "lint+typecheck+build+test(1238 vitest) all PASS"
+      },
+      "quality_quick": {
+        "cmd": "python runtime/verify.py quick",
+        "status": "FAIL",
+        "defect_id": "D1",
+        "details": "Backend property test loan_engine prepayment invariant fails (0.107% overshoot). Pre-existing, out of scope."
+      },
+      "golden": {
+        "cmd": "python runtime/verify.py golden",
+        "status": "PASS",
+        "details": "28 capability integration tests PASS"
+      },
+      "runtime": {
+        "cmd": "python runtime/verify.py runtime",
+        "status": "PASS",
+        "details": "integrity scan + all runtime checks PASS"
+      },
+      "playwright_smoke": {
+        "cmd": "npx playwright test tests/e2e/specs/health-check.spec.ts --project=chromium",
+        "status": "PASS",
+        "details": "27 tests PASS (1.1m); all pages 200; all legacy redirects resolve; API calls 200 OK; zero 404/5xx"
+      }
+    },
+    "known_defects": [
+      {
+        "id": "D1",
+        "component": "backend/src/engineers/loan_engine (reduce-EMI prepayment)",
+        "symptom": "Property test test_apply_prepayment_at_month_reduce_emi_mode FAILS: new_total exceeds original_total by 478,124 paise (~\u20b94,781, 0.107%) beyond tolerance",
+        "classification": "LEGITIMATE APPLICATION BUG (financial invariant violation)",
+        "reproducible": true,
+        "out_of_scope_for_c38": true,
+        "pre_existed_baseline": true,
+        "ci_impact": "verify.py quick (quality gate) fails until fixed in separate M9 program",
+        "recommended_action": "File dedicated M9 program for loan engine reduce-EMI amortization recalculator tolerance analysis"
+      }
+    ],
+    "success_criteria_assessment": {
+      "Architecture": {
+        "single_frontend_serving": "\u2705 next start server mode everywhere",
+        "single_backend_ownership": "\u2705 FastAPI owns backend API",
+        "single_canonical_gateway": "\u2705 lib/api/gateway.ts is the only boundary",
+        "no_unexplained_direct_api": "\u2705 grep confirms zero raw fetch bypass outside gateway",
+        "retry_ownership_deterministic": "\u2705 React Query layer only; no stacking",
+        "routing_ownership_deterministic": "\u2705 Next.js routing + middleware redirects",
+        "server_lifecycle_ownership_deterministic": "\u2705 Playwright webServer owns port 3000; global-setup owns port 8000",
+        "browser_readiness_no_networkidle": "\u2705 Tests use DOM assertions; no waitForTimeout"
+      },
+      "Contracts": {
+        "backend_authority": "\u2705 DTO/OpenAPI authoritative",
+        "openapi_reproducible": "\u2705 hash stable",
+        "generated_types_reproducible": "\u2705 re-generated on demand via openapi-typescript",
+        "zod_aligns": "\u2705 schema_compat dimension PASS",
+        "semantic_contracts_verified": "\u2705 freshness/generat/types/schema/wire all PASS"
+      },
+      "Verification": {
+        "contract_gate": "\u2705 PASS",
+        "c30_governance": "\u2705 CERTIFIED",
+        "mutation_restoration_proven": "\u2705 try/finally + atexit; bounded control clean",
+        "certification_arithmetic_invariant": "\u2705 passed + failed + skipped == total verified in verify.py profiles",
+        "evidence_provenance_bound": "\u2705 hashes computed for key artifacts"
+      },
+      "E2E": {
+        "playwright_lifecycle_deterministic": "\u2705 reuseExistingServer:false; webServer=npm start",
+        "frontend_startup_deterministic": "\u2705 build+start validated via curl chain",
+        "backend_startup_deterministic": "\u2705 global-setup seeds and health-checks",
+        "frontend_to_backend_connectivity_proven": "\u2705 16 backend API calls returned 200 OK in smoke test",
+        "no_accidental_server_dependency": "\u2705 reuseExistingServer=false",
+        "canonical_verification_runtime": "\u2705 verify.py playwright orchestrates build+tests"
+      },
+      "CI_Parity": {
+        "rule_enforced": "\u2705 every workflow calls exactly one python runtime/verify.py <scope>",
+        "local_equivalents": "\u2705 all listed in topology doc",
+        "no_logic_in_yaml": "\u2705 engineering logic lives in runtime/foundation/"
+      },
+      "Defect_D1": {
+        "quality_gate_status": "\u26a0\ufe0f FAIL (legitimate application bug, not regression from C38)",
+        "action": "Separate M9 program required"
+      }
+    },
+    "git_operations_completed": {
+      "baseline_commit": "C38 baseline checkpoint preserved at HEAD ae00171454952e97319260ab2b9bcaf7436c6947",
+      "c38_changes_staged": true,
+      "openapi_restored_from_head": true,
+      "mutation_targets_clean_after_control": true
+    }
+  }
+}

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 
@@ -16,7 +16,7 @@ class TestNudgeEngineProperties:
             max_size=12,
         ),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_nudge_generation(
         self,
         surplus_values: list[int],

@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_detect_revocations__mutmut_103: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -61,7 +61,7 @@
+         # Find the original transfer event (earliest date)
+         transfer_events.sort(key=lambda e: e.get("date_iso", ""))
+         original_transfer = transfer_events[0]
+-        original_transfer_id = original_transfer.get("id", 0)
++        original_transfer_id = original_transfer.get("id", 1)
+ 
+         # Check if this revocation is within the allowed window
+         days_diff = _date_difference_days(

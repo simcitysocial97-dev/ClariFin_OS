@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_164: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -71,7 +71,7 @@
+ 
+     # Buffer adequacy (days of expenses covered by average balance)
+     avg_balance = (
+-        abs(sum(running_balance) / len(running_balance)) if running_balance else 0
++        abs(sum(None) / len(running_balance)) if running_balance else 0
+     )
+     daily_avg_spend = total_debit / max(len(daily_net), 1)
+     buffer_days = avg_balance / max(daily_avg_spend, 1)

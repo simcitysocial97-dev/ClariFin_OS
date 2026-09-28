@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_walk_lineage__mutmut_34: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -44,7 +44,7 @@
+     for event in events:
+         event.get("event_type", "")
+         event_id = event.get("id", 0)
+-        account_id = event.get("account_id", "")
++        account_id = event.get("account_id", None)
+         event_date_iso = event.get("date_iso", "")
+         lifecycle_state = event.get("lifecycle_state", "open")
+ 

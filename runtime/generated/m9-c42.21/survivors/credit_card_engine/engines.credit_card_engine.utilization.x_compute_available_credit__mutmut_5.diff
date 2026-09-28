@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.utilization.x_compute_available_credit__mutmut_5: survived
+--- src/engines/credit_card_engine/utilization.py
++++ src/engines/credit_card_engine/utilization.py
+@@ -18,7 +18,7 @@
+     INVARIANT 5: Balances are never negative.
+     """
+     if credit_limit_paise < 0:
+-        raise ValueError("credit_limit_paise must be non-negative")
++        raise ValueError("CREDIT_LIMIT_PAISE MUST BE NON-NEGATIVE")
+     if outstanding_paise < 0:
+         raise ValueError("outstanding_paise must be non-negative")
+ 

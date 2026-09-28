@@ -1,0 +1,1472 @@
+{
+  "schema": "m9-c52-capability-catalog-certification/v1",
+  "generated_at": "2026-09-01T03:25:27.548748+00:00",
+  "total_capabilities": 55,
+  "records": [
+    {
+      "capability_id": "discover.blast-radius",
+      "name": "Blast-Radius Contract (C50)",
+      "stage": "discovery",
+      "owning_source": "runtime/foundation/verification/blast_radius.py",
+      "owning_module": "runtime.foundation.verification.blast_radius",
+      "owning_cli_entry": "blast-radius",
+      "cli_routes": [
+        "blast-radius"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "blast-radius"
+      ],
+      "evidence_kind": "blast_radius_contract",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/blast_radius.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "discover.capability-for",
+      "name": "Capability-For (problem -> capability resolver)",
+      "stage": "discovery",
+      "owning_source": "runtime/foundation/verification/capability_discovery.py",
+      "owning_module": "runtime.foundation.verification.capability_discovery",
+      "owning_cli_entry": "capability-for",
+      "cli_routes": [
+        "capability-for"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "capability-for"
+      ],
+      "evidence_kind": "capability_resolution",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [
+        "discover.blast-radius",
+        "plan.execution-plan"
+      ],
+      "derivation_source": "runtime/foundation/verification/capability_discovery.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "discover.capability-graph",
+      "name": "Capability Dependency Graph (C51)",
+      "stage": "discovery",
+      "owning_source": "runtime/foundation/verification/capability_graph.py",
+      "owning_module": "runtime.foundation.verification.capability_graph",
+      "owning_cli_entry": "capability-graph",
+      "cli_routes": [
+        "capability-graph"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "capability-graph"
+      ],
+      "evidence_kind": "capability_graph",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [
+        "discover.blast-radius",
+        "discover.resolve-capabilities"
+      ],
+      "derivation_source": "runtime/foundation/verification/capability_graph.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "discover.capability-inventory",
+      "name": "Command Inventory (C48)",
+      "stage": "discovery",
+      "owning_source": "runtime/foundation/verification/operational_cli.py",
+      "owning_module": "runtime.foundation.verification.operational_cli",
+      "owning_cli_entry": [
+        "capability-inventory",
+        "capabilities"
+      ],
+      "cli_routes": [
+        "capability-inventory",
+        "capabilities"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "capability-inventory",
+        "capabilities"
+      ],
+      "evidence_kind": "capability_catalog",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/operational_cli.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "discover.latent-capability-audit",
+      "name": "Latent Capability Audit (C51)",
+      "stage": "discovery",
+      "owning_source": "runtime/foundation/verification/capability_latent_audit.py",
+      "owning_module": "runtime.foundation.verification.capability_latent_audit",
+      "owning_cli_entry": "latent-audit",
+      "cli_routes": [
+        "latent-audit"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "latent-audit"
+      ],
+      "evidence_kind": "latent_capability_audit",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/capability_latent_audit.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "discover.resolve-capabilities",
+      "name": "Capability Resolution (C48)",
+      "stage": "discovery",
+      "owning_source": "runtime/foundation/verification/operational_cli.py",
+      "owning_module": "runtime.foundation.verification.operational_cli",
+      "owning_cli_entry": "resolve-capabilities",
+      "cli_routes": [
+        "resolve-capabilities"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "resolve-capabilities"
+      ],
+      "evidence_kind": "capability_resolution",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/operational_cli.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "discover.what-should-i-run",
+      "name": "What-Should-I-Run (C50)",
+      "stage": "discovery",
+      "owning_source": "runtime/foundation/verification/blast_radius_cli.py",
+      "owning_module": "runtime.foundation.verification.blast_radius_cli",
+      "owning_cli_entry": "what-should-i-run",
+      "cli_routes": [
+        "what-should-i-run"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "what-should-i-run"
+      ],
+      "evidence_kind": "blast_radius_contract",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/blast_radius_cli.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "plan.control-plane",
+      "name": "Control-Plane Plan (C48)",
+      "stage": "planning",
+      "owning_source": "runtime/foundation/verification/operational_cli.py",
+      "owning_module": "runtime.foundation.verification.operational_cli",
+      "owning_cli_entry": "control-plane-plan",
+      "cli_routes": [
+        "control-plane-plan"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "control-plane-plan"
+      ],
+      "evidence_kind": "control_plane_plan",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [
+        "plan.execution-plan"
+      ],
+      "derivation_source": "runtime/foundation/verification/operational_cli.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "plan.deep-contract",
+      "name": "Deep Contract Manifest",
+      "stage": "planning",
+      "owning_source": "runtime/verify.py",
+      "owning_module": "runtime/verify.py",
+      "owning_cli_entry": "deep-contract",
+      "cli_routes": [
+        "deep-contract"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "deep-contract"
+      ],
+      "evidence_kind": "certification_report",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/verify.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "plan.execution-plan",
+      "name": "Execution Plan (C49)",
+      "stage": "planning",
+      "owning_source": "runtime/foundation/verification/execution_orchestrator.py",
+      "owning_module": "runtime.foundation.verification.execution_orchestrator",
+      "owning_cli_entry": "execution-plan",
+      "cli_routes": [
+        "execution-plan"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "execution-plan"
+      ],
+      "evidence_kind": "execution_plan",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [
+        "exec.orchestrator"
+      ],
+      "derivation_source": "runtime/foundation/verification/execution_orchestrator.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "plan.local-gate",
+      "name": "Local Gate (pre-push)",
+      "stage": "planning",
+      "owning_source": "runtime/verify.py",
+      "owning_module": "runtime/verify.py",
+      "owning_cli_entry": "local-gate",
+      "cli_routes": [
+        "local-gate"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "local-gate"
+      ],
+      "evidence_kind": "tier_plan_manifest",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/verify.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "plan.tier-plan",
+      "name": "Tier-Aware Plan (VEA-5)",
+      "stage": "planning",
+      "owning_source": "runtime/verify.py",
+      "owning_module": "runtime/verify.py",
+      "owning_cli_entry": "plan",
+      "cli_routes": [
+        "plan"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "plan"
+      ],
+      "evidence_kind": "tier_plan_manifest",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/verify.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "evidence.pipeline-plan",
+      "name": "Evidence Plan Pipeline (C42)",
+      "stage": "execution",
+      "owning_source": "runtime/foundation/verification/executor_pipeline.py",
+      "owning_module": "runtime.foundation.verification.executor_pipeline",
+      "owning_cli_entry": "evidence-plan",
+      "cli_routes": [
+        "evidence-plan"
+      ],
+      "verification_profile": "evidence-plan",
+      "executable_test_surface": [
+        "evidence-plan"
+      ],
+      "evidence_kind": "execution_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [
+        "exec.orchestrator"
+      ],
+      "derivation_source": "runtime/foundation/verification/executor_pipeline.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "exec.environment-check",
+      "name": "Canonical Environment Check (C42.5)",
+      "stage": "execution",
+      "owning_source": "runtime/foundation/verification/env.py",
+      "owning_module": "runtime.foundation.verification.env",
+      "owning_cli_entry": "env-check",
+      "cli_routes": [
+        "env-check"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "env-check"
+      ],
+      "evidence_kind": "environment_fingerprint",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/env.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "exec.evidence-execute",
+      "name": "Evidence Pipeline Execute (C42.28)",
+      "stage": "execution",
+      "owning_source": "runtime/foundation/verification/executor_pipeline.py",
+      "owning_module": "runtime.foundation.verification.executor_pipeline",
+      "owning_cli_entry": "evidence-execute",
+      "cli_routes": [
+        "evidence-execute"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "evidence-execute"
+      ],
+      "evidence_kind": "execution_evidence",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [
+        "evidence.pipeline-plan",
+        "evidence.reconcile-pipeline",
+        "certify.evidence-pipeline"
+      ],
+      "derivation_source": "runtime/foundation/verification/executor_pipeline.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "exec.execution-evidence",
+      "name": "Execution Evidence Emission (VEA-5 M5-C)",
+      "stage": "execution",
+      "owning_source": "runtime/verify.py",
+      "owning_module": "runtime/verify.py",
+      "owning_cli_entry": "exec-evidence",
+      "cli_routes": [
+        "exec-evidence"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "exec-evidence"
+      ],
+      "evidence_kind": "execution_evidence",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/verify.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "exec.orchestrator",
+      "name": "Execution Orchestrator (C49)",
+      "stage": "execution",
+      "owning_source": "runtime/foundation/verification/execution_orchestrator.py",
+      "owning_module": "runtime.foundation.verification.execution_orchestrator",
+      "owning_cli_entry": "execute",
+      "cli_routes": [
+        "execute"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "execute"
+      ],
+      "evidence_kind": "execution_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/execution_orchestrator.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "quality.black",
+      "name": "Black Format (repository-wide)",
+      "stage": "execution",
+      "owning_source": ".github/scripts/run_fast_checks.sh",
+      "owning_module": ".github/scripts/run_fast_checks.sh",
+      "owning_cli_entry": null,
+      "cli_routes": [],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "python -m black --check --diff ."
+      ],
+      "evidence_kind": "format_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": ".github/scripts/run_fast_checks.sh",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "quality.mypy",
+      "name": "Mypy Typecheck (scoped boundaries)",
+      "stage": "execution",
+      "owning_source": ".github/scripts/run_fast_checks.sh",
+      "owning_module": ".github/scripts/run_fast_checks.sh",
+      "owning_cli_entry": null,
+      "cli_routes": [],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "python -m mypy .  # repo boundary;  python -m mypy src/  # backend strict boundary (rootdir=backend)"
+      ],
+      "evidence_kind": "typecheck_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": ".github/scripts/run_fast_checks.sh",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "quality.pytest",
+      "name": "Pytest (backend + runtime suites)",
+      "stage": "execution",
+      "owning_source": ".github/scripts/run_backend_verification.sh",
+      "owning_module": ".github/scripts/run_backend_verification.sh",
+      "owning_cli_entry": null,
+      "cli_routes": [],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "python -m pytest tests/unit/ -x -q  # backend (rootdir=backend);  python -m pytest runtime/tests/  # runtime"
+      ],
+      "evidence_kind": "test_pass",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": ".github/scripts/run_backend_verification.sh",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "quality.ruff",
+      "name": "Ruff Lint (repository-wide)",
+      "stage": "execution",
+      "owning_source": ".github/scripts/run_fast_checks.sh",
+      "owning_module": ".github/scripts/run_fast_checks.sh",
+      "owning_cli_entry": null,
+      "cli_routes": [],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "python -m ruff check . --output-format=github"
+      ],
+      "evidence_kind": "lint_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": ".github/scripts/run_fast_checks.sh",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "measure.coverage",
+      "name": "Coverage Measurement (C47 canonical)",
+      "stage": "measurement",
+      "owning_source": "runtime/foundation/verification/coverage_measurement.py",
+      "owning_module": "runtime.foundation.verification.coverage_measurement",
+      "owning_cli_entry": "measurement",
+      "cli_routes": [
+        "measurement"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "measurement"
+      ],
+      "evidence_kind": "coverage_measurement",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/coverage_measurement.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "measure.mutation",
+      "name": "Mutation Testing (C47 authoritative)",
+      "stage": "measurement",
+      "owning_source": "runtime/foundation/verification/mutation_runner.py",
+      "owning_module": "runtime.foundation.verification.mutation_runner",
+      "owning_cli_entry": [
+        "mutation",
+        "--target"
+      ],
+      "cli_routes": [
+        "mutation",
+        "--target"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "mutation",
+        "--target"
+      ],
+      "evidence_kind": "mutation_score",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/mutation_runner.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "measure.mutation-inventory",
+      "name": "Mutation Population Inventory",
+      "stage": "measurement",
+      "owning_source": "runtime/foundation/verification/mutation_inventory.py",
+      "owning_module": "runtime.foundation.verification.mutation_inventory",
+      "owning_cli_entry": "mutation-inventory",
+      "cli_routes": [
+        "mutation-inventory"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "mutation-inventory"
+      ],
+      "evidence_kind": "capability_catalog",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/mutation_inventory.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "measure.truth-report",
+      "name": "Measurement Truth Report (C47/C48)",
+      "stage": "measurement",
+      "owning_source": "runtime/foundation/verification/measurement_truth_integration.py",
+      "owning_module": "runtime.foundation.verification.measurement_truth_integration",
+      "owning_cli_entry": "measurement-truth-report",
+      "cli_routes": [
+        "measurement-truth-report"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "measurement-truth-report"
+      ],
+      "evidence_kind": "certification_report",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/measurement_truth_integration.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "diagnose.bypass-audit",
+      "name": "Control-Plane Bypass Audit (C51)",
+      "stage": "diagnosis",
+      "owning_source": "runtime/foundation/verification/capability_discovery.py",
+      "owning_module": "runtime.foundation.verification.capability_discovery",
+      "owning_cli_entry": "bypass-audit",
+      "cli_routes": [
+        "bypass-audit"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "bypass-audit"
+      ],
+      "evidence_kind": "bypass_risk_analysis",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [
+        "discover.capability-for"
+      ],
+      "derivation_source": "runtime/foundation/verification/capability_discovery.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "diagnose.failure-attribution",
+      "name": "Pipeline Failure Attribution (VEA-2 M6)",
+      "stage": "diagnosis",
+      "owning_source": "runtime/verify.py",
+      "owning_module": "runtime/verify.py",
+      "owning_cli_entry": "diagnose-failures",
+      "cli_routes": [
+        "diagnose-failures"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "diagnose-failures"
+      ],
+      "evidence_kind": "diagnostic_report",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [
+        "diagnose.forensic"
+      ],
+      "derivation_source": "runtime/verify.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "diagnose.intelligence",
+      "name": "Engineering Intelligence Layer",
+      "stage": "diagnosis",
+      "owning_source": "runtime/verify.py",
+      "owning_module": "runtime/verify.py",
+      "owning_cli_entry": "intelligence",
+      "cli_routes": [
+        "intelligence"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "intelligence"
+      ],
+      "evidence_kind": "diagnostic_report",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/verify.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "strengthen.capability-pipeline",
+      "name": "Capability-Aware Strengthening Pipeline (C48)",
+      "stage": "strengthening",
+      "owning_source": "runtime/foundation/verification/strengthening_pipeline.py",
+      "owning_module": "runtime.foundation.verification.strengthening_pipeline",
+      "owning_cli_entry": [
+        "strengthen-capability",
+        "strengthen-survivor"
+      ],
+      "cli_routes": [
+        "strengthen-capability",
+        "strengthen-survivor"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "strengthen-capability",
+        "strengthen-survivor"
+      ],
+      "evidence_kind": "strengthening_proposal",
+      "diagnostic_capability": true,
+      "strengthening_capability": true,
+      "certification_relevance": false,
+      "dependencies": [
+        "strengthen.forensic",
+        "measure.mutation"
+      ],
+      "derivation_source": "runtime/foundation/verification/strengthening_pipeline.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "strengthen.forensic",
+      "name": "Forensic Diagnostic Lab (C42.30)",
+      "stage": "strengthening",
+      "owning_source": "runtime/foundation/verification/forensic_cli.py",
+      "owning_module": "runtime.foundation.verification.forensic_cli",
+      "owning_cli_entry": [
+        "forensic-diagnose",
+        "forensic-report",
+        "strengthen-discover",
+        "strengthen-propose",
+        "strengthen-validate",
+        "strengthen-survivor-forensic",
+        "strengthen-analyze",
+        "strengthen-report"
+      ],
+      "cli_routes": [
+        "forensic-diagnose",
+        "forensic-report",
+        "strengthen-discover",
+        "strengthen-propose",
+        "strengthen-validate",
+        "strengthen-survivor-forensic",
+        "strengthen-analyze",
+        "strengthen-report"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "forensic-diagnose",
+        "forensic-report",
+        "strengthen-discover",
+        "strengthen-propose",
+        "strengthen-validate",
+        "strengthen-survivor-forensic",
+        "strengthen-analyze",
+        "strengthen-report"
+      ],
+      "evidence_kind": "forensic_report",
+      "diagnostic_capability": true,
+      "strengthening_capability": true,
+      "certification_relevance": false,
+      "dependencies": [
+        "strengthen.capability-pipeline"
+      ],
+      "derivation_source": "runtime/foundation/verification/forensic_cli.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "strengthen.survivor-intel",
+      "name": "Durable Survivor Intelligence (C45)",
+      "stage": "strengthening",
+      "owning_source": "runtime/foundation/verification/survivor_intel.py",
+      "owning_module": "runtime.foundation.verification.survivor_intel",
+      "owning_cli_entry": "mutation-intel",
+      "cli_routes": [
+        "mutation-intel"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "mutation-intel"
+      ],
+      "evidence_kind": "survivor_intel",
+      "diagnostic_capability": true,
+      "strengthening_capability": true,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/survivor_intel.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "evidence.config-authority",
+      "name": "Configuration Authority Verification (C51)",
+      "stage": "evidence_inspection",
+      "owning_source": "runtime/foundation/verification/configuration_authority.py",
+      "owning_module": "runtime.foundation.verification.configuration_authority",
+      "owning_cli_entry": "config-authority",
+      "cli_routes": [
+        "config-authority"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "config-authority"
+      ],
+      "evidence_kind": "configuration_authority_report",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/configuration_authority.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "evidence.execution-status",
+      "name": "Execution Report Status",
+      "stage": "evidence_inspection",
+      "owning_source": "runtime/verify.py",
+      "owning_module": "runtime/verify.py",
+      "owning_cli_entry": [
+        "execution-status",
+        "execution-report"
+      ],
+      "cli_routes": [
+        "execution-status",
+        "execution-report"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "execution-status",
+        "execution-report"
+      ],
+      "evidence_kind": "execution_report",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/verify.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "evidence.inspect-truth",
+      "name": "Measurement Truth Inspection (C47)",
+      "stage": "evidence_inspection",
+      "owning_source": "runtime/foundation/verification/measurement_truth_cli.py",
+      "owning_module": "runtime.foundation.verification.measurement_truth_cli",
+      "owning_cli_entry": "measurement-truth",
+      "cli_routes": [
+        "measurement-truth"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "measurement-truth"
+      ],
+      "evidence_kind": "certification_report",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/measurement_truth_cli.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "evidence.knowledge-base",
+      "name": "Verification Knowledge Base (C3/C42)",
+      "stage": "evidence_inspection",
+      "owning_source": "runtime/foundation/knowledge/indexer.py",
+      "owning_module": "runtime.foundation.knowledge.indexer",
+      "owning_cli_entry": "knowledge",
+      "cli_routes": [
+        "knowledge"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "knowledge"
+      ],
+      "evidence_kind": "knowledge_report",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [
+        "certify.contract-governance",
+        "certify.audit"
+      ],
+      "derivation_source": "runtime/foundation/knowledge/indexer.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "evidence.reconcile",
+      "name": "VEA-5 Plan Reconciliation Gate (C42.27)",
+      "stage": "evidence_inspection",
+      "owning_source": "runtime/verify.py",
+      "owning_module": "runtime/verify.py",
+      "owning_cli_entry": "reconcile",
+      "cli_routes": [
+        "reconcile"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "reconcile"
+      ],
+      "evidence_kind": "reconciliation_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [
+        "evidence.pipeline-plan",
+        "evidence.reconcile-pipeline"
+      ],
+      "derivation_source": "runtime/verify.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "evidence.reconcile-pipeline",
+      "name": "Evidence Pipeline Reconciliation (C42.28)",
+      "stage": "evidence_inspection",
+      "owning_source": "runtime/foundation/verification/executor_pipeline.py",
+      "owning_module": "runtime.foundation.verification.executor_pipeline",
+      "owning_cli_entry": "evidence-reconcile",
+      "cli_routes": [
+        "evidence-reconcile"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "evidence-reconcile"
+      ],
+      "evidence_kind": "reconciliation_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [
+        "evidence.pipeline-plan",
+        "exec.evidence-execute",
+        "certify.evidence-pipeline"
+      ],
+      "derivation_source": "runtime/foundation/verification/executor_pipeline.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "evidence.workspace-status",
+      "name": "Workspace Status & Metrics",
+      "stage": "evidence_inspection",
+      "owning_source": "runtime/foundation/workspace/__init__.py",
+      "owning_module": "runtime.foundation.workspace.*",
+      "owning_cli_entry": [
+        "status",
+        "metrics",
+        "history",
+        "deps",
+        "verify-status"
+      ],
+      "cli_routes": [
+        "status",
+        "metrics",
+        "history",
+        "deps",
+        "verify-status"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "status",
+        "metrics",
+        "history",
+        "deps",
+        "verify-status"
+      ],
+      "evidence_kind": "environment_fingerprint",
+      "diagnostic_capability": true,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/workspace/__init__.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "certify.api-contracts",
+      "name": "API Contract Integrity Gate (C27)",
+      "stage": "certification",
+      "owning_source": "runtime/foundation/verification/api_contracts/gate.py",
+      "owning_module": "runtime.foundation.verification.api_contracts.gate",
+      "owning_cli_entry": "api-contracts",
+      "cli_routes": [
+        "api-contracts"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "api-contracts"
+      ],
+      "evidence_kind": "certification_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": true,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/api_contracts/gate.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "certify.audit",
+      "name": "Engineering Platform Certification Audit",
+      "stage": "certification",
+      "owning_source": "runtime/verify.py",
+      "owning_module": "runtime/verify.py",
+      "owning_cli_entry": "audit",
+      "cli_routes": [
+        "audit"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "audit"
+      ],
+      "evidence_kind": "certification_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": true,
+      "dependencies": [],
+      "derivation_source": "runtime/verify.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "certify.contract-governance",
+      "name": "Contract Governance Certification (C30)",
+      "stage": "certification",
+      "owning_source": "runtime/foundation/verification/api_contracts/c30_certification.py",
+      "owning_module": "runtime.foundation.verification.api_contracts.c30_certification",
+      "owning_cli_entry": "contract-governance",
+      "cli_routes": [
+        "contract-governance"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "contract-governance"
+      ],
+      "evidence_kind": "certification_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": true,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/api_contracts/c30_certification.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "certify.evidence-pipeline",
+      "name": "Evidence Pipeline Certification (C42.28)",
+      "stage": "certification",
+      "owning_source": "runtime/foundation/verification/executor_pipeline.py",
+      "owning_module": "runtime.foundation.verification.executor_pipeline",
+      "owning_cli_entry": "evidence-certify",
+      "cli_routes": [
+        "evidence-certify"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "evidence-certify"
+      ],
+      "evidence_kind": "certification_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": true,
+      "dependencies": [
+        "exec.evidence-execute",
+        "evidence.reconcile-pipeline"
+      ],
+      "derivation_source": "runtime/foundation/verification/executor_pipeline.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "certify.integrity",
+      "name": "Architecture Integrity Verification",
+      "stage": "certification",
+      "owning_source": "runtime/foundation/integrity/engine.py",
+      "owning_module": "runtime.foundation.integrity.engine",
+      "owning_cli_entry": "integrity",
+      "cli_routes": [
+        "integrity"
+      ],
+      "verification_profile": null,
+      "executable_test_surface": [
+        "integrity"
+      ],
+      "evidence_kind": "certification_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": true,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/integrity/engine.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "exec.profile.quick",
+      "name": "Profile: Quick Verification",
+      "stage": "execution",
+      "owning_source": "runtime/foundation/verification/orchestrator.py",
+      "owning_module": "runtime.foundation.verification.orchestrator",
+      "owning_cli_entry": "quick",
+      "cli_routes": [
+        "quick"
+      ],
+      "verification_profile": "quick",
+      "executable_test_surface": [
+        "quick"
+      ],
+      "evidence_kind": "execution_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/orchestrator.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "exec.profile.backend",
+      "name": "Profile: Backend Verification",
+      "stage": "execution",
+      "owning_source": "runtime/foundation/verification/orchestrator.py",
+      "owning_module": "runtime.foundation.verification.orchestrator",
+      "owning_cli_entry": "backend",
+      "cli_routes": [
+        "backend"
+      ],
+      "verification_profile": "backend",
+      "executable_test_surface": [
+        "backend"
+      ],
+      "evidence_kind": "execution_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/orchestrator.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "exec.profile.frontend",
+      "name": "Profile: Frontend Verification",
+      "stage": "execution",
+      "owning_source": "runtime/foundation/verification/orchestrator.py",
+      "owning_module": "runtime.foundation.verification.orchestrator",
+      "owning_cli_entry": "frontend",
+      "cli_routes": [
+        "frontend"
+      ],
+      "verification_profile": "frontend",
+      "executable_test_surface": [
+        "frontend"
+      ],
+      "evidence_kind": "execution_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/orchestrator.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "exec.profile.contracts",
+      "name": "Profile: Contract Verification",
+      "stage": "execution",
+      "owning_source": "runtime/foundation/verification/orchestrator.py",
+      "owning_module": "runtime.foundation.verification.orchestrator",
+      "owning_cli_entry": "contracts",
+      "cli_routes": [
+        "contracts"
+      ],
+      "verification_profile": "contracts",
+      "executable_test_surface": [
+        "contracts"
+      ],
+      "evidence_kind": "execution_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/orchestrator.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "exec.profile.property",
+      "name": "Profile: Property Testing",
+      "stage": "execution",
+      "owning_source": "runtime/foundation/verification/orchestrator.py",
+      "owning_module": "runtime.foundation.verification.orchestrator",
+      "owning_cli_entry": "property",
+      "cli_routes": [
+        "property"
+      ],
+      "verification_profile": "property",
+      "executable_test_surface": [
+        "property"
+      ],
+      "evidence_kind": "execution_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/orchestrator.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "exec.profile.integration",
+      "name": "Profile: Integration Tests",
+      "stage": "execution",
+      "owning_source": "runtime/foundation/verification/orchestrator.py",
+      "owning_module": "runtime.foundation.verification.orchestrator",
+      "owning_cli_entry": "integration",
+      "cli_routes": [
+        "integration"
+      ],
+      "verification_profile": "integration",
+      "executable_test_surface": [
+        "integration"
+      ],
+      "evidence_kind": "execution_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/orchestrator.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "exec.profile.migration",
+      "name": "Profile: Migration Verification",
+      "stage": "execution",
+      "owning_source": "runtime/foundation/verification/orchestrator.py",
+      "owning_module": "runtime.foundation.verification.orchestrator",
+      "owning_cli_entry": "migration",
+      "cli_routes": [
+        "migration"
+      ],
+      "verification_profile": "migration",
+      "executable_test_surface": [
+        "migration"
+      ],
+      "evidence_kind": "execution_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/orchestrator.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "exec.profile.repository",
+      "name": "Profile: Repository Verification",
+      "stage": "execution",
+      "owning_source": "runtime/foundation/verification/orchestrator.py",
+      "owning_module": "runtime.foundation.verification.orchestrator",
+      "owning_cli_entry": "repository",
+      "cli_routes": [
+        "repository"
+      ],
+      "verification_profile": "repository",
+      "executable_test_surface": [
+        "repository"
+      ],
+      "evidence_kind": "execution_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/orchestrator.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "exec.profile.full",
+      "name": "Profile: Full Verification",
+      "stage": "execution",
+      "owning_source": "runtime/foundation/verification/orchestrator.py",
+      "owning_module": "runtime.foundation.verification.orchestrator",
+      "owning_cli_entry": "full",
+      "cli_routes": [
+        "full"
+      ],
+      "verification_profile": "full",
+      "executable_test_surface": [
+        "full"
+      ],
+      "evidence_kind": "execution_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/orchestrator.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "exec.profile.runtime",
+      "name": "Profile: Runtime Verification",
+      "stage": "execution",
+      "owning_source": "runtime/foundation/verification/orchestrator.py",
+      "owning_module": "runtime.foundation.verification.orchestrator",
+      "owning_cli_entry": "runtime",
+      "cli_routes": [
+        "runtime"
+      ],
+      "verification_profile": "runtime",
+      "executable_test_surface": [
+        "runtime"
+      ],
+      "evidence_kind": "execution_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/orchestrator.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "exec.profile.golden",
+      "name": "Profile: Golden Regression",
+      "stage": "execution",
+      "owning_source": "runtime/foundation/verification/orchestrator.py",
+      "owning_module": "runtime.foundation.verification.orchestrator",
+      "owning_cli_entry": "golden",
+      "cli_routes": [
+        "golden"
+      ],
+      "verification_profile": "golden",
+      "executable_test_surface": [
+        "golden"
+      ],
+      "evidence_kind": "execution_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/orchestrator.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    },
+    {
+      "capability_id": "exec.profile.playwright",
+      "name": "Profile: Playwright E2E",
+      "stage": "execution",
+      "owning_source": "runtime/foundation/verification/orchestrator.py",
+      "owning_module": "runtime.foundation.verification.orchestrator",
+      "owning_cli_entry": "playwright",
+      "cli_routes": [
+        "playwright"
+      ],
+      "verification_profile": "playwright",
+      "executable_test_surface": [
+        "playwright"
+      ],
+      "evidence_kind": "execution_report",
+      "diagnostic_capability": false,
+      "strengthening_capability": false,
+      "certification_relevance": false,
+      "dependencies": [],
+      "derivation_source": "runtime/foundation/verification/orchestrator.py",
+      "implementation_resolvable": true,
+      "reusable_evidence": true
+    }
+  ],
+  "audits": {
+    "duplicate_capability_ids": [],
+    "duplicate_alias_routes": [],
+    "missing_metadata": [],
+    "stale_metadata": [],
+    "unreachable_capabilities": [],
+    "no_executable_verification": [],
+    "observation_only": [],
+    "in_code_absent_from_catalog": [
+      {
+        "route": "analytics",
+        "derivation": "verify.py dispatcher contains the route; no C51/C52 catalog entry command claims it",
+        "disposition": "to be classified in M52.3 (cli-capability-matrix)"
+      },
+      {
+        "route": "health",
+        "derivation": "verify.py dispatcher contains the route; no C51/C52 catalog entry command claims it",
+        "disposition": "to be classified in M52.3 (cli-capability-matrix)"
+      },
+      {
+        "route": "doctor",
+        "derivation": "verify.py dispatcher contains the route; no C51/C52 catalog entry command claims it",
+        "disposition": "to be classified in M52.3 (cli-capability-matrix)"
+      },
+      {
+        "route": "ci-doctor",
+        "derivation": "verify.py dispatcher contains the route; no C51/C52 catalog entry command claims it",
+        "disposition": "to be classified in M52.3 (cli-capability-matrix)"
+      },
+      {
+        "route": "diagnose",
+        "derivation": "verify.py dispatcher contains the route; no C51/C52 catalog entry command claims it",
+        "disposition": "to be classified in M52.3 (cli-capability-matrix)"
+      },
+      {
+        "route": "affected",
+        "derivation": "verify.py dispatcher contains the route; no C51/C52 catalog entry command claims it",
+        "disposition": "to be classified in M52.3 (cli-capability-matrix)"
+      },
+      {
+        "route": "repair",
+        "derivation": "verify.py dispatcher contains the route; no C51/C52 catalog entry command claims it",
+        "disposition": "to be classified in M52.3 (cli-capability-matrix)"
+      },
+      {
+        "route": "risk",
+        "derivation": "verify.py dispatcher contains the route; no C51/C52 catalog entry command claims it",
+        "disposition": "to be classified in M52.3 (cli-capability-matrix)"
+      },
+      {
+        "route": "dashboard",
+        "derivation": "verify.py dispatcher contains the route; no C51/C52 catalog entry command claims it",
+        "disposition": "to be classified in M52.3 (cli-capability-matrix)"
+      },
+      {
+        "route": "certify-v4",
+        "derivation": "verify.py dispatcher contains the route; no C51/C52 catalog entry command claims it",
+        "disposition": "to be classified in M52.3 (cli-capability-matrix)"
+      },
+      {
+        "route": "certify-v5",
+        "derivation": "verify.py dispatcher contains the route; no C51/C52 catalog entry command claims it",
+        "disposition": "to be classified in M52.3 (cli-capability-matrix)"
+      },
+      {
+        "route": "intelligence-audit",
+        "derivation": "verify.py dispatcher contains the route; no C51/C52 catalog entry command claims it",
+        "disposition": "to be classified in M52.3 (cli-capability-matrix)"
+      }
+    ],
+    "in_catalog_absent_from_pipeline": []
+  },
+  "observations_only_count": 0,
+  "notes_metadata_corruption_fixed": true,
+  "notes_metadata_fix": "M9-C52.1: VerificationCapabilityMetadata.__post_init__ normalizes a str notes value to a one-element tuple. Prior to this the C51 inventory artifact contained per-character notes lists (9 entries).",
+  "stale_implementation_references_fixed": 8,
+  "stale_reference_fixes": [
+    "plan.tier-plan: orchestrator:cmd_plan -> runtime/verify.py:cmd_plan",
+    "plan.local-gate: orchestrator:cmd_local_gate -> runtime/verify.py:cmd_local_gate",
+    "plan.deep-contract: orchestrator:cmd_deep_contract -> runtime/verify.py:cmd_deep_contract",
+    "diagnose.failure-attribution: orchestrator:cmd_diagnose_failures -> runtime/verify.py:cmd_diagnose_failures",
+    "diagnose.intelligence: orchestrator:cmd_intelligence -> runtime/verify.py:cmd_intelligence",
+    "certify.audit: orchestrator:cmd_audit -> runtime/verify.py:cmd_audit",
+    "evidence.execution-status: orchestrator:cmd_execution_status -> runtime/verify.py:execution-status",
+    "evidence.workspace-status: verification.workspace.* -> workspace.* (package moved to runtime/foundation/workspace)",
+    "certify.integrity: verification.integrity.engine -> foundation.integrity.engine (path corrected)"
+  ],
+  "internal_passed": true,
+  "completeness_gap_in_code_absent_from_catalog": 12,
+  "passed": true,
+  "open_items": [
+    {
+      "id": "cli-routes-unclassified",
+      "count": 12,
+      "routes": [
+        "analytics",
+        "health",
+        "doctor",
+        "ci-doctor",
+        "diagnose",
+        "affected",
+        "repair",
+        "risk",
+        "dashboard",
+        "certify-v4",
+        "certify-v5",
+        "intelligence-audit"
+      ],
+      "resolution": "M52.3 cli-capability-matrix.json classifies every route; G5 requires gap == 0 after M52.3.",
+      "blocking_for_final_certification": true
+    }
+  ],
+  "issues": []
+}

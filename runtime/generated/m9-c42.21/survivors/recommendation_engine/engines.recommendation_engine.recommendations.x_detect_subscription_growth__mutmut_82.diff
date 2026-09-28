@@ -1,0 +1,13 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_82: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -52,7 +52,7 @@
+         growth = Decimal(str(total_current - total_previous)) / Decimal(
+             str(total_previous)
+         )
+-        if growth > SUBSCRIPTION_GROWTH_THRESHOLD:
++        if growth >= SUBSCRIPTION_GROWTH_THRESHOLD:
+             growth_pct = int(growth * 100)
+             return Recommendation(
+                 title="Review Subscriptions",

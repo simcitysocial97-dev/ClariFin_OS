@@ -1,0 +1,10 @@
+# status: survived
+# engines.account_engine.history.x_compute_balance_velocity__mutmut_14: survived
+--- src/engines/account_engine/history.py
++++ src/engines/account_engine/history.py
+@@ -24,4 +24,4 @@
+ 
+     change = closing_balance - opening_balance
+     velocity_decimal = Decimal(change) / Decimal(days)
+-    return int(velocity_decimal.quantize(Decimal(1), rounding=ROUND_HALF_UP))
++    return int(velocity_decimal.quantize(Decimal(1), rounding=None))

@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_walk_lineage__mutmut_140: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -81,7 +81,7 @@
+         matched_advance_id = matched_advance.get("id", 0)
+ 
+         # Check for duplicate
+-        link_key = (event_id, matched_advance_id, "settles")
++        link_key = (event_id, matched_advance_id, "XXsettlesXX")
+         if link_key in processed_pairs:
+             continue
+         processed_pairs.add(link_key)

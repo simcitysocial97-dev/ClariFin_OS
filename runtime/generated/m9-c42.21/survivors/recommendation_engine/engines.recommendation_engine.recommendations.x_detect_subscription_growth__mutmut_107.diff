@@ -1,0 +1,13 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_107: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -59,7 +59,7 @@
+                 reason="Subscription spending is increasing rapidly",
+                 metric=f"Subscription spending increased by {growth_pct}%",
+                 severity="MEDIUM",
+-                suggested_action="Review and consolidate subscription services to control recurring expenses",
++                suggested_action="REVIEW AND CONSOLIDATE SUBSCRIPTION SERVICES TO CONTROL RECURRING EXPENSES",
+             )
+ 
+     # Check for new subscriptions (not in previous period)

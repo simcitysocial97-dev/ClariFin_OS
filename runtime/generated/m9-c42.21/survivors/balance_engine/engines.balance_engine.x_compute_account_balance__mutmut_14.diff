@@ -1,0 +1,13 @@
+# status: survived
+# engines.balance_engine.x_compute_account_balance__mutmut_14: survived
+--- src/engines/balance_engine.py
++++ src/engines/balance_engine.py
+@@ -37,7 +37,7 @@
+     row = cur.fetchone()
+     conn.close()
+ 
+-    total_debit = row["total_debit"] or 0
++    total_debit = row["TOTAL_DEBIT"] or 0
+     total_credit = row["total_credit"] or 0
+     count = row["count"] or 0
+ 

@@ -13,21 +13,37 @@ Phase 2 Router Extraction Complete:
 - This file now contains only app setup, middleware, and router registration
 """
 
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.config import settings
 from src.errors import register_error_handlers
 from src.health import register_health_routes
+from src.middleware import LoggingMiddleware
+from src.startup import run_startup_validation
 
 # ============================================================
 # FastAPI App
 # ============================================================
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    # Ensure the SQLite schema exists/is current before serving requests.
+    # Delegates to the canonical startup-validation owner (src/startup.py),
+    # which now performs idempotent schema initialization.
+    run_startup_validation()
+    yield
+
+
 app = FastAPI(
     title="Personal Finance API",
     description="REST API for personal finance tracker",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 # Enable CORS
@@ -38,6 +54,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# App-wide request logging (after CORSMiddleware per M07-T3)
+app.add_middleware(LoggingMiddleware)
 
 # Register error handlers
 register_error_handlers(app)
@@ -67,7 +86,6 @@ from src.routers import (
     investments_workspace,
     loans,
     loans_workspace,
-    managed_accounts,
     members,
     networth,
     networth_workspace,
@@ -89,24 +107,33 @@ app.include_router(cashflow_workspace.router)
 app.include_router(dashboard.router)
 app.include_router(export.router)
 app.include_router(financial_events.router)
-app.include_router(
-    financial_intelligence.router,
-    prefix="/api/v1",
-    tags=["financial-intelligence"],
-)
+app.include_router(financial_intelligence.router)
 app.include_router(forecast.router)
 app.include_router(import_router.router)
 app.include_router(investments.router)
 app.include_router(investments_workspace.router)
 app.include_router(loans.router)
 app.include_router(loans_workspace.router)
-app.include_router(managed_accounts.router)
 app.include_router(members.router)
 app.include_router(networth.router)
 app.include_router(networth_workspace.router)
 app.include_router(reconciliation.router)
 app.include_router(reconciliation_workspace.router)
 app.include_router(transactions.router)
+
+# ============================================================
+# Phase 3 — Platform API mount
+# ============================================================
+# Mounts the thin FastAPI router for /platform/v1/* that delegates
+# exclusively to runtime.platform.api.services (C50 authorities).
+# See backend/src/routers/platform.py and
+# IMPLEMENTATION_ROADMAP.md §Phase 3.
+# ============================================================
+from src.routers import platform as _platform_router
+from src.routers.platform import register_platform_routes as _register_platform
+
+_register_platform(app)
+del _platform_router, _register_platform
 
 # ============================================================
 # Run Server

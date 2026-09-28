@@ -1,0 +1,28 @@
+{
+  "milestone": "M9-C67.1",
+  "phase": "Platform API Foundation",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "generated_at": "2026-09-20T16:30:00Z",
+  "predecessor": "M9-C66 (CERTIFIED)",
+  "existing_platform_routes": 75,
+  "new_c67_endpoints": [
+    "GET /platform/v1/status",
+    "GET /platform/v1/verification",
+    "GET /platform/v1/diagnostics",
+    "GET /platform/v1/runs",
+    "GET /platform/v1/runs/{run_id}",
+    "GET /platform/v1/workflows"
+  ],
+  "authority_chain": "Platform Console -> Platform API -> Canonical Runtime (verify.py/ControlPlane/EventStore)",
+  "no_second_authority": true,
+  "preservation_checks": {
+    "c50_primitives_preserved": true,
+    "c64_c65_runtime_preserved": true,
+    "c66_certification_artifacts_preserved": true,
+    "existing_control_plane_preserved": true,
+    "existing_verification_orchestration_preserved": true,
+    "existing_evidence_history_preserved": true,
+    "existing_financial_backend_preserved": true,
+    "existing_api_contracts_preserved": true
+  }
+}

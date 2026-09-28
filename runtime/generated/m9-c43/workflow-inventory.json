@@ -1,0 +1,91 @@
+{
+  "schema": "m9-c43-workflow-inventory/v1",
+  "generated_at": "2026-09-02T23:40:18.409116+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "total_workflows": 13,
+  "green": 12,
+  "green_smoke": 1,
+  "failing": 0,
+  "blocked": 0,
+  "environmental_limitations": 0,
+  "workflows": {
+    "api-contracts": {
+      "command": "verify.py api-contracts",
+      "trigger": "push/PR(runtime|backend|frontend)",
+      "status": "green",
+      "evidence_class": "authoritative"
+    },
+    "backend-verify": {
+      "command": "verify.py backend",
+      "trigger": "push/PR(runtime|backend)",
+      "status": "green",
+      "evidence_class": "authoritative"
+    },
+    "frontend-verify": {
+      "command": "verify.py frontend",
+      "trigger": "push/PR(frontend)",
+      "status": "green",
+      "evidence_class": "authoritative"
+    },
+    "golden": {
+      "command": "verify.py golden",
+      "trigger": "push/PR",
+      "status": "green",
+      "evidence_class": "authoritative"
+    },
+    "mutation": {
+      "command": "verify.py mutation --smoke | verify.py mutation",
+      "trigger": "schedule(02:00 daily), dispatch",
+      "status": "smoke_green",
+      "evidence_class": "authoritative(smoke)/deferred(full)"
+    },
+    "playwright": {
+      "command": "playwright test",
+      "trigger": "push/PR, dispatch",
+      "status": "green",
+      "evidence_class": "authoritative"
+    },
+    "quality": {
+      "command": "verify.py quick",
+      "trigger": "push(**), PR(main/develop)",
+      "status": "green",
+      "evidence_class": "authoritative"
+    },
+    "verification-runtime": {
+      "command": "verify.py runtime",
+      "trigger": "push/PR(runtime)",
+      "status": "green",
+      "evidence_class": "authoritative"
+    },
+    "verification-reconcile": {
+      "command": "verify.py plan/exec-evidence/reconcile",
+      "trigger": "push/PR(runtime|backend)",
+      "status": "green",
+      "evidence_class": "authoritative"
+    },
+    "m9-forensic-diagnostic-lab": {
+      "command": "verify.py diagnose-failures",
+      "trigger": "push/PR, dispatch",
+      "status": "green",
+      "evidence_class": "authoritative"
+    },
+    "dependency-update": {
+      "command": "pip audit + lockfile check",
+      "trigger": "schedule, dispatch",
+      "status": "green",
+      "evidence_class": "authoritative"
+    },
+    "release": {
+      "command": "verify.py certify",
+      "trigger": "tag push, dispatch",
+      "status": "green",
+      "evidence_class": "authoritative"
+    },
+    "security-codeql": {
+      "command": "codeql analyze",
+      "trigger": "schedule, push",
+      "status": "green",
+      "evidence_class": "authoritative"
+    }
+  }
+}

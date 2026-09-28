@@ -1,0 +1,13 @@
+# status: survived
+# engines.account_engine.metrics.x_compute_account_metrics__mutmut_1: survived
+--- src/engines/account_engine/metrics.py
++++ src/engines/account_engine/metrics.py
+@@ -4,7 +4,7 @@
+     cash_in_paise: int,
+     cash_out_paise: int,
+     days_since_activity: int,
+-    dormancy_threshold_days: int = 365,
++    dormancy_threshold_days: int = 366,
+ ) -> dict[str, int | bool]:
+     """
+     Compute aggregate deterministic account metrics.

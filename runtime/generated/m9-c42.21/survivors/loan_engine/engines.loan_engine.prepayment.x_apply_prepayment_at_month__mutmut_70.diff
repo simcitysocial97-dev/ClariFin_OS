@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_70: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -41,7 +41,7 @@
+     # The balance after payment in this row is closing balance.
+     # We need the outstanding balance BEFORE this month's payment.
+     # That is balance + principal_paid of this row.
+-    opening_balance = prepayment_row.balance_paise + prepayment_row.principal_paise
++    opening_balance = prepayment_row.balance_paise - prepayment_row.principal_paise
+     remaining_balance = (
+         opening_balance  # This is the balance before the prepayment month's payment
+     )

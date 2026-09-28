@@ -37,12 +37,12 @@ runs:
     - name: Generate cross-layer map (Architecture Map — Program 7A)
       shell: bash
       run: |
-        python3 tools/generators/build_cross_layer_map.py
+        .venv/bin/python tools/generators/build_cross_layer_map.py
 
     - name: Generate knowledge index (Knowledge Base)
       shell: bash
       run: |
-        python3 -c "from runtime.foundation.knowledge.indexer import save_index; save_index()"
+        .venv/bin/python -c "from runtime.foundation.knowledge.indexer import save_index; save_index()"
 
     - name: Validate runtime version
       shell: bash

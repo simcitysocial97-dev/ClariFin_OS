@@ -1,0 +1,44 @@
+{
+  "component": "transaction",
+  "run_id": "m9-c42.25",
+  "generated_at": "2026-08-26T05:00:00+05:30",
+  "baseline_pct": 17.5,
+  "post": {
+    "statement_pct": 98.6,
+    "statements": 367,
+    "covered": 365,
+    "missing": 2
+  },
+  "modules": {
+    "__init__.py": {
+      "statements": 5,
+      "covered": 5,
+      "percent": 100.0,
+      "missing_lines": 0
+    },
+    "cash_conversion_detector.py": {
+      "statements": 174,
+      "covered": 172,
+      "percent": 98.4,
+      "missing_lines": 0
+    },
+    "cc_payment_detector.py": {
+      "statements": 85,
+      "covered": 85,
+      "percent": 100.0,
+      "missing_lines": 0
+    },
+    "detector_result.py": {
+      "statements": 18,
+      "covered": 18,
+      "percent": 100.0,
+      "missing_lines": 0
+    },
+    "loan_emi_detector.py": {
+      "statements": 85,
+      "covered": 85,
+      "percent": 97.5,
+      "missing_lines": 0
+    }
+  }
+}

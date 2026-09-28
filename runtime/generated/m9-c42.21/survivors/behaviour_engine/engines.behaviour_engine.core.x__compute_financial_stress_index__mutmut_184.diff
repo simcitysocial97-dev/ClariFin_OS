@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_184: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -75,7 +75,7 @@
+     )
+     daily_avg_spend = total_debit / max(len(daily_net), 1)
+     buffer_days = avg_balance / max(daily_avg_spend, 1)
+-    buffer_score = _normalize_score(buffer_days, 0, 30)
++    buffer_score = _normalize_score(0, 30)
+ 
+     # Composite stress index (higher = more stress)
+     volatility_score = _normalize_score(balance_cv, 0, 2)

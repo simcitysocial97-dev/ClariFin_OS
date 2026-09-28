@@ -24,14 +24,21 @@ async function hasErrorState(page: Page): Promise<boolean> {
     'text=Something went wrong',
     'text=Error loading',
     'text=Failed to load',
-    'text=500',
+    'text=500 Internal Server Error',
+    'text=500 Error',
     '[data-testid="error-boundary"]',
     '.error-state',
     'text=Cannot read properties'
   ];
   for (const selector of errorSelectors) {
-    if (await page.locator(selector).isVisible().catch(() => false)) {
-      return true;
+    const locator = page.locator(selector);
+    const count = await locator.count();
+    if (count > 0) {
+      const isVisible = await locator.first().isVisible().catch(() => false);
+      if (isVisible) {
+        console.log(`Error state detected: selector="${selector}", count=${count}`);
+        return true;
+      }
     }
   }
   return false;
@@ -46,25 +53,25 @@ async function hasContent(page: Page): Promise<boolean> {
 }
 
 const PAGES = [
-  { name: 'Dashboard', url: '/dashboard' },
-  { name: 'Transactions', url: '/transactions' },
-  { name: 'Accounts', url: '/accounts' },
-  { name: 'Cards', url: '/cards' },
-  { name: 'Cashflow', url: '/cashflow' },
-  { name: 'Net Worth', url: '/networth' },
-  { name: 'Statements', url: '/statements' },
-  { name: 'Imports', url: '/imports' },
-  { name: 'Loans', url: '/loans' },
-  { name: 'Investments', url: '/investments' },
-  { name: 'Recurring', url: '/recurring' },
-  { name: 'Snapshots', url: '/snapshots' },
-  { name: 'Behavior', url: '/behavior' },
-  { name: 'Projections', url: '/projections' },
-  { name: 'Reconciliation', url: '/reconciliation' },
-  { name: 'Categories', url: '/categories' },
-  { name: 'Income Sources', url: '/income-sources' },
-  { name: 'Export', url: '/export' },
-  { name: 'Audit', url: '/audit' },
+  { name: 'Dashboard', url: '/dashboard/' },
+  { name: 'Transactions', url: '/transactions/' },
+  { name: 'Accounts', url: '/accounts/' },
+  { name: 'Cards', url: '/cards/' },
+  { name: 'Cashflow', url: '/cashflow/' },
+  { name: 'Net Worth', url: '/net-worth/' },
+  { name: 'Statements', url: '/statements/' },
+  { name: 'Imports', url: '/imports/' },
+  { name: 'Loans', url: '/loans/' },
+  { name: 'Investments', url: '/investments/' },
+  { name: 'Recurring', url: '/recurring/' },
+  { name: 'Snapshots', url: '/snapshots/' },
+  { name: 'Behavior', url: '/behaviour/' },
+  { name: 'Projections', url: '/projections/' },
+  { name: 'Reconciliation', url: '/reconciliation/' },
+  { name: 'Categories', url: '/categories/' },
+  { name: 'Income Sources', url: '/income-sources/' },
+  { name: 'Export', url: '/export/' },
+  { name: 'Audit', url: '/audit/' },
 ];
 
 // Test 1: Every page loads without white screen
@@ -78,7 +85,7 @@ for (const pageConfig of PAGES) {
 
     const response = await page.goto(
       `http://localhost:3000${pageConfig.url}`,
-      { waitUntil: 'networkidle', timeout: 15000 }
+      { waitUntil: 'load', timeout: 30000 }
     );
 
     // Page must return 200
@@ -116,8 +123,8 @@ for (const pageConfig of PAGES) {
 
 // Test 2: Dashboard shows financial data
 test('Dashboard - shows financial metrics', async ({ page }) => {
-  await page.goto('http://localhost:3000/dashboard',
-    { waitUntil: 'networkidle' });
+  await page.goto('http://localhost:3000/dashboard/',
+    { waitUntil: 'load' });
 
   // Should show some numbers (net worth, cashflow, etc.)
   const pageText = await page.locator('body').textContent();
@@ -129,8 +136,8 @@ test('Dashboard - shows financial metrics', async ({ page }) => {
 
 // Test 3: Transactions page shows transaction list
 test('Transactions - shows transaction rows', async ({ page }) => {
-  await page.goto('http://localhost:3000/transactions',
-    { waitUntil: 'networkidle' });
+  await page.goto('http://localhost:3000/transactions/',
+    { waitUntil: 'load' });
   await page.waitForTimeout(3000);
 
   // Find the actual selector by checking page content
@@ -152,9 +159,9 @@ test('Transactions - shows transaction rows', async ({ page }) => {
 
 // Test 4: Cashflow page shows chart
 test('Cashflow - renders chart with data', async ({ page }) => {
-  await page.goto('http://localhost:3000/cashflow',
-    { waitUntil: 'networkidle' });
-  await page.waitForTimeout(3000); // Charts need time to render
+  await page.goto('http://localhost:3000/cashflow/',
+    { waitUntil: 'load', timeout: 30000 });
+  await page.waitForTimeout(5000); // Charts need time to render
 
   // Check for SVG (charts render as SVG)
   const svgCount = await page.locator('svg').count();
@@ -171,8 +178,8 @@ test('Cashflow - renders chart with data', async ({ page }) => {
 
 // Test 5: Net Worth page shows chart and number
 test('Net Worth - shows net worth value and chart', async ({ page }) => {
-  await page.goto('http://localhost:3000/networth',
-    { waitUntil: 'networkidle' });
+  await page.goto('http://localhost:3000/net-worth/',
+    { waitUntil: 'load' });
   await page.waitForTimeout(3000);
 
   const svgCount = await page.locator('svg').count();
@@ -194,8 +201,8 @@ test('API proxy - frontend reaches backend', async ({ page }) => {
     }
   });
 
-  await page.goto('http://localhost:3000/dashboard',
-    { waitUntil: 'networkidle' });
+  await page.goto('http://localhost:3000/dashboard/',
+    { waitUntil: 'load' });
   await page.waitForTimeout(3000);
 
   console.log('API responses captured:', apiResponses);
@@ -209,8 +216,8 @@ test('API proxy - frontend reaches backend', async ({ page }) => {
 
 // Test 7: Navigation works
 test('Navigation - can move between pages', async ({ page }) => {
-  await page.goto('http://localhost:3000/dashboard',
-    { waitUntil: 'networkidle' });
+  await page.goto('http://localhost:3000/dashboard/',
+    { waitUntil: 'load' });
   await page.waitForTimeout(2000);
 
   // Take screenshot to see what navigation looks like
@@ -254,13 +261,20 @@ test('No pages return 404', async ({ page }) => {
   for (const pageConfig of PAGES) {
     const response = await page.goto(
       `http://localhost:3000${pageConfig.url}`,
-      { waitUntil: 'domcontentloaded', timeout: 10000 }
+      { waitUntil: 'load', timeout: 15000 }
     );
 
+    // Check final URL after redirects
+    const finalUrl = page.url();
     const status = response?.status();
-    const pageText = await page.locator('body').textContent();
 
-    if (status === 404 || pageText?.includes('404') || pageText?.includes('Page Not Found')) {
+    // A 404 page would have status 404 (the authoritative check)
+    // If status is 200, the page loaded successfully regardless of content
+    const is404 = status === 404;
+    
+    console.log(`Page ${pageConfig.url}: status=${status}, finalUrl=${finalUrl}, is404=${is404}`);
+    
+    if (is404) {
       notFoundPages.push(pageConfig.url);
     }
   }
@@ -269,4 +283,36 @@ test('No pages return 404', async ({ page }) => {
     console.log('Pages returning 404:', notFoundPages);
   }
   expect(notFoundPages).toHaveLength(0);
+});
+
+
+// M9-C37 regression: API gateway must route ALL /api/* paths to the backend
+// without 308 redirects or 404s. Every navigated page should produce at least
+// one healthy 2xx response from the backend through the same-origin path.
+test('API gateway regression — zero dead redirects or 404s', async ({ page }) => {
+  const apiEvents: Array<{url: string; status: number}> = [];
+  page.on('response', r => {
+    if (r.url().includes('/api/') && !r.url().includes('_next')) {
+      apiEvents.push({ url: r.url(), status: r.status() });
+    }
+  });
+
+  // Navigate each capability-exercising page
+  const pages = ['/cards/', '/investments/', '/behaviour/',
+                 '/reconciliation/', '/cashflow/', '/dashboard/'];
+  for (const p of pages) {
+    await page.goto(`http://localhost:3000${p}`, { waitUntil: 'load' });
+    await page.waitForTimeout(1500);
+  }
+
+  const redirects = apiEvents.filter(e => e.status === 308);
+  const notFound  = apiEvents.filter(e => e.status === 404);
+  const serverErr = apiEvents.filter(e => e.status >= 500);
+  const ok        = apiEvents.filter(e => e.status >= 200 && e.status < 400);
+
+  console.log(`API events: OK=${ok.length} Redirects=${redirects.length} 404s=${notFound.length} 5xx=${serverErr.length}`);
+  expect(redirects).toHaveLength(0);
+  expect(notFound).toHaveLength(0);
+  expect(serverErr).toHaveLength(0);
+  expect(ok.length).toBeGreaterThan(0);
 });

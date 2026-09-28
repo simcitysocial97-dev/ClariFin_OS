@@ -1,0 +1,38 @@
+{
+  "schema": "backend-verification/v1",
+  "experiment": "proof-4-interrupted-verification",
+  "description": "Interrupted verification — SIGINT to running backend unit suite after 15s (~87% complete). Demonstrates that interrupted runs cannot produce PASS and recover cleanly.",
+  "interrupt_details": {
+    "mechanism": "SIGINT (operational Ctrl+C equivalent)",
+    "target_process": "python -m pytest backend/tests/unit/ -x --tb=short -q (subprocess)",
+    "delay_seconds": 15,
+    "progress_at_interruption": "~87% (36 progress lines, no final summary emitted)",
+    "interrupted_exit_code": 130,
+    "interrupted_exit_note": "SIGINT (128+2); pytest terminates without writing final summary or certification verdict"
+  },
+  "interuption_classification": {
+    "produces_pass_or_certified": false,
+    "partial_evidence_written": false,
+    "no_junit_xml_generated": true,
+    "no_log_artifact_overwritten": true,
+    "git_state_after": "clean (no source or generated-file modifications)"
+  },
+  "recovery": {
+    "subsequent_run_command": ".venv/bin/python -m pytest backend/tests/unit/ -x --tb=short -q",
+    "exit_code": 0,
+    "passed": 2950,
+    "warnings": 2,
+    "duration_seconds": 63.29,
+    "result": "green (identical to pre-interruption baseline)"
+  },
+  "framework_behavior_verified": [
+    "SIGINT terminates subprocess cleanly (no hang)",
+    "No certification/PASS verdict emitted during interrupted execution",
+    "No partial junit.xml or log artifact overwrites existing evidence",
+    "Git state remains clean (interruption is process-level only, not filesystem-modifying)",
+    "Post-interruption clean rerun produces identical green result (deterministic)"
+  ],
+  "overall_status": "INCOMPLETE (never PASS)",
+  "timestamp": "2026-09-07T12:23:00Z",
+  "git_commit": "0c5f827e"
+}

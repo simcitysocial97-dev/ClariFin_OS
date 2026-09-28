@@ -1,0 +1,116 @@
+{
+  "certification": "M9-C34",
+  "title": "Application Route & Runtime Surface Remediation - Preflight",
+  "timestamp_utc": "2026-08-19T08:30:00.000000+00:00",
+  "repository_identity": {
+    "head_sha": "46ddb9255e96ec32a79977d4058cebe6b8662f5a",
+    "tree_sha": "107ca07c8f30a2f1cf201e0d6f8f64d77576e466",
+    "branch": "m9c9-merge-authorization-resolution"
+  },
+  "c33_baseline": {
+    "api_contract_gate": "5/5 PASS",
+    "c30_governance": "PASS",
+    "production_build": "PASS",
+    "chromium_total": 232,
+    "chromium_passed": 150,
+    "chromium_failed": 69,
+    "chromium_skipped": 13,
+    "failure_classification": {
+      "APP_MISSING_ROUTE_OR_404": 9,
+      "RENDER_LAYOUT": 17,
+      "TIMEOUT_INFRA": 6,
+      "VISUAL_BASELINE_DRIFT": 12,
+      "OTHER": 20
+    }
+  },
+  "working_tree_status_at_start": {
+    "modified_files": [
+      "frontend/app/dashboard/page.tsx",
+      "frontend/components/dashboard/behavior-score-card.tsx",
+      "frontend/lib/capabilities/use-behaviour-capability.ts",
+      "frontend/lib/mappers/behaviour-mapper.ts",
+      "frontend/lib/mappers/transaction-mapper.ts",
+      "frontend/lib/schemas/behavior-score.ts",
+      "frontend/lib/schemas/transaction.ts",
+      "frontend/mocks/handlers/behavior.ts",
+      "frontend/types/transaction.ts",
+      "progress.md",
+      "runtime/foundation/verification/api_contracts/c30_certification.py",
+      "runtime/generated/api-contract-evidence.json",
+      "runtime/generated/c30-certification.json"
+    ],
+    "untracked_files": [
+      "runtime/generated/c33-chromium-certification.json",
+      "runtime/generated/c33-chromium-certification.md"
+    ]
+  },
+  "c34_route_forensics": {
+    "missing_routes_identified": [
+      "/statements",
+      "/imports",
+      "/recurring",
+      "/snapshots",
+      "/projections",
+      "/categories",
+      "/income-sources",
+      "/export",
+      "/audit"
+    ],
+    "route_classification": {
+      "/statements": {
+        "classification": "ROUTE_REDIRECTED",
+        "target": "/transactions?tab=statements",
+        "infrastructure_gap": "middleware.ts not present (proxy.ts existed but unused)"
+      },
+      "/imports": {
+        "classification": "ROUTE_REDIRECTED",
+        "target": "/transactions?tab=import",
+        "infrastructure_gap": "middleware.ts not present"
+      },
+      "/recurring": {
+        "classification": "ROUTE_REDIRECTED",
+        "target": "/transactions?filter=recurring",
+        "infrastructure_gap": "middleware.ts not present"
+      },
+      "/snapshots": {
+        "classification": "ROUTE_REDIRECTED",
+        "target": "/dashboard?view=history",
+        "infrastructure_gap": "middleware.ts not present"
+      },
+      "/projections": {
+        "classification": "ROUTE_REDIRECTED",
+        "target": "/dashboard",
+        "infrastructure_gap": "middleware.ts not present"
+      },
+      "/categories": {
+        "classification": "ROUTE_REDIRECTED",
+        "target": "/settings?tab=categories",
+        "infrastructure_gap": "middleware.ts not present"
+      },
+      "/income-sources": {
+        "classification": "ROUTE_REDIRECTED",
+        "target": "/settings?tab=income",
+        "infrastructure_gap": "middleware.ts not present"
+      },
+      "/export": {
+        "classification": "ROUTE_REDIRECTED",
+        "target": "/settings?tab=backup",
+        "infrastructure_gap": "middleware.ts not present"
+      },
+      "/audit": {
+        "classification": "ROUTE_REDIRECTED",
+        "target": "/settings?tab=advanced",
+        "infrastructure_gap": "middleware.ts not present"
+      }
+    },
+    "root_cause": "frontend/proxy.ts existed with ROUTE_REDIRECTS logic but was not named middleware.ts, so Next.js did not load it as middleware"
+  },
+  "c34_fixes_planned": [
+    {
+      "id": "C34-fix-01",
+      "description": "Create frontend/middleware.ts from proxy.ts to enable route redirections",
+      "classification": "INFRASTRUCTURE_GAP_FIX",
+      "batch": "A"
+    }
+  ]
+}

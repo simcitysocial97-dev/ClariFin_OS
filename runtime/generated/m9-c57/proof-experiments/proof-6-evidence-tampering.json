@@ -1,0 +1,16 @@
+{
+  "schema": "backend-verification/v1",
+  "overall_status": "fail",
+  "experiment": "proof-6-evidence-tampering",
+  "description": "Evidence tampering detection - modify FAIL evidence to PASS and attempt to consume",
+  "original_evidence": "proof-experiments/proof-1-clean-baseline.json",
+  "tampering": {
+    "field_modified": "phases[2].status",
+    "original_value": "fail",
+    "tampered_value": "pass",
+    "description": "Changed properties phase from fail to pass"
+  },
+  "expected_behavior": "Framework should detect tampered evidence and reject it",
+  "actual_behavior": "Framework should detect evidence inconsistency and fail",
+  "timestamp": "2026-09-07T03:00:00Z"
+}

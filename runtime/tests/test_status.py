@@ -9,7 +9,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-
 from runtime.foundation.workspace.status import render_status
 from runtime.foundation.workspace.workspace import WorkspaceLoader
 
@@ -57,14 +56,38 @@ class TestStatusWorkspace:
         _write_json(
             tmp_path / "runtime" / "generated" / "engineering-analytics.json",
             {
-                "local": {"verification": {"success_rate": 1.0, "avg_duration_seconds": 1.2}, "cache": {"hit_rate": 1.0}},
-                "ci": {"verification": {"success_rate": 0.0, "avg_duration_seconds": 0.0}, "cache": {"hit_rate": 0.0}},
-                "combined": {"verification": {"success_rate": 1.0, "avg_duration_seconds": 1.2}, "cache": {"hit_rate": 1.0}},
+                "local": {
+                    "verification": {"success_rate": 1.0, "avg_duration_seconds": 1.2},
+                    "cache": {"hit_rate": 1.0},
+                },
+                "ci": {
+                    "verification": {"success_rate": 0.0, "avg_duration_seconds": 0.0},
+                    "cache": {"hit_rate": 0.0},
+                },
+                "combined": {
+                    "verification": {"success_rate": 1.0, "avg_duration_seconds": 1.2},
+                    "cache": {"hit_rate": 1.0},
+                },
             },
         )
         _write_json(
             tmp_path / "runtime" / "generated" / "cross-layer-map.json",
-            {"a.py": {"engine": "a.py", "services": [], "routers": [], "endpoints": [], "capabilities": [], "mappers": [], "viewModels": [], "pages": [], "workspace": [], "components": [], "tests": [], "graphRenderers": []}},
+            {
+                "a.py": {
+                    "engine": "a.py",
+                    "services": [],
+                    "routers": [],
+                    "endpoints": [],
+                    "capabilities": [],
+                    "mappers": [],
+                    "viewModels": [],
+                    "pages": [],
+                    "workspace": [],
+                    "components": [],
+                    "tests": [],
+                    "graphRenderers": [],
+                }
+            },
         )
         _write_json(
             tmp_path / "runtime" / "generated" / "dependency-growth.json",
@@ -86,7 +109,13 @@ class TestStatusWorkspace:
         loader = WorkspaceLoader(repo_root=tmp_path)
         _write_json(
             tmp_path / "runtime" / "generated" / "verification-cache.json",
-            {"last_commit": "abc", "changed_files": [], "executed_profiles": [], "duration": 0, "timestamp": ""},
+            {
+                "last_commit": "abc",
+                "changed_files": [],
+                "executed_profiles": [],
+                "duration": 0,
+                "timestamp": "",
+            },
         )
         _write_json(
             tmp_path / "runtime" / "generated" / "engineering-history.json",

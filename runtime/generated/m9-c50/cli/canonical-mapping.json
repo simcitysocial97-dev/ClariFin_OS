@@ -1,0 +1,14 @@
+{
+  "canonical_operations": [
+    "check",
+    "plan",
+    "run",
+    "diagnose",
+    "strengthen",
+    "inspect",
+    "certify",
+    "ci",
+    "doctor"
+  ],
+  "inspect_subqueries": []
+}

@@ -10,7 +10,7 @@
 #
 # ARCHITECTURE POSITION: Security analysis is a DISTINCT VEA-5 category (see
 #   runtime/foundation/verification/evidence_contract.py DeepVerificationDomain.
-#   SECURITY). It does NOT delegate to `runtime/verify.py` (CodeQL is GitHub-
+#   SECURITY). It does NOT delegate to `python -m runtime.verify` (CodeQL is GitHub-
 #   native and cannot run inside the local execution budget); it does NOT replace
 #   any existing verification owner (unit/integration/contract/frontend/mutation/
 #   golden/playwright/dependency). It is the `deep-codeql` DEEP surface made real.
@@ -69,7 +69,7 @@ jobs:
     timeout-minutes: 45
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
@@ -89,6 +89,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Security analysis complete. Results are available under the repository" >> $GITHUB_STEP_SUMMARY
-          echo "**Security** tab (code scanning) and as PR check annotations." >> $GITHUB_STEP_SUMMARY
+          echo "**Security analysis status:** ${{ job.status }}" >> "$GITHUB_STEP_SUMMARY"
         shell: bash

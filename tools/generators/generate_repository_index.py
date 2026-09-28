@@ -14,7 +14,7 @@ from pathlib import Path
 # Ensure the package is importable when run as a script
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from repo_intelligence.index import RepositoryIndexer
+from repo_intelligence.index import RepositoryIndexer  # type: ignore[import-not-found]
 
 
 def main() -> int:

@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.amortization.x_generate_schedule__mutmut_111: survived
+--- src/engines/loan_engine/amortization.py
++++ src/engines/loan_engine/amortization.py
+@@ -96,7 +96,7 @@
+                 principal_component_paise = reported_balance
+                 interest_paise = interest_rounded
+                 actual_emi_paise = principal_component_paise + interest_paise
+-                reported_balance = 0
++                reported_balance = 1
+                 balance = Decimal(0)
+             else:
+                 balance = balance - principal_exact

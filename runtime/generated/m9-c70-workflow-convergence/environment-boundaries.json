@@ -1,0 +1,73 @@
+{
+  "schema_version": 2,
+  "milestone": "M9-C70",
+  "phase": "BOUNDARY_RESOLUTION",
+  "updated_at": "2026-09-26T11:30:00Z",
+  "source_commit": "b7d83af4ee5104a9021724d28f7dfd55eb3fd69c",
+  "resolved": {
+    "ports": {
+      "status": "RESOLVED",
+      "evidence": "Ports 3000 and 8000 were free; launcher status showed no active ClariFin services."
+    },
+    "playwright_browser": {
+      "status": "RESOLVED",
+      "package_version": "1.63.0",
+      "chromium_revision": 1243,
+      "functional_chromium_passed": 225,
+      "functional_mobile_chrome_passed": 196,
+      "remaining_failures": "visual snapshot baselines, platform UI console-contract assertions, and one memory test"
+    },
+    "dependency_audit": {
+      "status": "RESOLVED",
+      "local_audit_vulnerabilities": 0,
+      "github_dispatch_run": "36237917290",
+      "github_result": "success"
+    },
+    "github_backend_frontend_quality_api_runtime": {
+      "status": "RESOLVED",
+      "run_ids": ["36231192064", "36231192038", "36231192015", "36231192006", "36231192130"],
+      "result": "all success"
+    },
+    "golden": {
+      "status": "RESOLVED",
+      "run_id": "36233134436",
+      "result": "success"
+    },
+    "codeql": {
+      "status": "RESOLVED",
+      "run_id": "36237918919",
+      "result": "success"
+    },
+    "generic_check_no_task": {
+      "status": "RESOLVED",
+      "evidence": "Quality/Reconcile now certify an explicit no-task change-scope no-op."
+    }
+  },
+  "remaining": {
+    "mutation": {
+      "status": "REAL_MUTATION_GAP",
+      "local_full_run": "exceeded the 90-minute runner limit without a score",
+      "github_full_run": "36233136018 cancelled after 91m45s",
+      "github_targeted_balance_engine_run": "36238247482",
+      "targeted_result": "0.0% score, 285 survived, threshold gate correctly failed",
+      "classification": "GENUINE_PRODUCT_MUTATION_GAP",
+      "note": "No threshold was lowered and no zero score was converted into success."
+    },
+    "e2e_nonfunctional": {
+      "status": "UI_CONTRACT_GAP",
+      "functional_flows": "PASS",
+      "remaining": "visual snapshot baselines and platform console/render assertions require product/test contract updates"
+    },
+    "generic_check_broad_delta": {
+      "status": "GITHUB_RESOLVED",
+      "evidence": "Quality runs now use PR base or push before SHA; the latest workflow-only delta is a certified no-op."
+    }
+  },
+  "canonical_environment": {
+    "python": "3.12.3",
+    "node": "24.20.0",
+    "npm": "11.19.0",
+    "root_venv": true,
+    "external_secrets_persisted": false
+  }
+}

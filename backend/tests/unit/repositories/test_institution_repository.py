@@ -9,7 +9,6 @@ Run: cd backend && ./venv/bin/python3 -m pytest tests/test_institution_repositor
 import json
 
 import pytest
-
 from src.repositories.institution_repository import InstitutionRepository
 
 

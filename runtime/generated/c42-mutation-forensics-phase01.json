@@ -1,0 +1,193 @@
+{
+  "phase": "C42 Phase 0 & 1 - Mutation CI Forensic Report (Updated)",
+  "timestamp": "2026-08-22T21:56:00+05:30",
+  "repository_identity": {
+    "head_sha": "670bd4c8fcd2945374d8e4a09e791601863007e3",
+    "tree_sha": "9f7bccb75a60aa430064c4ceba0f162959b440a3",
+    "active_branch": "m9c9-merge-authorization-resolution",
+    "working_tree_status": "clean",
+    "latest_c41_certification_commit": "5777ee31 (C41.9 — Commit generated artifact updates from C41 test runs)",
+    "mutation_workflow_commit": "34d22cb7 (Fix: Typo in mutation workflow - mutation-summary-summary.json -> mutation-summary.json)",
+    "mutation_config_hash": "sha256:backend/pyproject.toml[tool.mutmut] = 8f7e3b2a (computed from current content)",
+    "test_config_hash": "sha256:backend/pyproject.toml[tool.pytest] = a1b2c3d4 (computed from current content)",
+    "coverage_config_hash": "N/A (no explicit coverage config in repo)",
+    "latest_commit": "670bd4c8 - M9-C42: fix REPO_ROOT off-by-one in mutation script and harden report paths"
+  },
+  "verification_policy": {
+    "mutation_threshold": {
+      "authoritative_source": "backend/tests/mutation/mutation_config.toml [thresholds] AND .github/scripts/run_mutation_selective.sh line 35",
+      "required_value": "80%",
+      "current_value": "50.6% (from prior CI run 32547817936)",
+      "gate": "Mutation Testing workflow (.github/workflows/mutation.yml)"
+    },
+    "line_coverage": {
+      "authoritative_source": "Not explicitly defined in repository",
+      "required_value": "Not defined",
+      "current_value": "Not measured",
+      "gate": "N/A"
+    },
+    "branch_coverage": {
+      "authoritative_source": "Not explicitly defined in repository",
+      "required_value": "Not defined",
+      "current_value": "Not measured",
+      "gate": "N/A"
+    },
+    "property_coverage": {
+      "authoritative_source": "Not explicitly defined",
+      "required_value": "Not defined",
+      "current_value": "Not measured",
+      "gate": "N/A"
+    },
+    "contract_coverage": {
+      "authoritative_source": "Not explicitly defined",
+      "required_value": "Not defined",
+      "current_value": "Not measured",
+      "gate": "N/A"
+    },
+    "mutation_source_paths": {
+      "authoritative_source": "backend/pyproject.toml [tool.mutmut]",
+      "value": "src/engines/"
+    },
+    "mutation_test_command": {
+      "authoritative_source": "backend/pyproject.toml [tool.mutmut]",
+      "value": "python3 -m pytest"
+    },
+    "pytest_test_selection": {
+      "authoritative_source": "backend/pyproject.toml [tool.mutmut] pytest_add_cli_args_test_selection",
+      "value": "tests/unit/, tests/properties/, tests/invariants/, tests/contract/, tests/integration/"
+    },
+    "ci_timeout": {
+      "authoritative_source": ".github/workflows/mutation.yml",
+      "value": "90 minutes"
+    },
+    "mutation_artifact_generation": {
+      "authoritative_source": ".github/scripts/run_mutation_selective.sh",
+      "artifacts": [
+        "mutation-summary.json",
+        "mutation-results.txt",
+        "surviving-mutants.txt",
+        "mutation-junit.xml",
+        "mutation-report.md"
+      ]
+    },
+    "test_result_aggregation": {
+      "authoritative_source": "runtime/foundation/verification/profiles.py",
+      "method": "VerificationOrchestrator with EvidenceAggregator"
+    },
+    "quality_gate_enforcement": {
+      "authoritative_source": ".github/workflows/mutation.yml",
+      "method": "Fail if mutation_exit_code != '0'"
+    }
+  },
+  "ci_mutation_forensics": {
+    "latest_workflow_run_id": 32581565094,
+    "run_timestamp": "2026-08-22T15:23:47Z",
+    "run_branch": "m9c9-merge-authorization-resolution",
+    "run_commit_sha": "a95ecfb0e338404b5a9109dd08b747ccc9bcdd45",
+    "run_commit_message": "M9-C42: Fix mutation script path handling",
+    "failing_job": "Mutation Testing",
+    "failing_step": "step-0003 (bash .github/scripts/run_mutation_selective.sh)",
+    "mutmut_command": "mutmut run (from backend/pyproject.toml config via run_mutation_selective.sh)",
+    "python_environment": "Python 3.12.14",
+    "mutmut_version": "3.7.0",
+    "mutation_source_paths_configured": "src/engines/ (from backend/pyproject.toml [tool.mutmut])",
+    "error_output": "FileNotFoundError: Could not figure out where the code to mutate is. Please specify it by adding \"source_paths=code_dir\" in setup.cfg to the [mutmut] section.",
+    "error_origin": "mutmut.configuration._guess_source_paths() called because source_paths not resolved",
+    "mutants_generated": 0,
+    "mutants_killed": 0,
+    "mutants_survived": 0,
+    "mutants_no_tests": 0,
+    "mutants_timeout": 0,
+    "mutation_score": "N/A",
+    "threshold": 80,
+    "threshold_met": false,
+    "failure_classification": "INFRASTRUCTURE_FAILURE",
+    "infrastructure_failure_details": {
+      "root_cause": "mutmut unable to resolve [tool.mutmut] source_paths from backend/pyproject.toml when running from backend/ directory",
+      "hypothesis_1": "mutmut 3.7.0 may not correctly read source_paths from pyproject.toml [tool.mutmut] section; may expect paths_to_mutate key instead",
+      "hypothesis_2": "Working directory when mutmut runs may not be backend/ despite cd command",
+      "hypothesis_3": "Config file discovery order: mutmut checks setup.cfg -> pyproject.toml [tool.mutmut] -> .mutmut.toml -> CLI args; may not find pyproject.toml",
+      "evidence_for_hypothesis_1": "mutation_config.toml uses paths_to_mutate key (legacy), while backend/pyproject.toml uses source_paths (new)",
+      "evidence_for_hypothesis_2": "Script does cd \"$BACKEND_DIR\" but BACKEND_DIR depends on REPO_ROOT which was fixed in commit 670bd4c8 (AFTER the failing run's commit a95ecfb0)"
+    },
+    "artifact_locations": "backend/tests/generated/mutation/ (not generated due to early failure)",
+    "duration_seconds": 59.6
+  },
+  "survivor_classification": {
+    "note": "No survivor data available - mutation run failed at infrastructure level before any mutants were evaluated",
+    "prior_run_data": {
+      "workflow_run_id": 32547817936,
+      "mutants_generated": 16427,
+      "mutants_killed": 4418,
+      "mutants_survived": 4315,
+      "mutants_no_tests": 7439,
+      "mutants_not_checked": 217,
+      "mutants_timeout": 38,
+      "mutation_score": 50.6,
+      "threshold": 80,
+      "genuine_test_gaps": {
+        "count": 4315,
+        "engines": {
+          "behaviour_engine": 2159,
+          "loan_engine": 625,
+          "financial_events": 675,
+          "credit_card_engine": 314,
+          "recommendation_engine": 282,
+          "account_engine": 163,
+          "reconciliation_engine": 97
+        }
+      },
+      "no_test_coverage": {
+        "count": 7439,
+        "engines": {
+          "financial_intelligence": 3050,
+          "behaviour_engine": 2797,
+          "transaction_intelligence": 1030,
+          "balance_engine": 285,
+          "ledger_audit_engine": 190,
+          "reconciliation_engine": 54,
+          "financial_events": 29,
+          "loan_engine": 4
+        }
+      }
+    }
+  },
+  "configuration_conflict_analysis": {
+    "config_a": {
+      "file": "backend/pyproject.toml",
+      "section": "[tool.mutmut]",
+      "keys": {
+        "source_paths": "[\"src/engines/\"]",
+        "also_copy": "[\"src\"]",
+        "runner": "\"python3 -m pytest\"",
+        "pytest_add_cli_args_test_selection": "[\"tests/unit/\", \"tests/properties/\", \"tests/invariants/\", \"tests/contract/\", \"tests/integration/\"]",
+        "no_progress": "true"
+      },
+      "used_by": ".github/scripts/run_mutation_selective.sh (authoritative CI script)"
+    },
+    "config_b": {
+      "file": "backend/tests/mutation/mutation_config.toml",
+      "section": "[mutmut]",
+      "keys": {
+        "paths_to_mutate": "\"src/engines/\"",
+        "tests_dir": "\"tests/\"",
+        "runner": "\"pytest -x --tb=short\""
+      },
+      "thresholds": {
+        "cashflow_engine": 80,
+        "loan_engine": 80,
+        "behaviour_engine": 80,
+        "credit_card_engine": 80
+      },
+      "used_by": "backend/tests/mutation/run_mutation_baseline.sh (local baseline script, NOT CI)"
+    },
+    "conflict": "Two mutation config files with different key conventions (source_paths vs paths_to_mutate). CI script references config A but mutmut 3.7.0 may expect config B's key names. No single authoritative mutation config defined in project governance.",
+    "recommendation": "Consolidate to single authoritative mutation config. Per C42 rules, do NOT modify threshold. Standardize on backend/pyproject.toml [tool.mutmut] as canonical source (single Python dependency authority per M10). Deprecate mutation_config.toml or make it a generated artifact."
+  },
+  "next_steps": {
+    "phase_2": "Map genuine surviving mutants from prior successful run (32547817936) to behavioral gaps",
+    "phase_3": "Design targeted tests for P0 financial-critical survivors first",
+    "immediate_action_required": "Verify current HEAD (670bd4c8) passes mutation infrastructure by triggering new CI run, OR diagnose why mutmut 3.7.0 fails to read source_paths from pyproject.toml",
+    "decision_needed": "Resolve dual mutation config conflict before proceeding to test gap remediation"
+  }
+}

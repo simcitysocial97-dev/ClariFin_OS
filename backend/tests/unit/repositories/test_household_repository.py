@@ -10,7 +10,6 @@ Run: python -m pytest tests/test_household_repository.py -v
 import sqlite3
 
 import pytest
-
 from repositories.account_repository import AccountRepository
 
 

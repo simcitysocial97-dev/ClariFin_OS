@@ -1,0 +1,169 @@
+{
+  "schema": "m9-c42.38-baseline/v1",
+  "generated_at": "2026-08-27T01:15:00.000000+00:00",
+  "phase": "M9-C42.38",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "branch": "m9c9-merge-authorization-resolution",
+  "base_sha_from_c42_37": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "current_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "sha_changed_since_c42_37": false,
+  "c42_37_certification": {
+    "status": "CERTIFIED_WITH_EXPLICIT_NONBLOCKING_LIMITATIONS",
+    "gates_passed": 26,
+    "gates_total": 26,
+    "certification_file": "runtime/generated/m9-c42.37/final-certification.json",
+    "verdict": "CERTIFIED_WITH_EXPLICIT_NONBLOCKING_LIMITATIONS",
+    "outcome": "C42.37 exit condition met - ready for final convergence"
+  },
+  "test_baseline": {
+    "total_tests_collected": 785,
+    "c42_29_tests": 30,
+    "c42_30_tests": 25,
+    "c42_31_tests": 27,
+    "total_c42_tests": 82,
+    "passing": 82,
+    "failing": 0,
+    "pre_existing_failures": 1,
+    "pre_existing_details": "test_backend_exit_contract_holds_both_directions in test_backend_evidence.py - unrelated to C42"
+  },
+  "scenarios": {
+    "total": 27,
+    "passed": 27
+  },
+  "master_acceptance_checks": {
+    "total": 12,
+    "passed": 12,
+    "final_verdict": "CERTIFIABLE"
+  },
+  "c42_27_28_regression_suites": {
+    "status": "PASSED",
+    "tests": 144
+  },
+  "runtime_verification_surface": {
+    "verify_py_version": "runtime/verify.py",
+    "profiles": [
+      "quick",
+      "backend",
+      "frontend",
+      "mutation",
+      "status",
+      "metrics",
+      "history",
+      "deps",
+      "verify-status",
+      "integrity",
+      "env-check"
+    ],
+    "mutation_modes": [
+      "--smoke",
+      "--target",
+      "full"
+    ],
+    "forensic_commands": [
+      "forensic-diagnose",
+      "forensic-report",
+      "strengthen-analyze",
+      "strengthen-validate"
+    ],
+    "canonical_env": ".venv/bin/python"
+  },
+  "ci_workflow_inventory": {
+    "total_workflows": 12,
+    "verification_related_count": 11,
+    "verification_workflows": [
+      "backend-verify.yml",
+      "frontend-verify.yml",
+      "golden.yml",
+      "mutation.yml",
+      "playwright.yml",
+      "quality.yml",
+      "verification-reconcile.yml",
+      "verification-runtime.yml",
+      "m9-forensic-diagnostic-lab.yml",
+      "api-contracts.yml",
+      "security-codeql.yml"
+    ]
+  },
+  "verification_graph": {
+    "components": 14,
+    "population_id": "pop-14-c42.26",
+    "capabilities_mapped": 14,
+    "measurements_available": 14,
+    "fingerprint": "55e56843f8972d3f"
+  },
+  "evidence_schemas": {
+    "ci_evidence": "m9-ci-evidence/v1",
+    "diagnostic_report": "m9-diagnostic-report/v1",
+    "strengthening_proposal": "m9-strengthening-proposal/v1",
+    "strengthening_analysis": "m9-strengthening-analysis/v1",
+    "forensic_record": "m9-forensic-execution-record/v1"
+  },
+  "module_fingerprints": {
+    "runtime/foundation/verification/graph_model.py": "4bd704594b346207",
+    "runtime/foundation/verification/evidence_planner.py": "18245fbb90306e1e",
+    "runtime/foundation/verification/executor_pipeline.py": "5576411d77a27208",
+    "runtime/foundation/verification/evidence_reuse.py": "03d5939893079e28",
+    "runtime/foundation/verification/cache.py": "685f6ea77db23dd4",
+    "runtime/foundation/verification/correlation.py": "25af9ddf0b4856eb",
+    "runtime/foundation/verification/orchestrator.py": "3753b0876b22f66c",
+    "runtime/foundation/verification/diagnostic_agent.py": "857b5b0d2ea1f061",
+    "runtime/foundation/verification/strengthening.py": "ebf4e7d6d06f5b46",
+    "runtime/foundation/verification/forensic_cli.py": "9a3c094f713af842",
+    "runtime/foundation/verification/ci_evidence.py": "94ec3a6a00805a2d",
+    "runtime/verify.py": "ff4c552064f183d8",
+    "runtime/foundation/verification/profiles.py": "d52fa4a0efe437e8",
+    "runtime/foundation/verification/mutation_inventory.py": "fa4dd0c2dc330414",
+    "runtime/foundation/verification/mutation_runner.py": "1f5dc9c71a4c6a0d",
+    "runtime/foundation/verification/mutation_contract.py": "caf44e6ee563d781",
+    "runtime/foundation/verification/reconciliation.py": "964574b11508d9e2",
+    "runtime/foundation/verification/totals.py": "b3b4bbb17d80ad7f"
+  },
+  "certification_artifact_fingerprints": {
+    "runtime/generated/m9-c42.37/final-certification.json": "9daa1fcb923b07df",
+    "runtime/generated/m9-c42.37/final-readiness-audit.json": "297bc4bb53d58482",
+    "runtime/generated/m9-c42.37/verification-profile-certification.json": "038ede40cbb24489",
+    "runtime/generated/m9-c42.37/workflow-verification-matrix.json": "bd80d95b445b303c",
+    "runtime/generated/m9-c42.37/ci-live-emission-certification.json": "ec884c5dc6632c27",
+    "runtime/generated/m9-c42.37/shared-infrastructure-impact.json": "afdbe54469587a3e",
+    "runtime/generated/m9-c42.37/historical-calibration.json": "e38c27f4cab78a80",
+    "runtime/generated/m9-c42.37/forensic-cache-certification.json": "82273a688fbd55cd",
+    "runtime/generated/m9-c42.37/self-adaptive-test-certification.json": "9cee02a4dc6ad57e",
+    "runtime/generated/m9-c42.37/repository-acceptance-matrix.json": "3c244770a8430b10",
+    "runtime/generated/m9-c42.37/resource-efficiency.json": "1a6a06057796b66f",
+    "runtime/generated/m9-c42.37/m9-c42.37-baseline.json": "872b83e8305f0456",
+    "runtime/generated/m9-c42.37/EXECUTION_PROGRESS.md": "07496b66435d54e8"
+  },
+  "prior_generated_artifacts_preserved": [
+    "runtime/generated/m9-c42.21/",
+    "runtime/generated/m9-c42.22/",
+    "runtime/generated/m9-c42.23/",
+    "runtime/generated/m9-c42.24/",
+    "runtime/generated/m9-c42.24-B/",
+    "runtime/generated/m9-c42.25/",
+    "runtime/generated/m9-c42.26/",
+    "runtime/generated/m9-c42.27/",
+    "runtime/generated/m9-c42.28/",
+    "runtime/generated/m9-c42.29/",
+    "runtime/generated/m9-c42.30/",
+    "runtime/generated/m9-c42.31/",
+    "runtime/generated/m9-c42.29-31/",
+    "runtime/generated/m9-c42.32-36/",
+    "runtime/generated/m9-c42.37/",
+    "runtime/generated/cross-layer-map.json",
+    "runtime/generated/verification-cache.json",
+    "runtime/generated/engineering-history.json",
+    "runtime/generated/knowledge-index.json",
+    "backend/tests/generated/mutation/mutation-summary.json"
+  ],
+  "production_functionality_preserved": true,
+  "c42_26_mutation_population_evidence_reusable": true,
+  "c42_27_31_architecture_intact": true,
+  "c42_32_37_architecture_intact": true,
+  "drift_detection": {
+    "verified": true,
+    "repository_sha_stable": true,
+    "module_fingerprints_stable": true,
+    "certification_artifacts_stable": true,
+    "architecture_verified_intact": true
+  }
+}

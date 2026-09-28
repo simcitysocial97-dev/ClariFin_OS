@@ -9,7 +9,7 @@ All interest rates use _bps suffix (basis points, 1% = 100 bps).
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 # ===== Loan Types =====
 
@@ -212,8 +212,8 @@ class LoansDTO(BaseModel):
         default=None, description="Evidence chain for explainability"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "loans": [],
                 "total_outstanding_paise": 50000000,  # ₹5,00,000.00
@@ -223,6 +223,7 @@ class LoansDTO(BaseModel):
                 "evidence_chain": None,
             }
         }
+    )
 
 
 # ===== Loans Response Types =====

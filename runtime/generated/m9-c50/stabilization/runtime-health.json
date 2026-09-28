@@ -1,0 +1,173 @@
+{
+  "schema": "m9-c50/stabilization/runtime-health@1",
+  "generated_at": "2026-09-04T23:08:11.713881+00:00",
+  "overall": "HEALTHY",
+  "sections": [
+    {
+      "domain": "control_plane",
+      "status": "HEALTHY",
+      "reason": "single canonical ControlPlane class",
+      "details": {}
+    },
+    {
+      "domain": "capability_authority",
+      "status": "HEALTHY",
+      "reason": "canonical CapabilityAuthorityAudit importable",
+      "details": {}
+    },
+    {
+      "domain": "planner",
+      "status": "HEALTHY",
+      "reason": "default_planner available",
+      "details": {}
+    },
+    {
+      "domain": "obligation_model",
+      "status": "HEALTHY",
+      "reason": "ObligationSet + Disposition importable",
+      "details": {}
+    },
+    {
+      "domain": "task_model",
+      "status": "HEALTHY",
+      "reason": "ExecutableVerificationTask available",
+      "details": {}
+    },
+    {
+      "domain": "executor",
+      "status": "HEALTHY",
+      "reason": "real subprocess executor available",
+      "details": {}
+    },
+    {
+      "domain": "adapter_registry",
+      "status": "HEALTHY",
+      "reason": "all 8 kinds registered: ['capability', 'contract', 'coverage', 'golden', 'invariant', 'mutation', 'property', 'unit']",
+      "details": {
+        "kinds": [
+          "capability",
+          "contract",
+          "coverage",
+          "golden",
+          "invariant",
+          "mutation",
+          "property",
+          "unit"
+        ]
+      }
+    },
+    {
+      "domain": "execution_lifecycle",
+      "status": "HEALTHY",
+      "reason": "PLANNED->DISPATCHED->EXECUTING->EXECUTED->EVIDENCE_CAPTURED->RECONCILED->DECIDED enforced",
+      "details": {}
+    },
+    {
+      "domain": "evidence_contract",
+      "status": "HEALTHY",
+      "reason": "EVIDENCE_KINDS closed vocabulary with 27 kinds",
+      "details": {}
+    },
+    {
+      "domain": "reconciliation",
+      "status": "HEALTHY",
+      "reason": "reconcile() + default_population() available",
+      "details": {}
+    },
+    {
+      "domain": "cache",
+      "status": "HEALTHY",
+      "reason": "deterministic evaluate_cache() available",
+      "details": {}
+    },
+    {
+      "domain": "ci_parity",
+      "status": "HEALTHY",
+      "reason": "scenario 15 CI-equivalent test bound to canonical execute_task",
+      "details": {}
+    },
+    {
+      "domain": "legacy_bypass",
+      "status": "HEALTHY",
+      "reason": "verify.py is the thin shim; control_plane_facade.main() is single dispatcher",
+      "details": {}
+    },
+    {
+      "domain": "lineage_integrity",
+      "status": "HEALTHY",
+      "reason": "behavioral fault injection: 10/10 faults detected",
+      "details": {
+        "fault_injection": {
+          "schema": "m9-c50/stabilization/fault-injection@1",
+          "generated_at": "2026-09-04T23:08:11.713863+00:00",
+          "total_faults": 10,
+          "detected_faults": 10,
+          "results": [
+            {
+              "fault": "invalid_capability_mapping",
+              "expected": "runtime classifies or fails the task",
+              "observed": "executable",
+              "detected": true
+            },
+            {
+              "fault": "missing_obligation_task",
+              "expected": "LineageViolationError raised",
+              "observed": "raised",
+              "detected": true
+            },
+            {
+              "fault": "evidence_without_execution",
+              "expected": "LineageViolationError raised",
+              "observed": "raised",
+              "detected": true
+            },
+            {
+              "fault": "invalid_evidence",
+              "expected": "LineageViolationError raised",
+              "observed": "raised",
+              "detected": true
+            },
+            {
+              "fault": "stale_evidence",
+              "expected": "INVALIDATE",
+              "observed": "INVALIDATE",
+              "detected": true
+            },
+            {
+              "fault": "corrupted_cache",
+              "expected": "EXECUTE",
+              "observed": "EXECUTE",
+              "detected": true
+            },
+            {
+              "fault": "failed_executor",
+              "expected": "FailureKind.VERIFICATION",
+              "observed": "verification_failure",
+              "detected": true
+            },
+            {
+              "fault": "unsupported_verification_kind",
+              "expected": "not_executable_yet",
+              "observed": "not_executable_yet",
+              "detected": true
+            },
+            {
+              "fault": "legacy_bypass",
+              "expected": "ValueError (PLANNED -> DECIDED)",
+              "observed": "raised",
+              "detected": true
+            },
+            {
+              "fault": "inconsistent_lineage",
+              "expected": "runtime exposes task_id != evidence.task_id",
+              "observed": "decision.task_id=exec::inject::invalid_capability, evidence.task_id=task::other",
+              "detected": true
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "section_count": 14,
+  "healthy_count": 14
+}

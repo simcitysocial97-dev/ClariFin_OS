@@ -1,0 +1,177 @@
+{
+  "phase": "M9-C42.13-Phase0",
+  "timestamp": "2026-08-23T15:35:00+00:00",
+  "repository": {
+    "root": "/home/vasantha/AI-Projects/ClariFin_OS",
+    "branch": "m9c9-merge-authorization-resolution",
+    "head_commit": "255ffdde",
+    "head_message": "M9-C42.5: Mutation infrastructure hardening",
+    "dirty_paths_count": 23,
+    "dirty_paths": [
+      "AGENTS.md",
+      "backend/scripts/scan_test_anti_patterns.py",
+      "backend/src/api.py",
+      "backend/tests/generated/mutation/mutation-summary.json",
+      "backend/tests/properties/loan_engine/test_floating_rate_properties.py",
+      "backend/tests/unit/engines/behavior/test_behavior_engine.py",
+      "backend/tests/unit/engines/behavior/test_stress.py",
+      "backend/tests/unit/engines/reconciliation/test_reconciliation.py",
+      "backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
+      "backend/tests/unit/engines/balance_engine.py",
+      "backend/tests/unit/engines/ledger_audit_engine.py",
+      "runtime/foundation/verification/env.py",
+      "runtime/foundation/verification/mutation_contract.py",
+      "runtime/foundation/verification/mutation_runner.py",
+      "runtime/foundation/verification/api_contracts/mutations.py",
+      "runtime/tests/test_mutation_infra.py"
+    ]
+  },
+  "environment": {
+    "python": {
+      "version": "3.12.3",
+      "executable": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python3",
+      "source": "venv"
+    },
+    "node": {
+      "version": "v20.20.2",
+      "executable": "/usr/bin/node"
+    },
+    "npm": {
+      "version": "10.8.2",
+      "executable": "/usr/bin/npm"
+    }
+  },
+  "toolchain": {
+    "pytest": {"version": "9.1.1", "source": "venv", "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/pytest"},
+    "ruff": {"version": "0.15.20", "source": "venv", "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/ruff"},
+    "black": {"version": "26.5.1", "source": "venv", "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/black"},
+    "mypy": {"version": "2.1.0", "source": "venv", "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/mypy"},
+    "coverage": {"version": "7.15.2", "source": "venv", "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/coverage"},
+    "mutmut": {"version": "3.7.0", "source": "venv", "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/mutmut"}
+  },
+  "dependencies": {
+    "declared_pyproject_count": 78,
+    "locked_count": 76,
+    "installed_count": 82,
+    "drift_summary": {
+      "uvicorn": {"declared": "==0.35.0", "installed": "0.51.0", "locked": "absent", "severity": "CRITICAL"},
+      "schemathesis": {"declared": "absent", "installed": "absent", "locked": "absent", "severity": "HIGH", "note": "Invoked by 3 profiles but not declared/installed"},
+      "pyyaml": {"declared": ">=6.0", "installed": "6.0.3", "locked": "6.0.3", "severity": "MEDIUM", "note": "Only range declaration in pyproject"},
+      "chardet": {"locked": "7.5.1", "installed": "7.6.0", "severity": "LOW"},
+      "charset_normalizer": {"locked": "3.5.0", "installed": "3.5.1", "severity": "LOW"},
+      "pypdf": {"locked": "6.16.0", "installed": "6.16.1", "severity": "LOW"},
+      "pip": {"locked": "absent", "installed": "26.2.1", "severity": "MEDIUM", "note": "Upgraded in bootstrap/setup unpinned"},
+      "httpcore2": {"locked": "absent", "installed": "2.12.0", "severity": "MEDIUM"},
+      "httpx2": {"locked": "absent", "installed": "2.12.0", "severity": "MEDIUM"},
+      "truststore": {"locked": "absent", "installed": "0.10.4", "severity": "MEDIUM"}
+    },
+    "pip_check": "No broken requirements found"
+  },
+  "verification_baseline": {
+    "quick_profile": {
+      "status": "FAILED",
+      "duration_seconds": 713.6,
+      "steps": [
+        {
+          "name": "backend_verification",
+          "unit_tests": {"collected": 926, "passed": 926, "failed": 0, "duration_sec": 30.72},
+          "contract_tests": {"passed": 161, "duration_sec": 83.84},
+          "invariants_tests": {"passed": 26, "duration_sec": 42.08},
+          "properties_tests": {"passed": 228, "xfailed": 1, "duration_sec": 14.49},
+          "unit_engines_tests": {"passed": 634, "duration_sec": 17.36},
+          "mypy": {"status": "passed"},
+          "ruff": {"status": "failed", "failures": "in stale mutation_infra/mutants/ (ignored dir)"},
+          "black": {"status": "failed", "files_needing_reformat": 13}
+        },
+        {
+          "name": "runtime_self_test",
+          "status": "FAILED",
+          "passed": 760,
+          "failed": 2,
+          "failures": [
+            "runtime/tests/test_backend_evidence.py::TestMutationRunnerPortability::test_mutation_runner_uses_python3_not_python",
+            "runtime/tests/test_vea5_m8_merge_enforcement.py::test_m81_stale_workflows_use_verification_command_pattern"
+          ],
+          "duration_sec": 35.12
+        },
+        {
+          "name": "frontend_verification",
+          "lint": {"status": "passed", "duration_sec": 39},
+          "typecheck": {"status": "passed", "duration_sec": 14},
+          "build": {"status": "passed", "duration_sec": 56},
+          "test": {"status": "passed", "files": 93, "tests": 1238, "duration_sec": 104}
+        },
+        {
+          "name": "architecture_meta_tests",
+          "architecture_tests": {"passed": 50, "duration_sec": 1.37},
+          "meta_tests": {"passed": 61, "duration_sec": 13.46},
+          "black_check": {"status": "failed", "files_needing_reformat": 13},
+          "ruff_check": {"status": "failed", "failures": "in stale mutation_infra/mutants/ (ignored dir)"}
+        }
+      ],
+      "total_passed_steps": 2,
+      "total_failed_steps": 2
+    },
+    "pre_existing_failures": [
+      {
+        "test": "test_mutation_runner_uses_python3_not_python",
+        "file": "runtime/tests/test_backend_evidence.py",
+        "cause": "Uncommitted change in .github/scripts/run_mutation_selective.sh relaxed python3 requirement to python fallback",
+        "status": "PRE_EXISTING"
+      },
+      {
+        "test": "test_m81_stale_workflows_use_verification_command_pattern",
+        "file": "runtime/tests/test_vea5_m8_merge_enforcement.py",
+        "cause": "Mutation workflow has 2 jobs (mutation-smoke + mutation-full), test expects exactly 1",
+        "status": "PRE_EXISTING"
+      },
+      {
+        "tool": "black",
+        "files_needing_reformat": 13,
+        "includes_uncommitted_changes": true,
+        "status": "PRE_EXISTING"
+      },
+      {
+        "tool": "ruff",
+        "failures_in": "backend/tests/mutation_infra/mutants/ (gitignored stale residue)",
+        "status": "PRE_EXISTING_LOCAL_RESIDUE"
+      }
+    ],
+    "test_collection_counts": {
+      "backend_unit": 926,
+      "backend_properties": 229,
+      "backend_mutation_infra": "1 error (stale mutants dir)",
+      "runtime_tests": 629
+    }
+  },
+  "mutation_baseline": {
+    "existing_summary": "backend/tests/generated/mutation/mutation-summary.json exists",
+    "mutmut_version": "3.7.0",
+    "engine_selection_defined": true,
+    "pre_existing_modifications": {
+      "mutation_contract.py": "+173 lines (C42.7 ENGINE_SELECTION contract)",
+      "mutation_runner.py": "+86 lines"
+    }
+  },
+  "configuration_state": {
+    "ruff": {"root_pyproject": "line-length=100 no lint section", "backend_ruff_toml": "line-length=88 full select", "dual_authority": true, "severity": "HIGH"},
+    "black": {"root_pyproject": "line-length=88", "enforced_in_ci": false, "enforced_in_verify_fast": true, "severity": "MEDIUM"},
+    "mypy": {"root": "basic excludes servers", "backend": "strict=true", "intentional_dual": true},
+    "pytest": {"backend": "backend/pyproject.toml [tool.pytest.ini_options]", "runtime": "none (accidental absence)"}
+  },
+  "key_findings_from_reconnaissance": [
+    "F03: mutation rewrites tracked backend/pyproject.toml (finally-only restore)",
+    "F04: full-mode mutation restore scope='.' reverts ALL dirty tracked files",
+    "F05: uvicorn 0.51.0 installed vs ==0.35.0 declared, absent from lock",
+    "F06: pyyaml range >=6.0 only non-exact declaration",
+    "F07: schemathesis invoked by 3 profiles but not declared/installed",
+    "F08: orchestrator._find_repo_root() uses parents[5] then cwd heuristic",
+    "F10: bare python3/pytest in satellite scripts and Playwright backend launch",
+    "F12: ruff dual config conflict (root stub vs backend full)",
+    "F13: black configured but unenforced in CI/profiles",
+    "F14: Node engines absent from package.json",
+    "F16: verify-fast.sh tolerates forbidden backend/.venv fallback",
+    "F19: executor timeout kills shell only, orphans grandchildren",
+    "F20: pip-audit runs against stale requirements.lock"
+  ]
+}

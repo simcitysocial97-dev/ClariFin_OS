@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_walk_lineage__mutmut_52: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -46,7 +46,7 @@
+         event_id = event.get("id", 0)
+         account_id = event.get("account_id", "")
+         event_date_iso = event.get("date_iso", "")
+-        lifecycle_state = event.get("lifecycle_state", "open")
++        lifecycle_state = event.get("lifecycle_state", )
+ 
+         # Process revocation events first
+         if event.get("event_type") == "transfer_revocation":

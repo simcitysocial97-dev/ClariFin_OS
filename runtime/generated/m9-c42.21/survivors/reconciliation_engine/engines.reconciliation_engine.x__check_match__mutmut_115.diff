@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x__check_match__mutmut_115: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -75,7 +75,7 @@
+     )
+ 
+     # Generate deterministic key
+-    min_id = min(debit_txn["id"], credit_txn["id"])
++    min_id = None
+     max_id = max(debit_txn["id"], credit_txn["id"])
+     deterministic_key = f"{min_id}:{max_id}"
+ 

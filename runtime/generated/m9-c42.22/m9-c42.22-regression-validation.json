@@ -1,0 +1,83 @@
+{
+  "title": "M9-C42.22 — Milestone M22.6 Regression Validation",
+  "generated_at": "2026-08-25T07:06:00.000000+00:00",
+  "run_id": "m9-c42.22",
+  "milestone": "M22.6",
+  "test_results": {
+    "unit_engine_tests": {
+      "total": 852,
+      "passed": 852,
+      "failed": 0,
+      "duration_seconds": 10.76
+    },
+    "property_tests": {
+      "total": 229,
+      "passed": 228,
+      "xpassed": 1,
+      "failed": 0,
+      "duration_seconds": 19.61
+    },
+    "capability_tests": {
+      "total": 28,
+      "passed": 28,
+      "failed": 0,
+      "duration_seconds": 0.46
+    },
+    "invariant_tests": {
+      "total": 26,
+      "passed": 26,
+      "failed": 0,
+      "duration_seconds": 28.85
+    },
+    "core_domain_money_tests": {
+      "total": 95,
+      "passed": 95,
+      "failed": 0,
+      "duration_seconds": 0.48
+    },
+    "common_calculations_tests": {
+      "total": 34,
+      "passed": 34,
+      "failed": 0,
+      "duration_seconds": 0.35
+    },
+    "credit_card_engine_tests": {
+      "total": 189,
+      "passed": 189,
+      "failed": 0,
+      "duration_seconds": 0.73
+    },
+    "recommendation_engine_tests": {
+      "total": 36,
+      "passed": 36,
+      "failed": 0,
+      "duration_seconds": 0.43
+    },
+    "cashflow_engine_tests": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "duration_seconds": 0.70
+    },
+    "ledger_audit_engine_tests": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0,
+      "duration_seconds": 11.17
+    }
+  },
+  "summary": {
+    "total_tests": 1518,
+    "total_passed": 1517,
+    "total_failed": 0,
+    "total_xpassed": 1,
+    "regressions": 0,
+    "all_green": true
+  },
+  "validation": {
+    "no_regressions_in_modified_areas": true,
+    "behaviour_engine_tests_green": true,
+    "financial_events_tests_green": true,
+    "all_priority_engines_tested": true
+  }
+}

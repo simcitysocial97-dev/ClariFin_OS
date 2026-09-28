@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_loss_aversion_index__mutmut_63: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -30,7 +30,7 @@
+     median_debit = sorted(debit_amounts)[len(debit_amounts) // 2]
+ 
+     # Post-income spending velocity
+-    post_income_spends: list[float] = []
++    post_income_spends: list[float] = None
+ 
+     for credit in credits:
+         credit_date = _parse_date(credit.get("date_iso", "") or credit.get("date", ""))

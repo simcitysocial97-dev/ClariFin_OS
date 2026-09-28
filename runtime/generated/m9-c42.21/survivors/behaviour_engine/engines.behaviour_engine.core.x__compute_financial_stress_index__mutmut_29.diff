@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_29: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -18,7 +18,7 @@
+     debits = [t for t in transactions if t.get("type") == "debit"]
+ 
+     if not debits:
+-        return {"score": 0.5, "balance_volatility": 0.0, "credit_dependency": 0.0}
++        return {"score": 0.5, "XXbalance_volatilityXX": 0.0, "credit_dependency": 0.0}
+ 
+     # Daily net flow (convert amount_paise to rupees for analysis)
+     daily_net: defaultdict[str, float] = defaultdict(float)

@@ -8,7 +8,7 @@ All monetary fields use _paise suffix for explicit units.
 
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class DashboardSummaryDTO(BaseModel):
@@ -28,28 +28,39 @@ class DashboardSummaryDTO(BaseModel):
     )
     net_cash_flow_rupees: float | None = Field(
         default=None,
-        description="Net cash flow in rupees (DEPRECATED - use net_cash_flow_paise)",
+        description="Net cash flow in rupees (DEPRECATED - use net_cash_flow_paise). Null when not computed.",
     )
     total_income_paise: int = Field(description="Total income in paise")
     total_expenses_paise: int = Field(description="Total expenses in paise")
-    savings_rate: float = Field(description="Savings rate as percentage (0-100)")
+    savings_rate: float = Field(description="Savings rate as ratio (0-1)")
     emi_paise: int = Field(description="EMI amount in paise")
-    emi_ratio: float = Field(description="EMI to income ratio (0-100)")
+    emi_ratio: float = Field(description="EMI to income ratio (0-1)")
     buffer_days: int = Field(description="Emergency buffer in days")
+    financial_health_score: float | None = Field(
+        description="Financial health score from behavior analysis (0-100)",
+    )
 
-    class Config:
-        json_schema_extra = {
+    recent_transactions: list[dict[str, Any]] = Field(
+        default_factory=list,
+        description="Most recent transactions for display (up to 10)",
+    )
+
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "net_cash_flow_paise": 2500000,  # ₹25,000.00
-                "net_cash_flow_rupees": 25000.0,  # TODO: Remove in Phase 2
+                "net_cash_flow_rupees": None,  # DEPRECATED - always null post Phase 2
                 "total_income_paise": 10000000,  # ₹1,00,000.00
                 "total_expenses_paise": 7500000,  # ₹75,000.00
-                "savings_rate": 25.0,
+                "savings_rate": 0.25,  # 25% as ratio
                 "emi_paise": 1250000,  # ₹12,500.00
-                "emi_ratio": 12.5,
+                "emi_ratio": 0.125,  # 12.5% as ratio
                 "buffer_days": 45,
+                "financial_health_score": 75,
+                "recent_transactions": [],
             }
         }
+    )
 
 
 class OverviewDTO(BaseModel):
@@ -74,8 +85,8 @@ class OverviewDTO(BaseModel):
         description="Bank-wise spending distribution"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "total_spend_paise": 5000000,  # ₹50,000.00
                 "total_spend_rupees": 50000.0,  # TODO: Remove in Phase 2
@@ -85,6 +96,7 @@ class OverviewDTO(BaseModel):
                 "bank_wise_chart": [],
             }
         }
+    )
 
 
 class CategoryBreakdownDTO(BaseModel):
@@ -95,8 +107,8 @@ class CategoryBreakdownDTO(BaseModel):
     count: int = Field(description="Number of transactions")
     percentage: float = Field(description="Percentage of total")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "category": "Shopping",
                 "amount_paise": 500000,  # ₹5,000.00
@@ -104,3 +116,4 @@ class CategoryBreakdownDTO(BaseModel):
                 "percentage": 25.5,
             }
         }
+    )

@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x__compute_tenure_from_emi__mutmut_12: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -5,7 +5,7 @@
+     if annual_rate_bps == 0:
+         return math.ceil(principal_paise / emi_paise) if emi_paise > 0 else 999
+ 
+-    monthly_rate = Decimal(annual_rate_bps) / Decimal(120000)
++    monthly_rate = Decimal(annual_rate_bps) / Decimal(120001)
+     principal = Decimal(principal_paise)
+     emi = Decimal(emi_paise)
+ 

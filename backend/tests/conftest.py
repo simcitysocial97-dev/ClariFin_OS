@@ -45,6 +45,45 @@ if __import__("os").environ.get("MUTANT_UNDER_TEST"):
 
     _mm_main.record_trampoline_hit = _safe_record_trampoline_hit
 
+    # M9-C71: install the independent mutation execution sentinel. mutmut's
+    # verdict comes from a test process's exit code, which proves "a test
+    # failed", not "the mutated code ran". The sentinel records the latter
+    # directly, so a survivor can be distinguished from a mutant the suite
+    # never executed. It arms via an import hook, so no test needs to opt in
+    # and no test is modified to satisfy the measurement apparatus.
+    try:
+        import importlib.util as _importlib_util
+        import os as _os
+
+        # Resolve the sentinel by walking up from this file until the directory
+        # holding it is found. A fixed number of parent hops would be wrong
+        # here: mutmut runs pytest from inside ``mutants/``, where this same
+        # conftest lives at ``mutants/tests/conftest.py`` — two levels up is
+        # ``mutants/``, not ``backend/``. Searching for the file itself is
+        # correct in both the pristine and the mutated tree.
+        _sentinel_path = None
+        _here = _os.path.dirname(_os.path.abspath(__file__))
+        for _depth in range(6):
+            _candidate = _os.path.join(_here, "mutation_trust", "canary", "sentinel.py")
+            if _os.path.isfile(_candidate):
+                _sentinel_path = _candidate
+                break
+            _here = _os.path.dirname(_here)
+        if _sentinel_path is None:
+            raise FileNotFoundError("C71 mutation sentinel not found above conftest")
+        _sentinel_spec = _importlib_util.spec_from_file_location(
+            "c71_mutation_sentinel", _sentinel_path
+        )
+        if _sentinel_spec is not None and _sentinel_spec.loader is not None:
+            _sentinel = _importlib_util.module_from_spec(_sentinel_spec)
+            __import__("sys").modules["c71_mutation_sentinel"] = _sentinel
+            _sentinel_spec.loader.exec_module(_sentinel)
+            _sentinel.install_import_hook()
+    except Exception:
+        # A sentinel that cannot install must not change any mutant's outcome;
+        # the absence of its evidence is what the trust gate detects.
+        pass
+
     # mutmut's trampoline changes call context, which triggers hypothesis's
     # `differing_executors` health check. Suppress it so mutation runs complete.
     try:
@@ -63,7 +102,6 @@ if __import__("os").environ.get("MUTANT_UNDER_TEST"):
 # ============================================================
 # Plugin Registration
 # ============================================================
-
 pytest_plugins = [
     "tests.fixtures.pytest_config",
     "tests.fixtures.hypothesis",

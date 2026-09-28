@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="5.112" timestamp="2026-09-05T02:59:57.591107+00:00" hostname="vasantha-Lenovo-IdeaPad-S145-15IWL"><testcase classname="tests.invariants.test_determinism" name="test_replay_stability" time="4.996" /></testsuite></testsuites>

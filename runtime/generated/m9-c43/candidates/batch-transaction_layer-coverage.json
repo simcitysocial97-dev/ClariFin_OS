@@ -1,0 +1,157 @@
+{
+  "schema": "m9-c43-test-generation/v1",
+  "batch_id": "gen::821e631a326e",
+  "generated_at": "2026-08-27T02:06:54.148685+00:00",
+  "source_evidence": {
+    "kind": "coverage_gaps",
+    "path": "backend/tests/generated/raw-coverage.json",
+    "component": "transaction_layer",
+    "target_files": [
+      "src/services/transaction_service.py",
+      "src/repositories/transaction_repository.py",
+      "src/services/transaction_intelligence_service.py"
+    ]
+  },
+  "proposals": [
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::f3c80cc8eb31",
+      "component": "transaction_layer",
+      "capability": "transaction_processing",
+      "source_location": "src/services/transaction_service.py (missing lines: 21)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/services/transaction_service.py::21",
+        "component": "transaction_layer",
+        "capability": "transaction_processing",
+        "location": "src/services/transaction_service.py:41",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "21 uncovered line(s), 29 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/services/transaction_service.py is consequential: 50 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/transaction_layer/test_coverage_gap_f3c80cc8eb31.py",
+      "proposed_test": "def test_f3c80cc8eb31_covers_missing_behavior():\n    # Exercises the uncovered surface of src/services/transaction_service.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/transaction_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    },
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::e31bb9e1ac2d",
+      "component": "transaction_layer",
+      "capability": "transaction_processing",
+      "source_location": "src/repositories/transaction_repository.py (missing lines: 98)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/repositories/transaction_repository.py::98",
+        "component": "transaction_layer",
+        "capability": "transaction_processing",
+        "location": "src/repositories/transaction_repository.py:25",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "98 uncovered line(s), 37 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/repositories/transaction_repository.py is consequential: 135 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/transaction_layer/test_coverage_gap_e31bb9e1ac2d.py",
+      "proposed_test": "def test_e31bb9e1ac2d_covers_missing_behavior():\n    # Exercises the uncovered surface of src/repositories/transaction_repository.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/transaction_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    },
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::9138af7582fe",
+      "component": "transaction_layer",
+      "capability": "transaction_processing",
+      "source_location": "src/services/transaction_intelligence_service.py (missing lines: 129)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/services/transaction_intelligence_service.py::129",
+        "component": "transaction_layer",
+        "capability": "transaction_processing",
+        "location": "src/services/transaction_intelligence_service.py:76",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "129 uncovered line(s), 59 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/services/transaction_intelligence_service.py is consequential: 188 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/transaction_layer/test_coverage_gap_9138af7582fe.py",
+      "proposed_test": "def test_9138af7582fe_covers_missing_behavior():\n    # Exercises the uncovered surface of src/services/transaction_intelligence_service.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/transaction_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    }
+  ],
+  "rejections": [],
+  "candidates": [
+    {
+      "candidate_id": "8b49aec0d11b",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/services/transaction_service.py",
+      "module_under_test": "src/services/transaction_service.py",
+      "import_target": "services.transaction_service",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 41)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate 8b49aec0d11b \u2014 evidence: coverage gap src/services/transaction_service.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport services.transaction_service as target_mod  # services.transaction_service\n\n\ndef test_8b49aec0d11b_discriminates():\n    \"\"\"Target: src/services/transaction_service.py:41\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    },
+    {
+      "candidate_id": "80e232d04317",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/repositories/transaction_repository.py",
+      "module_under_test": "src/repositories/transaction_repository.py",
+      "import_target": "repositories.transaction_repository",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 25)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate 80e232d04317 \u2014 evidence: coverage gap src/repositories/transaction_repository.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport repositories.transaction_repository as target_mod  # repositories.transaction_repository\n\n\ndef test_80e232d04317_discriminates():\n    \"\"\"Target: src/repositories/transaction_repository.py:25\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    },
+    {
+      "candidate_id": "ba2fce273b83",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/services/transaction_intelligence_service.py",
+      "module_under_test": "src/services/transaction_intelligence_service.py",
+      "import_target": "services.transaction_intelligence_service",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 76)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate ba2fce273b83 \u2014 evidence: coverage gap src/services/transaction_intelligence_service.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport services.transaction_intelligence_service as target_mod  # services.transaction_intelligence_service\n\n\ndef test_ba2fce273b83_discriminates():\n    \"\"\"Target: src/services/transaction_intelligence_service.py:76\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    }
+  ],
+  "counts": {
+    "proposals": 3,
+    "rejections": 0,
+    "candidates": 3
+  }
+}

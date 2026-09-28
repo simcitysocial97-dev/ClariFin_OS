@@ -1,0 +1,13 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_check_foir__mutmut_5: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -8,7 +8,7 @@
+         Recommendation if ratio > 0.50, None otherwise
+     """
+     if foir_ratio > FOIR_THRESHOLD:
+-        percentage = int(foir_ratio * 100)
++        percentage = int(foir_ratio * 101)
+         severity: RecommendationSeverity = (
+             "CRITICAL" if foir_ratio >= Decimal("0.6") else "HIGH"
+         )

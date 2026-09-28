@@ -1,0 +1,39 @@
+{
+  "id": "ai-e3c4f3a93ea6",
+  "symptom": "test",
+  "mode": "ASSISTED",
+  "capability_id": null,
+  "status": "RUNNING",
+  "steps": [
+    {
+      "step_number": 1,
+      "tool_name": "run_diagnostic",
+      "arguments": {
+        "symptom": "test"
+      },
+      "result": null,
+      "error": null,
+      "started_at": "2026-09-06T04:03:57.489471Z",
+      "completed_at": null,
+      "evidence_id": null,
+      "duration_ms": null
+    }
+  ],
+  "created_at": "2026-09-06T04:03:57.470852Z",
+  "updated_at": "2026-09-06T04:03:57.489529Z",
+  "completed_at": null,
+  "error": null,
+  "audit_trail": [
+    {
+      "event_id": "audit-b096257e5b29",
+      "event_type": "run_created",
+      "run_id": "ai-e3c4f3a93ea6",
+      "timestamp": "2026-09-06T04:03:57.472154Z",
+      "payload": {
+        "symptom": "test",
+        "mode": "ASSISTED",
+        "capability_id": null
+      }
+    }
+  ]
+}

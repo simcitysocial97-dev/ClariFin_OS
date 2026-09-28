@@ -1,0 +1,22 @@
+{
+  "batch": "batch-4-calculations-credit-card",
+  "component": "common_calculations",
+  "objective": "Strengthen behavioral boundaries for common_calculations (C42.21: 376 generated, 212 killed, 164 survived, 56.4%).",
+  "strategic_constraint": "Preserve integer-paise monetary architecture; do NOT introduce floating-point arithmetic. Handle Class-B equivalent arithmetic by classification, not artificial tests.",
+  "baseline_c42_21": {"generated": 376, "killed": 212, "survived": 164, "no_tests": 0, "score_pct": 56.4},
+  "approach": "Added 4 deterministic boundary tests for compute_behavioral_insights: category-drift insight triggers strictly >30% (not at 30), and spending-trend insight triggers strictly >15% (not at 15). Existing 34 tests already cover _parse_amount_paise, percentage_change, compute_is_large.",
+  "tests_added": ["tests/unit/test_calculations_strengthening.py (4 tests)"],
+  "validation": {
+    "regression": "4 passed; full calculations + existing suite green",
+    "ruff": "passed",
+    "mypy_strict": "passed",
+    "targeted_mutation": "Manual mutant (pct_change > 30 -> >= 30) caught by test_category_drift_exactly_30_percent_not_flagged (test FAILS on mutant).",
+    "method_note": "Full component re-measurement is performed by the authoritative CI campaign (Batch 6 trigger)."
+  },
+  "survivor_classification": {
+    "class_B": "Arithmetic-equivalent mutations on percentage/insight metric strings and int() conversions whose valid-domain result is unchanged.",
+    "class_C": "Defensive input handling already exercised by existing tests.",
+    "genuine_gaps_addressed": "Strictly-greater-than threshold boundaries (>30 / >15) were untested; now pinned."
+  },
+  "production_code_changed": false
+}

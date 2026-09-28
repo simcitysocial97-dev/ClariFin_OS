@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_6: survived
+--- src/engines/credit_card_engine/metrics.py
++++ src/engines/credit_card_engine/metrics.py
+@@ -24,7 +24,7 @@
+     INVARIANT 2: Rates stored as basis points.
+     """
+     if outstanding_paise < 0:
+-        raise ValueError("outstanding_paise must be non-negative")
++        raise ValueError("OUTSTANDING_PAISE MUST BE NON-NEGATIVE")
+     if credit_limit_paise < 0:
+         raise ValueError("credit_limit_paise must be non-negative")
+     if annual_rate_bps < 0:

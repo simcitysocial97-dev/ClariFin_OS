@@ -1,0 +1,13 @@
+{
+  "schema": "m9-c66-cross-surface-reconciliation/v1",
+  "generated_at": "2026-09-20T14:45:00Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "total_checks": 120,
+  "checks_passed": 120,
+  "pass_rate": 1.0,
+  "discrepancies": [],
+  "summary": {
+    "all_surfaces_agree": true,
+    "discrepancy_count": 0
+  }
+}

@@ -1,0 +1,11 @@
+# status: survived
+# core.domain.money.xǁMoneyǁ__str____mutmut_2: survived
+--- src/core/domain/money.py
++++ src/core/domain/money.py
+@@ -4,5 +4,5 @@
+ 
+ def __str__(self) -> str:
+     """String representation showing both paise and rupees."""
+-    rupees = self._paise / 100.0
++    rupees = self._paise * 100.0
+     return f"₹{rupees:,.2f} ({self._paise} paise)"

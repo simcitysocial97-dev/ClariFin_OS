@@ -1,0 +1,59 @@
+{
+  "/platform/v1/health": {
+    "status": 200,
+    "kind": "platform.health_snapshot",
+    "summary": {
+      "platform": "UNHEALTHY",
+      "backend": "HEALTHY",
+      "frontend": "HEALTHY",
+      "database": "HEALTHY",
+      "architecture": "SAFE",
+      "verification": "CURRENT",
+      "evidence": "VALID",
+      "ai": "READY",
+      "domains": 2
+    }
+  },
+  "/platform/v1/capabilities": {
+    "status": 200,
+    "kind": "platform.capability_list",
+    "summary": {
+      "count": 55,
+      "categories": 8,
+      "items": 55
+    }
+  },
+  "/platform/v1/tasks": {
+    "status": 200,
+    "kind": "platform.task_list",
+    "summary": {
+      "open_count": 13,
+      "closed_count": 0,
+      "items": 13
+    }
+  },
+  "/platform/v1/history/runs?page=1&page_size=3": {
+    "status": 200,
+    "kind": "platform.history_runs",
+    "summary": {
+      "page": 1,
+      "page_size": 3,
+      "total": 75,
+      "items": 3
+    }
+  },
+  "/platform/v1/change/intelligence": {
+    "status": 200,
+    "kind": "platform.change_intelligence",
+    "summary": {
+      "changed_files": 363,
+      "affected_capabilities": 2,
+      "stale_evidence": 0,
+      "affected_tests": 1,
+      "affected_workflows": 6,
+      "recommended_verification": 0,
+      "risk": "HIGH",
+      "generated_from": "2026-09-05T11:08:14.869887+00:00"
+    }
+  }
+}

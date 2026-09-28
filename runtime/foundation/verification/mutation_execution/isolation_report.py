@@ -1,0 +1,79 @@
+# runtime/foundation/verification/mutation_execution/isolation_report.py
+#
+# M44.7 — Process Isolation Report.
+
+from __future__ import annotations
+
+import json
+from datetime import UTC, datetime
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+OUTPUT_DIR = REPO_ROOT / "runtime" / "generated" / "m9-c44"
+
+
+def build_isolation_report() -> dict:
+    return {
+        "schema": "m9-c44-isolation-report/v1",
+        "generated_at": datetime.now(UTC).isoformat(),
+        "isolation_layers": {
+            "working_directory": {
+                "description": "Each execution runs in its own workspace directory",
+                "mechanism": "subprocess.Popen(cwd=workspace_path)",
+                "guarantee": "No cross-worker filesystem contamination",
+            },
+            "environment_variables": {
+                "description": "Explicit PATH and PYTHONPATH injected per execution",
+                "mechanism": "env={**os.environ, 'PATH': f'{VENV_BIN}:...', 'PYTHONPATH': f'{src}:{tests}'}",
+                "guarantee": "Tests import from workspace source, not site-packages",
+            },
+            "python_import_path": {
+                "description": "PYTHONPATH controls module resolution",
+                "mechanism": "backend/src and backend/tests on sys.path before .venv site-packages",
+                "guarantee": "Mutated source is what gets imported, not editable-install original",
+            },
+            "temporary_files": {
+                "description": "Per-execution temp directory",
+                "mechanism": "tempfile.mkdtemp() or workspace-relative paths",
+                "guarantee": "No shared temp files between workers",
+            },
+            "pytest_cache": {
+                "description": "pytest cache isolation",
+                "mechanism": "Each workspace has its own .pytest_cache; cleared on workspace create",
+                "guarantee": "Cached test results from one worker don't affect another",
+            },
+            "generated_artifacts": {
+                "description": "Coverage reports, XML outputs, etc.",
+                "mechanism": "Artifacts written to workspace/evidence/ not repo root",
+                "guarantee": "No artifact pollution in canonical repository",
+            },
+            "process_group": {
+                "description": "Signal isolation for timeout/cancellation",
+                "mechanism": "start_new_session=True + os.killpg() on timeout",
+                "guarantee": "Timeout kills entire test subprocess tree without affecting other workers",
+            },
+        },
+        "never_allows": [
+            "Two workers mutating the same source tree concurrently",
+            "Mutations applied in-place in the canonical repository tree",
+            "Silent fallback to editable-install source when mutant differs",
+            "Cross-worker pytest cache sharing",
+            "Shared temporary directories between independent executions",
+        ],
+        "current_implementation": {
+            "adapter": "MutmutAdapter",
+            "isolation_mechanism": "subprocess with explicit cwd/env/PYTHONPATH",
+            "known_limitations": [
+                "Parallel execution (max_children > 1) may contend on ports if tests start servers",
+                "Some test fixtures with global state may leak between tests in the same selection",
+            ],
+        },
+    }
+
+
+if __name__ == "__main__":
+    p = OUTPUT_DIR / "mutation-isolation-report.json"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    report = build_isolation_report()
+    p.write_text(json.dumps(report, indent=2) + "\n")
+    print(f"Isolation report: {p}")

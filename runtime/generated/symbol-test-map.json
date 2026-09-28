@@ -1,0 +1,20 @@
+{
+  "compute_emi_fixed": [
+    "backend/tests/unit/engines/loan/test_loan_engine.py"
+  ],
+  "compute_emi_floating": [
+    "backend/tests/unit/engines/loan/test_loan_engine.py"
+  ],
+  "compute_monthly_interest": [
+    "backend/tests/unit/engines/loan/test_loan_engine.py"
+  ],
+  "compute_principal_component": [
+    "backend/tests/unit/engines/loan/test_loan_engine.py"
+  ],
+  "compute_principal_from_emi": [
+    "backend/tests/unit/engines/loan/test_loan_engine.py"
+  ],
+  "compute_tenure_from_emi": [
+    "backend/tests/unit/engines/loan/test_loan_engine.py"
+  ]
+}

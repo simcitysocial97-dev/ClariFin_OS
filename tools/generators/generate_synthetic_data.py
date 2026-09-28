@@ -45,7 +45,7 @@ ACCOUNTS = {
     "CC3": {"type": "credit", "name": "Credit Card 3"},
 }
 
-CATEGORIES = {
+CATEGORIES: dict[str, dict[str, Any]] = {
     "Salary": {
         "type": "credit",
         "accounts": ["SA1", "SA2"],
@@ -206,7 +206,7 @@ def get_weekend_factor(date: datetime, spike_factor: float) -> float:
     return 1.0
 
 
-def generate_description(category: str, platform: str = None) -> str:
+def generate_description(category: str, platform: str | None = None) -> str:
     """Generate realistic transaction description."""
     templates = {
         "Salary": ["SALARY CREDIT", "SALARY - {company}", "MONTHLY SALARY"],
@@ -544,7 +544,7 @@ def generate_emi_payments(
     current_month = start_date.replace(day=1)
 
     # Create 1-3 active EMIs
-    emis = [
+    emis: list[dict[str, Any]] = [
         {
             "amount": random.randint(10000, 20000),
             "day": 5,
@@ -572,7 +572,7 @@ def generate_emi_payments(
 
     while current_month <= end_date:
         for emi in active_emis:
-            emi_date = current_month.replace(day=emi["day"])
+            emi_date = current_month.replace(day=int(emi["day"]))
             if emi_date <= end_date:
                 transactions.append(
                     {

@@ -93,16 +93,22 @@ def test_synthetic_in_radius_failure_still_implicates():
     """M6 req 2 guard: the join must not be over-corrected into never matching."""
     _, blast, plan = _specimen()
     radius = attribute_failures(blast, [], plan.selected).blast_radius_paths
-    frontend_entity = next(p for p in radius if p.startswith("frontend/"))
+    # Use any entity from the blast radius (backend paths are expected for
+    # a loan-engine change specimen).
+    entity = next(p for p in radius if p.startswith("backend/src/engines/"))
 
     failures = build_observed_failures(
-        [_frontend_unit_failure(frontend_entity, "frontend-typecheck-build")]
+        [{"unit_id": "unit-targeted", "layer": "backend", "phase": "test",
+          "path": entity, "diagnostic": "assertion failed",
+          "provenance": {"capabilities": ["loan-engine"], "impact_kinds": ["engine"],
+                         "source": "ownership"},
+          "contributing_units": ["unit-targeted"]}]
     )
     report = attribute_failures(blast, failures, plan.selected)
     assert report.change_is_implicated is True
     assert len(report.in_blast_radius) == 1
     assert report.in_blast_radius[0].attribution == IN_BLAST_RADIUS
-    assert report.in_blast_radius[0].matched_entity == frontend_entity
+    assert report.in_blast_radius[0].matched_entity == entity
 
 
 def test_unjoinable_failure_is_attribution_unknown():
@@ -152,8 +158,11 @@ def test_pre_existing_is_never_inferred():
     """M6 req 3: absent evidence => OUTSIDE_BLAST_RADIUS, never PRE_EXISTING."""
     _, blast, plan = _specimen()
     failures = build_observed_failures(
-        [_frontend_unit_failure("frontend/lib/runtime/navigation-runtime.ts",
-                                 "frontend-typecheck-build")]
+        [
+            _frontend_unit_failure(
+                "frontend/lib/runtime/navigation-runtime.ts", "frontend-typecheck-build"
+            )
+        ]
     )
     report = attribute_failures(blast, failures, plan.selected)
     assert report.attributions[0].attribution == OUTSIDE_BLAST_RADIUS
@@ -163,8 +172,15 @@ def test_pre_existing_is_never_inferred():
 def test_adapter_performs_no_string_matching():
     """E-4 defect class is prohibited: no command/test-name inference here."""
     source = inspect.getsource(build_observed_failures)
-    forbidden = ("re.search", "re.match", "re.findall", "startswith(",
-                 "endswith(", "in command", ".find(")
+    forbidden = (
+        "re.search",
+        "re.match",
+        "re.findall",
+        "startswith(",
+        "endswith(",
+        "in command",
+        ".find(",
+    )
     for token in forbidden:
         assert token not in source, f"{token} found in build_observed_failures"
 

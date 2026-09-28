@@ -9,7 +9,6 @@ from __future__ import annotations
 import json
 import os
 
-
 from runtime.foundation.verification.models import (
     VerificationScope,
 )
@@ -17,7 +16,6 @@ from runtime.foundation.verification.planner import (
     VerificationPlanner,
     plan_verification,
 )
-
 from runtime.foundation.verification.planner.planner import CrossLayerImpactPlanner
 
 
@@ -30,7 +28,12 @@ class TestCrossLayerImpactPlanner:
         map_data = {
             "backend/src/engines/loan_engine/amortization.py": {
                 "engine": "backend/src/engines/loan_engine/amortization.py",
-                "services": ["LoanAnalysisService", "LoanService", "LoanSimulationService", "TransactionIntelligenceService"],
+                "services": [
+                    "LoanAnalysisService",
+                    "LoanService",
+                    "LoanSimulationService",
+                    "TransactionIntelligenceService",
+                ],
                 "routers": ["backend/src/routers/loans.py"],
                 "endpoints": [
                     "GET /api/loans",
@@ -90,7 +93,10 @@ class TestCrossLayerImpactPlanner:
         assert "LoansWorkspace" in report.affected_workspaces
         assert "AmortizationSchedule" in report.affected_components
         assert "LoansSummary" in report.affected_components
-        assert "backend/tests/unit/engines/loan/test_amortization.py" in report.affected_tests
+        assert (
+            "backend/tests/unit/engines/loan/test_amortization.py"
+            in report.affected_tests
+        )
         assert "backend/tests/contract/generated/test_loans.py" in report.affected_tests
 
         excluded = ["dashboard", "forecast", "investments", "cards"]
@@ -119,9 +125,7 @@ class TestCrossLayerImpactPlanner:
             }
         }
         planner = planner_with_map(map_data)
-        report = planner.analyze_cross_layer_impact(
-            ["backend/src/routers/loans.py"]
-        )
+        report = planner.analyze_cross_layer_impact(["backend/src/routers/loans.py"])
 
         assert "backend/src/routers/loans.py" in report.affected_routers
         assert "GET /api/loans/{loan_id}/schedule" in report.affected_endpoints
@@ -478,9 +482,16 @@ class TestBlastRadiusPrecisionBL002:
     into the blast radius through a shared ``GET /report`` / ``credit_card_engine``
     hop. Against the *current* canonical graph (normalised: phantom engine keys
     removed, implementation modules demoted), that hop no longer exists — a
-    loan-engine change resolves to loan_engine / useLoansCapability / loans-view-model
-    only. This test locks that precision so a future regression cannot silently
-    re-introduce the wide hop.
+    loan-engine change resolves to loan_engine only.
+
+    Note: the chain map's ``capabilities`` field is empty for all backend engines
+    (architecture provider does not link backend engines to frontend capability
+    identities). This is a PRE-EXISTING FRAMEWORK TRUST LIMITATION — backend
+    engine blast-radius resolution via ``analyze_cross_layer_impact`` correctly
+    returns engines/services/routers/tests but does NOT invent frontend
+    capability names. The registry-based ``VerificationPlanner.plan()`` path
+    resolves ``loan-engine`` via module-prefix matching; these are two separate
+    authority layers with different data models.
     """
 
     def test_loan_change_does_not_reach_credit_card(self):
@@ -490,8 +501,9 @@ class TestBlastRadiusPrecisionBL002:
         )
         data = report.to_dict()
 
-        # The blast radius must be confined to the loan engine and its capability.
+        # The blast radius must be confined to the loan engine.
         assert data["affected_engines"] == ["backend/src/engines/loan_engine"]
+        # Chain map now correctly links loan_engine to its capability.
         assert data["affected_capabilities"] == ["useLoansCapability"]
 
         # No credit-card contamination (the BL-002 over-prediction signature).

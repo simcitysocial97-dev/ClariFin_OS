@@ -1,0 +1,605 @@
+{
+  "schema": "m9-c56/measurement-reconciliation/v1",
+  "generated_at": "2026-09-02T00:15:00+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "component_count": 21,
+  "totals": {
+    "source_files": 234,
+    "loc": 44865,
+    "statements": 19985,
+    "covered_lines": 15922,
+    "missing_lines": 4063,
+    "mutation_mutants": 2742,
+    "mutation_killed": 2148,
+    "mutation_survived": 588,
+    "overall_line_pct": 79.67,
+    "overall_mutation_pct": 78.34
+  },
+  "components": [
+    {
+      "component": "account_engine",
+      "name": "Account Engine",
+      "type": "financial_engine",
+      "criticality": "P0",
+      "source_files": 7,
+      "loc": 479,
+      "measured_files": 7,
+      "coverage": {
+        "statements": 88,
+        "covered": 87,
+        "missing": 1,
+        "line_pct": 98.86,
+        "branches": 28,
+        "partial_branches": 1,
+        "branch_pct": 96.43
+      },
+      "mutation": {
+        "mutants_generated": 183,
+        "killed": 173,
+        "survived": 10,
+        "no_tests": 0,
+        "timeout": 0,
+        "score": 94.5,
+        "survivor_categories": {
+          "control_flow": 9,
+          "arithmetic": 1
+        }
+      }
+    },
+    {
+      "component": "credit_card_engine",
+      "name": "Credit Card Engine",
+      "type": "financial_engine",
+      "criticality": "P0",
+      "source_files": 8,
+      "loc": 726,
+      "measured_files": 8,
+      "coverage": {
+        "statements": 189,
+        "covered": 177,
+        "missing": 12,
+        "line_pct": 93.65,
+        "branches": 96,
+        "partial_branches": 12,
+        "branch_pct": 87.5
+      },
+      "mutation": {
+        "mutants_generated": 582,
+        "killed": 449,
+        "survived": 133,
+        "no_tests": 0,
+        "timeout": 0,
+        "score": 77.1,
+        "survivor_categories": {
+          "arithmetic": 81,
+          "control_flow": 45,
+          "comparison": 4,
+          "boolean": 3
+        }
+      }
+    },
+    {
+      "component": "financial_events",
+      "name": "Financial Events",
+      "type": "financial_engine",
+      "criticality": "P0",
+      "source_files": 2,
+      "loc": 476,
+      "measured_files": 2,
+      "coverage": {
+        "statements": 184,
+        "covered": 178,
+        "missing": 6,
+        "line_pct": 96.74,
+        "branches": 78,
+        "partial_branches": 6,
+        "branch_pct": 92.31
+      },
+      "mutation": {
+        "mutants_generated": 704,
+        "killed": 459,
+        "survived": 245,
+        "no_tests": 0,
+        "timeout": 0,
+        "score": 65.2,
+        "survivor_categories": {
+          "control_flow": 233,
+          "comparison": 7,
+          "boolean": 5
+        }
+      }
+    },
+    {
+      "component": "loan_engine",
+      "name": "Loan Engine",
+      "type": "financial_engine",
+      "criticality": "P0",
+      "source_files": 9,
+      "loc": 1400,
+      "measured_files": 9,
+      "coverage": {
+        "statements": 472,
+        "covered": 466,
+        "missing": 6,
+        "line_pct": 98.73,
+        "branches": 164,
+        "partial_branches": 7,
+        "branch_pct": 95.73
+      },
+      "mutation": {
+        "mutants_generated": 1273,
+        "killed": 1067,
+        "survived": 200,
+        "no_tests": 4,
+        "timeout": 2,
+        "score": 84.1,
+        "survivor_categories": {
+          "control_flow": 119,
+          "arithmetic": 52,
+          "comparison": 25,
+          "boolean": 3,
+          "numeric_literal": 1
+        }
+      }
+    },
+    {
+      "component": "financial_intelligence",
+      "name": "Financial Intelligence",
+      "type": "intelligence",
+      "criticality": "P1",
+      "source_files": 8,
+      "loc": 3093,
+      "measured_files": 8,
+      "coverage": {
+        "statements": 807,
+        "covered": 771,
+        "missing": 36,
+        "line_pct": 95.54,
+        "branches": 332,
+        "partial_branches": 14,
+        "branch_pct": 95.78
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    },
+    {
+      "component": "transaction_intelligence",
+      "name": "Transaction Intelligence",
+      "type": "intelligence",
+      "criticality": "P1",
+      "source_files": 5,
+      "loc": 1082,
+      "measured_files": 5,
+      "coverage": {
+        "statements": 367,
+        "covered": 365,
+        "missing": 2,
+        "line_pct": 99.46,
+        "branches": 148,
+        "partial_branches": 5,
+        "branch_pct": 96.62
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    },
+    {
+      "component": "behaviour_engine",
+      "name": "Behaviour Engine",
+      "type": "behaviour",
+      "criticality": "P2",
+      "source_files": 18,
+      "loc": 5190,
+      "measured_files": 18,
+      "coverage": {
+        "statements": 1649,
+        "covered": 1435,
+        "missing": 214,
+        "line_pct": 87.02,
+        "branches": 786,
+        "partial_branches": 130,
+        "branch_pct": 83.46
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    },
+    {
+      "component": "recommendation_engine",
+      "name": "Recommendation Engine",
+      "type": "advisory",
+      "criticality": "P2",
+      "source_files": 2,
+      "loc": 289,
+      "measured_files": 2,
+      "coverage": {
+        "statements": 73,
+        "covered": 70,
+        "missing": 3,
+        "line_pct": 95.89,
+        "branches": 30,
+        "partial_branches": 2,
+        "branch_pct": 93.33
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    },
+    {
+      "component": "services",
+      "name": "Services Layer",
+      "type": "service",
+      "criticality": "P1",
+      "source_files": 32,
+      "loc": 7519,
+      "measured_files": 32,
+      "coverage": {
+        "statements": 2047,
+        "covered": 1357,
+        "missing": 690,
+        "line_pct": 66.29,
+        "branches": 510,
+        "partial_branches": 124,
+        "branch_pct": 75.69
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    },
+    {
+      "component": "repositories",
+      "name": "Repositories",
+      "type": "data",
+      "criticality": "P1",
+      "source_files": 27,
+      "loc": 4606,
+      "measured_files": 27,
+      "coverage": {
+        "statements": 1366,
+        "covered": 757,
+        "missing": 609,
+        "line_pct": 55.42,
+        "branches": 228,
+        "partial_branches": 45,
+        "branch_pct": 80.26
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    },
+    {
+      "component": "core.dtos",
+      "name": "Core DTOs",
+      "type": "core",
+      "criticality": "P1",
+      "source_files": 15,
+      "loc": 2810,
+      "measured_files": 15,
+      "coverage": {
+        "statements": 922,
+        "covered": 856,
+        "missing": 66,
+        "line_pct": 92.84,
+        "branches": 0,
+        "partial_branches": 0,
+        "branch_pct": null
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    },
+    {
+      "component": "core.mappers",
+      "name": "Core Mappers",
+      "type": "core",
+      "criticality": "P1",
+      "source_files": 14,
+      "loc": 1497,
+      "measured_files": 14,
+      "coverage": {
+        "statements": 295,
+        "covered": 106,
+        "missing": 189,
+        "line_pct": 35.93,
+        "branches": 26,
+        "partial_branches": 0,
+        "branch_pct": 100.0
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    },
+    {
+      "component": "core.db",
+      "name": "Core DB",
+      "type": "core",
+      "criticality": "P1",
+      "source_files": 6,
+      "loc": 1199,
+      "measured_files": 5,
+      "coverage": {
+        "statements": 214,
+        "covered": 158,
+        "missing": 56,
+        "line_pct": 73.83,
+        "branches": 40,
+        "partial_branches": 12,
+        "branch_pct": 70.0
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    },
+    {
+      "component": "core.domain",
+      "name": "Core Domain",
+      "type": "core",
+      "criticality": "P1",
+      "source_files": 2,
+      "loc": 346,
+      "measured_files": 2,
+      "coverage": {
+        "statements": 105,
+        "covered": 105,
+        "missing": 0,
+        "line_pct": 100.0,
+        "branches": 38,
+        "partial_branches": 0,
+        "branch_pct": 100.0
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    },
+    {
+      "component": "routers",
+      "name": "API Routers",
+      "type": "interface",
+      "criticality": "P1",
+      "source_files": 29,
+      "loc": 4168,
+      "measured_files": 0,
+      "coverage": {
+        "statements": 0,
+        "covered": 0,
+        "missing": 0,
+        "line_pct": null,
+        "branches": 0,
+        "partial_branches": 0,
+        "branch_pct": null
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    },
+    {
+      "component": "models",
+      "name": "Domain Models",
+      "type": "core",
+      "criticality": "P1",
+      "source_files": 22,
+      "loc": 1713,
+      "measured_files": 22,
+      "coverage": {
+        "statements": 738,
+        "covered": 654,
+        "missing": 84,
+        "line_pct": 88.62,
+        "branches": 40,
+        "partial_branches": 0,
+        "branch_pct": 100.0
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    },
+    {
+      "component": "common",
+      "name": "Common Utilities",
+      "type": "core",
+      "criticality": "P1",
+      "source_files": 5,
+      "loc": 339,
+      "measured_files": 5,
+      "coverage": {
+        "statements": 160,
+        "covered": 159,
+        "missing": 1,
+        "line_pct": 99.38,
+        "branches": 68,
+        "partial_branches": 8,
+        "branch_pct": 88.24
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    },
+    {
+      "component": "extraction",
+      "name": "Data Extraction",
+      "type": "service",
+      "criticality": "P2",
+      "source_files": 11,
+      "loc": 5586,
+      "measured_files": 0,
+      "coverage": {
+        "statements": 0,
+        "covered": 0,
+        "missing": 0,
+        "line_pct": null,
+        "branches": 0,
+        "partial_branches": 0,
+        "branch_pct": null
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    },
+    {
+      "component": "orchestration",
+      "name": "Orchestration",
+      "type": "core",
+      "criticality": "P2",
+      "source_files": 2,
+      "loc": 191,
+      "measured_files": 2,
+      "coverage": {
+        "statements": 71,
+        "covered": 57,
+        "missing": 14,
+        "line_pct": 80.28,
+        "branches": 2,
+        "partial_branches": 1,
+        "branch_pct": 50.0
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    },
+    {
+      "component": "structural",
+      "name": "Structural",
+      "type": "core",
+      "criticality": "P2",
+      "source_files": 2,
+      "loc": 843,
+      "measured_files": 0,
+      "coverage": {
+        "statements": 0,
+        "covered": 0,
+        "missing": 0,
+        "line_pct": null,
+        "branches": 0,
+        "partial_branches": 0,
+        "branch_pct": null
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    },
+    {
+      "component": "root",
+      "name": "Root Config",
+      "type": "core",
+      "criticality": "P2",
+      "source_files": 8,
+      "loc": 1313,
+      "measured_files": 192,
+      "coverage": {
+        "statements": 10238,
+        "covered": 8164,
+        "missing": 2074,
+        "line_pct": 79.74,
+        "branches": 2740,
+        "partial_branches": 386,
+        "branch_pct": 85.91
+      },
+      "mutation": {
+        "mutants_generated": null,
+        "killed": null,
+        "survived": null,
+        "no_tests": null,
+        "timeout": null,
+        "score": null,
+        "survivor_categories": null
+      }
+    }
+  ]
+}

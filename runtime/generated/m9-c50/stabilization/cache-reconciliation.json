@@ -1,0 +1,10 @@
+{
+  "schema": "m9-c50/stabilization/cache-reconciliation@1",
+  "generated_at": "2026-09-04T22:55:24.534123+00:00",
+  "semantics": {
+    "REUSE": "same task_identity + same env_identity + valid evidence",
+    "EXECUTE": "no prior evidence or corrupted cache",
+    "INVALIDATE": "changed task, changed environment, stale evidence, corrupt artifact"
+  },
+  "effectiveness_distinct_from_correctness": true
+}

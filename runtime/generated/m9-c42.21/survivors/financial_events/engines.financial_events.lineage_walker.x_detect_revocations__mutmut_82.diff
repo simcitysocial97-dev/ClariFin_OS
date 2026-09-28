@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_detect_revocations__mutmut_82: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -52,7 +52,7 @@
+         # Find the transfer this revocation applies to
+         transfer_events = events_by_transfer.get(transfer_id, [])
+         if not transfer_events:
+-            continue
++            break
+ 
+         # Skip if this transfer was already auto-revoked
+         if transfer_id in auto_revoked_transfers:

@@ -1,0 +1,12 @@
+# status: survived
+# engines.reconciliation_engine.x_find_matches_for_transaction__mutmut_54: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -71,6 +71,6 @@
+     for candidate in candidates:
+         match = _check_match(target_dict, candidate, max_date_window_days)
+         if match:
+-            matches.append(match)
++            matches.append(None)
+ 
+     return matches

@@ -1,0 +1,10 @@
+# status: survived
+# engines.account_engine.cashflow.x_compute_income_expense_ratio__mutmut_15: survived
+--- src/engines/account_engine/cashflow.py
++++ src/engines/account_engine/cashflow.py
+@@ -19,4 +19,4 @@
+         return 0
+ 
+     ratio_decimal = Decimal(income_paise) * Decimal(10000) / Decimal(expense_paise)
+-    return int(ratio_decimal.quantize(Decimal(1), rounding=ROUND_HALF_UP))
++    return int(ratio_decimal.quantize(Decimal(1), ))

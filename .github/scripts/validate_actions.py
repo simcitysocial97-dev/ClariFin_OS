@@ -5,16 +5,17 @@ Validates, against docs/GITHUB_ACTIONS_CONSTITUTION.md and the Program 11.5
 rules:
   1. Every workflow + composite action is valid YAML.
   2. No workflow inlines setup-python / setup-node / upload-artifact / cache.
-  3. Every verification workflow executes exactly one `python runtime/verify.py`
-     command (the profile for that workflow).
+   3. Every verification workflow executes exactly one `python -m runtime.verify`
+      command (the profile for that workflow).
   4. No duplicated runtime-artifact generation (build_cross_layer_map / build_index
      must only run inside bootstrap-runtime).
   5. No duplicated artifact names within a workflow.
   6. Concurrency is configured; cancel-in-progress follows the exception list.
   7. Path filters configured on push/PR triggers (where applicable).
-  8. Every workflow ends with `python runtime/verify.py status`.
+   8. Every workflow ends with `python -m runtime.verify status`.
   9. Every composite action references existing scripts/commands.
 """
+
 from __future__ import annotations
 
 import sys
@@ -93,27 +94,29 @@ def validate_workflow(path: Path) -> None:
     pr = on.get("pull_request", {}) or {}
     has_push = bool(push)
     has_pr = bool(pr)
-    has_dispatch = bool(on.get("workflow_dispatch"))
-    has_schedule = bool(on.get("schedule"))
-    if name not in VERIFICATION_PROFILES and not (
-        has_schedule or has_dispatch
-    ):
+    # M9-C43.1: `workflow_dispatch:` / `schedule:` without a body parse to None
+    # in YAML; presence is the key existing in the mapping, not a truthy body.
+    has_dispatch = "workflow_dispatch" in on
+    has_schedule = "schedule" in on
+    if name not in VERIFICATION_PROFILES and not (has_schedule or has_dispatch):
         warn(f"{name}: non-verification workflow has no schedule/manual trigger")
 
     # path filters for verification workflows with push/PR triggers
     if name in VERIFICATION_PROFILES and (has_push or has_pr):
         # Check push paths if push is configured
         if has_push and name != "quality.yml":
-            push_paths = push.get("paths") or (push.get("branches") and push.get("paths"))
+            push_paths = push.get("paths") or (
+                push.get("branches") and push.get("paths")
+            )
             if not push_paths:
                 warn(f"{name}: push trigger has no `paths` filter (Rule 7)")
-                
+
         # Check PR paths if PR is configured
         if has_pr and name != "quality.yml":
             pr_paths = pr.get("paths") or (pr.get("branches") and pr.get("paths"))
             if not pr_paths:
                 warn(f"{name}: pull_request trigger has no `paths` filter (Rule 7)")
-        
+
     jobs = doc.get("jobs", {})
     if not jobs:
         err(f"{name}: no jobs defined")
@@ -144,12 +147,25 @@ def validate_workflow(path: Path) -> None:
                     )
             if "upload-artifact" in uses:
                 err(f"{name}/{job_id}: inlines actions/upload-artifact (Rule 3/4)")
-            if "build_cross_layer_map" in run or "build_index" in run or "save_index" in run:
+            if (
+                "build_cross_layer_map" in run
+                or "build_index" in run
+                or "save_index" in run
+            ):
                 found_inline_gen = True
-            if "python runtime/verify.py" in run:
-                prof = run.strip().split("python runtime/verify.py")[-1].split()[0]
-                if prof == "status":
-                    found_status = True
+            if "python -m runtime.verify" in run:
+                prof = run.strip().split("python -m runtime.verify")[-1].split()[0]
+                if prof in ("status", "env-check"):
+                    # Auxiliary non-gate commands:
+                    #   status    — Rule 9 job-summary append (never a verdict).
+                    #   env-check — canonical environment fingerprint preflight
+                    #              (AGENTS.md: verify before mutation/CI-critical
+                    #              work; C42.5 toolchain-drift guard). Produces a
+                    #              consistency report, never a verification
+                    #              verdict, so it cannot duplicate or weaken the
+                    #              single authoritative profile command (Rule 8).
+                    if prof == "status":
+                        found_status = True
                     continue
                 # Only verification-profile workflows are bound to a single profile
                 # command. Non-profile workflows (reconcile, security/CodeQL,
@@ -161,8 +177,8 @@ def validate_workflow(path: Path) -> None:
                         found_verify_profile = True
                     else:
                         err(
-                            f"{name}/{job_id}: runs `verify.py {prof}` but should be "
-                            f"`verify.py {expected}` (Rule 8)"
+                            f"{name}/{job_id}: runs `runtime.verify {prof}` but should be "
+                            f"`runtime.verify {expected}` (Rule 8)"
                         )
             # artifact names via upload-runtime
             name_in = step.get("with", {}).get("name")
@@ -172,9 +188,11 @@ def validate_workflow(path: Path) -> None:
     # verification workflow must run exactly one profile command
     if name in VERIFICATION_PROFILES:
         if not found_verify_profile:
-            err(f"{name}: missing required `python runtime/verify.py {VERIFICATION_PROFILES[name]}` (Rule 8)")
+            err(
+                f"{name}: missing required `python -m runtime.verify {VERIFICATION_PROFILES[name]}` (Rule 8)"
+            )
         if not found_status:
-            err(f"{name}: missing `python runtime/verify.py status` summary (Rule 9)")
+            err(f"{name}: missing `python -m runtime.verify status` summary (Rule 9)")
         if found_inline_gen:
             err(f"{name}: inlines shared-artifact generation (Rule 3)")
 
@@ -203,7 +221,9 @@ def main() -> int:
         validate_workflow(wf)
 
     print(f"Workflows validated: {len(list(WF_DIR.glob('*.yml')))}")
-    print(f"Composite actions validated: {len([d for d in ACT_DIR.iterdir() if d.is_dir()])}")
+    print(
+        f"Composite actions validated: {len([d for d in ACT_DIR.iterdir() if d.is_dir()])}"
+    )
     print()
     if WARNINGS:
         print("WARNINGS:")

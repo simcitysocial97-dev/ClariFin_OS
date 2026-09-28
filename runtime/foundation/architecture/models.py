@@ -228,7 +228,12 @@ class Mapper:
     layer: str = "backend"
 
     def to_dict(self) -> dict[str, Any]:
-        return {"id": self.id, "name": self.name, "path": self.path, "layer": self.layer}
+        return {
+            "id": self.id,
+            "name": self.name,
+            "path": self.path,
+            "layer": self.layer,
+        }
 
 
 @dataclass(frozen=True, slots=True)
@@ -470,9 +475,8 @@ class Architecture:
             return self.engines.get(module.engine)
         best: Engine | None = None
         for eng in self.engines.values():
-            if eng.owns_path(norm):
-                if best is None or len(eng.path) > len(best.path):
-                    best = eng
+            if eng.owns_path(norm) and (best is None or len(eng.path) > len(best.path)):
+                best = eng
         return best
 
     def counts(self) -> dict[str, int]:

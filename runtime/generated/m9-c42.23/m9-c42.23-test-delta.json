@@ -1,0 +1,19 @@
+{
+  "artifact": "m9-c42.23-test-delta",
+  "description": "Test inventory delta for M9-C42.23 behavioral strengthening (Batches 2-5).",
+  "tests_before_c42_23": "C42.22 regression recorded 1518 total backend tests passing (unit/property/capability/invariant/core/calc/credit_card/rec).",
+  "tests_added": {
+    "cashflow_engine": 10,
+    "recommendation_engine": 9,
+    "common_calculations": 4,
+    "credit_card_engine": 9,
+    "reconciliation_engine": 10,
+    "ledger_audit_engine": 0,
+    "loan_engine": 0,
+    "total_added": 42
+  },
+  "tests_modified": 0,
+  "tests_removed": 0,
+  "rationale": "Batch 1 (behaviour_engine + financial_events) was completed in C42.22 and is NOT reopened. Ledger and loan required no new tests: ledger's reachable contract is already covered by its 25-test suite (survivors are defensive SQL on generated columns); loan is already strong (84%) and its 5 nondeterministic mutants are preserved as reproducibility evidence.",
+  "anti_gaming": "No tests were added solely to kill equivalent/defensive mutants; no tests deleted; no test-count inflation objective."
+}

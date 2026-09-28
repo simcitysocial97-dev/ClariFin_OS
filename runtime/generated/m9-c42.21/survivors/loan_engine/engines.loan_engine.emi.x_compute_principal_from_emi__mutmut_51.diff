@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.emi.x_compute_principal_from_emi__mutmut_51: survived
+--- src/engines/loan_engine/emi.py
++++ src/engines/loan_engine/emi.py
+@@ -36,7 +36,7 @@
+     min_diff = float("inf")
+     best_distance = float("inf")
+ 
+-    for candidate in range(base_principal - 500, base_principal + 501):
++    for candidate in range(base_principal - 500, base_principal - 501):
+         if candidate <= 0:
+             continue
+         test_emi = compute_emi_fixed(candidate, annual_rate_bps, tenure_months)

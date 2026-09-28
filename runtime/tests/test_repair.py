@@ -6,7 +6,6 @@ through the canonical provider and never fabricates targets.
 
 from __future__ import annotations
 
-
 from runtime.foundation.intelligence import format_repair, repair_plan
 from runtime.foundation.intelligence.platform.repair import Defect
 
@@ -33,8 +32,9 @@ def test_repair_plan_orders_and_cites_provider_owners():
 
 
 def test_repair_plan_is_reproducible():
-    defect = Defect("d1", "test", "x",
-                    ("backend/src/engines/account_engine/balance.py",), "high")
+    defect = Defect(
+        "d1", "test", "x", ("backend/src/engines/account_engine/balance.py",), "high"
+    )
 
     def order():
         repair = repair_plan(defects=[defect], changed_files=[])

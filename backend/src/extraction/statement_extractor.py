@@ -299,7 +299,7 @@ class StatementExtractor:
                     )
                 # Fix 15: Skip stream only if lattice has >=3 cols, >=5 rows AND has dates
                 for t in tables:
-                    rows = t.df.values.tolist()
+                    rows = t.data
                     if len(rows) >= 5 and len(rows[0]) >= 3:
                         date_count = sum(
                             1
@@ -354,7 +354,7 @@ class StatementExtractor:
         Returns 0.0 if table is too small.
         """
         table = table_entry["table"]
-        rows = table.df.values.tolist()
+        rows = table.data
 
         row_count = len(rows)
         col_count = len(rows[0]) if rows else 0
@@ -1136,7 +1136,7 @@ class StatementExtractor:
                         suppress_stdout=True,
                     )
                     for t in tables:
-                        rows = t.df.values.tolist()
+                        rows = t.data
                         date_count = sum(
                             1
                             for row in rows
@@ -1166,7 +1166,7 @@ class StatementExtractor:
         Requires only 1 date row (not 2), col_count >= 2, row_count >= 2.
         Returns score >= 0.
         """
-        rows = table.df.values.tolist()
+        rows = table.data
         row_count = len(rows)
         col_count = len(rows[0]) if rows else 0
         if row_count < 2 or col_count < 2:
@@ -1228,7 +1228,7 @@ class StatementExtractor:
                         best_s, best_t = s, t
 
             if best_t is not None and best_s > 0:
-                page_rows = best_t.df.values.tolist()
+                page_rows = best_t.data
                 self._log(
                     f"  Page {page_num}: {len(page_rows)} rows (score={best_s:.1f})"
                 )

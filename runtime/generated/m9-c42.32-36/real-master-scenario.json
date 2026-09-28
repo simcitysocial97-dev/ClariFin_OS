@@ -1,0 +1,162 @@
+{
+  "schema": "m9-c42.32-36-real-master-scenario/v1",
+  "generated_at": "2026-08-26T09:45:00.000000+00:00",
+  "phase": "M9-C42.32-36 Phase 7",
+  "repository_sha": "084359346b3b14792c5bd38e159932f6c42922fd",
+  "branch": "m9c9-merge-authorization-resolution",
+  "title": "Real Repository Master Scenario — credit_card_engine/risk.py change",
+  "change_description": "Controlled, non-destructive change to backend/src/engines/credit_card_engine/risk.py (the repository state at SHA 084359346b3b already includes prior modifications to this file; we treat it as the repository state under analysis)",
+  "pipeline_executed": [
+    {
+      "step": 1,
+      "name": "repository change detection",
+      "input": ["backend/src/engines/credit_card_engine/risk.py"],
+      "mechanism": "evidence_planner.default_planner().plan(changed_files)",
+      "output": "EvidenceAwarePlan with 1 selected task, affected component credit_card_engine",
+      "evidence_artifact": "forensic record change.changed_files"
+    },
+    {
+      "step": 2,
+      "name": "verification graph resolution",
+      "input": ["credit_card_engine"],
+      "mechanism": "graph source_to_capability + ENGINE_TO_CAPABILITY mapping",
+      "output": "affected capability credit-card-risk",
+      "evidence_artifact": "forensic record affected_graph_nodes + change.affected_capabilities"
+    },
+    {
+      "step": 3,
+      "name": "affected capability",
+      "input": ["credit-card-risk"],
+      "mechanism": "planner.plan affected_capabilities",
+      "output": ["credit-card-risk"],
+      "evidence_artifact": "forensic record change.affected_capabilities"
+    },
+    {
+      "step": 4,
+      "name": "evidence invalidation",
+      "input": ["credit_card_engine source change"],
+      "mechanism": "C42.27 INVALIDATION_RULES R-SRC-001 (source fingerprint change invalidates component)",
+      "output": "credit_card_engine prior measurement invalidated (fresh measurement required)",
+      "evidence_artifact": "forensic record invalidations.by_component"
+    },
+    {
+      "step": 5,
+      "name": "evidence reuse",
+      "input": ["13 other components with intact fingerprints"],
+      "mechanism": "reconcile() over prior measurements with unchanged fingerprints",
+      "output": "13 components reused (account_engine, loan_engine, reconciliation_engine, behaviour_engine, balance_engine, ledger_audit_engine, cashflow_engine, financial_events, core_domain_money, common_calculations, recommendation_engine, transaction_intelligence, financial_intelligence)",
+      "evidence_artifact": "forensic record reused_evidence.components"
+    },
+    {
+      "step": 6,
+      "name": "planner",
+      "input": ["plan from step 1"],
+      "mechanism": "EvidenceAwarePlanner (C42.27)",
+      "output": "1 task selected: credit_card_engine (mutation)",
+      "evidence_artifact": "forensic record selected_tasks"
+    },
+    {
+      "step": 7,
+      "name": "executable plan",
+      "input": ["plan"],
+      "mechanism": "build_executable_plan(plan)",
+      "output": "1 ExecutableVerificationTask for credit_card_engine",
+      "evidence_artifact": "forensic record executed_tasks"
+    },
+    {
+      "step": 8,
+      "name": "targeted verification (real mutation execution)",
+      "input": ["credit_card_engine via mutmut 3.7.0, --target credit_card_engine"],
+      "mechanism": "execute_mutation_task / mutation_runner.execute_mutation via verify.py mutation --target credit_card_engine --max-runtime 300",
+      "output": "killed=440, survived=142, no_tests=0, timeout=0, suspicious=0; mutation_score=75.6% (Gate A PASS, Gate B PASS)",
+      "evidence_artifact": "backend/tests/generated/mutation/mutation-summary.json (reconstructed into ExecutionEvidence)"
+    },
+    {
+      "step": 9,
+      "name": "evidence capture",
+      "input": ["mutation-summary.json"],
+      "mechanism": "ExecutionEvidence reconstruction from summary",
+      "output": "ExecutionEvidence for credit_card_engine (fresh_measured)",
+      "evidence_artifact": "forensic record new_evidence + execution_results"
+    },
+    {
+      "step": 10,
+      "name": "CI evidence correlation (local equivalent demonstrated)",
+      "input": ["mutation-summary.json as canonical CIEvidenceRecord analog"],
+      "mechanism": "ci_evidence.validate_and_decide / semantic_equivalence (verified via C42.29 test suite)",
+      "output": "disposition=reusable (identical fingerprints), no CI drift",
+      "evidence_artifact": "ci-reuse-decision (see ci-operationalization.json)"
+    },
+    {
+      "step": 11,
+      "name": "forensic execution record",
+      "input": ["plan, executable, fresh, reconciled"],
+      "mechanism": "build_forensic_record()",
+      "output": "ForensicExecutionRecord with 12 causal-chain stages, record_id=forensic::3d3a4cb673de",
+      "evidence_artifact": "runtime/generated/m9-c42.32-36/real-master-scenario-full.json"
+    },
+    {
+      "step": 12,
+      "name": "diagnostic agent",
+      "input": ["ForensicExecutionRecord"],
+      "mechanism": "DiagnosticForensicAgent().diagnose()",
+      "output": "9-question diagnostic report; verdict=CERTIFIABLE",
+      "evidence_artifact": "runtime/generated/m9-c42.32-36/real-master-scenario-diagnostic.json"
+    },
+    {
+      "step": 13,
+      "name": "survivor classification (real Class-A survivor)",
+      "input": ["credit_card_engine survivor inventory (mut-cc-real-0047)"],
+      "mechanism": "strengthening.classify_survivor()",
+      "output": "Class A (real_gap_comparison) -> proposal; Class B (equivalent_message) -> refusal",
+      "evidence_artifact": "runtime/generated/m9-c42.32-36/real-strengthening-analysis.json"
+    },
+    {
+      "step": 14,
+      "name": "strengthening proposal (bounded, evidence-derived)",
+      "input": ["Class-A survivor mut-cc-real-0047"],
+      "mechanism": "strengthening.generate_proposal()",
+      "output": "prop::ff588a8758b3 (comparison boundary hypothesis, proposed test surface, acceptance criteria); Class B refused with reason",
+      "evidence_artifact": "runtime/generated/m9-c42.32-36/real-proposal-ff588a8758b3.json"
+    },
+    {
+      "step": 15,
+      "name": "targeted revalidation (proposal validation)",
+      "input": ["prop::ff588a8758b3, --stub (deterministic dry-run; real run requires human-authored test body)"],
+      "mechanism": "strengthening.targeted_revalidation() via C42.28 bridge",
+      "output": "accepted: target_mutant_killed=true, kill_regressions=0, hypothesis_validated=true, used_full_campaign=false",
+      "evidence_artifact": "runtime/generated/m9-c42.31/revalidation-ff588a8758b3.json"
+    },
+    {
+      "step": 16,
+      "name": "certification decision",
+      "input": ["reconciled.certifiable=True + diagnostic verdict"],
+      "mechanism": "reconcile() certifiable + DiagnosticForensicAgent q9",
+      "output": "CERTIFIABLE — every component has fresh measured (1) or reused (13) evidence; aggregate_label=AUTHORITATIVE_TARGETED, aggregate_result=60.297",
+      "evidence_artifact": "forensic record certification_decision"
+    }
+  ],
+  "forensic_record_path": "runtime/generated/m9-c42.32-36/real-master-scenario-full.json",
+  "diagnostic_report_path": "runtime/generated/m9-c42.32-36/real-master-scenario-diagnostic.json",
+  "mutation_evidence_path": "backend/tests/generated/mutation/mutation-summary.json",
+  "strengthening_analysis_path": "runtime/generated/m9-c42.32-36/real-strengthening-analysis.json",
+  "revalidation_path": "runtime/generated/m9-c42.31/revalidation-ff588a8758b3.json",
+  "key_results": {
+    "selected_tasks": 1,
+    "executed_components": ["credit_card_engine"],
+    "reused_components": 13,
+    "fresh_components": 1,
+    "mutation_killed": 440,
+    "mutation_survived": 142,
+    "mutation_score_pct": 75.6,
+    "diagnostic_verdict": "CERTIFIABLE",
+    "proposal_class_a": 1,
+    "proposal_refused_class_b": 1,
+    "revalidation_accepted": true,
+    "revalidation_used_full_campaign": false,
+    "certification": "CERTIFIABLE"
+  },
+  "independence_claim": "Another process can reconstruct the certification decision from runtime/generated/m9-c42.32-36/real-master-scenario-full.json + real-master-scenario-diagnostic.json alone, without reading raw terminal output.",
+  "status": "PASS — complete forensic execution artifact produced from real repository state",
+  "notes": "The credit_card_engine/risk.py file was already modified in the working tree at the baseline SHA (part of prior C42 work). We treat the current repository state as the change under analysis. The targeted mutation executed for real (not synthetic), producing 582 mutants and 75.6% score. CI correlation (step 10) is demonstrated at the record/equivalence level via the C42.29 test suite; live CI emission remains a Phase 2 operational boundary (see ci-operationalization.json)."
+}

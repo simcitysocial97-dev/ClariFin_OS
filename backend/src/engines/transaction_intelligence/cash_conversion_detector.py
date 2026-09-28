@@ -223,14 +223,13 @@ def detect(
             return None
 
         # Unknown provider with valid credit match - still return for review
-        # Find credit with fee closest to typical range (target ~225 bps midpoint)
+        # Find credit whose fee_bps is closest to the typical target (~225 bps).
         target_bps = 225
         best_credit = min(
             eligible_credits,
             key=lambda c: abs(
-                _calculate_fee_bps(
-                    debit_amount_paise, int(c.get("credit", 0) or 0) - target_bps
-                )
+                _calculate_fee_bps(debit_amount_paise, int(c.get("credit", 0) or 0))
+                - target_bps
             ),
         )
 

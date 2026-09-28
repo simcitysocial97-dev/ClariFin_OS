@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_walk_lineage__mutmut_115: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -73,7 +73,7 @@
+         ]
+ 
+         if not open_advances:
+-            continue
++            break
+ 
+         # Sort by date descending, take most recent
+         open_advances.sort(key=lambda e: e.get("date_iso", ""), reverse=True)

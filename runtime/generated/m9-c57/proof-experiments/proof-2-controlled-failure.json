@@ -1,0 +1,43 @@
+{
+  "schema": "backend-verification/v1",
+  "overall_status": "fail",
+  "experiment": "proof-2-controlled-failure",
+  "description": "Controlled code failure using pre-existing floating-rate bug in loan_engine",
+  "failure_details": {
+    "test_file": "tests/properties/loan_engine/test_floating_rate_properties.py",
+    "test_name": "test_simulate_floating_rate_schedule_rate_application",
+    "error_type": "AssertionError",
+    "error_message": "adjust_emi at month 2 with rate 501 did not change EMI (was 25261, now 25261)",
+    "stack_trace": [
+      "tests/properties/loan_engine/test_floating_rate_properties.py:333: in test_simulate_floating_rate_schedule_rate_application",
+      "    assert emi_after != emi_before, (",
+      "E   AssertionError: adjust_emi at month 2 with rate 501 did not change EMI (was 25261, now 25261)",
+      "E   assert 25261 != 25261"
+    ],
+    "rate_change_params": {
+      "change_month": 2,
+      "new_rate_bps": 501,
+      "mode": "adjust_emi"
+    }
+  },
+  "verification_results": {
+    "contract": {"status": "pass", "exit_code": 0, "duration_seconds": 90},
+    "invariants": {"status": "pass", "exit_code": 0, "duration_seconds": 90},
+    "properties": {"status": "fail", "exit_code": 1, "duration_seconds": 90},
+    "unit-engines": {"status": "pass", "exit_code": 0, "duration_seconds": 90}
+  },
+  "classification": {
+    "is_infrastructure_failure": false,
+    "is_pre_existing_bug": true,
+    "diagnostic_identifies_function": true,
+    "identified_function": "adjust_emi in loan_engine amortization module",
+    "root_cause": "EMI calculation does not update when interest rate changes in adjust_emi mode"
+  },
+  "evidence_integrity": {
+    "stale_evidence_detected": false,
+    "tampering_detected": false,
+    "repository_state_consistent": true
+  },
+  "timestamp": "2026-09-07T02:54:57Z",
+  "git_commit": "574a2584"
+}

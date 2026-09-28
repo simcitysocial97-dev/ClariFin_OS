@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_39: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -22,7 +22,7 @@
+     )
+     max_penalty_paise = int(
+         (Decimal(outstanding_balance) * Decimal(300) / Decimal(10000)).quantize(
+-            Decimal(1), rounding=ROUND_HALF_EVEN
++            Decimal(2), rounding=ROUND_HALF_EVEN
+         )
+     )
+     raw_penalty = (

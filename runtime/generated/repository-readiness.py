@@ -3,6 +3,7 @@
 
 Assesses whether the repository is ready for continued feature development.
 """
+
 from __future__ import annotations
 
 import json
@@ -15,11 +16,21 @@ sys.path.insert(0, str(REPO_ROOT))
 
 def main() -> int:
     audit_path = REPO_ROOT / "runtime" / "generated" / "engineering-platform-audit.json"
-    health_path = REPO_ROOT / "runtime" / "generated" / "repository-health-baseline.json"
+    health_path = (
+        REPO_ROOT / "runtime" / "generated" / "repository-health-baseline.json"
+    )
     gap_path = REPO_ROOT / "runtime" / "generated" / "repository-gap-analysis.json"
 
-    audit = json.loads(audit_path.read_text(encoding="utf-8")) if audit_path.exists() else {}
-    health = json.loads(health_path.read_text(encoding="utf-8")) if health_path.exists() else {}
+    audit = (
+        json.loads(audit_path.read_text(encoding="utf-8"))
+        if audit_path.exists()
+        else {}
+    )
+    health = (
+        json.loads(health_path.read_text(encoding="utf-8"))
+        if health_path.exists()
+        else {}
+    )
     gaps = json.loads(gap_path.read_text(encoding="utf-8")) if gap_path.exists() else {}
 
     output = {
@@ -92,7 +103,9 @@ def main() -> int:
     }
 
     out_path = REPO_ROOT / "runtime" / "generated" / "repository-readiness.json"
-    out_path.write_text(json.dumps(output, indent=2, default=str) + "\n", encoding="utf-8")
+    out_path.write_text(
+        json.dumps(output, indent=2, default=str) + "\n", encoding="utf-8"
+    )
     print(f"Generated: {out_path}")
     return 0
 

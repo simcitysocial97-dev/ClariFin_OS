@@ -1,0 +1,13 @@
+# status: survived
+# engines.ledger_audit_engine.x_validate_ledger_integrity__mutmut_38: survived
+--- src/engines/ledger_audit_engine.py
++++ src/engines/ledger_audit_engine.py
+@@ -59,7 +59,7 @@
+     for row in cur.fetchall():
+         violations.append(
+             {
+-                "type": "NEGATIVE_CREDIT",
++                "TYPE": "NEGATIVE_CREDIT",
+                 "transaction_id": row["id"],
+                 "message": f"Transaction {row['id']} has negative credit: {row['credit']}",
+             }

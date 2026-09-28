@@ -1,0 +1,12 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_check_foir__mutmut_32: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -17,6 +17,6 @@
+             reason="Fixed obligations are high",
+             metric=f"{percentage}% of income goes to fixed obligations",
+             severity=severity,
+-            suggested_action="Review and renegotiate loan terms, consider prepayment options to reduce monthly obligations",
++            suggested_action="REVIEW AND RENEGOTIATE LOAN TERMS, CONSIDER PREPAYMENT OPTIONS TO REDUCE MONTHLY OBLIGATIONS",
+         )
+     return None

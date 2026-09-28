@@ -1,0 +1,68 @@
+{
+  "schema": "m9-c42.37-self-adaptive-test-certification/v1",
+  "generated_at": "2026-08-26T18:47:11.230096+00:00",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "loop_contract": {
+    "step_1_survivor": "Classify survivor from mutation evidence",
+    "step_2_diagnosis": "Diagnose behavioral hypothesis from mutation operator + location",
+    "step_3_proposal": "Generate StrengtheningProposal (Class-A only; B/C/D/E refused)",
+    "step_4_human_auth": "ApprovalDecision.approved is ALWAYS False (boundary enforced)",
+    "step_5_test_impl": "Human writes test body; framework provides skeleton",
+    "step_6_targeted_verify": "execute_mutation_task(component) via C42.28 bridge",
+    "step_7_accept_reject": "RevalidationOutcome.accepted based on kill regression check",
+    "step_8_evidence_update": "New measurement recorded; prior evidence updated"
+  },
+  "autonomy_boundary": {
+    "production_code_modification": "NEVER allowed (hard constraint)",
+    "test_file_modification": "Requires human authorization (ApprovalDecision.approved=False by default)",
+    "score_chasing": "Explicitly excluded from FULL_CAMPAIGN_TRIGGERS (NOT_TRIGGERS contains 'score_improvement_desire')",
+    "class_b_c_d_e_targets": "Always refused with documented reason"
+  },
+  "loop_simulation": {
+    "survivor_input": {
+      "survivor_id": "mut-cc-real-0047",
+      "component": "credit_card_engine",
+      "capability": "credit-card-risk",
+      "location": "risk.py:calculate_risk_score",
+      "mutation_operator": "comparison",
+      "original_snippet": "if score > threshold:",
+      "mutated_snippet": "if score >= threshold:",
+      "status": "survived",
+      "covering_tests": []
+    },
+    "classification": "A",
+    "proposal_generated": true,
+    "approval_decision": {
+      "approved": false,
+      "approver": "approval-boundary",
+      "conditions": [
+        "eligible for controlled-loop validation after human review"
+      ]
+    },
+    "rejection_examples": [
+      {
+        "survivor_id": "equivalent_msg",
+        "classification": "B",
+        "reason": "equivalent/observable-equivalent behavior"
+      },
+      {
+        "survivor_id": "logging_code",
+        "classification": "C",
+        "reason": "defensive/observability code"
+      },
+      {
+        "survivor_id": "timeout_mut",
+        "classification": "D",
+        "reason": "measurement integrity problem"
+      },
+      {
+        "survivor_id": "ambiguous_design",
+        "classification": "E",
+        "reason": "requires human review"
+      }
+    ]
+  },
+  "end_to_end_status": "OPERATIONAL \u2014 Loop complete through human authorization boundary",
+  "hard_boundary_enforced": true,
+  "no_score_chasing": true
+}

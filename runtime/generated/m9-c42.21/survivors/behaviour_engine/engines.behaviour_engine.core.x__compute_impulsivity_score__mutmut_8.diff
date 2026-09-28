@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_impulsivity_score__mutmut_8: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -9,7 +9,7 @@
+     - Category switching frequency
+     """
+     if not transactions:
+-        return {"score": 0.5, "micro_txn_ratio": 0.0, "late_night_ratio": 0.0}
++        return {"score": 0.5, "micro_txn_ratio": 0.0, "XXlate_night_ratioXX": 0.0}
+ 
+     debits = [t for t in transactions if t.get("type") == "debit"]
+     if not debits:

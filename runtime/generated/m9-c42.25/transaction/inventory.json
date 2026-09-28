@@ -1,0 +1,142 @@
+{
+  "title": "M9-C42.25 / M25.1 — transaction_intelligence Forensic Inventory",
+  "run_id": "m9-c42.25",
+  "generated_at": "2026-08-26T00:42:00+05:30",
+  "component": "transaction_intelligence",
+  "source_location": "backend/src/engines/transaction_intelligence/",
+  "methodology": "Complete source inspection (all 5 modules read line-by-line) + coverage.py missing-line analysis (17.5% at entry) + grep-based caller mapping. No tests written before this inventory.",
+  "architecture": "Pure-function detector layer. No database access; all data passed as parameters by src/services/transaction_intelligence_service.py and src/orchestration/statement_orchestrator.py. Monetary values: integer paise.",
+  "modules": [
+    {
+      "module": "detector_result.py",
+      "statements": 18,
+      "coverage_pct_at_entry": 100.0,
+      "public_symbols": ["SourceType", "DetectionResult", "EMIDetectionResult"],
+      "internal_helpers": [],
+      "role": "Frozen dataclass result contracts shared by all detectors",
+      "domain_invariants": ["confidence_bps in 0-10000", "priority 60-100 scale", "source in {computed, bank_statement, user_confirmed}"],
+      "uncovered_regions": []
+    },
+    {
+      "module": "cash_conversion_detector.py",
+      "statements": 174,
+      "coverage_pct_at_entry": 10.4,
+      "public_symbols": ["CashConversionResult", "detect"],
+      "internal_helpers": ["_parse_date_iso", "_date_difference_days", "_match_description_pattern", "_match_purpose", "_is_savings_or_current", "_calculate_fee_bps", "_determine_zone", "_hungarian_inline"],
+      "decision_branches": [
+        "debit <= 0 -> None",
+        "provider pattern match vs unknown-provider path",
+        "unknown provider: liquidity keyword gate, savings/current + same household + amount window (credit < debit, credit > 10000) filters, closest-to-225bps selection",
+        "known provider: account type / household / settlement-window (0..settlement_days+2) / amount (< debit) eligibility filters",
+        "zone classification: auto (fee_min..fee_max inclusive) / review (review range inclusive) / None discard",
+        "disambiguation: auto preferred over review, then closest to fee-range midpoint (auto) or lowest fee_bps (review)",
+        "confidence: base 8000 auto / 5500 review, +1000 confirmed_by_user, +1000 due-date proximity 0..7 days (3 date formats), cap 9900",
+        "purpose pattern matching, narrative construction, match_reason"
+      ],
+      "error_paths": ["invalid ISO date -> None parse / 999-day sentinel", "invalid regex pattern -> False", "missing optional statement_row"],
+      "boundary_conditions": ["debit == 0 / negative", "credit == debit (excluded)", "date_diff == -1 / 0 / settlement_days+2 / settlement_days+3", "fee_bps exactly at fee_min/fee_max/review edges", "single vs multiple eligible credits", "due-date distance exactly 0 and 7 and 8"],
+      "dependencies": ["re", "datetime (stdlib only)"],
+      "uncovered_regions": [
+        {"region": "unknown-provider structural match path (lines 204-261)", "class": "A", "note": "genuinely untested"},
+        {"region": "known-provider eligibility + zone + disambiguation + confidence (lines 263-417)", "class": "A", "note": "genuinely untested; core financial classification logic"},
+        {"region": "helpers _match_purpose/_determine_zone/_hungarian_inline/_calculate_fee_bps (lines 80-157)", "class": "A", "note": "genuinely untested pure helpers"},
+        {"region": "module import surface", "class": "B", "note": "indirectly exercised via orchestrator/service imports"}
+      ],
+      "anomalies": [
+        {
+          "id": "TXN-E1",
+          "location": "detect() unknown-provider selection, lines 227-235",
+          "class": "E",
+          "severity": "AMBIGUOUS",
+          "description": "best_credit selection computes _calculate_fee_bps(debit_amount_paise, credit_amount_paise - target_bps) — subtracts 225 (a basis-points value) from a paise amount. Effectively shifts fee by 22500/debit bps rather than selecting credit closest to 225 bps fee. Likely defect, but intent cannot be proven from code alone.",
+          "disposition": "AMBIGUOUS -> explicitly recorded, NOT silently assigned. Tests pin current behavior and document the anomaly; no production change in C42.25 (would alter certified-baseline semantics)."
+        },
+        {
+          "id": "TXN-C1",
+          "location": "_hungarian_inline (lines 130-157)",
+          "class": "C",
+          "severity": "info",
+          "description": "Defined but never called from detect() or any production path (grep-verified: only its own definition). Unreachable within current production flow.",
+          "disposition": "NOT deleted (non-goal: no production-code removal). Tested as an isolated pure helper because it is independently reachable and cheap to pin; documented as unwired."
+        },
+        {
+          "id": "TXN-C2",
+          "location": "detect_cc_payment loose-match branch (cc_payment_detector.py lines 288-300)",
+          "class": "C",
+          "severity": "info",
+          "description": "Inside 'not has_keyword and not has_card_pattern' the additional 'and not has_card_pattern' guard is tautologically true and the branch always returns None when statement_row is None — dead condition but reachable control flow.",
+          "disposition": "Recorded; tests exercise the branch as-is."
+        }
+      ]
+    },
+    {
+      "module": "cc_payment_detector.py",
+      "statements": 85,
+      "coverage_pct_at_entry": 19.8,
+      "public_symbols": ["PaymentChannel", "LifecycleState", "extract_card_last4", "determine_payment_channel", "CCPaymentDetectionResult", "classify_cc_payment", "detect_cc_payment"],
+      "internal_helpers": ["_convert_to_paise", "_CARD_NUMBER_PATTERNS"],
+      "decision_branches": [
+        "extract_card_last4: XX####, ****####, standalone 4-digit with year-20xx exclusion",
+        "determine_payment_channel: CRED (excluding 'credit card'), CHEQ/chequebook, SPAYLATER/s-pa, NOBROKER, default DIRECT",
+        "classify_cc_payment: no statement -> unmatched/unknown/2000; payment >= due-100 -> fully_paid/9500; payment >= minimum_due -> revolving/8500; else payment_received/7000",
+        "detect_cc_payment: CC keyword list OR card pattern gate; amount-range fallthrough returns None"
+      ],
+      "error_paths": ["None/None-equivalent amounts -> 0 paise", "non-numeric string amounts -> 0", "float rupees -> int paise", "comma-formatted strings"],
+      "boundary_conditions": ["payment == due-100 exactly (fully_paid edge)", "payment == minimum_due exactly (revolving edge)", "amount 10000/500000 paise edges in loose gate", "description starting with '20' year exclusion"],
+      "dependencies": ["re (stdlib)"],
+      "uncovered_regions": [
+        {"region": "classify_cc_payment all lifecycle branches", "class": "A", "note": "genuinely untested"},
+        {"region": "extract_card_last4 / determine_payment_channel / _convert_to_paise", "class": "A", "note": "genuinely untested"},
+        {"region": "detect_cc_payment gate + fallthrough", "class": "A", "note": "genuinely untested"}
+      ]
+    },
+    {
+      "module": "loan_emi_detector.py",
+      "statements": 85,
+      "coverage_pct_at_entry": 14.0,
+      "public_symbols": ["EMI_KEYWORDS", "detect_emi_payment", "find_loan_candidates_for_account"],
+      "internal_helpers": ["_is_emi_description", "_amount_within_tolerance", "_date_near_expected"],
+      "decision_branches": [
+        "amount<=0 or missing date -> None",
+        "bank_statement_override (exact (loan_id, date) lookup) -> priority 100 / confidence 8000 / immediate return",
+        "amount match ±1% tolerance: +schedule row -> 90/9000 'amount_match'; no schedule -> 80/7500 'amount_only'",
+        "date proximity ±3 days: with amount match -> 85/7500 'amount+date' (only when best_priority < 85); without -> schedule scan near date -> 75/7000 'date_proximity'",
+        "description keyword -> 60/6000 'description_keyword' (fallback, also fills when best_match None)",
+        "best-priority selection across multiple loan candidates",
+        "emi_paise <= 0 skip"
+      ],
+      "error_paths": ["malformed dates -> ValueError/TypeError -> False", "expected_paise == 0 -> False", "empty loan candidates", "missing date_iso"],
+      "boundary_conditions": ["amount exactly at ±1% tolerance edge", "date distance exactly 3 and 4 days", "date_iso longer than 10 chars truncation", "priority ordering 100/90/85/80/75/60", "txn with debit key vs amount_paise key"],
+      "dependencies": ["datetime.date (stdlib)", ".detector_result"],
+      "uncovered_regions": [
+        {"region": "detect_emi_payment scoring matrix (all priorities)", "class": "A", "note": "genuinely untested"},
+        {"region": "tolerance/date helpers", "class": "A", "note": "genuinely untested"},
+        {"region": "find_loan_candidates_for_account", "class": "B", "note": "partially exercised via orchestrator path; needs direct tests"}
+      ]
+    },
+    {
+      "module": "__init__.py",
+      "statements": 5,
+      "coverage_pct_at_entry": 100.0,
+      "public_symbols": ["CashConversionResult", "DetectionResult", "EMIDetectionResult", "detect_cash_conversion", "detect_emi_payment", "find_loan_candidates_for_account"],
+      "uncovered_regions": []
+    }
+  ],
+  "capability_mappings": {
+    "registry_status": "test-domain 'transaction_intelligence' exists in backend/tests/generated/capability-registry.yaml with engine_imports=[] and maps_to=[] (capability tests use lazy in-function imports, so discovery found no engine binding)",
+    "engine_topology": "runtime/generated/engine-topology.json lists engine 'transaction_intelligence' with service src/services/transaction_intelligence_service.py and 6 discovered test files",
+    "gap": "No canonical capability id exists in verification.yaml for transaction-intelligence; production capability GENUINELY EXISTS (service + orchestrator wiring). Reconciliation plan in M25.5."
+  },
+  "existing_tests": {
+    "unit": {"path": "backend/tests/unit/engines/transaction_intelligence/", "status": "EMPTY (only __init__.py)"},
+    "property": {"path": "backend/tests/properties/transaction_intelligence/test_engine_properties.py", "count": 3, "binding": "NONE — tautological assertions on hypothesis-generated values; zero production calls"},
+    "capability": {"path": "backend/tests/capability/transaction_intelligence/test_capability.py", "count": 2, "binding": "smoke import + golden dataset load"}
+  },
+  "indirect_callers": [
+    "backend/src/services/transaction_intelligence_service.py (classify_emi_payments, classify_cc_payments, classify_cash_conversions)",
+    "backend/src/orchestration/statement_orchestrator.py",
+    "backend/src/services/__init__.py (export)"
+  ],
+  "why_coverage_is_low": "The package has NEVER had direct tests. The ~17.5% measured coverage comes exclusively from statement_orchestrator integration paths and credit_cards property tests, which touch only the detector entry guards (debit<=0 early returns, non-matching descriptions) and dataclass definitions. All classification math, zone logic, priority scoring, and confidence computation are genuinely untested (class A).",
+  "classification_summary": {"A_genuinely_untested": "~82% of statements", "B_indirectly_exercised": "~12%", "C_defensive_unreachable": "~5% (_hungarian_inline + dead branch)", "D_infrastructure": 0, "E_ambiguity": 1}
+}

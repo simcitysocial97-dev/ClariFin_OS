@@ -33,8 +33,10 @@ test.describe('Reconciliation Page', () => {
 
   test('should display page title', async ({ page, waitForPageReady }) => {
     await waitForPageReady(page);
-    
-    const title = page.locator('h1, h2').first();
+
+    // PanelHeader renders h3; wait for any skeleton to clear first
+    await page.locator('[class*="skeleton"]').waitFor({ state: 'hidden', timeout: 10000 });
+    const title = page.locator('h1, h2, h3').first();
     await expect(title).toBeVisible();
   });
 
@@ -206,23 +208,25 @@ test.describe('Reconciliation API', () => {
     captureErrors(page);
     
     // Block API
-    await page.route('**/api/reconciliations**', route => 
+    await page.route('**/api/reconciliation*', route => 
       route.fulfill({ status: 500, body: JSON.stringify({ error: 'Server error' }) })
     );
     
     await page.goto('/reconciliation');
     await waitForPageReady(page);
     
-    // Page should still render
-    const main = page.locator('main').first();
-    await expect(main).toBeVisible();
+    // Page should still render a degraded (error) state. The reconciliation
+    // workspace intentionally renders a non-<main> error Alert on API failure
+    // (C41.13), so we assert the error state is visible rather than a <main>.
+    const errorState = page.locator('[role="alert"]').first();
+    await expect(errorState).toBeVisible();
   });
 
   test('should show empty state when no matches', async ({ page, captureErrors, waitForPageReady }) => {
     captureErrors(page);
     
     // Mock empty response
-    await page.route('**/api/reconciliations**', route => 
+    await page.route('**/api/reconciliation*', route => 
       route.fulfill({ status: 200, body: JSON.stringify({ reconciliations: [] }) })
     );
     

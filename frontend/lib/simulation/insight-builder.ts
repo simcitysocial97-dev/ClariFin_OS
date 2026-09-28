@@ -4,6 +4,13 @@
  * Utility for building evidence chains, calculation steps, and simulation objects.
  * Ensures every projection includes assumptions, inputs, outputs, evidence, confidence,
  * and related graph nodes.
+ *
+ * ARCHITECTURAL EXCEPTION (M9-C50 Phase 7):
+ * This module contains financial arithmetic for ADVISORY/PLANNING purposes only.
+ * It operates on user-provided inputs for "what-if" scenario modeling.
+ * The BACKEND API is the canonical authority for all monetary calculations.
+ * Outputs are ESTIMATES — not authoritative for transactions.
+ * Disposition: ARCHITECTURAL_EXCEPTION — planning tool utilities, advisory only.
  */
 
 import type {

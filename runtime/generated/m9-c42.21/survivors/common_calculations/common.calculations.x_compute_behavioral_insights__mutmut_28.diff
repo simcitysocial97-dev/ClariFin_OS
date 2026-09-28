@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_28: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -14,7 +14,7 @@
+         return []
+ 
+     this_month = month_keys[-1]
+-    month_keys[:-1]
++    month_keys[:-2]
+ 
+     # Category drift (use amount_paise, convert to rupees for percentage)
+     cat_monthly: dict[str, Any] = defaultdict(lambda: defaultdict(float))

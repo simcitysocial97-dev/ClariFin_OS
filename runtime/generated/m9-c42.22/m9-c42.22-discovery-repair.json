@@ -1,0 +1,43 @@
+{
+  "title": "M9-C42.22 — Milestone M22.3 Discovery Repair Results",
+  "generated_at": "2026-08-25T07:06:00.000000+00:00",
+  "run_id": "m9-c42.22",
+  "milestone": "M22.3",
+  "components": ["behaviour_engine", "financial_events"],
+  "baseline_reference": {
+    "predecessor_run": "m9-c42.21",
+    "predecessor_sha": "3a37fab34dd71b2fe3aebecf41630815f92e7ad0",
+    "behaviour_engine_no_tests_before": 2835,
+    "financial_events_no_tests_before": 29
+  },
+  "repair_actions": {
+    "behaviour_engine": {
+      "actions_completed": [
+        "Extended mutation test_selection to include test_metrics.py, test_integration.py, capability/pattern_analysis",
+        "Added test for _parse_date utility function in test_core.py",
+        "Verified all 215 tests pass (unit + properties + capability)"
+      ],
+      "expected_no_tests_reduction": "1842 mutants now discoverable via existing tests",
+      "remaining_genuine_gaps": "~993 mutants (712 missing + 187 wrong binding + 94 infrastructure)"
+    },
+    "financial_events": {
+      "actions_completed": [
+        "Added unit tests for all 7 internal helper functions in TestInternalHelpers class",
+        "Added tests for: _parse_date_iso, _date_difference_days, _is_liability_event, _is_repayment_event, _is_transfer_event, _is_revocable_event, _merge_lifecycle_update",
+        "Verified all 58 tests pass (unit + properties + capability)"
+      ],
+      "expected_no_tests_reduction": "All 29 no_tests mutants now covered",
+      "remaining_genuine_gaps": "0 mutants"
+    }
+  },
+  "validation": {
+    "behaviour_engine_tests": "215 passed",
+    "financial_events_tests": "58 passed",
+    "no_regressions": true
+  },
+  "next_steps": [
+    "Run targeted mutation smoke on behaviour_engine to validate no_tests reduction",
+    "Run targeted mutation smoke on financial_events to validate no_tests = 0",
+    "Proceed to behavioral strengthening workstreams (Batch 2+)"
+  ]
+}

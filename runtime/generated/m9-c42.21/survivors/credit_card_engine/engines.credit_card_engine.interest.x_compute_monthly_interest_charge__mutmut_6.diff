@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.interest.x_compute_monthly_interest_charge__mutmut_6: survived
+--- src/engines/credit_card_engine/interest.py
++++ src/engines/credit_card_engine/interest.py
+@@ -22,7 +22,7 @@
+     if not daily_balances:
+         return 0
+     if annual_rate_bps < 0:
+-        raise ValueError("annual_rate_bps must be non-negative")
++        raise ValueError("XXannual_rate_bps must be non-negativeXX")
+ 
+     total_interest: int = 0
+     for _date_iso, balance in daily_balances:

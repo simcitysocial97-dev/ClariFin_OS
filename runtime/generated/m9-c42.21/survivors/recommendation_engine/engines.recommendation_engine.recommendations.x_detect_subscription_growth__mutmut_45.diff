@@ -1,0 +1,13 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_45: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -32,7 +32,7 @@
+         return None
+ 
+     total_previous = sum(
+-        sub.get("avg_amount_paise", 0) for sub in previous_subscriptions
++        sub.get("avg_amount_paise", 1) for sub in previous_subscriptions
+     )
+ 
+     if total_previous == 0:

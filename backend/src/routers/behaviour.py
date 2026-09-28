@@ -13,6 +13,7 @@ from typing import Any
 
 from fastapi import APIRouter, Query
 
+from src.core.domain.household import DEFAULT_HOUSEHOLD_ID
 from src.errors import NotFoundError
 from src.models.behaviour import (
     CashflowHealthResponse,
@@ -68,14 +69,14 @@ def _timed_log(
 
 @router.get("/profile", response_model=FinancialProfileResponse)
 def get_financial_profile(
-    household_id: str = Query("default", description="Household identifier"),
+    household_id: str = Query(DEFAULT_HOUSEHOLD_ID, description="Household identifier"),
 ) -> FinancialProfileResponse:
     """Get comprehensive financial behaviour profile.
 
     Returns financial personality classification based on transaction and account data.
 
     Args:
-        household_id: Household identifier (default: "default")
+        household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
 
     Returns:
         FinancialProfileResponse with profile classification
@@ -102,14 +103,14 @@ def get_financial_profile(
 
 @router.get("/wellness-score", response_model=WellnessScoreResponse)
 def get_wellness_score(
-    household_id: str = Query("default", description="Household identifier"),
+    household_id: str = Query(DEFAULT_HOUSEHOLD_ID, description="Household identifier"),
 ) -> WellnessScoreResponse:
     """Get the latest financial wellness score.
 
     Returns wellness score with band classification and component breakdown.
 
     Args:
-        household_id: Household identifier (default: "default")
+        household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
 
     Returns:
         WellnessScoreResponse with score, band, and components
@@ -147,14 +148,14 @@ def get_wellness_score(
 
 @router.get("/debt-health", response_model=DebtHealthResponse)
 def get_debt_health(
-    household_id: str = Query("default", description="Household identifier"),
+    household_id: str = Query(DEFAULT_HOUSEHOLD_ID, description="Household identifier"),
 ) -> DebtHealthResponse:
     """Get the latest debt health metrics.
 
     Returns FOIR, credit dependency ratio, debt cycle score, and revolver ratio.
 
     Args:
-        household_id: Household identifier (default: "default")
+        household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
 
     Returns:
         DebtHealthResponse with debt health metrics
@@ -192,14 +193,14 @@ def get_debt_health(
 
 @router.get("/cashflow-health", response_model=CashflowHealthResponse)
 def get_cashflow_health(
-    household_id: str = Query("default", description="Household identifier"),
+    household_id: str = Query(DEFAULT_HOUSEHOLD_ID, description="Household identifier"),
 ) -> CashflowHealthResponse:
     """Get the latest cashflow health metrics.
 
     Returns cashflow stability index, income/expense stability, and monthly surplus.
 
     Args:
-        household_id: Household identifier (default: "default")
+        household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
 
     Returns:
         CashflowHealthResponse with cashflow health metrics
@@ -237,7 +238,7 @@ def get_cashflow_health(
 
 @router.get("/patterns")
 def get_patterns(
-    household_id: str = Query("default", description="Household identifier"),
+    household_id: str = Query(DEFAULT_HOUSEHOLD_ID, description="Household identifier"),
     pattern_type: str | None = Query(
         None, description="Filter by pattern type (e.g., IMPULSE, SUBSCRIPTION)"
     ),
@@ -250,7 +251,7 @@ def get_patterns(
     Returns patterns like impulse spending and subscriptions with strength scores.
 
     Args:
-        household_id: Household identifier (default: "default")
+        household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
         pattern_type: Optional filter for specific pattern type
         days: Number of days to look back (1-365, default: 30)
 
@@ -285,7 +286,7 @@ def get_patterns(
 
 @router.get("/recommendations", response_model=RecommendationsResponse)
 def get_recommendations(
-    household_id: str = Query("default", description="Household identifier"),
+    household_id: str = Query(DEFAULT_HOUSEHOLD_ID, description="Household identifier"),
     limit: int = Query(
         10, ge=1, le=50, description="Maximum number of recommendations to return"
     ),
@@ -298,7 +299,7 @@ def get_recommendations(
     Returns actionable recommendations sorted by severity.
 
     Args:
-        household_id: Household identifier (default: "default")
+        household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
         limit: Maximum number of recommendations to return (1-50, default: 10)
         severity: Optional filter for specific severity level
 
@@ -345,7 +346,7 @@ def get_monthly_report(
     period: str | None = Query(
         None, description="Period in YYYY-MM format (default: current month)"
     ),
-    household_id: str = Query("default", description="Household identifier"),
+    household_id: str = Query(DEFAULT_HOUSEHOLD_ID, description="Household identifier"),
 ) -> MonthlySummaryResponse:
     """Generate a monthly financial summary report.
 
@@ -353,7 +354,7 @@ def get_monthly_report(
 
     Args:
         period: Period in YYYY-MM format (default: current month)
-        household_id: Household identifier (default: "default")
+        household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
 
     Returns:
         MonthlySummaryResponse with comprehensive financial summary

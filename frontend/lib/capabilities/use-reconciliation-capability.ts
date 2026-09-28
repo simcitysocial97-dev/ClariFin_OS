@@ -13,6 +13,7 @@ import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ReconciliationViewModel } from '@/types/reconciliation-view-model';
 import { reconciliationMapper } from '@/lib/mappers/reconciliation-mapper';
+import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
 
 // Query key for React Query
 const RECONCILIATION_QUERY_KEY = 'reconciliation';
@@ -111,17 +112,17 @@ export function useReconciliationCapability(): ReconciliationCapabilityReturn {
   } = useQuery<ReconciliationViewModel | null>({
     queryKey: [RECONCILIATION_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const response = await fetch('/api/v1/reconciliations');
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-      const raw = await response.json();
+      const query = new URLSearchParams();
+      if (queryParams.status) query.set('status', queryParams.status);
+      if (queryParams.banks) query.set('banks', queryParams.banks);
+      const suffix = query.size > 0 ? `?${query.toString()}` : '';
+      const raw = await apiFetchJson(`/api/v1/workspaces/reconciliation${suffix}`) as any;
       return reconciliationMapper.mapReconciliationDTO(raw);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (React Query v5 uses gcTime instead of cacheTime)
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retry: transientRetryPolicy,
+    retryDelay: 1000,
   });
 
   // Loading timeout effect - show message after 10 seconds

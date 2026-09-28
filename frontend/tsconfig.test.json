@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "strict": false
+  },
+  "include": ["**/*.test.ts", "**/*.test.tsx", "__tests__/**/*", "lib/hooks/__tests__/**/*"]
+}

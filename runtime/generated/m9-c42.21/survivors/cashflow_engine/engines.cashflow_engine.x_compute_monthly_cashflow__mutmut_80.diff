@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_80: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -65,7 +65,7 @@
+ 
+         if (
+             event_type in ("cash_advance", "credit_card_cash_advance")
+-            and event_amount > 0
++            and event_amount >= 0
+             and asset_change > 0
+         ):
+             # Fee = amount_transacted - asset_received

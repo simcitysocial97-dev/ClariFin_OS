@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_percentage_change__mutmut_5: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -1,7 +1,7 @@
+ def percentage_change(current: float, previous: float) -> str:
+     """Calculate percentage change, return formatted string."""
+     if previous == 0:
+-        return "+100%" if current > 0 else "0%"
++        return "+100%" if current > 1 else "0%"
+     change = ((current - previous) / previous) * 100
+     sign = "+" if change >= 0 else ""
+     return f"{sign}{change:.1f}%"

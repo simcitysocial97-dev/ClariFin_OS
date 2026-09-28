@@ -49,7 +49,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -181,7 +181,9 @@ class UnitExecutionRecord:
         return cls(
             unit_id=d["unit_id"],
             provenance=d.get("provenance", {}),
-            attempts=tuple(ExecutionAttempt.from_dict(a) for a in d.get("attempts", [])),
+            attempts=tuple(
+                ExecutionAttempt.from_dict(a) for a in d.get("attempts", [])
+            ),
         )
 
     def primary_status(self) -> str:
@@ -209,9 +211,7 @@ class ExecutionEvidenceV2:
     plan_fingerprint: str
     commit: str
     units: tuple[UnitExecutionRecord, ...]
-    generated_at: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
-    )
+    generated_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -235,9 +235,7 @@ class ExecutionEvidenceV2:
         )
 
 
-def save_execution_evidence_v2(
-    evidence: ExecutionEvidenceV2, path: Path | str
-) -> Path:
+def save_execution_evidence_v2(evidence: ExecutionEvidenceV2, path: Path | str) -> Path:
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(json.dumps(evidence.to_dict(), indent=2) + "\n", encoding="utf-8")

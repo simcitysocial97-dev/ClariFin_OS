@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_48: survived
+--- src/engines/credit_card_engine/billing.py
++++ src/engines/credit_card_engine/billing.py
+@@ -44,7 +44,7 @@
+         # billing_day exceeds month length (e.g., 31 in Feb)
+         # Use last day of current month
+         if reference_date.month == 12:
+-            next_month = date(reference_date.year + 1, 1, 1)
++            next_month = date(reference_date.year + 1, 1, 2)
+         else:
+             next_month = date(reference_date.year, reference_date.month + 1, 1)
+         last_day = (next_month - timedelta(days=1)).day

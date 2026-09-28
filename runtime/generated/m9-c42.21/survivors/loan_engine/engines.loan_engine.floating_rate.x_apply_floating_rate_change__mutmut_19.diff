@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.floating_rate.x_apply_floating_rate_change__mutmut_19: survived
+--- src/engines/loan_engine/floating_rate.py
++++ src/engines/loan_engine/floating_rate.py
+@@ -13,7 +13,7 @@
+     change_row = schedule[change_month - 1]
+     # Balance before change month's payment
+     opening_balance = change_row.balance_paise + change_row.principal_paise
+-    remaining_tenure = len(schedule) - change_month + 1
++    remaining_tenure = None
+     current_emi = change_row.emi_paise
+ 
+     # The loan is already fully repaid at (or before) the change month — integer

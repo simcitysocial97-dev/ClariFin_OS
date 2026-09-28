@@ -46,7 +46,7 @@ const mockCardsResponse = {
 }
 
 export const cardHandlers = [
-  http.get('/api/cards', () => {
+  http.get('/api/v1/cards', () => {
     return HttpResponse.json(mockCardsResponse)
   }),
 ]

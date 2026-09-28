@@ -1,0 +1,3 @@
+ERROR: not found: /home/vasantha/AI-Projects/ClariFin_OS/runtime/tests/test_status.py::TestDoesNotExist
+(no match in any of [<Module test_status.py>])
+

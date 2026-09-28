@@ -1,0 +1,48 @@
+{
+  "schema": "m9-c42.38-post-certification-boundary/v1",
+  "generated_at": "2026-08-27T02:03:00.000000+00:00",
+  "phase": "M9-C42.38",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "verdict": "FINAL_VERIFICATION_SYSTEM_CERTIFIED",
+  "freeze_action": "M9-C42 is frozen as the certified verification-system baseline. All C42.21-37 architecture, evidence, and artifacts are preserved under runtime/generated/m9-c42.* and referenced by this phase.",
+  "post_certification_evolution_items": [
+    {
+      "item": "automatic shared-infrastructure discovery",
+      "classification": "POST_CERTIFICATION_ENHANCEMENT",
+      "rationale": "Explicit shared:: mechanism is sufficient for certification; auto-propagation from file paths is an optimization, not a prerequisite.",
+      "moved_out_of_m9_c42": true
+    },
+    {
+      "item": "SurvivorRegistry",
+      "classification": "POST_CERTIFICATION_ENHANCEMENT",
+      "rationale": "Per-run survivor classification and proposal generation already function; persistent registry improves longitudinal intelligence only.",
+      "moved_out_of_m9_c42": true
+    },
+    {
+      "item": "richer forensic cache",
+      "classification": "POST_CERTIFICATION_ENHANCEMENT",
+      "rationale": "Base VerificationCache cannot bypass invalidation; a component-scoped forensic-aware wrapper is an enhancement.",
+      "moved_out_of_m9_c42": true
+    },
+    {
+      "item": "Class-E statistical calibration",
+      "classification": "DEFERRED_DATA",
+      "rationale": "Contract enforced; empirical threshold calibration requires accumulated real observations.",
+      "moved_out_of_m9_c42": true
+    },
+    {
+      "item": "live CI enhancements",
+      "classification": "NONBLOCKING_LIMITATION (ENVIRONMENTAL_LIMITATION)",
+      "rationale": "Canonical CI logic implemented and tested; wiring emission into workflows requires GitHub Actions environment.",
+      "moved_out_of_m9_c42": true
+    },
+    {
+      "item": "additional strengthening heuristics",
+      "classification": "POST_CERTIFICATION_ENHANCEMENT",
+      "rationale": "Class A-E chain is complete and bounded; further heuristics are operational evolution.",
+      "moved_out_of_m9_c42": true
+    }
+  ],
+  "prerequisite_status": "NONE of the above items are prerequisites for final verification system certification. The final audit (M38.12) found 0 blockers and 27/27 DoD items PASS.",
+  "next_state": "The verification system enters post-certification operational evolution. No further C42 phase is required."
+}

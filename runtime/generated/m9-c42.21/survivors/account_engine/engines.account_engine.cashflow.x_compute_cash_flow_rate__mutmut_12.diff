@@ -1,0 +1,10 @@
+# status: survived
+# engines.account_engine.cashflow.x_compute_cash_flow_rate__mutmut_12: survived
+--- src/engines/account_engine/cashflow.py
++++ src/engines/account_engine/cashflow.py
+@@ -20,4 +20,4 @@
+         raise ValueError("days must be positive")
+ 
+     rate_decimal = Decimal(net_flow_paise) / Decimal(days)
+-    return int(rate_decimal.quantize(Decimal(1), rounding=ROUND_HALF_UP))
++    return int(rate_decimal.quantize(Decimal(1), rounding=None))

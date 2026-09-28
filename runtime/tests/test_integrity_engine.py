@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-
 from runtime.foundation.integrity.engine import (
     ArchitecturalIntegrityEngine,
     evaluate_integrity,
@@ -59,7 +58,13 @@ class TestArchitecturalIntegrityEngine:
         engine = ArchitecturalIntegrityEngine()
         report = engine.evaluate()
         counts = report.severity_counts
-        total = counts["CRITICAL"] + counts["HIGH"] + counts["MEDIUM"] + counts["LOW"] + counts["INFO"]
+        total = (
+            counts["CRITICAL"]
+            + counts["HIGH"]
+            + counts["MEDIUM"]
+            + counts["LOW"]
+            + counts["INFO"]
+        )
         assert total == report.total_violations
 
     def test_report_rules_passed_plus_failed_equals_total(self) -> None:

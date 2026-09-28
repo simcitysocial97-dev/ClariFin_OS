@@ -1,0 +1,172 @@
+{
+  "phase": "M9-C42.19",
+  "title": "Coverage Scope Investigation & 40% Gate Semantics",
+  "timestamp": "2026-08-24T20:24:00+05:30",
+  "repository_sha": "5170e0b30ef5e308f2055661a0839e2966a721d4",
+  "threshold_changed": false,
+  "source_files_excluded": false,
+  "tests_excluded": false,
+  "tests_added_for_coverage": false,
+
+  "headline_finding": {
+    "verdict": "SCOPE_MISMATCH_IN_M9_C42_18_MEASUREMENT",
+    "one_line": "The canonical full-suite coverage command yields 65.59% and PASSES the 40% gate. The 36.63% figure reported by M9-C42.18 was produced by running only tests/unit/engines/ (843 tests) while labelling it the canonical full-suite command. There is no genuine coverage gate failure.",
+    "canonical_full_suite_coverage_percent": 65.59,
+    "threshold_percent": 40,
+    "gate_result": "PASS",
+    "pytest_cov_verbatim": "Required test coverage of 40.0% reached. Total coverage: 65.59%"
+  },
+
+  "two_measurements_reconciled": {
+    "canonical_full_suite": {
+      "command": "python3 -m pytest --cov=src --cov-report=term-missing --cov-config=.coveragerc tests/",
+      "scope": "tests/ (entire backend suite)",
+      "tests_collected": 1746,
+      "tests_passed": 1745,
+      "xfailed": 1,
+      "duration_seconds": 474.79,
+      "statements": 10238,
+      "covered_lines": 7111,
+      "missing_lines": 3127,
+      "num_branches": 2740,
+      "covered_branches": 1401,
+      "missing_branches": 1339,
+      "line_only_percent": 69.46,
+      "branch_inclusive_percent": 65.59,
+      "reported_percent_covered": 65.59,
+      "threshold_pass": true,
+      "exit_rc": 0
+    },
+    "engine_subset_reproduction_of_m9_c42_18": {
+      "command": "python3 -m pytest --cov=src --cov-report=json --cov-config=.coveragerc tests/unit/engines/",
+      "scope": "tests/unit/engines/ ONLY",
+      "tests_collected": 843,
+      "tests_passed": 843,
+      "statements": 10238,
+      "covered_lines": 3916,
+      "missing_lines": 6322,
+      "reported_percent_covered": 36.63,
+      "threshold_pass": false,
+      "pytest_cov_verbatim": "FAIL Required test coverage of 40.0% not reached. Total coverage: 36.63%",
+      "reproduces_m9_c42_18_exactly": true,
+      "match_evidence": [
+        "tests_passed 843 == M9-C42.18's reported 843",
+        "statements 10238 == M9-C42.18's reported 10238",
+        "covered 3916 == M9-C42.18's reported 3916",
+        "missing 6322 == M9-C42.18's reported 6322",
+        "percent 36.63 == M9-C42.18's reported 36.63"
+      ]
+    },
+    "delta_percentage_points": 28.96,
+    "why_identical_statement_population": "Both runs measure the SAME 10,238 statements under the SAME .coveragerc. Only the executing test population differs. This proves the discrepancy is a TEST-SCOPE difference, not a coverage-configuration difference.",
+    "m9_c42_18_self_inconsistency": "M9-C42.18 recorded canonical_command as '... tests/' but its own coverage_baseline.command field records '... tests/unit/engines/'. Additionally its own numbers 3916/10238 = 38.25%, not the 36.63% it reported (36.63% is the branch-inclusive figure), so its coverage narrative was internally inconsistent."
+  },
+
+  "source_area_contribution": {
+    "note": "Actual repository data from the canonical full-suite run. Categories derived from real paths under backend/src; none fabricated. Percentages are line-based per area; the 65.59% total is branch-inclusive.",
+    "areas": {
+      "credit_card":    {"files": 8,  "statements": 189,  "covered": 177,  "missing": 12,  "coverage_pct": 93.65, "engine_subset_pct": 91.01},
+      "account":        {"files": 7,  "statements": 88,   "covered": 87,   "missing": 1,   "coverage_pct": 98.86, "engine_subset_pct": 98.86},
+      "loan":           {"files": 9,  "statements": 472,  "covered": 466,  "missing": 6,   "coverage_pct": 98.73, "engine_subset_pct": 98.31},
+      "reconciliation": {"files": 1,  "statements": 131,  "covered": 125,  "missing": 6,   "coverage_pct": 95.42, "engine_subset_pct": 95.42},
+      "balance":        {"files": 1,  "statements": 95,   "covered": 56,   "missing": 39,  "coverage_pct": 58.95, "engine_subset_pct": 10.53},
+      "behaviour":      {"files": 18, "statements": 1649, "covered": 1161, "missing": 488, "coverage_pct": 70.41, "engine_subset_pct": 67.43},
+      "cashflow":       {"files": 1,  "statements": 41,   "covered": 40,   "missing": 1,   "coverage_pct": 97.56, "engine_subset_pct": 0.00},
+      "engines_other":  {"files": 19, "statements": 1479, "covered": 651,  "missing": 828, "coverage_pct": 44.02, "engine_subset_pct": 13.39,
+                         "composition": "financial_intelligence (807 stmts, 34.82%), transaction_intelligence (367 stmts, 24.25%), financial_events (184 stmts, 90.22%), recommendation_engine (73 stmts, 95.89%), ledger_audit_engine (46 stmts, 93.48%), engines/__init__ (2 stmts, 100%)"},
+      "services":       {"files": 32, "statements": 2047, "covered": 1357, "missing": 690, "coverage_pct": 66.29, "engine_subset_pct": 0.00},
+      "repositories":   {"files": 27, "statements": 1366, "covered": 757,  "missing": 609, "coverage_pct": 55.42, "engine_subset_pct": 18.81},
+      "core":           {"files": 37, "statements": 1540, "covered": 1229, "missing": 311, "coverage_pct": 79.81, "engine_subset_pct": 70.00},
+      "models":         {"files": 22, "statements": 738,  "covered": 654,  "missing": 84,  "coverage_pct": 88.62, "engine_subset_pct": 55.96},
+      "common":         {"files": 5,  "statements": 160,  "covered": 159,  "missing": 1,   "coverage_pct": 99.38, "engine_subset_pct": 0.00},
+      "orchestration":  {"files": 2,  "statements": 71,   "covered": 57,   "missing": 14,  "coverage_pct": 80.28, "engine_subset_pct": 0.00},
+      "other":          {"files": 6,  "statements": 172,  "covered": 135,  "missing": 37,  "coverage_pct": 78.49, "engine_subset_pct": 0.00}
+    },
+    "totals": {"files": 195, "statements": 10238, "covered": 7111, "missing": 3127, "line_pct": 69.46, "branch_inclusive_pct": 65.59}
+  },
+
+  "gap_attribution": {
+    "question": "Which source areas were responsible for the apparent 36.63% aggregate?",
+    "answer": "Areas that NO engine unit test exercises. Under the engine-only subset these measured 0% or near-0%; under the full suite they are well covered by capability, property, contract, golden, and domain tests that the subset excluded.",
+    "areas_at_zero_under_engine_subset_but_covered_under_full_suite": [
+      {"area": "services",      "engine_subset_pct": 0.00, "full_suite_pct": 66.29, "statements": 2047},
+      {"area": "common",        "engine_subset_pct": 0.00, "full_suite_pct": 99.38, "statements": 160},
+      {"area": "cashflow",      "engine_subset_pct": 0.00, "full_suite_pct": 97.56, "statements": 41},
+      {"area": "orchestration", "engine_subset_pct": 0.00, "full_suite_pct": 80.28, "statements": 71},
+      {"area": "other",         "engine_subset_pct": 0.00, "full_suite_pct": 78.49, "statements": 172}
+    ],
+    "largest_absolute_gain_from_full_suite": [
+      {"area": "services",      "gain_points": 66.29},
+      {"area": "engines_other", "gain_points": 30.63},
+      {"area": "repositories",  "gain_points": 36.61},
+      {"area": "models",        "gain_points": 32.66},
+      {"area": "balance",       "gain_points": 48.42}
+    ],
+    "genuinely_lowest_covered_under_full_suite": [
+      {"area": "financial_intelligence (within engines_other)", "statements": 807, "coverage_pct": 34.82, "missing": 526},
+      {"area": "transaction_intelligence (within engines_other)", "statements": 367, "coverage_pct": 24.25, "missing": 278},
+      {"area": "repositories", "statements": 1366, "coverage_pct": 55.42, "missing": 609},
+      {"area": "balance", "statements": 95, "coverage_pct": 58.95, "missing": 39},
+      {"area": "services", "statements": 2047, "coverage_pct": 66.29, "missing": 690}
+    ],
+    "p0_engines_all_well_covered": {
+      "credit_card": 93.65, "account": 98.86, "loan": 98.73, "reconciliation": 95.42,
+      "conclusion": "All four engines in the mutation campaign are at 93-99% line coverage. The coverage gap is NOT in the campaign's engines."
+    }
+  },
+
+  "phase_10_threshold_intent": {
+    "question_1_why_40": {
+      "answer": "It was deliberately calibrated DOWN from 60 to 40 to match a then-realistic measured baseline after excluding untestable modules.",
+      "origin_commit": "f0e28f0bd5d454afbe02e6db06fa7179e3fe8220",
+      "origin_date": "2026-07-26",
+      "origin_subject": "feat(coverage): reset threshold to 40% with exclusions + 189 new unit tests",
+      "verbatim_commit_evidence": [
+        "Set fail_under=40 (was 60) to match realistic baseline",
+        "Updated .coveragerc to exclude untestable modules (extraction pipeline, entry points, routers) from unit coverage measurement",
+        "Updated check_coverage_threshold.py thresholds: overall=40, engines=70, repositories=40, services=40",
+        "Overall coverage: 49.2% (up from 31.15%), all 4 threshold groups pass",
+        "823 unit tests pass (was 634)"
+      ],
+      "first_introduced_fail_under": "f0e732e8 (feat: complete Phase 0 CI integration and workflow fixes)"
+    },
+    "question_2_backend_wide": {
+      "answer": "YES for the measured SOURCE population (source = src, minus documented omits). The threshold is an aggregate over all of backend/src, not an engine-only threshold.",
+      "evidence": ".coveragerc [run] source = src with an omit list; [report] fail_under = 40 applies to the aggregate total."
+    },
+    "question_3_engine_code_only": {
+      "answer": "NO. Engine code has a SEPARATE and HIGHER intended threshold of 70%.",
+      "evidence": ".github/scripts/check_coverage_threshold.py THRESHOLDS = {'overall': 40, 'engines': 70, 'repositories': 40, 'services': 40}",
+      "implication": "The 40% figure was never intended as an engine-code threshold. Applying 40% to an engine-only test subset (as M9-C42.18 did) mismatches the threshold to a population it was not designed for."
+    },
+    "question_4_legacy": {
+      "answer": "PARTIALLY LEGACY. It is a deliberately-set Phase 1 value explicitly annotated as temporary.",
+      "evidence": "check_coverage_threshold.py comments: '# Phase 1 thresholds (current)', 'overall: 40,  # Will increase in Phase 2', 'repositories: 40,  # Will increase in Phase 2'.",
+      "note": "The measured full-suite coverage is now 65.59%, well above the Phase-1 value of 40%, indicating the threshold now lags actual quality."
+    },
+    "question_5_enforced_by_pytest": {
+      "answer": "YES — indirectly but effectively.",
+      "mechanism": "fail_under = 40 in .coveragerc [report]; pytest-cov reads --cov-config=.coveragerc and fails the run. Observed verbatim: 'FAIL Required test coverage of 40.0% not reached' (subset) and 'Required test coverage of 40.0% reached' (full suite)."
+    },
+    "question_6_enforced_by_ci": {
+      "answer": "NO backend coverage gate was found in CI.",
+      "evidence": "No --cov or .coveragerc invocation exists in any of the 13 .github/workflows/*.yml files. backend/pyproject.toml contains NO coverage settings. .github/scripts/check_coverage_threshold.py still exists but is not wired into any workflow, and an earlier M9 artifact (m9-c42.11) already classified it 'D (redundant) — coverage checked by .coveragerc'.",
+      "consequence": "The 40% gate is effectively a LOCAL/advisory gate that binds only when a developer or a phase script explicitly passes --cov with --cov-config=.coveragerc."
+    },
+    "question_7_advisory": {
+      "answer": "YES in CI (not enforced there); BINDING locally whenever --cov + --cov-config=.coveragerc are used."
+    },
+    "question_8_scope_match": {
+      "answer": "NO — not as M9-C42.18 applied it.",
+      "detail": "The threshold was calibrated against a broad unit-test population (823 unit tests across money/calculations/formatting/parsing/errors and more) measured over all of src. M9-C42.18 applied it to tests/unit/engines/ only (843 tests confined to engine directories), which structurally cannot execute services/, common/, orchestration/, or cashflow code paths. The canonical full-suite command DOES cover the intended source population and yields 65.59% (PASS).",
+      "verdict": "The 40% threshold is CORRECTLY CALIBRATED for the intended population; it was INCORRECTLY APPLIED to an engine-only test subset in M9-C42.18."
+    }
+  },
+
+  "recommendation": {
+    "change_threshold": false,
+    "rationale": "The threshold is not the problem. The measurement scope was. The canonical full-suite command already passes at 65.59%. Changing the threshold would be unjustified in either direction and is explicitly forbidden this phase.",
+    "smallest_correct_action": "Fix the MEASUREMENT COMMAND OF RECORD, not the threshold. Any phase that cites the 40% gate must run the full tests/ suite (the population the threshold was designed for) and must not substitute tests/unit/engines/.",
+    "optional_future_consideration": "Because measured full-suite coverage (65.59%) now far exceeds the Phase-1 value of 40%, a future phase may wish to raise the threshold in line with the 'Will increase in Phase 2' annotation. That is OUT OF SCOPE here and no change was made."
+  }
+}

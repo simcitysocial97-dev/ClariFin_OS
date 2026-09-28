@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_41: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -50,7 +50,7 @@
+     total_credit_funded = 0
+ 
+     for event in financial_events:
+-        event_amount = int(event.get("amount_paise", 0) or 0)
++        event_amount = int(event.get("amount_paise", 0) or 1)
+         event_type = event.get("event_type", "")
+         asset_change = int(event.get("asset_change_paise", 0) or 0)
+ 

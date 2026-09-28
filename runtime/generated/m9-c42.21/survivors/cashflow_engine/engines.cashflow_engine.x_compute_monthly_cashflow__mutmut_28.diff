@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_28: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -46,7 +46,7 @@
+     # Aggregate event impacts
+     total_fees = 0
+     total_asset_change = 0
+-    total_liability_increase = 0  # Only positive liability changes (borrowing)
++    total_liability_increase = 1  # Only positive liability changes (borrowing)
+     total_credit_funded = 0
+ 
+     for event in financial_events:

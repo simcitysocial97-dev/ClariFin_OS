@@ -4,12 +4,26 @@ import time
 from pathlib import Path
 from typing import Any
 
-from runtime.foundation.audit.models import AuditFinding, AuditPriority, AuditSeverity, AuditStatus
+from runtime.foundation.audit.models import (
+    AuditFinding,
+    AuditPriority,
+    AuditSeverity,
+    AuditStatus,
+)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
 
-def _f(check_id: str, name: str, status: str, severity: str, priority: str, message: str, details: dict[str, Any] = None, recommendation: str = "") -> AuditFinding:
+def _f(
+    check_id: str,
+    name: str,
+    status: str,
+    severity: str,
+    priority: str,
+    message: str,
+    details: dict[str, Any] | None = None,
+    recommendation: str = "",
+) -> AuditFinding:
     return AuditFinding(
         section="observability",
         check_id=check_id,
@@ -29,19 +43,19 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
     findings: list[AuditFinding] = []
     metrics: dict[str, Any] = {}
 
-    from runtime.system.observability.event_store import (
-        EngineeringEventStore,
-    )
     from runtime.system.observability.analytics import (
         AnalyticsEngine,
         AnalyticsReport,
     )
-    from runtime.system.observability.dashboard import DashboardGenerator
-    from runtime.system.observability.flaky_tests import FlakyTestIntelligence
     from runtime.system.observability.cost_analysis import CostAnalysis
+    from runtime.system.observability.dashboard import DashboardGenerator
     from runtime.system.observability.dependency_growth import (
         DependencyGrowthIntelligence,
     )
+    from runtime.system.observability.event_store import (
+        EngineeringEventStore,
+    )
+    from runtime.system.observability.flaky_tests import FlakyTestIntelligence
 
     event_store = EngineeringEventStore()
 

@@ -29,7 +29,15 @@ def _cache(tmp_path: Path) -> VerificationCache:
     return VerificationCache(tmp_path / "verification-cache.json")
 
 
-def _save(cache: VerificationCache, profile: str, status: str, passed: int = 0, failed: int = 0, skipped: int = 0, changed_files: list[str] | None = None):
+def _save(
+    cache: VerificationCache,
+    profile: str,
+    status: str,
+    passed: int = 0,
+    failed: int = 0,
+    skipped: int = 0,
+    changed_files: list[str] | None = None,
+):
     verdict = CachedVerdict(
         overall_status=status,
         passed=passed,
@@ -130,7 +138,9 @@ def test_stale_failure_never_silently_becomes_pass():
         _save(cache, "backend", "fail", failed=2)
         # The cache stores a failure. Replaying must NOT produce PASS/0.
         for _ in range(3):
-            r = cache.replay("abc123", ["backend/src/engines/loan_engine.py"], "backend")
+            r = cache.replay(
+                "abc123", ["backend/src/engines/loan_engine.py"], "backend"
+            )
             assert r.overall_status == "fail"
             assert r.exit_code == 1
             assert r.reusable is True
@@ -158,8 +168,16 @@ def test_save_and_reload_preserves_failed_status():
 def test_multiple_profiles_do_not_interfere():
     with TemporaryDirectory() as td:
         cache = _cache(Path(td))
-        _save(cache, "backend", "pass", passed=10, changed_files=["backend/src/engines/loan_engine.py"])
-        _save(cache, "frontend", "fail", failed=1, changed_files=["frontend/src/App.tsx"])
+        _save(
+            cache,
+            "backend",
+            "pass",
+            passed=10,
+            changed_files=["backend/src/engines/loan_engine.py"],
+        )
+        _save(
+            cache, "frontend", "fail", failed=1, changed_files=["frontend/src/App.tsx"]
+        )
         rb = cache.replay("abc123", ["backend/src/engines/loan_engine.py"], "backend")
         rf = cache.replay("abc123", ["frontend/src/App.tsx"], "frontend")
         assert rb.overall_status == "pass" and rb.exit_code == 0

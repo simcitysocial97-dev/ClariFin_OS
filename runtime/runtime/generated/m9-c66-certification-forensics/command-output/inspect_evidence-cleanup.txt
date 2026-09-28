@@ -1,0 +1,28 @@
+=== Command: verify inspect evidence-cleanup ===
+Exit: 0
+Class: PASS
+Duration: 0.965s
+
+--- STDOUT ---
+Evidence Retention Policy:
+  ai-runs      → 30 days
+  cache        → 7 days
+  evidence     → 60 days
+  logs         → 30 days
+  metrics      → 90 days
+  milestones   → 90 days
+
+Mode: DRY RUN (use --execute to apply cleanup)
+
+No expired artifacts found.
+
+Evidence Retention Report [DRY RUN — no files deleted]
+  Generated at: 2026-09-20T13:57:38.349730+00:00
+  Scanned:      0 paths
+  Expired:      0 paths
+  Deleted:      0 paths
+  Freed:        0 bytes
+
+
+--- STDERR ---
+

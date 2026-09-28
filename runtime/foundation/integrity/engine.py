@@ -7,7 +7,7 @@ and reports them.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from runtime.foundation.integrity.models import (
     IntegrityReport,
@@ -46,11 +46,10 @@ class ArchitecturalIntegrityEngine:
             Immutable IntegrityReport with all violations, summary
             counts, and suggested engineering actions.
         """
-        scanner = self._scanner or ArchitecturalScanner(
-            repo_root=(
-                self._repo_root and __import__("pathlib").Path(self._repo_root)
-            )
+        repo_root = (
+            __import__("pathlib").Path(self._repo_root) if self._repo_root else None
         )
+        scanner = self._scanner or ArchitecturalScanner(repo_root=repo_root)
         graph = scanner.scan()
         violations: list[Violation] = []
 
@@ -61,11 +60,10 @@ class ArchitecturalIntegrityEngine:
         severity_counts = self._count_severities(violations)
 
         return IntegrityReport(
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
             rules_evaluated=self._registry.total_count,
-            rules_passed=self._registry.total_count - len(
-                {v.rule_id for v in violations}
-            ),
+            rules_passed=self._registry.total_count
+            - len({v.rule_id for v in violations}),
             rules_failed=len({v.rule_id for v in violations}),
             violations=tuple(violations),
             files_scanned=graph.files_scanned,

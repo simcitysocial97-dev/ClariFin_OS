@@ -1,15 +1,33 @@
 # ClariFin OS — Verification Runtime Configuration
-# This file is the single source of truth for verification settings.
-# Populated incrementally through Programs 2-10 and the Program 11.5
-# GitHub Actions consolidation.
-# Do not edit manually — use verification CLI commands.
+#
+# O-2 configuration authority split:
+#   THIS FILE (verification.yaml) is the canonical source of truth for:
+#     - workflow definitions (single-command scripts),
+#     - capability declarations (id/name/description/categories/scopes/workflows),
+#     - script inventory,
+#     - coverage/threshold metadata consumed by the registry and planner.
+#   The `VerificationRegistry` loads this file at runtime and merges its
+#   built-in defaults field-by-field (yaml wins over defaults on every key).
+#
+# `profiles.py` is the canonical source of truth for:
+#   - multi-command task-list execution under the profile alias surface
+#     (`verify quick|backend|frontend|contracts|graph|full|runtime|golden|playwright`).
+#   Each alias profile's ``tasks`` tuple drives direct subprocess execution
+#   via the facade's alias path; these tasks are NOT loaded from this yaml.
+#
+# An executable reconciliation test pins the relationship: every alias name
+# must have a corresponding workflow (or be explicitly allowlisted as
+# alias-only), and every yaml workflow must reference a script that exists
+# on disk.
+#
+# Do not edit manually — use verification CLI commands where possible.
 
 version: "1.0"
 
 # Program 1: Infrastructure foundation
 infrastructure:
   python_version: "3.12"
-  node_version: "20"
+  node_version: "24"
   cache_strategy: "dependency-hash"
 
 # Program 2: Repository Intelligence (implemented)
@@ -38,6 +56,20 @@ frontend:
   paths:
     source: "frontend/src"
     tests: "frontend/tests"
+
+# Mutation testing thresholds (C42.7 / M9-C55)
+mutation_thresholds:
+  full_campaign: 80   # minimum mutation score % for full campaign pass
+  incremental: 75     # minimum mutation score % for incremental/targeted runs
+  smoke: 0            # smoke runs are not gated (score reported only)
+
+# Regression detection thresholds (M9-C55)
+regression_thresholds:
+  coverage_drop_warning: 5      # coverage drop > this % → WARNING
+  coverage_drop_critical: 10    # coverage drop > this % → CRITICAL
+  mutation_drop_warning: 10     # mutation score drop > this % → WARNING
+  mutation_drop_critical: 15    # mutation score drop > this % → CRITICAL
+  test_count_drop_warning: 20   # test count drop > this % → WARNING
 
 # Verification workflows (authoritative). Every command is invoked through the
 # bash interpreter so scripts need not carry the executable bit in git.
@@ -146,7 +178,7 @@ workflows:
     category: "architectural"
     scope: "runtime"
     command: "bash .github/scripts/run_runtime_verification.sh"
-    estimated_duration_seconds: 120
+    estimated_duration_seconds: 2700
     scopes: ["runtime"]
     capabilities: ["runtime-verification"]
 
@@ -250,7 +282,7 @@ scripts:
     description: "Engineering Runtime self-verification"
     category: "architectural"
     scope: "runtime"
-    estimated_duration_seconds: 120
+    estimated_duration_seconds: 2700
 
   run_golden_tests:
     name: "Golden Regression Tests"
@@ -353,3 +385,57 @@ capabilities:
     workflows: ["playwright"]
     scripts: ["run_playwright_tests"]
     modules: []
+
+  balance-engine:
+    name: "Balance Engine"
+    description: "Running balance computation from transaction streams"
+    category: "capability"
+    scopes: ["backend", "property", "contracts", "integration", "repository"]
+    workflows: ["property", "contracts", "backend"]
+    scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
+    modules: ["backend/src/engines/balance_engine.py"]
+
+  behaviour-engine:
+    name: "Behaviour Engine"
+    description: "Financial behaviour scoring and risk assessment"
+    category: "capability"
+    scopes: ["backend", "property", "contracts", "integration", "repository"]
+    workflows: ["property", "contracts", "backend"]
+    scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
+    modules: ["backend/src/engines/behaviour_engine"]
+
+  cashflow-engine:
+    name: "Cashflow Engine"
+    description: "Cashflow classification and net-worth computation"
+    category: "capability"
+    scopes: ["backend", "property", "contracts", "integration", "repository"]
+    workflows: ["property", "contracts", "backend"]
+    scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
+    modules: ["backend/src/engines/cashflow_engine.py"]
+
+  credit-card-engine:
+    name: "Credit Card Engine"
+    description: "Credit card billing, utilization and foreclosure"
+    category: "capability"
+    scopes: ["backend", "property", "contracts", "integration", "repository"]
+    workflows: ["property", "contracts", "backend"]
+    scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
+    modules: ["backend/src/engines/credit_card_engine"]
+
+  financial-intelligence:
+    name: "Financial Intelligence"
+    description: "Forecasting, goal planning and scenario analysis"
+    category: "capability"
+    scopes: ["backend", "property", "contracts", "integration", "repository"]
+    workflows: ["property", "contracts", "backend"]
+    scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
+    modules: ["backend/src/engines/financial_intelligence"]
+
+  account-engine:
+    name: "Account Engine"
+    description: "Account lifecycle, balance, cashflow and dormancy management"
+    category: "capability"
+    scopes: ["backend", "property", "contracts", "integration", "repository"]
+    workflows: ["property", "contracts", "backend"]
+    scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
+    modules: ["backend/src/engines/account_engine"]

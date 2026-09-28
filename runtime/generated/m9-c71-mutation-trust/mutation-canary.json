@@ -1,0 +1,49 @@
+{
+  "schema": "m9-c71-mutation-canary/v1",
+  "recorded_at": "2026-09-28T09:38:55.755643+00:00",
+  "passed": false,
+  "checks": {
+    "KNOWN_KILL_MUTANT": "KILLED",
+    "KNOWN_SURVIVOR_MUTANT": "FAILED",
+    "KNOWN_REACHED_LOCATION": "FAILED",
+    "KNOWN_UNREACHED_LOCATION": "FAILED"
+  },
+  "canary_root": "/tmp/pytest-of-vasantha/pytest-998/test_canary_accepts_a_kill_wit0",
+  "population": 2,
+  "sentinel_records": 0,
+  "mutants_observed_executing": 0,
+  "by_location": {
+    "known_kill": {
+      "EXECUTED_AND_KILLED": 1,
+      "NOT_EXECUTED": 1
+    },
+    "known_survivor": {},
+    "known_reached": {},
+    "known_unreached": {}
+  },
+  "raw_mutants": {
+    "m.x_known_kill_value__mutmut_1": {
+      "exit_code": 1,
+      "status": "KILLED",
+      "execution": "EXECUTED_AND_KILLED"
+    },
+    "m.x_known_kill_value__mutmut_2": {
+      "exit_code": 0,
+      "status": "SURVIVED",
+      "execution": "NOT_EXECUTED"
+    }
+  },
+  "toolchain_contract": {
+    "contract_id": "c71-mutation-toolchain-contract",
+    "status": "SATISFIED",
+    "mutmut_version": "3.7.0",
+    "trampoline_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/mutmut/mutation/trampoline.py",
+    "before_sha256": "aadb4841ee38661164e391f2299b6be81db4926eb5da39e893caacf5c1a0bd16",
+    "after_sha256": "aadb4841ee38661164e391f2299b6be81db4926eb5da39e893caacf5c1a0bd16",
+    "canonical_sha256": "aadb4841ee38661164e391f2299b6be81db4926eb5da39e893caacf5c1a0bd16",
+    "applied": false,
+    "unsatisfied_clauses": [],
+    "detail": "all clauses satisfied; toolchain is canonical",
+    "satisfied": true
+  }
+}

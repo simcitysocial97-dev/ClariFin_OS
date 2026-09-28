@@ -1,0 +1,30 @@
+# backend/tests/mutation_trust/canary/pyproject.toml
+#
+# M9-C71 — Mutation-measurement canary configuration.
+#
+# This is NOT the authoritative repository mutation scope (that is the
+# `[tool.mutmut]` block in `backend/pyproject.toml`, rendered from
+# ENGINE_SELECTION). This is a tiny, deterministic, self-contained scope whose
+# only job is to prove the harness can distinguish:
+#
+#   * a mutant that must be killed        -> exit 1  (killed)
+#   * a mutant that must survive         -> exit 0  (survived)
+#   * a mutant that must not be executed -> exit 33 (no tests)
+#
+# and that the independent execution sentinel observes the mutated code running
+# in the first two cases and nothing in the third.
+#
+# It runs as a dedicated mutation campaign unit, gated by the same
+# mutation-measurement self-certification gate as the real shards.
+
+[tool.mutmut]
+# Only the canary module is mutated. The sentinel is deliberately NOT a
+# mutation target: its job is to observe mutants, and mutating the observer
+# would conflate "the sentinel was wrong" with "the mutant behaved differently".
+# It is still also_copy'd so it is importable inside mutants/.
+source_paths = ["mutation_canary.py"]
+# The sentinel must be importable from inside mutmut's mutants/ directory.
+also_copy = ["test_mutation_canary.py", "sentinel.py"]
+# The canary suite only. MUTANT_UNDER_TEST must be visible to the forked child.
+runner = "python3 -m pytest test_mutation_canary.py -p no:randomly -p no:cacheprovider"
+no_progress = true

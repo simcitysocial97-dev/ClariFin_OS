@@ -1,0 +1,14 @@
+# status: survived
+# engines.loan_engine.floating_rate.x_apply_floating_rate_change__mutmut_43: survived
+--- src/engines/loan_engine/floating_rate.py
++++ src/engines/loan_engine/floating_rate.py
+@@ -36,8 +36,7 @@
+             "reduce_emi",
+             change_row.payment_date,
+             original_emi=None,
+-            original_tenure=remaining_tenure,
+-        )
++            )
+     else:  # adjust_tenure
+         tail = regenerate_schedule(
+             schedule[change_month - 1 :],

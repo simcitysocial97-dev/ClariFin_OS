@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_impulsivity_score__mutmut_64: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -30,7 +30,7 @@
+         date_iso = txn.get("date_iso", "")
+         if date_iso:
+             try:
+-                dt = datetime.strptime(date_iso, "%Y-%m-%d")
++                dt = datetime.strptime(date_iso, "%y-%m-%d")
+                 if dt.weekday() >= 5:  # Saturday, Sunday
+                     weekend_txns.append(txn)
+                 else:

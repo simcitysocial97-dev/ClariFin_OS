@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -130,7 +130,8 @@ def load_defects(generated_dir: Path | None = None) -> list[Defect]:
             if not isinstance(entry, dict):
                 continue
             paths = [
-                p for p in [entry.get("path"), entry.get("file")]
+                p
+                for p in [entry.get("path"), entry.get("file")]
                 if isinstance(p, str) and p
             ]
             defects.append(
@@ -241,20 +242,27 @@ def build_repair_intelligence(
         verification_order = []
         if tests:
             verification_order.append(
-                {"step": 1, "action": "run impacted unit tests",
-                 "targets": sorted(tests)}
+                {
+                    "step": 1,
+                    "action": "run impacted unit tests",
+                    "targets": sorted(tests),
+                }
             )
         if capabilities:
             verification_order.append(
-                {"step": len(verification_order) + 1,
-                 "action": "run contract verification for affected capabilities",
-                 "targets": sorted(capabilities)}
+                {
+                    "step": len(verification_order) + 1,
+                    "action": "run contract verification for affected capabilities",
+                    "targets": sorted(capabilities),
+                }
             )
         if workflows:
             verification_order.append(
-                {"step": len(verification_order) + 1,
-                 "action": "run workspace/e2e verification",
-                 "targets": sorted(workflows)}
+                {
+                    "step": len(verification_order) + 1,
+                    "action": "run workspace/e2e verification",
+                    "targets": sorted(workflows),
+                }
             )
 
         # Confidence: how much of the defect was provider-explainable.
@@ -309,7 +317,7 @@ def build_repair_intelligence(
     }
 
     return RepairPlan(
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
         defects=tuple(planned),
         items=tuple(items),
         rollback=rollback,

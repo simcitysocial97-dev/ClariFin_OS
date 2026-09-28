@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_detect_revocations__mutmut_9: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -21,7 +21,7 @@
+     # Group events by transfer_id for efficient lookup
+     events_by_transfer: dict[str, list[dict[str, Any]]] = {}
+     for event in events:
+-        transfer_id = event.get("transfer_id", "")
++        transfer_id = event.get("transfer_id", )
+         if transfer_id and _is_transfer_event(event):
+             if transfer_id not in events_by_transfer:
+                 events_by_transfer[transfer_id] = []

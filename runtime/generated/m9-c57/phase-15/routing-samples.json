@@ -1,0 +1,28 @@
+[
+  {
+    "task": "classify",
+    "provider": "deterministic-fallback",
+    "kind": "ProviderKind.LOCAL",
+    "available": true
+  },
+  {
+    "task": "diagnose",
+    "provider": "deterministic-fallback",
+    "kind": "ProviderKind.LOCAL",
+    "available": true
+  },
+  {
+    "task": "patch",
+    "provider": "deterministic-fallback",
+    "kind": "ProviderKind.LOCAL",
+    "available": true
+  },
+  {
+    "privacy_local_explicit_openrouter": "deterministic-fallback",
+    "rejected": true
+  },
+  {
+    "deterministic": true,
+    "text_prefix": "[DETERMINISTIC FALLBACK] Based"
+  }
+]

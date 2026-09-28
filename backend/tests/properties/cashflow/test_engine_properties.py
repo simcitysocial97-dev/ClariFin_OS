@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 from tests.invariants import assert_cashflow_result_invariants
@@ -18,7 +18,7 @@ class TestCashflowEngineProperties:
         cash_summary=cash_summary_strategy(),
         events=st.lists(financial_event_strategy(), max_size=5),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_cashflow_result_invariants_hold(
         self, cash_summary: dict[str, Any], events: list[dict[str, Any]]
     ) -> None:
@@ -40,7 +40,7 @@ class TestCashflowEngineProperties:
         income_paise=st.integers(min_value=50000, max_value=1000000),
         expense_paise=st.integers(min_value=50000, max_value=1000000),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_cashflow_no_events_true_savings(
         self, income_paise: int, expense_paise: int
     ) -> None:
@@ -60,7 +60,7 @@ class TestCashflowEngineProperties:
         cash_summary=cash_summary_strategy(),
         events=st.lists(financial_event_strategy(), max_size=3),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_cashflow_classification_valid(
         self, cash_summary: dict[str, Any], events: list[dict[str, Any]]
     ) -> None:
@@ -80,7 +80,7 @@ class TestCashflowEngineProperties:
         income_paise=st.integers(min_value=100000, max_value=500000),
         expense_paise=st.integers(min_value=10000, max_value=99999),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_cashflow_surplus_classification(
         self, income_paise: int, expense_paise: int
     ) -> None:

@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_impulsivity_score__mutmut_49: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -24,7 +24,7 @@
+     # Late-night spending (simplified - would need timestamp data)
+     # For now, use weekend spending as proxy
+     weekend_txns = []
+-    weekday_txns = []
++    weekday_txns = None
+ 
+     for txn in debits:
+         date_iso = txn.get("date_iso", "")

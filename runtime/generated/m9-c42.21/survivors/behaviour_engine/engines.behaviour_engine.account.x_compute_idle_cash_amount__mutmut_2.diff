@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.account.x_compute_idle_cash_amount__mutmut_2: survived
+--- src/engines/behaviour_engine/account.py
++++ src/engines/behaviour_engine/account.py
+@@ -21,7 +21,7 @@
+         Returns the entire cash balance if loan rate exceeds deposit rate + threshold.
+         Returns Decimal('0') if no significant opportunity cost.
+     """
+-    if cash_balance_paise <= 0:
++    if cash_balance_paise < 0:
+         return Decimal("0")
+ 
+     rate_differential = loan_interest_rate_bps - deposit_interest_rate_bps

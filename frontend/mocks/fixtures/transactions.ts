@@ -1,20 +1,20 @@
 import type { Transaction } from '@/types/transaction'
 
 export const mockTransaction: Transaction = {
-  id: 'test-tx-001',
+  id: 1,
   date: '2025-01-15',
   description: 'Test Transaction',
-  amount_paise: 50000,
+  amount: { paise: 50000, rupees: 500.0 },
   type: 'debit',
   category: 'Food & Dining',
   bank: 'HDFC',
-  member: undefined,
+  member: 'Self',
 }
 
 export const mockCreditTransaction: Transaction = {
   ...mockTransaction,
-  id: 'test-tx-002',
-  amount_paise: 150000,
+  id: 2,
+  amount: { paise: 150000, rupees: 1500.0 },
   type: 'credit',
   description: 'Salary Credit',
   category: 'Income',
@@ -22,8 +22,8 @@ export const mockCreditTransaction: Transaction = {
 
 export const mockTransportTransaction: Transaction = {
   ...mockTransaction,
-  id: 'test-tx-003',
-  amount_paise: 25000,
+  id: 3,
+  amount: { paise: 25000, rupees: 250.0 },
   type: 'debit',
   description: 'Uber Ride',
   category: 'Transport',
@@ -31,8 +31,8 @@ export const mockTransportTransaction: Transaction = {
 
 export const mockShoppingTransaction: Transaction = {
   ...mockTransaction,
-  id: 'test-tx-004',
-  amount_paise: 35000,
+  id: 4,
+  amount: { paise: 35000, rupees: 350.0 },
   type: 'debit',
   description: 'Amazon Purchase',
   category: 'Shopping',

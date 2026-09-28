@@ -8,7 +8,7 @@ No execution logic. Data models only.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
@@ -183,7 +183,7 @@ class VerificationEvidence:
     target_id: str
     type: str
     content: dict[str, Any]
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     status: VerificationStatus = VerificationStatus.UNKNOWN
     metadata: dict[str, Any] = field(default_factory=dict)
 
@@ -240,7 +240,7 @@ class ExecutionResult:
     # vocabulary, so a red pipeline is self-describing without opening raw logs.
     # ``UNKNOWN_FAILURE`` is used whenever the runtime cannot establish a more
     # specific cause, and the raw diagnostic is preserved in ``error``/artifacts.
-    classification: "FailureClassification" = field(
+    classification: FailureClassification = field(
         default=FailureClassification.UNKNOWN_FAILURE
     )
     # Structured failure summary, when the executor can derive one (e.g. pytest
@@ -256,7 +256,12 @@ class ExecutionResult:
 
 @dataclass(frozen=True, slots=True)
 class VerificationSummary:
-    """Summary of a completed verification run."""
+    """Summary of a completed verification run.
+
+    M9-C37 meta-invariant: the totals arithmetic is enforced at construction
+    time — passed + failed + skipped must equal total_tasks, so a summary can
+    never report inconsistent totals (e.g. "66/50 PASS").
+    """
 
     profile: str
     total_tasks: int
@@ -271,6 +276,16 @@ class VerificationSummary:
     recommendations: list[str] = field(default_factory=list)
     overall_status: VerificationStatus = VerificationStatus.PASSED
 
+    def __post_init__(self) -> None:
+        computed = self.passed + self.failed + self.skipped
+        if computed != self.total_tasks:
+            raise ValueError(
+                "certification arithmetic violated: "
+                f"passed({self.passed}) + failed({self.failed}) + "
+                f"skipped({self.skipped}) = {computed} != "
+                f"total_tasks({self.total_tasks}) [profile={self.profile}]"
+            )
+
 
 @dataclass(frozen=True, slots=True)
 class VerificationPlan:
@@ -279,7 +294,7 @@ class VerificationPlan:
     id: str
     name: str
     scope: VerificationScope
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     targets: list[VerificationTarget] = field(default_factory=list)
     steps: list[VerificationStep] = field(default_factory=list)
     required_workflows: list[str] = field(default_factory=list)

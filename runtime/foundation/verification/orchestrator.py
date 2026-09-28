@@ -17,39 +17,45 @@ from __future__ import annotations
 import json
 import subprocess
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from runtime.foundation.verification.executor import Executor
+from runtime.foundation.verification.failure_report import build_failure_report
 from runtime.foundation.verification.models import (
     ExecutionResult as ExecutionResultModel,
+)
+from runtime.foundation.verification.models import (
     FailureClassification,
     VerificationPlan,
     VerificationScope,
     VerificationStatus,
     VerificationSummary,
 )
+from runtime.foundation.verification.planner import PlanningContext, VerificationPlanner
 from runtime.foundation.verification.profiles import VerificationProfile, get_profile
-from runtime.foundation.verification.planner import VerificationPlanner, PlanningContext
 from runtime.foundation.verification.registry import UNMAPPED
-from runtime.foundation.verification.failure_report import build_failure_report
-from runtime.system.evidence.aggregator import EvidenceAggregator
 
 VERIFICATION_CACHE_PATH = Path("runtime/generated/verification-cache.json")
 VERIFICATION_REPORT_PATH = Path("runtime/generated/verification-report.md")
 
 
 def _find_repo_root() -> Path:
-    candidates = [
-        Path(__file__).resolve().parents[5],
-        Path.cwd(),
-    ]
-    for candidate in candidates:
-        if (candidate / "backend" / "pyproject.toml").exists() or (
-            candidate / "runtime"
-        ).exists():
-            return candidate
+    """Resolve repository root by walking up from this file to find a known marker.
+
+    Uses backend/pyproject.toml as the anchor since it exists in the canonical
+    repository structure and is stable. Falls back to cwd only as last resort.
+    """
+    current = Path(__file__).resolve()
+    for parent in [current.parent] + list(current.parents):
+        if (parent / "backend" / "pyproject.toml").exists():
+            return parent
+    # Fallback: if running from a different context, try cwd
+    cwd = Path.cwd()
+    if (cwd / "backend" / "pyproject.toml").exists():
+        return cwd
+    # Ultimate fallback (should not occur in normal operation)
     return Path.cwd()
 
 
@@ -86,19 +92,44 @@ def _default_branch() -> str | None:
     return None
 
 
-def _merge_base_with_default() -> str | None:
+def _merge_base_with_default(*, fetch_remote: bool = True) -> str | None:
     """Return the merge-base SHA of HEAD and the default branch, if resolvable.
 
     The default branch ref is fetched first to ensure it is not stale, so the
     merge-base is computed against the true remote tip (P0-1).
+
+    F26: Fetch failures now fail closed — stale remote refs cannot be silently used.
+    Offline mode can be enabled via VERIFICATION_OFFLINE=1 to skip fetch.
     """
+    import os
+
+    # Offline mode: skip fetch entirely (for local verification without network)
+    if not fetch_remote or os.environ.get("VERIFICATION_OFFLINE") == "1":
+        default = _default_branch()
+        if not default:
+            return None
+        repo_root = _find_repo_root()
+        try:
+            r = subprocess.run(
+                ["git", "merge-base", "HEAD", default],
+                capture_output=True,
+                text=True,
+                cwd=str(repo_root),
+                timeout=10,
+            )
+            if r.returncode == 0 and r.stdout.strip():
+                return r.stdout.strip()
+        except Exception:
+            pass
+        return None
+
     default = _default_branch()
     if not default:
         return None
     repo_root = _find_repo_root()
     # Extract branch name from ref (e.g., "origin/main" -> "main") for fetch.
     branch_name = default.replace("origin/", "")
-    # Refresh the default branch to avoid a stale cached ref (P0-1).
+    # Refresh the default branch to avoid a stale cached ref (P0-1 / F26).
     fetch_result = subprocess.run(
         ["git", "fetch", "origin", branch_name],
         capture_output=True,
@@ -107,8 +138,25 @@ def _merge_base_with_default() -> str | None:
         timeout=30,
     )
     if fetch_result.returncode != 0:
-        # Fetch failed; continue with potentially stale ref rather than failing.
-        pass
+        # F26: Fetch failed — fail closed. Do not silently use stale ref.
+        # Record the failure for evidence.
+        _record_git_fetch_evidence(
+            success=False,
+            branch=branch_name,
+            error=fetch_result.stderr.strip() or fetch_result.stdout.strip(),
+            returncode=fetch_result.returncode,
+        )
+        raise RuntimeError(
+            f"git fetch origin {branch_name} failed (exit {fetch_result.returncode}). "
+            f"Set VERIFICATION_OFFLINE=1 to skip fetch for local-only verification. "
+            f"Error: {fetch_result.stderr.strip() or fetch_result.stdout.strip()}"
+        )
+    # Record successful fetch
+    _record_git_fetch_evidence(
+        success=True,
+        branch=branch_name,
+        output=fetch_result.stdout.strip(),
+    )
     try:
         r = subprocess.run(
             ["git", "merge-base", "HEAD", default],
@@ -122,6 +170,38 @@ def _merge_base_with_default() -> str | None:
     if r.returncode == 0 and r.stdout.strip():
         return r.stdout.strip()
     return None
+
+
+def _record_git_fetch_evidence(
+    *,
+    success: bool,
+    branch: str,
+    error: str | None = None,
+    output: str | None = None,
+    returncode: int | None = None,
+) -> None:
+    """Record git fetch result for forensic reproducibility."""
+    import json
+    from datetime import datetime
+
+    event = {
+        "timestamp": datetime.now(UTC).isoformat(),
+        "event": "git_fetch",
+        "details": {
+            "branch": branch,
+            "success": success,
+            "returncode": returncode,
+            "error": error,
+            "output": output,
+        },
+    }
+    log_file = Path("runtime/generated/git-fetch-events.jsonl")
+    try:
+        log_file.parent.mkdir(parents=True, exist_ok=True)
+        with log_file.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(event) + "\n")
+    except Exception:
+        pass  # Non-critical
 
 
 def _github_pr_refs() -> tuple[str | None, str | None]:
@@ -145,7 +225,7 @@ def _github_pr_refs() -> tuple[str | None, str | None]:
     if not event_path or not os.path.isfile(event_path):
         return (None, None)
     try:
-        with open(event_path, "r", encoding="utf-8") as fh:
+        with open(event_path, encoding="utf-8") as fh:
             payload = json.load(fh)
     except Exception:
         return (None, None)
@@ -183,7 +263,7 @@ class _ChangedFilesResult:
     error: str | None = None
 
 
-def _resolve_base_ref() -> str | None:
+def _resolve_base_ref(*, fetch_remote: bool = True) -> str | None:
     """Determine the git reference to diff against.
 
     Priority:
@@ -213,23 +293,22 @@ def _resolve_base_ref() -> str | None:
     gh_ref = os.environ.get("GITHUB_REF")
 
     if gh_event == "push":
-        mb = _merge_base_with_default()
+        mb = _merge_base_with_default(fetch_remote=fetch_remote)
         if mb:
             return mb
         if gh_ref:
             return f"{gh_ref}..."
         return None
     if gh_sha and gh_event != "push":
-        mb = _merge_base_with_default()
+        mb = _merge_base_with_default(fetch_remote=fetch_remote)
         if mb:
             return mb
         return f"{gh_sha}..."
 
-
     return None
 
 
-def _collect_changed_files() -> _ChangedFilesResult:
+def _collect_changed_files(*, fetch_remote: bool = True) -> _ChangedFilesResult:
     """Detect changed files using git diff.
 
     Returns a :class:`_ChangedFilesResult` carrying the detected files plus the
@@ -291,7 +370,7 @@ def _collect_changed_files() -> _ChangedFilesResult:
             return result.stdout
         return ""
 
-    def _resolve_remote_ref(ref: str) -> str:
+    def _resolve_remote_ref(ref: str | None) -> str:
         """Resolve a ref to a form usable by git diff.
 
         A full 40-character SHA is returned as-is (no network). For a branch name
@@ -299,17 +378,20 @@ def _collect_changed_files() -> _ChangedFilesResult:
         ``origin/main`` cannot produce an inflated changed-file diff (P0-1); then we
         return the first resolvable candidate.
         """
+        if ref is None:
+            return ""
         # A full commit SHA needs no resolution or network access.
         if len(ref) == 40 and all(c in "0123456789abcdef" for c in ref):
             return ref
         # Refresh the remote branch so a cached ref cannot be stale.
-        subprocess.run(
-            ["git", "fetch", "origin", ref],
-            capture_output=True,
-            text=True,
-            cwd=str(repo_root),
-            timeout=30,
-        )
+        if fetch_remote and os.environ.get("VERIFICATION_OFFLINE") != "1":
+            subprocess.run(
+                ["git", "fetch", "origin", ref],
+                capture_output=True,
+                text=True,
+                cwd=str(repo_root),
+                timeout=30,
+            )
         for candidate in (f"origin/{ref}", ref):
             check = subprocess.run(
                 ["git", "rev-parse", "--verify", "--quiet", candidate],
@@ -323,7 +405,7 @@ def _collect_changed_files() -> _ChangedFilesResult:
         return ref
 
     in_pr_event = os.environ.get("GITHUB_EVENT_NAME") == "pull_request"
-    base_ref = _resolve_base_ref()
+    base_ref = _resolve_base_ref(fetch_remote=fetch_remote)
     pr_base, pr_head = _github_pr_refs()
 
     # PR boundary (M9-C3): when the authoritative PR base SHA is in play AND a PR
@@ -360,7 +442,7 @@ def _collect_changed_files() -> _ChangedFilesResult:
         # always populates GITHUB_EVENT_PATH, so this branch is the safe local/CI
         # fallback, not the path that produced the historical ~986-file inflation
         # (that is avoided by the two-dot base..head path above when SHAs exist).
-        local_base = _merge_base_with_default()
+        local_base = _merge_base_with_default(fetch_remote=fetch_remote)
         if local_base:
             combined = _run_diff_three_dot(local_base)
             result = _ChangedFilesResult(
@@ -377,7 +459,7 @@ def _collect_changed_files() -> _ChangedFilesResult:
         # (merge-base of HEAD and the default branch) so the local path agrees
         # with the CI path instead of two-dot `git diff HEAD` (sensitive to
         # uncommitted working-tree state and therefore not parity-safe).
-        local_base = _merge_base_with_default()
+        local_base = _merge_base_with_default(fetch_remote=fetch_remote)
         if local_base:
             combined = _run_diff_three_dot(local_base)
             result = _ChangedFilesResult(
@@ -471,7 +553,7 @@ class VerificationReport:
     dependency_chains: list[dict[str, Any]]
     evidence_files: list[str]
     recommendations: list[str]
-    generated_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    generated_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     def to_markdown(self) -> str:
         lines: list[str] = []
@@ -506,7 +588,9 @@ class VerificationReport:
         lines.append(f"- **Scope:** {self.plan.scope.value}")
         lines.append(f"- **Targets:** {len(self.plan.targets)}")
         lines.append(f"- **Steps:** {len(self.plan.steps)}")
-        lines.append(f"- **Estimated Duration:** {self.plan.estimated_duration_seconds}s")
+        lines.append(
+            f"- **Estimated Duration:** {self.plan.estimated_duration_seconds}s"
+        )
         lines.append("")
 
         lines.append("## Tasks Executed")
@@ -600,7 +684,9 @@ class VerificationReport:
                     lines.append(f"- Tests: {len(tests)} affected")
                 lines.append("")
         else:
-            lines.append("No dependency chains available (Program 7A cross-layer map not loaded).")
+            lines.append(
+                "No dependency chains available (Program 7A cross-layer map not loaded)."
+            )
             lines.append("")
 
         lines.append("## Evidence Files")
@@ -673,6 +759,8 @@ class VerificationOrchestrator:
             log_callback=log_callback,
             per_step_timeout=per_step_timeout,
         )
+        from runtime.system.evidence.aggregator import EvidenceAggregator
+
         self._aggregator = EvidenceAggregator(self._repo_root)
         self._map_path = map_path
         self._changed_files: list[str] = []
@@ -837,12 +925,12 @@ class VerificationOrchestrator:
         if self._plan is None:
             raise RuntimeError("No plan generated. Call generate_plan() first.")
 
-        self._run_start = datetime.now(timezone.utc)
+        self._run_start = datetime.now(UTC)
         total_steps = len(self._plan.steps)
         self._results = []
 
         for idx, step in enumerate(self._plan.steps, start=1):
-            elapsed = (datetime.now(timezone.utc) - self._run_start).total_seconds()
+            elapsed = (datetime.now(UTC) - self._run_start).total_seconds()
             if elapsed > self._overall_timeout:
                 # C5.2: hard ceiling — abort remaining steps rather than running
                 # forever when the per-step timeout misfires.
@@ -930,11 +1018,7 @@ class VerificationOrchestrator:
             return None
 
         manifest_path = path or (
-            self._repo_root
-            / "runtime"
-            / "generated"
-            / "evidence"
-            / "run-manifest.json"
+            self._repo_root / "runtime" / "generated" / "evidence" / "run-manifest.json"
         )
 
         steps_by_id = {}
@@ -985,7 +1069,7 @@ class VerificationOrchestrator:
             "schema": "run-manifest/v1",
             "commit": _get_current_commit(),
             "branch": _current_branch(),
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
             "profile": self._profile.name if self._profile else None,
             "steps": entries,
             "unmapped": unmapped,
@@ -1015,9 +1099,7 @@ class VerificationOrchestrator:
         total_duration = sum(r.duration_seconds for r in self._results)
 
         overall_status = (
-            VerificationStatus.FAILED
-            if failed > 0
-            else VerificationStatus.PASSED
+            VerificationStatus.FAILED if failed > 0 else VerificationStatus.PASSED
         )
 
         dependency_chains: list[dict[str, Any]] = []
@@ -1094,9 +1176,7 @@ class VerificationOrchestrator:
                     f"Investigate failing task: {result.command[:80]}"
                 )
         if self._cross_layer_report is not None:
-            affected_engines = getattr(
-                self._cross_layer_report, "affected_engines", []
-            )
+            affected_engines = getattr(self._cross_layer_report, "affected_engines", [])
             if affected_engines:
                 recommendations.append(
                     f"Review changes in affected engines: {', '.join(affected_engines)}"

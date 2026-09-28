@@ -8,26 +8,26 @@ import { useEffect } from 'react';
 import { commandCenterRuntime } from '@/lib/command-center';
 import { CommandCenterLayout } from '@/components/command-center';
 import { useDashboardMetrics } from '@/lib/hooks/use-dashboard-metrics';
-import { useManagedAccounts } from '@/lib/hooks/use-accounts';
-import { useLoans } from '@/lib/hooks/use-loans';
-import { useCards } from '@/lib/hooks/use-cards';
-import { useInvestments } from '@/lib/hooks/use-investments';
-import { useCashflow } from '@/lib/hooks/use-cashflow';
-import { useBehaviorScore } from '@/lib/hooks/use-behavior-score';
-import { useReconciliations } from '@/lib/hooks/use-reconciliation';
+import { useAccountsCapability } from '@/lib/capabilities/use-accounts-capability';
+import { useLoansCapability } from '@/lib/capabilities/use-loans-capability';
+import { useCreditCardsCapability } from '@/lib/capabilities/use-credit-cards-capability';
+import { useInvestmentsCapability } from '@/lib/capabilities/use-investments-capability';
+import { useCashflowCapability } from '@/lib/capabilities/use-cashflow-capability';
+import { useBehaviourCapability } from '@/lib/capabilities/use-behaviour-capability';
+import { useReconciliationCapability } from '@/lib/capabilities/use-reconciliation-capability';
 import { useForecastCapability } from '@/lib/capabilities/use-forecast-capability';
 import { useNavigation } from '@/lib/runtime';
 
 export default function CommandCenterPage() {
   const { pushPath } = useNavigation();
   const { data: dashboardData } = useDashboardMetrics();
-  const { data: accountsData } = useManagedAccounts();
-  const { data: loansData } = useLoans();
-  const { data: cardsData } = useCards();
-  const { data: investmentsData } = useInvestments();
-  const { data: cashflowData } = useCashflow();
-  const { data: behaviourData } = useBehaviorScore();
-  const { data: reconciliationData } = useReconciliations();
+  const { accounts: accountsData } = useAccountsCapability();
+  const { loans: loansData } = useLoansCapability();
+  const { creditCards: cardsData } = useCreditCardsCapability();
+  const { investments: investmentsData } = useInvestmentsCapability();
+  const { cashflow: cashflowData } = useCashflowCapability();
+  const { behaviour: behaviourData } = useBehaviourCapability();
+  const { reconciliation: reconciliationData } = useReconciliationCapability();
   const { forecast } = useForecastCapability();
 
   useEffect(() => {

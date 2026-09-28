@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_habit_stability_score__mutmut_136: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -62,7 +62,7 @@
+             if all(abs(a - avg) / max(avg, 1) < 0.1 for a in amounts):
+                 recurring_count += 1
+ 
+-    recurring_score = min(1.0, recurring_count / 10)  # Normalize to max 10 recurring
++    recurring_score = min(2.0, recurring_count / 10)  # Normalize to max 10 recurring
+ 
+     # Behavioral rhythm (regular transaction days)
+     daily_counts: defaultdict[str, float] = defaultdict(float)

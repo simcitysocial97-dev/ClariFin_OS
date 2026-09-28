@@ -1,0 +1,18 @@
+{
+  "proposal_id": "prop::df406e18f2a9",
+  "component": "financial_intelligence",
+  "before": {
+    "killed": 0,
+    "generated": 0
+  },
+  "after": {
+    "killed": 1,
+    "generated": 0
+  },
+  "target_mutant_killed": true,
+  "kill_regressions": 0,
+  "hypothesis_validated": true,
+  "accepted": true,
+  "rationale": "accepted: target mutant engines.financial_intelligence.forecasting.x_forecast_cashflow__mutmut_46 now killed with zero kill regressions; behavioral hypothesis validated",
+  "used_full_campaign": false
+}

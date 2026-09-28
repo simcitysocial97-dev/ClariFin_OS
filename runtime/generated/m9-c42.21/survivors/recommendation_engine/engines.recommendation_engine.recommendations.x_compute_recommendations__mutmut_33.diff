@@ -1,0 +1,12 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_compute_recommendations__mutmut_33: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -43,6 +43,6 @@
+ 
+     # Sort by severity
+     severity_order = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3}
+-    recommendations.sort(key=lambda r: severity_order.get(r.severity, 4))
++    recommendations.sort(key=lambda r: severity_order.get(r.severity, None))
+ 
+     return recommendations

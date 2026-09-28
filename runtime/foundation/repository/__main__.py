@@ -202,18 +202,18 @@ def main() -> int:
 
     if args.stats:
         idx = RepositoryIndex()
-        metadata = idx._data.get("metadata", {})
+        metadata = idx._service.statistics()
         print(f"Total nodes: {metadata.get('total_nodes', 0)}")
         print(f"Total edges: {metadata.get('total_edges', 0)}")
-        for ntype, count in sorted(metadata.get("node_counts", {}).items()):
+        for ntype, count in sorted(metadata.get("node_types", {}).items()):
             print(f"  {ntype}: {count}")
-        for rtype, count in sorted(metadata.get("edge_counts", {}).items()):
+        for rtype, count in sorted(metadata.get("edge_relationships", {}).items()):
             print(f"  edge[{rtype}]: {count}")
 
     # New Phase 2.2 CLI commands
     if args.impact:
         idx = RepositoryIndex()
-        from runtime.foundation.repository.impact import compute_impact
+        from runtime.foundation.repository.analysis.impact import compute_impact
 
         result = compute_impact(args.impact, max_depth=8)
         print(json.dumps(result, indent=2, default=str))

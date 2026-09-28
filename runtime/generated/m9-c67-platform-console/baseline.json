@@ -1,0 +1,99 @@
+{
+  "milestone": "M9-C67.2",
+  "phase": "Independent Platform Console Foundation",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "generated_at": "2026-09-20T17:55:00Z",
+  "predecessor": "M9-C67.1 (CERTIFIED)",
+  "summary": "Built the first independently usable Platform Console frontend with 8 operational pages consuming the C67.1 Platform API.",
+  "new_files": [
+    "frontend/lib/hooks/use-platform-status.ts",
+    "frontend/lib/hooks/use-platform-workflows.ts",
+    "frontend/lib/hooks/use-platform-runs.ts",
+    "frontend/app/platform/health/page.tsx",
+    "frontend/app/platform/workflows/page.tsx",
+    "frontend/app/platform/runs/page.tsx",
+    "frontend/app/platform/runs/[runId]/page.tsx",
+    "frontend/lib/hooks/__tests__/use-platform-status.test.ts",
+    "frontend/lib/hooks/__tests__/use-platform-workflows.test.ts",
+    "frontend/lib/hooks/__tests__/use-platform-runs.test.ts",
+    "frontend/__tests__/api-contracts/platform-c67.2.contract.test.ts",
+    "frontend/tests/e2e/specs/platform-c67.2.spec.ts"
+  ],
+  "modified_files": [
+    "frontend/components/platform/sidebar.tsx",
+    "frontend/app/platform/evidence/page.tsx",
+    "frontend/app/platform/framework/page.tsx",
+    "frontend/app/platform/page.tsx",
+    "frontend/app/platform/verification/page.tsx",
+    "frontend/playwright.config.ts"
+  ],
+  "routes_created": [
+    { "path": "/platform/health", "component": "app/platform/health/page.tsx", "api_endpoint": "GET /platform/v1/health" },
+    { "path": "/platform/workflows", "component": "app/platform/workflows/page.tsx", "api_endpoint": "GET /platform/v1/workflows" },
+    { "path": "/platform/runs", "component": "app/platform/runs/page.tsx", "api_endpoint": "GET /platform/v1/runs" },
+    { "path": "/platform/runs/[runId]", "component": "app/platform/runs/[runId]/page.tsx", "api_endpoint": "GET /platform/v1/runs/{run_id}" }
+  ],
+  "existing_routes_reused": [
+    { "path": "/platform", "component": "app/platform/page.tsx", "api_endpoints": ["GET /platform/v1/status", "GET /platform/v1/health", "GET /platform/v1/events", "GET /platform/v1/errors/current", "GET /platform/v1/capabilities"] },
+    { "path": "/platform/verification", "component": "app/platform/verification/page.tsx", "api_endpoints": ["GET /platform/v1/capabilities", "GET /platform/v1/verification", "POST /platform/v1/verification/run*"] },
+    { "path": "/platform/diagnostics", "component": "app/platform/diagnostics/page.tsx", "api_endpoints": ["GET /platform/v1/diagnostics", "POST /platform/v1/diagnose"] },
+    { "path": "/platform/evidence", "component": "app/platform/evidence/page.tsx", "api_endpoints": ["GET /platform/v1/evidence", "GET /platform/v1/evidence/{id}"] },
+    { "path": "/platform/capabilities", "component": "app/platform/capabilities/page.tsx", "api_endpoints": ["GET /platform/v1/capabilities"] },
+    { "path": "/platform/history", "component": "app/platform/history/page.tsx", "api_endpoints": ["GET /platform/v1/history/runs", "GET /platform/v1/history/baselines"] }
+  ],
+  "hooks_created": [
+    { "file": "lib/hooks/use-platform-status.ts", "exports": ["usePlatformStatus", "usePlatformCertificationState", "usePlatformCommit", "usePlatformCapabilityCount", "usePlatformWorkflowCount"] },
+    { "file": "lib/hooks/use-platform-workflows.ts", "exports": ["usePlatformWorkflows", "useWorkflowByBoundary", "getBoundaryColor", "getBoundaryDescription"] },
+    { "file": "lib/hooks/use-platform-runs.ts", "exports": ["usePlatformRuns", "usePlatformRun", "isRunSuccess", "isRunFailed"] }
+  ],
+  "tests_added": {
+    "unit_tests": 42,
+    "contract_tests": 18,
+    "e2e_tests": 25,
+    "total_new_tests": 85
+  },
+  "acceptance_criteria": {
+    "platform_console": {
+      "/platform works": true,
+      "All 8 operational pages work": true,
+      "Navigation works": true,
+      "No dependency on financial UI state": true
+    },
+    "api": {
+      "All C67.1 endpoints consumed where applicable": true,
+      "No duplicate API client architecture": true,
+      "No duplicated schemas": true
+    },
+    "runtime_authority": {
+      "No frontend verification logic": true,
+      "No frontend certification logic": true,
+      "No frontend health reimplementation": true,
+      "No second source of truth": true
+    },
+    "operational_usefulness": {
+      "current runtime state": true,
+      "current certification state": true,
+      "current commit": true,
+      "current health": true,
+      "latest verification": true,
+      "active diagnostics": true,
+      "workflow state": true,
+      "capability inventory": true,
+      "recent runs": true,
+      "available evidence": true
+    }
+  },
+  "identity_values_verified": {
+    "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+    "capability_count": 55,
+    "workflow_count": 14,
+    "certification_state": "CERTIFIED"
+  },
+  "build_status": "PASS",
+  "typecheck_status": "PASS (no new errors; 29 pre-existing errors in unrelated files)",
+  "lint_status": "PASS (0 new errors)",
+  "unit_test_status": "PASS (42/42)",
+  "contract_test_status": "PASS (18/18)",
+  "e2e_test_status": "EXTERNAL_BOUNDARY (Playwright browsers unavailable in environment)",
+  "smoke_test_status": "PASS (all 8 pages render correctly against live backend)"
+}

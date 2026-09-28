@@ -1,0 +1,13 @@
+# status: survived
+# engines.ledger_audit_engine.x_verify_hash_signatures__mutmut_12: survived
+--- src/engines/ledger_audit_engine.py
++++ src/engines/ledger_audit_engine.py
+@@ -30,7 +30,7 @@
+ 
+     for row in cur.fetchall():
+         # Recompute hash
+-        hash_input = f"{row['account_id']}|{row['date_iso']}|{row['description']}|{row['debit']}|{row['credit']}"
++        hash_input = f"{row['account_id']}|{row['date_iso']}|{row['DESCRIPTION']}|{row['debit']}|{row['credit']}"
+         computed_hash = hashlib.sha256(hash_input.encode()).hexdigest().lower()
+         stored_hash = row["hash_signature"].lower()
+ 

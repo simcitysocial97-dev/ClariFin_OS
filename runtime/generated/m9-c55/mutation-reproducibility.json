@@ -1,0 +1,41 @@
+{
+  "schema": "m9-c55/mutation-reproducibility/v1",
+  "generated_at": "2026-09-01T19:57:01+00:00",
+  "baseline_summary": {
+    "run_id": "mut-1584012ffc86",
+    "repository_sha": "f92363b914353063b8813f5d61862197957ee7bd",
+    "tree_sha": "691eddb2e0c460a0c433fc9331ba66946097c2d5",
+    "python_version": "Python 3.12.3",
+    "pytest_version": "pytest 9.1.1",
+    "mutmut_version": "mutmut, version 3.7.0",
+    "config_hash": "f022ec34388c4765",
+    "killed": 453,
+    "survived": 251,
+    "no_tests": 0,
+    "timeout": 0,
+    "suspicious": 0,
+    "not_checked": 0,
+    "mutants_generated": 704,
+    "mutation_score": 64.3,
+    "threshold_percent": 80,
+    "execution_status": "PASS",
+    "classification_status": "PASS",
+    "evidence_complete": true,
+    "mode": "target",
+    "target": "financial_events",
+    "duration_seconds": 164,
+    "mutmut_rc": 0,
+    "error": null,
+    "note": "",
+    "selected_test_scope": "tests/unit/engines/financial_events tests/properties/financial_events tests/capability/financial_events",
+    "source_scope": "src/engines/financial_events",
+    "selection_method": "explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)"
+  },
+  "observation": {
+    "current_score": 64.3,
+    "threshold": 80,
+    "target_engine": "financial_events",
+    "note": "C55 does not re-run mutation campaigns; baseline preserved from prior certified run. C56 addresses 80% convergence.",
+    "stochastic_variance": "mutation testing has inherent non-determinism due to scheduler ordering; targeted runs on same population are reproducible within bounded variance"
+  }
+}

@@ -1,0 +1,174 @@
+# Dependencies and environments
+node_modules/
+.venv/
+venv/
+backend/venv/
+backend/.venv/
+
+# Build outputs
+.next/
+frontend/dist/
+frontend/build/
+backend/dist/
+backend/build/
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Binary assets and vendor bundles
+*.mjs
+*.worker.*
+frontend/public/
+frontend/public/**/*
+*.min.js
+*.min.css
+*.map
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+poetry.lock
+Pipfile.lock
+requirements.lock
+*.lock
+
+# Generated artifacts
+runtime/generated/
+backend/tests/generated/
+frontend/generated/
+*.generated.*
+generated-*/
+
+# Test results and artifacts
+test-results/
+coverage/
+*.lcov
+*.xml
+junit.xml
+*.json
+!package.json
+!tsconfig.json
+!next.config.ts
+!next.config.js
+!*.config.json
+!*.config.js
+!*.config.ts
+!pyproject.toml
+!requirements*.txt
+
+# Cache directories
+.cache/
+.eslintcache
+.stylelintcache
+.turbo/
+.vercel/
+.netlify/
+*.tsbuildinfo
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-*
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Database and uploads
+data/
+*.db
+*.sqlite
+*.sqlite3
+uploads/
+*.log
+
+# Documentation (narrative markdown) - EXCLUDE ALL markdown except essential config
+docs/
+*.md
+!README.md
+
+# Memory and progress tracking
+memory-bank/
+progress.md
+activeContext.md
+CAPABILITY_AUDIT.md
+CAPABILITY_COVERAGE.md
+SYSTEM_ARCHITECTURE_MAP.md
+
+# CI/CD - exclude all workflow files (operational, not source logic)
+.github/
+
+# IDE specific
+.project
+.classpath
+.settings/
+*.iml
+*.ipr
+*.iws
+
+# Python specific
+*.egg-info/
+dist/
+build/
+*.whl
+.pypirc
+
+# Frontend specific
+*.tsbuildinfo
+.env
+.env.local
+.env.*.local
+
+# Runtime - entire folder excluded
+runtime/
+
+# Runtime generated
+backend/tests/generated/**
+frontend/generated/**
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Third-party/vendor code
+**/vendor/**/*
+**/third_party/**/*
+**/third-party/**/*
+**/node_modules/**/*
+
+# Large generated type files
+frontend/types/api-generated.ts
+frontend/types/*-generated.ts
+
+# Non-source config files not needed for codebase understanding
+*.yml
+*.yaml
+!docker-compose*.yml
+!.github/workflows/ci.yml
+!.github/workflows/cd.yml
+AGENTS.md
+.clinerules
+CHANGELOG.md
+CONTRIBUTING.md
+LICENSE
+SECURITY.md
+*.txt
+!requirements*.txt
+!.env.example
+!.env.sample

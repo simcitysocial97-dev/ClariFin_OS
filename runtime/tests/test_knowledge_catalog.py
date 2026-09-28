@@ -5,7 +5,6 @@ Deterministic tests. No network. No repository mutation.
 
 from __future__ import annotations
 
-
 from runtime.foundation.knowledge.catalog import (
     KnowledgeCatalog,
     get_catalog,
@@ -28,7 +27,6 @@ class TestKnowledgeCatalog:
         assert len(catalog.integrity_rules) == 0
 
     def test_catalog_endpoint_lookup(self) -> None:
-        catalog = KnowledgeCatalog()
         endpoint = EndpointEntry(
             path="/api/test",
             method="GET",
@@ -46,7 +44,6 @@ class TestKnowledgeCatalog:
         assert result is None
 
     def test_catalog_workspace_lookup(self) -> None:
-        catalog = KnowledgeCatalog()
         workspace = WorkspaceEntry(
             name="TestWorkspace",
             references={},

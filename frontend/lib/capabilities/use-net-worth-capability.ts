@@ -13,6 +13,7 @@ import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { NetWorthViewModel } from '@/types/net-worth-view-model';
 import { netWorthMapper } from '@/lib/mappers/net-worth-mapper';
+import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
 
 // Query key for React Query
 const NET_WORTH_QUERY_KEY = 'netWorth';
@@ -108,17 +109,18 @@ export function useNetWorthCapability(): NetWorthCapabilityReturn {
   } = useQuery<NetWorthViewModel | null>({
     queryKey: [NET_WORTH_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const response = await fetch('/api/networth');
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-      const raw = await response.json();
+      const query = new URLSearchParams();
+      if (queryParams.date_range) query.set('date_range', queryParams.date_range);
+      if (queryParams.account_types) query.set('account_types', queryParams.account_types);
+      if (queryParams.period) query.set('period', queryParams.period);
+      const suffix = query.size > 0 ? `?${query.toString()}` : '';
+      const raw = await apiFetchJson(`/api/v1/workspaces/net-worth${suffix}`) as any;
       return netWorthMapper.mapNetWorthDTO(raw);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (React Query v5 uses gcTime instead of cacheTime)
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retry: transientRetryPolicy,
+    retryDelay: 1000,
   });
 
   // Loading timeout effect - show message after 10 seconds

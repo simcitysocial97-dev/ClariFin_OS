@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.emi.x_compute_emi_conversion__mutmut_14: survived
+--- src/engines/credit_card_engine/emi.py
++++ src/engines/credit_card_engine/emi.py
+@@ -9,7 +9,7 @@
+     if annual_rate_bps < 0:
+         raise ValueError("annual_rate_bps must be non-negative")
+     if tenure_months <= 0:
+-        raise ValueError("tenure_months must be positive")
++        raise ValueError("XXtenure_months must be positiveXX")
+ 
+     emi_paise = compute_emi_fixed(
+         principal_paise=amount_paise,

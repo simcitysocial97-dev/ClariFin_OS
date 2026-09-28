@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_133: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -91,7 +91,7 @@
+     # Determine mode literal
+     mode_literal: Literal["reduce_tenure", "reduce_emi"] = (
+         "reduce_tenure"
+-        if mode in ("reduce_tenure", PrepaymentMode.REDUCE_TENURE)
++        if mode in ("REDUCE_TENURE", PrepaymentMode.REDUCE_TENURE)
+         else "reduce_emi"
+     )
+ 

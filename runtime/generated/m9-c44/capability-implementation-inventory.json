@@ -1,0 +1,862 @@
+{
+  "schema": "m9-c44-capability-inventory/v1",
+  "generated_at": "2026-08-27T16:10:25Z",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "total_capabilities": 19,
+  "capabilities": [
+    {
+      "id": "accounts",
+      "name": "Accounts Management",
+      "description": "Manage bank accounts, account balances, account linking, and account metadata",
+      "criticality": "high",
+      "source_modules": [
+        "backend/src/engines/account_engine",
+        "backend/src/services/account_service.py",
+        "backend/src/services/audit_service.py",
+        "backend/src/models/account.py",
+        "backend/src/models/account_balance.py",
+        "backend/src/models/account_link.py",
+        "backend/src/repositories/account_repository.py",
+        "backend/src/repositories/account_balance_repository.py",
+        "backend/src/repositories/account_link_repository.py",
+        "backend/src/routers/accounts.py",
+        "backend/src/core/dtos/account_dto.py",
+        "backend/src/core/dtos/accounts_dto.py"
+      ],
+      "components": ["account_engine"],
+      "test_surfaces": [
+        "backend/tests/unit/engines/account/",
+        "backend/tests/integration/",
+        "backend/tests/capability/financial_intelligence/",
+        "runtime/tests/golden/"
+      ],
+      "verification_tasks": [
+        "unit tests for account_engine",
+        "integration tests for account_service",
+        "API contract tests for /accounts endpoints",
+        "golden regression scenarios"
+      ],
+      "existing_evidence": [
+        "C42.26 component matrix (account_engine 89.1% mutation)",
+        "C43 strengthening batch 1 (account_engine 89.1% -> 94.5%)",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["transaction-intelligence", "reconciliation", "common-calculations"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["Service layer unit tests limited", "Account balance linkage edge cases"]
+    },
+    {
+      "id": "behaviour",
+      "name": "Behaviour Analysis",
+      "description": "Financial personality profiling, stress indices, spending patterns, insights generation, and nudges",
+      "criticality": "high",
+      "source_modules": [
+        "backend/src/engines/behaviour_engine/",
+        "backend/src/services/behaviour_service.py",
+        "backend/src/services/behaviour_workspace_service.py",
+        "backend/src/models/behaviour.py",
+        "backend/src/repositories/behaviour_repository.py",
+        "backend/src/routers/behaviour.py",
+        "backend/src/core/dtos/behaviour_dto.py",
+        "backend/src/core/mappers/behaviour_mapper.py",
+        "backend/src/engines/insight_generator.py",
+        "backend/src/engines/nudge_engine.py"
+      ],
+      "components": ["behaviour_engine"],
+      "test_surfaces": [
+        "backend/tests/unit/engines/behaviour/",
+        "backend/tests/unit/core/mappers/test_behaviour_mapper.py",
+        "backend/tests/capability/financial_intelligence/",
+        "backend/tests/properties/financial_intelligence/"
+      ],
+      "verification_tasks": [
+        "unit tests for behaviour_engine core/helpers",
+        "stress index boundary tests",
+        "insights generation threshold tests",
+        "nudge generation tests",
+        "mapper DTO mapping tests"
+      ],
+      "existing_evidence": [
+        "C43 behaviour_engine strengthening (35.7% -> 65.9%)",
+        "5 new test files (~300 tests)",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["transaction-intelligence", "financial-intelligence", "common-calculations"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["Remaining 2,459 survivors at 65.9%", "Cross-capability dependency coverage incomplete"]
+    },
+    {
+      "id": "cashflow",
+      "name": "Cashflow Forecasting",
+      "description": "Cashflow projection, runway estimation, and cashflow analysis",
+      "criticality": "high",
+      "source_modules": [
+        "backend/src/engines/cashflow_engine.py",
+        "backend/src/services/cashflow_service.py",
+        "backend/src/services/cashflow_workspace_service.py",
+        "backend/src/models/financial_goal.py",
+        "backend/src/repositories/cashflow_repository.py",
+        "backend/src/routers/cashflow.py",
+        "backend/src/core/dtos/cashflow_dto.py"
+      ],
+      "components": ["cashflow_engine"],
+      "test_surfaces": [
+        "backend/tests/unit/engines/cashflow/",
+        "backend/tests/capability/financial_intelligence/"
+      ],
+      "verification_tasks": [
+        "unit tests for cashflow_engine projection math",
+        "property tests for cashflow conservation",
+        "API contract tests for /cashflow endpoints"
+      ],
+      "existing_evidence": [
+        "C42.26 component matrix (cashflow_engine 74.4% mutation)",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["financial-intelligence", "common-calculations", "transactions"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["44 surviving mutants", "Service layer coverage limited"]
+    },
+    {
+      "id": "credit-cards",
+      "name": "Credit Card Management",
+      "description": "Credit card statements, EMI calculations, foreclosure logic, and credit card risk assessment",
+      "criticality": "high",
+      "source_modules": [
+        "backend/src/engines/credit_card_engine/",
+        "backend/src/services/credit_card_service.py",
+        "backend/src/services/credit_cards_workspace_service.py",
+        "backend/src/models/credit_card.py",
+        "backend/src/models/credit_card_emi.py",
+        "backend/src/models/credit_card_foreclosure.py",
+        "backend/src/models/credit_card_statement.py",
+        "backend/src/repositories/credit_card_repository.py",
+        "backend/src/repositories/credit_card_statement_repository.py",
+        "backend/src/routers/cards_statements.py",
+        "backend/src/core/dtos/credit_cards_dto.py"
+      ],
+      "components": ["credit_card_engine"],
+      "test_surfaces": [
+        "backend/tests/unit/engines/credit_card/",
+        "backend/tests/unit/engines/credit_card/test_mutation_gap_repairs.py",
+        "backend/tests/capability/financial_intelligence/"
+      ],
+      "verification_tasks": [
+        "unit tests for credit_card_engine risk/metrics/outstanding",
+        "foreclosure boundary tests",
+        "EMI calculation property tests",
+        "API contract tests for /cards endpoints"
+      ],
+      "existing_evidence": [
+        "C42.38 targeted measurement (75.6%, 582 mutants)",
+        "C42.17 survivor inventory (144 survivors: A:44, B:99, E:1)",
+        "mutation gap repairs tests",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["financial-intelligence", "common-calculations", "transactions"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["142 surviving mutants (75.6%)", "44 Class-A gaps remain"]
+    },
+    {
+      "id": "transactions",
+      "name": "Transaction Management",
+      "description": "Transaction ingestion, categorization, enrichment, and statement parsing",
+      "criticality": "high",
+      "source_modules": [
+        "backend/src/services/transaction_service.py",
+        "backend/src/services/statement_service.py",
+        "backend/src/services/import_service.py",
+        "backend/src/models/transaction.py",
+        "backend/src/models/statement.py",
+        "backend/src/repositories/transaction_repository.py",
+        "backend/src/repositories/statement_repository.py",
+        "backend/src/routers/transactions.py",
+        "backend/src/core/dtos/transaction_dto.py",
+        "backend/src/core/dtos/statement_dto.py",
+        "backend/src/structural/"
+      ],
+      "components": [],
+      "test_surfaces": [
+        "backend/tests/unit/test_calculations.py",
+        "backend/tests/unit/test_calculations_strengthening.py",
+        "backend/tests/integration/"
+      ],
+      "verification_tasks": [
+        "unit tests for transaction_service",
+        "statement parsing tests",
+        "import/enrichment pipeline tests",
+        "API contract tests for /transactions endpoints"
+      ],
+      "existing_evidence": [
+        "calculation unit tests",
+        "API contract tests for transactions",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["transaction-intelligence", "common-calculations", "financial-events"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["No dedicated mutation component", "Service layer coverage 88% but limited behavioral assertions"]
+    },
+    {
+      "id": "transaction-intelligence",
+      "name": "Transaction Intelligence",
+      "description": "Automatic transaction classification: EMI detection, CC payment detection, cash conversion detection",
+      "criticality": "high",
+      "source_modules": [
+        "backend/src/engines/transaction_intelligence/",
+        "backend/src/services/transaction_intelligence_service.py",
+        "backend/src/models/transaction_classification.py",
+        "backend/src/repositories/transaction_classification_repository.py",
+        "backend/src/core/dtos/transaction_dto.py"
+      ],
+      "components": ["transaction_intelligence"],
+      "test_surfaces": [
+        "backend/tests/unit/engines/transaction_intelligence/",
+        "backend/tests/properties/transaction_intelligence/",
+        "backend/tests/capability/transaction_intelligence/"
+      ],
+      "verification_tasks": [
+        "unit tests for cash_conversion_detector",
+        "unit tests for cc_payment_detector",
+        "unit tests for loan_emi_detector",
+        "property-based detector invariant tests"
+      ],
+      "existing_evidence": [
+        "C42.26 component matrix (transaction_intelligence 70.2% mutation)",
+        "C42.25 inventory TXN-E1..C2 documented",
+        "property tests for detectors",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["transactions", "loans", "credit-cards", "common-calculations"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["437 surviving mutants", "TXN-E1 ambiguity unresolved", "Service layer coverage 38%"]
+    },
+    {
+      "id": "financial-intelligence",
+      "name": "Financial Intelligence",
+      "description": "Financial goal planning, optimization, scenario analysis, forecasting, and health scoring",
+      "criticality": "high",
+      "source_modules": [
+        "backend/src/engines/financial_intelligence/",
+        "backend/src/services/financial_intelligence_service.py",
+        "backend/src/services/forecast_service.py",
+        "backend/src/services/loan_analysis_service.py",
+        "backend/src/services/investment_service.py",
+        "backend/src/models/financial_goal.py",
+        "backend/src/models/loan_analysis.py",
+        "backend/src/models/investment.py",
+        "backend/src/repositories/financial_goal_repository.py",
+        "backend/src/repositories/investment_repository.py",
+        "backend/src/core/dtos/analytics_dto.py",
+        "backend/src/core/dtos/forecast_dto.py",
+        "backend/src/core/dtos/investments_dto.py",
+        "backend/src/core/dtos/loans_dto.py"
+      ],
+      "components": ["financial_intelligence"],
+      "test_surfaces": [
+        "backend/tests/unit/engines/financial_intelligence/",
+        "backend/tests/properties/financial_intelligence/",
+        "backend/tests/capability/financial_intelligence/"
+      ],
+      "verification_tasks": [
+        "unit tests for goal_planner",
+        "unit tests for optimization",
+        "unit tests for scenario intelligence",
+        "unit tests for forecasting",
+        "property tests for financial invariants"
+      ],
+      "existing_evidence": [
+        "C42.26 component matrix (financial_intelligence 73.0% mutation)",
+        "C42.25 anomalies FIN-E1..E5 documented",
+        "property tests for scenario/optimization",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["loans", "investments", "cashflow", "transaction-intelligence", "common-calculations"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["1000 surviving mutants", "5 Class-E candidates documented", "Service layer coverage limited"]
+    },
+    {
+      "id": "loans",
+      "name": "Loan Management",
+      "description": "Loan accounts, loan payments, loan simulations, and amortization schedules",
+      "criticality": "high",
+      "source_modules": [
+        "backend/src/engines/loan_engine/",
+        "backend/src/services/loan_service.py",
+        "backend/src/services/loan_simulation_service.py",
+        "backend/src/services/loans_workspace_service.py",
+        "backend/src/models/loan.py",
+        "backend/src/models/loan_payment.py",
+        "backend/src/models/loan_simulation.py",
+        "backend/src/models/loan_analysis.py",
+        "backend/src/repositories/loan_repository.py",
+        "backend/src/repositories/loan_payment_repository.py",
+        "backend/src/routers/loans.py",
+        "backend/src/core/dtos/loans_dto.py"
+      ],
+      "components": ["loan_engine"],
+      "test_surfaces": [
+        "backend/tests/unit/engines/loan/",
+        "backend/tests/properties/loan_engine/",
+        "backend/tests/capability/financial_intelligence/"
+      ],
+      "verification_tasks": [
+        "unit tests for loan_engine amortization",
+        "property tests for balance strictly decreasing",
+        "payment schedule validation",
+        "API contract tests for /loans endpoints"
+      ],
+      "existing_evidence": [
+        "C42.26 component matrix (loan_engine 84.0% mutation)",
+        "C42.17 survivor inventory (308 survivors: A:258, B:39, E:11)",
+        "property tests for amortization",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["financial-intelligence", "common-calculations", "transactions"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["207 surviving mutants", "Service layer coverage 44-79%", "11 historical Class-E candidates"]
+    },
+    {
+      "id": "reconciliation",
+      "name": "Reconciliation",
+      "description": "Account reconciliation, transaction matching, and discrepancy detection",
+      "criticality": "high",
+      "source_modules": [
+        "backend/src/engines/reconciliation_engine.py",
+        "backend/src/services/reconciliation_service.py",
+        "backend/src/services/reconciliation_workspace_service.py",
+        "backend/src/models/reconciliation.py",
+        "backend/src/repositories/reconciliation_repository.py",
+        "backend/src/repositories/reconciliation_audit_repository.py",
+        "backend/src/routers/reconciliation.py",
+        "backend/src/core/dtos/reconciliation_dto.py"
+      ],
+      "components": ["reconciliation_engine"],
+      "test_surfaces": [
+        "backend/tests/unit/engines/reconciliation/",
+        "backend/tests/capability/financial_intelligence/"
+      ],
+      "verification_tasks": [
+        "unit tests for reconciliation_engine matching logic",
+        "boundary tests for confidence thresholds",
+        "API contract tests for /reconciliation endpoints"
+      ],
+      "existing_evidence": [
+        "C42.26 component matrix (reconciliation_engine 80.7% mutation)",
+        "C42.17 survivor inventory (72 survivors: A:69, E:3)",
+        "C43 strengthening batch 2 (22 boundary tests added)",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["transactions", "accounts", "common-calculations"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["71 surviving mutants", "3 Class-E candidates", "Service layer coverage 75%"]
+    },
+    {
+      "id": "investments",
+      "name": "Investments",
+      "description": "Investment tracking, portfolio management, and investment workspace",
+      "criticality": "medium",
+      "source_modules": [
+        "backend/src/services/investment_service.py",
+        "backend/src/services/investments_workspace_service.py",
+        "backend/src/models/investment.py",
+        "backend/src/repositories/investment_repository.py",
+        "backend/src/routers/investments.py",
+        "backend/src/core/dtos/investments_dto.py"
+      ],
+      "components": [],
+      "test_surfaces": [
+        "backend/tests/capability/financial_intelligence/"
+      ],
+      "verification_tasks": [
+        "unit tests for investment_service",
+        "API contract tests for /investments endpoints"
+      ],
+      "existing_evidence": [
+        "API contract tests",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["financial-intelligence", "common-calculations"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["No dedicated mutation component", "Service layer coverage 77%", "Limited behavioral tests"]
+    },
+    {
+      "id": "net-worth",
+      "name": "Net Worth",
+      "description": "Net worth calculation, asset/liability tracking, and net worth workspace",
+      "criticality": "medium",
+      "source_modules": [
+        "backend/src/services/networth_service.py",
+        "backend/src/services/networth_workspace_service.py",
+        "backend/src/models/account_balance.py",
+        "backend/src/repositories/networth_repository.py",
+        "backend/src/routers/networth.py",
+        "backend/src/core/dtos/net_worth_dto.py"
+      ],
+      "components": [],
+      "test_surfaces": [
+        "backend/tests/capability/financial_intelligence/"
+      ],
+      "verification_tasks": [
+        "unit tests for networth_service",
+        "API contract tests for /net-worth endpoints"
+      ],
+      "existing_evidence": [
+        "API contract tests",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["accounts", "financial-intelligence", "common-calculations"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["No dedicated mutation component", "Service layer coverage 68%", "Limited behavioral tests"]
+    },
+    {
+      "id": "recommendations",
+      "name": "Recommendations",
+      "description": "Financial product recommendations and recommendation engine logic",
+      "criticality": "medium",
+      "source_modules": [
+        "backend/src/engines/recommendation_engine/",
+        "backend/src/services/recommendation_service.py",
+        "backend/src/routers/managed_accounts.py",
+        "backend/src/core/dtos/analytics_dto.py"
+      ],
+      "components": ["recommendation_engine"],
+      "test_surfaces": [
+        "backend/tests/unit/engines/recommendation/",
+        "backend/tests/capability/financial_intelligence/"
+      ],
+      "verification_tasks": [
+        "unit tests for recommendation_engine decision rules",
+        "API contract tests for recommendation endpoints"
+      ],
+      "existing_evidence": [
+        "C42.26 component matrix (recommendation_engine 63.5% mutation)",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["financial-intelligence", "transaction-intelligence"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["103 surviving mutants", "Service layer 0% coverage (recommendation_service.py)"]
+    },
+    {
+      "id": "financial-events",
+      "name": "Financial Events",
+      "description": "Financial event lineage, event walking, and event audit trail",
+      "criticality": "medium",
+      "source_modules": [
+        "backend/src/engines/financial_events/",
+        "backend/src/services/financial_events_service.py",
+        "backend/src/models/financial_event.py",
+        "backend/src/repositories/financial_event_repository.py",
+        "backend/src/routers/financial_events.py",
+        "backend/src/core/dtos/financial_event.py"
+      ],
+      "components": ["financial_events"],
+      "test_surfaces": [
+        "backend/tests/unit/engines/financial_events/",
+        "backend/tests/capability/financial_intelligence/"
+      ],
+      "verification_tasks": [
+        "unit tests for financial_events engine",
+        "lineage/walker behavior tests",
+        "API contract tests for /financial-events endpoints"
+      ],
+      "existing_evidence": [
+        "C42.26 component matrix (financial_events 64.5% mutation)",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["transactions", "common-calculations"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["250 surviving mutants", "Service layer coverage limited"]
+    },
+    {
+      "id": "common-calculations",
+      "name": "Common Calculations",
+      "description": "Shared arithmetic, rounding, percentage, date, and rate calculation utilities",
+      "criticality": "high",
+      "source_modules": [
+        "backend/src/common/calculations.py",
+        "backend/src/common/enrichment.py",
+        "backend/src/common/formatting.py",
+        "backend/src/common/parsing.py"
+      ],
+      "components": ["common_calculations"],
+      "test_surfaces": [
+        "backend/tests/unit/test_calculations.py",
+        "backend/tests/unit/test_calculations_strengthening.py"
+      ],
+      "verification_tasks": [
+        "unit tests for rounding/percent/date/rate helpers",
+        "property tests for arithmetic invariants",
+        "paise conservation tests"
+      ],
+      "existing_evidence": [
+        "C42.26 component matrix (common_calculations 56.4% mutation)",
+        "C43 defect C43-E1 (compute_is_large threshold bug)",
+        "calculation unit tests",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["accounts", "transactions", "loans", "credit-cards", "financial-intelligence"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["164 surviving mutants", "C43-E1 defect OPEN", "Highest leverage per kill but low coverage"]
+    },
+    {
+      "id": "core-domain",
+      "name": "Core Domain",
+      "description": "Money type, domain primitives, and domain validation rules",
+      "criticality": "high",
+      "source_modules": [
+        "backend/src/core/domain/",
+        "backend/src/core/db/"
+      ],
+      "components": ["core_domain_money"],
+      "test_surfaces": [
+        "backend/tests/unit/core/",
+        "backend/tests/architecture/"
+      ],
+      "verification_tasks": [
+        "unit tests for Money type",
+        "paise validation tests",
+        "domain invariant tests"
+      ],
+      "existing_evidence": [
+        "C42.26 component matrix (core_domain_money 82.4% mutation)",
+        "architecture boundary tests",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["common-calculations", "accounts", "transactions"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["18 surviving mutants", "Limited property tests"]
+    },
+    {
+      "id": "ledger",
+      "name": "Ledger Audit",
+      "description": "Ledger integrity checks, audit trails, and financial record verification",
+      "criticality": "high",
+      "source_modules": [
+        "backend/src/engines/ledger_audit_engine.py",
+        "backend/src/services/audit_service.py",
+        "backend/src/repositories/reconciliation_audit_repository.py",
+        "backend/src/core/dtos/analytics_dto.py"
+      ],
+      "components": ["ledger_audit_engine"],
+      "test_surfaces": [
+        "backend/tests/unit/engines/ledger/",
+        "backend/tests/capability/financial_intelligence/"
+      ],
+      "verification_tasks": [
+        "unit tests for ledger_audit_engine",
+        "double-entry balance tests",
+        "reconciliation correctness tests"
+      ],
+      "existing_evidence": [
+        "C42.26 component matrix (ledger_audit_engine 56.8% mutation)",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["reconciliation", "accounts", "transactions"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["82 surviving mutants", "Only 1 test", "Validation maturity NONE"]
+    },
+    {
+      "id": "dashboard",
+      "name": "Dashboard",
+      "description": "Dashboard data aggregation, metrics compilation, and dashboard service",
+      "criticality": "medium",
+      "source_modules": [
+        "backend/src/services/dashboard_service.py",
+        "backend/src/core/dtos/dashboard_dto.py",
+        "backend/src/routers/__init__.py"
+      ],
+      "components": [],
+      "test_surfaces": [
+        "backend/tests/capability/financial_intelligence/"
+      ],
+      "verification_tasks": [
+        "unit tests for dashboard_service",
+        "API contract tests for dashboard endpoints"
+      ],
+      "existing_evidence": [
+        "API contract tests",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["financial-intelligence", "accounts", "transactions"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": true,
+      "gaps": ["No dedicated mutation component", "Limited behavioral tests"]
+    },
+    {
+      "id": "api-contracts",
+      "name": "API Contracts",
+      "description": "OpenAPI schema validation, wire compatibility, and API consumer integrity",
+      "criticality": "high",
+      "source_modules": [
+        "backend/src/routers/",
+        "backend/src/core/dtos/",
+        "backend/src/api.py",
+        "backend/src/api_common.py"
+      ],
+      "components": [],
+      "test_surfaces": [
+        "backend/tests/integration/contracts/",
+        "runtime/tests/test_api_contracts.py"
+      ],
+      "verification_tasks": [
+        "freshness checks",
+        "generated_types validation",
+        "schema_compat checks",
+        "consumer_integrity tests",
+        "wire tests"
+      ],
+      "existing_evidence": [
+        "api-contract-evidence.json",
+        "5/5 contract families PASS",
+        "m9-c43-workflow-verification-matrix.json"
+      ],
+      "cross_module_dependencies": ["accounts", "transactions", "loans", "credit-cards", "financial-intelligence"],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": false,
+      "gaps": ["No executable behavioral evidence for API contract logic itself", "Schemathesis not executed locally"]
+    },
+    {
+      "id": "migrations",
+      "name": "Database Migrations",
+      "description": "Database schema migration scripts and migration validation",
+      "criticality": "high",
+      "source_modules": [
+        "backend/src/migrations/"
+      ],
+      "components": [],
+      "test_surfaces": [],
+      "verification_tasks": [
+        "migration up/down tests",
+        "schema consistency checks"
+      ],
+      "existing_evidence": [
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": [],
+      "outside_engines": true,
+      "spanning_multiple_modules": false,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": false,
+      "gaps": ["No executable behavioral evidence", "No dedicated test surface"]
+    },
+    {
+      "id": "runtime-verification",
+      "name": "Runtime Verification",
+      "description": "Verification runtime infrastructure, profiles, and self-test execution",
+      "criticality": "high",
+      "source_modules": [
+        "runtime/foundation/verification/",
+        "runtime/verify.py"
+      ],
+      "components": [],
+      "test_surfaces": [
+        "runtime/tests/"
+      ],
+      "verification_tasks": [
+        "runtime suite 785 tests",
+        "verification infrastructure tests",
+        "profile execution tests"
+      ],
+      "existing_evidence": [
+        "785/785 runtime tests pass",
+        "C42.38 certification 144/144",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": [],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": false,
+      "gaps": ["No executable behavioral evidence for verification logic itself"]
+    },
+    {
+      "id": "golden-regression",
+      "name": "Golden Regression",
+      "description": "Golden dataset regression tests and capability golden scenarios",
+      "criticality": "medium",
+      "source_modules": [
+        "runtime/tests/golden/",
+        "backend/tests/capability/"
+      ],
+      "components": [],
+      "test_surfaces": [
+        "runtime/tests/golden/",
+        "backend/tests/capability/"
+      ],
+      "verification_tasks": [
+        "golden dataset scenarios",
+        "capability golden tests"
+      ],
+      "existing_evidence": [
+        "38 golden capability tests pass",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": [],
+      "outside_engines": true,
+      "spanning_multiple_modules": false,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": false,
+      "gaps": ["No executable behavioral evidence for golden regression logic itself"]
+    },
+    {
+      "id": "mutation-analysis",
+      "name": "Mutation Analysis",
+      "description": "Mutation testing infrastructure, population management, and analysis",
+      "criticality": "high",
+      "source_modules": [
+        "runtime/foundation/verification/mutation_runner.py",
+        "runtime/foundation/verification/mutation_inventory.py",
+        "runtime/foundation/verification/mutation_contract.py",
+        "runtime/foundation/verification/diagnostic_agent.py"
+      ],
+      "components": [],
+      "test_surfaces": [
+        "runtime/tests/test_mutation_infra.py",
+        "runtime/tests/test_mutation_inventory.py"
+      ],
+      "verification_tasks": [
+        "mutation infrastructure tests",
+        "inventory classification tests",
+        "contract validation tests"
+      ],
+      "existing_evidence": [
+        "test_mutation_infra.py passes",
+        "test_mutation_inventory.py passes",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": [],
+      "outside_engines": true,
+      "spanning_multiple_modules": true,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": false,
+      "gaps": ["No executable behavioral evidence for mutation analysis logic itself"]
+    },
+    {
+      "id": "e2e-tests",
+      "name": "End-to-End Tests",
+      "description": "Playwright E2E tests covering user journeys across frontend and backend",
+      "criticality": "high",
+      "source_modules": [
+        "frontend/tests/e2e/"
+      ],
+      "components": [],
+      "test_surfaces": [
+        "frontend/tests/e2e/specs/"
+      ],
+      "verification_tasks": [
+        "chromium E2E tests",
+        "mobile-chrome E2E tests",
+        "visual regression tests"
+      ],
+      "existing_evidence": [
+        "438 passed (chromium)",
+        "466 passed (mobile-chrome)",
+        "m9-c43-baseline.json"
+      ],
+      "cross_module_dependencies": ["accounts", "transactions", "loans", "credit-cards", "financial-intelligence"],
+      "outside_engines": true,
+      "spanning_multiple_modules": false,
+      "spanning_multiple_components": false,
+      "has_executable_behavioral_surface": false,
+      "gaps": ["No executable behavioral evidence for E2E test logic itself", "2 load-timing flakes under local load"]
+    }
+  ],
+  "unmapped_sources": [
+    "backend/src/startup.py",
+    "backend/src/api.py",
+    "backend/src/health.py",
+    "backend/src/main.py",
+    "backend/src/structural/layout_analyzer.py",
+    "backend/src/tools/*",
+    "backend/src/scripts/*"
+  ],
+  "shared_infrastructure": [
+    {
+      "module": "backend/src/common/",
+      "capabilities": ["accounts", "transactions", "loans", "credit-cards", "financial-intelligence", "reconciliation"],
+      "description": "Shared arithmetic, formatting, enrichment, and parsing utilities used across all financial capabilities"
+    },
+    {
+      "module": "backend/src/core/domain/",
+      "capabilities": ["accounts", "transactions", "loans", "credit-cards", "financial-intelligence", "reconciliation"],
+      "description": "Domain primitives (Money type, validation rules) used across all financial capabilities"
+    },
+    {
+      "module": "backend/src/core/dtos/",
+      "capabilities": ["accounts", "transactions", "loans", "credit-cards", "financial-intelligence", "reconciliation", "behaviour", "cashflow", "investments", "net-worth", "recommendations", "dashboard"],
+      "description": "Data transfer objects for all API endpoints"
+    },
+    {
+      "module": "backend/src/core/mappers/",
+      "capabilities": ["behaviour", "accounts", "transactions", "loans", "credit-cards"],
+      "description": "DTO mapping logic for engine-to-API translation"
+    },
+    {
+      "module": "backend/src/repositories/",
+      "capabilities": ["accounts", "transactions", "loans", "credit-cards", "financial-intelligence", "reconciliation", "investments", "net-worth", "recommendations", "financial-events"],
+      "description": "Database access layer shared across capabilities"
+    }
+  ],
+  "cross_capability_dependencies": [
+    "common-calculations -> all financial engines",
+    "core-domain -> all financial engines",
+    "transactions -> transaction-intelligence, financial-events, reconciliation",
+    "accounts -> reconciliation, ledger, recommendations",
+    "loans -> financial-intelligence, transaction-intelligence",
+    "credit-cards -> financial-intelligence, transaction-intelligence",
+    "financial-intelligence -> cashflow, recommendations, investments",
+    "reconciliation -> ledger, accounts, transactions"
+  ]
+}

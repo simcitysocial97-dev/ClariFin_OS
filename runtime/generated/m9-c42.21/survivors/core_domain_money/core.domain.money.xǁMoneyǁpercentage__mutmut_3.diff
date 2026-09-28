@@ -1,0 +1,13 @@
+# status: survived
+# core.domain.money.xǁMoneyǁpercentage__mutmut_3: survived
+--- src/core/domain/money.py
++++ src/core/domain/money.py
+@@ -9,7 +9,7 @@
+             New Money instance with percentage amount
+         """
+     if not isinstance(percent, int):
+-        raise TypeError(f"Percentage must be int, got {type(percent).__name__}")
++        raise TypeError(f"Percentage must be int, got {type(None).__name__}")
+     if not (0 <= percent <= 100):
+         raise ValueError(f"Percentage must be 0-100, got {percent}")
+     return Money(round(self._paise * percent / 100))

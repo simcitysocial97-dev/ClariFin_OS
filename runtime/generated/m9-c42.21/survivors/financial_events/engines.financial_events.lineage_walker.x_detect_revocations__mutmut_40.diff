@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_detect_revocations__mutmut_40: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -40,7 +40,7 @@
+ 
+     for event in events:
+         event_type = event.get("event_type", "")
+-        event_id = event.get("id", 0)
++        event_id = event.get("id", )
+         transfer_id = event.get("transfer_id", "")
+         date_iso = event.get("date_iso", "")
+         lifecycle_state = event.get("lifecycle_state", "")

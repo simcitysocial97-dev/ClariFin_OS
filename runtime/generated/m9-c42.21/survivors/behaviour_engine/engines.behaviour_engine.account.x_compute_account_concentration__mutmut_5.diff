@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.account.x_compute_account_concentration__mutmut_5: survived
+--- src/engines/behaviour_engine/account.py
++++ src/engines/behaviour_engine/account.py
+@@ -23,7 +23,7 @@
+     if not account_balances_paise:
+         return Decimal("0")
+ 
+-    if len(account_balances_paise) == 1:
++    if len(account_balances_paise) == 2:
+         return Decimal("1")
+ 
+     largest_balance = max(account_balances_paise)

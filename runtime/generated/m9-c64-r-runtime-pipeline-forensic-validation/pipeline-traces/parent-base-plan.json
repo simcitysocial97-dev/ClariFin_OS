@@ -1,0 +1,210 @@
+{
+  "set_id": "set-276757a3c17b",
+  "obligations": [
+    {
+      "obligation_id": "obl-276757a3c17b-0",
+      "change": {
+        "path": "backend/src/routers/platform.py",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "api-contracts",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-276757a3c17b-0",
+        "capability_id": "api-contracts",
+        "obligation_kind": "contract",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "contracts"
+      },
+      "disposition": "open",
+      "task_id": "task-0001",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:26:06.338417+00:00",
+      "closed_at": null,
+      "fingerprint": "3196f4e84d0c224ee999db756b0f72ddf30d0a08e897cb5f629f97ae12b689e1"
+    },
+    {
+      "obligation_id": "obl-276757a3c17b-1",
+      "change": {
+        "path": "backend/src/routers/platform.py",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "api-contracts",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-276757a3c17b-1",
+        "capability_id": "api-contracts",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "frontend"
+      },
+      "disposition": "open",
+      "task_id": "task-0002",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:26:06.338442+00:00",
+      "closed_at": null,
+      "fingerprint": "da3a6b933fdcc5fecf0e52951f25be03e5c2cb8884b6656c81aa0680dde1994a"
+    },
+    {
+      "obligation_id": "obl-276757a3c17b-2",
+      "change": {
+        "path": "backend/src/routers/platform.py",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "api-contracts",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-276757a3c17b-2",
+        "capability_id": "api-contracts",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "backend"
+      },
+      "disposition": "open",
+      "task_id": "task-0003",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:26:06.338458+00:00",
+      "closed_at": null,
+      "fingerprint": "161790fdf66388b9422baac1f9f7ea3aa301ed4910975dc464efbeaf188578ee"
+    },
+    {
+      "obligation_id": "obl-276757a3c17b-3",
+      "change": {
+        "path": "backend/src/routers/platform.py",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "api-contracts",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-276757a3c17b-3",
+        "capability_id": "api-contracts",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "run_contract_tests"
+      },
+      "disposition": "open",
+      "task_id": "task-0004",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:26:06.338471+00:00",
+      "closed_at": null,
+      "fingerprint": "9e4df62026b757c2000c7682b65bc7aa3ec0e35e99e423d76af7d56c43e7f7e9"
+    },
+    {
+      "obligation_id": "obl-276757a3c17b-4",
+      "change": {
+        "path": "backend/src/routers/platform.py",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "api-contracts",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-276757a3c17b-4",
+        "capability_id": "api-contracts",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "run_frontend_verification"
+      },
+      "disposition": "open",
+      "task_id": "task-0005",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:26:06.338484+00:00",
+      "closed_at": null,
+      "fingerprint": "e45be59d1daed624f14d17669dd6e6b0c4302ca6494f652eddb9df3592702965"
+    },
+    {
+      "obligation_id": "obl-276757a3c17b-5",
+      "change": {
+        "path": "backend/src/routers/platform.py",
+        "change_type": "modified",
+        "symbol": null,
+        "old_path": null
+      },
+      "capability": {
+        "capability_id": "api-contracts",
+        "authority": "ControlPlanePlanner",
+        "severity": "required",
+        "description": ""
+      },
+      "requirement": {
+        "requirement_id": "req-276757a3c17b-5",
+        "capability_id": "api-contracts",
+        "obligation_kind": "unit",
+        "rationale": "Directly affected by change",
+        "severity": "required",
+        "target": "run_backend_verification"
+      },
+      "disposition": "open",
+      "task_id": "task-0006",
+      "evidence": [],
+      "reasons": [
+        "Directly affected by change"
+      ],
+      "created_at": "2026-09-20T02:26:06.338498+00:00",
+      "closed_at": null,
+      "fingerprint": "3158d4fe3970358cef28fb9862773406cecbfacf9a27f02fc1bdadb355734f08"
+    }
+  ],
+  "generated_at": "2026-09-20T02:26:06.340556+00:00",
+  "repository_sha": "8990f3ae16e664d9b0f58737bd4f556bc82f52c9",
+  "plan_fingerprint": "276757a3c17b",
+  "set_fingerprint": "23b090b9207f81802a012be35977f5d20862f217ec18fc509da21fc366082438",
+  "summary": {
+    "total": 6,
+    "closed": 0,
+    "open": 6,
+    "blocked": 0,
+    "failed": 0,
+    "reused": 0,
+    "invalidated": 0
+  }
+}

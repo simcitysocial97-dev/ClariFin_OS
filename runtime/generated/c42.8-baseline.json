@@ -1,0 +1,50 @@
+{
+  "provenance": {
+    "head_sha": "255ffddec3b27a2c4bb96fb4a7e790fee2522e3e",
+    "tree_sha": "0f2ee8991c2474a96a34c2dce438fdb547bb1690",
+    "git_status": "M backend/tests/generated/mutation/mutation-summary.json\nM runtime/foundation/verification/mutation_contract.py\nM runtime/foundation/verification/mutation_runner.py\n?? AGENTS.md\n?? runtime/generated/c42.5d-ci-smoke-certification.json\n?? runtime/generated/c42.5d-ci-smoke-certification.md\n?? runtime/generated/c42.6-mutation-reconciliation.json\n?? runtime/generated/c42.6-mutation-reconciliation.md\n?? runtime/generated/c42.7-mutation-selection-certification.json\n?? runtime/generated/c42.7-mutation-selection-certification.md",
+    "python_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python",
+    "python_version": "Python 3.12.3",
+    "pytest_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/pytest",
+    "pytest_version": "pytest 9.1.1",
+    "mutmut_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/mutmut",
+    "mutmut_version": "mutmut, version 3.7.0",
+    "environment_fingerprint": {
+      "python_version": "Python 3.12.3",
+      "python_source": "venv",
+      "pytest_version": "pytest 9.1.1",
+      "pytest_source": "venv",
+      "mutmut_version": "mutmut, version 3.7.0",
+      "mutmut_source": "venv",
+      "pinned_mutmut": "3.7.0",
+      "forbidden_venvs": [],
+      "venv_bin": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin"
+    },
+    "consistent": true
+  },
+  "mutation_baseline": {
+    "target": "credit_card_engine",
+    "mode": "target",
+    "source_scope": "src/engines/credit_card_engine",
+    "test_scope": "tests/unit/engines/credit_card tests/properties/credit_card_engine tests/capability/credit_cards",
+    "generated": 582,
+    "killed": 406,
+    "survived": 176,
+    "no_tests": 0,
+    "timeout": 0,
+    "suspicious": 0,
+    "not_checked": 0,
+    "mutation_score": 69.8,
+    "duration_seconds": 99,
+    "mutmut_rc": 0,
+    "execution_status": "PASS",
+    "classification_status": "PASS",
+    "evidence_complete": true
+  },
+  "test_baseline": {
+    "total_tests": 1533,
+    "passed": 1533,
+    "failed": 1,
+    "pre_existing_failure": "backend/tests/properties/loan_engine/test_floating_rate_properties.py::test_simulate_floating_rate_schedule_rate_application"
+  }
+}

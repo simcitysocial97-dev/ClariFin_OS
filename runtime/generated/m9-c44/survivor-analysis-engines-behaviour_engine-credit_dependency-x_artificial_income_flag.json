@@ -1,0 +1,20 @@
+{
+  "schema": "m9-strengthening-survivor-analysis/v1",
+  "generated_at": "2026-08-29T09:18:05.888427+00:00",
+  "survivor_id": "engines.behaviour_engine.credit_dependency.x_artificial_income_flag__mutmut_13",
+  "diff": "# engines.behaviour_engine.credit_dependency.x_artificial_income_flag__mutmut_13: survived\n--- src/engines/behaviour_engine/credit_dependency.py\n+++ src/engines/behaviour_engine/credit_dependency.py\n@@ -34,7 +34,7 @@\n     excluded_ids: list[int] = []\n \n     for event in financial_events:\n-        event_type = event.get(\"event_type\", \"\")\n+        event_type = event.get(\"event_type\", None)\n         if event_type in artificial_income_types:\n             # For cash advances, the amount represents borrowed money\n             # This inflates available cash but creates liability",
+  "covering_test_surface": [
+    "tests/unit/engines/behaviour/test_credit_dependency.py::test_artificial_income_detects_cash_advance",
+    "tests/unit/engines/behaviour/test_credit_dependency.py::test_artificial_income_detects_liability_increase",
+    "tests/unit/engines/behaviour/test_credit_dependency.py::test_artificial_income_empty",
+    "tests/unit/engines/behaviour/test_credit_dependency.py::test_artificial_income_ignores_zero_amount",
+    "tests/unit/engines/behaviour/test_credit_dependency.py::test_artificial_income_no_matching_events",
+    "tests/unit/engines/behaviour/test_credit_dependency_strengthening.py::TestArtificialIncomeFlagMutants::test_detects_cash_advance",
+    "tests/unit/engines/behaviour/test_credit_dependency_strengthening.py::TestArtificialIncomeFlagMutants::test_no_artificial",
+    "tests/unit/engines/behaviour/test_credit_dependency_strengthening.py::TestArtificialIncomeFlagMutants::test_zero_amount_skipped",
+    "tests/unit/engines/behaviour/test_mutation_golden_groups.py::test_golden_artificialincomeflag_empty",
+    "tests/unit/engines/behaviour/test_mutation_golden_groups.py::test_golden_artificialincomeflag_rich"
+  ],
+  "capability_attribution": {},
+  "recommended_action": "Write a behavioral assertion on the covering test surface that discriminates the mutation; if a production defect is suspected, escalate for human review (Class-E)."
+}

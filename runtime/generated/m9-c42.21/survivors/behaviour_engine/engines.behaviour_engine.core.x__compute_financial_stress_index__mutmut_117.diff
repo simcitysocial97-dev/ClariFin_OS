@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_117: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -51,7 +51,7 @@
+     credit_dependency = total_credit / max(total_debit, 1) if total_debit > 0 else 0
+ 
+     # End-of-month depletion (last 5 days spending ratio)
+-    eom_spending: float = 0.0
++    eom_spending: float = 1.0
+     total_spending: float = 0.0
+ 
+     for txn in debits:

@@ -53,7 +53,7 @@ export class TransactionMapper implements ITransactionMapper {
       category_id: dto.category ? `cat_${dto.category.toLowerCase()}` : undefined,
       category_name: dto.category,
       category_path: dto.subcategory ? `${dto.category} > ${dto.subcategory}` : dto.category,
-      subcategory: dto.subcategory,
+      subcategory: dto.subcategory ?? undefined,
       merchant_id: undefined,
       merchant_name: undefined,
       merchant_category: undefined,
@@ -192,7 +192,7 @@ export class TransactionMapper implements ITransactionMapper {
         type: 'categorization',
         summary: `Categorized as ${dto.category}${dto.subcategory ? ` > ${dto.subcategory}` : ''}`,
         source: {
-          file_id: dto.statement_file,
+          file_id: dto.statement_file ?? undefined,
           row_number: dto.sequence_num,
         },
       });
@@ -204,7 +204,7 @@ export class TransactionMapper implements ITransactionMapper {
         type: 'import',
         summary: `Imported from ${dto.statement_file}`,
         source: {
-          file_id: dto.statement_file,
+          file_id: dto.statement_file ?? undefined,
           row_number: dto.sequence_num,
         },
       });

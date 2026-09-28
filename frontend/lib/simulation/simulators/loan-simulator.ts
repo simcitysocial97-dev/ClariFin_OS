@@ -8,6 +8,13 @@
  * All rates in basis points (integer).
  *
  * Reuses backend loan engine calculations via the graph context.
+ *
+ * ARCHITECTURAL EXCEPTION (M9-C50 Phase 7):
+ * This simulator performs financial arithmetic for ADVISORY/PLANNING purposes only.
+ * It operates on user-provided inputs for "what-if" scenario modeling.
+ * The BACKEND API is the canonical authority for all monetary calculations.
+ * Simulator outputs are ESTIMATES — not authoritative for transactions.
+ * Disposition: ARCHITECTURAL_EXCEPTION — planning tool, advisory only.
  */
 
 import type {

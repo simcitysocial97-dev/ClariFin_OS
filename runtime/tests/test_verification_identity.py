@@ -25,6 +25,7 @@ These tests protect two architectural invariants, not implementation details:
 from __future__ import annotations
 
 import dataclasses
+from typing import Any
 
 import pytest
 
@@ -36,7 +37,6 @@ from runtime.foundation.verification.models import (
     VerificationStep,
     VerificationTarget,
 )
-
 
 # C11 provenance shape, as emitted by VerificationUnit.to_dict()["provenance"].
 C11_PROVENANCE = {
@@ -57,7 +57,7 @@ def _target(target_id: str = "target-loan-engine") -> VerificationTarget:
 
 
 def _step(**overrides) -> VerificationStep:
-    kwargs = {
+    kwargs: dict[str, Any] = {
         "id": "step-0001",
         "target": _target(),
         "order": 1,
@@ -68,7 +68,7 @@ def _step(**overrides) -> VerificationStep:
 
 
 def _result(**overrides) -> ExecutionResult:
-    kwargs = {
+    kwargs: dict[str, Any] = {
         "task_id": "step-0001",
         "command": "bash .github/scripts/run_backend_verification.sh",
         "status": VerificationStatus.PASSED,
@@ -188,7 +188,9 @@ class TestImmutabilityPreserved:
         the assignment does not succeed.
         """
         instance = factory()
-        with pytest.raises((AttributeError, TypeError, dataclasses.FrozenInstanceError)):
+        with pytest.raises(
+            (AttributeError, TypeError, dataclasses.FrozenInstanceError)
+        ):
             instance.unit_ID = "typo"
         assert not hasattr(instance, "unit_ID")
 

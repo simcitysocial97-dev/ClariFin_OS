@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from typing import List
+from pathlib import Path
 
-from .base import EvidenceCollector, EvidenceArtifact
+from .base import EvidenceArtifact, EvidenceCollector
 
 
 class ContractTestCollector(EvidenceCollector):
@@ -18,8 +18,8 @@ class ContractTestCollector(EvidenceCollector):
     def name(self) -> str:
         return "Contract Test Results"
 
-    def collect(self) -> List[EvidenceArtifact]:
-        artifacts = []
+    def collect(self, artifact_path: Path | None = None) -> list[EvidenceArtifact]:
+        artifacts: list[EvidenceArtifact] = []
 
         contract_dir = self.workspace_root / "backend" / "tests" / "generated"
         if not contract_dir.exists():
@@ -74,5 +74,5 @@ class ContractTestCollector(EvidenceCollector):
 
         return artifacts
 
-    def collect_artifacts(self) -> List[EvidenceArtifact]:
+    def collect_artifacts(self) -> list[EvidenceArtifact]:
         return self.collect()

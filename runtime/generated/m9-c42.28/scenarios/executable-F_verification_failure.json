@@ -1,0 +1,53 @@
+{
+  "plan_id": "exec-plan::cd277bc90e4e",
+  "generated_at": "2026-08-26T04:26:39.047055+00:00",
+  "plan_fingerprint": "055a3556294809f040c4eb594fe66ad58e0c338e8bf0ead61d205e510aaf8c6a",
+  "source_plan_id": "cd277bc90e4e",
+  "tasks": [
+    {
+      "task_id": "exec::task::mutation::behaviour_engine",
+      "component": "behaviour_engine",
+      "capability": "behaviour-engine",
+      "verification_kind": "mutation",
+      "source_task_id": "task::mutation::behaviour_engine",
+      "execution_command": ".venv/bin/python runtime/verify.py mutation --target behaviour_engine --json",
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "required_environment": [
+        ".venv",
+        "mutmut==3.7.0"
+      ],
+      "evidence_kind": "mutation-summary",
+      "expected_artifact": "backend/tests/generated/mutation/target-behaviour_engine-summary.json",
+      "timeout_policy": 600,
+      "fingerprints": {
+        "source": "4b4960d25100824809504384e87057a5dabe7a7dcfcf5e1a492a9e6e9a7e6fe9",
+        "test": "",
+        "config": "29b283dad76f8949",
+        "toolchain": "ee413b0b32ea5eb98ed0e9931550cd4254045079467407863471360714777ba6"
+      },
+      "reason": "component behaviour_engine invalidated by change (R-SRC-001); fresh measurement required",
+      "executable": "executable",
+      "executable_meta": {
+        "engine_selection": {
+          "test_selection": [
+            "tests/unit/engines/behaviour",
+            "tests/unit/engines/behaviour/test_metrics.py",
+            "tests/unit/engines/behaviour/test_integration.py",
+            "tests/properties/behaviour",
+            "tests/capability/pattern_analysis"
+          ],
+          "source_paths": [
+            "src/engines/behaviour_engine"
+          ]
+        },
+        "expected_engine": "behaviour_engine"
+      }
+    }
+  ],
+  "not_executable": [],
+  "rationale": "Expanded 1 selected planner task(s) into 1 executable task(s); 0 marked not_executable_yet. Plan fingerprint covers command + four fingerprints for every executable task.",
+  "counts": {
+    "tasks": 1,
+    "not_executable": 0
+  }
+}

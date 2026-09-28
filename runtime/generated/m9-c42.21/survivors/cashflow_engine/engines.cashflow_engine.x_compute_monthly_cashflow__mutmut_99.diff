@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_99: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -82,7 +82,7 @@
+ 
+     # True savings (accrual basis): income - expenses - fees
+     # Fees are the actual cost of credit, not the liability principal
+-    true_savings = income - expense - total_fees
++    true_savings = income - expense + total_fees
+ 
+     # Liability-adjusted: true savings minus liability increases (principal borrowed)
+     # This represents the net savings after accounting for borrowed money

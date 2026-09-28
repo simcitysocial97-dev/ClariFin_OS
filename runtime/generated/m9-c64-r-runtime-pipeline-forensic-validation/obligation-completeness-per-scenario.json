@@ -1,0 +1,92 @@
+{
+  "audit_date": "2026-09-20T03:30:14.714210+00:00",
+  "per_scenario": {
+    "D-backend-unit": {
+      "expected": [
+        "loan-engine",
+        "api-contracts",
+        "credit-card-engine",
+        "financial-intelligence"
+      ],
+      "actual": [
+        "api-contracts",
+        "credit-card-engine",
+        "financial-intelligence",
+        "loan-engine"
+      ],
+      "missing": [],
+      "obligations": 27
+    },
+    "E-backend-router": {
+      "expected": [
+        "account-engine",
+        "api-contracts"
+      ],
+      "actual": [
+        "api-contracts"
+      ],
+      "missing": [
+        "account-engine"
+      ],
+      "obligations": 6
+    },
+    "F-frontend-component": {
+      "expected": [
+        "account-engine",
+        "api-contracts"
+      ],
+      "actual": [],
+      "missing": [
+        "account-engine",
+        "api-contracts"
+      ],
+      "obligations": 0
+    },
+    "G-unmapped": {
+      "expected": [],
+      "actual": [],
+      "missing": [],
+      "obligations": 0
+    },
+    "H-platform-boundary": {
+      "expected": [
+        "api-contracts"
+      ],
+      "actual": [
+        "api-contracts"
+      ],
+      "missing": [],
+      "obligations": 6
+    },
+    "J-cross-layer": {
+      "expected": [
+        "account-engine",
+        "api-contracts"
+      ],
+      "actual": [
+        "api-contracts"
+      ],
+      "missing": [
+        "account-engine"
+      ],
+      "obligations": 6
+    },
+    "X-real-change": {
+      "expected": [
+        "behaviour-engine",
+        "api-contracts"
+      ],
+      "actual": [
+        "api-contracts",
+        "behaviour-engine"
+      ],
+      "missing": [],
+      "obligations": 13
+    }
+  },
+  "summary": {
+    "audited": 7,
+    "complete": 4,
+    "partial": 3
+  }
+}

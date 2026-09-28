@@ -1,7 +1,7 @@
 # .github/workflows/quality.yml
 #
 # PURPOSE: Fast quality gate (lint, format, typecheck, unit, architecture, meta).
-# RESPONSIBILITY: Run `runtime/verify.py quick` — the ONLY verification command.
+# RESPONSIBILITY: Run `runtime/verify.py check` — the canonical verification command.
 # BLOCKS:  Merging if it fails.
 #
 # Rule 1: No engineering logic duplicated here. Rule 2: exactly one command.
@@ -31,10 +31,10 @@ jobs:
   quality:
     name: Quality Gate
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 90
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
@@ -46,11 +46,14 @@ jobs:
       - name: Setup Node.js runtime
         uses: ./.github/actions/setup-node-runtime
         with:
-          node-version: "20"
+          node-version: "24"
           working-directory: "frontend"
 
-      - name: Run quick verification
-        run: python runtime/verify.py quick
+      - name: Run quality verification (canonical check)
+        env:
+          VERIFICATION_BASE_REF: ${{ github.base_ref || github.event.before }}
+          VERIFICATION_HEAD_REF: ${{ github.sha }}
+        run: .venv/bin/python -m runtime.verify check
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
@@ -101,5 +104,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          python runtime/verify.py status >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
         shell: bash

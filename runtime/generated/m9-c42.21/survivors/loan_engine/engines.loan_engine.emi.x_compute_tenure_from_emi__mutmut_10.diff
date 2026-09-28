@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.emi.x_compute_tenure_from_emi__mutmut_10: survived
+--- src/engines/loan_engine/emi.py
++++ src/engines/loan_engine/emi.py
+@@ -8,7 +8,7 @@
+         raise ValueError("Principal must be positive")
+ 
+     if emi_paise <= 0:
+-        raise ValueError("EMI must be positive")
++        raise ValueError("XXEMI must be positiveXX")
+ 
+     if annual_rate_bps == 0:
+         return (principal_paise + emi_paise - 1) // emi_paise  # ceiling

@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x__parse_amount_paise__mutmut_44: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -34,7 +34,7 @@
+     try:
+         rupees = Decimal(cleaned)
+         # Financial Standard: Use quantization to guarantee safe integer conversion
+-        paise = (rupees * Decimal("100")).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
++        paise = (rupees * Decimal("100")).quantize(Decimal("1"), rounding=None)
+         return int(paise)
+     except (ValueError, InvalidOperation) as e:
+         raise ValueError(f"Invalid amount format '{amount_str}': {e}") from e

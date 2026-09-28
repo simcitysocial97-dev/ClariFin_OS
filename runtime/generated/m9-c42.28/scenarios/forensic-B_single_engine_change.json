@@ -1,0 +1,141 @@
+{
+  "record_id": "forensic::ff0cf0099e27",
+  "generated_at": "2026-08-26T04:26:27.848496+00:00",
+  "repository_sha": "523637b8de928565ee19fbcff2b5645fbd85a2ce",
+  "change": {
+    "changed_files": [
+      "backend/src/engines/credit_card_engine/foo.py"
+    ],
+    "affected_components": [
+      "credit_card"
+    ],
+    "affected_capabilities": [
+      "credit-card-risk"
+    ]
+  },
+  "affected_graph_nodes": {
+    "sources": [
+      "backend/src/engines/credit_card_engine/foo.py"
+    ],
+    "capabilities": [
+      "credit-card-risk"
+    ]
+  },
+  "invalidations": {
+    "by_component": {
+      "credit_card_engine": [
+        "R-SRC-001"
+      ],
+      "account_engine": [],
+      "loan_engine": [],
+      "reconciliation_engine": [],
+      "behaviour_engine": [],
+      "balance_engine": [],
+      "ledger_audit_engine": [],
+      "cashflow_engine": [],
+      "financial_events": [],
+      "core_domain_money": [],
+      "common_calculations": [],
+      "recommendation_engine": [],
+      "transaction_intelligence": [],
+      "financial_intelligence": []
+    }
+  },
+  "reused_evidence": {
+    "count": 13,
+    "components": [
+      "account_engine",
+      "loan_engine",
+      "reconciliation_engine",
+      "behaviour_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine",
+      "financial_events",
+      "core_domain_money",
+      "common_calculations",
+      "recommendation_engine",
+      "transaction_intelligence",
+      "financial_intelligence"
+    ]
+  },
+  "selected_tasks": {
+    "count": 1,
+    "components": [
+      "credit_card_engine"
+    ]
+  },
+  "executed_tasks": {
+    "count": 1,
+    "components": [
+      "credit_card_engine"
+    ]
+  },
+  "execution_results": {
+    "by_component": {
+      "credit_card_engine": {
+        "execution_id": "exec-stub-credit_card_engine",
+        "task_id": "exec::task::mutation::credit_card_engine",
+        "component": "credit_card_engine",
+        "capability": "credit-card-engine",
+        "verification_kind": "mutation",
+        "started_at": "2026-08-26T04:26:25.798366+00:00",
+        "completed_at": "2026-08-26T04:26:25.798373+00:00",
+        "duration_seconds": 0.01,
+        "command": ".venv/bin/python runtime/verify.py mutation --target credit_card_engine",
+        "exit_code": 0,
+        "failure_kind": null,
+        "failure_message": "",
+        "source_fingerprint": "03a257beaa78f2f5b179c91b1719066a52106924ac4bef97fd66467d59ce8109",
+        "test_fingerprint": "",
+        "config_fingerprint": "29b283dad76f8949",
+        "toolchain_fingerprint": "ee413b0b32ea5eb98ed0e9931550cd4254045079467407863471360714777ba6",
+        "repository_sha": "523637b8de928565ee19fbcff2b5645fbd85a2ce",
+        "artifact_paths": [],
+        "notes": "stub: outcome=fresh_measured",
+        "counts": {
+          "generated": 100,
+          "killed": 78,
+          "survived": 20,
+          "no_tests": 0,
+          "timeout": 0,
+          "suspicious": 0,
+          "not_checked": 2
+        }
+      }
+    }
+  },
+  "new_evidence": {
+    "count": 1,
+    "components": [
+      "credit_card_engine"
+    ]
+  },
+  "derived_evidence": {
+    "aggregate": {
+      "label": "AUTHORITATIVE_TARGETED",
+      "result": 59.8037,
+      "numerator": 8653,
+      "denominator": 14469,
+      "scope": "pop-14-c42.26",
+      "decided_at": "2026-08-26T04:26:27.845117+00:00",
+      "rationale": "1 component(s) freshly measured + 13 reused; only the fresh subset is directly measured, the rest are derived from prior certified artifacts"
+    }
+  },
+  "failures": {
+    "by_component": {},
+    "count": 0
+  },
+  "uncertainties": {
+    "no_evidence": [],
+    "invalidated": [],
+    "drift_blockers": [],
+    "certification_gaps": []
+  },
+  "certification_decision": {
+    "certifiable": true,
+    "rationale": "certifiable: every component has either fresh measured evidence or a reused prior measurement",
+    "aggregate_label": "AUTHORITATIVE_TARGETED",
+    "aggregate_result": 59.8037
+  }
+}

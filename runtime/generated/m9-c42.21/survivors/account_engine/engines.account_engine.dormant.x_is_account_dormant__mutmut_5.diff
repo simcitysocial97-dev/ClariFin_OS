@@ -1,0 +1,12 @@
+# status: survived
+# engines.account_engine.dormant.x_is_account_dormant__mutmut_5: survived
+--- src/engines/account_engine/dormant.py
++++ src/engines/account_engine/dormant.py
+@@ -13,6 +13,6 @@
+     INVARIANT 2: Dormant status is purely deterministic.
+     """
+     if threshold_days < 0:
+-        raise ValueError("threshold_days must be non-negative")
++        raise ValueError("XXthreshold_days must be non-negativeXX")
+ 
+     return days_since_activity >= threshold_days

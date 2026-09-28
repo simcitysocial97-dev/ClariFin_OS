@@ -3,25 +3,30 @@
 from __future__ import annotations
 
 from dataclasses import asdict
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from runtime.system.evidence.collectors import (
+    ContractTestCollector,
     CoverageCollector,
     MutationCollector,
     PropertyTestCollector,
-    ContractTestCollector,
 )
 from runtime.system.evidence.models import (
     CoverageEvidence,
+    EvidenceCollectionResult,
     MutationEvidence,
     VerificationEvidence,
-    EvidenceCollectionResult,
 )
 
 # All available collectors
-COLLECTORS = [
+COLLECTORS: list[
+    type[CoverageCollector]
+    | type[MutationCollector]
+    | type[PropertyTestCollector]
+    | type[ContractTestCollector]
+] = [
     CoverageCollector,
     MutationCollector,
     PropertyTestCollector,
@@ -55,15 +60,15 @@ def collect_all_evidence(workspace_root: Path) -> EvidenceCollectionResult:
 
     return EvidenceCollectionResult(
         workspace_root=str(workspace_root),
-        collected_at=datetime.utcnow().isoformat() + "Z",
+        collected_at=datetime.now(UTC).isoformat().replace("+00:00", "Z"),
         artifacts=artifacts,
         collectors=collectors_metadata,
     )
 
 
 def extract_coverage_evidence(
-    artifacts: List[Dict[str, Any]],
-) -> Optional[CoverageEvidence]:
+    artifacts: list[dict[str, Any]],
+) -> CoverageEvidence | None:
     """Extract CoverageEvidence from collected artifacts."""
     for artifact in artifacts:
         if artifact.get("artifact_type") == "coverage":
@@ -80,8 +85,8 @@ def extract_coverage_evidence(
 
 
 def extract_mutation_evidence(
-    artifacts: List[Dict[str, Any]],
-) -> Optional[MutationEvidence]:
+    artifacts: list[dict[str, Any]],
+) -> MutationEvidence | None:
     """Extract MutationEvidence from collected artifacts."""
     for artifact in artifacts:
         if artifact.get("artifact_type") == "mutation":
@@ -104,9 +109,9 @@ def extract_mutation_evidence(
 def build_verification_evidence(
     commit_sha: str,
     branch: str,
-    artifacts: List[Dict[str, Any]],
-    property_tests: Dict[str, Any] | None = None,
-    contract_tests: Dict[str, Any] | None = None,
+    artifacts: list[dict[str, Any]],
+    property_tests: dict[str, Any] | None = None,
+    contract_tests: dict[str, Any] | None = None,
     status: str = "partial",
 ) -> VerificationEvidence:
     """Build a VerificationEvidence object from collected artifacts.
@@ -138,7 +143,7 @@ def build_verification_evidence(
     return VerificationEvidence(
         commit_sha=commit_sha,
         branch=branch,
-        timestamp=datetime.utcnow().isoformat() + "Z",
+        timestamp=datetime.now(UTC).isoformat().replace("+00:00", "Z"),
         status=status,
         coverage=coverage,
         mutation=mutation,

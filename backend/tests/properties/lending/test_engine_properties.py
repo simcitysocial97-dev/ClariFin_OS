@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 from tests.invariants import assert_loan_schedule_valid
@@ -18,7 +18,7 @@ class TestLoanEngineProperties:
         annual_rate_bps=st.integers(min_value=600, max_value=2400),
         tenure_months=st.integers(min_value=6, max_value=360),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_loan_amortization_schedule_valid(
         self, principal_paise: int, annual_rate_bps: int, tenure_months: int
     ) -> None:
@@ -45,7 +45,7 @@ class TestLoanEngineProperties:
         annual_rate_bps=st.integers(min_value=600, max_value=2400),
         tenure_months=st.integers(min_value=12, max_value=120),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_loan_emi_reduces_outstanding(
         self, principal_paise: int, annual_rate_bps: int, tenure_months: int
     ) -> None:
@@ -71,7 +71,7 @@ class TestLoanEngineProperties:
         tenure_months=st.integers(min_value=12, max_value=360),
         prepayment_paise=st.integers(min_value=10000, max_value=500000),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_loan_prepayment_reduces_interest(
         self,
         principal_paise: int,
@@ -114,7 +114,7 @@ class TestLoanEngineProperties:
             ["2025-01-01", "2025-01-15", "2025-02-28", "2025-03-31"]
         ),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_generate_schedule_invariants(
         self,
         principal_paise: int,
@@ -153,7 +153,7 @@ class TestLoanEngineProperties:
         annual_rate_bps=st.integers(min_value=800, max_value=1800),
         tenure_months=st.integers(min_value=12, max_value=240),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_emi_calculation_consistency(
         self,
         principal_paise: int,
@@ -181,7 +181,7 @@ class TestLoanEngineProperties:
         remaining_months=st.integers(min_value=6, max_value=240),
         prepayment_paise=st.integers(min_value=100000, max_value=20000000),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_prepayment_interest_saved_non_negative(
         self,
         outstanding_paise: int,
@@ -235,7 +235,7 @@ class TestPrepaymentPenaltyProperties:
         prepayment_penalty_bps=st.integers(min_value=0, max_value=500),
         prepayment_month=st.integers(min_value=1, max_value=12),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_prepayment_penalty_bounds(
         self,
         principal_paise: int,
@@ -300,7 +300,7 @@ class TestPrepaymentPenaltyProperties:
         prepayment_paise=st.integers(min_value=10000, max_value=5000000),
         prepayment_penalty_bps=st.integers(min_value=0, max_value=500),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_prepayment_penalty_rounding(
         self,
         principal_paise: int,
@@ -349,7 +349,7 @@ class TestPrepaymentPenaltyProperties:
         prepayment_paise=st.integers(min_value=10000, max_value=5000000),
         prepayment_month=st.integers(min_value=1, max_value=12),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_prepayment_penalty_deterministic(
         self,
         principal_paise: int,
@@ -400,7 +400,7 @@ class TestPrepaymentPenaltyProperties:
         prepayment_paise=st.integers(min_value=10000, max_value=5000000),
         prepayment_month=st.integers(min_value=1, max_value=12),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_prepayment_penalty_partial_prepayment(
         self,
         principal_paise: int,
@@ -457,7 +457,7 @@ class TestCreditCardEngineProperties:
         limit_paise=st.integers(min_value=100000, max_value=5000000),
         outstanding_paise=st.integers(min_value=0, max_value=5000000),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_credit_card_utilization_valid(
         self, limit_paise: int, outstanding_paise: int
     ) -> None:
@@ -474,7 +474,7 @@ class TestCreditCardEngineProperties:
         limit_paise=st.integers(min_value=100000, max_value=5000000),
         outstanding_paise=st.integers(min_value=0, max_value=5000000),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_credit_card_available_credit(
         self, limit_paise: int, outstanding_paise: int
     ) -> None:

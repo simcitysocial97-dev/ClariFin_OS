@@ -12,7 +12,7 @@ from fastapi import APIRouter, Query
 from src.services.credit_cards_workspace_service import CreditCardsWorkspaceService
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/api/v1", tags=["credit-cards-workspace"])
+router = APIRouter(prefix="/api/v1/workspaces", tags=["credit-cards-workspace"])
 
 
 def _timed_log(

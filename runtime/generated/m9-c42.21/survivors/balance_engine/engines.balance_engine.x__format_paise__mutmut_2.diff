@@ -1,0 +1,13 @@
+# status: survived
+# engines.balance_engine.x__format_paise__mutmut_2: survived
+--- src/engines/balance_engine.py
++++ src/engines/balance_engine.py
+@@ -12,7 +12,7 @@
+         10000000 -> "₹1,00,000.00"
+     """
+     if paise is None:
+-        return "₹0.00"
++        return "XX₹0.00XX"
+ 
+     negative = paise < 0
+     paise = abs(paise)

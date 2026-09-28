@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_6: survived
+--- src/engines/credit_card_engine/billing.py
++++ src/engines/credit_card_engine/billing.py
+@@ -20,7 +20,7 @@
+     INVARIANT 4: All dates are ISO 8601 compatible.
+     """
+     if billing_day < 1 or billing_day > 31:
+-        raise ValueError("billing_day must be between 1 and 31")
++        raise ValueError(None)
+ 
+     if last_statement_date is not None:
+         # Advance to the next occurrence of billing_day after last_statement_date

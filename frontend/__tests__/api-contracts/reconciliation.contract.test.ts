@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 
-describe('GET /api/reconciliations contract', () => {
+describe('GET /api/v1/reconciliation contract', () => {
   it('returns an object with reconciliations array', async () => {
-    const response = await fetch('/api/reconciliations')
+    const response = await fetch('/api/v1/reconciliation')
     const data = await response.json()
 
     expect(data).toHaveProperty('reconciliations')
@@ -10,7 +10,7 @@ describe('GET /api/reconciliations contract', () => {
   })
 
   it('each reconciliation has required fields', async () => {
-    const response = await fetch('/api/reconciliations')
+    const response = await fetch('/api/v1/reconciliation')
     const data = await response.json()
 
     const rec = data.reconciliations[0]
@@ -19,15 +19,15 @@ describe('GET /api/reconciliations contract', () => {
     expect(rec).toHaveProperty('credit_txn_id')
     expect(rec).toHaveProperty('debit_account_id')
     expect(rec).toHaveProperty('credit_account_id')
-    expect(rec).toHaveProperty('amount')
+    expect(rec).toHaveProperty('amount_paise')
     expect(rec).toHaveProperty('date_diff_days')
-    expect(rec).toHaveProperty('match_confidence')
+    expect(rec).toHaveProperty('match_confidence_bps')
     expect(rec).toHaveProperty('match_type')
     expect(rec).toHaveProperty('status')
   })
 
   it('each reconciliation has transaction details', async () => {
-    const response = await fetch('/api/reconciliations')
+    const response = await fetch('/api/v1/reconciliation')
     const data = await response.json()
 
     const rec = data.reconciliations[0]
@@ -45,18 +45,18 @@ describe('GET /api/reconciliations contract', () => {
     expect(rec).toHaveProperty('credit_bank')
   })
 
-  it('match_confidence is between 0 and 1', async () => {
-    const response = await fetch('/api/reconciliations')
+  it('match_confidence_bps is between 0 and 10000', async () => {
+    const response = await fetch('/api/v1/reconciliation')
     const data = await response.json()
 
     for (const rec of data.reconciliations) {
-      expect(rec.match_confidence).toBeGreaterThanOrEqual(0)
-      expect(rec.match_confidence).toBeLessThanOrEqual(1)
+      expect(rec.match_confidence_bps).toBeGreaterThanOrEqual(0)
+      expect(rec.match_confidence_bps).toBeLessThanOrEqual(10000)
     }
   })
 
   it('match_type is valid', async () => {
-    const response = await fetch('/api/reconciliations')
+    const response = await fetch('/api/v1/reconciliation')
     const data = await response.json()
 
     const validTypes = ['exact', 'window', 'fuzzy', 'manual']
@@ -66,7 +66,7 @@ describe('GET /api/reconciliations contract', () => {
   })
 
   it('status is valid', async () => {
-    const response = await fetch('/api/reconciliations')
+    const response = await fetch('/api/v1/reconciliation')
     const data = await response.json()
 
     const validStatuses = ['pending', 'confirmed', 'rejected']
@@ -76,9 +76,9 @@ describe('GET /api/reconciliations contract', () => {
   })
 })
 
-describe('GET /api/reconciliations/pending contract', () => {
+describe('GET /api/v1/reconciliation/pending contract', () => {
   it('returns only pending reconciliations', async () => {
-    const response = await fetch('/api/reconciliations/pending')
+    const response = await fetch('/api/v1/reconciliation/pending')
     const data = await response.json()
 
     for (const rec of data.reconciliations) {
@@ -87,9 +87,9 @@ describe('GET /api/reconciliations/pending contract', () => {
   })
 })
 
-describe('GET /api/reconciliations/scan contract', () => {
+describe('GET /api/v1/reconciliation/scan contract', () => {
   it('returns matches array and count', async () => {
-    const response = await fetch('/api/reconciliations/scan')
+    const response = await fetch('/api/v1/reconciliation/scan')
     const data = await response.json()
 
     expect(data).toHaveProperty('matches')
@@ -99,14 +99,14 @@ describe('GET /api/reconciliations/scan contract', () => {
   })
 
   it('each match has required fields', async () => {
-    const response = await fetch('/api/reconciliations/scan')
+    const response = await fetch('/api/v1/reconciliation/scan')
     const data = await response.json()
 
     const match = data.matches[0]
     expect(match).toHaveProperty('debit_txn_id')
     expect(match).toHaveProperty('credit_txn_id')
-    expect(match).toHaveProperty('amount')
-    expect(match).toHaveProperty('match_confidence')
+    expect(match).toHaveProperty('amount_paise')
+    expect(match).toHaveProperty('match_confidence_bps')
     expect(match).toHaveProperty('match_type')
   })
 })

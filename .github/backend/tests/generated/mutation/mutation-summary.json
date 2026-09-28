@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-08-22T10:16:54.865785+00:00",
+  "mutmut_exit_code": 1,
+  "killed": 0,
+  "survived": 0,
+  "timeout": 0,
+  "not_checked": 0,
+  "no_tests": 0,
+  "total_mutants": 0,
+  "testable_mutants": 0,
+  "score_percent": 0,
+  "threshold_percent": 80,
+  "threshold_met": false,
+  "status": "infrastructure_failure",
+  "error_message": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/home/vasantha/.local/lib/python3.12/site-packages/mutmut/__main__.py\", line 72, in <module>\n    from mutmut.utils.safe_setproctitle import safe_setproctitle as setproctitle\n  File \"/home/vasantha/.local/lib/python3.12/site-packages/mutmut/utils/safe_setproctitle.py\", line 15, in <module>\n    if Config.get().use_setproctitle:\n       ^^^^^^^^^^^^\n  File \"/home/vasantha/.local/lib/python3.12/site-packages/mutmut/configuration.py\", line 245, in get\n    Config.ensure_loaded()\n  File \"/home/vasantha/.local/lib/python3.12/site-packages/mutmut/configuration.py\", line 240, in ensure_loaded\n    _config = _load_config()\n              ^^^^^^^^^^^^^^\n  File \"/home/vasantha/.local/lib/python3.12/site-packages/mutmut/configuration.py\", line 104, in _load_config\n    source_paths = source_paths or paths_to_mutate or [Path(path) for path in _guess_source_paths()]\n                                                                              ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/vasantha/.local/lib/python3.12/site-packages/mutmut/configuration.py\", line 91, in _guess_source_paths\n    raise FileNotFoundError(\nFileNotFoundError: Could not figure out where the code to mutate is. Please specify it by adding \"source_paths=code_dir\" in setup.cfg to the [mutmut] section.\n"
+}

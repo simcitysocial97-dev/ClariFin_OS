@@ -1,0 +1,42 @@
+{
+  "audit_date": "2026-09-20T02:45:00Z",
+  "commit_sha": "8990f3ae16e664d9b0f58737bd4f556bc82f52c9",
+  "identity_trace": {
+    "backend_unit_change": {
+      "file": "backend/src/engines/loan_engine/emi.py",
+      "plan_id": "d5c82369932d",
+      "set_id": "set-d5c82369932d",
+      "expected_capabilities": ["api-contracts", "loan-engine", "credit-card-engine", "financial-intelligence"],
+      "actual_capabilities": ["api-contracts", "loan-engine", "credit-card-engine", "financial-intelligence"],
+      "capability_loss": false,
+      "obligation_path_bug": true,
+      "notes": "All 27 tasks correctly attributed; obligation change.path uses changed_files[0]"
+    },
+    "empty_input": {
+      "file": null,
+      "plan_id": "e3b0c44298fc",
+      "obligations": 0,
+      "result": "CORRECT - no obligations for no changes"
+    },
+    "unmapped_file": {
+      "file": "/tmp/nonexistent_file_xyz.py",
+      "plan_id": "5646b12eecd7",
+      "obligations": 0,
+      "result": "CORRECT - unmapped file produces no obligations"
+    }
+  },
+  "identity_correlations": [
+    {"stage": "commit", "value": "8990f3ae", "preserved": true},
+    {"stage": "plan_id", "value": "sha256(sorted_files)[:12]", "preserved": true},
+    {"stage": "set_id", "value": "set-{plan_id}", "preserved": true},
+    {"stage": "obligation_id", "value": "obl-{plan_id}-{i}", "preserved": true},
+    {"stage": "change_path", "value": "changed_files[0] BUG", "preserved": false}
+  ],
+  "lost_identities": ["per-file provenance in obligations"],
+  "summary": {
+    "total_identity_links": 5,
+    "preserved": 4,
+    "lost": 1,
+    "continuity_score": "80%"
+  }
+}

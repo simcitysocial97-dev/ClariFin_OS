@@ -1,0 +1,15 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_71: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -42,9 +42,7 @@
+     # We need the outstanding balance BEFORE this month's payment.
+     # That is balance + principal_paid of this row.
+     opening_balance = prepayment_row.balance_paise + prepayment_row.principal_paise
+-    remaining_balance = (
+-        opening_balance  # This is the balance before the prepayment month's payment
+-    )
++    remaining_balance = None
+     # Actually, the prepayment happens at the beginning of the month, before the regular EMI.
+     # So we need the balance at the start of the month.
+     # Since our schedule stores closing balance, we need the previous month's closing balance.

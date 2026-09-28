@@ -1,0 +1,49 @@
+{
+  "schema": "m9-c43-defect-ledger/v1",
+  "generated_at": "2026-08-27T04:32:21.114668+00:00",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "principle": "Class-E defects are production issues documented separately. They are NEVER silently fixed during test-strengthening. Each requires human authorization before any code change.",
+  "defects": [
+    {
+      "id": "C43-E1",
+      "component": "common_calculations",
+      "function": "compute_is_large",
+      "source": "src/common/calculations.py:41-43",
+      "severity": "medium",
+      "classification": "E - possible production defect",
+      "description": "The threshold calculation (avg * 250000) makes it mathematically impossible for any transaction to ever be flagged as 'large'. For N transactions: threshold = avg * 250000 = sum/N * 250000. A transaction X > threshold requires X(N - 250000) > rest_sum * 250000, which is impossible for any realistic N.",
+      "evidence": {
+        "tested_with": [
+          {
+            "txns": [
+              {
+                "amount": 100
+              },
+              {
+                "amount": 25000001
+              }
+            ],
+            "expected_large": false,
+            "actual": "all False"
+          },
+          {
+            "txns": [
+              {
+                "amount": 1
+              },
+              {
+                "amount": 999999999
+              }
+            ],
+            "expected_large": false,
+            "actual": "all False"
+          }
+        ],
+        "mathematical_proof": "X > (sum/N)*250000 \u2192 X*N > sum*250000 \u2192 X(N-250000) > rest_sum*250000. For N<<250000, LHS<0, RHS>0 \u2192 contradiction."
+      },
+      "proposed_action": "Fix the threshold formula or accept that no transactions can be flagged (documented limitation). Requires human review.",
+      "human_authorization_required": true,
+      "status": "OPEN"
+    }
+  ]
+}

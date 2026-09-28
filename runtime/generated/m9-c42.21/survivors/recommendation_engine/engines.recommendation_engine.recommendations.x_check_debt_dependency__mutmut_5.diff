@@ -1,0 +1,13 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_check_debt_dependency__mutmut_5: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -8,7 +8,7 @@
+         Recommendation if ratio > 0.20, None otherwise
+     """
+     if borrowed_lifestyle_ratio > DEBT_DEPENDENCY_THRESHOLD:
+-        percentage = int(borrowed_lifestyle_ratio * 100)
++        percentage = int(borrowed_lifestyle_ratio * 101)
+         return Recommendation(
+             title="Lifestyle Debt Alert",
+             reason="Your lifestyle is partly funded by borrowed money",

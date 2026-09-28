@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.billing.x_compute_minimum_due__mutmut_14: survived
+--- src/engines/credit_card_engine/billing.py
++++ src/engines/credit_card_engine/billing.py
+@@ -21,7 +21,7 @@
+     if total_outstanding_paise < 0:
+         raise ValueError("total_outstanding_paise must be non-negative")
+     if min_due_pct_bps < 0 or min_due_pct_bps > 10000:
+-        raise ValueError("min_due_pct_bps must be between 0 and 10000")
++        raise ValueError("XXmin_due_pct_bps must be between 0 and 10000XX")
+     if floor_paise < 0:
+         raise ValueError("floor_paise must be non-negative")
+ 

@@ -1,0 +1,45 @@
+{
+  "audit_date": "2026-09-20T06:30:00Z",
+  "test_scenarios": {
+    "F001_provenance": {
+      "description": "Per-file obligation provenance",
+      "tests": [
+        {"name": "single_file_change", "file": "backend/src/engines/loan_engine/emi.py", "expected_source_paths": ["backend/src/engines/loan_engine/emi.py"], "status": "PASS"},
+        {"name": "multi_file_change", "files": ["backend/src/engines/loan_engine/emi.py", "backend/src/engines/account_engine/lifecycle.py"], "expected_all_sources_in_paths": true, "status": "PASS"},
+        {"name": "reorder_invariant", "note": "Reordering changed_files does not change source_paths content", "status": "PASS"}
+      ]
+    },
+    "F002_frontend": {
+      "description": "Frontend source classification",
+      "tests": [
+        {"name": "frontend_app_page", "file": "frontend/app/accounts/workspace-page.tsx", "expected_capabilities": ["account-engine"], "status": "PASS"},
+        {"name": "frontend_hook", "file": "frontend/lib/hooks/use-accounts.ts", "expected_capabilities": ["account-engine"], "status": "PASS"},
+        {"name": "frontend_component", "file": "frontend/components/accounts/accounts-search.tsx", "expected_capabilities": ["account-engine"], "status": "PASS"}
+      ]
+    },
+    "F003_router": {
+      "description": "Router-to-capability authority reconciliation",
+      "tests": [
+        {"name": "loans_router", "file": "backend/src/routers/loans.py", "expected_capabilities": ["loan-engine"], "status": "PASS"},
+        {"name": "accounts_router", "file": "backend/src/routers/accounts.py", "expected_capabilities": ["account-engine"], "status": "PASS"}
+      ]
+    },
+    "F005_large_file": {
+      "description": "Large file performance boundary",
+      "tests": [
+        {"name": "15k_line_file", "lines": 15000, "max_duration_seconds": 30, "actual_duration_seconds": 11.5, "status": "PASS"}
+      ]
+    },
+    "F006_config_divergence": {
+      "description": "Configuration divergence detection",
+      "tests": [
+        {"name": "consistent_config", "expected_state": "CONSISTENT", "status": "PASS"},
+        {"name": "out_of_range_threshold", "expected_state": "DIVERGED", "status": "PASS"},
+        {"name": "inverted_regression_thresholds", "expected_state": "DIVERGED", "status": "PASS"}
+      ]
+    }
+  },
+  "canonical_pipeline_verified": true,
+  "regression_tests_passed": 167,
+  "new_tests_added": 8
+}

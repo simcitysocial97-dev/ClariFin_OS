@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.billing.x_compute_next_statement_date__mutmut_21: survived
+--- src/engines/credit_card_engine/billing.py
++++ src/engines/credit_card_engine/billing.py
+@@ -29,7 +29,7 @@
+ 
+         # If candidate is not after the last statement date, advance one more month
+         if candidate <= last_statement_date:
+-            candidate = _add_months(candidate, 1)
++            candidate = _add_months(candidate, 2)
+ 
+         # If candidate is in the past relative to reference_date, advance
+         if candidate < reference_date:

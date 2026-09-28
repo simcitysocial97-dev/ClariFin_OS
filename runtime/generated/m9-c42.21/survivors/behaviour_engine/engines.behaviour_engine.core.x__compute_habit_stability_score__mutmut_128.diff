@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_habit_stability_score__mutmut_128: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -60,7 +60,7 @@
+             # Check if amounts are similar (within 10%)
+             avg = sum(amounts) / len(amounts)
+             if all(abs(a - avg) / max(avg, 1) < 0.1 for a in amounts):
+-                recurring_count += 1
++                recurring_count = 1
+ 
+     recurring_score = min(1.0, recurring_count / 10)  # Normalize to max 10 recurring
+ 

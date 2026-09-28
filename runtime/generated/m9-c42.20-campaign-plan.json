@@ -1,0 +1,180 @@
+{
+  "title": "M9-C42.20 \u2014 Campaign Execution Plan",
+  "generated_at": "2026-08-24T18:15:36.161742+00:00",
+  "global_lessons": [
+    "M9-C42.19 Lesson: do NOT use default serial runtime (--max-children 0) \u2014 it truncates the population (loan had 280 not_checked). Always specify --max-runtime and --max-children.",
+    "Verify not_checked == 0 after every run.",
+    "If evidence reports zero mutants unexpectedly, recover and validate against .meta files before accepting.",
+    "R2 (fixed): evidence collected while target config active; original restored afterward; Gate B fail-safe."
+  ],
+  "rows": [
+    {
+      "component": "credit_card_engine",
+      "max_children": 4,
+      "max_runtime_s": 7200,
+      "execution": "parallel",
+      "cache_strategy": "per-engine cache, --no-cache on scope change",
+      "resource_requirement": "~582 mutants, 250 tests",
+      "fixture_requirement": "standard pytest fixtures (tests/fixtures); none special",
+      "verification_gates": "Gate A (execution), Gate B (evidence: not_checked==0), Gate C (>=80% if full campaign)",
+      "evidence_artifact": "tests/generated/mutation/credit_card_engine-mutation-summary.json",
+      "status": "INCLUDED"
+    },
+    {
+      "component": "account_engine",
+      "max_children": 4,
+      "max_runtime_s": 1800,
+      "execution": "sequential",
+      "cache_strategy": "per-engine cache, --no-cache on scope change",
+      "resource_requirement": "~183 mutants, 119 tests",
+      "fixture_requirement": "standard pytest fixtures (tests/fixtures); none special",
+      "verification_gates": "Gate A (execution), Gate B (evidence: not_checked==0), Gate C (>=80% if full campaign)",
+      "evidence_artifact": "tests/generated/mutation/account_engine-mutation-summary.json",
+      "status": "INCLUDED"
+    },
+    {
+      "component": "loan_engine",
+      "max_children": 4,
+      "max_runtime_s": 7200,
+      "execution": "parallel",
+      "cache_strategy": "per-engine cache, --no-cache on scope change",
+      "resource_requirement": "~1273 mutants, 258 tests",
+      "fixture_requirement": "standard pytest fixtures (tests/fixtures); none special",
+      "verification_gates": "Gate A (execution), Gate B (evidence: not_checked==0), Gate C (>=80% if full campaign)",
+      "evidence_artifact": "tests/generated/mutation/loan_engine-mutation-summary.json",
+      "status": "INCLUDED"
+    },
+    {
+      "component": "reconciliation_engine",
+      "max_children": 4,
+      "max_runtime_s": 1800,
+      "execution": "parallel",
+      "cache_strategy": "per-engine cache, --no-cache on scope change",
+      "resource_requirement": "~368 mutants, 51 tests",
+      "fixture_requirement": "standard pytest fixtures (tests/fixtures); none special",
+      "verification_gates": "Gate A (execution), Gate B (evidence: not_checked==0), Gate C (>=80% if full campaign)",
+      "evidence_artifact": "tests/generated/mutation/reconciliation_engine-mutation-summary.json",
+      "status": "INCLUDED"
+    },
+    {
+      "component": "behaviour_engine",
+      "max_children": 4,
+      "max_runtime_s": 7200,
+      "execution": "parallel",
+      "cache_strategy": "per-engine cache, --no-cache on scope change",
+      "resource_requirement": "~1200 mutants, 213 tests",
+      "fixture_requirement": "standard pytest fixtures (tests/fixtures); none special",
+      "verification_gates": "Gate A (execution), Gate B (evidence: not_checked==0), Gate C (>=80% if full campaign)",
+      "evidence_artifact": "tests/generated/mutation/behaviour_engine-mutation-summary.json",
+      "status": "INCLUDED"
+    },
+    {
+      "component": "balance_engine",
+      "max_children": 4,
+      "max_runtime_s": 1800,
+      "execution": "sequential",
+      "cache_strategy": "per-engine cache, --no-cache on scope change",
+      "resource_requirement": "~95 mutants, 0 tests",
+      "fixture_requirement": "standard pytest fixtures (tests/fixtures); none special",
+      "verification_gates": "Gate A (execution), Gate B (evidence: not_checked==0), Gate C (>=80% if full campaign)",
+      "evidence_artifact": "tests/generated/mutation/balance_engine-mutation-summary.json",
+      "status": "INCLUDED"
+    },
+    {
+      "component": "ledger_audit_engine",
+      "max_children": 4,
+      "max_runtime_s": 1800,
+      "execution": "sequential",
+      "cache_strategy": "per-engine cache, --no-cache on scope change",
+      "resource_requirement": "~46 mutants, 0 tests",
+      "fixture_requirement": "standard pytest fixtures (tests/fixtures); none special",
+      "verification_gates": "Gate A (execution), Gate B (evidence: not_checked==0), Gate C (>=80% if full campaign)",
+      "evidence_artifact": "tests/generated/mutation/ledger_audit_engine-mutation-summary.json",
+      "status": "INCLUDED"
+    },
+    {
+      "component": "cashflow_engine",
+      "max_children": 4,
+      "max_runtime_s": 1800,
+      "execution": "sequential",
+      "cache_strategy": "per-engine cache, --no-cache on scope change",
+      "resource_requirement": "~41 mutants, 4 tests",
+      "fixture_requirement": "standard pytest fixtures (tests/fixtures); none special",
+      "verification_gates": "Gate A (execution), Gate B (evidence: not_checked==0), Gate C (>=80% if full campaign)",
+      "evidence_artifact": "tests/generated/mutation/cashflow_engine-mutation-summary.json",
+      "status": "INCLUDED"
+    },
+    {
+      "component": "financial_events (lineage_walker)",
+      "max_children": 4,
+      "max_runtime_s": 1800,
+      "execution": "sequential",
+      "cache_strategy": "per-engine cache, --no-cache on scope change",
+      "resource_requirement": "~184 mutants, 50 tests",
+      "fixture_requirement": "standard pytest fixtures (tests/fixtures); none special",
+      "verification_gates": "Gate A (execution), Gate B (evidence: not_checked==0), Gate C (>=80% if full campaign)",
+      "evidence_artifact": "tests/generated/mutation/financial_events-mutation-summary.json",
+      "status": "INCLUDED"
+    },
+    {
+      "component": "recommendation_engine",
+      "max_children": 4,
+      "max_runtime_s": 1800,
+      "execution": "sequential",
+      "cache_strategy": "per-engine cache, --no-cache on scope change",
+      "resource_requirement": "~73 mutants, 37 tests",
+      "fixture_requirement": "standard pytest fixtures (tests/fixtures); none special",
+      "verification_gates": "Gate A (execution), Gate B (evidence: not_checked==0), Gate C (>=80% if full campaign)",
+      "evidence_artifact": "tests/generated/mutation/recommendation_engine-mutation-summary.json",
+      "status": "INCLUDED"
+    },
+    {
+      "component": "core/domain (Money)",
+      "max_children": 4,
+      "max_runtime_s": 1800,
+      "execution": "sequential",
+      "cache_strategy": "per-engine cache, --no-cache on scope change",
+      "resource_requirement": "~105 mutants, 96 tests",
+      "fixture_requirement": "standard pytest fixtures (tests/fixtures); none special",
+      "verification_gates": "Gate A (execution), Gate B (evidence: not_checked==0), Gate C (>=80% if full campaign)",
+      "evidence_artifact": "tests/generated/mutation/core/domain-mutation-summary.json",
+      "status": "INCLUDED"
+    },
+    {
+      "component": "common/calculations",
+      "max_children": 4,
+      "max_runtime_s": 1800,
+      "execution": "sequential",
+      "cache_strategy": "per-engine cache, --no-cache on scope change",
+      "resource_requirement": "~30 mutants, 34 tests",
+      "fixture_requirement": "standard pytest fixtures (tests/fixtures); none special",
+      "verification_gates": "Gate A (execution), Gate B (evidence: not_checked==0), Gate C (>=80% if full campaign)",
+      "evidence_artifact": "tests/generated/mutation/common/calculations-mutation-summary.json",
+      "status": "INCLUDED"
+    },
+    {
+      "component": "transaction_intelligence",
+      "max_children": 4,
+      "max_runtime_s": 1800,
+      "execution": "parallel",
+      "cache_strategy": "per-engine cache, --no-cache on scope change",
+      "resource_requirement": "~367 mutants, 5 tests",
+      "fixture_requirement": "standard pytest fixtures (tests/fixtures); none special",
+      "verification_gates": "Gate A (execution), Gate B (evidence: not_checked==0), Gate C (>=80% if full campaign)",
+      "evidence_artifact": "tests/generated/mutation/transaction_intelligence-mutation-summary.json",
+      "status": "GATED (defer until test-strengthening)"
+    },
+    {
+      "component": "financial_intelligence",
+      "max_children": 4,
+      "max_runtime_s": 7200,
+      "execution": "parallel",
+      "cache_strategy": "per-engine cache, --no-cache on scope change",
+      "resource_requirement": "~807 mutants, 9 tests",
+      "fixture_requirement": "standard pytest fixtures (tests/fixtures); none special",
+      "verification_gates": "Gate A (execution), Gate B (evidence: not_checked==0), Gate C (>=80% if full campaign)",
+      "evidence_artifact": "tests/generated/mutation/financial_intelligence-mutation-summary.json",
+      "status": "GATED (defer until test-strengthening)"
+    }
+  ]
+}

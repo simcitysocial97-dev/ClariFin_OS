@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.amortization.x_generate_schedule__mutmut_100: survived
+--- src/engines/loan_engine/amortization.py
++++ src/engines/loan_engine/amortization.py
+@@ -89,7 +89,7 @@
+                 # EMI does not even cover the interest (or the loan is already
+                 # closed): nothing is amortized this month.
+                 principal_component_paise = 0
+-                interest_paise = interest_rounded if reported_balance > 0 else 0
++                interest_paise = interest_rounded if reported_balance > 1 else 0
+                 actual_emi_paise = interest_paise
+             elif balance - principal_exact <= 0:
+                 # This instalment clears the loan early

@@ -1,0 +1,43 @@
+{
+  "schema": "m9-c55/baseline/v1",
+  "generated_at": "2026-09-01T19:42:22+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "repository_tree_sha": "6202939acbf860a5ffa20ed7d2954723741f6307",
+  "working_tree_state": "DIRTY",
+  "untracked_files_count": 38,
+  "untracked_files_sample": [
+    "runtime/foundation/verification/workflow_convergence.py",
+    "runtime/generated/m9-c49/logs/execplan-9b176468b819/exec-0001-stderr.log",
+    "runtime/generated/m9-c49/logs/execplan-9b176468b819/exec-0001-stdout.log",
+    "runtime/generated/m9-c49/logs/execplan-9b176468b819/exec-0002-stderr.log",
+    "runtime/generated/m9-c49/logs/execplan-9b176468b819/exec-0002-stdout.log",
+    "runtime/generated/m9-c49/logs/execplan-9b176468b819/exec-0003-stderr.log",
+    "runtime/generated/m9-c49/logs/execplan-9b176468b819/exec-0003-stdout.log",
+    "runtime/generated/m9-c49/logs/execplan-9b176468b819/exec-0004-stderr.log",
+    "runtime/generated/m9-c49/logs/execplan-9b176468b819/exec-0004-stdout.log",
+    "runtime/generated/m9-c49/logs/execplan-9b176468b819/exec-0005-stderr.log",
+    "runtime/generated/m9-c49/logs/execplan-9b176468b819/exec-0005-stdout.log",
+    "runtime/generated/m9-c49/logs/execplan-9b176468b819/exec-0006-stderr.log",
+    "runtime/generated/m9-c49/logs/execplan-9b176468b819/exec-0006-stdout.log",
+    "runtime/generated/m9-c49/logs/execplan-9b176468b819/exec-0008-stderr.log",
+    "runtime/generated/m9-c49/logs/execplan-9b176468b819/exec-0008-stdout.log",
+    "runtime/generated/m9-c54/CERTIFICATION.md",
+    "runtime/generated/m9-c54/EXECUTION_PROGRESS.md",
+    "runtime/generated/m9-c54/c53-ci-integration.json",
+    "runtime/generated/m9-c54/ci-emission-certification.json",
+    "runtime/generated/m9-c54/ci-evidence-contract.json"
+  ],
+  "c54_verdict": "CERTIFIED",
+  "c54_gates": "28/28",
+  "c54_tests": 87,
+  "c50_to_c53_regression_tested": 136,
+  "total_verified_regression": 188,
+  "requirements_lock_updated_epoch": 1788291553,
+  "frontend_package_lock_present": true,
+  "node_local_version": "v20.20.2",
+  "npm_local_version": "10.8.2",
+  "environmental_limitations": [
+    "Local node=v20.20.2 differs from frontend engines >=24 <25",
+    "Live GitHub Actions execution unavailable locally"
+  ]
+}

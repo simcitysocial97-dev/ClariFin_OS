@@ -1,0 +1,107 @@
+{
+  "schema": "m9-resource-efficiency/v1",
+  "generated_at": "2026-08-26T07:09:15.934675+00:00",
+  "methodology": {
+    "mutation_minutes_per_component": 60,
+    "test_minutes_per_component": 4,
+    "full_population_size": 14,
+    "ci_verification_bindings": 18,
+    "all_numbers_from_artifacts": true
+  },
+  "scenarios": [
+    {
+      "scenario": "no_change",
+      "changed_files": [],
+      "tasks_planned": 0,
+      "tasks_executed": 0,
+      "tasks_reused": 14,
+      "components_invalidated": 0,
+      "mutation_minutes_avoided": 840,
+      "test_minutes_avoided": 56,
+      "ci_work_avoided": 18,
+      "full_mutation_minutes_baseline": 840,
+      "actual_mutation_minutes": 0,
+      "saved_pct": 100.0,
+      "certification_confidence": "preserved"
+    },
+    {
+      "scenario": "one_engine_change",
+      "changed_files": [
+        "backend/src/engines/credit_card_engine/risk.py"
+      ],
+      "tasks_planned": 1,
+      "tasks_executed": 1,
+      "tasks_reused": 13,
+      "components_invalidated": 1,
+      "mutation_minutes_avoided": 780,
+      "test_minutes_avoided": 52,
+      "ci_work_avoided": 9,
+      "full_mutation_minutes_baseline": 840,
+      "actual_mutation_minutes": 60,
+      "saved_pct": 92.86,
+      "certification_confidence": "preserved"
+    },
+    {
+      "scenario": "two_engine_change",
+      "changed_files": [
+        "backend/src/engines/credit_card_engine/risk.py",
+        "backend/src/engines/balance_engine/ledger.py"
+      ],
+      "tasks_planned": 2,
+      "tasks_executed": 2,
+      "tasks_reused": 12,
+      "components_invalidated": 2,
+      "mutation_minutes_avoided": 720,
+      "test_minutes_avoided": 48,
+      "ci_work_avoided": 9,
+      "full_mutation_minutes_baseline": 840,
+      "actual_mutation_minutes": 120,
+      "saved_pct": 85.71,
+      "certification_confidence": "preserved"
+    },
+    {
+      "scenario": "test_only_change",
+      "changed_files": [
+        "backend/tests/unit/engines/credit_card_engine/test_risk.py"
+      ],
+      "tasks_planned": 1,
+      "tasks_executed": 1,
+      "tasks_reused": 13,
+      "components_invalidated": 1,
+      "mutation_minutes_avoided": 780,
+      "test_minutes_avoided": 52,
+      "ci_work_avoided": 9,
+      "full_mutation_minutes_baseline": 840,
+      "actual_mutation_minutes": 60,
+      "saved_pct": 92.86,
+      "certification_confidence": "preserved"
+    },
+    {
+      "scenario": "config_change",
+      "changed_files": [
+        "backend/pyproject.toml"
+      ],
+      "tasks_planned": 0,
+      "tasks_executed": 0,
+      "tasks_reused": 14,
+      "components_invalidated": 0,
+      "mutation_minutes_avoided": 840,
+      "test_minutes_avoided": 56,
+      "ci_work_avoided": 18,
+      "full_mutation_minutes_baseline": 840,
+      "actual_mutation_minutes": 0,
+      "saved_pct": 100.0,
+      "certification_confidence": "preserved"
+    }
+  ],
+  "aggregate": {
+    "scenarios": 5,
+    "full_mutation_baseline_minutes": 4200,
+    "actual_mutation_minutes_total": 240,
+    "mutation_minutes_avoided_total": 3960,
+    "test_minutes_avoided_total": 264,
+    "ci_work_avoided_total": 63,
+    "ci_verification_bindings": 18,
+    "aggregate_saved_pct": 94.29
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "batch": "batch-4-calculations-credit-card",
+  "component": "credit_card_engine",
+  "objective": "Targeted strengthening of credit_card_engine interest/fee behavior (C42.21: 582 generated, 440 killed, 142 survived, 75.6%). C42.22 estimated ~26 genuine Class-A interest/fee candidates; verified against actual survivors rather than blindly adding 26 tests.",
+  "strategic_constraint": "Strengthen genuine financial behavior only; do not add tests solely to kill equivalent arithmetic mutants.",
+  "baseline_c42_21": {"generated": 582, "killed": 440, "survived": 142, "no_tests": 0, "score_pct": 75.6},
+  "approach": "Added 9 deterministic tests for the interest module (interest.py): 365-day Indian daily-rate convention, exact ROUND_HALF_EVEN daily accrual, zero short-circuits, ValueError guards on negative inputs, monthly aggregation, and invalid-cycle guards. Targets the interest/fee Class-A inventory from C42.21/22.",
+  "tests_added": ["tests/unit/engines/credit_card/test_interest_strengthening.py (9 tests)"],
+  "validation": {
+    "regression": "9 passed; full credit_card suite (189+9) green",
+    "ruff": "passed (import sort auto-fixed)",
+    "mypy_strict": "passed",
+    "targeted_mutation": "Manual mutant (3650000 -> 3600000 denominator) caught by test_bps_to_daily_rate_uses_365_day_year (test FAILS on mutant).",
+    "method_note": "Full component re-measurement is performed by the authoritative CI campaign (Batch 6 trigger)."
+  },
+  "survivor_classification": {
+    "class_A_addressed": "Interest accrual exact value, 365-day convention, rounding mode, guard ValueError semantics.",
+    "class_B": "Equivalent arithmetic mutations on fee aggregation paths whose valid-domain result is unchanged.",
+    "class_C": "Defensive input handling already covered."
+  },
+  "production_code_changed": false
+}

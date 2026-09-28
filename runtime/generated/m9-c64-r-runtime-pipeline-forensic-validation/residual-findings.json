@@ -1,0 +1,99 @@
+{
+  "audit_date": "2026-09-20T03:20:00Z",
+  "commit": "8990f3ae",
+  "findings": [
+    {
+      "id": "C64R-F001",
+      "category": "PIPELINE_CONTRACT_DEFECT",
+      "severity": "HIGH",
+      "location": "runtime/foundation/verification/control_plane_facade.py:895",
+      "description": "All obligations reference changed_files[0] instead of per-file attribution",
+      "evidence": "obligations group_by(change.path) shows all obligations attribute to single path",
+      "impact": "Cannot trace which file caused which obligation",
+      "classification": "BROKEN_PIPELINE",
+      "remediation": "Iterate over changed_files with index or map task.capability_id -> file"
+    },
+    {
+      "id": "C64R-F002",
+      "category": "PIPELINE_CONTRACT_DEFECT",
+      "severity": "HIGH",
+      "location": "runtime/foundation/verification/capability_resolver.py:349-354",
+      "description": "Frontend component paths (frontend/app/, frontend/components/) not classified as SOURCE_CHANGE",
+      "evidence": "resolve_capabilities(['frontend/app/accounts/page.tsx']) returns empty direct_caps; Phase I confirms 0 obligations for platform/framework/page.tsx",
+      "impact": "Frontend component changes produce zero verification obligations",
+      "classification": "BROKEN_PIPELINE",
+      "remediation": "Add frontend/app/ and frontend/components/ to SOURCE_CHANGE classification"
+    },
+    {
+      "id": "C64R-F003",
+      "category": "DATA_PROVENANCE_DEFECT",
+      "severity": "MEDIUM",
+      "location": "runtime/foundation/verification/capability_resolver.py:363-380",
+      "description": "Router files (backend/src/routers/*.py) not mapped to backend capability contracts",
+      "evidence": "accounts.py change produces only api-contracts obligations, not account-engine; cross_layer_graph.py:147-176 has hardcoded mapping but resolver doesn't consume it",
+      "impact": "Router changes bypass engine-level verification",
+      "classification": "OPAQUE_PIPELINE",
+      "remediation": "Add router-to-capability mapping in contract registry or _classify_change"
+    },
+    {
+      "id": "C64R-F004",
+      "category": "ENVIRONMENT_DEFECT",
+      "severity": "LOW",
+      "description": "Change detection returns 1127 files due to branch divergence from main (merge-base fe654f27)",
+      "evidence": "git diff --name-only fe654f27 HEAD produces 5470 files; filtered to 1127 by exclude patterns",
+      "impact": "Large changesets cause obligation explosion and timeout in blast radius",
+      "classification": "INTENTIONAL_BOUNDARY",
+      "note": "Mitigated by VERIFICATION_OFFLINE and explicit base refs"
+    },
+    {
+      "id": "C64R-F005",
+      "category": "TEST_DEFECT",
+      "severity": "MEDIUM",
+      "location": "runtime/tests/test_large_changeset.py:72",
+      "description": "test_blast_radius_with_very_large_file times out on 15k-line files",
+      "evidence": "ast.walk O(n^2) on large files causes >60s timeout",
+      "impact": "Framework cannot handle legitimately large source files",
+      "classification": "BLOCKED_PER_C64",
+      "parent": "C64-T002"
+    },
+    {
+      "id": "C64R-F006",
+      "category": "CONFIGURATION_INTEGRITY_DEFECT",
+      "severity": "MEDIUM",
+      "location": "runtime/foundation/verification/verification.yaml consumer gap",
+      "description": "Framework does not detect configuration threshold divergence (e.g. coverage_threshold: 999) at plan or doctor time",
+      "evidence": "Phase K: set coverage_threshold=999, verify doctor returns HEALTHY, plan produces 27 obligations unchanged",
+      "impact": "Misconfigured thresholds silently accepted; no guardrail against accidental config drift",
+      "classification": "OPAQUE_PIPELINE",
+      "remediation": "Add configuration validation step in doctor() that compares yaml values against reasonable bounds"
+    }
+  ],
+  "confirmed_repeatability": {
+    "doctor": "IDENTICAL across runs",
+    "plan_set_id": "DETERMINISTIC (set-bdc2d05ad782 for commit 8990f3ae)",
+    "evidence_count": "CONSISTENT (240 ai-runs files)",
+    "capabilities_count": "CONSISTENT (55 catalog entries)"
+  },
+  "repeatability_gaps": {
+    "inspect_capabilities": "INCONSISTENT (structural variance between runs)",
+    "inspect_evidence": "INCONSISTENT (counts grow between runs)"
+  },
+  "architecture_counts": {
+    "architecture_inventory_modules": 1472,
+    "provider_capabilities": 10,
+    "provider_routers": 12,
+    "provider_endpoints": 76,
+    "cross_layer_frontend_caps": 414,
+    "cross_layer_backend_caps": 157,
+    "cross_layer_edges": 176,
+    "contract_registry_capabilities": 15
+  },
+  "new_findings_from_phases_r_ac": {
+    "transition_audit": "34 transitions documented, 29 PASS, 5 FAIL (T08 obligation attribution, T13 formatting)",
+    "negative_testing": "6/9 passed; S-5 (frontend/app), S-6 (router), S-9 (multi-file attribution) failed as expected from known defects",
+    "truth_table": "7/9 rows match; 2 mismatches: Row 4 (SIGINT exit code variance), Row 6 (config divergence undetected)",
+    "console_truth": "4 scenarios compared across CLI/API/evidence/console; structural consistency confirmed",
+    "obligation_completeness": "4/7 scenarios fully complete; F (frontend/app) and E (router) incomplete due to F002/F003",
+    "evidence_infrastructure": "240 ai-runs files, 23 trace files; full execution evidence available for prior runs"
+  }
+}

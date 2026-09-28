@@ -255,7 +255,9 @@ def test_frontend_selection_provenance_records_chain_map_source(resolver):
     The frontend unit's provenance must name the chain-map bridge as its
     source, so an AI diagnosis can trace backend DTO → chain-map → frontend.
     """
-    change = analyze_changes(resolver=resolver, paths=["backend/src/core/dtos/loans_dto.py"])
+    change = analyze_changes(
+        resolver=resolver, paths=["backend/src/core/dtos/loans_dto.py"]
+    )
     plan = optimize_verification(compute_blast_radius(change, resolver=resolver))
     frontend_units = [u for u in plan.selected if u.category == "frontend"]
     assert frontend_units

@@ -1,0 +1,339 @@
+{
+  "schema": "m9-c71-mutation-trust-baseline/v1",
+  "recorded_at": "2026-09-28T06:50:00.515199+00:00",
+  "identity": {
+    "head_sha": "ebe3d2e178869075ee3fb8ae1fa16c70de42b464",
+    "tree_sha": "8cb70226de8930794f82650c95270364c494c199",
+    "branch": "m9c9-merge-authorization-resolution",
+    "working_tree_clean": false
+  },
+  "environment": {
+    "python": "3.12.3",
+    "python_executable": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python",
+    "venv": "/home/vasantha/AI-Projects/ClariFin_OS/.venv",
+    "mutmut_installed": "3.7.0",
+    "mutmut_declared": "3.7.0",
+    "mutmut_pinned": "3.7.0"
+  },
+  "mutation_configuration": {
+    "threshold_percent": 80,
+    "threshold_source": "verification.yaml mutation_thresholds.full_campaign",
+    "shard_model": "mutation_shards.shard_plan (deterministic, size-bounded)",
+    "shard_count": 26,
+    "components": 5
+  },
+  "toolchain_contract": {
+    "contract_id": "c71-mutation-toolchain-contract",
+    "status": "SATISFIED",
+    "mutmut_version": "3.7.0",
+    "trampoline_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/mutmut/mutation/trampoline.py",
+    "before_sha256": "aadb4841ee38661164e391f2299b6be81db4926eb5da39e893caacf5c1a0bd16",
+    "after_sha256": "aadb4841ee38661164e391f2299b6be81db4926eb5da39e893caacf5c1a0bd16",
+    "canonical_sha256": "aadb4841ee38661164e391f2299b6be81db4926eb5da39e893caacf5c1a0bd16",
+    "applied": false,
+    "unsatisfied_clauses": [],
+    "detail": "all clauses satisfied; toolchain is canonical",
+    "satisfied": true
+  },
+  "population": {
+    "shards_expected": 26,
+    "shards_measured": 26,
+    "shards_missing": [],
+    "generated": 16904,
+    "killed": 13534,
+    "survived": 3359,
+    "no_tests": 5,
+    "timeout": 6,
+    "score": 80.1
+  },
+  "aggregate_verdict": "PASS",
+  "aggregate_failures": [],
+  "shards": [
+    {
+      "shard": "account_engine",
+      "present": true,
+      "population": 183,
+      "killed": 173,
+      "survived": 10,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 94.5,
+      "duration_seconds": 43
+    },
+    {
+      "shard": "balance_engine",
+      "present": true,
+      "population": 285,
+      "killed": 272,
+      "survived": 13,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 95.4,
+      "duration_seconds": 654
+    },
+    {
+      "shard": "behaviour_engine-00",
+      "present": true,
+      "population": 2080,
+      "killed": 1682,
+      "survived": 398,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 80.9,
+      "duration_seconds": 616
+    },
+    {
+      "shard": "behaviour_engine-01",
+      "present": true,
+      "population": 1425,
+      "killed": 1098,
+      "survived": 327,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 77.1,
+      "duration_seconds": 314
+    },
+    {
+      "shard": "behaviour_engine-02",
+      "present": true,
+      "population": 820,
+      "killed": 649,
+      "survived": 171,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 79.1,
+      "duration_seconds": 157
+    },
+    {
+      "shard": "behaviour_engine-03",
+      "present": true,
+      "population": 1034,
+      "killed": 958,
+      "survived": 76,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 92.6,
+      "duration_seconds": 504
+    },
+    {
+      "shard": "behaviour_engine-04",
+      "present": true,
+      "population": 606,
+      "killed": 529,
+      "survived": 77,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 87.3,
+      "duration_seconds": 124
+    },
+    {
+      "shard": "behaviour_engine-05",
+      "present": true,
+      "population": 945,
+      "killed": 836,
+      "survived": 106,
+      "no_tests": 0,
+      "timeout": 3,
+      "score": 88.5,
+      "duration_seconds": 274
+    },
+    {
+      "shard": "behaviour_engine-06",
+      "present": true,
+      "population": 303,
+      "killed": 281,
+      "survived": 22,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 92.7,
+      "duration_seconds": 68
+    },
+    {
+      "shard": "cashflow_engine",
+      "present": true,
+      "population": 172,
+      "killed": 128,
+      "survived": 44,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 74.4,
+      "duration_seconds": 56
+    },
+    {
+      "shard": "common_calculations",
+      "present": true,
+      "population": 376,
+      "killed": 241,
+      "survived": 135,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 64.1,
+      "duration_seconds": 89
+    },
+    {
+      "shard": "core_domain_money",
+      "present": true,
+      "population": 103,
+      "killed": 84,
+      "survived": 18,
+      "no_tests": 1,
+      "timeout": 0,
+      "score": 82.4,
+      "duration_seconds": 30
+    },
+    {
+      "shard": "credit_card_engine",
+      "present": true,
+      "population": 582,
+      "killed": 449,
+      "survived": 133,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 77.1,
+      "duration_seconds": 189
+    },
+    {
+      "shard": "financial_events",
+      "present": true,
+      "population": 704,
+      "killed": 505,
+      "survived": 199,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 71.7,
+      "duration_seconds": 554
+    },
+    {
+      "shard": "financial_intelligence-00",
+      "present": true,
+      "population": 1244,
+      "killed": 895,
+      "survived": 349,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 71.9,
+      "duration_seconds": 325
+    },
+    {
+      "shard": "financial_intelligence-01",
+      "present": true,
+      "population": 803,
+      "killed": 664,
+      "survived": 139,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 82.7,
+      "duration_seconds": 197
+    },
+    {
+      "shard": "financial_intelligence-02",
+      "present": true,
+      "population": 627,
+      "killed": 449,
+      "survived": 178,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 71.6,
+      "duration_seconds": 177
+    },
+    {
+      "shard": "financial_intelligence-03",
+      "present": true,
+      "population": 715,
+      "killed": 566,
+      "survived": 149,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 79.2,
+      "duration_seconds": 107
+    },
+    {
+      "shard": "financial_intelligence-04",
+      "present": true,
+      "population": 319,
+      "killed": 281,
+      "survived": 38,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 88.1,
+      "duration_seconds": 77
+    },
+    {
+      "shard": "ledger_audit_engine",
+      "present": true,
+      "population": 190,
+      "killed": 132,
+      "survived": 58,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 69.5,
+      "duration_seconds": 693
+    },
+    {
+      "shard": "loan_engine-00",
+      "present": true,
+      "population": 703,
+      "killed": 565,
+      "survived": 131,
+      "no_tests": 4,
+      "timeout": 3,
+      "score": 80.8,
+      "duration_seconds": 380
+    },
+    {
+      "shard": "loan_engine-01",
+      "present": true,
+      "population": 570,
+      "killed": 498,
+      "survived": 72,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 87.4,
+      "duration_seconds": 564
+    },
+    {
+      "shard": "recommendation_engine",
+      "present": true,
+      "population": 282,
+      "killed": 199,
+      "survived": 83,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 70.6,
+      "duration_seconds": 66
+    },
+    {
+      "shard": "reconciliation_engine",
+      "present": true,
+      "population": 368,
+      "killed": 298,
+      "survived": 70,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 81.0,
+      "duration_seconds": 566
+    },
+    {
+      "shard": "transaction_intelligence-00",
+      "present": true,
+      "population": 985,
+      "killed": 767,
+      "survived": 218,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 77.9,
+      "duration_seconds": 368
+    },
+    {
+      "shard": "transaction_intelligence-01",
+      "present": true,
+      "population": 480,
+      "killed": 335,
+      "survived": 145,
+      "no_tests": 0,
+      "timeout": 0,
+      "score": 69.8,
+      "duration_seconds": 186
+    }
+  ]
+}

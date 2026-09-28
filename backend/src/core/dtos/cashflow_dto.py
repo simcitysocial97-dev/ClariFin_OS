@@ -8,7 +8,7 @@ All monetary fields use _paise suffix for explicit units.
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 # ===== Cashflow Trend Types =====
 
@@ -159,8 +159,8 @@ class CashflowSummaryDTO(BaseModel):
         default=None, description="Evidence chain for explainability"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "total_income_paise": 10000000,  # ₹1,00,000.00
                 "total_expenses_paise": 7500000,  # ₹75,000.00
@@ -176,6 +176,7 @@ class CashflowSummaryDTO(BaseModel):
                 "evidence_chain": None,
             }
         }
+    )
 
 
 # ===== Cashflow Response Types =====

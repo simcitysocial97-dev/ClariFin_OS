@@ -1,0 +1,13 @@
+# status: survived
+# engines.ledger_audit_engine.x_validate_ledger_integrity__mutmut_25: survived
+--- src/engines/ledger_audit_engine.py
++++ src/engines/ledger_audit_engine.py
+@@ -46,7 +46,7 @@
+         violations.append(
+             {
+                 "type": "NEGATIVE_DEBIT",
+-                "transaction_id": row["id"],
++                "XXtransaction_idXX": row["id"],
+                 "message": f"Transaction {row['id']} has negative debit: {row['debit']}",
+             }
+         )

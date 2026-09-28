@@ -1,0 +1,17 @@
+# status: survived
+# engines.ledger_audit_engine.x_validate_ledger_integrity__mutmut_52: survived
+--- src/engines/ledger_audit_engine.py
++++ src/engines/ledger_audit_engine.py
+@@ -72,11 +72,7 @@
+     """)
+     for row in cur.fetchall():
+         violations.append(
+-            {
+-                "type": "DUAL_ENTRY",
+-                "transaction_id": row["id"],
+-                "message": f"Transaction {row['id']} has both debit ({row['debit']}) and credit ({row['credit']})",
+-            }
++            None
+         )
+ 
+     # Check 5: hash_signature NOT NULL

@@ -6,7 +6,7 @@ Generates the repair DAG based on root cause clusters.
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -33,14 +33,20 @@ REPAIR_DAG = [
         "order": 3,
         "cluster_id": "CLUSTER-DEPENDENCY_GRAPH_INTEGRITY",
         "name": "Dependency Graph Integrity",
-        "depends_on": ["CLUSTER-REPOSITORY_GRAPH_INTEGRITY", "CLUSTER-CROSS_LAYER_COMPLETENESS"],
+        "depends_on": [
+            "CLUSTER-REPOSITORY_GRAPH_INTEGRITY",
+            "CLUSTER-CROSS_LAYER_COMPLETENESS",
+        ],
         "rationale": "Dependency graph depends on clean repository and cross-layer data",
     },
     {
         "order": 4,
         "cluster_id": "CLUSTER-KNOWLEDGE_DATA_QUALITY",
         "name": "Knowledge Base Data Quality",
-        "depends_on": ["CLUSTER-CROSS_LAYER_COMPLETENESS", "CLUSTER-DEPENDENCY_GRAPH_INTEGRITY"],
+        "depends_on": [
+            "CLUSTER-CROSS_LAYER_COMPLETENESS",
+            "CLUSTER-DEPENDENCY_GRAPH_INTEGRITY",
+        ],
         "rationale": "Knowledge index is built from cross-layer map and repository artifacts",
     },
     {
@@ -83,7 +89,7 @@ REPAIR_DAG = [
 
 def generate_repair_order() -> dict[str, Any]:
     return {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "repair_dag": REPAIR_DAG,
         "total_clusters": len(REPAIR_DAG),
         "execution_phases": [
@@ -95,7 +101,10 @@ def generate_repair_order() -> dict[str, Any]:
             {
                 "phase": 2,
                 "description": "Fix cross-layer and dependency graph",
-                "clusters": ["CLUSTER-CROSS_LAYER_COMPLETENESS", "CLUSTER-DEPENDENCY_GRAPH_INTEGRITY"],
+                "clusters": [
+                    "CLUSTER-CROSS_LAYER_COMPLETENESS",
+                    "CLUSTER-DEPENDENCY_GRAPH_INTEGRITY",
+                ],
             },
             {
                 "phase": 3,
@@ -105,12 +114,19 @@ def generate_repair_order() -> dict[str, Any]:
             {
                 "phase": 4,
                 "description": "Fix executor formatting and resilience",
-                "clusters": ["CLUSTER-EXECUTOR_COMMAND_FORMTING", "CLUSTER-EXECUTOR_RESILIENCE"],
+                "clusters": [
+                    "CLUSTER-EXECUTOR_COMMAND_FORMTING",
+                    "CLUSTER-EXECUTOR_RESILIENCE",
+                ],
             },
             {
                 "phase": 5,
                 "description": "Fix CLI, GitHub Actions, and artifacts",
-                "clusters": ["CLUSTER-CLI_COMPLETENESS", "CLUSTER-GITHUB_ACTIONS_COMPLETENESS", "CLUSTER-ARTIFACT_ORGANIZATION"],
+                "clusters": [
+                    "CLUSTER-CLI_COMPLETENESS",
+                    "CLUSTER-GITHUB_ACTIONS_COMPLETENESS",
+                    "CLUSTER-ARTIFACT_ORGANIZATION",
+                ],
             },
         ],
     }

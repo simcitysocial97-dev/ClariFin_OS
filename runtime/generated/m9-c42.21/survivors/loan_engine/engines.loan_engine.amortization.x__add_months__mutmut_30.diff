@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.amortization.x__add_months__mutmut_30: survived
+--- src/engines/loan_engine/amortization.py
++++ src/engines/loan_engine/amortization.py
+@@ -16,7 +16,7 @@
+         # Day doesn't exist in target month (e.g., Jan 31 -> Feb)
+         # Use last day of target month
+         if month_idx == 12:
+-            next_month = date(year + 1, 1, 1)
++            next_month = date(year + 1, 1, )
+         else:
+             next_month = date(year, month_idx + 1, 1)
+         last_day = (next_month - timedelta(days=1)).day

@@ -9,7 +9,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-
 from runtime.foundation.workspace.verification import render_verification
 from runtime.foundation.workspace.workspace import WorkspaceLoader
 
@@ -78,7 +77,13 @@ class TestVerificationWorkspace:
         loader = WorkspaceLoader(repo_root=tmp_path)
         _write_json(
             tmp_path / "runtime" / "generated" / "verification-cache.json",
-            {"last_commit": "", "changed_files": [], "executed_profiles": [], "duration": 0, "timestamp": ""},
+            {
+                "last_commit": "",
+                "changed_files": [],
+                "executed_profiles": [],
+                "duration": 0,
+                "timestamp": "",
+            },
         )
         _write_json(
             tmp_path / "runtime" / "generated" / "engineering-history.json",

@@ -1,0 +1,16 @@
+{
+  "forged_decision_certified": false,
+  "forged_decision_status": "BLOCKED",
+  "forged_evidence_constructed": true,
+  "forged_evidence_id": "runtime.verification::ev::0000000000000000",
+  "forgery_detectable_via_identity": true,
+  "generated_at": "2026-09-05T02:58:38.332884+00:00",
+  "identity_matches_forgery": false,
+  "identity_recomputed": "runtime.verification::ev::e94e30d6c1021fa5",
+  "repository": {
+    "branch": "m9c9-merge-authorization-resolution",
+    "sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde"
+  },
+  "schema": "m9-c50/final-freeze/execution-authenticity@1",
+  "verdict": "forgery_detectable_via_deterministic_identity"
+}

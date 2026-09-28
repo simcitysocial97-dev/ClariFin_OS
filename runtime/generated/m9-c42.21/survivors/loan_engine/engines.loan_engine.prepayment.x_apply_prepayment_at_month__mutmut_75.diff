@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_75: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -56,7 +56,7 @@
+         # The opening balance is the original principal.
+         # We don't have original principal directly, but we can compute from first row: balance + principal.
+         # That's already opening_balance.
+-        opening_balance = prepayment_row.balance_paise + prepayment_row.principal_paise
++        opening_balance = prepayment_row.balance_paise - prepayment_row.principal_paise
+     else:
+         opening_balance = schedule[prepayment_month - 2].balance_paise
+ 

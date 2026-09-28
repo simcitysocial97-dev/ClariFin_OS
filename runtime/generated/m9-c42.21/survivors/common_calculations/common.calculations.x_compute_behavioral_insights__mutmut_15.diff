@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_15: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -8,7 +8,7 @@
+ 
+     # Get month keys
+     month_keys = sorted(
+-        {t.get("month_key", "") for t in debit_txns if t.get("month_key")}
++        {t.get("month_key", ) for t in debit_txns if t.get("month_key")}
+     )
+     if len(month_keys) < 1:
+         return []

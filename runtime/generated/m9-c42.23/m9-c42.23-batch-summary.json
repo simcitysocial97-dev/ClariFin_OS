@@ -1,0 +1,21 @@
+{
+  "artifact": "m9-c42.23-batch-summary",
+  "phase": "M9-C42.23 — Bounded Behavioral Test Strengthening & Mutation Revalidation",
+  "predecessor_baseline": "M9-C42.21 SHA 3a37fab | 11,730 pop | 8,862 eval | 4,419 killed | 4,438 survived | 2,868 no_tests | ~49.9% (NOT CERTIFIED)",
+  "batches_executed": {
+    "batch_1": "COMPLETE in C42.22 (behaviour_engine + financial_events discovery repair). NOT reopened.",
+    "batch_2_cashflow": "COMPLETE — 10 behavioral tests; full local mutation 50->128 killed (29.1%->74.4%); 44 survivors classified B/C.",
+    "batch_3_ledger_recommendation": "COMPLETE — ledger: 0 new tests (82 survivors classified C/B, reachable contract already covered); recommendation: 9 new tests (spot-check validated).",
+    "batch_4_calculations_credit_card": "COMPLETE — common_calculations: 4 new boundary tests; credit_card: 9 interest-invariant tests (both spot-check validated).",
+    "batch_5_loan_reconciliation": "COMPLETE — reconciliation: 10 scoring tests (spot-check validated); loan: conservative, 0 new tests, 5 nondeterministic mutants preserved as reproducibility evidence.",
+    "batch_6_cross_repository": "COMPLETE — test/coverage/mutation/capability/survivor deltas reconciled (this artifact set)."
+  },
+  "new_tests_total": 42,
+  "production_logic_changed": false,
+  "mutation_effectiveness": {
+    "cashflow": "FULLY re-measured locally (78 genuine mutants now killed)",
+    "ledger_recommendation_calc_credit_card_reconciliation_loan": "Targeted spot-check validation (representative mutant killed by each new test) + authoritative CI full campaign pending at Batch 6 trigger"
+  },
+  "verification_gates_preserved": true,
+  "strong_engines_stable": "ledger (56.8% identical to C42.21), loan (84% band), balance/account/core_domain_money unchanged"
+}

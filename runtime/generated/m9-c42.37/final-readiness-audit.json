@@ -1,0 +1,144 @@
+{
+  "schema": "m9-c42.37-final-readiness-audit/v1",
+  "generated_at": "2026-08-26T18:47:11.230096+00:00",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "questions": [
+    {
+      "q": "Q1: Can every capability be discovered?",
+      "answer": "YES",
+      "evidence": "14 capabilities declared in graph; ENGINE_TO_CAPABILITY maps 14 components",
+      "mechanism": "graph_model.VerificationGraph.capabilities + evidence_reuse.ENGINE_TO_CAPABILITY"
+    },
+    {
+      "q": "Q2: Can every capability be mapped to production sources?",
+      "answer": "YES",
+      "evidence": "65 source\u2192capability edges",
+      "mechanism": "graph.source_to_capability mapping from cross-layer-map.json inventory"
+    },
+    {
+      "q": "Q3: Can every capability be mapped to executable verification?",
+      "answer": "PARTIALLY (14/14 capabilities have executable surfaces)",
+      "evidence": "14 capabilities have unit/integration/property/invariant surfaces; observation-only surfaces exist for audit/architecture",
+      "mechanism": "graph.capability_to_surface \u2192 TestSurfaceNode.kind filter"
+    },
+    {
+      "q": "Q4: Can evidence validity be determined deterministically?",
+      "answer": "YES",
+      "evidence": "validate_ci_evidence() checks 8 drift categories; decide_reuse() applies 13 enumerated rules",
+      "mechanism": "ci_evidence.validate_and_decide() + evidence_reuse.decide_reuse()"
+    },
+    {
+      "q": "Q5: Can stale evidence be rejected?",
+      "answer": "YES",
+      "evidence": "R-SRC-001 (source drift), R-SRC-003 (test drift), R-CFG-001/002 (config/toolchain), R-POP-001 (population)",
+      "mechanism": "InvalidationRule evaluators return INVALIDATES_COMPONENT/CAPABILITY/TASK"
+    },
+    {
+      "q": "Q6: Can CI evidence enter the canonical evidence model?",
+      "answer": "YES (logic implemented; live emission pending)",
+      "evidence": "ingest_ci_evidence() converts CIEvidenceRecord \u2192 ExecutionEvidence; semantic_equivalence() validates 6 dimensions",
+      "mechanism": "ci_evidence.ingest_ci_evidence() \u2192 ExecutionEvidence (same model as local)"
+    },
+    {
+      "q": "Q7: Can local and CI evidence be correlated?",
+      "answer": "YES (logic implemented; live pair pending)",
+      "evidence": "semantic_equivalence() tested with simulated records; 6-dimension check passes",
+      "mechanism": "ci_evidence.semantic_equivalence(local, ci_record, ingested)"
+    },
+    {
+      "q": "Q8: Can verification scope be enforced?",
+      "answer": "YES",
+      "evidence": "EvidenceAwarePlanner.plan() produces selected_tasks + excluded_tasks with explicit cause; scope_safe helpers in executor_pipeline",
+      "mechanism": "evidence_planner.EvidenceAwarePlanner.plan() + executor scope guards"
+    },
+    {
+      "q": "Q9: Can shared dependencies propagate invalidation correctly?",
+      "answer": "PARTIALLY (isolated engine changes correct; shared infra changes need enhancement)",
+      "evidence": "R-SRC-001 handles single-engine source changes; R-SRC-002 requires explicit 'shared::' prefix \u2014 not auto-detected from file paths",
+      "mechanism": "evidence_reuse.INVALIDATION_RULES; R-SRC-002 gap identified in shared-infrastructure-impact.json"
+    },
+    {
+      "q": "Q10: Can the planner determine minimum defensible verification?",
+      "answer": "YES",
+      "evidence": "Real scenario: 1 task selected, 13 excluded (92.86% reduction); no_full_campaign=true guaranteed",
+      "mechanism": "EvidenceAwarePlanner.plan() + gate_full_campaign() rejects score_improvement_desire"
+    },
+    {
+      "q": "Q11: Can the executor run only the selected verification?",
+      "answer": "YES",
+      "evidence": "executor_pipeline.execute_mutation_task(component) targets single component; build_executable_plan filters to selected tasks",
+      "mechanism": "executor_pipeline.build_executable_plan() + execute_mutation_task()"
+    },
+    {
+      "q": "Q12: Can the forensic record explain the entire causal chain?",
+      "answer": "YES",
+      "evidence": "validate_forensic_record() enforces 12 CAUSAL_CHAIN_STAGES; real-master-scenario-full.json passes with complete=true",
+      "mechanism": "diagnostic_agent.validate_forensic_record() + ForensicExecutionRecord schema"
+    },
+    {
+      "q": "Q13: Can the Diagnostic Agent answer all nine canonical questions?",
+      "answer": "YES",
+      "evidence": "DiagnosticForensicAgent.diagnose() produces q1-q9 + record_validation + explainability; determinism verified (C42.30 TestDeterminism)",
+      "mechanism": "diagnostic_agent.DiagnosticForensicAgent"
+    },
+    {
+      "q": "Q14: Can failures be correctly classified?",
+      "answer": "YES",
+      "evidence": "FailureKind enum (VERIFICATION, INFRASTRUCTURE, EVIDENCE, SCOPE, CONFIGURATION, CERTIFICATION); classify_ci_failure() precedence: evidence > infra > verification",
+      "mechanism": "executor_pipeline.FailureKind + ci_evidence.classify_ci_failure()"
+    },
+    {
+      "q": "Q15: Can uncertainty be explicitly represented?",
+      "answer": "YES",
+      "evidence": "Uncertainty dataclass with kind/subject/detail/gates_certification/recommendation; 7 uncertainty kinds in UNCERTAINTY_KINDS",
+      "mechanism": "diagnostic_agent.Uncertainty + DiagnosticReport.q8_uncertainties"
+    },
+    {
+      "q": "Q16: Can strengthening proposals be evidence-derived?",
+      "answer": "YES",
+      "evidence": "generate_proposal() takes SurvivorEvidence \u2192 StrengtheningProposal (Class-A) or RejectionRecord (B/C/D/E); hypothesis from mutation_operator template",
+      "mechanism": "strengthening.generate_proposal()"
+    },
+    {
+      "q": "Q17: Can strengthening be targeted and revalidated?",
+      "answer": "YES",
+      "evidence": "targeted_revalidation() runs executor on component only; accepts if target killed + zero regressions; used_full_campaign always False",
+      "mechanism": "strengthening.targeted_revalidation()"
+    },
+    {
+      "q": "Q18: Can production modification remain outside autonomous authority?",
+      "answer": "YES",
+      "evidence": "strengthening.py: no production write path; ApprovalDecision.approved always False; gate_full_campaign rejects test_addition/score_improvement_desire",
+      "mechanism": "strengthening.evaluate_auto_approval_eligibility() + ApprovalDecision.approved=False hardcode"
+    },
+    {
+      "q": "Q19: Can historical evidence improve future decisions?",
+      "answer": "YES (structurally; data accumulation ongoing)",
+      "evidence": "C42.26 population evidence reused across runs; ComponentMeasurement.fingerprint() enables cross-run comparison; SurvivorRegistry gap identified (not yet implemented)",
+      "mechanism": "evidence_reuse.ComponentMeasurement + evidence_reuse.load_snapshot()/save_snapshot()"
+    },
+    {
+      "q": "Q20: Can the system produce a defensible certification decision from artifacts alone?",
+      "answer": "YES",
+      "evidence": "DiagnosticReport.q9_verdict deterministic from ForensicExecutionRecord; Explainability provides mandatory answers; real master scenario \u2192 CERTIFIABLE",
+      "mechanism": "diagnostic_agent.DiagnosticForensicAgent._answer_q9()"
+    }
+  ],
+  "summary": {
+    "total_questions": 20,
+    "yes": 18,
+    "partially": 2,
+    "no": 0,
+    "partial_items": [
+      {
+        "q": "Q3: Can every capability be mapped to executable verification?",
+        "answer": "PARTIALLY (14/14 capabilities have executable surfaces)"
+      },
+      {
+        "q": "Q9: Can shared dependencies propagate invalidation correctly?",
+        "answer": "PARTIALLY (isolated engine changes correct; shared infra changes need enhancement)"
+      }
+    ],
+    "readiness": "READY_FOR_FINAL_CERTIFICATION"
+  }
+}

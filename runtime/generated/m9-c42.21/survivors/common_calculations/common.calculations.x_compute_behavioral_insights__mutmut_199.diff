@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_199: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -82,7 +82,7 @@
+                             "title": "Spending Down",
+                             "description": f"Spending is down {int(abs(pct_change_total))}%",
+                             "severity": "positive",
+-                            "icon": "check-circle",
++                            "icon": "XXcheck-circleXX",
+                         }
+                     )
+ 

@@ -82,15 +82,14 @@ def main() -> int:
 
     args = parser.parse_args()
 
-    # Ensure repo root in sys.path for imports
+    # Workspace root for path-relative evidence operations (no sys.path
+    # manipulation: the runtime package is installed, canonical contract).
     repo_root = args.workspace
-    if str(repo_root) not in sys.path:
-        sys.path.insert(0, str(repo_root))
 
-    # Import after path setup
+    # Import after path resolution
     from runtime.system.evidence.api import (
-        collect_all_evidence,
         build_verification_evidence,
+        collect_all_evidence,
         write_verification_summary,
     )
 
@@ -134,9 +133,9 @@ def main() -> int:
 
     # Print summary
     print("\nVerification Summary:")
-    print("  Commit: {}".format(commit_sha[:8]))
-    print("  Branch: {}".format(branch))
-    print("  Status: {}".format(evidence.status))
+    print(f"  Commit: {commit_sha[:8]}")
+    print(f"  Branch: {branch}")
+    print(f"  Status: {evidence.status}")
     if evidence.coverage:
         print(f"  Coverage: {evidence.coverage.percentage:.1f}%")
     if evidence.mutation:

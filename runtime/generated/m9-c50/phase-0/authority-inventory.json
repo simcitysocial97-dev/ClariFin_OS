@@ -1,0 +1,48 @@
+{
+  "schema": "m9-c50/phase-0/authority-inventory@1",
+  "generated_at": "2026-09-04T11:07:00+00:00",
+  "authorities": [
+    {
+      "domain": "operator CLI / command surface",
+      "canonical_authority": "runtime/foundation/verification/canonical_control_plane.py",
+      "runtime_dispatch": "runtime/foundation/verification/control_plane_facade.py::main",
+      "consumer": "runtime/verify.py (thin shim)"
+    },
+    {
+      "domain": "capability semantic authority",
+      "canonical_authority": "VerificationRegistry (loads verification.yaml)",
+      "derived": "CapabilityContractRegistry",
+      "runtime_guard": "capability_authority.assert_no_competing_authority()"
+    },
+    {
+      "domain": "planner",
+      "canonical_authority": "ControlPlanePlanner (control_plane.py)",
+      "evidence_planning": "evidence_planner.py"
+    },
+    {
+      "domain": "executor",
+      "canonical_authority": "ExecutionOrchestrator",
+      "task_composition": "executor_pipeline.py (ADAPTERS registry, 8 task kinds)"
+    },
+    {
+      "domain": "evidence",
+      "canonical_authority": "EvidenceContract / evidence_integrity / evidence_reuse",
+      "observability": "runtime/system/observability/event_store.py"
+    },
+    {
+      "domain": "mutation",
+      "canonical_authority": "MutationOrchestrator",
+      "legacy_surface": "verify.py mutation (DEPRECATED -> strengthen)"
+    },
+    {
+      "domain": "obligation model",
+      "canonical_authority": "obligation.py (dispositions CLOSED/EXECUTED/OPEN/BLOCKED/INVALIDATED/REUSED/NOT_APPLICABLE/FAILED)"
+    }
+  ],
+  "known_duplicate_or_dormant_authorities": [
+    "forensic_cli.py (~38KB) exposes legacy forensic commands (forensic-diagnose, strengthen-*, mutation-intel) classified DEPRECATED",
+    "blast_radius_cli.py exposes blast-radius legacy command (DEPRECATED)",
+    "legacy semantic commands remain dispatchable as DEPRECATED/COMPATIBILITY routes but delegate to one canonical op (claimed)"
+  ],
+  "repository_boundary_check": "FinanceDB import confined to src/repositories/ per .clinerules (engines/routers must not import FinanceDB)"
+}

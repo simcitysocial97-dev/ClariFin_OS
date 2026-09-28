@@ -1,0 +1,13 @@
+# status: survived
+# engines.balance_engine.x__parse_date_to_ymd__mutmut_23: survived
+--- src/engines/balance_engine.py
++++ src/engines/balance_engine.py
+@@ -19,7 +19,7 @@
+         "%d %b %Y",
+         "%d %b %y",
+         "%d-%b-%Y",
+-        "XX%d-%b-%yXX",
++        "xx%d-%b-%yxx",
+         "%Y-%m-%d",
+     ]
+     s = date_str.strip()

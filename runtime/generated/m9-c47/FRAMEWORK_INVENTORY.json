@@ -1,0 +1,1294 @@
+{
+  "metadata": {
+    "schema": "m9-c47-framework-inventory/v1",
+    "generated_at": "2026-09-03T16:35:00Z",
+    "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+    "branch": "m9c9-merge-authorization-resolution",
+    "total_files_inventoried": 122,
+    "category_counts": {
+      "core_verification": 45,
+      "planner": 3,
+      "registry": 2,
+      "capability": 7,
+      "mutation_execution": 22,
+      "api_contracts": 7,
+      "evidence_system": 6,
+      "executor": 5,
+      "ci_evidence": 1,
+      "convergence": 3,
+      "audit": 3,
+      "strengthening": 4,
+      "measurement_truth": 3,
+      "reconciliation": 1,
+      "mutation_runner": 1,
+      "tier": 1,
+      "configuration": 3,
+      "forensic": 1,
+      "runtime": 1,
+      "validation": 2,
+      "test_files": 4
+    }
+  },
+  "framework_files": {
+    "runtime/foundation/verification/orchestrator.py": {
+      "category": "core_verification",
+      "role": "Main verification orchestrator (Program 7B) - collects changed files, runs cross-layer impact, generates plan, executes, aggregates evidence",
+      "status": "ACTIVE",
+      "imports": ["VerificationPlanner", "Executor", "EvidenceAggregator", "CrossLayerImpactPlanner"],
+      "entrypoints": ["VerificationOrchestrator.run()", "run_verification()"],
+      "callers": ["runtime/verify.py", "runtime/foundation/verification/cli/cli.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Primary orchestrator for all verification runs. Handles changed-file detection, plan generation, execution, and report generation."
+    },
+    "runtime/foundation/verification/planner/planner.py": {
+      "category": "planner",
+      "role": "Verification planner - generates verification plans from changed files/capabilities/endpoints",
+      "status": "ACTIVE",
+      "imports": ["RepositoryGraphService", "VerificationRegistry"],
+      "entrypoints": ["VerificationPlanner.plan()", "plan_verification()", "CrossLayerImpactPlanner.analyze_cross_layer_impact()"],
+      "callers": ["orchestrator.py", "cli/cli.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Contains both VerificationPlanner and CrossLayerImpactPlanner (Program 7A). Handles scope merging, bounded profile semantics, and dependency resolution."
+    },
+    "runtime/foundation/verification/registry/registry.py": {
+      "category": "registry",
+      "role": "Verification registry - loads verification.yaml, registers workflows/scripts/capabilities",
+      "status": "ACTIVE",
+      "imports": ["yaml"],
+      "entrypoints": ["VerificationRegistry.load()", "get_registry()"],
+      "callers": ["planner/planner.py", "cli/cli.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Contains UNIT_TO_WORKFLOW mapping (VEA-2 Phase 2 M2) and default workflows/scripts/capabilities. Single source of truth for registry data."
+    },
+    "runtime/foundation/verification/capability_catalog.py": {
+      "category": "capability",
+      "role": "Canonical capability catalog (M9-C51) - frozen inventory of all verification capabilities",
+      "status": "ACTIVE",
+      "imports": ["CommandCategory", "CommandInventoryEntry"],
+      "entrypoints": ["get_capability_catalog()", "CapabilityCatalogBuilder.build()"],
+      "callers": ["capability_graph.py", "cli_capability_matrix.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Contains VerificationCapabilityMetadata dataclass, CapabilityStage enum, CostClass enum, AuthorizationLevel enum, and EVIDENCE_KINDS closed vocabulary."
+    },
+    "runtime/foundation/verification/capability_graph.py": {
+      "category": "capability",
+      "role": "Capability dependency graph builder (M9-C51 M51.9)",
+      "status": "ACTIVE",
+      "imports": ["capability_catalog"],
+      "entrypoints": ["build_capability_graph()", "cmd_capability_graph()"],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Builds graph from capability catalog. Contains canonical pipeline spine edges and evidence dependency edges."
+    },
+    "runtime/foundation/verification/capability_resolver.py": {
+      "category": "capability",
+      "role": "Capability resolution from repository changes (M9-C48)",
+      "status": "ACTIVE",
+      "imports": ["CapabilityContractRegistry", "CrossLayerImpactPlanner", "EvidenceReuse", "VerificationGraph"],
+      "entrypoints": ["resolve_capabilities()", "CapabilityResolver.resolve()"],
+      "callers": ["blast_radius.py", "verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Resolves changed files to capabilities, determines directly/transitively affected capabilities, evidence reuse decisions."
+    },
+    "runtime/foundation/verification/capability_contract.py": {
+      "category": "capability",
+      "role": "Capability contract registry - per-capability metadata including affected_by_paths, workflow_mappings, test_mappings",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["get_capability_contract_registry()"],
+      "callers": ["capability_resolver.py", "blast_radius.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Provides structured capability definitions with workflow and test mappings."
+    },
+    "runtime/foundation/verification/capability_discovery.py": {
+      "category": "capability",
+      "role": "Capability discovery from repository structure",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Discovers capabilities from the repository structure."
+    },
+    "runtime/foundation/verification/blast_radius.py": {
+      "category": "core_verification",
+      "role": "Canonical blast-radius contract (M9-C50) - answers 15 questions about change impact",
+      "status": "ACTIVE",
+      "imports": ["CapabilityContractRegistry", "CapabilityResolver", "ChangeSurfaceAnalysis", "CommandInventory", "EvidenceReuse", "SharedDependencyIndex"],
+      "entrypoints": ["compute_blast_radius()", "BlastRadiusEngine.compute()"],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Comprehensive blast-radius contract with SurfaceImpact, CapabilityImpact, VerificationSurfaceRequirement, EvidenceInvalidation, EscalationCondition dataclasses."
+    },
+    "runtime/foundation/verification/mutation_contract.py": {
+      "category": "core_verification",
+      "role": "Canonical mutation result contract (M9-C42.5) - single source of truth for mutation result schema, three-gate classification",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["classify_gates()", "compute_score()", "parse_mutmut_results()", "ENGINE_SELECTION"],
+      "callers": ["mutation_runner.py", "mutation_execution/orchestrator.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Contains ENGINE_SELECTION dict with 14 components (credit_card, account, balance, ledger_audit, reconciliation, loan, behaviour, cashflow, financial_events, core_domain_money, common_calculations, recommendation, transaction_intelligence, financial_intelligence). Three-gate classification (A=Execution, B=Evidence, C=Quality). MutationResult dataclass with provenance."
+    },
+    "runtime/foundation/verification/mutation_runner.py": {
+      "category": "mutation_runner",
+      "role": "Canonical mutation runner (M9-C42.5) - replaces bash pipeline with deterministic Python runner",
+      "status": "ACTIVE",
+      "imports": ["mutation_contract", "env", "measurement_truth", "survivor_intel", "survivor_catalog"],
+      "entrypoints": ["execute_mutation()", "run_mutation_cli()"],
+      "callers": ["verify.py (mutation command)"],
+      "authority_level": "CANONICAL",
+      "notes": "Invoked via 'python runtime/verify.py mutation'. Handles smoke/target/full modes. Writes mutation-summary.json and measurement-truth.json. Uses _MutationSafety context manager for config restoration."
+    },
+    "runtime/foundation/verification/mutation_execution/orchestrator.py": {
+      "category": "mutation_execution",
+      "role": "Mutation campaign orchestrator (M9-C44) - coordinates baseline gate, candidate discovery, execution, cache, retries",
+      "status": "ACTIVE",
+      "imports": ["MutmutAdapter", "MutationCache", "MutationBackendBase", "MutationWorkspace"],
+      "entrypoints": ["MutationOrchestrator.run()", "create_orchestrator()"],
+      "callers": [],
+      "authority_level": "CANONICAL_FOR_DOMAIN_MODEL",
+      "notes": "Owns mutation execution semantics. Calls ONLY MutationBackendBase interface. Never invokes mutmut directly. Has parallel and serial execution modes. NOTE: The verify.py mutation path uses mutation_runner.py, NOT this orchestrator."
+    },
+    "runtime/foundation/verification/mutation_execution/domain_model.py": {
+      "category": "mutation_execution",
+      "role": "Canonical mutation domain model (M9-C44.1) - repository-owned data types independent of mutmut",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["MutationResultState", "MutationCampaign", "MutationCandidate", "MutationExecution", "MutationResult"],
+      "callers": ["mutation_execution/orchestrator.py", "mutation_execution/mutmut_adapter.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Schema: m9-c44-mutation-domain/v1. Contains canonical result states (KILLED, SURVIVED, EQUIVALENT, NO_TESTS, TIMEOUT, EXECUTION_ERROR, INVALID_MUTANT, NOT_EXECUTED, CANCELLED, UNKNOWN)."
+    },
+    "runtime/foundation/verification/mutation_execution/mutmut_adapter.py": {
+      "category": "mutation_execution",
+      "role": "Mutmut 3.7.0 backend adapter implementing MutationBackendBase",
+      "status": "ACTIVE",
+      "imports": ["mutation_execution/domain_model", "mutation_execution/backend_interface"],
+      "entrypoints": ["MutmutAdapter"],
+      "callers": ["mutation_execution/orchestrator.py"],
+      "authority_level": "CANONICAL",
+      "notes": "The ONLY mutmut integration point. Never invoke mutmut directly elsewhere."
+    },
+    "runtime/foundation/verification/mutation_execution/cache.py": {
+      "category": "mutation_execution",
+      "role": "Mutation cache for caching per-mutant results",
+      "status": "ACTIVE",
+      "imports": ["config_fingerprint"],
+      "entrypoints": ["MutationCache.get_or_skip()", "MutationCache.put()"],
+      "callers": ["mutation_execution/orchestrator.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Separate from the verification cache.py. Caches per-mutant results keyed by configuration fingerprint."
+    },
+    "runtime/foundation/verification/mutation_execution/workspace.py": {
+      "category": "mutation_execution",
+      "role": "Mutation workspace management (M44.6) - create/resume/persist campaign workspace",
+      "status": "ACTIVE",
+      "imports": ["domain_model"],
+      "entrypoints": ["create_workspace()", "resume_workspace()", "MutationWorkspace"],
+      "callers": ["mutation_execution/orchestrator.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Workspace persistence for campaign resume capability."
+    },
+    "runtime/foundation/verification/mutation_execution/evidence.py": {
+      "category": "mutation_execution",
+      "role": "Mutation evidence normalization (M44.17)",
+      "status": "ACTIVE",
+      "imports": ["domain_model"],
+      "entrypoints": [],
+      "callers": ["mutation_execution/orchestrator.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Normalizes mutation execution evidence."
+    },
+    "runtime/foundation/verification/mutation_execution/verify_result.py": {
+      "category": "mutation_execution",
+      "role": "Mutation result verification (M44.15) - was mutated source actually active?",
+      "status": "ACTIVE",
+      "imports": ["domain_model"],
+      "entrypoints": [],
+      "callers": ["mutation_execution/orchestrator.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Verifies that the mutation was actually applied before classifying."
+    },
+    "runtime/foundation/verification/mutation_execution/final_certification.py": {
+      "category": "mutation_execution",
+      "role": "Final mutation certification",
+      "status": "ACTIVE",
+      "imports": ["domain_model"],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Final certification step for mutation results."
+    },
+    "runtime/foundation/verification/mutation_execution/config_fingerprint.py": {
+      "category": "mutation_execution",
+      "role": "Configuration fingerprint computation",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["compute_source_fingerprint()"],
+      "callers": ["mutation_execution/orchestrator.py", "mutation_execution/cache.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Computes deterministic fingerprints for source/config invalidation."
+    },
+    "runtime/foundation/verification/mutation_execution/health.py": {
+      "category": "mutation_execution",
+      "role": "Mutation infrastructure health check",
+      "status": "ACTIVE",
+      "imports": ["domain_model"],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Health check for mutation infrastructure."
+    },
+    "runtime/foundation/verification/mutation_execution/forensics.py": {
+      "category": "mutation_execution",
+      "role": "Mutation forensics",
+      "status": "ACTIVE",
+      "imports": ["domain_model"],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Forensic analysis of mutation results."
+    },
+    "runtime/foundation/verification/mutation_execution/backend_interface.py": {
+      "category": "mutation_execution",
+      "role": "Abstract backend interface for mutation tools",
+      "status": "ACTIVE",
+      "imports": ["domain_model"],
+      "entrypoints": ["MutationBackendBase"],
+      "callers": ["mutation_execution/orchestrator.py", "mutation_execution/mutmut_adapter.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Abstract interface for mutation backends. MutmutAdapter implements this."
+    },
+    "runtime/foundation/verification/cache.py": {
+      "category": "core_verification",
+      "role": "Verification cache integrity (VEA-5 M3) - CachedResult/CachedVerdict/ReplayResult",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["VerificationCache.replay()", "VerificationCache.is_valid()"],
+      "callers": ["orchestrator.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Content-aware invalidation (R-CACHE-1). Cache key includes (commit, changed_files, profile, fingerprint, tree_digest). Exit code derived from stored status, never 0 when stored status is 'fail'."
+    },
+    "runtime/foundation/verification/executor.py": {
+      "category": "executor",
+      "role": "Verification step executor - runs subprocess commands with timeouts and logging",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["Executor.execute()"],
+      "callers": ["orchestrator.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Executes verification commands as subprocesses with per-step timeout and log callback."
+    },
+    "runtime/foundation/verification/executor_pipeline.py": {
+      "category": "executor",
+      "role": "Executor pipeline (evidence-plan, evidence-execute, evidence-reconcile, evidence-certify)",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["main()"],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Pipeline for evidence-based execution: plan -> execute -> reconcile -> certify."
+    },
+    "runtime/foundation/verification/evidence_contract.py": {
+      "category": "evidence_system",
+      "role": "VEA-5 M6 evidence contract - per-unit execution evidence with attempts and artifacts",
+      "status": "ACTIVE",
+      "imports": ["tier"],
+      "entrypoints": ["save_execution_evidence_v2()", "load_execution_evidence_any()", "deep_contract_manifest()"],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Schema: vea5-execution-evidence/v2. Hard invariant: unit_id -> attempt -> artifact. Also contains DEEP_VERIFICATION_SURFACES (13 surfaces across functional/regression/test-effectiveness/UI/performance/security domains)."
+    },
+    "runtime/foundation/verification/evidence_reuse.py": {
+      "category": "evidence_system",
+      "role": "M9-C42.27 evidence reuse, population snapshots, measurement invalidation rules",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["decide_reuse()", "evaluate_rule()", "c42_26_population()", "c42_24_b_measurements()"],
+      "callers": ["capability_resolver.py", "blast_radius.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Contains 13 invalidation rules (R-SRC-001 through R-TASK-001). Contains C42_26_COMPONENTS (14 components). Contains ENGINE_TO_CAPABILITY mapping (14 entries)."
+    },
+    "runtime/foundation/verification/evidence_integrity.py": {
+      "category": "evidence_system",
+      "role": "Evidence integrity validation",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Validates evidence integrity."
+    },
+    "runtime/foundation/verification/evidence_planner.py": {
+      "category": "evidence_system",
+      "role": "Evidence planning component",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Plans evidence collection."
+    },
+    "runtime/system/evidence/aggregator.py": {
+      "category": "evidence_system",
+      "role": "Evidence aggregator - combines test/coverage/mutation/contract/property evidence into summary",
+      "status": "ACTIVE",
+      "imports": ["collectors/contract", "collectors/coverage", "collectors/mutation", "collectors/test_results"],
+      "entrypoints": ["EvidenceAggregator.aggregate()", "EvidenceAggregator.from_artifact_directory()"],
+      "callers": ["orchestrator.py", ".github/scripts/aggregate_evidence.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Contains VEA-2 Phase 2 M5 frontend representation (E-2 fix) and unit-keyed failure joining (E-3 fix). VEA-3 M2 replaces E-4 keyword guessing with unit-keyed graph traversal. Contains OBSOLETE functions (_find_chain_for_failure, _find_dependency_chain) marked as E-4 defect."
+    },
+    "runtime/system/evidence/collectors/test_results.py": {
+      "category": "evidence_system",
+      "role": "Test results collector (JUnit XML)",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["ResultsCollector.collect()"],
+      "callers": ["aggregator.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Collects test results from JUnit XML files."
+    },
+    "runtime/system/evidence/collectors/coverage.py": {
+      "category": "evidence_system",
+      "role": "Coverage collector (coverage.py JSON)",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["CoverageCollector.collect()"],
+      "callers": ["aggregator.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Collects coverage data from coverage.py JSON output."
+    },
+    "runtime/system/evidence/collectors/mutation.py": {
+      "category": "evidence_system",
+      "role": "Mutation collector (mutmut results text)",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["MutationCollector.collect()"],
+      "callers": ["aggregator.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Collects mutation results from mutmut output text."
+    },
+    "runtime/system/evidence/collectors/contract.py": {
+      "category": "evidence_system",
+      "role": "Contract test results collector",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["ContractCollector.collect()"],
+      "callers": ["aggregator.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Collects contract test results."
+    },
+    "runtime/system/evidence/collectors/property_tests.py": {
+      "category": "evidence_system",
+      "role": "Property test results collector",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["aggregator.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Collects property-based test results."
+    },
+    "runtime/foundation/verification/api_contracts/gate.py": {
+      "category": "api_contracts",
+      "role": "M9-C27 API Contract Integrity & Drift-Proofing gate",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["ApiContractGate.run()"],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Runs STRUCTURAL freshness, GENERATED-type reproducibility, CONSUMER integrity, and WIRE validation."
+    },
+    "runtime/foundation/verification/api_contracts/c30_certification.py": {
+      "category": "api_contracts",
+      "role": "M9-C30 Contract Governance & Enforcement Certification",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["main()"],
+      "callers": ["verify.py (contract-governance command)"],
+      "authority_level": "CANONICAL",
+      "notes": "Forensic certification for API contract governance."
+    },
+    "runtime/foundation/verification/api_contracts/inventory.py": {
+      "category": "api_contracts",
+      "role": "API contract inventory",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["gate.py"],
+      "authority_level": "SUPPORTING",
+      "notes": "API contract inventory."
+    },
+    "runtime/foundation/verification/api_contracts/normalize.py": {
+      "category": "api_contracts",
+      "role": "API contract normalization",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["gate.py"],
+      "authority_level": "SUPPORTING",
+      "notes": "Normalizes API contract data."
+    },
+    "runtime/foundation/verification/api_contracts/taxonomy.py": {
+      "category": "api_contracts",
+      "role": "API contract taxonomy",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["gate.py"],
+      "authority_level": "SUPPORTING",
+      "notes": "Taxonomy for API contract classifications."
+    },
+    "runtime/foundation/verification/api_contracts/mutations.py": {
+      "category": "api_contracts",
+      "role": "API contract mutation testing",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["c30_certification.py"],
+      "authority_level": "SUPPORTING",
+      "notes": "Mutation testing for API contracts."
+    },
+    "runtime/foundation/verification/api_contracts/fixture.py": {
+      "category": "api_contracts",
+      "role": "API contract test fixtures",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["gate.py"],
+      "authority_level": "SUPPORTING",
+      "notes": "Test fixtures for API contract testing."
+    },
+    "runtime/foundation/verification/cli/cli.py": {
+      "category": "core_verification",
+      "role": "Verification Runtime CLI (Phase 6) - plan, scope, capability, resolve, explain, registry, validate",
+      "status": "ACTIVE",
+      "imports": ["models", "scope", "planner", "registry"],
+      "entrypoints": ["cli (Click group)", "plan", "scope", "capability", "repository", "resolve", "explain", "scopes", "examples", "registry", "validate", "backend", "evidence"],
+      "callers": ["verify (Python project script)"],
+      "authority_level": "CANONICAL",
+      "notes": "Planning-only CLI. Does NOT execute tests. Contains plan/scope/capability/resolve/explain/registry/validate commands. Also has 'backend' and 'evidence' subcommands for selective verification and evidence download."
+    },
+    "runtime/verify.py": {
+      "category": "core_verification",
+      "role": "Autonomous Verification Runtime CLI entry point (Program 7B)",
+      "status": "ACTIVE",
+      "imports": ["orchestrator", "profiles", "failure_report", "models", "observability"],
+      "entrypoints": ["main()"],
+      "callers": ["CI workflows (all)", "scripts/verify.sh"],
+      "authority_level": "CANONICAL",
+      "notes": "The CANONICAL CLI entry point. 100+ commands including: quick, backend, frontend, contracts, mutation, audit, certify, api-contracts, contract-governance, plan, reconcile, exec-evidence, etc. Dispatches to appropriate modules."
+    },
+    "runtime/foundation/verification/profiles.py": {
+      "category": "core_verification",
+      "role": "Verification profiles definition",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["get_profile()"],
+      "callers": ["orchestrator.py", "verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Defines verification profiles (quick, backend, frontend, contracts, etc.) with scopes and constraints."
+    },
+    "runtime/foundation/verification/env.py": {
+      "category": "core_verification",
+      "role": "Canonical environment resolver & consistency guard",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["resolve_environment()", "main_env_check()"],
+      "callers": ["mutation_runner.py", "verify.py (env-check)"],
+      "authority_level": "CANONICAL",
+      "notes": "Resolves mutmut/pytest/python binaries. Pins mutmut==3.7.0. Detects forbidden venvs (backend/venv, backend/.venv). Emits machine-readable environment fingerprint."
+    },
+    "runtime/foundation/verification/measurement_truth.py": {
+      "category": "measurement_truth",
+      "role": "Canonical measurement truth records (M9-C47)",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["classify_completion()", "set_evidence_fingerprint()", "assert_authoritative_classification()"],
+      "callers": ["mutation_runner.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Defines MeasurementTruthRecord, EvidenceClassification, FailureClassification, MeasurementCompletionStatus, PopulationAccounting."
+    },
+    "runtime/foundation/verification/measurement_truth_cli.py": {
+      "category": "measurement_truth",
+      "role": "CLI for measurement truth records",
+      "status": "ACTIVE",
+      "imports": ["measurement_truth"],
+      "entrypoints": ["run_measurement_truth_cli()"],
+      "callers": ["verify.py (measurement-truth command)"],
+      "authority_level": "CANONICAL",
+      "notes": "CLI for managing measurement truth records."
+    },
+    "runtime/foundation/verification/measurement_truth_integration.py": {
+      "category": "measurement_truth",
+      "role": "Measurement truth integration with mutation runner",
+      "status": "ACTIVE",
+      "imports": ["measurement_truth"],
+      "entrypoints": [],
+      "callers": ["mutation_runner.py"],
+      "authority_level": "SUPPORTING",
+      "notes": "Integration layer for measurement truth."
+    },
+    "runtime/foundation/verification/coverage_measurement.py": {
+      "category": "core_verification",
+      "role": "Coverage measurement (line/branch coverage by architectural layer)",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["measure_coverage_cli()"],
+      "callers": ["verify.py (measurement coverage command)"],
+      "authority_level": "CANONICAL",
+      "notes": "Measures coverage by layer (engines, services, repositories, etc.)."
+    },
+    "runtime/foundation/verification/survivor_intel.py": {
+      "category": "mutation_execution",
+      "role": "Survivor intelligence - per-mutant surviving mutant analysis",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["build_survivor_intel()", "write_survivor_intel()"],
+      "callers": ["mutation_runner.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Builds per-mutant survivor intelligence with covering tests, capability, fingerprint."
+    },
+    "runtime/foundation/verification/survivor_catalog.py": {
+      "category": "mutation_execution",
+      "role": "Survivor catalog - structured per-function survivor breakdown",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["run_catalog_cli()"],
+      "callers": ["mutation_runner.py"],
+      "authority_level": "CANONICAL",
+      "notes": "C43.7 structured per-function survivor breakdown via libcst reconstruction."
+    },
+    "runtime/foundation/verification/mutation_inventory.py": {
+      "category": "mutation_execution",
+      "role": "Mutation inventory management",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Manages mutation test inventory."
+    },
+    "runtime/foundation/verification/strengthening.py": {
+      "category": "strengthening",
+      "role": "Test strengthening core",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["strengthening_pipeline.py", "strengthening_integration.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Core test strengthening logic."
+    },
+    "runtime/foundation/verification/strengthening_pipeline.py": {
+      "category": "strengthening",
+      "role": "Test strengthening pipeline",
+      "status": "ACTIVE",
+      "imports": ["strengthening"],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "CANONICAL",
+      "notes": "Pipeline for test strengthening workflow."
+    },
+    "runtime/foundation/verification/strengthening_integration.py": {
+      "category": "strengthening",
+      "role": "Test strengthening integration",
+      "status": "ACTIVE",
+      "imports": ["strengthening"],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "CANONICAL",
+      "notes": "Integration layer for test strengthening."
+    },
+    "runtime/foundation/verification/generation_engine.py": {
+      "category": "strengthening",
+      "role": "Automatic test generation engine",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["test_generator.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Engine for automatic test generation from survivors."
+    },
+    "runtime/foundation/verification/test_generator.py": {
+      "category": "strengthening",
+      "role": "Test generator",
+      "status": "ACTIVE",
+      "imports": ["generation_engine"],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "CANONICAL",
+      "notes": "Generates tests for surviving mutants."
+    },
+    "runtime/foundation/verification/candidate_validation.py": {
+      "category": "strengthening",
+      "role": "Candidate test validation",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Validates candidate generated tests."
+    },
+    "runtime/foundation/verification/gap_classification.py": {
+      "category": "core_verification",
+      "role": "Test gap classification",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Classifies test gaps (REAL_TEST_GAP, EQUIVALENT_MUTANT, NO_TEST_DISCOVERY, TIMEOUT, TOOL_FAILURE, UNSUPPORTED_TRANSFORMATION, AMBIGUOUS)."
+    },
+    "runtime/foundation/verification/tier.py": {
+      "category": "core_verification",
+      "role": "Verification tier system (VEA-5) - local/pr/deep tiers with unit catalog",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["plan_for_tier()", "UNIT_CATALOG"],
+      "callers": ["verify.py (plan, reconcile, exec-evidence, deep-contract, local-gate)"],
+      "authority_level": "CANONICAL",
+      "notes": "Defines UNIT_CATALOG with 8 units (unit-targeted, backend-unit, backend-integration, contracts-schemathesis, frontend-unit, frontend-typecheck-build, playwright-e2e, runtime-self-test, mutation-run, golden-regression). TierPlan, SelectedUnit, ExcludedUnit dataclasses."
+    },
+    "runtime/foundation/verification/reconciliation.py": {
+      "category": "reconciliation",
+      "role": "Plan reconciliation & CI reconciliation gate (VEA-5 M4/M5)",
+      "status": "ACTIVE",
+      "imports": ["tier", "evidence_contract"],
+      "entrypoints": ["reconcile()", "reconcile_from_artifacts()", "validate_ci_artifacts()"],
+      "callers": ["verify.py (reconcile command)"],
+      "authority_level": "CANONICAL",
+      "notes": "M5 exit contract: same-plan -> 0, expected-tier-difference -> 0, environment-divergence -> 1, planning-divergence -> 2."
+    },
+    "runtime/foundation/verification/failure_report.py": {
+      "category": "core_verification",
+      "role": "Failure report builder with classification",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["build_failure_report()"],
+      "callers": ["orchestrator.py", "verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Builds actionable failure reports with classification and diagnostic information."
+    },
+    "runtime/foundation/verification/diagnostic_agent.py": {
+      "category": "core_verification",
+      "role": "Diagnostic agent for failure analysis",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Agent for diagnosing verification failures."
+    },
+    "runtime/foundation/verification/correlation.py": {
+      "category": "core_verification",
+      "role": "Test-environment correlation",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Correlates test results with environmental factors."
+    },
+    "runtime/foundation/verification/configuration_authority.py": {
+      "category": "configuration",
+      "role": "Configuration authority management",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Manages configuration authority and validation."
+    },
+    "runtime/foundation/verification/configuration_authority_enforcement.py": {
+      "category": "configuration",
+      "role": "Configuration authority enforcement",
+      "status": "ACTIVE",
+      "imports": ["configuration_authority"],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "CANONICAL",
+      "notes": "Enforces configuration authority rules."
+    },
+    "runtime/foundation/verification/change_surface.py": {
+      "category": "core_verification",
+      "role": "Change surface analysis (M9-C48)",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["discover_change_surfaces()"],
+      "callers": ["blast_radius.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Discovers change surfaces with SurfaceKind enum (PRODUCTION, TEST, CONFIG, WORKFLOW, RUNTIME_INFRASTRUCTURE, etc.)."
+    },
+    "runtime/foundation/verification/shared_impact.py": {
+      "category": "core_verification",
+      "role": "Shared dependency impact analysis",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["get_shared_dependency_index()"],
+      "callers": ["capability_resolver.py", "blast_radius.py"],
+      "authority_level": "CANONICAL",
+      "notes": "AST-based shared module dependency index for transitive capability expansion."
+    },
+    "runtime/foundation/verification/cross_capability_impact.py": {
+      "category": "core_verification",
+      "role": "Cross-capability impact analysis",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Analyzes impact across capabilities."
+    },
+    "runtime/foundation/verification/authorization_boundary.py": {
+      "category": "core_verification",
+      "role": "Authorization boundary management",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Manages authorization boundaries for capabilities."
+    },
+    "runtime/foundation/verification/execution_enforcer.py": {
+      "category": "core_verification",
+      "role": "Execution enforcement boundary",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Enforces execution boundaries."
+    },
+    "runtime/foundation/verification/pipeline_enforcement.py": {
+      "category": "core_verification",
+      "role": "Pipeline enforcement",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Enforces pipeline execution order."
+    },
+    "runtime/foundation/verification/bypass_enforcement.py": {
+      "category": "core_verification",
+      "role": "Bypass enforcement",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Manages bypass enforcement mechanisms."
+    },
+    "runtime/foundation/verification/certification.py": {
+      "category": "core_verification",
+      "role": "Certification logic",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "CANONICAL",
+      "notes": "Core certification logic."
+    },
+    "runtime/foundation/verification/catalog_certification.py": {
+      "category": "core_verification",
+      "role": "Catalog certification",
+      "status": "ACTIVE",
+      "imports": ["capability_catalog"],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "CANONICAL",
+      "notes": "Certifies the capability catalog."
+    },
+    "runtime/foundation/verification/c53_scenarios.py": {
+      "category": "core_verification",
+      "role": "C53 controlled test generation scenarios",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Controlled scenarios for test generation."
+    },
+    "runtime/foundation/verification/c53_certification.py": {
+      "category": "core_verification",
+      "role": "C53 certification",
+      "status": "ACTIVE",
+      "imports": ["c53_scenarios"],
+      "entrypoints": [],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "C53 certification logic."
+    },
+    "runtime/foundation/verification/c56_convergence.py": {
+      "category": "convergence",
+      "role": "C56 convergence logic",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "C56 convergence verification."
+    },
+    "runtime/foundation/verification/convergence_pipeline.py": {
+      "category": "convergence",
+      "role": "Convergence pipeline",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Pipeline for convergence verification."
+    },
+    "runtime/foundation/verification/workflow_convergence.py": {
+      "category": "convergence",
+      "role": "Workflow convergence",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Workflow convergence logic."
+    },
+    "runtime/foundation/verification/forensic_cli.py": {
+      "category": "forensic",
+      "role": "Forensic CLI",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "CANONICAL",
+      "notes": "Forensic verification CLI commands."
+    },
+    "runtime/foundation/verification/runtime.py": {
+      "category": "runtime",
+      "role": "Runtime verification core",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["verify.py (runtime profile)"],
+      "authority_level": "CANONICAL",
+      "notes": "Runtime self-verification logic."
+    },
+    "runtime/foundation/verification/ci_evidence.py": {
+      "category": "ci_evidence",
+      "role": "CI evidence collection",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "CANONICAL",
+      "notes": "CI-specific evidence collection."
+    },
+    "runtime/foundation/verification/control_plane.py": {
+      "category": "core_verification",
+      "role": "Control plane for verification",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Control plane for verification orchestration."
+    },
+    "runtime/foundation/verification/control_plane_efficiency.py": {
+      "category": "core_verification",
+      "role": "Control plane efficiency metrics",
+      "status": "ACTIVE",
+      "imports": ["control_plane"],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Efficiency metrics for the control plane."
+    },
+    "runtime/foundation/verification/verification_contract.py": {
+      "category": "core_verification",
+      "role": "Verification contract (M9-C52.4)",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["main()"],
+      "callers": ["verify.py (verification-contract command)"],
+      "authority_level": "CANONICAL",
+      "notes": "Unified change->capability->plan contract."
+    },
+    "runtime/foundation/verification/graph_model.py": {
+      "category": "core_verification",
+      "role": "Verification graph model",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["capability_resolver.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Graph model for verification relationships."
+    },
+    "runtime/foundation/verification/route_authority.py": {
+      "category": "core_verification",
+      "role": "Route authority management",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "CANONICAL",
+      "notes": "Manages route authority for API endpoints."
+    },
+    "runtime/foundation/verification/blast_radius_cli.py": {
+      "category": "core_verification",
+      "role": "Blast radius CLI",
+      "status": "ACTIVE",
+      "imports": ["blast_radius"],
+      "entrypoints": [],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "CLI interface for blast-radius operations."
+    },
+    "runtime/foundation/verification/scenario_harness.py": {
+      "category": "core_verification",
+      "role": "Scenario test harness",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Harness for scenario-based testing."
+    },
+    "runtime/foundation/verification/help_resolver.py": {
+      "category": "core_verification",
+      "role": "CLI help resolver",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Resolves CLI help text."
+    },
+    "runtime/foundation/verification/latent_capabilities.py": {
+      "category": "core_verification",
+      "role": "Latent capabilities detection",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Detects latent/unused capabilities."
+    },
+    "runtime/foundation/verification/capability_latent_audit.py": {
+      "category": "audit",
+      "role": "Capability latent audit",
+      "status": "ACTIVE",
+      "imports": ["capability_catalog"],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "CANONICAL",
+      "notes": "Audits latent capabilities."
+    },
+    "runtime/foundation/verification/cli_capability_matrix.py": {
+      "category": "capability",
+      "role": "CLI capability matrix",
+      "status": "ACTIVE",
+      "imports": ["capability_catalog"],
+      "entrypoints": [],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Matrix of CLI capabilities."
+    },
+    "runtime/foundation/verification/operational_cli.py": {
+      "category": "core_verification",
+      "role": "Operational CLI",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": ["verify.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Operational CLI commands."
+    },
+    "runtime/foundation/verification/command_inventory.py": {
+      "category": "core_verification",
+      "role": "Command inventory (C48)",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": ["get_command_inventory()"],
+      "callers": ["blast_radius.py"],
+      "authority_level": "CANONICAL",
+      "notes": "Inventory of all verification commands."
+    },
+    "runtime/foundation/verification/regression.py": {
+      "category": "core_verification",
+      "role": "Regression detection",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Regression detection logic."
+    },
+    "runtime/foundation/verification/totals.py": {
+      "category": "core_verification",
+      "role": "Totals computation",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Computes totals for verification metrics."
+    },
+    "runtime/foundation/verification/env_contract.py": {
+      "category": "core_verification",
+      "role": "Environment contract",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "CANONICAL",
+      "notes": "Environment contract definition."
+    },
+    "runtime/foundation/validation/validator.py": {
+      "category": "validation",
+      "role": "Validation logic",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "General validation logic."
+    },
+    "runtime/foundation/verification/generation_eligibility.py": {
+      "category": "strengthening",
+      "role": "Test generation eligibility check",
+      "status": "ACTIVE",
+      "imports": [],
+      "entrypoints": [],
+      "callers": [],
+      "authority_level": "SUPPORTING",
+      "notes": "Checks if test generation is eligible for a given context."
+    }
+  },
+  "ci_workflows": {
+    ".github/workflows/backend-verify.yml": {
+      "trigger": "push (backend/**, runtime/**), pull_request, workflow_dispatch",
+      "command": "python runtime/verify.py backend",
+      "timeout": "30 minutes",
+      "dependencies": ["bootstrap-runtime", "setup-node-runtime"],
+      "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "backend-report", "backend-evidence"],
+      "authority_level": "CANONICAL",
+      "notes": "Backend verification via autonomous runtime. Delegates to verify.py backend."
+    },
+    ".github/workflows/frontend-verify.yml": {
+      "trigger": "push (frontend/**, backend/src/routers/**, backend/src/mappers/**, runtime/**), pull_request, workflow_dispatch",
+      "command": "python runtime/verify.py frontend",
+      "timeout": "25 minutes",
+      "dependencies": ["bootstrap-runtime", "setup-node-runtime"],
+      "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "frontend-report", "frontend-evidence"],
+      "authority_level": "CANONICAL",
+      "notes": "Frontend verification via autonomous runtime."
+    },
+    ".github/workflows/verification-runtime.yml": {
+      "trigger": "push (runtime/**, backend/src/engines/**, backend/src/routers/**, backend/src/mappers/**), pull_request, workflow_dispatch",
+      "command": "python runtime/verify.py runtime",
+      "timeout": "30 minutes",
+      "dependencies": ["bootstrap-runtime", "setup-node-runtime"],
+      "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "runtime-quality", "runtime-performance"],
+      "authority_level": "CANONICAL",
+      "notes": "Engineering Runtime self-validation."
+    },
+    ".github/workflows/mutation.yml": {
+      "trigger": "schedule (nightly 2am), workflow_dispatch",
+      "command": "python runtime/verify.py mutation (full) | python runtime/verify.py mutation --smoke",
+      "timeout": "90 minutes (full), 15 minutes (smoke)",
+      "dependencies": ["bootstrap-runtime"],
+      "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "mutation-report", "mutation-evidence", "coverage-evidence"],
+      "authority_level": "CANONICAL",
+      "notes": "Mutation testing - nightly + manual dispatch. Two jobs: mutation-smoke (infra health) + mutation (authoritative). Three-gate classification. Never cancels in-progress."
+    },
+    ".github/workflows/api-contracts.yml": {
+      "trigger": "push (backend/**, frontend/**, runtime/**), pull_request, workflow_dispatch, workflow_run (Playwright failed)",
+      "command": "python runtime/verify.py api-contracts",
+      "timeout": "5 minutes",
+      "dependencies": ["bootstrap-runtime", "setup-node-runtime"],
+      "artifacts": ["api-contract-evidence"],
+      "authority_level": "CANONICAL",
+      "notes": "M9-C27 API Contract Integrity Gate. Runs before Playwright to catch contract breaks cheaply."
+    },
+    ".github/workflows/frontend-verify.yml": {
+      "trigger": "push (frontend/**, backend/src/routers/**, backend/src/mappers/**, runtime/**), pull_request, workflow_dispatch",
+      "command": "python runtime/verify.py frontend",
+      "timeout": "25 minutes",
+      "dependencies": ["bootstrap-runtime", "setup-node-runtime"],
+      "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "frontend-report", "frontend-evidence"],
+      "authority_level": "CANONICAL",
+      "notes": "Frontend verification via autonomous runtime."
+    },
+    ".github/workflows/golden.yml": {
+      "trigger": "TBD",
+      "command": "bash .github/scripts/run_golden_tests.sh",
+      "timeout": "TBD",
+      "dependencies": ["bootstrap-runtime"],
+      "artifacts": ["TBD"],
+      "authority_level": "CANONICAL",
+      "notes": "Golden regression tests. Script delegates to bash wrapper."
+    },
+    ".github/workflows/playwright.yml": {
+      "trigger": "TBD",
+      "command": "bash .github/scripts/run_playwright_tests.sh",
+      "timeout": "TBD",
+      "dependencies": ["bootstrap-runtime", "setup-playwright"],
+      "artifacts": ["TBD"],
+      "authority_level": "CANONICAL",
+      "notes": "Playwright E2E tests."
+    },
+    ".github/workflows/quality.yml": {
+      "trigger": "TBD",
+      "command": "TBD",
+      "timeout": "TBD",
+      "dependencies": ["bootstrap-runtime"],
+      "artifacts": ["TBD"],
+      "authority_level": "CANONICAL",
+      "notes": "Quality gate workflow."
+    },
+    ".github/workflows/release.yml": {
+      "trigger": "TBD",
+      "command": "TBD",
+      "timeout": "TBD",
+      "dependencies": ["bootstrap-runtime"],
+      "artifacts": ["TBD"],
+      "authority_level": "CANONICAL",
+      "notes": "Release workflow."
+    },
+    ".github/workflows/security-codeql.yml": {
+      "trigger": "TBD",
+      "command": "github/codeql-action/analyze",
+      "timeout": "TBD",
+      "dependencies": ["codeql-action"],
+      "artifacts": ["TBD"],
+      "authority_level": "CANONICAL",
+      "notes": "CodeQL security analysis."
+    },
+    ".github/workflows/verification-reconcile.yml": {
+      "trigger": "TBD",
+      "command": "python runtime/verify.py reconcile",
+      "timeout": "TBD",
+      "dependencies": ["bootstrap-runtime"],
+      "artifacts": ["TBD"],
+      "authority_level": "CANONICAL",
+      "notes": "VEA-5 M4/M5 reconciliation gate."
+    },
+    ".github/workflows/dependency-update.yml": {
+      "trigger": "TBD",
+      "command": "TBD",
+      "timeout": "TBD",
+      "dependencies": ["TBD"],
+      "artifacts": ["TBD"],
+      "authority_level": "CANONICAL",
+      "notes": "Dependency update workflow."
+    },
+    ".github/workflows/m9-forensic-diagnostic-lab.yml": {
+      "trigger": "TBD",
+      "command": "TBD",
+      "timeout": "TBD",
+      "dependencies": ["TBD"],
+      "artifacts": ["TBD"],
+      "authority_level": "CANONICAL",
+      "notes": "M9 forensic diagnostic lab workflow."
+    }
+  },
+  "github_actions": {
+    ".github/actions/bootstrap-runtime/action.yml": {
+      "role": "Canonical Engineering Runtime bootstrap",
+      "responsibilities": [
+        "Provision Python runtime (delegates to setup-python-runtime)",
+        "Generate cross-layer-map.json (shared, generated once)",
+        "Generate knowledge-index.json (shared, generated once)",
+        "Validate Engineering Runtime version against runtime/VERSION",
+        "Prepare runtime/generated working directories / cache files",
+        "Restore (touch) engineering-history.json"
+      ],
+      "authority_level": "CANONICAL"
+    },
+    ".github/actions/setup-python-runtime/action.yml": {
+      "role": "Canonical Python environment setup",
+      "responsibilities": [
+        "Install Python 3.12",
+        "Cache pip packages",
+        "Install ClariFin_OS via 'pip install -e .[all]'",
+        "Verify environment"
+      ],
+      "authority_level": "CANONICAL",
+      "notes": "Used by EVERY workflow via bootstrap-runtime. Never duplicated."
+    },
+    ".github/actions/setup-node-runtime/action.yml": {
+      "role": "Node.js runtime setup for frontend",
+      "authority_level": "CANONICAL"
+    },
+    ".github/actions/setup-playwright/action.yml": {
+      "role": "Playwright E2E setup",
+      "authority_level": "CANONICAL"
+    },
+    ".github/actions/upload-runtime/action.yml": {
+      "role": "Canonical artifact upload",
+      "authority_level": "CANONICAL"
+    }
+  },
+  "scripts": {
+    "scripts/bootstrap.sh": {
+      "role": "Repository reproducible environment bootstrap",
+      "responsibilities": [
+        "Create .venv if missing",
+        "pip install -e '.[all]' from root pyproject.toml",
+        "npm ci for frontend",
+        "Validate environment via env-doctor.sh"
+      ],
+      "authority_level": "CANONICAL"
+    },
+    "scripts/verify.sh": {
+      "role": "Local verification wrapper",
+      "authority_level": "CANONICAL"
+    },
+    "scripts/verify-fast.sh": {
+      "role": "Fast verification wrapper",
+      "authority_level": "CANONICAL"
+    },
+    "scripts/env-doctor.sh": {
+      "role": "Environment diagnostic guard",
+      "authority_level": "CANONICAL"
+    },
+    "scripts/freeze-env.sh": {
+      "role": "Dependency lock snapshot generator",
+      "authority_level": "CANONICAL"
+    }
+  },
+  "duplicate_authorities_identified": [
+    {
+      "name": "Mutation Orchestration",
+      "authority_a": "runtime/foundation/verification/mutation_runner.py (execute_mutation) - invoked by 'verify.py mutation'",
+      "authority_b": "runtime/foundation/verification/mutation_execution/orchestrator.py (MutationOrchestrator.run) - exists but NOT called by verify.py",
+      "actual_used": "mutation_runner.py",
+      "risk": "Two parallel mutation execution paths exist. The verify.py path uses mutation_runner.py directly. The MutationOrchestrator in mutation_execution/ is a more sophisticated orchestrator (M9-C44) with parallel execution, sharding, and campaign management, but is NOT wired into the verify.py path. The simpler mutation_runner.py path is what actually runs in CI."
+    },
+    {
+      "name": "Cache System",
+      "authority_a": "runtime/foundation/verification/cache.py (VerificationCache) - content-aware cache for verification runs",
+      "authority_b": "runtime/foundation/verification/mutation_execution/cache.py (MutationCache) - per-mutant result cache",
+      "actual_used": "Both, for different purposes",
+      "risk": "Two separate cache systems. The verification cache is for overall run results; the mutation cache is for per-mutant results. No overlap in scope, but increases complexity."
+    },
+    {
+      "name": "Mutation Result Classification",
+      "authority_a": "runtime/foundation/verification/mutation_contract.py (MutationResult, classify_gates) - three-gate classification",
+      "authority_b": "runtime/foundation/verification/mutation_execution/domain_model.py (MutationResult, MutationResultState) - canonical domain model with state enum",
+      "actual_used": "Both, but for different purposes",
+      "risk": "Two MutationResult dataclasses exist. The mutation_contract.py one is the runner-facing one (with killed/survived/timeout/suspicious/not_checked buckets). The domain_model.py one is the canonical domain model (with KILLED/SURVIVED/EQUIVALENT/NO_TESTS/TIMEOUT/EXECUTION_ERROR/INVALID_MUTANT/NOT_EXECUTED/CANCELLED/UNKNOWN states). The two use different vocabularies. The runner uses the contract one; the orchestrator uses the domain model one."
+    },
+    {
+      "name": "Capability Registry",
+      "authority_a": "runtime/foundation/verification/registry/registry.py (VerificationRegistry) - loads verification.yaml",
+      "authority_b": "runtime/foundation/verification/capability_contract.py (CapabilityContractRegistry) - per-capability metadata with affected_by_paths",
+      "actual_used": "Both, for different purposes",
+      "risk": "Two separate capability registries. The VerificationRegistry is for workflow/script/capability registration from YAML. The CapabilityContractRegistry is for per-capability metadata with path mappings. Both are used by the resolver and planner."
+    },
+    {
+      "name": "Evidence Aggregator Obsolete Code",
+      "authority_a": "runtime/system/evidence/aggregator.py:_find_chain_for_failure (OBSOLETE E-4 defect)",
+      "authority_b": "runtime/system/evidence/aggregator.py:_find_dependency_chain (OBSOLETE E-4 defect)",
+      "actual_used": "Neither (replaced by _resolve_chain_for_failure)",
+      "risk": "Dead code retained per VEA-3 §0.3. Both functions are marked OBSOLETE and not called by production paths. They are retained for forensic purposes but represent a risk if accidentally called."
+    }
+  ]
+}

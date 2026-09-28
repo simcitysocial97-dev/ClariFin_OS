@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_145: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -104,7 +104,7 @@
+         annual_rate_bps,
+         mode_literal,
+         start_date or schedule[tail_start_index].payment_date,
+-        original_emi=original_emi,
++        original_emi=None,
+         original_tenure=original_remaining_months,
+     )
+ 

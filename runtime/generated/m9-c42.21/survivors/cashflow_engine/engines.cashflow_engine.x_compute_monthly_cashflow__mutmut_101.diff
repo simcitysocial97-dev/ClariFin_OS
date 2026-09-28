@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_101: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -86,7 +86,7 @@
+ 
+     # Liability-adjusted: true savings minus liability increases (principal borrowed)
+     # This represents the net savings after accounting for borrowed money
+-    liability_adjusted = true_savings - total_liability_increase
++    liability_adjusted = None
+ 
+     # Net worth impact = assets - liabilities
+     net_worth_impact = total_asset_change - total_liability_increase

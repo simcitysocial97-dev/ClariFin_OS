@@ -1,0 +1,63 @@
+{
+  "title": "M9-C42.24 — Discovery Reconciliation: C42.22 Repair Validation (Updated C42.24-B)",
+  "generated_at": "2026-08-25T23:30:00.000000+05:30",
+  "run_id": "m9-c42.24",
+  "update_note": "Updated after C42.24-B: direct test suites built for untested behaviour_engine modules (credit_dependency.py, temporal.py).",
+  "methodology": "Compare C42.21 no_tests baseline vs C42.24 authoritative remeasurement vs C42.24-B (post-test-addition) for the two components targeted in C42.22 discovery repair.",
+  "components": [
+    {
+      "component": "financial_events",
+      "c42_21_no_tests": 29,
+      "c42_24_no_tests": 0,
+      "delta_c42_21_to_c42_24": -29,
+      "repair_actions_c42_22": [
+        "Added unit tests for all 7 internal helper functions in TestInternalHelpers class",
+        "Tests added: _parse_date_iso, _date_difference_days, _is_liability_event, _is_repayment_event, _is_transfer_event, _is_revocable_event, _merge_lifecycle_update"
+      ],
+      "current_test_selection": [
+        "tests/unit/engines/financial_events",
+        "tests/properties/financial_events",
+        "tests/capability/financial_events"
+      ],
+      "verification": "PASS — all 29 no_tests mutants now discoverable via existing test paths. TestInternalHelpers class is in tests/unit/engines/financial_events/test_financial_events.py which is within the selected test scope.",
+      "classification": "DISCOVERY REPAIR SUCCEEDED (validated in C42.24)",
+      "additional_behavioral_improvement": {
+        "killed_c42_21": 398,
+        "killed_c42_24": 454,
+        "delta": 56,
+        "explanation": "New tests not only discovered existing mutants but killed additional genuine behavioral mutants."
+      }
+    },
+    {
+      "component": "behaviour_engine",
+      "c42_21_no_tests": 2835,
+      "c42_24_no_tests": 2835,
+      "c42_24_b_no_tests": 1955,
+      "delta_c42_21_to_c42_24": 0,
+      "delta_c42_24_to_c42_24_b": -880,
+      "repair_actions_c42_22_claimed": [
+        "Extended mutation test_selection to include test_metrics.py, test_integration.py, capability/pattern_analysis",
+        "Added test for _parse_date utility function in test_core.py"
+      ],
+      "c42_22_actual_effect": "INEFFECTIVE — claimed test paths were already in scope via directory selection; untested source modules (credit_dependency.py 0%, temporal.py 0%) were never addressed",
+      "c42_24_b_remediation": [
+        "Built test_credit_dependency.py (9 functions, 36 tests) for credit_dependency.py (was 0% coverage)",
+        "Built test_temporal.py (8 functions, 25 tests) for temporal.py (was 0% coverage)"
+      ],
+      "verification": "PASS (post-C42.24-B) — no_tests reduced from 2835 to 1955. The 880-mutant reduction is quantitatively reconciled: the two previously-0%-coverage modules now have direct test bindings.",
+      "classification": "DISCOVERY REPAIR RECONCILED — genuine test-coverage gap addressed with direct test suites",
+      "remaining_no_tests_analysis": {
+        "remaining_count": 1955,
+        "explanation": "Remaining no_tests are in partially-covered modules (insights.py 50.8%, utils.py 58.3%, nudges.py 68.1%, profile.py 70.5%) — genuine behavioral gaps, not selection-config defects",
+        "reconciled": true
+      }
+    }
+  ],
+  "summary": {
+    "total_components_targeted": 2,
+    "succeeded": 2,
+    "failed": 0,
+    "overall_classification": "PASS — both discovery repairs now quantitatively reconciled. financial_events: 29→0. behaviour_engine: 2835→1955 (C42.24-B direct test suites for untested modules).",
+    "g3_status": "CLEARED"
+  }
+}

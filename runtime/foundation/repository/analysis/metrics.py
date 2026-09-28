@@ -11,12 +11,12 @@ graph access.
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, List, Set
+from typing import Any
 
 from runtime.foundation.repository.graph.graph_service import RepositoryGraphService
 
 
-def calculate_metrics(service: RepositoryGraphService) -> Dict[str, Any]:
+def calculate_metrics(service: RepositoryGraphService) -> dict[str, Any]:
     """Compute comprehensive repository health metrics from the index service.
 
     Args:
@@ -32,14 +32,14 @@ def calculate_metrics(service: RepositoryGraphService) -> Dict[str, Any]:
         raise RuntimeError("Graph not loaded")
     all_edges = service._graph.edges
 
-    node_counts: Dict[str, int] = {}
+    node_counts: dict[str, int] = {}
     for n in nodes:
         t = n.type
         node_counts[t] = node_counts.get(t, 0) + 1
 
-    edge_counts: Dict[str, int] = {}
+    edge_counts: dict[str, int] = {}
     # Track seen edge keys to avoid duplicates
-    seen_edges: Set[tuple[str, str, str]] = set()
+    seen_edges: set[tuple[str, str, str]] = set()
     for e in all_edges:
         key = (e.source, e.target, e.relationship)
         if key not in seen_edges:
@@ -59,7 +59,7 @@ def calculate_metrics(service: RepositoryGraphService) -> Dict[str, Any]:
 
     # Verification evidence coverage: endpoints verified by capabilities
     endpoint_count = node_counts.get("endpoint", 0)
-    verified_endpoints: Set[str] = set()
+    verified_endpoints: set[str] = set()
     for e in all_edges:
         if e.relationship == "verifies" and e.source.startswith("capability:"):
             verified_endpoints.add(e.target)
@@ -68,7 +68,7 @@ def calculate_metrics(service: RepositoryGraphService) -> Dict[str, Any]:
     )
 
     # Documentation evidence coverage: capabilities with docs
-    documented_cap_ids: Set[str] = set()
+    documented_cap_ids: set[str] = set()
     for e in all_edges:
         if e.relationship == "documents":
             cap_id = e.source.split(":", 1)[-1] if ":" in e.source else e.source
@@ -79,7 +79,7 @@ def calculate_metrics(service: RepositoryGraphService) -> Dict[str, Any]:
     )
 
     # Orphan module percentage
-    implemented_modules: Set[str] = set()
+    implemented_modules: set[str] = set()
     for e in all_edges:
         if e.relationship == "implements" and e.source.startswith("capability:"):
             implemented_modules.add(e.target)
@@ -105,7 +105,7 @@ def calculate_metrics(service: RepositoryGraphService) -> Dict[str, Any]:
             largest_capability = cap_node.name if cap_node.name else cap_node.id
 
     # Top 10 highest fan-out nodes (most outgoing edges)
-    node_out_degree: Dict[str, int] = {}
+    node_out_degree: dict[str, int] = {}
     for e in all_edges:
         src = e.source
         node_out_degree[src] = node_out_degree.get(src, 0) + 1
@@ -113,7 +113,7 @@ def calculate_metrics(service: RepositoryGraphService) -> Dict[str, Any]:
     top_fanout = [{"node_id": nid, "degree": deg} for nid, deg in sorted_out]
 
     # Top 10 highest fan-in nodes (most incoming edges)
-    node_in_degree: Dict[str, int] = {}
+    node_in_degree: dict[str, int] = {}
     for e in all_edges:
         tgt = e.target
         node_in_degree[tgt] = node_in_degree.get(tgt, 0) + 1
@@ -121,7 +121,7 @@ def calculate_metrics(service: RepositoryGraphService) -> Dict[str, Any]:
     top_fanin = [{"node_id": nid, "degree": deg} for nid, deg in sorted_in]
 
     # Dead nodes (zero in-degree and zero out-degree)
-    dead_nodes: List[str] = []
+    dead_nodes: list[str] = []
     for n in nodes:
         nid = n.id
         has_out = any(e.source == nid for e in all_edges)
@@ -130,17 +130,17 @@ def calculate_metrics(service: RepositoryGraphService) -> Dict[str, Any]:
             dead_nodes.append(nid)
 
     # Longest dependency chain (depends_on edges only)
-    depends_on_adj: Dict[str, List[str]] = {}
+    depends_on_adj: dict[str, list[str]] = {}
     for e in all_edges:
         if e.relationship == "depends_on":
             src = e.source
             tgt = e.target
             depends_on_adj.setdefault(src, []).append(tgt)
 
-    def longest_path_from(start: str, adj: Dict[str, List[str]]) -> List[str]:
-        best_path: List[str] = []
+    def longest_path_from(start: str, adj: dict[str, list[str]]) -> list[str]:
+        best_path: list[str] = []
 
-        def dfs(node: str, path: List[str]):
+        def dfs(node: str, path: list[str]):
             nonlocal best_path
             path.append(node)
             if len(path) > len(best_path):
@@ -155,7 +155,7 @@ def calculate_metrics(service: RepositoryGraphService) -> Dict[str, Any]:
         return best_path
 
     dep_sources = set(depends_on_adj.keys())
-    longest_chain: List[str] = []
+    longest_chain: list[str] = []
     for src in dep_sources:
         chain = longest_path_from(src, depends_on_adj)
         if len(chain) > len(longest_chain):

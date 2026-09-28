@@ -1,0 +1,34 @@
+{
+  "schema": "m9-c66-final-summary/v1",
+  "generated_at": "2026-09-20T14:46:39.019865+00:00",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "command_matrix": {
+    "total": 24,
+    "passed": 21,
+    "failed": 0,
+    "external_boundary": 3
+  },
+  "output_truth_reconciliation": {
+    "checks": 120,
+    "pass_rate": 1.0,
+    "discrepancies": 0
+  },
+  "ci_parity": {
+    "local_executable": 4,
+    "github_only": 3,
+    "environment_boundary": 3,
+    "external_service": 1,
+    "external_tooling": 2,
+    "browser": 1
+  },
+  "authority_contract_version": "1.0.0",
+  "completion_gates": {
+    "COMMAND_FAILURE": 0,
+    "FALSE_PASS": 0,
+    "FALSE_CERTIFICATION": 0,
+    "TRUTH_DRIFT": 0,
+    "OUTPUT_CONTRADICTIONS": 0,
+    "CI_DISCREPANCIES_UNEXPLAINED": 0,
+    "FORBIDDEN_NONDETERMINISM": 0
+  }
+}

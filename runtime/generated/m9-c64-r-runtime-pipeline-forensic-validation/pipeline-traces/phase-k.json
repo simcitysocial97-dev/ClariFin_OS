@@ -1,0 +1,12 @@
+{
+  "phase": "K",
+  "config_file": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/verification.yaml",
+  "divergence": "coverage_threshold: 999",
+  "obligation_count": 27,
+  "framework_detected_divergence": false,
+  "doctor_exit_code": 0,
+  "result": "FAIL",
+  "note": "Framework does not detect config threshold at plan time",
+  "elapsed_seconds": 9.756,
+  "status": "COMPLETED"
+}

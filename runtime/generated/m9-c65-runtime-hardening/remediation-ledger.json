@@ -1,0 +1,110 @@
+{
+  "schema": "m9-c65-runtime-hardening/remediation-ledger/v1",
+  "generated_at": "2026-09-20T12:15:00Z",
+  "commit_sha_baseline": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "items": [
+    {
+      "id": "C65.1",
+      "source": "R001",
+      "title": "Coverage measurement path resolution",
+      "classification_before": "ENVIRONMENT_BOUNDARY",
+      "classification_after": "FIXED",
+      "root_cause": "coverage report --format json is invalid; must use coverage json -o subcommand. cwd not propagated to report step.",
+      "implementation_file": "runtime/foundation/verification/coverage_measurement.py",
+      "test_file": "runtime/tests/test_coverage_path_authority.py",
+      "tests_passed": 12,
+      "status": "DONE",
+      "verified": true
+    },
+    {
+      "id": "C65.2",
+      "source": "R003",
+      "title": "inspect.workflows first-class capability",
+      "classification_before": "DEFECT",
+      "classification_after": "FIXED",
+      "root_cause": "workflows subquery delegated to help-resolve instead of enumerating .github/workflows/*.yml",
+      "implementation_file": "runtime/foundation/verification/workflow_inspection.py",
+      "test_file": "runtime/tests/test_inspect_workflows.py",
+      "tests_passed": 10,
+      "status": "DONE",
+      "verified": true
+    },
+    {
+      "id": "C65.3",
+      "source": "R002",
+      "title": "Eliminate duplicate E2E IMPACT output",
+      "classification_before": "FALSE_POSITIVE",
+      "classification_after": "FIXED",
+      "root_cause": "Two separate print blocks in control_plane.py plan(); consolidated into single structured e2e_notice_lines loop",
+      "implementation_file": "runtime/foundation/verification/control_plane.py",
+      "test_file": "runtime/tests/test_e2e_output_dedup.py",
+      "tests_passed": 4,
+      "status": "DONE",
+      "verified": true
+    },
+    {
+      "id": "C65.4",
+      "source": "R004",
+      "title": "Historical health semantics",
+      "classification_before": "PROVEN_NON_DEFECT",
+      "classification_after": "SEMANTICS_IMPROVED",
+      "root_cause": "Health report conflated current framework integrity with historical 0% success rate from pre-convergence runs",
+      "implementation_file": "runtime/system/observability/health_report.py",
+      "test_file": "runtime/tests/test_health_semantics.py",
+      "tests_passed": 6,
+      "status": "DONE",
+      "verified": true
+    },
+    {
+      "id": "C65.5",
+      "source": "R005",
+      "title": "Execution budget model",
+      "classification_before": "EXTERNAL_BOUNDARY",
+      "classification_after": "BUDGET_MODEL",
+      "root_cause": "External 120s timeout produced exit 124 with no semantic information about what was completed",
+      "implementation_file": "runtime/foundation/verification/execution_budget.py",
+      "integration_file": "runtime/foundation/verification/control_plane_facade.py",
+      "test_file": "runtime/tests/test_controlled_failure.py",
+      "tests_passed": 7,
+      "status": "DONE",
+      "verified": true
+    }
+  ],
+  "adversarial_tests": [
+    {
+      "id": "C65.6",
+      "title": "Controlled-failure injection",
+      "test_file": "runtime/tests/test_controlled_failure.py",
+      "tests_passed": 7,
+      "status": "DONE",
+      "verified": true
+    },
+    {
+      "id": "C65.7",
+      "title": "Authority-drift detection",
+      "test_file": "runtime/tests/test_authority_drift.py",
+      "tests_passed": 8,
+      "status": "DONE",
+      "verified": true
+    },
+    {
+      "id": "C65.8",
+      "title": "Configuration-divergence detection",
+      "test_file": "runtime/tests/test_config_divergence.py",
+      "tests_passed": 8,
+      "status": "DONE",
+      "verified": true
+    }
+  ],
+  "summary": {
+    "total_remediation_items": 5,
+    "fixed": 5,
+    "improved": 1,
+    "pending": 0,
+    "total_adversarial_tests": 3,
+    "adversarial_passed": 3,
+    "total_new_tests": 55,
+    "regression_check": "PASSED"
+  }
+}
+

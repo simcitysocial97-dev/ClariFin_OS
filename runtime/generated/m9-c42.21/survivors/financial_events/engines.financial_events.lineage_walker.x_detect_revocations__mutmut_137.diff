@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_detect_revocations__mutmut_137: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -82,7 +82,7 @@
+             proposed_links.append(
+                 {
+                     "event_id": event_id,
+-                    "linked_event_id": transfer_event_id,
++                    "LINKED_EVENT_ID": transfer_event_id,
+                     "link_type": "revokes",
+                 }
+             )

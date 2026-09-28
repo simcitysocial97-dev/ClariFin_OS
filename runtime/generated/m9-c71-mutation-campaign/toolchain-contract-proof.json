@@ -1,0 +1,41 @@
+{
+  "schema": "m9-c71-mutation-toolchain-proof/v1",
+  "recorded_at": "2026-09-26T17:27:37.711006+00:00",
+  "finding": "The 0.0% targeted balance_engine score was a MEASUREMENT-TOOLCHAIN artefact, not a test-quality gap.",
+  "root_cause": "mutmut 3.7.0 get_mutant_name() strips a leading 'src.' from path-derived mutant module names. This repository imports production code as 'src.<package>'. The mutated-file trampoline compares mutmut's stripped name against decorated_func.__module__ and, on mismatch, calls the ORIGINAL function. With a pristine install every mutant is therefore dispatched to unmutated code, so the test suite passes for every mutant and the campaign reports 0.0% with all mutants 'survived'.",
+  "control_pristine": {
+    "toolchain": "mutmut 3.7.0 pristine (trampoline module-dispatch region unmodified)",
+    "trampoline_sha256": "b5df55413d517b61224d6548b13183821e5cec903f202a826ddd9f703496f383",
+    "component": "balance_engine",
+    "population": 285,
+    "killed": 0,
+    "survived": 74,
+    "attempted_at_stop": 74,
+    "observed_score": 0.0,
+    "note": "Control run deliberately stopped once 74/74 mutants had been dispatched to the original function; the trend is 0 killed / 74 survived, identical to GitHub run 36238247482 (0.0%, 285 survived).",
+    "ci_reference": {
+      "run": 36238247482,
+      "head_sha": "b7d83af4ee5104a9021724d28f7dfd55eb3fd69c",
+      "killed": 0,
+      "survived": 285,
+      "mutation_score": 0.0
+    },
+    "transcript": "control/pristine-trampoline-partial.log"
+  },
+  "contract_applied": {
+    "contract_id": "c71-src-module-name-normalisation:SATISFIED",
+    "component": "balance_engine",
+    "population": 285,
+    "killed": 272,
+    "survived": 13,
+    "mutation_score": 95.4,
+    "duration_seconds": 1051,
+    "transcript": "backend/tests/generated/mutation/mutation-logs/mut-b64f81364c7f.log"
+  },
+  "conclusion": "Identical population (285 mutants) and identical selection: 0.0%/285 survived under a pristine toolchain vs 95.4%/13 survived under the contract-conformant toolchain. The declared dependency contract (pip install -e '.[all]') and the working toolchain are now the same thing, enforced and audited by runtime/foundation/verification/mutmut_contract.py.",
+  "prior_classification_correction": {
+    "was": "GENUINE_PRODUCT_GAP (test effectiveness)",
+    "now": "TOOLCHAIN_CONTRACT_DEFECT (measurement integrity)",
+    "authority": "C71 controlled experiment + mutmut 3.7.0 source (utils/format_utils.py get_mutant_name; mutation/trampoline.py dispatch)"
+  }
+}

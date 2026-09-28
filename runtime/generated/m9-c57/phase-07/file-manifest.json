@@ -1,0 +1,41 @@
+{
+  "manifest": [
+    {
+      "file": "runtime/platform/api/services/verification_write.py",
+      "lines": 260,
+      "sha256": "acfb082a3728057df93874dfebdcce3c6fb717a15f2db51380baf8c071e9d00f"
+    },
+    {
+      "file": "runtime/platform/api/services/executions.py",
+      "lines": 112,
+      "sha256": "c9f1163659813316f6bddb88e102e77de4e2df8431b2673e7f4218d55adfbc9a"
+    },
+    {
+      "file": "backend/src/routers/platform.py",
+      "lines": 704,
+      "sha256": "d8f7e6df2b4d418d42ae69e42badaf11b2a3fe47322e2ba4b1ab01330900d92d"
+    },
+    {
+      "file": "frontend/app/platform/verification/run/[capability]/page.tsx",
+      "lines": 218,
+      "sha256": "fc125ff4da53053e44b6467ee0187d1747097805051cb30ec75177bf424ea62b"
+    },
+    {
+      "file": "frontend/lib/hooks/use-live-execution.ts",
+      "lines": 102,
+      "sha256": "0927fd68754d027a81090f1be29cb2bba93b54f78aa04a143d49ce7ae27d2ff0"
+    },
+    {
+      "file": "runtime/tests/test_platform_api_phase7.py",
+      "lines": 364,
+      "sha256": "56209b2c6d3bd86a25a6385a2d8298a639366946314d8e42a826aa7c8a8ba103"
+    },
+    {
+      "file": "runtime/generated/m9-c57/phase-07/progress.md",
+      "lines": 260,
+      "sha256": "ebabf91cf8f576dd446895cec8ee5193824618a118987e80f29f15f7a9790a4e"
+    }
+  ],
+  "total_lines": 2020,
+  "generated_at": "2026-09-05T18:00:00Z"
+}

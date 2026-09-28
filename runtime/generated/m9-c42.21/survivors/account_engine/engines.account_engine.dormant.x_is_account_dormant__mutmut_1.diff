@@ -1,0 +1,10 @@
+# status: survived
+# engines.account_engine.dormant.x_is_account_dormant__mutmut_1: survived
+--- src/engines/account_engine/dormant.py
++++ src/engines/account_engine/dormant.py
+@@ -1,4 +1,4 @@
+-def is_account_dormant(days_since_activity: int, threshold_days: int = 365) -> bool:
++def is_account_dormant(days_since_activity: int, threshold_days: int = 366) -> bool:
+     """
+     Determine if account is dormant based on days since last activity.
+ 

@@ -61,6 +61,7 @@ _REQUIRED_TABLES: set[str] = {
     "financial_event_links",
     "liquidity_provider_patterns",
     "liquidity_purpose_patterns",
+    "schema_migrations",
 }
 
 _REQUIRED_INDEXES: set[str] = {
@@ -70,7 +71,7 @@ _REQUIRED_INDEXES: set[str] = {
     "idx_txn_type",
     "idx_txn_date_iso",
     "idx_account_date_iso",
-    "idx_transaction_hash",
+    "idx_transaction_hash_v2",
     "idx_loan_payments_loan_id",
     "idx_loan_payments_date",
     "idx_loan_prepayments_loan_id",
@@ -100,6 +101,13 @@ _REQUIRED_TRIGGERS: set[str] = {
 # DDL — Base Tables
 # ============================================================
 
+_DDL_SCHEMA_MIGRATIONS = """CREATE TABLE IF NOT EXISTS schema_migrations (
+    version INTEGER PRIMARY KEY,
+    description TEXT NOT NULL,
+    applied_at TEXT DEFAULT (datetime('now'))
+);
+"""
+
 _DDL_STATEMENTS = """
 CREATE TABLE IF NOT EXISTS statements (
     id                   INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -128,6 +136,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     created_at      TEXT DEFAULT (datetime('now')),
     date_iso        TEXT,
     hash_signature  TEXT,
+    hash_signature_v2 TEXT,
     account_id      TEXT,
     member          TEXT DEFAULT 'Self',
     source          TEXT DEFAULT 'pdf',
@@ -368,10 +377,16 @@ CREATE TABLE IF NOT EXISTS reconciliation_audit_log (
 );
 """
 
+# NOTE (M04/D11): the DDL default on the four behaviour/financial_profiles
+# tables is now 'primary' for all newly created databases via create_all.
+# Migration 002 unifies stored rows on pre-existing databases. The
+# permanent boundary record is backend/tests/architecture/
+# test_no_raw_household_default.py, which asserts raw DDL-default INSERTs
+# yield 'primary'.
 _DDL_BEHAVIOUR_SNAPSHOTS = """
 CREATE TABLE IF NOT EXISTS behaviour_snapshots (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    household_id TEXT NOT NULL DEFAULT 'default',
+    household_id TEXT NOT NULL DEFAULT 'primary',
     snapshot_date TEXT NOT NULL,
     savings_discipline_score_bps INTEGER,
     cashflow_stability_score_bps INTEGER,
@@ -390,7 +405,7 @@ CREATE TABLE IF NOT EXISTS behaviour_patterns (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     pattern_type TEXT NOT NULL,
     pattern_key TEXT NOT NULL,
-    household_id TEXT NOT NULL DEFAULT 'default',
+    household_id TEXT NOT NULL DEFAULT 'primary',
     strength_bps INTEGER NOT NULL,
     first_observed TEXT,
     last_observed TEXT,
@@ -407,7 +422,7 @@ CREATE TABLE IF NOT EXISTS behaviour_alerts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     alert_type TEXT NOT NULL,
     alert_code TEXT NOT NULL,
-    household_id TEXT NOT NULL DEFAULT 'default',
+    household_id TEXT NOT NULL DEFAULT 'primary',
     severity TEXT NOT NULL,
     title TEXT NOT NULL,
     description TEXT,
@@ -421,7 +436,7 @@ CREATE TABLE IF NOT EXISTS behaviour_alerts (
 _DDL_FINANCIAL_PROFILES = """
 CREATE TABLE IF NOT EXISTS financial_profiles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    household_id TEXT NOT NULL DEFAULT 'default',
+    household_id TEXT NOT NULL DEFAULT 'primary',
     profile_type TEXT NOT NULL,
     profile_data_json TEXT,
     score_bps INTEGER,
@@ -567,7 +582,7 @@ CREATE INDEX IF NOT EXISTS idx_txn_statement   ON transactions(statement_id);
 CREATE INDEX IF NOT EXISTS idx_txn_type        ON transactions(type);
 CREATE INDEX IF NOT EXISTS idx_txn_date_iso    ON transactions(date_iso);
 CREATE INDEX IF NOT EXISTS idx_account_date_iso ON transactions(account_id, date_iso, id);
-CREATE UNIQUE INDEX IF NOT EXISTS idx_transaction_hash ON transactions(hash_signature);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_transaction_hash_v2 ON transactions(hash_signature_v2);
 CREATE INDEX IF NOT EXISTS idx_loan_payments_loan_id ON loan_payments(loan_id);
 CREATE INDEX IF NOT EXISTS idx_loan_payments_date ON loan_payments(payment_date);
 CREATE INDEX IF NOT EXISTS idx_loan_prepayments_loan_id ON loan_prepayments(loan_id);
@@ -672,6 +687,7 @@ def _row_to_dict(cursor: sqlite3.Cursor, row: tuple[Any, ...]) -> dict[str, Any]
 # ============================================================
 
 _ALL_DDL_TABLES: list[tuple[str, str]] = [
+    ("schema_migrations", _DDL_SCHEMA_MIGRATIONS),
     ("statements", _DDL_STATEMENTS),
     ("transactions", _DDL_TRANSACTIONS),
     ("members", _DDL_MEMBERS),

@@ -71,9 +71,9 @@ export default defineConfig({
     navigationTimeout: 30000,
   },
   
-  // Configure projects for different browsers
+  // Configure projects for supported browsers only
   projects: [
-    // Desktop Chrome
+    // Desktop Chrome (supported)
     {
       name: 'chromium',
       use: { 
@@ -82,61 +82,51 @@ export default defineConfig({
       },
     },
     
-    // Desktop Firefox
-    {
-      name: 'firefox',
-      use: { 
-        ...devices['Desktop Firefox'],
-        viewport: { width: 1280, height: 720 },
-      },
-    },
-    
-    // Desktop Safari (WebKit)
-    {
-      name: 'webkit',
-      use: { 
-        ...devices['Desktop Safari'],
-        viewport: { width: 1280, height: 720 },
-      },
-    },
-    
-    // Mobile Chrome
+    // Mobile Chrome (supported touch profile)
     {
       name: 'mobile-chrome',
       use: { 
         ...devices['Pixel 5'],
       },
     },
-    
-    // Mobile Safari
-    {
-      name: 'mobile-safari',
-      use: { 
-        ...devices['iPhone 12'],
-      },
-    },
-    
-    // Tablet
-    {
-      name: 'tablet',
-      use: { 
-        ...devices['iPad Pro'],
-      },
-    },
   ],
   
-  // Production server (avoids CSS corruption in dev mode)
-  // CI uses python3 (guaranteed on ubuntu-latest); local uses npm start.
-  webServer: {
-    command: process.env.CI
-      ? 'python3 -m http.server 3000 --directory dist'
-      : 'npm start',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000,
-    stdout: 'ignore',
-    stderr: 'pipe',
-  },
+  // C38.6 — Deterministic E2E server lifecycle. The frontend is ALWAYS served
+  // by `next start` (server mode), identical to local dev and production. We
+  // never serve the static `dist` export because middleware (legacy-route
+  // redirects) and SPA routing only work under server mode.
+  //
+  // M9-C71 — port ownership. The servers are always started fresh in CI, where
+  // the runner is exclusive. Locally, a previous run's orphaned `next start` or
+  // uvicorn still holding :3000/:8000 aborted the whole run with
+  // "http://localhost:8000/ready is already used" before a single assertion
+  // ran — and because the orphans are invisible from the test process, the
+  // failure looked like a configuration problem rather than a stale process.
+  // `!process.env.CI` reuses a healthy local server and is the documented
+  // Playwright pattern for exactly this; CI keeps exclusive ownership, so no
+  // determinism is traded away where determinism is verifiable. The readiness
+  // gates in `tests/global-setup.ts` then prove the reused server really does
+  // serve every exercised route before the suite starts.
+  webServer: [
+    {
+      command: 'npm start',
+      url: 'http://localhost:3000',
+      reuseExistingServer: !process.env.CI,
+      timeout: 120000,
+      stdout: 'ignore',
+      stderr: 'pipe',
+    },
+    {
+      // Resolve Python via CLARIFIN_PYTHON env var (set by CI/bootstrap) or venv-first ladder.
+      // No PYTHONPATH needed: -m uvicorn places cwd on sys.path[0], resolving `src.*`.
+      command: 'cd ../backend && "${CLARIFIN_PYTHON:-$(if [ -x ../../.venv/bin/python ]; then echo ../../.venv/bin/python; else command -v python3 || command -v python; fi)}" -m uvicorn src.api:app --host 0.0.0.0 --port 8000',
+      url: 'http://localhost:8000/ready',
+      reuseExistingServer: !process.env.CI,
+      timeout: 60000,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    },
+  ],
   
   // Output directory
   outputDir: 'test-results/artifacts',

@@ -1,0 +1,42 @@
+{
+  "schema": "m9-c42.38-shared-infrastructure-final-boundary/v1",
+  "generated_at": "2026-08-27T01:46:00.000000+00:00",
+  "phase": "M9-C42.38",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "methodology": "Exercise the explicit shared:: invalidation rule (R-SRC-002) and the single-engine rule (R-SRC-001) directly via evidence_reuse.evaluate_rule; confirm planner scope-safety via C42.28/C42.30 test suites (43 passed). No redesign of dependency inference performed in this phase.",
+  "rule_proofs": [
+    {
+      "requirement": "explicit shared:: changes invalidate the intended dependent scope",
+      "mechanism": "R-SRC-002 fires when change.target.startswith('shared::') and component in target.split('::')",
+      "result": "PASS",
+      "evidence": "Change('shared::common_calculations::credit_card_engine') -> R-SRC-002.triggered=True for credit_card_engine; False for loan_engine (unnamed) and reconciliation_engine (unrelated)."
+    },
+    {
+      "requirement": "ordinary single-engine changes remain bounded",
+      "mechanism": "R-SRC-001 fires only when change.target == component",
+      "result": "PASS",
+      "evidence": "Change('credit_card_engine') -> R-SRC-001.triggered=True for credit_card_engine; False for loan_engine."
+    },
+    {
+      "requirement": "shared-infrastructure ambiguity does not silently cause under-testing",
+      "mechanism": "A shared-module FILE change without the explicit shared:: prefix maps only to its own component via describe_change; dependents are NOT auto-invalidated",
+      "result": "GAP_CONFIRMED",
+      "evidence": "Change('common_calculations') -> R-SRC-002.triggered=False for credit_card_engine. Without explicit shared:: prefix, dependent engines keep reusable (stale) evidence. This is the documented HIGH-severity gap (C42.33/C42.37)."
+    },
+    {
+      "requirement": "the planner does not silently expand to repository-wide verification",
+      "mechanism": "EvidenceAwarePlanner.plan selects only components whose reuse disposition is invalidated; all others excluded with explicit cause",
+      "result": "PASS",
+      "evidence": "C42.28 scenario B (single_engine_change): 1 selected, 13 excluded. C42.30 TestVerdicts: planner deterministic, selects exactly the affected component. 43/43 C42.28+C42.30 tests pass."
+    }
+  ],
+  "sufficiency_for_final_certification": {
+    "explicit_shared_mechanism_sufficient": true,
+    "rationale": "When a shared change is correctly declared with the shared:: prefix naming the affected dependents, R-SRC-002 invalidates exactly those dependents and the planner re-measures only them; the planner never expands to a repository-wide run. Ordinary single-engine changes are correctly bounded.",
+    "limitation": "The mechanism is EXPLICIT, not automatic. A shared-module file change that omits the shared:: prefix will not propagate invalidation to dependents, creating an under-testing risk if the changer fails to declare it. This is the established C42.33/C42.37 gap.",
+    "classification": "CERTIFIED_WITH_LIMITATION (explicit mechanism sufficient; auto-detection deferred as post-certification enhancement)",
+    "not_a_blocker": true,
+    "reason_not_blocker": "The system reliably answers the nine canonical questions for explicitly-declared changes. Auto-detection of shared dependencies from file paths is a deliberately deferred optimization (constraint: do not redesign dependency inference in M38.6). The documented practice requires shared:: prefix for shared-infrastructure changes; this is a known operational boundary, not an architectural defect."
+  },
+  "verdict": "CERTIFIED_WITH_LIMITATION"
+}

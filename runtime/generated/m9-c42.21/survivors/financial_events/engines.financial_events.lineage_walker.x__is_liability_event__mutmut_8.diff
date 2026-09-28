@@ -1,0 +1,12 @@
+# status: survived
+# engines.financial_events.lineage_walker.x__is_liability_event__mutmut_8: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -1,6 +1,6 @@
+ def _is_liability_event(event: dict[str, Any]) -> bool:
+     """Check if event type represents a liability."""
+-    event_type = event.get("event_type", "")
++    event_type = event.get("event_type", "XXXX")
+     return event_type in (
+         "liability_increase",
+         "cash_advance",

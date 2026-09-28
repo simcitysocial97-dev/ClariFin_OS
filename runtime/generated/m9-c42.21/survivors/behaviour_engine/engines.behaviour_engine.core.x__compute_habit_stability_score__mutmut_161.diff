@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_habit_stability_score__mutmut_161: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -74,7 +74,7 @@
+     if daily_counts:
+         counts = [float(v) for v in daily_counts.values()]
+         rhythm_cv = _coefficient_of_variation(counts)
+-        rhythm_score = 1 - _normalize_score(rhythm_cv, 0, 2)
++        rhythm_score = 1 - _normalize_score(rhythm_cv, 0, None)
+     else:
+         rhythm_score = 0.5
+ 

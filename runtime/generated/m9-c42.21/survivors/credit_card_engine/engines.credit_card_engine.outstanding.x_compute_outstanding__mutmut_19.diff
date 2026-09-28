@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.outstanding.x_compute_outstanding__mutmut_19: survived
+--- src/engines/credit_card_engine/outstanding.py
++++ src/engines/credit_card_engine/outstanding.py
+@@ -26,7 +26,7 @@
+     if total_fees_paise < 0:
+         raise ValueError("total_fees_paise must be non-negative")
+     if total_payments_paise < 0:
+-        raise ValueError("total_payments_paise must be non-negative")
++        raise ValueError("XXtotal_payments_paise must be non-negativeXX")
+ 
+     outstanding = (
+         total_spend_paise + total_emi_paise + total_fees_paise - total_payments_paise

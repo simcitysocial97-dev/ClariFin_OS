@@ -57,9 +57,9 @@ class ScopeResolver:
         "backend/src/api": ["api"],
         "backend/src/auth": ["auth"],
         "backend/src/migrations": ["migrations"],
-        "frontend/src/components": ["frontend"],
-        "frontend/src/pages": ["frontend"],
-        "frontend/src/services": ["frontend"],
+        "frontend/lib/components": ["frontend"],
+        "frontend/lib/pages": ["frontend"],
+        "frontend/lib/services": ["frontend"],
     }
 
     # Category to scope mapping
@@ -198,7 +198,7 @@ class ScopeResolver:
                     capabilities.add("risk" if "risk" in norm_path else "compliance")
 
         # Frontend source files
-        elif norm_path.startswith("frontend/src/"):
+        elif norm_path.startswith("frontend/lib/"):
             scopes.add(VerificationScope.FRONTEND)
             scopes.add(VerificationScope.CONTRACTS)
             reasons.append(
@@ -481,7 +481,7 @@ accrual) AND integrate with ledger/accounting invariants.
 def explain_frontend_api_change() -> str:
     """Example: frontend API change."""
     return """
-Frontend API service change (frontend/src/services/api.ts) affects:
+Frontend API service change (frontend/lib/services/api.ts) affects:
 
 1. FRONTEND - Frontend code change
 2. CONTRACTS - May change API contract expectations

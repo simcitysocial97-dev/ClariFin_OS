@@ -1,0 +1,82 @@
+=== Command: verify inspect evidence ===
+Exit: 0
+Class: PASS
+Duration: 10.819s
+
+--- STDOUT ---
+Total obligations: 64
+Open: 64
+Closed: 0
+  - obl-0b15bfffde0e-0: account-engine (property)
+  - obl-0b15bfffde0e-1: account-engine (contract)
+  - obl-0b15bfffde0e-2: account-engine (unit)
+  - obl-0b15bfffde0e-3: account-engine (unit)
+  - obl-0b15bfffde0e-4: account-engine (unit)
+  - obl-0b15bfffde0e-5: account-engine (unit)
+  - obl-0b15bfffde0e-6: account-engine (unit)
+  - obl-0b15bfffde0e-7: api-contracts (contract)
+  - obl-0b15bfffde0e-8: api-contracts (unit)
+  - obl-0b15bfffde0e-9: api-contracts (unit)
+  - obl-0b15bfffde0e-10: api-contracts (unit)
+  - obl-0b15bfffde0e-11: api-contracts (unit)
+  - obl-0b15bfffde0e-12: api-contracts (unit)
+  - obl-0b15bfffde0e-13: behaviour-engine (property)
+  - obl-0b15bfffde0e-14: behaviour-engine (contract)
+  - obl-0b15bfffde0e-15: behaviour-engine (unit)
+  - obl-0b15bfffde0e-16: behaviour-engine (unit)
+  - obl-0b15bfffde0e-17: behaviour-engine (unit)
+  - obl-0b15bfffde0e-18: behaviour-engine (unit)
+  - obl-0b15bfffde0e-19: behaviour-engine (unit)
+  - obl-0b15bfffde0e-20: cashflow-engine (property)
+  - obl-0b15bfffde0e-21: cashflow-engine (contract)
+  - obl-0b15bfffde0e-22: cashflow-engine (unit)
+  - obl-0b15bfffde0e-23: cashflow-engine (unit)
+  - obl-0b15bfffde0e-24: cashflow-engine (unit)
+  - obl-0b15bfffde0e-25: cashflow-engine (unit)
+  - obl-0b15bfffde0e-26: cashflow-engine (unit)
+  - obl-0b15bfffde0e-27: credit-card-engine (property)
+  - obl-0b15bfffde0e-28: credit-card-engine (contract)
+  - obl-0b15bfffde0e-29: credit-card-engine (unit)
+  - obl-0b15bfffde0e-30: credit-card-engine (unit)
+  - obl-0b15bfffde0e-31: credit-card-engine (unit)
+  - obl-0b15bfffde0e-32: credit-card-engine (unit)
+  - obl-0b15bfffde0e-33: credit-card-engine (unit)
+  - obl-0b15bfffde0e-34: financial-intelligence (property)
+  - obl-0b15bfffde0e-35: financial-intelligence (contract)
+  - obl-0b15bfffde0e-36: financial-intelligence (unit)
+  - obl-0b15bfffde0e-37: financial-intelligence (unit)
+  - obl-0b15bfffde0e-38: financial-intelligence (unit)
+  - obl-0b15bfffde0e-39: financial-intelligence (unit)
+  - obl-0b15bfffde0e-40: financial-intelligence (unit)
+  - obl-0b15bfffde0e-41: ledger (contract)
+  - obl-0b15bfffde0e-42: ledger (unit)
+  - obl-0b15bfffde0e-43: ledger (integration)
+  - obl-0b15bfffde0e-44: ledger (unit)
+  - obl-0b15bfffde0e-45: ledger (unit)
+  - obl-0b15bfffde0e-46: ledger (unit)
+  - obl-0b15bfffde0e-47: loan-engine (property)
+  - obl-0b15bfffde0e-48: loan-engine (contract)
+  - obl-0b15bfffde0e-49: loan-engine (unit)
+  - obl-0b15bfffde0e-50: loan-engine (unit)
+  - obl-0b15bfffde0e-51: loan-engine (unit)
+  - obl-0b15bfffde0e-52: loan-engine (unit)
+  - obl-0b15bfffde0e-53: loan-engine (unit)
+  - obl-0b15bfffde0e-54: reconciliation (property)
+  - obl-0b15bfffde0e-55: reconciliation (contract)
+  - obl-0b15bfffde0e-56: reconciliation (unit)
+  - obl-0b15bfffde0e-57: reconciliation (unit)
+  - obl-0b15bfffde0e-58: reconciliation (unit)
+  - obl-0b15bfffde0e-59: reconciliation (unit)
+  - obl-0b15bfffde0e-60: reconciliation (unit)
+  - obl-0b15bfffde0e-61: runtime-verification (unit)
+  - obl-0b15bfffde0e-62: runtime-verification (unit)
+  - obl-0b15bfffde0e-63: frontend-e2e (e2e)
+
+
+--- STDERR ---
+
+E2E IMPACT:
+   19 route(s) changed
+   4 E2E test(s) required
+   Added E2E verification task for routes: /dashboard, /layout.tsx, /platform, /platform/architecture, /platform/capabilities, /platform/capabilities/[capabilityId], /platform/diagnostics, /platform/diagnostics/change, /platform/diagnostics/detail/[id], /platform/errors, /platform/evidence, /platform/framework, /platform/history, /platform/history/compare, /platform/platform-providers.tsx, /platform/verification, /platform/verification/[capability], /platform/verification/history/[runId], /platform/verification/run/[capability]
+

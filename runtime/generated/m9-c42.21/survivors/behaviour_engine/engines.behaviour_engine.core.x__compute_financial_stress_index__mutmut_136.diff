@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_136: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -56,7 +56,7 @@
+ 
+     for txn in debits:
+         date_iso = txn.get("date_iso", "")
+-        amount = (txn.get("amount_paise", 0) or 0) / 100.0
++        amount = (txn.get("AMOUNT_PAISE", 0) or 0) / 100.0
+         total_spending += amount
+ 
+         if date_iso:

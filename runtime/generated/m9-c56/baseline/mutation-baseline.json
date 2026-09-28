@@ -1,0 +1,67 @@
+{
+  "schema": "m9-c56/mutation-baseline/v1",
+  "generated_at": "2026-09-02T00:16:24.511473+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "note": "Per-engine targeted mutation summaries. Overall computed from these.",
+  "engines": {
+    "account_engine": {
+      "killed": 173,
+      "survived": 10,
+      "no_tests": 0,
+      "timeout": 0,
+      "mutants_generated": 183,
+      "mutation_score": 94.5,
+      "source_scope": "src/engines/account_engine",
+      "test_scope": "tests/unit/engines/account tests/capability/account_management",
+      "duration_seconds": 18
+    },
+    "credit_card_engine": {
+      "killed": 449,
+      "survived": 133,
+      "no_tests": 0,
+      "timeout": 0,
+      "mutants_generated": 582,
+      "mutation_score": 77.1,
+      "source_scope": "src/engines/credit_card_engine",
+      "test_scope": "tests/unit/engines/credit_card tests/properties/credit_card_engine tests/capability/credit_cards",
+      "duration_seconds": 87
+    },
+    "financial_events": {
+      "killed": 453,
+      "survived": 251,
+      "no_tests": 0,
+      "timeout": 0,
+      "mutants_generated": 704,
+      "mutation_score": 64.3,
+      "source_scope": "src/engines/financial_events",
+      "test_scope": "tests/unit/engines/financial_events tests/properties/financial_events tests/capability/financial_events",
+      "duration_seconds": 164
+    },
+    "loan_engine": {
+      "killed": 1067,
+      "survived": 200,
+      "no_tests": 4,
+      "timeout": 2,
+      "mutants_generated": 1273,
+      "mutation_score": 84.1,
+      "source_scope": "src/engines/loan_engine",
+      "test_scope": "tests/unit/engines/loan tests/properties/loan_engine",
+      "duration_seconds": 442
+    }
+  },
+  "overall": {
+    "killed": 2142,
+    "survived": 594,
+    "no_tests": 4,
+    "timeout": 2,
+    "mutants_generated": 2742,
+    "mutation_score": 78.1,
+    "total_duration_seconds": 711
+  },
+  "threshold_percent": 80,
+  "gap_to_threshold": {
+    "coverage_line_pp": 2.28,
+    "coverage_branch_pp": 9.85,
+    "mutation_pp": 1.9
+  }
+}

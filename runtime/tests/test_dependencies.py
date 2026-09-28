@@ -9,7 +9,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-
 from runtime.foundation.workspace.dependencies import render_dependencies
 from runtime.foundation.workspace.workspace import WorkspaceLoader
 
@@ -42,7 +41,9 @@ class TestDependencyExplorer:
                 }
             },
         )
-        result = loader.load_dependency_chain("backend/src/engines/loan_engine/amortization.py")
+        result = loader.load_dependency_chain(
+            "backend/src/engines/loan_engine/amortization.py"
+        )
         output = render_dependencies(result)
         assert "Dependency Chain" in output
         assert "LoanService" in output

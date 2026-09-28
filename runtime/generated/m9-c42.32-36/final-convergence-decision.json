@@ -1,0 +1,49 @@
+{
+  "schema": "m9-c42.32-36-final-convergence-decision/v1",
+  "generated_at": "2026-08-26T10:15:00.000000+00:00",
+  "phase": "M9-C42.32-36 Phase 13",
+  "repository_sha": "084359346b3b14792c5bd38e159932f6c42922fd",
+  "outcome": "OUTCOME_A_CORE_FORENSIC_AGENT_READY",
+  "outcome_rationale": "The C42.27-31 architecture is operationally sufficient for practical local/in-house use as the in-house Diagnostic & Forensic Agent. The complete real repository master scenario (Phase 7) executed end-to-end against real mutation evidence (440 killed, 75.6% score) and produced a deterministic CERTIFIABLE verdict. 24/26 agent capabilities are CERTIFIED; 1 is PARTIALLY_CERTIFIED (CI evidence ingestion — logic + local/CI equivalence done & tested, live CI emission not yet wired). The remaining gaps are operational (CI wiring) and data-accumulation (escalation threshold), NOT fundamental architectural weaknesses.",
+  "why_not_outcome_b": "No concrete architectural gap prevents real use. The single PARTIALLY_CERTIFIED item (CI ingestion) has working canonical logic and tests; only live workflow emission remains, which is an operational boundary clearly marked rather than a blocking gap.",
+  "why_not_outcome_c": "No fundamental architectural weakness remains. The framework determines minimum defensible verification, reuses valid evidence, classifies survivors, proposes bounded strengthening, validates without full campaigns, and certifies deterministically. Shared-infrastructure invalidation (cross-engine-impact gap) is an enhancement, not a structural defect — single-engine change paths are fully safe and validated.",
+  "why_not_outcome_d": "Real-world execution evidence IS available: the Phase 7 master scenario ran the actual mutmut pipeline on credit_card_engine and produced a complete forensic record + diagnostic verdict. This is not a validation gap requiring invented confidence.",
+  "next_work_phase": "OUTCOME A transition: move from M9-C42 architectural construction into operational deployment, usability, hardening, and controlled integration. Specifically: (1) wire live CI evidence emission into mutation.yml / backend-verify.yml (resolve Phase 2 PARTIALLY_CERTIFIED item); (2) accumulate real strengthening approval/revalidation data to define the CLASS-E escalation threshold (resolve repeated-survivor gap); (3) implement shared-infrastructure invalidation rule (resolve cross-engine-impact gap) as an enhancement.",
+  "certification": {
+    "gates_total": 26,
+    "gates_passed": 26,
+    "c42_29_31_baseline_preserved": true,
+    "real_master_scenario_passes": true,
+    "full_campaign_required": false,
+    "existing_mutation_evidence_reused": true,
+    "no_production_functionality_deleted": true,
+    "no_duplicate_architecture": true,
+    "all_new_behavior_tested": true,
+    "final_verdict": "CERTIFIABLE"
+  },
+  "gaps_carried_forward": [
+    {
+      "id": "CI-LIVE-EMISSION",
+      "severity": "operational",
+      "status": "design+logic complete, live wiring pending",
+      "owner_phase": "C42.32 Phase 2 follow-up",
+      "blocks_outcome": false
+    },
+    {
+      "id": "SHARED-INFRA-INVALIDATION",
+      "severity": "enhancement",
+      "status": "gap identified, rule design pending",
+      "owner_phase": "cross-engine-impact follow-up",
+      "blocks_outcome": false
+    },
+    {
+      "id": "ESCALATION-THRESHOLD-DATA",
+      "severity": "data-accumulation",
+      "status": "mechanism defined, historical data insufficient",
+      "owner_phase": "C42.35 follow-up",
+      "blocks_outcome": false
+    }
+  ],
+  "authorization_boundary_confirmed": "Agent autonomy is correctly bounded (autonomy-boundary.json). No prohibited action (production modification, auto-approval, scope expansion, full campaigns, failure suppression, policy change) is possible through the implemented code paths.",
+  "status": "FINAL_DECISION_RECORDED"
+}

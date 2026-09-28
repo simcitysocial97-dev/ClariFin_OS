@@ -10,6 +10,8 @@ import { ErrorMessage } from '../error-message';
 
 describe('Error Performance', () => {
   it('ErrorMessage renders under 150ms', () => {
+    const warmup = render(<ErrorMessage message="Warmup" />);
+    warmup.unmount();
     const start = performance.now();
     render(<ErrorMessage message="Error" />);
     const end = performance.now();

@@ -1,0 +1,15 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_habit_stability_score__mutmut_68: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -37,9 +37,7 @@
+             all_categories.update(month_data.keys())
+ 
+         for cat in all_categories:
+-            monthly_vals = [
+-                monthly_category[m].get(cat, 0) for m in sorted(monthly_category.keys())
+-            ]
++            monthly_vals = None
+             if len(monthly_vals) >= 2:
+                 cv = _coefficient_of_variation(monthly_vals)
+                 category_cvs.append(cv)

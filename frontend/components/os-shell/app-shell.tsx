@@ -27,6 +27,11 @@ import { DeepLinkSync } from './deep-link-sync';
 // ===== App Shell Component =====
 export function AppShell({ children }: { children: ReactNode }) {
   return (
+    // M9-C71: the financial workspace shell is marked so the E2E readiness gate
+    // can prove a financial route was served by the app rather than answered by
+    // the not-found page. The Platform Console renders NO AppShell by design
+    // (app/platform/layout.tsx invariant), so the two route families need
+    // distinguishable markers.
     <ShellProvider>
       {/* Deep link sync — wires Next.js router to NavigationRuntime.
           DeepLinkSync calls useSearchParams(), which forces client-side
@@ -36,7 +41,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         <DeepLinkSync />
       </Suspense>
 
-      <ResizableLayout>
+      <div data-testid="app-shell" className="contents">
+        <ResizableLayout>
         {/* Left Rail - Navigation (180px) */}
         <LeftRail />
 
@@ -67,7 +73,8 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         {/* Modal Layer - z-index: 2000+ */}
         <ModalLayer />
-      </ResizableLayout>
+        </ResizableLayout>
+      </div>
     </ShellProvider>
   );
 }

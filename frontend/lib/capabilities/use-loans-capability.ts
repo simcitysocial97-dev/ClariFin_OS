@@ -13,6 +13,7 @@ import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { LoansViewModel } from '@/types/loans-view-model';
 import { loansMapper } from '@/lib/mappers/loans-mapper';
+import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
 
 // Query key for React Query
 const LOANS_QUERY_KEY = 'loans';
@@ -115,17 +116,18 @@ export function useLoansCapability(): LoansCapabilityReturn {
   } = useQuery<LoansViewModel | null>({
     queryKey: [LOANS_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const response = await fetch('/api/v1/loans');
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-      const raw = await response.json();
+      const query = new URLSearchParams();
+      if (queryParams.loan_types) query.set('loan_types', queryParams.loan_types);
+      if (queryParams.lenders) query.set('lenders', queryParams.lenders);
+      if (queryParams.statuses) query.set('statuses', queryParams.statuses);
+      const suffix = query.size > 0 ? `?${query.toString()}` : '';
+      const raw = await apiFetchJson(`/api/v1/workspaces/loans${suffix}`) as any;
       return loansMapper.mapLoansDTO(raw);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (React Query v5 uses gcTime instead of cacheTime)
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retry: transientRetryPolicy,
+    retryDelay: 1000,
   });
 
   // Loading timeout effect - show message after 10 seconds

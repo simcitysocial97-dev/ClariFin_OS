@@ -37,7 +37,7 @@ _BACKEND_TEST_TYPES: dict[str, str] = {
 _FRONTEND_TEST_DIRS: list[str] = ["__tests__", "tests"]
 
 
-class TestScanner(BaseScanner):
+class SuiteDiscovery(BaseScanner):
     """Discover test suites and map them to capabilities."""
 
     def scan(self) -> ScanResult:
@@ -187,6 +187,6 @@ class TestScanner(BaseScanner):
     def _count_test_files(directory: Path) -> int:
         """Count test files in a directory tree."""
         count = 0
-        for py_file in directory.rglob("test_*.py"):
+        for _py_file in directory.rglob("test_*.py"):
             count += 1
         return count

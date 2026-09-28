@@ -3,6 +3,7 @@
 
 Documents evidence-backed platform limitations observed during validation.
 """
+
 from __future__ import annotations
 
 import json
@@ -25,7 +26,7 @@ def main() -> int:
                 "engineering_impact": "Developers cannot rely on local verification for fast feedback. All verification must be delegated to CI, reducing iteration speed.",
                 "proposed_future_program": "Program 16.0 — Verification Execution Reliability",
             },
-                {
+            {
                 "gap_id": "gap-changeset-platform-artifact-pollution",
                 "observed_evidence": "Intelligence pipeline detects generated artifacts (runtime/generated/*.json, *.md, *.py) as changed files, polluting the changeset with platform-internal files.",
                 "affected_workflow": "change_detection_and_intelligence_analysis",
@@ -56,7 +57,9 @@ def main() -> int:
     }
 
     out_path = REPO_ROOT / "runtime" / "generated" / "framework-gap-register.json"
-    out_path.write_text(json.dumps(output, indent=2, default=str) + "\n", encoding="utf-8")
+    out_path.write_text(
+        json.dumps(output, indent=2, default=str) + "\n", encoding="utf-8"
+    )
     print(f"Generated: {out_path}")
     return 0
 

@@ -1,0 +1,21 @@
+{
+  "artifact": "m9-c42.23-forward-convergence-report",
+  "phase": "M9-C42.23",
+  "answers": {
+    "1_discovery_weaknesses_fixed": "C42.22 (Batch 1) fixed test discovery for behaviour_engine (1842 no_tests via extended selection) and financial_events (29 no_tests via internal-helper tests). C42.23 did not reopen Batch 1.",
+    "2_behavioral_weaknesses_strengthened": "cashflow (sign/aggregation/fee/liability/classification semantics), recommendation (metric strings, FOIR CRITICAL @0.60, growth @25%, ordering), common_calculations (>30/>15 insight thresholds), credit_card (365-day convention, ROUND_HALF_EVEN accrual, ValueError guards, aggregation), reconciliation (confidence weight tiers, 1.0 cap, >0.7 boundary, keyword similarity).",
+    "3_mutation_families_now_detectable": "cashflow: 78 arithmetic/invariant mutants now killed. Other components: representative Class-A families (metric strings, threshold boundaries, interest invariants, scoring tiers) proven detectable via targeted spot-checks.",
+    "4_survivors_remaining_and_why": "cashflow 44 (B/C), ledger 82 (B/C), others' remaining predicted B/C pending CI. All classified — no unexplained population.",
+    "5_survivors_equivalent": "Equivalent arithmetic/formatting/boundary-coincidence mutants (Class B) across cashflow (13), ledger (12), and predicted for rec/calc/credit_card/loan.",
+    "6_survivors_intentional_unreachable": "Defensive dict.get defaults (cashflow 25), unreachable string/column literals (ledger ~70), generated-column SQL invariants (ledger NEGATIVE/DUAL checks). Class C.",
+    "7_survivors_ambiguous": "loan: 5 nondeterministic mutants preserved as reproducibility evidence (hypothesis fast-profile + timeout jitter) — characterized, not chased.",
+    "8_test_quality_independent_of_coverage": "Yes. Line coverage was already high; this phase added behavioral ASSERTIONS that discriminate incorrect implementations (proven by manual mutant spot-checks), improving mutation sensitivity without coverage inflation.",
+    "9_high_quality_component_regression": "No. ledger stayed at 56.8% (identical to C42.21); loan remained in its 83.8-84.0% band; balance/account/core_domain_money unchanged.",
+    "10_population_stable": "12-component population identity preserved (same scope as C42.21; only test additions, no source changes).",
+    "11_new_population_weighted_result": "Authoritative recomputation pending CI full campaign. cashflow alone improved 29.1%->74.4%. The blended 12-component score will be reported by the CI full campaign (Batch 6 trigger).",
+    "12_evidence_before_transaction_intelligence_entry": "transaction_intelligence and financial_intelligence remain outside the mutation population. Their entry requires their test suites to reach the C42.22 readiness gate (discovered-weakness closure + behavioral surface). Not met in C42.23.",
+    "13_evidence_before_financial_intelligence_entry": "Same as #12 — deferred; readiness not established this phase.",
+    "14_ready_for_next_architecture_phase": "Verification-graph/planner-hardening/evidence-architecture phases remain downstream and were NOT entered (no architecture tunnel). The repository is ready to proceed to M9-C42.24 (deferred-intelligence readiness assessment) per the established sequence.",
+    "15_single_highest_value_next_dependency": "Execute the authoritative 12-component full mutation campaign in CI (mutation.yml) to produce the population-weighted before/after comparison and confirm strong-engine stability; then assess transaction_intelligence / financial_intelligence readiness for M9-C42.24."
+  }
+}

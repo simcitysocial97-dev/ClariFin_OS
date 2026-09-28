@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.emi.x_compute_tenure_from_emi__mutmut_27: survived
+--- src/engines/loan_engine/emi.py
++++ src/engines/loan_engine/emi.py
+@@ -17,7 +17,7 @@
+     one: Decimal = Decimal(1)
+ 
+     interest_only = Decimal(principal_paise) * monthly_rate
+-    if emi_paise <= interest_only:
++    if emi_paise < interest_only:
+         return 999  # EMI doesn't cover interest — return max
+ 
+     ratio = Decimal(emi_paise) / (Decimal(emi_paise) - interest_only)

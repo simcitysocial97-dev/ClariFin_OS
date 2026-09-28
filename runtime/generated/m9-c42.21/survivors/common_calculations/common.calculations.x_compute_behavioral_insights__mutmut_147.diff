@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_147: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -59,7 +59,7 @@
+             monthly_totals[mk] += (t.get("amount_paise", 0) or 0) / 100.0
+ 
+     if len(monthly_totals) >= 2:
+-        this_month_total = monthly_totals.get(this_month, 0)
++        this_month_total = monthly_totals.get(this_month, )
+         other_totals = [v for k, v in monthly_totals.items() if k != this_month]
+         if other_totals:
+             avg_other_total = sum(other_totals) / len(other_totals)

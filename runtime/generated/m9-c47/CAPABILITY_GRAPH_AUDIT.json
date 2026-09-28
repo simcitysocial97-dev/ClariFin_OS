@@ -1,0 +1,178 @@
+{
+  "metadata": {
+    "schema": "m9-c47-capability-graph-audit/v1",
+    "generated_at": "2026-09-03T17:00:00Z",
+    "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+    "scope": "Capability registry, capability graph, capability resolution, capability contracts",
+    "methodology": "Inspection of registry/registry.py, capability_catalog.py, capability_graph.py, capability_contract.py, capability_resolver.py"
+  },
+  "capability_registries": {
+    "VerificationRegistry (registry/registry.py)": {
+      "default_capabilities_count": 10,
+      "capability_ids": [
+        "loan-engine",
+        "reconciliation",
+        "ledger",
+        "api-contracts",
+        "migrations",
+        "quick",
+        "runtime-verification",
+        "golden-regression",
+        "mutation-analysis",
+        "e2e-tests"
+      ],
+      "source": "Hardcoded in _register_capabilities() method",
+      "config_override": "verification.yaml capabilities section",
+      "authority": "CANONICAL for workflow/script/capability registration"
+    },
+    "CapabilityContractRegistry (capability_contract.py)": {
+      "purpose": "Per-capability metadata with affected_by_paths, workflow_mappings, test_mappings",
+      "source": "Separate from VerificationRegistry",
+      "authority": "CANONICAL for capability-to-path mapping"
+    }
+  },
+  "capability_catalog": {
+    "schema": "m9-c51-capability-catalog/v1",
+    "stages": [
+      "discovery",
+      "planning",
+      "execution",
+      "measurement",
+      "diagnosis",
+      "strengthening",
+      "evidence_inspection",
+      "certification"
+    ],
+    "evidence_kinds_count": 28,
+    "evidence_kinds": [
+      "environment_fingerprint",
+      "lint_report",
+      "format_report",
+      "typecheck_report",
+      "test_pass",
+      "property_pass",
+      "contract_pass",
+      "invariant_pass",
+      "integration_pass",
+      "e2e_pass",
+      "golden_pass",
+      "coverage_measurement",
+      "mutation_score",
+      "survivor_intel",
+      "strengthening_proposal",
+      "forensic_report",
+      "diagnostic_report",
+      "capability_resolution",
+      "blast_radius_contract",
+      "control_plane_plan",
+      "execution_plan",
+      "tier_plan_manifest",
+      "evidence_invalidations",
+      "execution_report",
+      "reconciliation_report",
+      "certification_report",
+      "capability_catalog"
+    ],
+    "source": "Hardcoded in capability_catalog_data.py (REGISTRATIONS) + derived from VerificationRegistry profiles"
+  },
+  "capability_graph": {
+    "schema": "m9-c51-capability-graph/v1",
+    "spine_edges": [
+      {"source": "discover.blast-radius", "target": "plan.execution-plan", "type": "successor"},
+      {"source": "plan.execution-plan", "target": "exec.orchestrator", "type": "successor"},
+      {"source": "exec.orchestrator", "target": "measure.truth-report", "type": "successor"},
+      {"source": "measure.truth-report", "target": "diagnose.failure-attribution", "type": "successor"},
+      {"source": "diagnose.failure-attribution", "target": "strengthen.survivor-intel", "type": "successor"},
+      {"source": "strengthen.survivor-intel", "target": "strengthen.capability-pipeline", "type": "successor"},
+      {"source": "strengthen.capability-pipeline", "target": "measure.mutation", "type": "escalation"},
+      {"source": "measure.mutation", "target": "certify.contract-governance", "type": "successor"}
+    ],
+    "notes": "Canonical pipeline spine is hardcoded in capability_graph.py:build_capability_graph()"
+  },
+  "findings": {
+    "duplicate_authorities": [
+      {
+        "name": "Capability Registry",
+        "authority_a": "VerificationRegistry in registry/registry.py",
+        "authority_b": "CapabilityContractRegistry in capability_contract.py",
+        "actual_used": "Both - VerificationRegistry for workflow/script registration, CapabilityContractRegistry for path-to-capability mapping"
+      }
+    ],
+    "unmapped_capabilities": [
+      "transaction_intelligence (in ENGINE_SELECTION but not in VerificationRegistry default capabilities)",
+      "financial_intelligence (in ENGINE_SELECTION but not in VerificationRegistry default capabilities)",
+      "core_domain_money (in ENGINE_SELECTION but not in VerificationRegistry default capabilities)",
+      "common_calculations (in ENGINE_SELECTION but not in VerificationRegistry default capabilities)",
+      "cashflow_engine (in ENGINE_SELECTION but not in VerificationRegistry default capabilities)",
+      "balance_engine (in ENGINE_SELECTION but not in VerificationRegistry default capabilities)",
+      "credit_card_engine (in ENGINE_SELECTION but not in VerificationRegistry default capabilities)",
+      "account_engine (in ENGINE_SELECTION but not in VerificationRegistry default capabilities)",
+      "behaviour_engine (in ENGINE_SELECTION but not in VerificationRegistry default capabilities)"
+    ],
+    "notes": "ENGINE_SELECTION in mutation_contract.py contains 14 engines for mutation testing, but VerificationRegistry only has 10 default capabilities. The mutation engines are not registered as verification capabilities. This is a GAP - the mutation engine selection is separate from the capability registry."
+  },
+  "capability_to_production_mapping": {
+    "loan-engine": {
+      "production_source": "backend/src/engines/loan_engine",
+      "mapped": true
+    },
+    "reconciliation": {
+      "production_source": "backend/src/engines/reconciliation_engine.py",
+      "mapped": true
+    },
+    "ledger": {
+      "production_source": "backend/src/engines/ledger_audit_engine.py",
+      "mapped": true
+    },
+    "api-contracts": {
+      "production_source": "backend/src + frontend/src",
+      "mapped": true
+    },
+    "migrations": {
+      "production_source": "backend/src/migrations",
+      "mapped": true
+    },
+    "quick": {
+      "production_source": "backend/src",
+      "mapped": true
+    },
+    "runtime-verification": {
+      "production_source": "runtime",
+      "mapped": true
+    },
+    "golden-regression": {
+      "production_source": "backend/tests/golden",
+      "mapped": true
+    },
+    "mutation-analysis": {
+      "production_source": "backend/src/engines",
+      "mapped": true
+    },
+    "e2e-tests": {
+      "production_source": "frontend/e2e",
+      "mapped": true
+    }
+  },
+  "capability_to_test_mapping": {
+    "loan-engine": {
+      "tests": "tests/unit/engines/loan, tests/properties/loan_engine",
+      "mapped": true
+    },
+    "reconciliation": {
+      "tests": "tests/unit/engines/reconciliation, tests/properties/reconciliation, tests/capability/reconciliation",
+      "mapped": true
+    },
+    "api-contracts": {
+      "tests": "backend/tests/contract/",
+      "mapped": true
+    },
+    "e2e-tests": {
+      "tests": "frontend/tests/e2e/specs/",
+      "mapped": true
+    }
+  },
+  "conclusion": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Capability registry exists with 10 default capabilities. ENGINE_SELECTION has 14 engines for mutation but these are not registered as capabilities. Two separate capability registries exist (VerificationRegistry and CapabilityContractRegistry). Capability graph has hardcoded pipeline spine edges. Capability-to-production mapping is present for the 10 registered capabilities but missing for the 9 additional mutation engines."
+  }
+}

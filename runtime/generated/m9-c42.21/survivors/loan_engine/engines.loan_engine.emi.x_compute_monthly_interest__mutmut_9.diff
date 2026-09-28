@@ -1,0 +1,12 @@
+# status: survived
+# engines.loan_engine.emi.x_compute_monthly_interest__mutmut_9: survived
+--- src/engines/loan_engine/emi.py
++++ src/engines/loan_engine/emi.py
+@@ -9,6 +9,6 @@
+     if annual_rate_bps == 0:
+         return 0
+ 
+-    interest_decimal: Decimal = outstanding * monthly_rate
++    interest_decimal: Decimal = outstanding / monthly_rate
+     interest_paise = int(interest_decimal)
+     return interest_paise

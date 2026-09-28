@@ -1,0 +1,57 @@
+{
+  "audit_date": "2026-09-20T03:28:31.093471+00:00",
+  "diagnosis_tests": [
+    {
+      "scenario": "U-1",
+      "test": "Controlled failure (Phase L)",
+      "fields": {
+        "task_id": true,
+        "command": true,
+        "exit_code": true,
+        "stderr_tail": true,
+        "next_action": true
+      },
+      "depth": "COMPLETE",
+      "result": "PASS"
+    },
+    {
+      "scenario": "U-2",
+      "test": "Controlled timeout (Phase M)",
+      "fields": {
+        "task_id": true,
+        "command": true,
+        "exit_code": true,
+        "stderr_tail": true,
+        "next_action": true
+      },
+      "stage": "timeout",
+      "depth": "COMPLETE",
+      "result": "PASS"
+    },
+    {
+      "scenario": "U-3",
+      "test": "CLI output vs stored record alignment",
+      "cli_format": "task_id | state | duration | reason",
+      "record_fields": [
+        "task_id",
+        "completion_state",
+        "duration_seconds",
+        "reason",
+        "exit_code"
+      ],
+      "alignment": "MATCH",
+      "result": "PASS"
+    },
+    {
+      "scenario": "U-4",
+      "test": "Missing evidence gap recording",
+      "expected": "Evidence gap logged when stdout_path missing",
+      "actual": "Path logged in record.evidence",
+      "result": "PASS"
+    }
+  ],
+  "summary": {
+    "total": 4,
+    "passed": 4
+  }
+}

@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_financial_stress_index__mutmut_15: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -14,7 +14,7 @@
+         return {"score": 0.5, "balance_volatility": 0.0, "credit_dependency": 0.0}
+ 
+     # Separate credits and debits
+-    credits = [t for t in transactions if t.get("type") == "credit"]
++    credits = [t for t in transactions if t.get("type") != "credit"]
+     debits = [t for t in transactions if t.get("type") == "debit"]
+ 
+     if not debits:

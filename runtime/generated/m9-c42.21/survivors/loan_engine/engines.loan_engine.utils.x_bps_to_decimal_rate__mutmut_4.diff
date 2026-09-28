@@ -1,0 +1,10 @@
+# status: no tests
+# engines.loan_engine.utils.x_bps_to_decimal_rate__mutmut_4: no tests
+--- src/engines/loan_engine/utils.py
++++ src/engines/loan_engine/utils.py
+@@ -4,4 +4,4 @@
+ 
+     850 bps → 0.085
+     """
+-    return Decimal(bps) / Decimal(10000)
++    return Decimal(bps) / Decimal(10001)

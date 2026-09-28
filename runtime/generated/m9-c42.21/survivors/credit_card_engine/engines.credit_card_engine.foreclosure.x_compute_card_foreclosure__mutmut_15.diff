@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.foreclosure.x_compute_card_foreclosure__mutmut_15: survived
+--- src/engines/credit_card_engine/foreclosure.py
++++ src/engines/credit_card_engine/foreclosure.py
+@@ -30,7 +30,7 @@
+     if annual_rate_bps < 0:
+         raise ValueError("annual_rate_bps must be non-negative")
+     if remaining_months < 0:
+-        raise ValueError("remaining_months must be non-negative")
++        raise ValueError("XXremaining_months must be non-negativeXX")
+     if penalty_bps < 0:
+         raise ValueError("penalty_bps must be non-negative")
+ 

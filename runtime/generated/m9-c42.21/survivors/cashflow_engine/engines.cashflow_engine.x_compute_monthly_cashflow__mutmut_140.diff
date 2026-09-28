@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_140: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -113,7 +113,7 @@
+             str(expense)
+         )
+     else:
+-        credit_dependency_ratio = Decimal("0")
++        credit_dependency_ratio = None
+ 
+     # Effective liquidity cost annualized (simple: fee * 12)
+     effective_liquidity_cost_annualized = total_fees * 12

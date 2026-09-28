@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.prepayment.x_regenerate_schedule__mutmut_2: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -19,7 +19,7 @@
+         original_emi: Original EMI (for reduce_tenure mode). If not provided, derive from previous_schedule.
+         original_tenure: Original remaining months (for reduce_emi mode). If not provided, derive from previous_schedule.
+     """
+-    if new_principal_paise <= 0:
++    if new_principal_paise <= 1:
+         return []
+ 
+     # Derive missing parameters if not provided

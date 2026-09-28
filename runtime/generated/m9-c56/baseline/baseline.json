@@ -1,0 +1,97 @@
+{
+  "schema": "m9-c56/baseline/v1",
+  "generated_at": "2026-09-02T00:16:24.511473+00:00",
+  "milestone": "M9-C56 \u2014 Coverage & Mutation Convergence Toward the 80% Engineering Threshold",
+  "predecessor": "M9-C55 \u2014 Reproducible Verification Environment & Measurement Foundation (CERTIFIED 32/32)",
+  "repository": {
+    "sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+    "branch": "m9c9-merge-authorization-resolution",
+    "dirty": true,
+    "dirty_note": "C54/C55 artifacts uncommitted; working tree has untracked/modified files from prior milestones"
+  },
+  "environment": {
+    "schema": "m9-c56/environment-baseline/v1",
+    "generated_at": "2026-09-02T00:16:24.511473+00:00",
+    "python": {
+      "version": "Python 3.12.3",
+      "source": "venv",
+      "path": ".venv/bin/python3"
+    },
+    "pytest": {
+      "version": "pytest 9.1.1",
+      "source": "venv"
+    },
+    "mutmut": {
+      "version": "mutmut 3.7.0",
+      "source": "venv",
+      "pinned": "3.7.0"
+    },
+    "node": {
+      "version": "v24.20.0"
+    },
+    "npm": {
+      "version": "11.19.0"
+    },
+    "forbidden_venvs": [],
+    "consistent": true,
+    "venv_bin": ".venv/bin"
+  },
+  "coverage": {
+    "num_statements": 10238,
+    "covered_lines": 8164,
+    "missing_lines": 2074,
+    "percent_covered": 77.72,
+    "num_branches": 2740,
+    "num_partial_branches": 386,
+    "covered_branches": 1922,
+    "missing_branches": 818,
+    "percent_branches_covered": 70.15,
+    "excluded_lines": 50
+  },
+  "mutation": {
+    "killed": 2142,
+    "survived": 594,
+    "no_tests": 4,
+    "timeout": 2,
+    "mutants_generated": 2742,
+    "mutation_score": 78.1,
+    "total_duration_seconds": 711
+  },
+  "population": {
+    "tests": {
+      "total_collected": 3199,
+      "passed": 3197,
+      "failed": 1,
+      "xpassed": 1,
+      "note": "1 failure is intentional M4 exit probe (infrastructure test, not a regression)"
+    },
+    "mutation": {
+      "total_mutants": 2742,
+      "killed": 2142,
+      "survived": 594,
+      "no_tests": 4,
+      "timeout": 2
+    },
+    "source": {
+      "count": 242,
+      "total_loc": 46127
+    }
+  },
+  "thresholds": {
+    "line_coverage_target": 80,
+    "branch_coverage_target": 80,
+    "mutation_score_target": 80
+  },
+  "gaps": {
+    "coverage_line_pct": 2.28,
+    "coverage_branch_pct": 9.85,
+    "mutation_pct": 1.9
+  },
+  "baseline_artifacts": [
+    "baseline/environment-baseline.json",
+    "baseline/coverage-baseline.json",
+    "baseline/mutation-baseline.json",
+    "baseline/population-baseline.json"
+  ],
+  "c55_certification_reference": "runtime/generated/m9-c55/final-certification.json"
+}

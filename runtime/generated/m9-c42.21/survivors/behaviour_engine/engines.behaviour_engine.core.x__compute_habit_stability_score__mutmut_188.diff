@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_habit_stability_score__mutmut_188: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -81,7 +81,7 @@
+     # Composite score (lower CV = higher stability)
+     cv_score = 1 - _normalize_score(avg_category_cv, 0, 1.5)
+ 
+-    habit_stability = cv_score * 0.40 + recurring_score * 0.30 + rhythm_score * 0.30
++    habit_stability = cv_score * 0.40 + recurring_score * 0.30 + rhythm_score * 1.3
+ 
+     return {
+         "score": round(habit_stability, 4),

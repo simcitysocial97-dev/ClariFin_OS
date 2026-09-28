@@ -214,7 +214,7 @@ def optimize_surplus_allocation(
     return {
         "allocation": allocation,
         "expected_impact": {
-            "total_allocated_paise": monthly_surplus_paise - remaining_surplus,
+            "total_allocated_paise": sum(a.get("amount_paise", 0) for a in allocation),
             "remaining_paise": remaining_surplus,
         },
     }

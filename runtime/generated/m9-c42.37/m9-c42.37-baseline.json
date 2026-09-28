@@ -1,0 +1,129 @@
+{
+  "schema": "m9-c42.37-baseline/v1",
+  "generated_at": "2026-08-26T18:47:11.230096+00:00",
+  "phase": "M9-C42.37",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "branch": "m9c9-merge-authorization-resolution",
+  "base_sha_from_c42_32_36": "084359346b3b14792c5bd38e159932f6c42922fd",
+  "current_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "sha_changed_since_c42_36": true,
+  "c42_32_36_certification": {
+    "status": "PASSED",
+    "gates_passed": 26,
+    "gates_total": 26,
+    "certification_file": "runtime/generated/m9-c42.32-36/certification.json",
+    "verdict": "CERTIFIABLE",
+    "outcome": "OUTCOME_A_CORE_FORENSIC_AGENT_READY"
+  },
+  "test_baseline": {
+    "total_tests_collected": 785,
+    "c42_29_tests": 30,
+    "c42_30_tests": 25,
+    "c42_31_tests": 27,
+    "total_c42_tests": 82,
+    "passing": 82,
+    "failing": 0,
+    "pre_existing_failures": 1,
+    "pre_existing_details": "test_backend_exit_contract_holds_both_directions in test_backend_evidence.py - unrelated to C42"
+  },
+  "scenarios": {
+    "total": 27,
+    "passed": 27
+  },
+  "master_acceptance_checks": {
+    "total": 12,
+    "passed": 12,
+    "final_verdict": "CERTIFIABLE"
+  },
+  "c42_27_28_regression_suites": {
+    "status": "PASSED",
+    "tests": 144
+  },
+  "runtime_verification_surface": {
+    "verify_py_version": "runtime/verify.py",
+    "profiles": [
+      "quick",
+      "backend",
+      "frontend",
+      "mutation",
+      "status",
+      "metrics",
+      "history",
+      "deps",
+      "verify-status",
+      "integrity",
+      "env-check"
+    ],
+    "mutation_modes": [
+      "--smoke",
+      "--target",
+      "full"
+    ],
+    "forensic_commands": [
+      "forensic-diagnose",
+      "forensic-report",
+      "strengthen-analyze",
+      "strengthen-validate"
+    ],
+    "canonical_env": ".venv/bin/python"
+  },
+  "ci_workflow_inventory": {
+    "total_workflows": 12,
+    "verification_related_count": 11,
+    "verification_workflows": [
+      "backend-verify.yml",
+      "frontend-verify.yml",
+      "golden.yml",
+      "mutation.yml",
+      "playwright.yml",
+      "quality.yml",
+      "verification-reconcile.yml",
+      "verification-runtime.yml",
+      "m9-forensic-diagnostic-lab.yml",
+      "api-contracts.yml",
+      "security-codeql.yml"
+    ]
+  },
+  "verification_graph": {
+    "components": 14,
+    "population_id": "pop-14-c42.26",
+    "capabilities_mapped": 14,
+    "measurements_available": 14
+  },
+  "evidence_schemas": {
+    "ci_evidence": "m9-ci-evidence/v1",
+    "diagnostic_report": "m9-diagnostic-report/v1",
+    "strengthening_proposal": "m9-strengthening-proposal/v1",
+    "strengthening_analysis": "m9-strengthening-analysis/v1",
+    "forensic_record": "m9-forensic-execution-record/v1"
+  },
+  "fingerprints": {
+    "runtime/foundation/verification/ci_evidence.py": "MISSING",
+    "runtime/foundation/verification/diagnostic_agent.py": "MISSING",
+    "runtime/foundation/verification/strengthening.py": "MISSING",
+    "runtime/foundation/verification/forensic_cli.py": "MISSING",
+    "runtime/foundation/verification/evidence_planner.py": "MISSING",
+    "runtime/foundation/verification/executor_pipeline.py": "MISSING",
+    "runtime/foundation/verification/graph_model.py": "MISSING",
+    "runtime/foundation/verification/evidence_reuse.py": "MISSING",
+    "runtime/foundation/verification/cache.py": "MISSING",
+    "runtime/foundation/verification/correlation.py": "MISSING",
+    "runtime/foundation/verification/orchestrator.py": "MISSING",
+    "runtime/verify.py": "MISSING"
+  },
+  "prior_generated_artifacts_preserved": [
+    "runtime/generated/m9-c42.29/",
+    "runtime/generated/m9-c42.30/",
+    "runtime/generated/m9-c42.31/",
+    "runtime/generated/m9-c42.29-31/",
+    "runtime/generated/m9-c42.32-36/",
+    "runtime/generated/cross-layer-map.json",
+    "runtime/generated/verification-cache.json",
+    "runtime/generated/engineering-history.json",
+    "runtime/generated/knowledge-index.json",
+    "backend/tests/generated/mutation/mutation-summary.json"
+  ],
+  "production_functionality_preserved": true,
+  "c42_26_mutation_population_evidence_reusable": true,
+  "c42_27_31_architecture_intact": true
+}

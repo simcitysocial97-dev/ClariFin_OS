@@ -1,0 +1,2699 @@
+{
+  "schema": "m9-c48-command-inventory/v1",
+  "generated_at": "2026-08-31T02:56:16.247159+00:00",
+  "commands": [
+    {
+      "command_id": "cmd::quick",
+      "command": "bash .github/scripts/run_fast_checks.sh",
+      "profile_name": "quick",
+      "purpose": "Fast local checks (lint, typecheck, unit tests)",
+      "accepted_scope": [
+        "quick"
+      ],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "targeted_mutation",
+      "escalation_commands": [
+        "verify.py mutation --target <engine>"
+      ],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 60,
+      "capabilities_served": [
+        "quick"
+      ],
+      "metadata": {
+        "workflow_id": "quick",
+        "scope": "quick",
+        "script": null
+      },
+      "generated_at": "2026-08-31T02:56:16.284700+00:00"
+    },
+    {
+      "command_id": "cmd::backend",
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "profile_name": "backend",
+      "purpose": "Full backend verification suite",
+      "accepted_scope": [
+        "backend",
+        "contracts",
+        "property"
+      ],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "targeted_mutation",
+      "escalation_commands": [
+        "verify.py mutation --target <engine>"
+      ],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 300,
+      "capabilities_served": [
+        "loan-engine",
+        "reconciliation",
+        "ledger"
+      ],
+      "metadata": {
+        "workflow_id": "backend",
+        "scope": "backend",
+        "script": null
+      },
+      "generated_at": "2026-08-31T02:56:16.284732+00:00"
+    },
+    {
+      "command_id": "cmd::frontend",
+      "command": "bash .github/scripts/run_frontend_verification.sh",
+      "profile_name": "frontend",
+      "purpose": "Full frontend verification suite",
+      "accepted_scope": [
+        "frontend",
+        "contracts"
+      ],
+      "category": "contract_test",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 180,
+      "capabilities_served": [
+        "api-contracts"
+      ],
+      "metadata": {
+        "workflow_id": "frontend",
+        "scope": "frontend",
+        "script": null
+      },
+      "generated_at": "2026-08-31T02:56:16.284754+00:00"
+    },
+    {
+      "command_id": "cmd::contracts",
+      "command": "bash .github/scripts/run_contract_tests.sh",
+      "profile_name": "contracts",
+      "purpose": "Contract tests for all capabilities",
+      "accepted_scope": [
+        "contracts"
+      ],
+      "category": "contract_test",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "cross_capability",
+      "escalation_commands": [
+        "verify.py backend",
+        "verify.py frontend"
+      ],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 180,
+      "capabilities_served": [
+        "loan-engine",
+        "reconciliation",
+        "ledger",
+        "api-contracts"
+      ],
+      "metadata": {
+        "workflow_id": "contracts",
+        "scope": "contracts",
+        "script": null
+      },
+      "generated_at": "2026-08-31T02:56:16.284771+00:00"
+    },
+    {
+      "command_id": "cmd::property",
+      "command": "bash .github/scripts/run_property_tests.sh",
+      "profile_name": "property",
+      "purpose": "Property-based testing for loan engine",
+      "accepted_scope": [
+        "property"
+      ],
+      "category": "property_test",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "full_capability",
+      "escalation_commands": [
+        "verify.py backend"
+      ],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 300,
+      "capabilities_served": [
+        "loan-engine",
+        "reconciliation"
+      ],
+      "metadata": {
+        "workflow_id": "property",
+        "scope": "property",
+        "script": null
+      },
+      "generated_at": "2026-08-31T02:56:16.284789+00:00"
+    },
+    {
+      "command_id": "cmd::mutation",
+      "command": "bash .github/scripts/run_mutation_selective.sh",
+      "profile_name": "mutation",
+      "purpose": "Mutation testing for critical modules",
+      "accepted_scope": [
+        "mutation"
+      ],
+      "category": "mutation_test",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "infrastructure_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": true,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 600,
+      "capabilities_served": [
+        "mutation-analysis"
+      ],
+      "metadata": {
+        "workflow_id": "mutation",
+        "scope": "mutation",
+        "script": null
+      },
+      "generated_at": "2026-08-31T02:56:16.284805+00:00"
+    },
+    {
+      "command_id": "cmd::integration",
+      "command": "bash .github/scripts/run_integration_tests.sh",
+      "profile_name": "integration",
+      "purpose": "End-to-end integration tests",
+      "accepted_scope": [
+        "integration"
+      ],
+      "category": "integration_test",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 600,
+      "capabilities_served": [
+        "loan-engine"
+      ],
+      "metadata": {
+        "workflow_id": "integration",
+        "scope": "integration",
+        "script": null
+      },
+      "generated_at": "2026-08-31T02:56:16.284819+00:00"
+    },
+    {
+      "command_id": "cmd::migration",
+      "command": "bash .github/scripts/run_migration_verification.sh",
+      "profile_name": "migration",
+      "purpose": "Database migration verification",
+      "accepted_scope": [
+        "migration"
+      ],
+      "category": "migration",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 120,
+      "capabilities_served": [
+        "migrations"
+      ],
+      "metadata": {
+        "workflow_id": "migration",
+        "scope": "migration",
+        "script": null
+      },
+      "generated_at": "2026-08-31T02:56:16.284834+00:00"
+    },
+    {
+      "command_id": "cmd::repository",
+      "command": "bash .github/scripts/run_full_verification.sh",
+      "profile_name": "repository",
+      "purpose": "Full repository verification",
+      "accepted_scope": [
+        "repository"
+      ],
+      "category": "architectural",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 1800,
+      "capabilities_served": [],
+      "metadata": {
+        "workflow_id": "repository",
+        "scope": "repository",
+        "script": null
+      },
+      "generated_at": "2026-08-31T02:56:16.284851+00:00"
+    },
+    {
+      "command_id": "cmd::full",
+      "command": "bash .github/scripts/run_full_verification.sh",
+      "profile_name": "full",
+      "purpose": "Complete verification suite",
+      "accepted_scope": [
+        "full"
+      ],
+      "category": "architectural",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 3600,
+      "capabilities_served": [],
+      "metadata": {
+        "workflow_id": "full",
+        "scope": "full",
+        "script": null
+      },
+      "generated_at": "2026-08-31T02:56:16.284866+00:00"
+    },
+    {
+      "command_id": "cmd::runtime",
+      "command": "bash .github/scripts/run_runtime_verification.sh",
+      "profile_name": "runtime",
+      "purpose": "Engineering Runtime self-verification",
+      "accepted_scope": [
+        "runtime"
+      ],
+      "category": "architectural",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 120,
+      "capabilities_served": [
+        "runtime-verification"
+      ],
+      "metadata": {
+        "workflow_id": "runtime",
+        "scope": "runtime",
+        "script": null
+      },
+      "generated_at": "2026-08-31T02:56:16.284879+00:00"
+    },
+    {
+      "command_id": "cmd::golden",
+      "command": "bash .github/scripts/run_golden_tests.sh",
+      "profile_name": "golden",
+      "purpose": "Golden dataset regression tests",
+      "accepted_scope": [
+        "golden"
+      ],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 600,
+      "capabilities_served": [
+        "golden-regression"
+      ],
+      "metadata": {
+        "workflow_id": "golden",
+        "scope": "golden",
+        "script": null
+      },
+      "generated_at": "2026-08-31T02:56:16.284896+00:00"
+    },
+    {
+      "command_id": "cmd::playwright",
+      "command": "bash .github/scripts/run_playwright_tests.sh",
+      "profile_name": "playwright",
+      "purpose": "End-to-end browser tests",
+      "accepted_scope": [
+        "playwright"
+      ],
+      "category": "integration_test",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 1800,
+      "capabilities_served": [
+        "e2e-tests"
+      ],
+      "metadata": {
+        "workflow_id": "playwright",
+        "scope": "playwright",
+        "script": null
+      },
+      "generated_at": "2026-08-31T02:56:16.284910+00:00"
+    },
+    {
+      "command_id": "cmd::status",
+      "command": "verify.py status",
+      "profile_name": null,
+      "purpose": "Show workspace status",
+      "accepted_scope": [],
+      "category": "diagnostic",
+      "prerequisites": [
+        ".venv"
+      ],
+      "requires_git": false,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 5,
+      "capabilities_served": [],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:56:16.284924+00:00"
+    },
+    {
+      "command_id": "cmd::metrics",
+      "command": "verify.py metrics",
+      "profile_name": null,
+      "purpose": "Show verification metrics",
+      "accepted_scope": [],
+      "category": "diagnostic",
+      "prerequisites": [
+        ".venv"
+      ],
+      "requires_git": false,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 5,
+      "capabilities_served": [],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:56:16.284935+00:00"
+    },
+    {
+      "command_id": "cmd::diagnose",
+      "command": "verify.py diagnose",
+      "profile_name": null,
+      "purpose": "Diagnose impact of changed files",
+      "accepted_scope": [],
+      "category": "diagnostic",
+      "prerequisites": [
+        ".venv"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 10,
+      "capabilities_served": [],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:56:16.284948+00:00"
+    },
+    {
+      "command_id": "cmd::affected",
+      "command": "verify.py affected",
+      "profile_name": null,
+      "purpose": "Show affected components and verification plan",
+      "accepted_scope": [],
+      "category": "diagnostic",
+      "prerequisites": [
+        ".venv"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 10,
+      "capabilities_served": [],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:56:16.284957+00:00"
+    },
+    {
+      "command_id": "cmd::plan",
+      "command": "verify.py plan --tier <local|pr|deep>",
+      "profile_name": null,
+      "purpose": "Emit tier-aware verification plan manifest",
+      "accepted_scope": [],
+      "category": "diagnostic",
+      "prerequisites": [
+        ".venv"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 10,
+      "capabilities_served": [],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:56:16.284967+00:00"
+    },
+    {
+      "command_id": "cmd::mutation",
+      "command": "verify.py mutation [--smoke|--target <engine>|--restore]",
+      "profile_name": null,
+      "purpose": "Run mutation testing (authoritative full campaign or targeted)",
+      "accepted_scope": [],
+      "category": "mutation_test",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [
+        "mutation_score",
+        "survivor_intel",
+        "measurement_truth"
+      ],
+      "evidence_consumed": [],
+      "measurement_kinds": [
+        "mutation"
+      ],
+      "failure_semantics": "infrastructure_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": true,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 5400,
+      "capabilities_served": [
+        "mutation-analysis"
+      ],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:56:16.284980+00:00"
+    },
+    {
+      "command_id": "cmd::measurement_truth",
+      "command": "verify.py measurement-truth <record.json> [--json]",
+      "profile_name": null,
+      "purpose": "Inspect a measurement truth record",
+      "accepted_scope": [],
+      "category": "diagnostic",
+      "prerequisites": [
+        ".venv"
+      ],
+      "requires_git": false,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [
+        "measurement_truth"
+      ],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 5,
+      "capabilities_served": [],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:56:16.284991+00:00"
+    },
+    {
+      "command_id": "cmd::measurement_coverage",
+      "command": "verify.py measurement coverage <scope>",
+      "profile_name": null,
+      "purpose": "Measure coverage for a scope and produce measurement truth record",
+      "accepted_scope": [],
+      "category": "coverage_measurement",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [
+        "measurement_truth"
+      ],
+      "evidence_consumed": [],
+      "measurement_kinds": [
+        "coverage"
+      ],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 1800,
+      "capabilities_served": [],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:56:16.285001+00:00"
+    },
+    {
+      "command_id": "cmd::mutation_intel",
+      "command": "verify.py mutation-intel [survivor_id] [--json]",
+      "profile_name": null,
+      "purpose": "Inspect durable survivor intelligence",
+      "accepted_scope": [],
+      "category": "intelligence",
+      "prerequisites": [
+        ".venv"
+      ],
+      "requires_git": false,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [
+        "survivor_intel"
+      ],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 5,
+      "capabilities_served": [],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:56:16.285012+00:00"
+    },
+    {
+      "command_id": "cmd::forensic_diagnose",
+      "command": "verify.py forensic-diagnose <engine>",
+      "profile_name": null,
+      "purpose": "Forensic diagnosis of mutation survivors",
+      "accepted_scope": [],
+      "category": "intelligence",
+      "prerequisites": [
+        ".venv"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [
+        "survivor_intel",
+        "measurement_truth"
+      ],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 300,
+      "capabilities_served": [],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:56:16.285024+00:00"
+    },
+    {
+      "command_id": "cmd::strengthen_analyze",
+      "command": "verify.py strengthen-analyze <engine>",
+      "profile_name": null,
+      "purpose": "Analyze survivors for strengthening opportunities",
+      "accepted_scope": [],
+      "category": "intelligence",
+      "prerequisites": [
+        ".venv"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [
+        "strengthening_proposal"
+      ],
+      "evidence_consumed": [
+        "survivor_intel"
+      ],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 300,
+      "capabilities_served": [],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:56:16.285039+00:00"
+    },
+    {
+      "command_id": "cmd::env_check",
+      "command": "verify.py env-check",
+      "profile_name": null,
+      "purpose": "Verify canonical .venv environment",
+      "accepted_scope": [],
+      "category": "diagnostic",
+      "prerequisites": [
+        ".venv"
+      ],
+      "requires_git": false,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 10,
+      "capabilities_served": [],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:56:16.285050+00:00"
+    },
+    {
+      "command_id": "cmd::audit",
+      "command": "verify.py audit",
+      "profile_name": null,
+      "purpose": "Run engineering platform certification audit",
+      "accepted_scope": [],
+      "category": "certification",
+      "prerequisites": [
+        ".venv"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 300,
+      "capabilities_served": [],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:56:16.285063+00:00"
+    },
+    {
+      "command_id": "cmd::api_contracts",
+      "command": "verify.py api-contracts",
+      "profile_name": null,
+      "purpose": "Run API contract integrity gate",
+      "accepted_scope": [],
+      "category": "contract_test",
+      "prerequisites": [
+        ".venv"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 180,
+      "capabilities_served": [
+        "api-contracts"
+      ],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:56:16.285076+00:00"
+    },
+    {
+      "command_id": "cmd::contract_governance",
+      "command": "verify.py contract-governance",
+      "profile_name": null,
+      "purpose": "Run contract governance certification",
+      "accepted_scope": [],
+      "category": "certification",
+      "prerequisites": [
+        ".venv"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "none",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 600,
+      "capabilities_served": [],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:56:16.285086+00:00"
+    },
+    {
+      "command_id": "cmd::capability::loan-engine::minimum",
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "profile_name": "backend",
+      "purpose": "Minimum verification for Loan Engine",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "targeted_mutation",
+      "escalation_commands": [
+        "bash .github/scripts/run_property_tests.sh",
+        "bash .github/scripts/run_contract_tests.sh",
+        "bash .github/scripts/run_property_tests.sh",
+        "bash .github/scripts/run_contract_tests.sh",
+        "bash .github/scripts/run_backend_verification.sh",
+        "bash .github/scripts/run_fast_checks.sh"
+      ],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 1320,
+      "capabilities_served": [
+        "loan-engine"
+      ],
+      "metadata": {
+        "capability_id": "loan-engine",
+        "verification_type": "minimum"
+      },
+      "generated_at": "2026-08-31T02:56:16.285116+00:00"
+    },
+    {
+      "command_id": "cmd::capability::loan-engine::escalation::0",
+      "command": "bash .github/scripts/run_property_tests.sh",
+      "profile_name": "property",
+      "purpose": "Escalation verification for Loan Engine (level 1)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "cross_capability",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 300,
+      "capabilities_served": [
+        "loan-engine"
+      ],
+      "metadata": {
+        "capability_id": "loan-engine",
+        "verification_type": "escalation",
+        "escalation_level": 1
+      },
+      "generated_at": "2026-08-31T02:56:16.285142+00:00"
+    },
+    {
+      "command_id": "cmd::capability::loan-engine::escalation::1",
+      "command": "bash .github/scripts/run_contract_tests.sh",
+      "profile_name": "contracts",
+      "purpose": "Escalation verification for Loan Engine (level 2)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 600,
+      "capabilities_served": [
+        "loan-engine"
+      ],
+      "metadata": {
+        "capability_id": "loan-engine",
+        "verification_type": "escalation",
+        "escalation_level": 2
+      },
+      "generated_at": "2026-08-31T02:56:16.285162+00:00"
+    },
+    {
+      "command_id": "cmd::capability::loan-engine::escalation::2",
+      "command": "bash .github/scripts/run_property_tests.sh",
+      "profile_name": "run_property_tests",
+      "purpose": "Escalation verification for Loan Engine (level 3)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 900,
+      "capabilities_served": [
+        "loan-engine"
+      ],
+      "metadata": {
+        "capability_id": "loan-engine",
+        "verification_type": "escalation",
+        "escalation_level": 3
+      },
+      "generated_at": "2026-08-31T02:56:16.285176+00:00"
+    },
+    {
+      "command_id": "cmd::capability::loan-engine::escalation::3",
+      "command": "bash .github/scripts/run_contract_tests.sh",
+      "profile_name": "run_contract_tests",
+      "purpose": "Escalation verification for Loan Engine (level 4)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 1200,
+      "capabilities_served": [
+        "loan-engine"
+      ],
+      "metadata": {
+        "capability_id": "loan-engine",
+        "verification_type": "escalation",
+        "escalation_level": 4
+      },
+      "generated_at": "2026-08-31T02:56:16.285187+00:00"
+    },
+    {
+      "command_id": "cmd::capability::loan-engine::escalation::4",
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "profile_name": "run_backend_verification",
+      "purpose": "Escalation verification for Loan Engine (level 5)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 1500,
+      "capabilities_served": [
+        "loan-engine"
+      ],
+      "metadata": {
+        "capability_id": "loan-engine",
+        "verification_type": "escalation",
+        "escalation_level": 5
+      },
+      "generated_at": "2026-08-31T02:56:16.285203+00:00"
+    },
+    {
+      "command_id": "cmd::capability::loan-engine::escalation::5",
+      "command": "bash .github/scripts/run_fast_checks.sh",
+      "profile_name": "run_fast_checks",
+      "purpose": "Escalation verification for Loan Engine (level 6)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 1800,
+      "capabilities_served": [
+        "loan-engine"
+      ],
+      "metadata": {
+        "capability_id": "loan-engine",
+        "verification_type": "escalation",
+        "escalation_level": 6
+      },
+      "generated_at": "2026-08-31T02:56:16.285215+00:00"
+    },
+    {
+      "command_id": "cmd::capability::reconciliation::minimum",
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "profile_name": "backend",
+      "purpose": "Minimum verification for Reconciliation Engine",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "targeted_mutation",
+      "escalation_commands": [
+        "bash .github/scripts/run_property_tests.sh",
+        "bash .github/scripts/run_contract_tests.sh",
+        "bash .github/scripts/run_property_tests.sh",
+        "bash .github/scripts/run_contract_tests.sh",
+        "bash .github/scripts/run_backend_verification.sh",
+        "bash .github/scripts/run_fast_checks.sh"
+      ],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 1320,
+      "capabilities_served": [
+        "reconciliation"
+      ],
+      "metadata": {
+        "capability_id": "reconciliation",
+        "verification_type": "minimum"
+      },
+      "generated_at": "2026-08-31T02:56:16.285234+00:00"
+    },
+    {
+      "command_id": "cmd::capability::reconciliation::escalation::0",
+      "command": "bash .github/scripts/run_property_tests.sh",
+      "profile_name": "property",
+      "purpose": "Escalation verification for Reconciliation Engine (level 1)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "cross_capability",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 300,
+      "capabilities_served": [
+        "reconciliation"
+      ],
+      "metadata": {
+        "capability_id": "reconciliation",
+        "verification_type": "escalation",
+        "escalation_level": 1
+      },
+      "generated_at": "2026-08-31T02:56:16.285249+00:00"
+    },
+    {
+      "command_id": "cmd::capability::reconciliation::escalation::1",
+      "command": "bash .github/scripts/run_contract_tests.sh",
+      "profile_name": "contracts",
+      "purpose": "Escalation verification for Reconciliation Engine (level 2)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 600,
+      "capabilities_served": [
+        "reconciliation"
+      ],
+      "metadata": {
+        "capability_id": "reconciliation",
+        "verification_type": "escalation",
+        "escalation_level": 2
+      },
+      "generated_at": "2026-08-31T02:56:16.285266+00:00"
+    },
+    {
+      "command_id": "cmd::capability::reconciliation::escalation::2",
+      "command": "bash .github/scripts/run_property_tests.sh",
+      "profile_name": "run_property_tests",
+      "purpose": "Escalation verification for Reconciliation Engine (level 3)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 900,
+      "capabilities_served": [
+        "reconciliation"
+      ],
+      "metadata": {
+        "capability_id": "reconciliation",
+        "verification_type": "escalation",
+        "escalation_level": 3
+      },
+      "generated_at": "2026-08-31T02:56:16.285280+00:00"
+    },
+    {
+      "command_id": "cmd::capability::reconciliation::escalation::3",
+      "command": "bash .github/scripts/run_contract_tests.sh",
+      "profile_name": "run_contract_tests",
+      "purpose": "Escalation verification for Reconciliation Engine (level 4)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 1200,
+      "capabilities_served": [
+        "reconciliation"
+      ],
+      "metadata": {
+        "capability_id": "reconciliation",
+        "verification_type": "escalation",
+        "escalation_level": 4
+      },
+      "generated_at": "2026-08-31T02:56:16.285294+00:00"
+    },
+    {
+      "command_id": "cmd::capability::reconciliation::escalation::4",
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "profile_name": "run_backend_verification",
+      "purpose": "Escalation verification for Reconciliation Engine (level 5)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 1500,
+      "capabilities_served": [
+        "reconciliation"
+      ],
+      "metadata": {
+        "capability_id": "reconciliation",
+        "verification_type": "escalation",
+        "escalation_level": 5
+      },
+      "generated_at": "2026-08-31T02:56:16.285305+00:00"
+    },
+    {
+      "command_id": "cmd::capability::reconciliation::escalation::5",
+      "command": "bash .github/scripts/run_fast_checks.sh",
+      "profile_name": "run_fast_checks",
+      "purpose": "Escalation verification for Reconciliation Engine (level 6)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 1800,
+      "capabilities_served": [
+        "reconciliation"
+      ],
+      "metadata": {
+        "capability_id": "reconciliation",
+        "verification_type": "escalation",
+        "escalation_level": 6
+      },
+      "generated_at": "2026-08-31T02:56:16.285319+00:00"
+    },
+    {
+      "command_id": "cmd::capability::ledger::minimum",
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "profile_name": "backend",
+      "purpose": "Minimum verification for Ledger Service",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "targeted_mutation",
+      "escalation_commands": [
+        "bash .github/scripts/run_contract_tests.sh",
+        "bash .github/scripts/run_integration_tests.sh",
+        "bash .github/scripts/run_contract_tests.sh",
+        "bash .github/scripts/run_backend_verification.sh",
+        "bash .github/scripts/run_fast_checks.sh"
+      ],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 1320,
+      "capabilities_served": [
+        "ledger"
+      ],
+      "metadata": {
+        "capability_id": "ledger",
+        "verification_type": "minimum"
+      },
+      "generated_at": "2026-08-31T02:56:16.285336+00:00"
+    },
+    {
+      "command_id": "cmd::capability::ledger::escalation::0",
+      "command": "bash .github/scripts/run_contract_tests.sh",
+      "profile_name": "contracts",
+      "purpose": "Escalation verification for Ledger Service (level 1)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "cross_capability",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 300,
+      "capabilities_served": [
+        "ledger"
+      ],
+      "metadata": {
+        "capability_id": "ledger",
+        "verification_type": "escalation",
+        "escalation_level": 1
+      },
+      "generated_at": "2026-08-31T02:56:16.285348+00:00"
+    },
+    {
+      "command_id": "cmd::capability::ledger::escalation::1",
+      "command": "bash .github/scripts/run_integration_tests.sh",
+      "profile_name": "integration",
+      "purpose": "Escalation verification for Ledger Service (level 2)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 600,
+      "capabilities_served": [
+        "ledger"
+      ],
+      "metadata": {
+        "capability_id": "ledger",
+        "verification_type": "escalation",
+        "escalation_level": 2
+      },
+      "generated_at": "2026-08-31T02:56:16.285363+00:00"
+    },
+    {
+      "command_id": "cmd::capability::ledger::escalation::2",
+      "command": "bash .github/scripts/run_contract_tests.sh",
+      "profile_name": "run_contract_tests",
+      "purpose": "Escalation verification for Ledger Service (level 3)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 900,
+      "capabilities_served": [
+        "ledger"
+      ],
+      "metadata": {
+        "capability_id": "ledger",
+        "verification_type": "escalation",
+        "escalation_level": 3
+      },
+      "generated_at": "2026-08-31T02:56:16.285374+00:00"
+    },
+    {
+      "command_id": "cmd::capability::ledger::escalation::3",
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "profile_name": "run_backend_verification",
+      "purpose": "Escalation verification for Ledger Service (level 4)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 1200,
+      "capabilities_served": [
+        "ledger"
+      ],
+      "metadata": {
+        "capability_id": "ledger",
+        "verification_type": "escalation",
+        "escalation_level": 4
+      },
+      "generated_at": "2026-08-31T02:56:16.285384+00:00"
+    },
+    {
+      "command_id": "cmd::capability::ledger::escalation::4",
+      "command": "bash .github/scripts/run_fast_checks.sh",
+      "profile_name": "run_fast_checks",
+      "purpose": "Escalation verification for Ledger Service (level 5)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 1500,
+      "capabilities_served": [
+        "ledger"
+      ],
+      "metadata": {
+        "capability_id": "ledger",
+        "verification_type": "escalation",
+        "escalation_level": 5
+      },
+      "generated_at": "2026-08-31T02:56:16.285407+00:00"
+    },
+    {
+      "command_id": "cmd::capability::api-contracts::minimum",
+      "command": "bash .github/scripts/run_contract_tests.sh",
+      "profile_name": "contracts",
+      "purpose": "Minimum verification for API Contracts",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "targeted_mutation",
+      "escalation_commands": [
+        "bash .github/scripts/run_contract_tests.sh",
+        "bash .github/scripts/run_frontend_verification.sh",
+        "bash .github/scripts/run_backend_verification.sh",
+        "bash .github/scripts/run_contract_tests.sh",
+        "bash .github/scripts/run_frontend_verification.sh",
+        "bash .github/scripts/run_backend_verification.sh"
+      ],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 1320,
+      "capabilities_served": [
+        "api-contracts"
+      ],
+      "metadata": {
+        "capability_id": "api-contracts",
+        "verification_type": "minimum"
+      },
+      "generated_at": "2026-08-31T02:56:16.285429+00:00"
+    },
+    {
+      "command_id": "cmd::capability::api-contracts::escalation::0",
+      "command": "bash .github/scripts/run_contract_tests.sh",
+      "profile_name": "contracts",
+      "purpose": "Escalation verification for API Contracts (level 1)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "cross_capability",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 300,
+      "capabilities_served": [
+        "api-contracts"
+      ],
+      "metadata": {
+        "capability_id": "api-contracts",
+        "verification_type": "escalation",
+        "escalation_level": 1
+      },
+      "generated_at": "2026-08-31T02:56:16.285444+00:00"
+    },
+    {
+      "command_id": "cmd::capability::api-contracts::escalation::1",
+      "command": "bash .github/scripts/run_frontend_verification.sh",
+      "profile_name": "frontend",
+      "purpose": "Escalation verification for API Contracts (level 2)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 600,
+      "capabilities_served": [
+        "api-contracts"
+      ],
+      "metadata": {
+        "capability_id": "api-contracts",
+        "verification_type": "escalation",
+        "escalation_level": 2
+      },
+      "generated_at": "2026-08-31T02:56:16.285456+00:00"
+    },
+    {
+      "command_id": "cmd::capability::api-contracts::escalation::2",
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "profile_name": "backend",
+      "purpose": "Escalation verification for API Contracts (level 3)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 900,
+      "capabilities_served": [
+        "api-contracts"
+      ],
+      "metadata": {
+        "capability_id": "api-contracts",
+        "verification_type": "escalation",
+        "escalation_level": 3
+      },
+      "generated_at": "2026-08-31T02:56:16.285473+00:00"
+    },
+    {
+      "command_id": "cmd::capability::api-contracts::escalation::3",
+      "command": "bash .github/scripts/run_contract_tests.sh",
+      "profile_name": "run_contract_tests",
+      "purpose": "Escalation verification for API Contracts (level 4)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 1200,
+      "capabilities_served": [
+        "api-contracts"
+      ],
+      "metadata": {
+        "capability_id": "api-contracts",
+        "verification_type": "escalation",
+        "escalation_level": 4
+      },
+      "generated_at": "2026-08-31T02:56:16.285485+00:00"
+    },
+    {
+      "command_id": "cmd::capability::api-contracts::escalation::4",
+      "command": "bash .github/scripts/run_frontend_verification.sh",
+      "profile_name": "run_frontend_verification",
+      "purpose": "Escalation verification for API Contracts (level 5)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 1500,
+      "capabilities_served": [
+        "api-contracts"
+      ],
+      "metadata": {
+        "capability_id": "api-contracts",
+        "verification_type": "escalation",
+        "escalation_level": 5
+      },
+      "generated_at": "2026-08-31T02:56:16.285496+00:00"
+    },
+    {
+      "command_id": "cmd::capability::api-contracts::escalation::5",
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "profile_name": "run_backend_verification",
+      "purpose": "Escalation verification for API Contracts (level 6)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 1800,
+      "capabilities_served": [
+        "api-contracts"
+      ],
+      "metadata": {
+        "capability_id": "api-contracts",
+        "verification_type": "escalation",
+        "escalation_level": 6
+      },
+      "generated_at": "2026-08-31T02:56:16.285505+00:00"
+    },
+    {
+      "command_id": "cmd::capability::migrations::minimum",
+      "command": "bash .github/scripts/run_migration_verification.sh",
+      "profile_name": "migration",
+      "purpose": "Minimum verification for Database Migrations",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "targeted_mutation",
+      "escalation_commands": [
+        "bash .github/scripts/run_migration_verification.sh",
+        "bash .github/scripts/run_backend_verification.sh",
+        "bash .github/scripts/run_migration_verification.sh",
+        "bash .github/scripts/run_backend_verification.sh"
+      ],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 840,
+      "capabilities_served": [
+        "migrations"
+      ],
+      "metadata": {
+        "capability_id": "migrations",
+        "verification_type": "minimum"
+      },
+      "generated_at": "2026-08-31T02:56:16.285521+00:00"
+    },
+    {
+      "command_id": "cmd::capability::migrations::escalation::0",
+      "command": "bash .github/scripts/run_migration_verification.sh",
+      "profile_name": "migration",
+      "purpose": "Escalation verification for Database Migrations (level 1)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "cross_capability",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 300,
+      "capabilities_served": [
+        "migrations"
+      ],
+      "metadata": {
+        "capability_id": "migrations",
+        "verification_type": "escalation",
+        "escalation_level": 1
+      },
+      "generated_at": "2026-08-31T02:56:16.285533+00:00"
+    },
+    {
+      "command_id": "cmd::capability::migrations::escalation::1",
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "profile_name": "backend",
+      "purpose": "Escalation verification for Database Migrations (level 2)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 600,
+      "capabilities_served": [
+        "migrations"
+      ],
+      "metadata": {
+        "capability_id": "migrations",
+        "verification_type": "escalation",
+        "escalation_level": 2
+      },
+      "generated_at": "2026-08-31T02:56:16.285545+00:00"
+    },
+    {
+      "command_id": "cmd::capability::migrations::escalation::2",
+      "command": "bash .github/scripts/run_migration_verification.sh",
+      "profile_name": "run_migration_verification",
+      "purpose": "Escalation verification for Database Migrations (level 3)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 900,
+      "capabilities_served": [
+        "migrations"
+      ],
+      "metadata": {
+        "capability_id": "migrations",
+        "verification_type": "escalation",
+        "escalation_level": 3
+      },
+      "generated_at": "2026-08-31T02:56:16.285555+00:00"
+    },
+    {
+      "command_id": "cmd::capability::migrations::escalation::3",
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "profile_name": "run_backend_verification",
+      "purpose": "Escalation verification for Database Migrations (level 4)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 1200,
+      "capabilities_served": [
+        "migrations"
+      ],
+      "metadata": {
+        "capability_id": "migrations",
+        "verification_type": "escalation",
+        "escalation_level": 4
+      },
+      "generated_at": "2026-08-31T02:56:16.285571+00:00"
+    },
+    {
+      "command_id": "cmd::capability::quick::minimum",
+      "command": "bash .github/scripts/run_fast_checks.sh",
+      "profile_name": "quick",
+      "purpose": "Minimum verification for Quick Quality Gate",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "targeted_mutation",
+      "escalation_commands": [
+        "bash .github/scripts/run_fast_checks.sh",
+        "bash .github/scripts/run_fast_checks.sh"
+      ],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 120,
+      "capabilities_served": [
+        "quick"
+      ],
+      "metadata": {
+        "capability_id": "quick",
+        "verification_type": "minimum"
+      },
+      "generated_at": "2026-08-31T02:56:16.285586+00:00"
+    },
+    {
+      "command_id": "cmd::capability::quick::escalation::0",
+      "command": "bash .github/scripts/run_fast_checks.sh",
+      "profile_name": "quick",
+      "purpose": "Escalation verification for Quick Quality Gate (level 1)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "cross_capability",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 300,
+      "capabilities_served": [
+        "quick"
+      ],
+      "metadata": {
+        "capability_id": "quick",
+        "verification_type": "escalation",
+        "escalation_level": 1
+      },
+      "generated_at": "2026-08-31T02:56:16.285600+00:00"
+    },
+    {
+      "command_id": "cmd::capability::quick::escalation::1",
+      "command": "bash .github/scripts/run_fast_checks.sh",
+      "profile_name": "run_fast_checks",
+      "purpose": "Escalation verification for Quick Quality Gate (level 2)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 600,
+      "capabilities_served": [
+        "quick"
+      ],
+      "metadata": {
+        "capability_id": "quick",
+        "verification_type": "escalation",
+        "escalation_level": 2
+      },
+      "generated_at": "2026-08-31T02:56:16.285615+00:00"
+    },
+    {
+      "command_id": "cmd::capability::runtime-verification::minimum",
+      "command": "bash .github/scripts/run_runtime_verification.sh",
+      "profile_name": "runtime",
+      "purpose": "Minimum verification for Runtime Verification",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "targeted_mutation",
+      "escalation_commands": [
+        "bash .github/scripts/run_runtime_verification.sh",
+        "bash .github/scripts/run_runtime_verification.sh"
+      ],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 240,
+      "capabilities_served": [
+        "runtime-verification"
+      ],
+      "metadata": {
+        "capability_id": "runtime-verification",
+        "verification_type": "minimum"
+      },
+      "generated_at": "2026-08-31T02:56:16.285631+00:00"
+    },
+    {
+      "command_id": "cmd::capability::runtime-verification::escalation::0",
+      "command": "bash .github/scripts/run_runtime_verification.sh",
+      "profile_name": "runtime",
+      "purpose": "Escalation verification for Runtime Verification (level 1)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "cross_capability",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 300,
+      "capabilities_served": [
+        "runtime-verification"
+      ],
+      "metadata": {
+        "capability_id": "runtime-verification",
+        "verification_type": "escalation",
+        "escalation_level": 1
+      },
+      "generated_at": "2026-08-31T02:56:16.285643+00:00"
+    },
+    {
+      "command_id": "cmd::capability::runtime-verification::escalation::1",
+      "command": "bash .github/scripts/run_runtime_verification.sh",
+      "profile_name": "run_runtime_verification",
+      "purpose": "Escalation verification for Runtime Verification (level 2)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 600,
+      "capabilities_served": [
+        "runtime-verification"
+      ],
+      "metadata": {
+        "capability_id": "runtime-verification",
+        "verification_type": "escalation",
+        "escalation_level": 2
+      },
+      "generated_at": "2026-08-31T02:56:16.285657+00:00"
+    },
+    {
+      "command_id": "cmd::capability::golden-regression::minimum",
+      "command": "bash .github/scripts/run_golden_tests.sh",
+      "profile_name": "golden",
+      "purpose": "Minimum verification for Golden Regression",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "targeted_mutation",
+      "escalation_commands": [
+        "bash .github/scripts/run_golden_tests.sh",
+        "bash .github/scripts/run_golden_tests.sh"
+      ],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 1200,
+      "capabilities_served": [
+        "golden-regression"
+      ],
+      "metadata": {
+        "capability_id": "golden-regression",
+        "verification_type": "minimum"
+      },
+      "generated_at": "2026-08-31T02:56:16.285681+00:00"
+    },
+    {
+      "command_id": "cmd::capability::golden-regression::escalation::0",
+      "command": "bash .github/scripts/run_golden_tests.sh",
+      "profile_name": "golden",
+      "purpose": "Escalation verification for Golden Regression (level 1)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "cross_capability",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 300,
+      "capabilities_served": [
+        "golden-regression"
+      ],
+      "metadata": {
+        "capability_id": "golden-regression",
+        "verification_type": "escalation",
+        "escalation_level": 1
+      },
+      "generated_at": "2026-08-31T02:56:16.285696+00:00"
+    },
+    {
+      "command_id": "cmd::capability::golden-regression::escalation::1",
+      "command": "bash .github/scripts/run_golden_tests.sh",
+      "profile_name": "run_golden_tests",
+      "purpose": "Escalation verification for Golden Regression (level 2)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 600,
+      "capabilities_served": [
+        "golden-regression"
+      ],
+      "metadata": {
+        "capability_id": "golden-regression",
+        "verification_type": "escalation",
+        "escalation_level": 2
+      },
+      "generated_at": "2026-08-31T02:56:16.285708+00:00"
+    },
+    {
+      "command_id": "cmd::capability::mutation-analysis::minimum",
+      "command": "bash .github/scripts/run_mutation_selective.sh",
+      "profile_name": "mutation",
+      "purpose": "Minimum verification for Mutation Analysis",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "targeted_mutation",
+      "escalation_commands": [
+        "bash .github/scripts/run_mutation_selective.sh",
+        "bash .github/scripts/run_mutation_selective.sh"
+      ],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 1200,
+      "capabilities_served": [
+        "mutation-analysis"
+      ],
+      "metadata": {
+        "capability_id": "mutation-analysis",
+        "verification_type": "minimum"
+      },
+      "generated_at": "2026-08-31T02:56:16.285725+00:00"
+    },
+    {
+      "command_id": "cmd::capability::mutation-analysis::escalation::0",
+      "command": "bash .github/scripts/run_mutation_selective.sh",
+      "profile_name": "mutation",
+      "purpose": "Escalation verification for Mutation Analysis (level 1)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "cross_capability",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 300,
+      "capabilities_served": [
+        "mutation-analysis"
+      ],
+      "metadata": {
+        "capability_id": "mutation-analysis",
+        "verification_type": "escalation",
+        "escalation_level": 1
+      },
+      "generated_at": "2026-08-31T02:56:16.285740+00:00"
+    },
+    {
+      "command_id": "cmd::capability::mutation-analysis::escalation::1",
+      "command": "bash .github/scripts/run_mutation_selective.sh",
+      "profile_name": "run_mutation_selective",
+      "purpose": "Escalation verification for Mutation Analysis (level 2)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 600,
+      "capabilities_served": [
+        "mutation-analysis"
+      ],
+      "metadata": {
+        "capability_id": "mutation-analysis",
+        "verification_type": "escalation",
+        "escalation_level": 2
+      },
+      "generated_at": "2026-08-31T02:56:16.285754+00:00"
+    },
+    {
+      "command_id": "cmd::capability::e2e-tests::minimum",
+      "command": "bash .github/scripts/run_playwright_tests.sh",
+      "profile_name": "playwright",
+      "purpose": "Minimum verification for End-to-End Tests",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "targeted_mutation",
+      "escalation_commands": [
+        "bash .github/scripts/run_playwright_tests.sh",
+        "bash .github/scripts/run_playwright_tests.sh"
+      ],
+      "is_certifiable": false,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 3600,
+      "capabilities_served": [
+        "e2e-tests"
+      ],
+      "metadata": {
+        "capability_id": "e2e-tests",
+        "verification_type": "minimum"
+      },
+      "generated_at": "2026-08-31T02:56:16.285771+00:00"
+    },
+    {
+      "command_id": "cmd::capability::e2e-tests::escalation::0",
+      "command": "bash .github/scripts/run_playwright_tests.sh",
+      "profile_name": "playwright",
+      "purpose": "Escalation verification for End-to-End Tests (level 1)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "cross_capability",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": false,
+      "estimated_duration_seconds": 300,
+      "capabilities_served": [
+        "e2e-tests"
+      ],
+      "metadata": {
+        "capability_id": "e2e-tests",
+        "verification_type": "escalation",
+        "escalation_level": 1
+      },
+      "generated_at": "2026-08-31T02:56:16.285878+00:00"
+    },
+    {
+      "command_id": "cmd::capability::e2e-tests::escalation::1",
+      "command": "bash .github/scripts/run_playwright_tests.sh",
+      "profile_name": "run_playwright_tests",
+      "purpose": "Escalation verification for End-to-End Tests (level 2)",
+      "accepted_scope": [],
+      "category": "quality_gate",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "requires_git": true,
+      "requires_docker": false,
+      "requires_network": false,
+      "evidence_produced": [],
+      "evidence_consumed": [],
+      "measurement_kinds": [],
+      "failure_semantics": "verification_failed",
+      "escalation_behavior": "repository_wide",
+      "escalation_commands": [],
+      "is_certifiable": true,
+      "mutates_repository": false,
+      "requires_human_authorization": true,
+      "estimated_duration_seconds": 600,
+      "capabilities_served": [
+        "e2e-tests"
+      ],
+      "metadata": {
+        "capability_id": "e2e-tests",
+        "verification_type": "escalation",
+        "escalation_level": 2
+      },
+      "generated_at": "2026-08-31T02:56:16.285905+00:00"
+    }
+  ],
+  "profiles": {
+    "quick": [
+      "cmd::quick"
+    ],
+    "backend": [
+      "cmd::backend"
+    ],
+    "frontend": [
+      "cmd::frontend"
+    ],
+    "contracts": [
+      "cmd::contracts"
+    ],
+    "property": [
+      "cmd::property"
+    ],
+    "mutation": [
+      "cmd::mutation"
+    ],
+    "integration": [
+      "cmd::integration"
+    ],
+    "migration": [
+      "cmd::migration"
+    ],
+    "repository": [
+      "cmd::repository"
+    ],
+    "full": [
+      "cmd::full"
+    ],
+    "runtime": [
+      "cmd::runtime"
+    ],
+    "golden": [
+      "cmd::golden"
+    ],
+    "playwright": [
+      "cmd::playwright"
+    ],
+    "standalone": [
+      "cmd::status",
+      "cmd::metrics",
+      "cmd::diagnose",
+      "cmd::affected",
+      "cmd::plan",
+      "cmd::mutation",
+      "cmd::measurement_truth",
+      "cmd::measurement_coverage",
+      "cmd::mutation_intel",
+      "cmd::forensic_diagnose",
+      "cmd::strengthen_analyze",
+      "cmd::env_check",
+      "cmd::audit",
+      "cmd::api_contracts",
+      "cmd::contract_governance"
+    ]
+  },
+  "capabilities_index": {
+    "quick": [
+      "cmd::quick",
+      "cmd::capability::quick::minimum",
+      "cmd::capability::quick::escalation::0",
+      "cmd::capability::quick::escalation::1"
+    ],
+    "loan-engine": [
+      "cmd::backend",
+      "cmd::contracts",
+      "cmd::property",
+      "cmd::integration",
+      "cmd::capability::loan-engine::minimum",
+      "cmd::capability::loan-engine::escalation::0",
+      "cmd::capability::loan-engine::escalation::1",
+      "cmd::capability::loan-engine::escalation::2",
+      "cmd::capability::loan-engine::escalation::3",
+      "cmd::capability::loan-engine::escalation::4",
+      "cmd::capability::loan-engine::escalation::5"
+    ],
+    "reconciliation": [
+      "cmd::backend",
+      "cmd::contracts",
+      "cmd::property",
+      "cmd::capability::reconciliation::minimum",
+      "cmd::capability::reconciliation::escalation::0",
+      "cmd::capability::reconciliation::escalation::1",
+      "cmd::capability::reconciliation::escalation::2",
+      "cmd::capability::reconciliation::escalation::3",
+      "cmd::capability::reconciliation::escalation::4",
+      "cmd::capability::reconciliation::escalation::5"
+    ],
+    "ledger": [
+      "cmd::backend",
+      "cmd::contracts",
+      "cmd::capability::ledger::minimum",
+      "cmd::capability::ledger::escalation::0",
+      "cmd::capability::ledger::escalation::1",
+      "cmd::capability::ledger::escalation::2",
+      "cmd::capability::ledger::escalation::3",
+      "cmd::capability::ledger::escalation::4"
+    ],
+    "api-contracts": [
+      "cmd::frontend",
+      "cmd::contracts",
+      "cmd::capability::api-contracts::minimum",
+      "cmd::capability::api-contracts::escalation::0",
+      "cmd::capability::api-contracts::escalation::1",
+      "cmd::capability::api-contracts::escalation::2",
+      "cmd::capability::api-contracts::escalation::3",
+      "cmd::capability::api-contracts::escalation::4",
+      "cmd::capability::api-contracts::escalation::5"
+    ],
+    "mutation-analysis": [
+      "cmd::mutation",
+      "cmd::capability::mutation-analysis::minimum",
+      "cmd::capability::mutation-analysis::escalation::0",
+      "cmd::capability::mutation-analysis::escalation::1"
+    ],
+    "migrations": [
+      "cmd::migration",
+      "cmd::capability::migrations::minimum",
+      "cmd::capability::migrations::escalation::0",
+      "cmd::capability::migrations::escalation::1",
+      "cmd::capability::migrations::escalation::2",
+      "cmd::capability::migrations::escalation::3"
+    ],
+    "runtime-verification": [
+      "cmd::runtime",
+      "cmd::capability::runtime-verification::minimum",
+      "cmd::capability::runtime-verification::escalation::0",
+      "cmd::capability::runtime-verification::escalation::1"
+    ],
+    "golden-regression": [
+      "cmd::golden",
+      "cmd::capability::golden-regression::minimum",
+      "cmd::capability::golden-regression::escalation::0",
+      "cmd::capability::golden-regression::escalation::1"
+    ],
+    "e2e-tests": [
+      "cmd::playwright",
+      "cmd::capability::e2e-tests::minimum",
+      "cmd::capability::e2e-tests::escalation::0",
+      "cmd::capability::e2e-tests::escalation::1"
+    ]
+  }
+}

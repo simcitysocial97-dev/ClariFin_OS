@@ -1,0 +1,86 @@
+{
+  "schema": "m9-c46-baseline/v1",
+  "generated_at": "2026-08-29T20:31:00Z",
+  "repository_sha": "f92363b914353063b8813f5d61862197957ee7bd",
+  "branch": "m9c9-merge-authorization-resolution",
+  "c45_certification_state": {
+    "verdict": "FINAL QUALITY CERTIFICATION — NOT YET ACHIEVED",
+    "reason": "repository-wide mutation threshold below 80%; evidence-bound; authoritative full measurement CI-designated",
+    "evidence": "runtime/generated/m9-c45/evidence/final-certification.json"
+  },
+  "current_coverage_evidence": {
+    "statement_pct": 80.58,
+    "branch_pct": 75.91,
+    "combined_pct": 80.58,
+    "80_target": "ACHIEVED",
+    "source": "runtime/generated/m9-c45/evidence/coverage-gap-reconciliation.json"
+  },
+  "current_mutation_evidence": {
+    "repository_wide_projected": 78.3,
+    "authoritative": "NOT_MEASURED (CI-designated)",
+    "threshold": 80.0,
+    "gap_pct": 1.7,
+    "gap_kills": 293,
+    "components_measured": {
+      "behaviour_engine": 83.5,
+      "financial_intelligence": 73.9,
+      "common_calculations": 64.1
+    }
+  },
+  "current_workflow_state": {
+    "total": 14,
+    "GREEN": 9,
+    "GREEN_BY_DESIGN": 3,
+    "ENVIRONMENTAL_LIMITATION": 2,
+    "FAILED": 0
+  },
+  "current_test_state": {
+    "runtime_tests_collected": 871,
+    "backend_tests_collected": 3086,
+    "known_failures": "1 pre-existing TypeScript error (TS6133 unused var)",
+    "golden_tests": "22 passing (FI 17 + calculations 5)"
+  },
+  "effective_tooling_configuration": {
+    "ruff": {
+      "status": "PASS",
+      "violations": 0,
+      "command": ".venv/bin/ruff check ."
+    },
+    "black": {
+      "status": "PASS",
+      "files_requiring_format": 0,
+      "total_files": 800,
+      "command": ".venv/bin/black --check ."
+    },
+    "mypy": {
+      "status": "FAIL",
+      "errors": 185,
+      "errors_by_directory": {
+        "runtime/foundation/audit": 33,
+        "runtime/tests": 30,
+        "runtime/foundation/verification": 24,
+        "tools/generators": 14,
+        "runtime/ (top-level)": 14,
+        "runtime/system/observability": 11,
+        "runtime/foundation/repository/query": 11,
+        "tools/diagnostics": 7,
+        "runtime/foundation/verification/api_contracts": 6,
+        "runtime/foundation/knowledge": 6,
+        "runtime/foundation/intelligence/platform": 6,
+        "runtime/system/evidence/collectors": 4,
+        "runtime/foundation/repository/validation": 4,
+        "runtime/foundation/architecture": 4,
+        "runtime/system/evidence/ingestion": 3,
+        "other": 22
+      },
+      "command": ".venv/bin/mypy --config-file pyproject.toml ."
+    },
+    "pytest": {
+      "status": "PASS (runtime tests + targeted backend)",
+      "runtime_tests": "871 collected, passing",
+      "backend_tests": "3086 collected (full suite not run to completion)",
+      "collection_error": "backend/conftest.py pytest_plugins in non-top-level conftest (pre-existing)"
+    }
+  },
+  "production_changes_pending": "backend/pyproject.toml has unstaged changes (mutmut source_paths -> transaction_intelligence from prior session)"
+}

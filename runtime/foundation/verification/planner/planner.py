@@ -16,18 +16,19 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from runtime.foundation.repository.graph.graph_service import RepositoryGraphService
 from runtime.foundation.verification.models import (
     VerificationCategory,
+    VerificationDependency,
     VerificationPlan,
     VerificationScope,
+    VerificationStatus,
     VerificationStep,
     VerificationTarget,
-    VerificationDependency,
-    VerificationStatus,
 )
 from runtime.foundation.verification.registry import (
     VerificationRegistry,
@@ -35,7 +36,6 @@ from runtime.foundation.verification.registry import (
     get_registry,
     units_for_workflow,
 )
-from runtime.foundation.repository.graph.graph_service import RepositoryGraphService
 
 
 @dataclass(frozen=True, slots=True)
@@ -159,7 +159,7 @@ class VerificationPlanner:
 
         # Create plan
         plan = VerificationPlan(
-            id=f"plan-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
+            id=f"plan-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
             name=f"Verification Plan - {scope.value}",
             scope=scope,
             targets=targets_with_deps,
@@ -177,7 +177,7 @@ class VerificationPlanner:
                 "include_dependencies": context.include_dependencies,
                 "include_dependents": context.include_dependents,
                 "max_depth": context.max_depth,
-                "generated_at": datetime.now(timezone.utc).isoformat(),
+                "generated_at": datetime.now(UTC).isoformat(),
             },
         )
 
@@ -215,7 +215,7 @@ class VerificationPlanner:
                     scopes.add(VerificationScope.INTEGRATION)
 
             # Frontend paths
-            elif norm_path.startswith("frontend/src/"):
+            elif norm_path.startswith("frontend/lib/"):
                 scopes.add(VerificationScope.FRONTEND)
                 scopes.add(VerificationScope.CONTRACTS)
 
@@ -450,10 +450,8 @@ class VerificationPlanner:
     ) -> list[VerificationTarget]:
         """Build verification targets from requirements."""
         targets = []
-        target_id = 0
 
-        for req in requirements:
-            target_id += 1
+        for target_id, req in enumerate(requirements, start=1):
             target = VerificationTarget(
                 id=f"target-{target_id:04d}",
                 name=f"{req.category.value}: {req.description}",
@@ -507,17 +505,16 @@ class VerificationPlanner:
                 )
 
                 # Dependencies flow from lower to higher in hierarchy
-                if other_idx < target_idx:
-                    # Check if same capability or module
-                    if (
-                        target.capability and target.capability == other.capability
-                    ) or (target.module and target.module == other.module):
-                        dep = VerificationDependency(
-                            target_id=other.id,
-                            dependency_type="requires",
-                            reason=f"{other.category.value} must pass before {target.category.value}",
-                        )
-                        deps.append(dep)
+                if other_idx < target_idx and (
+                    (target.capability and target.capability == other.capability)
+                    or (target.module and target.module == other.module)
+                ):
+                    dep = VerificationDependency(
+                        target_id=other.id,
+                        dependency_type="requires",
+                        reason=f"{other.category.value} must pass before {target.category.value}",
+                    )
+                    deps.append(dep)
 
             # Also check for explicit dependency requirements
             for req in target.requirements:
@@ -677,9 +674,7 @@ class VerificationPlanner:
             # `contributing_units` is a tuple because the mapping is legitimately
             # many-to-one; an empty tuple means "no unit identity", surfaced downstream
             # as UNMAPPED rather than guessed.
-            contributing_units = (
-                units_for_workflow(workflow.id) if workflow else ()
-            )
+            contributing_units = units_for_workflow(workflow.id) if workflow else ()
             step = VerificationStep(
                 id=f"step-{step_id:04d}",
                 target=target,
@@ -719,11 +714,11 @@ class VerificationPlanner:
         # onto one command, the surviving step must record **all** contributing unit IDs
         # — dropping the second would make its failures unattributable, which is exactly
         # the evidence gap Phase 2 exists to close.
-        seen_commands: dict[str, str] = {}
+        seen_commands: dict[str | None, str] = {}
         old_to_new_id: dict[str, str] = {}
         unique_steps: list[VerificationStep] = []
         # command -> ordered, de-duplicated list of contributing unit IDs
-        merged_units: dict[str, list[str]] = {}
+        merged_units: dict[str | None, list[str]] = {}
 
         def _record_units(command: str | None, step: VerificationStep) -> None:
             """Accumulate contributing unit IDs for a command, preserving order."""
@@ -896,13 +891,145 @@ class CrossLayerImpactPlanner:
     def __init__(self, map_path: Path | None = None):
         self.map_path = map_path
         self._map: dict[str, dict[str, Any]] = {}
+        self._cross_layer_graph: dict | None = None
         self._load_map()
+        self._load_cross_layer_graph()
+
+    def _load_cross_layer_graph(self) -> None:
+        """Load cross-layer graph for frontend capability resolution."""
+        try:
+            import json
+            graph_path = Path("runtime/generated/cross-layer-graph.json")
+            if graph_path.exists():
+                self._cross_layer_graph = json.loads(graph_path.read_text())
+        except Exception:
+            pass
+
+    def _find_frontend_capability(
+        self, file_path: str
+    ) -> dict[str, Any] | None:
+        """Resolve a frontend file to its capability and related backend info.
+
+        Returns a dict with:
+          - capability_id: deterministic frontend capability identity
+          - kind: capability kind (hook, component, route, test, etc.)
+          - domain: domain prefix (frontend-accounts, frontend-loans, etc.)
+          - backend_capabilities: list of resolved backend capability IDs
+          - backend_endpoints: list of resolved backend endpoint paths
+          - status: MAPPED | UNMAPPED | AMBIGUOUS
+          - edges: list of cross-layer edges from this capability
+        """
+        if not self._cross_layer_graph:
+            return None
+
+        # Normalize file path for matching
+        norm_path = file_path.replace("\\", "/")
+        # Strip leading ./ if present
+        if norm_path.startswith("./"):
+            norm_path = norm_path[2:]
+
+        # Build reverse index: absolute file path → capability
+        file_to_cap: dict[str, str] = {}
+        for cap_id, cap in self._cross_layer_graph.get(
+            "frontend_capabilities", {}
+        ).items():
+            for f in cap.get("files", []):
+                file_to_cap[f] = cap_id
+
+        # Try exact match first
+        if norm_path in file_to_cap:
+            cap_id = file_to_cap[norm_path]
+            return self._resolve_capability_edges(cap_id)
+
+        # Try basename match (for files without full path)
+        basename = Path(norm_path).name
+        matches = [
+            cap_id
+            for abs_path, cap_id in file_to_cap.items()
+            if Path(abs_path).name == basename
+        ]
+        if len(matches) == 1:
+            return self._resolve_capability_edges(matches[0])
+        elif len(matches) > 1:
+            # Ambiguous - return first match with ambiguous flag
+            return {
+                "capability_id": matches[0],
+                "kind": self._cross_layer_graph["frontend_capabilities"][
+                    matches[0]
+                ].get("kind", "unknown"),
+                "domain": self._cross_layer_graph["frontend_capabilities"][
+                    matches[0]
+                ].get("domain", "unknown"),
+                "backend_capabilities": [],
+                "backend_endpoints": [],
+                "status": "AMBIGUOUS",
+                "edges": [],
+                "matched_files": matches,
+            }
+
+        return None
+
+    def _resolve_capability_edges(
+        self, capability_id: str
+    ) -> dict[str, Any] | None:
+        """Resolve cross-layer edges for a frontend capability."""
+        if not self._cross_layer_graph:
+            return None
+
+        cap = self._cross_layer_graph.get("frontend_capabilities", {}).get(
+            capability_id
+        )
+        if not cap:
+            return None
+
+        # Find outgoing edges from this capability
+        edges = [
+            e
+            for e in self._cross_layer_graph.get("edges", [])
+            if e.get("source_id") == capability_id
+        ]
+
+        # Extract backend capabilities and endpoints from edges
+        backend_capabilities = list(
+            {
+                e.get("target_id")
+                for e in edges
+                if e.get("target_type") == "capability"
+                and e.get("relationship") == "depends_on"
+            }
+        )
+        backend_endpoints = list(
+            {
+                e.get("target_id")
+                for e in edges
+                if e.get("target_type") == "endpoint"
+                and e.get("relationship") == "calls"
+            }
+        )
+
+        # Determine status
+        if edges or backend_capabilities or backend_endpoints:
+            status = "MAPPED"
+        else:
+            status = "UNMAPPED"
+
+        return {
+            "capability_id": capability_id,
+            "kind": cap.get("kind", "unknown"),
+            "domain": cap.get("domain", "unknown"),
+            "backend_capabilities": backend_capabilities,
+            "backend_endpoints": backend_endpoints,
+            "status": status,
+            "edges": edges,
+        }
 
     def _load_map(self) -> None:
         """Load chains from the architecture provider (or an injected fixture)."""
         if self.map_path is not None:
             if not self.map_path.exists():
-                raise FileNotFoundError(f"Injected chain fixture not found: {self.map_path}")
+                raise FileNotFoundError(
+                    f"Injected chain fixture not found: {self.map_path}"
+                )
             with open(self.map_path, encoding="utf-8") as f:
                 self._map = json.load(f)
             return
@@ -911,9 +1038,7 @@ class CrossLayerImpactPlanner:
 
         self._map = get_chain_map()
 
-    def analyze_cross_layer_impact(
-        self, changed_files: list[str]
-    ) -> ImpactReport:
+    def analyze_cross_layer_impact(self, changed_files: list[str]) -> ImpactReport:
         """Analyze impact of changed files across all layers.
 
         Primary strategy: per-file chain-map lookup (fast, fixture-injectable).
@@ -922,9 +1047,13 @@ class CrossLayerImpactPlanner:
         mappers, generated types), delegate to the canonical architecture
         provider graph traversal via ``compute_blast_radius`` so that every
         provider-registered entity kind contributes to the blast radius.
+
+        Frontend strategy: for frontend files NOT resolved by chain map,
+        resolve via cross-layer graph and propagate backend dependencies.
         """
         report = ImpactReport(changed_files=list(changed_files))
 
+        # First pass: try chain map for ALL files
         chain_resolved = set()
         for file_path in changed_files:
             norm = file_path.replace("\\", "/")
@@ -933,16 +1062,91 @@ class CrossLayerImpactPlanner:
                 self._add_chain_to_report(report, chain, file_path)
                 chain_resolved.add(file_path)
 
-        unresolved_files = [f for f in changed_files if f not in chain_resolved]
+        # Second pass: for unresolved frontend files, use cross-layer graph
+        unresolved_frontend = [
+            f for f in changed_files
+            if f not in chain_resolved and self._is_frontend_path(f)
+        ]
+        if unresolved_frontend and self._cross_layer_graph:
+            self._resolve_frontend_capabilities(report, unresolved_frontend)
 
-        if self.map_path is None and unresolved_files:
-            self._enrich_from_intelligence(report, unresolved_files)
+        # Third pass: enrich unresolved non-frontend files via intelligence
+        unresolved_backend = [
+            f for f in changed_files
+            if f not in chain_resolved and not self._is_frontend_path(f)
+        ]
+        if self.map_path is None and unresolved_backend:
+            self._enrich_from_intelligence(report, unresolved_backend)
 
         report.dependency_chains = self._build_dependency_chains(report, changed_files)
 
         report.verification_plan = self._build_minimal_plan(report)
 
         return report
+
+    @staticmethod
+    def _is_frontend_path(file_path: str) -> bool:
+        """Check if a file path is a frontend source file."""
+        norm = file_path.replace("\\", "/")
+        return (
+            norm.startswith("frontend/")
+            or norm.startswith("./frontend/")
+            or "/frontend/" in norm
+        )
+
+    def _resolve_frontend_capabilities(
+        self, report: ImpactReport, frontend_files: list[str]
+    ) -> None:
+        """Resolve frontend files to capabilities and propagate impacts.
+
+        For each frontend file:
+        1. Find the corresponding frontend capability via cross-layer graph
+        2. Add the capability ID to affected_capabilities
+        3. Propagate backend capabilities from mapped edges
+        4. Track unmapped/ambiguous cases explicitly
+        """
+        if not self._cross_layer_graph:
+            return
+
+        resolved_capabilities: set[str] = set()
+        resolved_backend_caps: set[str] = set()
+        resolved_endpoints: set[str] = set()
+        unmapped_files: list[str] = []
+
+        for file_path in frontend_files:
+            result = self._find_frontend_capability(file_path)
+
+            if result is None:
+                unmapped_files.append(file_path)
+                continue
+
+            cap_id = result.get("capability_id")
+            if cap_id and cap_id not in resolved_capabilities:
+                resolved_capabilities.add(cap_id)
+                report.affected_capabilities.append(cap_id)
+
+            # Propagate backend capabilities
+            for backend_cap in result.get("backend_capabilities", []):
+                if backend_cap not in resolved_backend_caps:
+                    resolved_backend_caps.add(backend_cap)
+                    report.affected_capabilities.append(backend_cap)
+
+            # Propagate backend endpoints
+            for endpoint in result.get("backend_endpoints", []):
+                if endpoint not in resolved_endpoints:
+                    resolved_endpoints.add(endpoint)
+                    report.affected_endpoints.append(endpoint)
+
+            # Add UI impact for components/hooks/routes
+            kind = result.get("kind", "")
+            if kind in ("frontend_component", "frontend_hook", "frontend_route"):
+                if cap_id not in report.affected_ui:
+                    report.affected_ui.append(cap_id)
+
+        # Record unmapped files as explicit UNMAPPED status
+        if unmapped_files:
+            for mf in unmapped_files:
+                report.affected_capabilities.append(f"UNMAPPED:{mf}")
 
     def _enrich_from_intelligence(
         self, report: ImpactReport, unresolved_files: list[str]
@@ -955,11 +1159,11 @@ class CrossLayerImpactPlanner:
         their downstream impact to the report.
         """
         try:
-            from runtime.foundation.intelligence.platform.change import (
-                analyze_changes,
-            )
             from runtime.foundation.intelligence.platform.blast import (
                 compute_blast_radius,
+            )
+            from runtime.foundation.intelligence.platform.change import (
+                analyze_changes,
             )
 
             change = analyze_changes(paths=unresolved_files)
@@ -999,7 +1203,11 @@ class CrossLayerImpactPlanner:
                 if verif.ref not in report.affected_engines:
                     self._append_uniq(report.affected_engines, verif.ref)
 
-            if report.affected_capabilities or report.affected_components or report.affected_view_models:
+            if (
+                report.affected_capabilities
+                or report.affected_components
+                or report.affected_view_models
+            ):
                 report.verification_plan["run_frontend"] = True
                 if report.affected_endpoints or report.affected_routers:
                     report.verification_plan["run_contract"] = True
@@ -1103,24 +1311,24 @@ class CrossLayerImpactPlanner:
         for ws in arch.workspaces.values():
             if ws.path and ws.path == norm:
                 for cap_name in ws.capabilities:
-                    cap = arch.capabilities.get(cap_name)
-                    if cap is None:
+                    cap_found = arch.capabilities.get(cap_name)
+                    if cap_found is None:
                         continue
-                    found = chain_for_engines(cap.engines)
+                    found = chain_for_engines(cap_found.engines)
                     if found is not None:
                         return found
 
         component = arch.components.get(norm)
         if component is not None:
             for ws_name in component.workspaces:
-                ws = arch.workspaces.get(ws_name)
-                if ws is None:
+                ws_found = arch.workspaces.get(ws_name)
+                if ws_found is None:
                     continue
-                for cap_name in ws.capabilities:
-                    cap = arch.capabilities.get(cap_name)
-                    if cap is None:
+                for cap_name in ws_found.capabilities:
+                    cap_found = arch.capabilities.get(cap_name)
+                    if cap_found is None:
                         continue
-                    found = chain_for_engines(cap.engines)
+                    found = chain_for_engines(cap_found.engines)
                     if found is not None:
                         return found
 
@@ -1217,9 +1425,7 @@ class CrossLayerImpactPlanner:
         # Determine which verification types are needed
         run_unit = bool(report.affected_engines or report.affected_services)
         run_contract = bool(
-            report.affected_endpoints
-            or report.affected_routers
-            or report.affected_dtos
+            report.affected_endpoints or report.affected_routers or report.affected_dtos
         )
         run_property = any("loan" in e.lower() for e in report.affected_engines)
         run_frontend = bool(
@@ -1238,9 +1444,7 @@ class CrossLayerImpactPlanner:
             "run_frontend": run_frontend,
             "run_integration": run_integration,
             "unit_paths": report.affected_tests,
-            "contract_paths": [
-                t for t in report.affected_tests if "contract" in t
-            ],
+            "contract_paths": [t for t in report.affected_tests if "contract" in t],
             "capabilities": report.affected_capabilities,
             "engines": report.affected_engines,
             "services": report.affected_services,
@@ -1283,19 +1487,25 @@ class CrossLayerImpactPlanner:
                 or report.affected_components
             )
             if has_impact:
-                chains.append({
-                    "source": source_file,
-                    "engine": report.affected_engines[0] if report.affected_engines else "unknown",
-                    "services": report.affected_services,
-                    "routers": report.affected_routers,
-                    "endpoints": report.affected_endpoints,
-                    "capabilities": report.affected_capabilities,
-                    "mappers": report.affected_mappers,
-                    "dtos": report.affected_dtos,
-                    "view_models": report.affected_view_models,
-                    "workspaces": report.affected_workspaces,
-                    "components": report.affected_components,
-                    "tests": report.affected_tests,
-                })
+                chains.append(
+                    {
+                        "source": source_file,
+                        "engine": (
+                            report.affected_engines[0]
+                            if report.affected_engines
+                            else "unknown"
+                        ),
+                        "services": report.affected_services,
+                        "routers": report.affected_routers,
+                        "endpoints": report.affected_endpoints,
+                        "capabilities": report.affected_capabilities,
+                        "mappers": report.affected_mappers,
+                        "dtos": report.affected_dtos,
+                        "view_models": report.affected_view_models,
+                        "workspaces": report.affected_workspaces,
+                        "components": report.affected_components,
+                        "tests": report.affected_tests,
+                    }
+                )
 
         return chains

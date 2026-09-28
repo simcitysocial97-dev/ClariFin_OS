@@ -1,0 +1,61 @@
+{
+  "schema": "m9-c42.32-36-campaign-governance/v1",
+  "generated_at": "2026-08-26T09:55:00.000000+00:00",
+  "phase": "M9-C42.32-36 Phase 9",
+  "repository_sha": "084359346b3b14792c5bd38e159932f6c42922fd",
+  "question": "Is the C42.26/C42.31 formal full-campaign trigger actually satisfied by the work performed in C42.32-36?",
+  "formal_triggers": [
+    "population_expansion",
+    "major_verification_architecture_change",
+    "mutation_infrastructure_change",
+    "mutation_configuration_semantic_change",
+    "significant_cross_component_architecture_change",
+    "periodic_measurement_checkpoint",
+    "final_certification_milestone"
+  ],
+  "not_triggers": [
+    "test_addition",
+    "test_strengthening",
+    "score_improvement_desire"
+  ],
+  "analysis_of_c42_32_36_work": {
+    "artifacts_created": "17 JSON analysis/report artifacts under runtime/generated/m9-c42.32-36/",
+    "production_code_modified": false,
+    "mutation_infrastructure_modified": false,
+    "mutation_configuration_modified": false,
+    "population_expanded": false,
+    "capability_mappings_modified": false,
+    "verification_architecture_changed": false,
+    "tests_added": "none (existing C42.29/30/31 suites already cover the capabilities)",
+    "reused_existing_evidence": true,
+    "real_targeted_mutation_executed": "credit_card_engine only (authorized by planner, not a full campaign)",
+    "full_campaign_gate_evaluation": "NOT SATISFIED"
+  },
+  "trigger_satisfaction_table": [
+    {"trigger": "population_expansion", "satisfied": false, "reason": "14-component population unchanged"},
+    {"trigger": "major_verification_architecture_change", "satisfied": false, "reason": "C42.27-31 architecture preserved; only analysis artifacts added"},
+    {"trigger": "mutation_infrastructure_change", "satisfied": false, "reason": "mutation_runner.py, mutation_contract.py unchanged"},
+    {"trigger": "mutation_configuration_semantic_change", "satisfied": false, "reason": "ENGINE_SELECTION / pyproject mutation config unchanged"},
+    {"trigger": "significant_cross_component_architecture_change", "satisfied": false, "reason": "no cross-component architecture change in C42.32-36"},
+    {"trigger": "periodic_measurement_checkpoint", "satisfied": false, "reason": "no periodic checkpoint invoked"},
+    {"trigger": "final_certification_milestone", "satisfied": false, "reason": "C42.32-36 is operationalization, not a final certification milestone requiring fresh population measurement"}
+  ],
+  "full_campaign_justification_required": false,
+  "full_campaign_justification": null,
+  "gate_decision": {
+    "permitted": false,
+    "reason": "No formal C42.26/C42.31 trigger is satisfied by C42.32-36 work. The work is analysis + one planner-authorized targeted mutation (credit_card_engine). Running a full 14-component campaign would violate the minimum-defensible-execution principle and the score-chasing prohibition.",
+    "justification": null
+  },
+  "evidence_reuse_decision": {
+    "valid_evidence_reused": 13,
+    "fresh_targeted_evidence": 1,
+    "invalidated_evidence": 0,
+    "reused_components": ["account_engine", "loan_engine", "reconciliation_engine", "behaviour_engine", "balance_engine", "ledger_audit_engine", "cashflow_engine", "financial_events", "core_domain_money", "common_calculations", "recommendation_engine", "transaction_intelligence", "financial_intelligence"],
+    "fresh_component": "credit_card_engine",
+    "rationale": "13 components have intact source/test/config/toolchain/population fingerprints; C42.29 reuse decision = reusable. Only credit_card_engine required fresh targeted measurement (planner-selected)."
+  },
+  "certification_report_statement": "FULL CAMPAIGN NOT REQUIRED — VALID EVIDENCE REUSED. 13/14 components reused existing mathematically-reconciled evidence; 1 component (credit_card_engine) received planner-authorized targeted mutation measurement (75.6% score, 440 killed). The full mutation campaign gate (C42.26/C42.31) is NOT satisfied and therefore NOT executed.",
+  "status": "DECISION_RECORD_COMPLETE",
+  "next_action": "Do not run full campaign. If future work expands the population or changes mutation infrastructure/config, re-evaluate the gate via gate_full_campaign()."
+}

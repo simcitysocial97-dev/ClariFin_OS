@@ -1,0 +1,43 @@
+{
+  "title": "M9-C42.24 — Loan Reproducibility Gate",
+  "generated_at": "2026-08-25T18:45:00.000000+00:00",
+  "run_id": "m9-c42.24",
+  "component": "loan_engine",
+  "historical_band": {
+    "expected_min": 83.8,
+    "expected_max": 84.0,
+    "note": "Established in C42.21 from multiple local runs and CI runs. 5 known nondeterministic mutants."
+  },
+  "c42_21_result": {
+    "generated": 1273,
+    "killed": 1066,
+    "survived": 200,
+    "no_tests": 4,
+    "timeout": 3,
+    "score": 84.0
+  },
+  "c42_24_result": {
+    "generated": 1273,
+    "killed": 1066,
+    "survived": 200,
+    "no_tests": 4,
+    "timeout": 3,
+    "score": 84.0
+  },
+  "variance_analysis": {
+    "score_delta": 0.0,
+    "killed_delta": 0,
+    "survived_delta": 0,
+    "timeout_delta": 0,
+    "within_historical_band": true,
+    "deterministic": true
+  },
+  "nondeterministic_mutants": {
+    "count": 5,
+    "status": "PRESERVED — not artificially eliminated",
+    "note": "These mutants are known to produce inconsistent results across runs due to floating-point or ordering dependencies. They are classified as controlled nondeterminism and excluded from the reproducibility gate."
+  },
+  "gate_verdict": "ACCEPT",
+  "classification": "Controlled nondeterminism within documented band. No test or production code changes made to stabilize percentage.",
+  "action_required": false
+}

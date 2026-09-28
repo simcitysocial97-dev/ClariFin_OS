@@ -11,13 +11,13 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-import yaml
+import yaml  # type: ignore[import-untyped]
 
 from runtime.foundation.verification.models import (
     VerificationCategory,
+    VerificationRequirement,
     VerificationScope,
     VerificationSeverity,
-    VerificationRequirement,
 )
 
 
@@ -410,7 +410,7 @@ class VerificationRegistry:
                 category=VerificationCategory.ARCHITECTURAL,
                 scope=VerificationScope.RUNTIME,
                 command="bash .github/scripts/run_runtime_verification.sh",
-                estimated_duration_seconds=120,
+                estimated_duration_seconds=2700,
                 scopes=[VerificationScope.RUNTIME],
             ),
             "golden": VerificationWorkflow(
@@ -585,7 +585,7 @@ class VerificationRegistry:
                 description="Engineering Runtime self-verification",
                 category=VerificationCategory.ARCHITECTURAL,
                 scope=VerificationScope.RUNTIME,
-                estimated_duration_seconds=120,
+                estimated_duration_seconds=2700,
             ),
             "run_golden_tests": VerificationScript(
                 id="run_golden_tests",
@@ -794,7 +794,7 @@ class VerificationRegistry:
                         severity=VerificationSeverity.HIGH,
                         description="Frontend contract compliance",
                         scope=VerificationScope.FRONTEND,
-                        module="frontend/src",
+                        module="frontend/lib",
                         capability="api-contracts",
                     ),
                     VerificationRequirement(
@@ -813,7 +813,7 @@ class VerificationRegistry:
                     "run_frontend_verification",
                     "run_backend_verification",
                 ],
-                modules=["backend/src", "frontend/src"],
+                modules=["backend/src", "frontend/lib"],
             ),
             "migrations": VerificationCapability(
                 id="migrations",
@@ -944,6 +944,161 @@ class VerificationRegistry:
                 workflows=["playwright"],
                 scripts=["run_playwright_tests"],
                 modules=[],
+            ),
+            "balance-engine": VerificationCapability(
+                id="balance-engine",
+                name="Balance Engine",
+                description="Running balance computation from transaction streams",
+                category=VerificationCategory.CAPABILITY,
+                scopes=[
+                    VerificationScope.BACKEND,
+                    VerificationScope.PROPERTY,
+                    VerificationScope.CONTRACTS,
+                    VerificationScope.INTEGRATION,
+                    VerificationScope.REPOSITORY,
+                ],
+                requirements=[
+                    VerificationRequirement(
+                        id="balance-engine-property",
+                        category=VerificationCategory.PROPERTY,
+                        severity=VerificationSeverity.CRITICAL,
+                        description="Property-based tests for balance computation",
+                        scope=VerificationScope.PROPERTY,
+                        module="backend/src/engines/balance_engine.py",
+                        capability="balance-engine",
+                    ),
+                ],
+                workflows=["property", "contracts", "backend"],
+                scripts=[
+                    "run_property_tests",
+                    "run_contract_tests",
+                    "run_backend_verification",
+                ],
+                modules=["backend/src/engines/balance_engine.py"],
+            ),
+            "behaviour-engine": VerificationCapability(
+                id="behaviour-engine",
+                name="Behaviour Engine",
+                description="Financial behaviour scoring and risk assessment",
+                category=VerificationCategory.CAPABILITY,
+                scopes=[
+                    VerificationScope.BACKEND,
+                    VerificationScope.PROPERTY,
+                    VerificationScope.CONTRACTS,
+                    VerificationScope.INTEGRATION,
+                    VerificationScope.REPOSITORY,
+                ],
+                requirements=[
+                    VerificationRequirement(
+                        id="behaviour-engine-property",
+                        category=VerificationCategory.PROPERTY,
+                        severity=VerificationSeverity.CRITICAL,
+                        description="Property-based tests for behaviour engine",
+                        scope=VerificationScope.PROPERTY,
+                        module="backend/src/engines/behaviour_engine",
+                        capability="behaviour-engine",
+                    ),
+                ],
+                workflows=["property", "contracts", "backend"],
+                scripts=[
+                    "run_property_tests",
+                    "run_contract_tests",
+                    "run_backend_verification",
+                ],
+                modules=["backend/src/engines/behaviour_engine"],
+            ),
+            "cashflow-engine": VerificationCapability(
+                id="cashflow-engine",
+                name="Cashflow Engine",
+                description="Cashflow classification and net-worth computation",
+                category=VerificationCategory.CAPABILITY,
+                scopes=[
+                    VerificationScope.BACKEND,
+                    VerificationScope.PROPERTY,
+                    VerificationScope.CONTRACTS,
+                    VerificationScope.INTEGRATION,
+                    VerificationScope.REPOSITORY,
+                ],
+                requirements=[
+                    VerificationRequirement(
+                        id="cashflow-engine-property",
+                        category=VerificationCategory.PROPERTY,
+                        severity=VerificationSeverity.CRITICAL,
+                        description="Property-based tests for cashflow engine",
+                        scope=VerificationScope.PROPERTY,
+                        module="backend/src/engines/cashflow_engine.py",
+                        capability="cashflow-engine",
+                    ),
+                ],
+                workflows=["property", "contracts", "backend"],
+                scripts=[
+                    "run_property_tests",
+                    "run_contract_tests",
+                    "run_backend_verification",
+                ],
+                modules=["backend/src/engines/cashflow_engine.py"],
+            ),
+            "credit-card-engine": VerificationCapability(
+                id="credit-card-engine",
+                name="Credit Card Engine",
+                description="Credit card billing, utilization and foreclosure",
+                category=VerificationCategory.CAPABILITY,
+                scopes=[
+                    VerificationScope.BACKEND,
+                    VerificationScope.PROPERTY,
+                    VerificationScope.CONTRACTS,
+                    VerificationScope.INTEGRATION,
+                    VerificationScope.REPOSITORY,
+                ],
+                requirements=[
+                    VerificationRequirement(
+                        id="credit-card-engine-property",
+                        category=VerificationCategory.PROPERTY,
+                        severity=VerificationSeverity.CRITICAL,
+                        description="Property-based tests for credit card engine",
+                        scope=VerificationScope.PROPERTY,
+                        module="backend/src/engines/credit_card_engine",
+                        capability="credit-card-engine",
+                    ),
+                ],
+                workflows=["property", "contracts", "backend"],
+                scripts=[
+                    "run_property_tests",
+                    "run_contract_tests",
+                    "run_backend_verification",
+                ],
+                modules=["backend/src/engines/credit_card_engine"],
+            ),
+            "financial-intelligence": VerificationCapability(
+                id="financial-intelligence",
+                name="Financial Intelligence",
+                description="Forecasting, goal planning and scenario analysis",
+                category=VerificationCategory.CAPABILITY,
+                scopes=[
+                    VerificationScope.BACKEND,
+                    VerificationScope.PROPERTY,
+                    VerificationScope.CONTRACTS,
+                    VerificationScope.INTEGRATION,
+                    VerificationScope.REPOSITORY,
+                ],
+                requirements=[
+                    VerificationRequirement(
+                        id="financial-intelligence-property",
+                        category=VerificationCategory.PROPERTY,
+                        severity=VerificationSeverity.CRITICAL,
+                        description="Property-based tests for financial intelligence",
+                        scope=VerificationScope.PROPERTY,
+                        module="backend/src/engines/financial_intelligence",
+                        capability="financial-intelligence",
+                    ),
+                ],
+                workflows=["property", "contracts", "backend"],
+                scripts=[
+                    "run_property_tests",
+                    "run_contract_tests",
+                    "run_backend_verification",
+                ],
+                modules=["backend/src/engines/financial_intelligence"],
             ),
         }
 

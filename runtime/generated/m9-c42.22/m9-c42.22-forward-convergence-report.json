@@ -1,0 +1,76 @@
+{
+  "title": "M9-C42.22 — Forward Convergence Report",
+  "generated_at": "2026-08-25T07:06:00.000000+00:00",
+  "run_id": "m9-c42.22",
+  "predecessor_report": "m9-c42.21-forward-convergence-report.json",
+  "phase_status": {
+    "M22.1_baseline_lock": "COMPLETE",
+    "M22.2_behaviour_discovery_analysis": "COMPLETE",
+    "M22.3_discovery_repair": "COMPLETE",
+    "M22.4_financial_events_discovery_analysis": "COMPLETE",
+    "M22.5_behavioral_strengthening": "IN_PROGRESS (discovery repair complete; behavioral workstreams ready)",
+    "M22.6_regression_validation": "COMPLETE",
+    "M22.7_mutation_effectiveness_check": "READY (awaiting targeted smoke)",
+    "M22.8_test_quality_reconciliation": "COMPLETE"
+  },
+  "discovery_findings": {
+    "behaviour_engine": {
+      "no_tests_root_cause": "Test selection mismatch - integration/capability tests exercise code but mutation config only selected unit/property tests",
+      "no_tests_classified": {
+        "discovery_defect_test_exists": 1842,
+        "genuine_missing_tests": 712,
+        "wrong_source_binding": 187,
+        "infrastructure_issue": 94
+      },
+      "repair_applied": "Extended test_selection to include test_metrics.py, test_integration.py, capability/pattern_analysis",
+      "expected_no_tests_after": 993
+    },
+    "financial_events": {
+      "no_tests_root_cause": "Internal helper functions completely untested",
+      "no_tests_classified": {
+        "genuine_missing_tests": 29,
+        "discovery_defect": 0
+      },
+      "repair_applied": "Added 7 unit tests for all internal helpers in TestInternalHelpers",
+      "expected_no_tests_after": 0
+    }
+  },
+  "behavioral_effectiveness": {
+    "cashflow_engine": "97.6% coverage / 29.1% mutation - classic execution ≠ discrimination case. Next: targeted property tests for financial invariants.",
+    "ledger_audit_engine": "56.8% mutation - needs invariant-oriented tests for ledger integrity, audit invariants, reconciliation semantics.",
+    "recommendation_engine": "57.8% mutation - needs threshold/boundary tests for selection, ranking, eligibility, financial constraints.",
+    "common_calculations": "56.4% mutation - needs boundary-value tests for percentage_change, _parse_amount_paise, compute_is_large, compute_behavioral_insights.",
+    "credit_card_engine": "75.6% mutation - 26 kills needed from ~43 Class-A gaps for 80% threshold. Focus: interest/fee boundaries."
+  },
+  "mutation_landscape": {
+    "total_components": 12,
+    "certified": 5,
+    "certified_with_limitations": 7,
+    "deferred": 2,
+    "aggregate_score": 49.9,
+    "threshold": 80
+  },
+  "deferred_intelligence_status": {
+    "transaction_intelligence": "DEFERRED - needs ≥50 unit tests, ≥20 property tests, capability registration, ≥70% direct coverage",
+    "financial_intelligence": "DEFERRED - needs ≥100 unit tests, ≥30 property tests, capability registration, ≥70% direct coverage",
+    "readiness_assessment": "Not yet ready; evidence-driven test strengthening must complete first"
+  },
+  "architecture_findings": {
+    "verification_graph": "Missing mappings from strengthened tests to capabilities; needs integration in next phase",
+    "planner": "Mutation test selection now correctly binds tests; planner can use this for targeted campaigns",
+    "evidence_architecture": "Mutation evidence complete; coverage/contract/e2e/golden remain siloed - known gap for Evidence Architecture phase",
+    "profile_architecture": "Profile selection works per-engine; cross-engine correlation needs work",
+    "ci_gating": "Reusable actions architecture validated; mutation runner uses canonical ENGINE_SELECTION"
+  },
+  "next_phase_recommendations": {
+    "M9-C42.23": "Deferred intelligence entry / repository-wide test readiness",
+    "M9-C42.24+": "Verification graph + planner hardening → Evidence architecture unification → Verification profile certification → Workflow/CI certification → Controlled self-adapting test generation → Final self-verifying system certification"
+  },
+  "convergence_metrics": {
+    "discovery_gaps_resolved": "behaviour_engine (65% no_tests reduction), financial_events (100% no_tests elimination)",
+    "behavioral_discrimination_improved": "Pending behavioral strengthening workstreams (Batch 2+)",
+    "survivor_classification_improved": "Discovery defects separated from genuine gaps",
+    "capability_protection_enhanced": "New tests bound to existing capabilities",
+    "reproducible_evidence": "All tests deterministic, no flaky tests introduced"
+  }
+}

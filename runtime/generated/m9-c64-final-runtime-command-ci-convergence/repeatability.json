@@ -1,0 +1,42 @@
+{
+  "schema": "m9-c64-final-repeatability/v1",
+  "generated_at": "2026-09-20T11:08:42Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "tests": [
+    {
+      "command": "plan --json",
+      "runs": 3,
+      "deterministic": [
+        "set_id",
+        "obligation_count"
+      ],
+      "results": [
+        {
+          "run": 1,
+          "set_id": "set-612327196aa9",
+          "obligations": 64,
+          "status": "repeatable"
+        },
+        {
+          "run": 2,
+          "set_id": "set-612327196aa9",
+          "obligations": 64,
+          "status": "repeatable"
+        },
+        {
+          "run": 3,
+          "set_id": "set-612327196aa9",
+          "obligations": 64,
+          "status": "repeatable"
+        }
+      ],
+      "classification": "PASS"
+    }
+  ],
+  "summary": {
+    "total_command_variants_tested": 1,
+    "fully_repeatable": 1,
+    "structurally_repeatable": 0,
+    "non_repeatable": 0
+  }
+}

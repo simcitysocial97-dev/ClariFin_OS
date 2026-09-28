@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.emi.x_compute_principal_from_emi__mutmut_1: survived
+--- src/engines/loan_engine/emi.py
++++ src/engines/loan_engine/emi.py
+@@ -11,7 +11,7 @@
+     INVARIANT 1: Money is always integer paise
+     INVARIANT 2: Rates stored as basis points
+     """
+-    if tenure_months <= 0:
++    if tenure_months < 0:
+         raise ValueError("Tenure must be positive")
+ 
+     if annual_rate_bps == 0:

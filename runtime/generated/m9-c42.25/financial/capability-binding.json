@@ -1,0 +1,19 @@
+{
+  "component": "financial",
+  "engine_name": "financial_intelligence",
+  "generated_at": "2026-08-26T05:00:00+05:30",
+  "test_domain": {
+    "id": "financial",
+    "registered": false,
+    "engine_imports": [],
+    "path": "backend/tests/capability/financial",
+    "test_count": 0
+  },
+  "engine_topology": {
+    "registered": true,
+    "has_router": true,
+    "has_service": true
+  },
+  "registration_status": "UNBOUND",
+  "notes": "financial test-domain engine_imports=[]"
+}

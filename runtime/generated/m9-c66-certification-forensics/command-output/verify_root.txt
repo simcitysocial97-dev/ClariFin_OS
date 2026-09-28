@@ -1,0 +1,11 @@
+=== Command: verify verify  ===
+Exit: 1
+Class: FAILED
+Duration: 0.247s
+
+--- STDOUT ---
+
+
+--- STDERR ---
+Command not available in canonical surface: verify
+

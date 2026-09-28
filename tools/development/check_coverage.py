@@ -255,11 +255,7 @@ def match_engines_for_capability(
                 ):
                     hit = True
                     break
-                if (
-                    "engines/" in p
-                    and p.count("/") >= 2
-                    and mrel.startswith(p + "/")
-                ):
+                if "engines/" in p and p.count("/") >= 2 and mrel.startswith(p + "/"):
                     hit = True
                     break
             if hit:
@@ -267,7 +263,9 @@ def match_engines_for_capability(
     return sorted(matched)
 
 
-def build_engine_to_capability(engines: dict[str, Any], capabilities: dict[str, Any]) -> dict[str, str]:
+def build_engine_to_capability(
+    engines: dict[str, Any], capabilities: dict[str, Any]
+) -> dict[str, str]:
     """Map engine ids to the canonical capability they implement.
 
     Derived from verification.yaml capability ``modules`` declarations, which
@@ -277,9 +275,7 @@ def build_engine_to_capability(engines: dict[str, Any], capabilities: dict[str, 
     """
     mapping: dict[str, str] = {}
     for cap_id, cap_def in capabilities.items():
-        for eid in match_engines_for_capability(
-            cap_def.get("modules", []), engines
-        ):
+        for eid in match_engines_for_capability(cap_def.get("modules", []), engines):
             mapping.setdefault(eid, cap_id)
     return mapping
 
@@ -359,9 +355,7 @@ def scan_capabilities() -> tuple[list[CapabilityCoverage], list[dict[str, Any]]]
             cap.status = "MAPPED"
         elif owning and not all_tests:
             cap.status = "MAPPED_NO_TESTS"
-        elif modules and any(
-            (BACKEND_DIR / _backend_rel(m)).exists() for m in modules
-        ):
+        elif modules and any((BACKEND_DIR / _backend_rel(m)).exists() for m in modules):
             cap.status = "MODULE_MAPPED_NO_ENGINE"
         elif cap_def.get("workflows"):
             cap.status = "WORKFLOW_ONLY"
@@ -373,19 +367,23 @@ def scan_capabilities() -> tuple[list[CapabilityCoverage], list[dict[str, Any]]]
                 "type": "verification-yaml",
                 "path": str(VERIFICATION_YAML.relative_to(PROJECT_ROOT)),
             },
-            "engine_mapping": {
-                "type": "engine-topology",
-                "path": str(ENGINE_TOPOLOGY.relative_to(PROJECT_ROOT)),
-                "engines": list(owning),
-            }
-            if owning
-            else {"type": "none"},
-            "tests": {
-                "type": "engine-topology",
-                "count": len(all_tests),
-            }
-            if all_tests
-            else {"type": "none"},
+            "engine_mapping": (
+                {
+                    "type": "engine-topology",
+                    "path": str(ENGINE_TOPOLOGY.relative_to(PROJECT_ROOT)),
+                    "engines": list(owning),
+                }
+                if owning
+                else {"type": "none"}
+            ),
+            "tests": (
+                {
+                    "type": "engine-topology",
+                    "count": len(all_tests),
+                }
+                if all_tests
+                else {"type": "none"}
+            ),
             "repositories": {
                 "type": "repository-resolution",
                 "pattern": "src/repositories/<name>.py",
@@ -645,9 +643,7 @@ def generate_change_impact_md(capabilities: list[CapabilityCoverage]) -> str:
 
     file_impacts: dict[str, dict[str, Any]] = {}
     for cap in capabilities:
-        for item in (
-            cap.routers + cap.services + cap.engines + cap.repositories
-        ):
+        for item in cap.routers + cap.services + cap.engines + cap.repositories:
             if not item.path:
                 continue
             file_impacts.setdefault(

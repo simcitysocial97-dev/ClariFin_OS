@@ -1,0 +1,39 @@
+{
+  "schema": "m9-c71-execution-sentinel/v1",
+  "recorded_at": "2026-09-28T06:50:06.529436+00:00",
+  "sample_classes": {
+    "small_engine": "cashflow_engine",
+    "medium_engine": "financial_events",
+    "large_engine": "behaviour_engine-00",
+    "function_heavy": "common_calculations",
+    "defensive_heavy": "ledger_audit_engine",
+    "classmethod_heavy": "core_domain_money",
+    "value_object": "balance_engine",
+    "unreached_concentration": "recommendation_engine"
+  },
+  "mutants_examined": 20,
+  "by_shard": [
+    {
+      "shard": "mutation_canary",
+      "mutants": 20,
+      "EXECUTED_AND_KILLED": 6,
+      "EXECUTED_AND_SURVIVED": 7,
+      "NOT_EXECUTED": 7,
+      "INVALID_MUTANT": 0,
+      "sentinel_armed": 13
+    }
+  ],
+  "totals": {
+    "EXECUTED_AND_KILLED": 6,
+    "EXECUTED_AND_SURVIVED": 7,
+    "NOT_EXECUTED": 7,
+    "INVALID_MUTANT": 0
+  },
+  "survivors_proven_executed": 7,
+  "survivors_without_execution_evidence": 0,
+  "unmeasured_mutants": 0,
+  "execution_proven_for_all_survivors": true,
+  "unexecuted_survivor_sample": [],
+  "unmeasured_sample": [],
+  "limit_per_shard": 40
+}

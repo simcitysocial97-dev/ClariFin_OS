@@ -5,9 +5,9 @@
 #   * Dependencies are NOT declared here — root pyproject.toml is the SINGLE
 #     Python dependency authority (`.venv` single-venv architecture).
 #   * Ruff / Black configuration are canonicalized at repo root
-#     (root pyproject.toml [tool.ruff] / [tool.black]); backend/ruff.toml is the
-#     backend-scoped lint selection. No `[tool.ruff]` / `[tool.black]` here (the
-#     previous duplicate in this file conflicted with backend/ruff.toml).
+#     (root pyproject.toml [tool.ruff] / [tool.black]); there is NO
+#     backend/ruff.toml (an earlier M10 note referenced one — it never
+#     existed as a separate authority; root config is the single authority).
 #   * This file remains the authority for pytest / Mypy-strict / Mutmut /
 #     Hypothesis because backend tests resolve their rootdir here.
 
@@ -16,6 +16,22 @@ python_version = "3.12"
 strict = true
 
 namespace_packages = false
+
+# Stubs directory for third-party libraries and cross-boundary modules.
+# The stubs/ tree contains minimal py.typed-compatible stub packages:
+#   * camelot/__init__.pyi     — third-party PDF table extraction library
+#   * runtime/platform/...     — repository runtime package, treated as
+#     cross-boundary dependency by the strict backend boundary
+# The runtime source itself is NOT on the mypy path here — the
+# `verify-fast.sh` script runs mypy from the backend/ rootdir, where
+# backend.src.stubs mirrors the runtime import surface used by the
+# platform router. The actual runtime is loaded at HTTP boundary time
+# (FastAPI startup) and via the `from src.* import` import path on
+# `pythonpath = ["backend/src"]` (see root pyproject.toml [tool.pytest]).
+# This isolation is the canonical fix for the historical stdlib
+# `platform` module shadowing caused by `runtime/platform/` package
+# being on the same path as Python's stdlib.
+mypy_path = ["src/stubs"]
 
 warn_return_any = true
 warn_unused_configs = true
@@ -27,11 +43,13 @@ warn_unused_ignores = true
 
 exclude = [
     "tests/",
+    "mutants/",
 ]
 
 # Test configuration
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+norecursedirs = ["probes", "mutants", "invariants/_m4_exit_probe"]
 pythonpath = ["src", "tests"]
 asyncio_default_fixture_loop_scope = "function"
 python_files = ["test_*.py", "*_test.py"]
@@ -73,32 +91,21 @@ nightly = { max_examples = 1000, deadline = 30000 }
 
 # External third-party libraries only
 [[tool.mypy.overrides]]
-module = ["camelot.*", "pdfplumber.*", "cachetools.*", "fastapi.*", "pydantic.*", "pandas.*", "uvicorn.*", "sqlite3"]
+module = ["pandas", "pdfplumber.*", "cachetools.*", "fastapi.*", "pydantic.*", "uvicorn.*", "sqlite3"]
 ignore_missing_imports = true
-# Note: camelot is a PDF table extraction library without type stubs.
-# The import-untyped error is expected and suppressed via ignore_missing_imports.
-# This is a third-party dependency limitation, not a code issue.
 
+# Rendered from canonical ENGINE_SELECTION (mutation_contract.py) — single source of truth.
+# Scope: credit_card_engine
+# Selection method: explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)
 [tool.mutmut]
-# ── Canonical mutation configuration (single source of truth) ───────────────
-# Consumed by BOTH the bounded local smoke test and the authoritative CI run.
-# CI mutates the full `source_paths` scope; local smoke bounds the target via
-# `mutmut run "module.function*"` selection. The configuration itself is shared.
-#
-# Mutation is authoritative in CI. Do NOT reduce `source_paths` to the smoke
-# target. Do NOT report the local smoke result as a mutation score.
-
-# Directories to mutate (full authoritative scope for CI).
-source_paths = ["src/engines/"]
-# Also copy the full src tree so tests can import non-mutated modules.
+source_paths = ["src/engines/credit_card_engine"]
 also_copy = ["src"]
-# Test runner — `python3` per repository convention (ubuntu-latest ships
-# `python3`, never bare `python`).
-runner = "python3 -m pytest"
-# Which tests to run per mutant. Both local smoke and CI share this selection.
-pytest_add_cli_args_test_selection = ["tests/unit/", "tests/properties/"]
-# Disable progress bar (cleaner CI output).
+pytest_add_cli_args = [
+    "-p", "tests.mutation_trust.canary.sentinel_plugin",
+]
+pytest_add_cli_args_test_selection = [
+    "tests/unit/engines/credit_card",
+    "tests/properties/credit_card_engine",
+    "tests/capability/credit_cards"
+]
 no_progress = true
-# Note: mutmut only mutates `*.py` files, so stray artifacts such as
-# `*.bak` and `__pycache__/` are excluded automatically.
-

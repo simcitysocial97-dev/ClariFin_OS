@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 
-describe('GET /api/overview contract', () => {
+describe('GET /api/v1/overview contract', () => {
   it('returns an object with required fields', async () => {
-    const response = await fetch('/api/overview')
+    const response = await fetch('/api/v1/overview')
     const data = await response.json()
 
     expect(data).toHaveProperty('total_spend')
@@ -15,7 +15,7 @@ describe('GET /api/overview contract', () => {
   })
 
   it('display fields are strings with ₹ symbol', async () => {
-    const response = await fetch('/api/overview')
+    const response = await fetch('/api/v1/overview')
     const data = await response.json()
 
     expect(data.total_spend_display).toMatch(/^₹/)

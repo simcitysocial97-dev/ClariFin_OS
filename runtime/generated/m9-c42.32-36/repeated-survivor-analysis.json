@@ -1,0 +1,156 @@
+{
+  "schema": "m9-c42.32-36-repeated-survivor-analysis/v1",
+  "generated_at": "2026-08-26T07:21:00.000000+00:00",
+  "phase": "M9-C42.35 Phase 5",
+  "repository_sha": "084359346b3b14792c5bd38e159932f6c42922fd",
+  "baseline_reference": "runtime/generated/m9-c42.32-36/baseline.json",
+  "survivor_inventory_summary": {
+    "credit_card_engine": {
+      "total": 144,
+      "class_a": 44,
+      "class_b": 99,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 1,
+      "inventory_file": "runtime/generated/m9-c42.17-credit_card_engine-survivor-inventory.json",
+      "sha_at_inventory": "d6d3624ba033a0d089bca6bbf046d46eb9739411"
+    },
+    "account_engine": {
+      "total": 20,
+      "class_a": 17,
+      "class_b": 3,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 0,
+      "inventory_file": "runtime/generated/m9-c42.17-account_engine-survivor-inventory.json",
+      "sha_at_inventory": "d6d3624ba033a0d089bca6bbf046d46eb9739411"
+    },
+    "loan_engine": {
+      "total": 308,
+      "class_a": 258,
+      "class_b": 39,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 11,
+      "inventory_file": "runtime/generated/m9-c42.17-loan_engine-survivor-inventory.json",
+      "sha_at_inventory": "d6d3624ba033a0d089bca6bbf046d46eb9739411"
+    },
+    "reconciliation_engine": {
+      "total": 0,
+      "class_a": 0,
+      "class_b": 0,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 0,
+      "inventory_file": "runtime/generated/m9-c42.17-reconciliation_engine-survivor-inventory.json",
+      "sha_at_inventory": "d6d3624ba033a0d089bca6bbf046d46eb9739411"
+    }
+  },
+  "repeated_survivor_tracking": {
+    "persistent_identity_basis": "Canonical evidence: component + capability + mutation_operator + source_location (file:function or file:line) + behavioral_hypothesis",
+    "current_identity_fields": [
+      "source_file",
+      "line",
+      "mutation_operator",
+      "original_expression",
+      "mutated_expression",
+      "classification",
+      "subclassification"
+    ],
+    "missing_identity_fields": [
+      "survivor_id (mutmut-generated)",
+      "capability",
+      "behavioral_hypothesis",
+      "classification_history",
+      "observation_count",
+      "independent_repository_changes",
+      "previous_proposals",
+      "proposal_outcomes",
+      "regression_evidence"
+    ],
+    "tracking_status": "NOT_IMPLEMENTED - No persistent survivor registry across mutation runs"
+  },
+  "distinction_analysis": {
+    "test_weakness_indicators": {
+      "class_a_survivors": "Survivors with covering_tests=0 or covering_tests that don't exercise the mutated behavior",
+      "patterns": [
+        "rounding_argument_mutation - no test checks rounding precision",
+        "comparison_operator_mutation - boundary conditions not tested",
+        "numeric_constant_mutation - default values not validated",
+        "constant_replacement_mutation - None/0/1 replacements not caught"
+      ],
+      "evidence": "44 Class-A in credit_card_engine, 17 in account_engine, 258 in loan_engine"
+    },
+    "production_behavior_indicators": {
+      "class_e_survivors": "Ambiguous/design/production-defect candidates requiring human review",
+      "credit_card_engine": 1,
+      "loan_engine": 11,
+      "account_engine": 0,
+      "patterns": [
+        "other_mutation with unknown subclassification",
+        "Mutations that may reveal design flaws or undefined behavior"
+      ]
+    },
+    "equivalent_behavior": {
+      "class_b_survivors": "Equivalent/observable-equivalent behavior - do not chase",
+      "credit_card_engine": 99,
+      "account_engine": 3,
+      "loan_engine": 39,
+      "patterns": [
+        "exception_message_string_mutation - message text not part of contract",
+        "equivalent_rounding_default",
+        "equivalent_message"
+      ]
+    }
+  },
+  "escalation_threshold": {
+    "definition": "CLASS-E ESCALATION when repeated survivor evidence meets threshold",
+    "current_threshold": "NOT_DEFINED - requires historical data accumulation",
+    "required_evidence": [
+      "persistent_survivor_id (canonical, not line-number-based)",
+      "component",
+      "capability",
+      "mutation_operator",
+      "source_location",
+      "behavioral_hypothesis",
+      "classification_history (list of observations with timestamps and SHAs)",
+      "observation_count (number of independent mutation runs observing this survivor)",
+      "independent_change_count (repository SHAs where survivor persisted)",
+      "previous_proposals (list of proposal_ids and outcomes)",
+      "proposal_outcomes (accepted/rejected/validation_results)",
+      "regression_evidence (any regressions from strengthening attempts)"
+    ],
+    "proposed_threshold_conditions": [
+      "observation_count >= 3 independent mutation runs",
+      "independent_change_count >= 2 distinct repository states",
+      "previous_proposals >= 1 attempted strengthening",
+      "proposal_outcomes all rejected or validation failed",
+      "no regression_evidence from strengthening"
+    ],
+    "escalation_output": {
+      "evidence_summary": "Aggregated survivor evidence across observations",
+      "repeated_observation_count": "Integer count",
+      "independent_change_count": "Integer count of distinct SHAs",
+      "previous_dispositions": "List of proposal outcomes",
+      "why_test_strengthening_insufficient": "Analysis of why tests cannot discriminate",
+      "suspected_production_behavior": "Hypothesis about actual production behavior",
+      "recommended_human_investigation": "Specific investigation steps",
+      "certification_impact": "How this affects certification decisions"
+    }
+  },
+  "survivor_classification_pipeline": {
+    "current": "C42.31 strengthening.classify_survivor() -> A/B/C/D/E based on patterns",
+    "gap": "No persistence across runs; each mutation run re-classifies from scratch",
+    "needed": "SurvivorRegistry that persists survivor identity across runs and accumulates history"
+  },
+  "recommendations": [
+    "Create SurvivorRegistry in runtime/foundation/verification/ that persists to runtime/generated/mutation-registry/",
+    "Assign canonical survivor_id based on (component, mutation_operator, source_location, behavioral_hypothesis hash)",
+    "Track observation history: each mutation run updates registry with current SHA, classification, counts",
+    "Implement escalation detection in DiagnosticForensicAgent._answer_q8()",
+    "Add CLASS-E ESCALATION to DiagnosticReport.q8_uncertainties with gates_certification=true",
+    "Create regression scenarios proving escalation triggers correctly"
+  ],
+  "status": "ANALYSIS_COMPLETE - Survivor inventories exist but no persistent cross-run tracking; escalation threshold not defined",
+  "next_action": "Implement SurvivorRegistry with canonical identity; integrate with Diagnostic Agent for escalation detection"
+}

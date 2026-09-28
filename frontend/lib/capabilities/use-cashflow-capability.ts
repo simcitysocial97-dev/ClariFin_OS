@@ -13,6 +13,7 @@ import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { CashflowViewModel } from '@/types/cashflow-view-model';
 import { cashflowMapper } from '@/lib/mappers/cashflow-mapper';
+import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
 
 // Query key for React Query
 const CASHFLOW_QUERY_KEY = 'cashflow';
@@ -113,17 +114,13 @@ export function useCashflowCapability(): CashflowCapabilityReturn {
   } = useQuery<CashflowViewModel | null>({
     queryKey: [CASHFLOW_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const response = await fetch('/api/v1/cashflow');
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-      const raw = await response.json();
+      const raw = await apiFetchJson('/api/v1/workspaces/cashflow') as any;
       return cashflowMapper.mapCashflowDTO(raw);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (React Query v5 uses gcTime instead of cacheTime)
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retry: transientRetryPolicy,
+    retryDelay: 1000,
   });
 
   // Loading timeout effect - show message after 10 seconds

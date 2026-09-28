@@ -1,0 +1,60 @@
+{
+  "schema": "m9-phase-baseline/v1",
+  "phase": "M9-C42.29-31",
+  "frozen_at": "2026-08-26T05:23:59.550961+00:00",
+  "repository_sha": "084359346b3b14792c5bd38e159932f6c42922fd",
+  "prior_certification": {
+    "c42.27": "CERTIFIED \u2014 Verification Graph + Planner Hardening (24/24 gates)",
+    "c42.28": "CERTIFIED \u2014 Targeted Verification Execution (27/27 gates)"
+  },
+  "module_fingerprints": {
+    "graph_model": "4bd704594b34620778383cf6c4762f2553ed21d8a95d8fe020c2552509e3c45d",
+    "evidence_reuse": "03d5939893079e285b4533d6a4fb3a7caceb0f2c42a9ab3fe7057af6a6e4ad81",
+    "evidence_planner": "18245fbb90306e1e07aa153c5e026dcbe886f3e767eac671a0ae6a50c9985edb",
+    "correlation": "25af9ddf0b4856ebd14ab51f5a8260d328efccd728c4a2eb549fa81eb8b5a8a5",
+    "executor_pipeline": "5576411d77a27208798261240c755c00a1477180e36ed4a6e98b6dc1d5d0958a",
+    "mutation_runner": "1f5dc9c71a4c6a0dd353d347a3c00d3dc4fa4110bb340c217c6576e5759ae4d5",
+    "mutation_contract": "caf44e6ee563d7817d0212caa703c4a26c35bc12c98438179bba9d42ed574d91",
+    "mutation_inventory": "fa4dd0c2dc3304146faab330da2fe1d4afa7f4b4d108ac35863dce4417090780",
+    "evidence_contract": "29336dc1c7e6397b2ad1aae2fba4e46449f603cc9a7b3542883bdb1e4b96d509",
+    "reconciliation": "964574b11508d9e268a64acf343246e505ec81744932e6d5014d165eaca210ed"
+  },
+  "artifact_fingerprints": {
+    "c42.27-certification": "69e145c758403f68e730d7663c670159b442c46d1f727028ab10f5fdb1e77dc5",
+    "c42.27-baseline": "dcb568a55faef9a3311553bf1f97b5cb2609990d1dc7d9948099245530fd6bc0",
+    "c42.27-graph-inventory": "38b5ed6514dc00f73cec9bafd350eee858a387ccd5f80b3670ae71c6ff057dd5",
+    "c42.27-scenarios": "003ff91539acc25bab101c17eded0ae18ae747d3fca05f238f4250202be1a481",
+    "c42.28-baseline": "2522767cd44472d9adcc0566964a2916316b92218ba8db4607be4266c5b5f93a",
+    "c42.28-certification": "51919220b549eb21b8edae4a874fee483694150d3d7412d40051aac35df939d9",
+    "c42.28-scenarios": "ca2a42806b5b017d71e1cb10fa84b04f2d39eaccfac68ad6a09a4e5ac5b781e7",
+    "pop-12-c42.24-B": "a16449f7bf04ab25ca014cb22e842aaa34563fcb99ceeb47e4c1e51bed601646",
+    "pop-txn-c42.25": "cdf920e8e6d427c749aad1eef0316fa627e093c947a2326604b8b6d8157a1d5f",
+    "pop-14-c42.26": "7b5204c67061003446655c12c83d9421f526530625a555380c08797212445000",
+    "c42.26-derived-aggregate": "60844453d631117a9007e060ca0fc1d893880e31d6ad6d7cadeb9b8d0c660855"
+  },
+  "verification_layer_fingerprint": "aaa8d4f957a0f0351bbe015e50872a431c636d6edbe56a3200a52bfa16469a01",
+  "population_snapshots_fingerprint": "1629d86f99db605c9328f0fe7d06834596f6dc5bddebe8e0d582fbaafe93931c",
+  "cli_command_surface_fingerprint": "a009d092b7aae8c0ab2a6711f360cb3ec84529f161ec0686f67c5cf307fccb73",
+  "ci_workflow_inventory": {
+    "api-contracts.yml": "d53700951e3e06a843861796f03355332d65187aea73eda5bf73a30f3f83eb40",
+    "backend-verify.yml": "d5ec1d289a5708ca95a2eea34291a55a4c2d04342303e6f93508a58d2465ee6a",
+    "dependency-update.yml": "d509c64c28744c78cf4124b10a48798c77de05bf295dd05da4fd82c7533a4368",
+    "frontend-verify.yml": "96d068d717c23aae997b24d64f692e4d2e0dc069f49a668c201167533fdf0c38",
+    "golden.yml": "6e25db91a5cb59667b4f8f819c025c29ebf074653f14666cf605c7ffc3c446ae",
+    "m9-forensic-diagnostic-lab.yml": "50f87600a8f5e84416a6ba744c69ccaa3158fa3aa760d7fdf1a1b382d60d7000",
+    "mutation.yml": "c0e7ab4b06940776a517435e50c283f9daf778b10ad526df0af5471bb60d9b14",
+    "playwright.yml": "0728641be39bd23bcb6074ab32b2763233a737f5e32e19ef42ae24e1aac0afda",
+    "quality.yml": "8af8659897e67f9f00a3ce9a77c60adc725f5ae7d57bf5fb6983a8e24c2801d8",
+    "release.yml": "9859cee213b4a17997bb0579d5201f5c7a5a612ebe92eab643613584b3ac970b",
+    "security-codeql.yml": "29b3a1b248fd408a3db0ecdc51dfdfafebbbbd59967a0417e1633ce5f75bb47d",
+    "verification-reconcile.yml": "10015001aaf471d861b910fcb20dc3a7eb24c8d944f13bbe124ebe6085f14836",
+    "verification-runtime.yml": "241fc4924a227bba8c6c388feeb38696a7271f4ffa556c2d28e1c9d50bd91639"
+  },
+  "governing_constraints": [
+    "Targeted measurement remains the default.",
+    "A full campaign requires a formal trigger (C42.26 policy).",
+    "A test addition alone never justifies a full campaign.",
+    "Authoritative/targeted/reused/derived evidence must remain distinguishable.",
+    "No production business logic may change merely to improve metrics."
+  ]
+}

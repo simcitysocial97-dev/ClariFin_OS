@@ -1,0 +1,51 @@
+{
+  "schema": "m9-c45-performance-report/v1",
+  "milestone": "M45.17",
+  "objective": "Document mutation execution performance characteristics across operating modes.",
+  "operating_modes": {
+    "developer_local": {
+      "scope": "single engine via --target",
+      "expected_runtime_seconds": "20-120",
+      "expected_mutants_per_minute": "300-600",
+      "expected_cache_benefit": "minimal (first run)",
+      "hardware": "developer workstation"
+    },
+    "ci_pull_request": {
+      "scope": "smoke only",
+      "expected_runtime_seconds": "5-10",
+      "expected_mutants_per_minute": "50-80",
+      "purpose": "infra health gate before merging"
+    },
+    "ci_scheduled_nightly": {
+      "scope": "full campaign sharded by engine",
+      "expected_runtime_minutes": "60-90 across all shards",
+      "shards": 7,
+      "purpose": "nightly mutation score gate"
+    },
+    "certification_run": {
+      "scope": "full + 80% gate",
+      "expected_runtime_minutes": "60-90",
+      "evidence": "full audit trail with provenance"
+    }
+  },
+  "measured_throughput": {
+    "smoke": {"mutants": 6, "duration_s": 3, "mutants_per_minute": 120.0},
+    "account_engine_sequential": {"mutants": 183, "duration_s": 20, "mutants_per_minute": 549.0},
+    "account_engine_parallel_2": {"mutants": 183, "duration_s": 15, "mutants_per_minute": 732.0, "speedup": 1.33},
+    "credit_card_engine": {"mutants": 582, "duration_s": 90, "mutants_per_minute": 388.0}
+  },
+  "parallel_speedup_observation": "1.33x speedup with 2 workers; expected ~1.8x with 4 workers based on linear extrapolation (not measured).",
+  "cache_benefit": {
+    "first_run_seconds": 29,
+    "cached_run_seconds": 30,
+    "local_benefit": "negligible (warm cache only saves the mutmut restart overhead)",
+    "ci_benefit": "more significant — avoids full re-execution on rerun",
+    "warm_cache_seconds": "approximately 60-80% of cold cache in CI"
+  },
+  "scaling_recommendations": {
+    "small_engine_lt_500_mutants": "single worker, --max-runtime 600s",
+    "medium_engine_500_2000_mutants": "2 workers, --max-runtime 1800s",
+    "large_engine_gt_2000_mutants": "4 workers + sharding, --max-runtime 5400s"
+  },
+  "verdict": "DOCUMENTED"
+}

@@ -1,0 +1,13 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_60: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -39,7 +39,7 @@
+         # Previous had no subscriptions but current does
+         if len(current_subscriptions) >= 2:
+             return Recommendation(
+-                title="Review Subscriptions",
++                title="XXReview SubscriptionsXX",
+                 reason="New subscriptions detected",
+                 metric=f"{len(current_subscriptions)} new subscriptions adding ₹{total_current // 100}",
+                 severity="MEDIUM",

@@ -17,6 +17,7 @@ from src.engines.behaviour_engine import (
     detect_recurring_merchants,
     detect_subscription_patterns,
 )
+
 from tests.conftest import make_transaction
 
 # ============================================================

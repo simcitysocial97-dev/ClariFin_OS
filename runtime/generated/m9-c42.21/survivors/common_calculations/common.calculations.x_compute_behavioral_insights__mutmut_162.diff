@@ -1,0 +1,13 @@
+# status: survived
+# common.calculations.x_compute_behavioral_insights__mutmut_162: survived
+--- src/common/calculations.py
++++ src/common/calculations.py
+@@ -67,7 +67,7 @@
+                 pct_change_total = (
+                     (this_month_total - avg_other_total) / avg_other_total
+                 ) * 100
+-                if pct_change_total > 15:
++                if pct_change_total > 16:
+                     insights.append(
+                         {
+                             "title": "Spending Trending Up",

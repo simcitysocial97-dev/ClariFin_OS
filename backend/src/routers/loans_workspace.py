@@ -12,7 +12,7 @@ from fastapi import APIRouter, Query
 from src.services.loans_workspace_service import LoansWorkspaceService
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/api/v1", tags=["loans-workspace"])
+router = APIRouter(prefix="/api/v1/workspaces", tags=["loans-workspace"])
 
 
 def _timed_log(

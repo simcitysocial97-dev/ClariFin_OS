@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.cashflow.x_compute_expense_stability__mutmut_2: survived
+--- src/engines/behaviour_engine/cashflow.py
++++ src/engines/behaviour_engine/cashflow.py
+@@ -15,7 +15,7 @@
+         Decimal stability score between 0 and 1.
+         Returns Decimal('1') for empty/single month (assumed stable).
+     """
+-    if len(monthly_expenses_paise) < 2:
++    if len(monthly_expenses_paise) < 3:
+         return Decimal("1")
+ 
+     cv = _coefficient_of_variation(monthly_expenses_paise)

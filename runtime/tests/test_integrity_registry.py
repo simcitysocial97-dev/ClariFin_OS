@@ -6,14 +6,13 @@ Deterministic. No network. No git mutation.
 
 from __future__ import annotations
 
-
-from runtime.foundation.integrity.registry import (
-    IntegrityRule,
-    get_constitution,
-)
 from runtime.foundation.integrity.models import (
     ViolationCategory,
     ViolationSeverity,
+)
+from runtime.foundation.integrity.registry import (
+    IntegrityRule,
+    get_constitution,
 )
 
 
@@ -34,7 +33,7 @@ class TestConstitutionalRegistry:
         ids = [r.id for r in registry.all_rules()]
         # Rules are grouped by category (structural, ownership, evolution)
         # but all 28 IDs from ARCH-001 to ARCH-028 must be present
-        expected = set(f"ARCH-{i:03d}" for i in range(1, 29))
+        expected = {f"ARCH-{i:03d}" for i in range(1, 29)}
         assert set(ids) == expected
         assert len(ids) == 28
 
@@ -93,7 +92,9 @@ class TestConstitutionalRegistry:
 
     def test_critical_rules_exist(self) -> None:
         registry = get_constitution()
-        critical = [r for r in registry.all_rules() if r.severity == ViolationSeverity.CRITICAL]
+        critical = [
+            r for r in registry.all_rules() if r.severity == ViolationSeverity.CRITICAL
+        ]
         assert len(critical) >= 1
         assert any(r.id == "ARCH-009" for r in critical)
 
@@ -107,6 +108,6 @@ class TestConstitutionalRegistry:
 
         registry = get_constitution()
         for rule in registry.all_rules():
-            assert rule.id in _RULE_CHECKS, (
-                f"Missing check function for {rule.id}: {rule.check}"
-            )
+            assert (
+                rule.id in _RULE_CHECKS
+            ), f"Missing check function for {rule.id}: {rule.check}"

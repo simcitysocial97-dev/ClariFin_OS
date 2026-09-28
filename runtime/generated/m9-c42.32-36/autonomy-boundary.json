@@ -1,0 +1,138 @@
+{
+  "schema": "m9-c42.32-36-autonomy-boundary/v1",
+  "generated_at": "2026-08-26T10:00:00.000000+00:00",
+  "phase": "M9-C42.32-36 Phase 10",
+  "repository_sha": "084359346b3b14792c5bd38e159932f6c42922fd",
+  "principle": "The Diagnostic & Forensic Agent is a read-observe-decide-diagnose-propose system. It NEVER modifies production code or silently expands scope. Human authorization is required for any change to production functionality, test files beyond proposal skeletons, or verification policy.",
+  "allowed_without_human_authorization": [
+    {
+      "capability": "observe repository state",
+      "mechanism": "evidence_planner.plan() / git diff / fingerprint collection",
+      "evidence": "C42.27 plan generation"
+    },
+    {
+      "capability": "calculate impact",
+      "mechanism": "graph traversal + ENGINE_TO_CAPABILITY + invalidation rules",
+      "evidence": "C42.27/C42.28 invalidation + reuse"
+    },
+    {
+      "capability": "invalidate evidence",
+      "mechanism": "evidence_reuse.aggregate_invalidation() under C42.27 rule set",
+      "evidence": "C42.27 INVALIDATION_RULES"
+    },
+    {
+      "capability": "reuse evidence",
+      "mechanism": "reconcile() -> ReusedMeasurement",
+      "evidence": "C42.28 evidence reuse"
+    },
+    {
+      "capability": "plan verification",
+      "mechanism": "EvidenceAwarePlanner (C42.27)",
+      "evidence": "planner is the single authority; agent never invents scope"
+    },
+    {
+      "capability": "execute approved verification classes",
+      "mechanism": "executor_pipeline.execute_mutation_task() (targeted only)",
+      "evidence": "C42.28 targeted execution; scope-safe"
+    },
+    {
+      "capability": "capture evidence",
+      "mechanism": "ExecutionEvidence / ComponentMeasurement construction",
+      "evidence": "C42.28 evidence capture"
+    },
+    {
+      "capability": "correlate evidence",
+      "mechanism": "ci_evidence.semantic_equivalence() + correlation.py",
+      "evidence": "C42.29 local/CI correlation"
+    },
+    {
+      "capability": "classify failures",
+      "mechanism": "FailureKind taxonomy (closed) + classify_ci_failure()",
+      "evidence": "C42.28/C42.29 closed taxonomy"
+    },
+    {
+      "capability": "diagnose weaknesses",
+      "mechanism": "DiagnosticForensicAgent q7/q8",
+      "evidence": "C42.30 nine questions"
+    },
+    {
+      "capability": "generate strengthening proposals",
+      "mechanism": "strengthening.generate_proposal() (skeleton only)",
+      "evidence": "C42.31; proposals are test skeletons, not autonomous edits"
+    },
+    {
+      "capability": "perform bounded targeted validation where formally permitted",
+      "mechanism": "strengthening.targeted_revalidation() via C42.28 bridge (--stub or controlled loop)",
+      "evidence": "C42.31; always used_full_campaign=false"
+    },
+    {
+      "capability": "produce certification reports",
+      "mechanism": "DiagnosticForensicAgent q9 verdict + Explainability",
+      "evidence": "C42.30 diagnostic report"
+    }
+  ],
+  "requires_explicit_human_authorization": [
+    {
+      "prohibited": "production-code modification",
+      "enforcement": "strengthening generator never writes production source; evaluate_auto_approval_eligibility never sets production approval",
+      "evidence": "strengthening.py: proposals carry regression_risk and acceptance_criteria; no production path"
+    },
+    {
+      "prohibited": "deletion of functionality",
+      "enforcement": "Global Constraint #2 — no deletion of production functionality",
+      "evidence": "This phase created zero production deletions"
+    },
+    {
+      "prohibited": "automatic test approval",
+      "enforcement": "evaluate_auto_approval_eligibility returns approved=False for ALL proposals (boundary never auto-approves)",
+      "evidence": "C42.31 TestAutomationBoundary::test_approval_never_auto_executes"
+    },
+    {
+      "prohibited": "arbitrary scope expansion",
+      "enforcement": "planner is the single source of scope; q4 answers strictly from planner",
+      "evidence": "C42.30 _answer_q4 authority=EvidenceAwarePlanner"
+    },
+    {
+      "prohibited": "arbitrary full mutation campaigns",
+      "enforcement": "gate_full_campaign() rejects non-formal triggers; NOT_TRIGGERS includes test_addition/test_strengthening/score_improvement_desire",
+      "evidence": "C42.31 TestCampaignGate (5 tests)"
+    },
+    {
+      "prohibited": "suppressing failures",
+      "enforcement": "q9 precedence: verification_failure > drift_blocker > scope_failure > ...; failures are first-class",
+      "evidence": "C42.30 TestVerdicts"
+    },
+    {
+      "prohibited": "rewriting certification evidence",
+      "enforcement": "forensic record stages are immutable once written; validate_forensic_record detects missing/silent stages",
+      "evidence": "C42.30 RecordValidation"
+    },
+    {
+      "prohibited": "changing verification policy",
+      "enforcement": "INVALIDATION_RULES and FULL_CAMPAIGN_TRIGGERS are module constants; agent reads them, never mutates",
+      "evidence": "evidence_reuse.py / strengthening.py"
+    },
+    {
+      "prohibited": "changing population membership",
+      "enforcement": "C42_26_COMPONENTS / c42_26_population() are constants; agent does not add/remove",
+      "evidence": "evidence_reuse.py population snapshot"
+    },
+    {
+      "prohibited": "changing capability mappings without review",
+      "enforcement": "ENGINE_TO_CAPABILITY is an enumerated constant; discovered drift is a BLOCKER, not a silent remap",
+      "evidence": "C42.24 discovery-drift regression protection (G12)"
+    }
+  ],
+  "proposal_approval_boundary": {
+    "class_a": "bounded proposal generated; requires human authorship of test body (skeleton only)",
+    "class_b_c_d_e": "explicit refusal; no proposal emitted",
+    "auto_approval": "NEVER — ApprovalDecision.approved is always False at the boundary",
+    "human_oversight": "proposed_test is a skeleton; human must fill body before strengthen-validate runs real measurement"
+  },
+  "validation": {
+    "test_evidence": "C42.31 TestAutomationBoundary (2 tests pass): approval never auto-executes; eligible conditions require human",
+    "live_evidence": "real-strengthening-analysis.json: 1 Class-A proposal skeleton generated, 1 Class-B refusal; no production code touched; --stub revalidation accepted with used_full_campaign=false"
+  },
+  "status": "BOUNDARY_ARTIFACT_COMPLETE",
+  "determination": "The agent's autonomy is correctly bounded. All prohibited actions are enforced by code (no production path, no auto-approval, gated campaigns, immutable records, constant policy). No new autonomous capability was introduced in C42.32-36."
+}

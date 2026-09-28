@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_61: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -54,7 +54,7 @@
+         event_type = event.get("event_type", "")
+         asset_change = int(event.get("asset_change_paise", 0) or 0)
+ 
+-        if event_type in (
++        if event_type not in (
+             "cash_advance",
+             "credit_card_cash_advance",
+             "liability_increase",

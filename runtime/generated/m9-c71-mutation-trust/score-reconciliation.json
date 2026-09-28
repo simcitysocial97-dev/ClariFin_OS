@@ -1,0 +1,43 @@
+{
+  "raw": {
+    "population": 16904,
+    "killed": 13534,
+    "survived": 3359,
+    "score": 80.1
+  },
+  "certified": {
+    "valid_population": 16886,
+    "killed": 13534,
+    "proven_equivalent": 18,
+    "proven_unobservable": 0,
+    "proven_not_reached": 0,
+    "proven_defensive": 0,
+    "remaining_real_survivors": 3541,
+    "effective_score": 80.1
+  },
+  "threshold": 80,
+  "raw_gate": "PASS",
+  "effective_gate": "PASS",
+  "denominator_adjustments": [
+    {
+      "adjustment": "remove structurally-justified survivors from the CERTIFIED denominator only",
+      "removed": 18,
+      "components": {
+        "EQUIVALENT": 18,
+        "UNOBSERVABLE_BY_CONTRACT": 0,
+        "NOT_REACHED": 0,
+        "DEFENSIVE_PATH": 0,
+        "MUTATION_INVALID+TOOLING_DEFECT": 0
+      },
+      "justification": "each removed survivor carries independent evidence that it is not a test-quality failure; the RAW score is unchanged and remains the immutable measurement"
+    },
+    {
+      "adjustment": "genuine survivors are RETAINED in the certified denominator",
+      "removed": 0,
+      "components": {
+        "REAL_TEST_GAP+HARNESS+CONTRACT": 3541
+      },
+      "justification": "a genuine test gap is a real shortfall; removing it would be the score-chasing C71 forbids"
+    }
+  ]
+}

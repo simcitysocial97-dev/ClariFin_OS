@@ -235,18 +235,14 @@ export const test = base.extend<TestFixtures>({
   // Wait for page to be fully ready
   waitForPageReady: async ({}, use) => {
     const waitForPageReady = async (page: Page) => {
-      // Wait for network to be idle
-      await page.waitForLoadState('networkidle');
+      // Wait for DOM content loaded (deterministic, no networkidle race)
+      await page.waitForLoadState('domcontentloaded');
       
       // Wait for React to hydrate
       await page.waitForFunction(() => {
-        // Check if React has finished hydrating
         const root = document.getElementById('__next') || document.body;
         return root && root.children.length > 0;
       }, { timeout: 10000 });
-      
-      // Additional wait for any async rendering
-      await page.waitForTimeout(500);
     };
 
     await use(waitForPageReady);

@@ -1,0 +1,13 @@
+# status: survived
+# engines.loan_engine.foreclosure.x_compute_prepayment_breakup__mutmut_34: survived
+--- src/engines/loan_engine/foreclosure.py
++++ src/engines/loan_engine/foreclosure.py
+@@ -19,7 +19,7 @@
+         return {
+             "principal_remaining_paise": max(0, outstanding_paise),
+             "accrued_interest_paise": 0,
+-            "penalty_paise": 0,
++            "penalty_paise": 1,
+             "total_foreclosure_paise": max(0, outstanding_paise),
+         }
+ 

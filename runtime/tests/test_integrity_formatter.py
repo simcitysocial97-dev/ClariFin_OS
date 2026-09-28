@@ -26,7 +26,9 @@ def make_report(
     return IntegrityReport(
         timestamp="2026-08-05T00:00:00+00:00",
         rules_evaluated=rules_evaluated,
-        rules_passed=rules_evaluated - len(violations) if violations else rules_evaluated,
+        rules_passed=(
+            rules_evaluated - len(violations) if violations else rules_evaluated
+        ),
         rules_failed=len(violations) if violations else 0,
         violations=tuple(violations or []),
         files_scanned=files_scanned,
@@ -34,11 +36,21 @@ def make_report(
         graph_nodes=100,
         graph_edges=200,
         scan_errors=(),
-        critical_count=sum(1 for v in (violations or []) if v.severity == ViolationSeverity.CRITICAL),
-        high_count=sum(1 for v in (violations or []) if v.severity == ViolationSeverity.HIGH),
-        medium_count=sum(1 for v in (violations or []) if v.severity == ViolationSeverity.MEDIUM),
-        low_count=sum(1 for v in (violations or []) if v.severity == ViolationSeverity.LOW),
-        info_count=sum(1 for v in (violations or []) if v.severity == ViolationSeverity.INFO),
+        critical_count=sum(
+            1 for v in (violations or []) if v.severity == ViolationSeverity.CRITICAL
+        ),
+        high_count=sum(
+            1 for v in (violations or []) if v.severity == ViolationSeverity.HIGH
+        ),
+        medium_count=sum(
+            1 for v in (violations or []) if v.severity == ViolationSeverity.MEDIUM
+        ),
+        low_count=sum(
+            1 for v in (violations or []) if v.severity == ViolationSeverity.LOW
+        ),
+        info_count=sum(
+            1 for v in (violations or []) if v.severity == ViolationSeverity.INFO
+        ),
     )
 
 

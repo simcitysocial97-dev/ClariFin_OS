@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_detect_rollover_scenarios__mutmut_39: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -30,7 +30,7 @@
+         # Look for advance events that might be rollovers
+         if event_type in (
+             "credit_card_cash_advance",
+-            "liability_increase",
++            "LIABILITY_INCREASE",
+             "cash_advance",
+         ):
+             if event.get("lifecycle_state") != "open":

@@ -1,4 +1,5 @@
 """Generate verification plan from git diff."""
+
 import os
 import subprocess
 import sys

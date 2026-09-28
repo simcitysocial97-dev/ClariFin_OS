@@ -19,13 +19,13 @@ Example::
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 from runtime.foundation.repository.graph.graph_service import RepositoryGraphService
 from runtime.foundation.repository.graph.schema import (
-    GraphNode,
-    GraphEdge,
     OWNERSHIP_CLASSES,
+    GraphEdge,
+    GraphNode,
 )
 
 
@@ -115,9 +115,8 @@ class RepositoryIndex:
             for e in self._outgoing_edges(cap_node["id"])
             if e["relationship"] == "implements"
             and e["target"].startswith("module:")
-            and self._find_node(e["target"]) is not None
-            and self._find_node(e["target"])["properties"].get("module_type")
-            == "router"
+            and (node := self._find_node(e["target"])) is not None
+            and node["properties"].get("module_type") == "router"
         ]
         routers = [self._find_node(e["target"]) for e in router_edges]
         routers = [r for r in routers if r is not None]
@@ -128,9 +127,8 @@ class RepositoryIndex:
             for e in self._outgoing_edges(cap_node["id"])
             if e["relationship"] == "implements"
             and e["target"].startswith("module:")
-            and self._find_node(e["target"]) is not None
-            and self._find_node(e["target"])["properties"].get("module_type")
-            == "service"
+            and (node := self._find_node(e["target"])) is not None
+            and node["properties"].get("module_type") == "service"
         ]
         services = [self._find_node(e["target"]) for e in service_edges]
         services = [s for s in services if s is not None]
@@ -141,9 +139,8 @@ class RepositoryIndex:
             for e in self._outgoing_edges(cap_node["id"])
             if e["relationship"] == "implements"
             and e["target"].startswith("module:")
-            and self._find_node(e["target"]) is not None
-            and self._find_node(e["target"])["properties"].get("module_type")
-            == "repository"
+            and (node := self._find_node(e["target"])) is not None
+            and node["properties"].get("module_type") == "repository"
         ]
         repositories = [self._find_node(e["target"]) for e in repo_edges]
         repositories = [r for r in repositories if r is not None]
@@ -154,8 +151,11 @@ class RepositoryIndex:
             for e in self._outgoing_edges(cap_node["id"])
             if e["relationship"] == "implements" and e["target"].startswith("endpoint:")
         ]
-        endpoints = [self._find_node(e["target"]) for e in endpoint_edges]
-        endpoints = [ep for ep in endpoints if ep is not None]
+        endpoints: list[dict[str, Any]] = []
+        for e in endpoint_edges:
+            ep = self._find_node(e["target"])
+            if ep is not None:
+                endpoints.append(ep)
 
         # Tests
         test_edges = [
@@ -201,7 +201,6 @@ class RepositoryIndex:
         # Frontend routes that consume this capability's endpoints
         route_edges: list[dict] = []
         for ep in endpoints:
-            ep["id"]
             consumers = self.find_frontend_consumers_of_endpoint(
                 ep["properties"].get("path", "")
             )
@@ -356,7 +355,7 @@ class RepositoryIndex:
                                 ),
                                 "api_client_path": client_func_obj["path"],
                                 "endpoint": endpoint_path,
-                                "method": ep_obj["properties"].get("method", ""),
+                                "method": ep_obj.properties.get("method", ""),
                             }
                         )
 
@@ -404,7 +403,7 @@ class RepositoryIndex:
         gaps = self._get_gaps_data()
         return gaps.get("missing_dependencies", [])
 
-    def _get_gaps_data(self) -> Dict[str, Any]:
+    def _get_gaps_data(self) -> dict[str, Any]:
         """Return gap data from the underlying graph service."""
         service = self._ensure_service()
         return service.get_gaps() or {}  # Ensure dict is returned
@@ -459,11 +458,11 @@ class RepositoryIndex:
             for e in inc_edges:
                 edges_list.append(e.to_dict())
 
-        for e in edges_list:
-            if e.get("relationship") == "verifies" and e.get("source").startswith(
-                "capability:"
-            ):
-                verified_cap_ids.add(e["source"])
+        for e_dict in edges_list:
+            if e_dict.get("relationship") == "verifies" and e_dict.get(
+                "source", ""
+            ).startswith("capability:"):
+                verified_cap_ids.add(e_dict["source"])
 
         result = []
         for node in service.get_nodes(node_type="capability"):
@@ -505,7 +504,7 @@ class RepositoryIndex:
 
     # -- Semantic Query Improvements ---------------------------------------
 
-    def why(self, path: str) -> Dict[str, Any]:
+    def why(self, path: str) -> dict[str, Any]:
         """Explain all relationships involving a given node/file path."""
         node = self._find_node_by_path(path)
         if not node:
@@ -535,15 +534,15 @@ class RepositoryIndex:
             ],
         }
 
-    def impact(self, path: str, max_depth: int = 8) -> Dict[str, Any]:
+    def impact(self, path: str, max_depth: int = 8) -> dict[str, Any]:
         """Compute impact of changes to a file using ImpactAnalyzer."""
-        from runtime.foundation.repository.impact import (
+        from runtime.foundation.repository.analysis.impact import (
             compute_impact,
         )  # avoid circular import
 
         return compute_impact(path, max_depth=max_depth)
 
-    def trace(self, node_id: str, max_depth: int = 6) -> List[List[Dict[str, Any]]]:
+    def trace(self, node_id: str, max_depth: int = 6) -> list[list[dict[str, Any]]]:
         """Return all paths starting from a node up to max_depth.
 
         Uses BFS to enumerate simple paths from the given node identifier.
@@ -554,7 +553,7 @@ class RepositoryIndex:
             return []
 
         start_node = start_node_obj.to_dict()
-        results: List[List[Dict[str, Any]]] = []
+        results: list[list[dict[str, Any]]] = []
         stack = [(start_node["id"], [start_node])]  # (current_id, path_of_dicts)
 
         while stack:
@@ -579,9 +578,9 @@ class RepositoryIndex:
 
         return results
 
-    def health(self) -> Dict[str, Any]:
+    def health(self) -> dict[str, Any]:
         """Get comprehensive repository health metrics."""
-        from runtime.foundation.repository.metrics import (
+        from runtime.foundation.repository.analysis.metrics import (
             calculate_metrics as calc_metrics,
         )
         from runtime.foundation.repository.graph.graph_service import load_graph_service
@@ -593,10 +592,10 @@ class RepositoryIndex:
         except Exception as e:
             return {"error": f"Could not compute health metrics: {str(e)}"}
 
-    def search(self, text: str) -> Dict[str, Any]:
+    def search(self, text: str) -> dict[str, Any]:
         """Search across multiple entity types for matching text."""
         text_lower = text.lower()
-        results: Dict[str, List[Dict[str, Any]]] = {}
+        results: dict[str, list[dict[str, Any]]] = {}
 
         def should_match(n: GraphNode) -> bool:
             name = n.name.lower()

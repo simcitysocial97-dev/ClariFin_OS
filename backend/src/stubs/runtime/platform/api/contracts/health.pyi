@@ -1,0 +1,9 @@
+from __future__ import annotations
+
+from pydantic import BaseModel
+
+HEALTH_KIND: str
+HEALTH_SNAPSHOT_KIND: str
+class DomainHealth(BaseModel): ...
+class HealthSnapshotData(BaseModel): ...
+class HealthSnapshotEnvelope(BaseModel): ...

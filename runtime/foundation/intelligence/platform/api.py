@@ -76,7 +76,7 @@ def _collect_default() -> list[str]:
 
     if not _is_git_available():
         return []
-    return _collect_changed_files()
+    return _collect_changed_files().files
 
 
 def _files(changed_files: list[str] | None) -> list[str]:
@@ -88,9 +88,7 @@ def _files(changed_files: list[str] | None) -> list[str]:
 # ---------------------------------------------------------------------------
 
 
-def resolve_entity(
-    path: str, resolver: EntityResolver | None = None
-) -> dict[str, Any]:
+def resolve_entity(path: str, resolver: EntityResolver | None = None) -> dict[str, Any]:
     res = resolver or get_resolver()
     refs = res.classify_path(path)
     owner = res.owning_engine(path)

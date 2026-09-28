@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_habit_stability_score__mutmut_192: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -84,7 +84,7 @@
+     habit_stability = cv_score * 0.40 + recurring_score * 0.30 + rhythm_score * 0.30
+ 
+     return {
+-        "score": round(habit_stability, 4),
++        "score": round(habit_stability, None),
+         "category_cv": round(avg_category_cv, 4),
+         "recurring_count": recurring_count,
+         "rhythm_score": round(rhythm_score, 4),

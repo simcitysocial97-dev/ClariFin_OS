@@ -1,0 +1,11 @@
+# status: survived
+# engines.credit_card_engine.billing.x_compute_due_date__mutmut_4: survived
+--- src/engines/credit_card_engine/billing.py
++++ src/engines/credit_card_engine/billing.py
+@@ -12,5 +12,5 @@
+     INVARIANT 4: All dates are ISO 8601 compatible.
+     """
+     if due_day_offset < 0:
+-        raise ValueError("due_day_offset must be non-negative")
++        raise ValueError("XXdue_day_offset must be non-negativeXX")
+     return statement_date + timedelta(days=due_day_offset)

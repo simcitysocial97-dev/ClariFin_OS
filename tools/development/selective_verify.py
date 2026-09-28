@@ -113,7 +113,15 @@ def load_change_report() -> dict[str, Any]:
         if git_mtime > report_mtime and git_mtime > 0:
             print("Regenerating stale change-report.json...")
             regenerate_result = subprocess.run(
-                [sys.executable, str(PROJECT_ROOT / "tools" / "development" / "change_intelligence.py")],
+                [
+                    sys.executable,
+                    str(
+                        PROJECT_ROOT
+                        / "tools"
+                        / "development"
+                        / "change_intelligence.py"
+                    ),
+                ],
                 cwd=PROJECT_ROOT,
                 capture_output=True,
                 text=True,
@@ -508,7 +516,10 @@ def run_full_verification() -> tuple[int, float]:
 
     # Run via verify-local.sh equivalent but without spawning
     result = subprocess.run(
-        [sys.executable, str(PROJECT_ROOT / "tools" / "development" / "change_intelligence.py")],
+        [
+            sys.executable,
+            str(PROJECT_ROOT / "tools" / "development" / "change_intelligence.py"),
+        ],
         cwd=PROJECT_ROOT,
     )
 

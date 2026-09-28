@@ -2824,3 +2824,5 @@ minimal and does not alter execution for fresh runs.
 * M7/M8: workflow topology re-audit; branch-protection record.
 * M9: CodeQL PR-eligibility wiring (config unchanged).
 * M10: deep profile contract (golden/mutation/E2E home).
+
+

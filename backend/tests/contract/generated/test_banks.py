@@ -3,7 +3,7 @@
 
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
-# Source: GET /api/banks
+# Source: GET /api/v1/banks
 # Generated: 006d64b6da73
 # To regenerate: python tools/generate_contract_tests.py --routers banks
 
@@ -12,9 +12,9 @@ import pytest
 
 @pytest.mark.contract
 def test_get__api_banks_contract(client):
-    """Contract: GET /api/banks matches OpenAPI schema"""
+    """Contract: GET /api/v1/banks matches OpenAPI schema"""
 
-    response = client.get("/api/banks")
+    response = client.get("/api/v1/banks")
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [

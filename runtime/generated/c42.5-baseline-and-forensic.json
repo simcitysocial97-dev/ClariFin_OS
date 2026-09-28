@@ -1,0 +1,60 @@
+{
+  "milestone": "M9-C42.5",
+  "title": "Mutation Infrastructure Hardening & Deterministic Execution",
+  "recorded_at": "2026-08-23T01:25:00+05:30",
+  "baseline": {
+    "head_sha": "0b65d3f237da7e98c5be0005d036c76968722fc3",
+    "tree_sha": "330d687b7da5b295f1091198afc67331cbca4cd0",
+    "branch": "m9c9-merge-authorization-resolution",
+    "worktree": "clean (2 untracked c42.4h artifacts)",
+    "python_version": "3.12.3",
+    "pytest_version": "9.1.1",
+    "mutmut_version": "3.7.0",
+    "mutmut_pin": "mutmut==3.7.0 (root pyproject.toml:71)"
+  },
+  "configuration_hashes": {
+    "backend/pyproject.toml [tool.mutmut]": "3f78523469514ffc",
+    "backend/tests/mutation/mutation_config.toml (CONTRADICTORY)": "9b70075614a7e6e5",
+    ".github/scripts/run_mutation_selective.sh": "ec118003f63027e6",
+    ".github/scripts/run_mutation_local_smoke.sh": "8dbde57dff646eda",
+    ".github/workflows/mutation.yml": "b7dfeab0dc894337",
+    ".github/scripts/generate_mutation_report.py": "54e1d8a9af2d61d4",
+    "runtime/verify.py": "8d4c90e19c5f424a"
+  },
+  "preserved_c42_evidence": {
+    "authoritative_score_percent": 50.6,
+    "mutants_generated": 16427,
+    "killed": 4418,
+    "survived": 4315,
+    "no_tests": 7439,
+    "timeout": 38,
+    "not_checked": 217
+  },
+  "c42_4h_evidence": {
+    "ci_run_id": 32591878959,
+    "generation_minutes": 29,
+    "failure": "Error: Missing argument 'MUTANT_NAME'",
+    "classification": "0/0/N/A",
+    "verdict": "NO AUTHORITATIVE MUTATION SCORE (infrastructure failure)"
+  },
+  "forensic": {
+    "mutant_name_expected_at": "mutmut show (required positional)",
+    "first_incorrect_boundary": ".github/scripts/run_mutation_selective.sh:68 (mutmut show, no arg)",
+    "secondary_boundary": ".github/scripts/run_mutation_selective.sh:69 (mutmut junitxml does not exist in 3.7.0)",
+    "local_smoke_defect": "run_mutation_local_smoke.sh:103 passes function name as mutant name -> runs full scope, never bounded",
+    "root_cause": "Pipeline built against mutmut 2.x CLI contract; pinned toolchain is mutmut 3.7.0. Mutation execution/integration contract defect, identical locally and in CI.",
+    "evidence": [
+      "mutmut show (no arg) -> 'Error: Missing argument MUTANT_NAME' (reproduced)",
+      "mutmut junitxml -> 'No such command junitxml' (reproduced)",
+      "valid mutmut run + results --all true -> killed/survived/no_tests classified (reproduced 2/2/2)"
+    ]
+  },
+  "governance": {
+    "threshold": 80,
+    "scope": "src/engines/",
+    "no_production_code_change": true,
+    "no_threshold_reduction": true,
+    "no_scope_reduction": true,
+    "no_fake_certification": true
+  }
+}

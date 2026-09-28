@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x__calculate_confidence__mutmut_21: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -34,7 +34,7 @@
+ 
+     # Description similarity factor
+     if description_similarity > 0.7:
+-        confidence += 0.2
++        confidence += 1.2
+ 
+     # Cap at 1.0
+     confidence = min(confidence, 1.0)

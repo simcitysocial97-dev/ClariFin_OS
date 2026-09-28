@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_impulsivity_score__mutmut_56: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -27,7 +27,7 @@
+     weekday_txns = []
+ 
+     for txn in debits:
+-        date_iso = txn.get("date_iso", "")
++        date_iso = txn.get("DATE_ISO", "")
+         if date_iso:
+             try:
+                 dt = datetime.strptime(date_iso, "%Y-%m-%d")

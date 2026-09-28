@@ -24,9 +24,9 @@ from runtime.foundation.knowledge.catalog import (
     get_catalog,
 )
 from runtime.foundation.knowledge.formatter import (
+    format_catalog_summary,
     format_knowledge_report,
     format_query_result,
-    format_catalog_summary,
 )
 from runtime.foundation.knowledge.indexer import (
     build_index,
@@ -49,24 +49,24 @@ from runtime.foundation.knowledge.models import (
 )
 from runtime.foundation.knowledge.query import (
     KnowledgeQueryEngine,
-    query_endpoint,
     query_capability,
-    query_workspace,
-    query_rule,
     query_component,
+    query_endpoint,
+    query_rule,
+    query_workspace,
 )
 from runtime.foundation.knowledge.references import (
     ReferenceEngine,
-    resolve_endpoint,
     resolve_capability,
-    resolve_mapper,
-    resolve_viewmodel,
-    resolve_workspace,
     resolve_component,
+    resolve_documentation,
+    resolve_endpoint,
+    resolve_integrity_rule,
+    resolve_mapper,
     resolve_test,
     resolve_verification_profile,
-    resolve_integrity_rule,
-    resolve_documentation,
+    resolve_viewmodel,
+    resolve_workspace,
 )
 
 __all__ = [

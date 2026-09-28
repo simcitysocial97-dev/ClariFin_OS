@@ -1,0 +1,14 @@
+# status: survived
+# engines.credit_card_engine.billing.x_compute_statement_dates__mutmut_7: survived
+--- src/engines/credit_card_engine/billing.py
++++ src/engines/credit_card_engine/billing.py
+@@ -19,8 +19,7 @@
+     stmt_date = compute_next_statement_date(
+         billing_day=billing_day,
+         reference_date=reference_date,
+-        last_statement_date=last_statement_date,
+-    )
++        )
+     due = compute_due_date(stmt_date, due_day_offset)
+     return {
+         "statement_date": stmt_date.isoformat(),

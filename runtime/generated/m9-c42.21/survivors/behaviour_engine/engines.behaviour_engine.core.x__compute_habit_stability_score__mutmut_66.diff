@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_habit_stability_score__mutmut_66: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -32,7 +32,7 @@
+     # Category CV across months
+     category_cvs: list[float] = []
+     if monthly_category:
+-        all_categories: set[str] = set()
++        all_categories: set[str] = None
+         for month_data in monthly_category.values():
+             all_categories.update(month_data.keys())
+ 

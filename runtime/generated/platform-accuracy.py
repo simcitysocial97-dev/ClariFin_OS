@@ -3,6 +3,7 @@
 
 Measures platform accuracy against validated issues.
 """
+
 from __future__ import annotations
 
 import json
@@ -18,8 +19,16 @@ def main() -> int:
     phase2_path = REPO_ROOT / "runtime" / "generated" / "real-defect-validation.json"
     phase3_path = REPO_ROOT / "runtime" / "generated" / "workflow-validation.json"
 
-    phase2 = json.loads(phase2_path.read_text(encoding="utf-8")) if phase2_path.exists() else {}
-    phase3 = json.loads(phase3_path.read_text(encoding="utf-8")) if phase3_path.exists() else {}
+    phase2 = (
+        json.loads(phase2_path.read_text(encoding="utf-8"))
+        if phase2_path.exists()
+        else {}
+    )
+    phase3 = (
+        json.loads(phase3_path.read_text(encoding="utf-8"))
+        if phase3_path.exists()
+        else {}
+    )
 
     phase2_defects = phase2.get("defects", [])
     phase3_workflows = phase3.get("workflows", [])
@@ -77,31 +86,37 @@ def main() -> int:
     }
 
     for defect in phase2_defects:
-        output["validated_issues"].append({
-            "issue_id": defect.get("issue_id"),
-            "type": "defect",
-            "diagnosis_correct": True,
-            "false_positive": False,
-            "false_negative": False,
-            "ownership_correct": True,
-            "dependency_correct": True,
-            "verification_correct": True,
-        })
+        output["validated_issues"].append(
+            {
+                "issue_id": defect.get("issue_id"),
+                "type": "defect",
+                "diagnosis_correct": True,
+                "false_positive": False,
+                "false_negative": False,
+                "ownership_correct": True,
+                "dependency_correct": True,
+                "verification_correct": True,
+            }
+        )
 
     for workflow in phase3_workflows:
-        output["validated_issues"].append({
-            "issue_id": workflow.get("workflow_name"),
-            "type": "workflow",
-            "diagnosis_correct": True,
-            "false_positive": False,
-            "false_negative": False,
-            "ownership_correct": True,
-            "dependency_correct": True,
-            "verification_correct": True,
-        })
+        output["validated_issues"].append(
+            {
+                "issue_id": workflow.get("workflow_name"),
+                "type": "workflow",
+                "diagnosis_correct": True,
+                "false_positive": False,
+                "false_negative": False,
+                "ownership_correct": True,
+                "dependency_correct": True,
+                "verification_correct": True,
+            }
+        )
 
     out_path = REPO_ROOT / "runtime" / "generated" / "platform-accuracy.json"
-    out_path.write_text(json.dumps(output, indent=2, default=str) + "\n", encoding="utf-8")
+    out_path.write_text(
+        json.dumps(output, indent=2, default=str) + "\n", encoding="utf-8"
+    )
     print(f"Generated: {out_path}")
     return 0
 

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -127,24 +127,30 @@ def run_intelligence(
     blast = compute_blast_radius(change, resolver=res)
     plan = optimize_verification(blast, resolver=res)
     memory = build_memory(generated_dir=gen)
-    risk = assess_risk(
-        change, blast, plan, resolver=res, memory=memory.as_risk_input()
-    )
+    risk = assess_risk(change, blast, plan, resolver=res, memory=memory.as_risk_input())
     repair = build_repair_intelligence(blast, resolver=res)
 
     if collect_ci:
         github = collect_github_intelligence(allow_logs=allow_logs)
     else:
         github = GitHubIntelligence(
-            generated_at=datetime.now(timezone.utc).isoformat(),
+            generated_at=datetime.now(UTC).isoformat(),
             available=False,
             notes=("CI collection disabled for this run",),
         )
 
     cost = estimate_cost(plan)
     state = build_platform_state(
-        change, blast, plan, risk, repair, memory, github, cost,
-        resolver=res, generated_dir=gen,
+        change,
+        blast,
+        plan,
+        risk,
+        repair,
+        memory,
+        github,
+        cost,
+        resolver=res,
+        generated_dir=gen,
     )
 
     run = IntelligenceRun(

@@ -27,7 +27,7 @@ reachability, never duplicate ownership.
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -158,11 +158,11 @@ def build_cross_layer_map_v2(arch: Architecture | None = None) -> dict[str, Any]
             {"module": path, "ownedByEngine": det.engine, "wasTreatedAsEngine": True}
             for path, det in architecture.detectors.items()
         ],
-        key=lambda d: d["module"],
+        key=lambda d: str(d["module"]),
     )
 
     return {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "schema": SCHEMA,
         "generator": "runtime.foundation.architecture.cross_layer.build_cross_layer_map_v2",
         "basis": [f"runtime/generated/{n}" for n in architecture.source_artifacts],
@@ -175,7 +175,8 @@ def build_cross_layer_map_v2(arch: Architecture | None = None) -> dict[str, Any]
         "chains": chains,
         "endpointOwnership": endpoint_ownership,
         "facades": {
-            path: facade.to_dict() for path, facade in sorted(architecture.facades.items())
+            path: facade.to_dict()
+            for path, facade in sorted(architecture.facades.items())
         },
         "phantomEngineKeysRemoved": list(LEGACY_PHANTOM_ENGINE_KEYS),
         "implementationModulesDemoted": demoted,
@@ -196,7 +197,9 @@ def save(output_path: Path | None = None, arch: Architecture | None = None) -> P
     data = build_cross_layer_map_v2(arch)
     target = output_path or (GENERATED_DIR / OUTPUT_NAME)
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(data, indent=2, sort_keys=False) + "\n", encoding="utf-8")
+    target.write_text(
+        json.dumps(data, indent=2, sort_keys=False) + "\n", encoding="utf-8"
+    )
     return target
 
 

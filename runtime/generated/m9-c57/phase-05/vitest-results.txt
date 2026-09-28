@@ -1,0 +1,10 @@
+vitest config loaded from: /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+ RUN  v4.1.10 /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  21:34:11
+   Duration  1.42s (transform 174ms, setup 311ms, import 147ms, tests 67ms, environment 715ms)
+

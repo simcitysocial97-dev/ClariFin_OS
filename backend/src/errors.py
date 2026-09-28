@@ -79,7 +79,7 @@ class FileError(AppError):
         super().__init__(message, status_code=400, details=details)
 
 
-class ImportError(AppError):
+class StatementImportError(AppError):
     """Data import error."""
 
     def __init__(self, message: str, details: dict[str, Any] | None = None) -> None:

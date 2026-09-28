@@ -1,0 +1,13 @@
+# status: survived
+# core.domain.money.xǁMoneyǁ__init____mutmut_3: survived
+--- src/core/domain/money.py
++++ src/core/domain/money.py
+@@ -10,7 +10,7 @@
+         """
+     if not isinstance(paise, int):
+         raise TypeError(
+-            f"Money must be created with integer paise, got {type(paise).__name__}: {paise}"
++            f"Money must be created with integer paise, got {type(None).__name__}: {paise}"
+         )
+ 
+     self._paise = paise

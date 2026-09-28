@@ -1,0 +1,51 @@
+{
+  "plan_id": "exec-plan::04f9aa6cf413",
+  "generated_at": "2026-08-26T04:26:30.137545+00:00",
+  "plan_fingerprint": "4075059af8bbd03bfb5f249a5691b202a53f9dd196442b48907325f6744e44d9",
+  "source_plan_id": "04f9aa6cf413",
+  "tasks": [
+    {
+      "task_id": "exec::task::mutation::credit_card_engine",
+      "component": "credit_card_engine",
+      "capability": "credit-card-engine",
+      "verification_kind": "mutation",
+      "source_task_id": "task::mutation::credit_card_engine",
+      "execution_command": ".venv/bin/python runtime/verify.py mutation --target credit_card_engine --json",
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "required_environment": [
+        ".venv",
+        "mutmut==3.7.0"
+      ],
+      "evidence_kind": "mutation-summary",
+      "expected_artifact": "backend/tests/generated/mutation/target-credit_card_engine-summary.json",
+      "timeout_policy": 600,
+      "fingerprints": {
+        "source": "03a257beaa78f2f5b179c91b1719066a52106924ac4bef97fd66467d59ce8109",
+        "test": "",
+        "config": "29b283dad76f8949",
+        "toolchain": "ee413b0b32ea5eb98ed0e9931550cd4254045079467407863471360714777ba6"
+      },
+      "reason": "task-level invalidation for credit_card_engine (R-SRC-003)",
+      "executable": "executable",
+      "executable_meta": {
+        "engine_selection": {
+          "test_selection": [
+            "tests/unit/engines/credit_card",
+            "tests/properties/credit_card_engine",
+            "tests/capability/credit_cards"
+          ],
+          "source_paths": [
+            "src/engines/credit_card_engine"
+          ]
+        },
+        "expected_engine": "credit_card_engine"
+      }
+    }
+  ],
+  "not_executable": [],
+  "rationale": "Expanded 1 selected planner task(s) into 1 executable task(s); 0 marked not_executable_yet. Plan fingerprint covers command + four fingerprints for every executable task.",
+  "counts": {
+    "tasks": 1,
+    "not_executable": 0
+  }
+}

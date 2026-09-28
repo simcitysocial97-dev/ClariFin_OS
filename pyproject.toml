@@ -40,18 +40,19 @@ dependencies = [
     # ── Runtime / verification CLI ────────────────────────────────────────────
     "click==8.4.2",
     # ── Backend runtime ──────────────────────────────────────────────────────
-    "fastapi==0.139.2",
-    "pydantic==2.13.4",
-    "python-multipart==0.0.22",
-    "pdfplumber==0.11.9",
-    "camelot-py[cv]==0.11.0",
+    "fastapi==0.141.1",
+    "pydantic==2.13.5",
+    "python-multipart==0.0.32",
+    "pdfplumber==0.11.10",
+    "camelot-py[cv]==2.0.0",
     "ghostscript==0.8.1",
-    "pandas==3.0.1",
+    "pandas==3.0.5",
     "python-dateutil==2.9.0",
-    "cachetools==7.1.4",
-    "httpx==0.28.1",
+    "cachetools==7.1.8",
+    "httpx2>=2.0",
     "jsonschema==4.26.0",
-    "pyyaml>=6.0",
+    "pyyaml==6.0.3",
+    "uvicorn==0.52.4",
 ]
 
 [project.optional-dependencies]
@@ -62,14 +63,19 @@ verification = [
     "pytest-cov==7.1.0",
     "pytest-xdist==3.8.0",
     "pytest-timeout==2.4.0",
-    "hypothesis==6.161.4",
-    "coverage==7.15.2",
-    "ruff==0.15.20",
+    "hypothesis==6.168.0",
+    "coverage==7.16.0",
+    "ruff==0.16.6",
     "black==26.5.1",
-    "mypy==2.1.0",
+    "mypy==2.3.1",
     "mutmut==3.7.0",
+    "pip-audit==2.10.1",
 ]
-all = ["clarinfin-verification[verification]"]
+# Contract testing (schemathesis) - optional, install via `pip install -e ".[contract]"`
+contract = [
+    "schemathesis==4.25.2",
+]
+all = ["clarinfin-verification[verification]", "clarinfin-verification[contract]"]
 
 [project.scripts]
 verify = "runtime.foundation.verification.cli.cli:cli"
@@ -84,8 +90,60 @@ include = ["runtime*"]
 # remain in backend/pyproject.toml (their scoped authority — backend rootdir).
 
 [tool.ruff]
-line-length = 100
+line-length = 88
 target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings  
+    "F",      # pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear (common bugs)
+    "C4",     # flake8-comprehensions
+    "UP",     # pyupgrade (modern Python syntax)
+    "SIM",    # flake8-simplify
+]
+
+ignore = [
+    "E501",   # line too long — Black/ruff format handles this
+    "E402",   # module level import not at top of file (common in scripts/tests)
+    "B008",   # do not perform function calls in default arguments (FastAPI uses this)
+    "B017",   # assertRaises(Exception) in tests intentionally tests broad immutability guard
+    "B024",   # BaseProvider/MutationBackendBase are ABC with concrete shared state + template hooks
+    "B027",   # _setup_models/cancel/cleanup are intentional no-op template hooks
+    "SIM108", # ternary operator — sometimes less readable
+    # M9-C46 (Category F — intentional architectural pattern, documented):
+    # UP042 suggests migrating `class X(str, Enum)` -> `enum.StrEnum`. The
+    # certified C42.38 verification models (runtime/foundation/verification/*)
+    # intentionally use the `str` + `Enum` mixin because evidence serializers
+    # rely on `str(member)` == "ClassName.MEMBER" semantics; `StrEnum` changes
+    # `__str__` to return the bare value, which would silently alter evidence
+    # JSON contracts. Conversion is deferred until serializers are contract-tested.
+    "UP042",
+]
+
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "backend/tests/generated",
+    "backend/mutants",
+    "backend/tests/mutation_infra/mutants/**",
+    "backend/src/stubs",
+    "*.pyc",
+    # M9-C46 (Category E — generated surface): milestone evidence/scenario
+    # scripts produced by verification runs. Mirrors the existing Black
+    # extend-exclude; hand-editing generated artifacts is forbidden.
+    "runtime/generated/**",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Test files can use assert, magic values, etc.
+"backend/tests/**" = ["S101", "S105", "S106", "PLR2004"]
+# Migration files may have long strings
+"backend/migrations/**" = ["E501"]
 
 [tool.black]
 line-length = 88
@@ -98,7 +156,10 @@ extend-exclude = '''
   | venv
   | __pycache__
   | backend/mutants
+  | backend/tests/mutation_infra/mutants
   | backend/tests/generated
+  | backend/src/stubs
+  | runtime/generated
   | build
   | dist
 )/
@@ -106,5 +167,78 @@ extend-exclude = '''
 
 [tool.mypy]
 python_version = "3.12"
-exclude = ['servers/src/fetch/tests/']
+# backend/src modules (`src.*`) are imported by runtime verification code;
+# the root pytest config already puts backend/src on the path — mirror it here.
+mypy_path = ["backend/src"]
+# M9-C46 typing boundaries (documented):
+#   * backend/ is its own STRICT typing boundary (backend/pyproject.toml
+#     [tool.mypy] strict=true, rootdir=backend), gated by scripts/verify-fast.sh.
+#     It MUST be excluded here: including it under repo-scope settings creates
+#     duplicate module identities (backend/src as "src.*" vs "<repo-relative>")
+#     and re-checks strict-passing code under a weaker, conflicting config.
+#     Cross-boundary `src.*` imports from runtime code are covered by the
+#     targeted src.* override below.
+#   * runtime/generated/ holds non-importable milestone evidence scripts
+#     (hyphenated dirs abort discovery entirely).
+exclude = [
+    'backend/',
+    'servers/src/fetch/tests/',
+    'backend/mutants/',
+    'runtime/generated/',
+]
 
+[[tool.mypy.overrides]]
+# Cross-boundary imports: runtime verification code imports backend `src.*`
+# modules. backend/src is type-checked by its own strict boundary; at repo
+# scope the module source is excluded (see above), so these imports are
+# treated as untyped rather than errors.
+module = ["src.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# Third-party libraries without py.typed markers / stubs in the dependency
+# contract (pyyaml, jinja2). Not code defects.
+module = ["yaml", "jinja2"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+norecursedirs = [
+    ".*",
+    ".hypothesis",
+    "backend/mutants",
+    "backend/tests/mutation_infra/mutants",
+    "backend/tests/invariants/_m4_exit_probe/**",
+    "backend/tests/probes",
+    ".git",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "node_modules",
+    "frontend/node_modules"
+]
+pythonpath = ["backend", "backend/src", "backend/tests"]
+markers = [
+    "capability: mark test as capability smoke test",
+    "contract: mark test as contract test",
+    "property: mark test as property test",
+    "invariant: mark test as invariant test",
+    "golden: mark test as golden dataset test",
+    "meta: mark test as meta test",
+    "slow: marks tests as slow (deselect with '-m not slow')",
+    "mutation: marks tests specifically for mutation testing",
+    "integration: marks integration tests",
+    "unit: marks unit tests",
+    "performance: marks performance tests",
+]
+filterwarnings = [
+    # Treat project-code deprecations as errors to prevent silent accumulation.
+    "error::DeprecationWarning",
+    "error::PendingDeprecationWarning",
+    # Third-party warnings that are unavoidable with current dependency versions.
+    "ignore::pytest.PytestDeprecationWarning",
+    "ignore::_pytest.warning_types.PytestAssertRewriteWarning",
+    "ignore:Please use `import python_multipart` instead:PendingDeprecationWarning",
+    # Starlette 1.6.0 uses deprecated anyio.abc.BlockingPortal alias;
+    # fixed in future Starlette release. Track: https://github.com/Kludex/starlette/issues
+    "ignore:The anyio.abc.BlockingPortal alias is deprecated:DeprecationWarning",
+]

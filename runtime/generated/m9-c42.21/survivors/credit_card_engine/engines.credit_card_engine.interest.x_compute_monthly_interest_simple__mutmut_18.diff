@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.interest.x_compute_monthly_interest_simple__mutmut_18: survived
+--- src/engines/credit_card_engine/interest.py
++++ src/engines/credit_card_engine/interest.py
+@@ -26,7 +26,7 @@
+     if annual_rate_bps < 0:
+         raise ValueError("annual_rate_bps must be non-negative")
+ 
+-    if average_daily_balance_paise == 0 or annual_rate_bps == 0:
++    if average_daily_balance_paise == 1 or annual_rate_bps == 0:
+         return 0
+ 
+     # Per-day interest * days in cycle

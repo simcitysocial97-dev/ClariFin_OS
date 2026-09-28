@@ -1,0 +1,124 @@
+{
+  "schema": "m9-c64-final-ci-workflow-inventory/v1",
+  "generated_at": "2026-09-20T11:04:52Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "total_workflows": 14,
+  "local_executable": 12,
+  "github_only": 2,
+  "workflows": [
+    {
+      "file": "api-contracts.yml",
+      "trigger": "push/PR to main/develop",
+      "jobs": 1,
+      "command": "python -m runtime.verify api-contracts",
+      "local_executable": true,
+      "github_only": false
+    },
+    {
+      "file": "backend-verify.yml",
+      "trigger": "push/PR (backend/** or runtime/**)",
+      "jobs": 1,
+      "command": "python -m runtime.verify backend",
+      "local_executable": true,
+      "github_only": false
+    },
+    {
+      "file": "dependency-update.yml",
+      "trigger": "schedule (nightly)",
+      "jobs": 1,
+      "command": "pnpm audit && python -m pip check",
+      "local_executable": true,
+      "github_only": false
+    },
+    {
+      "file": "frontend-verify.yml",
+      "trigger": "push/PR (frontend/** or runtime/**)",
+      "jobs": 1,
+      "command": "python -m runtime.verify frontend",
+      "local_executable": true,
+      "github_only": false
+    },
+    {
+      "file": "golden.yml",
+      "trigger": "push/PR (frontend/**)",
+      "jobs": 1,
+      "command": "python -m runtime.verify golden",
+      "local_executable": true,
+      "github_only": false
+    },
+    {
+      "file": "m9-forensic-diagnostic-lab.yml",
+      "trigger": "workflow_dispatch",
+      "jobs": 1,
+      "command": "python -m runtime.verify diagnose",
+      "local_executable": true,
+      "github_only": false
+    },
+    {
+      "file": "mutation-pr.yml",
+      "trigger": "pull_request",
+      "jobs": 1,
+      "command": "python -m runtime.verify strengthen --smoke --incremental",
+      "local_executable": true,
+      "github_only": false
+    },
+    {
+      "file": "mutation.yml",
+      "trigger": "schedule (cron 2AM UTC) + dispatch",
+      "jobs": 2,
+      "command": "python -m runtime.verify strengthen",
+      "local_executable": true,
+      "github_only": false
+    },
+    {
+      "file": "playwright.yml",
+      "trigger": "push/PR (frontend/**)",
+      "jobs": 1,
+      "command": "python -m runtime.verify playwright",
+      "local_executable": true,
+      "github_only": false
+    },
+    {
+      "file": "quality.yml",
+      "trigger": "push/PR",
+      "jobs": 1,
+      "command": "python -m ruff check . && python -m black --check . && python -m mypy .",
+      "local_executable": true,
+      "github_only": false
+    },
+    {
+      "file": "release.yml",
+      "trigger": "push to main",
+      "jobs": 1,
+      "command": "semantic-release / publish",
+      "local_executable": false,
+      "github_only": true,
+      "boundary": "requires GitHub release workflow + npm publish"
+    },
+    {
+      "file": "security-codeql.yml",
+      "trigger": "schedule + PR",
+      "jobs": 1,
+      "command": "CodeQL analysis",
+      "local_executable": false,
+      "github_only": true,
+      "boundary": "GitHub-native CodeQL service"
+    },
+    {
+      "file": "verification-reconcile.yml",
+      "trigger": "push/PR",
+      "jobs": 1,
+      "command": "python -m runtime.verify ci",
+      "local_executable": true,
+      "github_only": false
+    },
+    {
+      "file": "verification-runtime.yml",
+      "trigger": "push (runtime/** or backend/src/**)",
+      "jobs": 1,
+      "command": "python -m runtime.verify runtime",
+      "local_executable": true,
+      "github_only": false
+    }
+  ]
+}

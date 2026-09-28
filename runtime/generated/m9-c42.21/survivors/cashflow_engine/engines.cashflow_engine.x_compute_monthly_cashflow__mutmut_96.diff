@@ -1,0 +1,13 @@
+# status: survived
+# engines.cashflow_engine.x_compute_monthly_cashflow__mutmut_96: survived
+--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -78,7 +78,7 @@
+ 
+     # Cash surplus (cash basis): income - expenses + credit advances received
+     # Credit advances inflate available cash but create liabilities
+-    cash_surplus = income - expense + total_credit_funded
++    cash_surplus = income - expense - total_credit_funded
+ 
+     # True savings (accrual basis): income - expenses - fees
+     # Fees are the actual cost of credit, not the liability principal

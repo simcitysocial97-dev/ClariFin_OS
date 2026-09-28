@@ -1,8 +1,8 @@
 from runtime.foundation.verification.validation.validator import (
-    ValidationSeverity,
     ValidationFinding,
-    validate_all,
+    ValidationSeverity,
     print_findings,
+    validate_all,
 )
 
 __all__ = [

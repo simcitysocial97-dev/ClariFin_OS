@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-
 from runtime.foundation.intelligence import (
     affected_entities,
     format_diagnostic,
@@ -10,8 +9,8 @@ from runtime.foundation.intelligence import (
 from runtime.foundation.intelligence.platform.blast import compute_blast_radius
 from runtime.foundation.intelligence.platform.change import analyze_changes
 from runtime.foundation.intelligence.platform.optimizer import optimize_verification
-from runtime.foundation.intelligence.platform.risk import assess_risk
 from runtime.foundation.intelligence.platform.repair import build_repair_intelligence
+from runtime.foundation.intelligence.platform.risk import assess_risk
 
 
 def test_diagnose_resolves_ownership_from_provider():
@@ -21,11 +20,18 @@ def test_diagnose_resolves_ownership_from_provider():
 
 
 def test_diagnose_formats_change_blast_risk_repair():
-    changed = ["backend/src/engines/account_engine/balance.py",
-               "backend/src/routers/accounts.py"]
+    changed = [
+        "backend/src/engines/account_engine/balance.py",
+        "backend/src/routers/accounts.py",
+    ]
     change = analyze_changes(paths=changed)
     blast = compute_blast_radius(change)
-    risk = assess_risk(change, blast, optimize_verification(blast), memory={"recurring_ci_failures": []})
+    risk = assess_risk(
+        change,
+        blast,
+        optimize_verification(blast),
+        memory={"recurring_ci_failures": []},
+    )
     repair = build_repair_intelligence(blast)
     out = format_diagnostic(change, blast, risk, repair)
     assert "Developer Diagnostic" in out

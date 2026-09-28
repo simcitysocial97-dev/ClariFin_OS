@@ -1,0 +1,12 @@
+# status: no tests
+# engines.financial_events.lineage_walker.x__is_revocable_event__mutmut_2: no tests
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -1,6 +1,6 @@
+ def _is_revocable_event(event: dict[str, Any]) -> bool:
+     """Check if event type can be revoked (transfers only)."""
+-    event_type = event.get("event_type", "")
++    event_type = event.get(None, "")
+     lifecycle_state = event.get("lifecycle_state", "")
+     return event_type in (
+         "fund_transfer_out",

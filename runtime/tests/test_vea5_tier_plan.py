@@ -194,7 +194,9 @@ def test_pr_selects_engine_change_units_and_mutation_selectively():
     # non-selected units still carry reason + justification
     by_id = {e.unit_id: e for e in plan.excluded}
     assert "golden-regression" in by_id
-    assert by_id["golden-regression"].reason and by_id["golden-regression"].justification
+    assert (
+        by_id["golden-regression"].reason and by_id["golden-regression"].justification
+    )
 
 
 def test_pr_plan_differs_from_local_for_engine_change():
@@ -257,9 +259,7 @@ def test_no_duplicate_unit_identities():
             if tier != "deep"
             else plan_for_tier(tier)
         )
-        ids = [s.unit_id for s in plan.selected] + [
-            e.unit_id for e in plan.excluded
-        ]
+        ids = [s.unit_id for s in plan.selected] + [e.unit_id for e in plan.excluded]
         assert len(ids) == len(set(ids)), f"duplicate unit ids in {tier}"
         # No positional assumptions: ids are stable strings, not step indices.
         assert not any(i.startswith("step-") for i in ids)
@@ -308,13 +308,13 @@ def test_manifest_records_required_fields_and_is_inspectable():
 def test_existing_optimizer_units_all_have_catalog_counterparts():
     """The catalog is the single source of truth; assert it covers exactly the
     unit ids the intelligence planner can emit (selected or skipped)."""
-    from runtime.foundation.intelligence.platform.optimizer import (
-        optimize_verification,
-    )
     from runtime.foundation.intelligence.platform.blast import (
         compute_blast_radius,
     )
     from runtime.foundation.intelligence.platform.change import analyze_changes
+    from runtime.foundation.intelligence.platform.optimizer import (
+        optimize_verification,
+    )
 
     change = analyze_changes(paths=ENGINE_CHANGE)
     blast = compute_blast_radius(change)

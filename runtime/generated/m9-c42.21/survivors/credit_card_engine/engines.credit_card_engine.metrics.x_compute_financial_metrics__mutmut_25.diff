@@ -1,0 +1,13 @@
+# status: survived
+# engines.credit_card_engine.metrics.x_compute_financial_metrics__mutmut_25: survived
+--- src/engines/credit_card_engine/metrics.py
++++ src/engines/credit_card_engine/metrics.py
+@@ -33,7 +33,7 @@
+         raise ValueError("total_interest_paid_paise must be non-negative")
+ 
+     # Utilization in basis points
+-    if credit_limit_paise > 0 and outstanding_paise > 0:
++    if credit_limit_paise > 0 and outstanding_paise >= 0:
+         from decimal import ROUND_HALF_EVEN, Decimal
+ 
+         util_decimal = (

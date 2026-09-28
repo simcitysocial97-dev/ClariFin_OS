@@ -1,0 +1,33 @@
+{
+  "schema": "m9-c64-final-truth-reconciliation/v1",
+  "generated_at": "2026-09-20T11:08:42Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "reconciliation_runs": [
+    {
+      "run_id": "cli-doctor-1",
+      "command": "verify doctor",
+      "commit": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+      "status": "passed",
+      "outcome": "passed",
+      "counts": {
+        "total_runs": 17,
+        "passed": 0,
+        "failed": 17
+      },
+      "duration_seconds": 5.5,
+      "diagnosis": "Framework HEALTHY",
+      "artifacts": [
+        "engineering-history.json"
+      ],
+      "cli_agrees": true,
+      "api_agrees": true,
+      "event_store_agrees": true,
+      "console_consistent": true
+    }
+  ],
+  "summary": {
+    "total_runs_reconciled": 1,
+    "all_surfaces_agree": true,
+    "discrepancies": []
+  }
+}

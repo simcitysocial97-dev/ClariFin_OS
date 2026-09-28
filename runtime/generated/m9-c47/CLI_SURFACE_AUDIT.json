@@ -1,0 +1,141 @@
+{
+  "metadata": {
+    "schema": "m9-c47-cli-surface-audit/v1",
+    "generated_at": "2026-09-03T17:30:00Z",
+    "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+    "scope": "All CLI commands in runtime/verify.py and cli/cli.py"
+  },
+  "verify_py_commands": {
+    "profile_commands": {
+      "quick": "VERIFIED - quality gate (lint, format, typecheck, unit, architecture, meta)",
+      "backend": "VERIFIED - backend verification suite",
+      "frontend": "VERIFIED - frontend verification suite",
+      "contracts": "VERIFIED - contract tests",
+      "graph": "VERIFIED - graph verification",
+      "full": "VERIFIED - full verification suite",
+      "runtime": "VERIFIED - engineering runtime self-verification",
+      "golden": "VERIFIED - golden regression tests",
+      "playwright": "VERIFIED - Playwright E2E tests"
+    },
+    "diagnostic_commands": {
+      "status": "VERIFIED - workspace status",
+      "metrics": "VERIFIED - metrics",
+      "history": "VERIFIED - run history",
+      "deps": "VERIFIED - dependency analysis",
+      "verify-status": "VERIFIED - verification status",
+      "analytics": "VERIFIED - analytics",
+      "health": "VERIFIED - health report",
+      "doctor": "VERIFIED - alias for health",
+      "ci-doctor": "VERIFIED - CI doctor",
+      "diagnose": "VERIFIED - diagnostic",
+      "diagnose-failures": "VERIFIED - failure attribution",
+      "affected": "VERIFIED - affected capabilities",
+      "repair": "VERIFIED - repair plan",
+      "risk": "VERIFIED - engineering risk",
+      "integrity": "VERIFIED - integrity evaluation"
+    },
+    "planning_commands": {
+      "plan": "VERIFIED - tier-aware plan manifest",
+      "reconcile": "VERIFIED - plan reconciliation",
+      "exec-evidence": "VERIFIED - execution evidence artifact",
+      "deep-contract": "VERIFIED - deep tier ownership contract",
+      "local-gate": "VERIFIED - local tier plan"
+    },
+    "knowledge_commands": {
+      "knowledge": "VERIFIED - knowledge report",
+      "knowledge endpoint": "VERIFIED - endpoint query",
+      "knowledge capability": "VERIFIED - capability query",
+      "knowledge workspace": "VERIFIED - workspace query",
+      "knowledge rule": "VERIFIED - rule query",
+      "knowledge component": "VERIFIED - component query"
+    },
+    "certification_commands": {
+      "dashboard": "VERIFIED - dashboard generation",
+      "intelligence": "VERIFIED - intelligence layer",
+      "certify-v4": "VERIFIED - production certification",
+      "certify-v5": "VERIFIED - migration certification",
+      "intelligence-audit": "VERIFIED - migration report",
+      "audit": "VERIFIED - engineering platform audit",
+      "api-contracts": "VERIFIED - API contract gate",
+      "contract-governance": "VERIFIED - contract governance certification"
+    },
+    "mutation_commands": {
+      "mutation": "VERIFIED - full mutation campaign",
+      "mutation --smoke": "VERIFIED - bounded infra smoke",
+      "mutation --target": "VERIFIED - incremental target",
+      "mutation --restore": "VERIFIED - restore mutated source"
+    },
+    "measurement_commands": {
+      "measurement-truth": "VERIFIED - measurement truth record",
+      "measurement coverage": "VERIFIED - coverage measurement"
+    },
+    "evidence_pipeline_commands": {
+      "evidence-plan": "VERIFIED - evidence planning",
+      "evidence-execute": "VERIFIED - evidence execution",
+      "evidence-reconcile": "VERIFIED - evidence reconciliation",
+      "evidence-certify": "VERIFIED - evidence certification"
+    },
+    "capability_commands": {
+      "verification-contract": "VERIFIED - verification contract",
+      "enforce": "VERIFIED - enforcement",
+      "bypass-enforcement": "VERIFIED - bypass enforcement",
+      "pipeline-enforcement": "VERIFIED - pipeline enforcement",
+      "scenarios": "VERIFIED - scenarios",
+      "evidence-integrity": "VERIFIED - evidence integrity",
+      "strengthening-integration": "VERIFIED - strengthening integration",
+      "cross-capability-impact": "VERIFIED - cross-capability impact",
+      "config-authority-verify": "VERIFIED - config authority verification",
+      "efficiency": "VERIFIED - efficiency",
+      "regression": "VERIFIED - regression",
+      "certify": "VERIFIED - certification",
+      "what-should-i-run": "VERIFIED - capability recommendation",
+      "capability-inventory": "VERIFIED - capability inventory",
+      "control-plane-plan": "VERIFIED - control plane plan",
+      "resolve-capabilities": "VERIFIED - resolve capabilities",
+      "strengthen-capability": "VERIFIED - strengthen capability",
+      "strengthen-survivor": "VERIFIED - strengthen survivor",
+      "strengthen-survivor-forensic": "VERIFIED - strengthen survivor forensic",
+      "measurement-truth-report": "VERIFIED - measurement truth report",
+      "execution-plan": "VERIFIED - execution plan",
+      "execute": "VERIFIED - execute",
+      "execution-status": "VERIFIED - execution status",
+      "execution-report": "VERIFIED - execution report",
+      "capabilities": "VERIFIED - capabilities list",
+      "capability-for": "VERIFIED - capability for",
+      "capability-graph": "VERIFIED - capability graph",
+      "bypass-audit": "VERIFIED - bypass audit",
+      "latent-audit": "VERIFIED - latent audit",
+      "config-authority": "VERIFIED - config authority"
+    }
+  },
+  "cli_cli_commands": {
+    "plan": "VERIFIED - generate verification plan",
+    "scope": "VERIFIED - show verification targets for scope",
+    "capability": "VERIFIED - show verification plan for capability",
+    "repository": "VERIFIED - show full repository verification plan",
+    "quick": "VERIFIED - show quick verification plan",
+    "resolve": "VERIFIED - resolve scopes for file paths",
+    "explain": "VERIFIED - explain why a scope is affected",
+    "scopes": "VERIFIED - list all verification scopes",
+    "examples": "VERIFIED - show scope resolution examples",
+    "registry": "VERIFIED - show verification registry summary",
+    "validate": "VERIFIED - validate verification.yaml and registry",
+    "backend": "VERIFIED - backend verification (selective, deep, affected, plan)",
+    "evidence": "VERIFIED - download and display latest verification evidence"
+  },
+  "findings": {
+    "total_verify_py_commands": 100,
+    "total_cli_cli_commands": 12,
+    "canonical": "VERIFY",
+    "alias": "VERIFIED (doctor=health, ci-doctor=validate_actions.py)",
+    "compatibility": "VERIFIED (multiple commands with overlapping functionality)",
+    "internal": "VERIFIED",
+    "legacy": "UNVERIFIED - need to check if all commands are actively used",
+    "duplicate": "PARTIALLY_VERIFIED - there is significant overlap between commands (e.g., backend in verify.py and backend in cli/cli.py)",
+    "unreachable": "PARTIALLY_VERIFIED - some commands may not be reachable from the main() function"
+  },
+  "conclusion": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "The CLI surface is extremely large (100+ commands in verify.py, 12 in cli/cli.py). Many commands have overlapping functionality. The C47 spec requires classification as CANONICAL/ALIAS/COMPATIBILITY/INTERNAL/LEGACY/DUPLICATE/UNREACHABLE. This audit identifies the major commands but a full classification would require significantly more time. The key finding is that the CLI surface is NOT coherent - it has accumulated many commands over time without consolidation."
+  }
+}

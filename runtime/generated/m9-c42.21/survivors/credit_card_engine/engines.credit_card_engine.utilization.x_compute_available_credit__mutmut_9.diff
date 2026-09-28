@@ -1,0 +1,12 @@
+# status: survived
+# engines.credit_card_engine.utilization.x_compute_available_credit__mutmut_9: survived
+--- src/engines/credit_card_engine/utilization.py
++++ src/engines/credit_card_engine/utilization.py
+@@ -20,6 +20,6 @@
+     if credit_limit_paise < 0:
+         raise ValueError("credit_limit_paise must be non-negative")
+     if outstanding_paise < 0:
+-        raise ValueError("outstanding_paise must be non-negative")
++        raise ValueError("XXoutstanding_paise must be non-negativeXX")
+ 
+     return max(0, credit_limit_paise - outstanding_paise)

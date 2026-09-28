@@ -42,7 +42,7 @@ from __future__ import annotations
 import json
 import subprocess
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -84,7 +84,7 @@ UNIT_CATALOG: tuple[dict[str, Any], ...] = (
     {"id": "frontend-unit", "category": "frontend", "estimated_seconds": 120},
     {"id": "frontend-typecheck-build", "category": "frontend", "estimated_seconds": 90},
     {"id": "playwright-e2e", "category": "e2e", "estimated_seconds": 1800},
-    {"id": "runtime-self-test", "category": "runtime", "estimated_seconds": 120},
+    {"id": "runtime-self-test", "category": "runtime", "estimated_seconds": 2700},
     {"id": "mutation-run", "category": "mutation", "estimated_seconds": 600},
     {"id": "golden-regression", "category": "golden", "estimated_seconds": 600},
 )
@@ -135,9 +135,7 @@ class TierPlan:
     estimated_seconds: int
     planner_version: str
     framework_version: str
-    generated_at: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
-    )
+    generated_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     # --- determinism helpers (timestamps excluded) -------------------------
     def fingerprint(self) -> dict[str, Any]:
@@ -150,8 +148,12 @@ class TierPlan:
             "base_ref": self.base_ref,
             "head_ref": self.head_ref,
             "changed_files": sorted(self.changed_files),
-            "selected": [s.unit_id for s in sorted(self.selected, key=lambda s: s.unit_id)],
-            "excluded": [e.unit_id for e in sorted(self.excluded, key=lambda e: e.unit_id)],
+            "selected": [
+                s.unit_id for s in sorted(self.selected, key=lambda s: s.unit_id)
+            ],
+            "excluded": [
+                e.unit_id for e in sorted(self.excluded, key=lambda e: e.unit_id)
+            ],
             "estimated_seconds": self.estimated_seconds,
         }
 
@@ -251,7 +253,11 @@ def collect_working_tree_changes(repo_root: Path) -> list[str]:
     diff_head = _run_git(["diff", "--name-only", "HEAD"], repo_root)
     diff_cached = _run_git(["diff", "--cached", "--name-only", "HEAD"], repo_root)
     untracked = _run_git(["ls-files", "--others", "--exclude-standard"], repo_root)
-    files = [*diff_head.splitlines(), *diff_cached.splitlines(), *untracked.splitlines()]
+    files = [
+        *diff_head.splitlines(),
+        *diff_cached.splitlines(),
+        *untracked.splitlines(),
+    ]
     return _filter_changed_files([f.strip() for f in files if f.strip()])
 
 

@@ -8,7 +8,7 @@ All monetary fields use _paise suffix for explicit units.
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 # ===== Net Worth Composition Types =====
 
@@ -169,8 +169,8 @@ class NetWorthDTO(BaseModel):
         default=None, description="Evidence chain for explainability"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "total_net_worth_paise": 15000000,  # ₹1,50,000.00
                 "total_assets_paise": 20000000,  # ₹2,00,000.00
@@ -186,6 +186,7 @@ class NetWorthDTO(BaseModel):
                 "evidence_chain": None,
             }
         }
+    )
 
 
 # ===== Net Worth Response Types =====

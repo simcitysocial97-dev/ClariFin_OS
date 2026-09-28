@@ -1,0 +1,56 @@
+{
+  "schema": "m9-c47-measurement-truth/v1",
+  "title": "M9-C47 Measurement Truth Contract",
+  "description": "ONE authoritative, observable, durable and reproducible measurement path for coverage and mutation evidence.",
+  "governing_constraints": [
+    "Coverage and mutation MUST remain separate measurements (MeasurementKind)",
+    "A partial/timeout/corrupt/derived campaign can NEVER be labelled AUTHORITATIVE_COMPLETE",
+    "Authoritative vs derived is machine-readable and immutable (EvidenceClassification)",
+    "Reuses native environment fingerprints (env.py), not recreated ones",
+    "Native mutmut analysis is reused rather than unnecessarily recreated"
+  ],
+  "completion_status_vocabulary": [
+    "AUTHORITATIVE_COMPLETE - measurement complete, authoritative, certifiable",
+    "PARTIAL - requested population not fully processed",
+    "TIMEOUT - execution exceeded max_runtime",
+    "INFRASTRUCTURE_FAILURE - execution did not complete cleanly",
+    "EVIDENCE_FAILURE - evidence corrupt, incomplete, or arithmetic invariant failed",
+    "INVALID_SCOPE - requested scope != actual scope",
+    "DERIVED_ONLY - evidence is reused/reconciled aggregate, not freshly measured"
+  ],
+  "evidence_classification": [
+    "authoritative - freshly measured, complete, durable",
+    "derived - reused, reconciled, or aggregate evidence"
+  ],
+  "measurement_kind": [
+    "coverage",
+    "mutation"
+  ],
+  "record_fields": {
+    "identity": ["run_id", "measurement_kind", "repository_sha", "tree_sha"],
+    "fingerprints": ["working_tree_fingerprint", "configuration_fingerprint", "toolchain_fingerprint", "environment_fingerprint"],
+    "command_and_scope": ["command", "requested_scope", "actual_scope", "scope_invalid_reason"],
+    "population": ["requested_generated", "generated", "killed", "survived", "timeout", "no_tests", "suspicious", "not_checked", "actually_scored", "actually_processed"],
+    "coverage": ["lines_total", "lines_covered", "line_percent", "branches_total", "branches_covered", "branch_percent"],
+    "scores": ["mutation_score", "coverage_result_percent"],
+    "execution_state": ["execution_status", "completion_status", "failure_classification", "start_time", "end_time", "duration_seconds"],
+    "toolchain_versions": ["python", "pytest", "mutmut", "coverage"],
+    "artifacts": ["artifact_paths"],
+    "classification": ["evidence_classification", "evidence_fingerprint", "consumable_by_certification"],
+    "meta": ["mode", "target", "error", "note", "derived_from", "durable_survivor_evidence"]
+  },
+  "operator_questions_answered": [
+    "what was requested",
+    "what actually ran",
+    "what evidence was produced",
+    "whether the evidence is authoritative",
+    "whether certification may consume it",
+    "what should be run next"
+  ],
+  "certification_gate_rules": [
+    "completion must be AUTHORITATIVE_COMPLETE",
+    "evidence classification must be authoritative",
+    "the record must be durable (have a fingerprint)",
+    "coverage and mutation must not be conflated"
+  ]
+}

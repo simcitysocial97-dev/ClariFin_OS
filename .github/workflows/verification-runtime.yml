@@ -1,7 +1,7 @@
 # .github/workflows/verification-runtime.yml
 #
 # PURPOSE: Engineering Runtime self-validation (runtime/tests + integrity).
-# RESPONSIBILITY: Run `runtime/verify.py runtime` — the ONLY verification command.
+# RESPONSIBILITY: Run `runtime/verify.py check` — the canonical verification command.
 # Rule 1: no engineering logic in YAML. Rule 2: single responsibility. Rule 8:
 # delegate to runtime/verify.py. Rule 9: append `verify.py status` summary.
 
@@ -38,10 +38,10 @@ jobs:
   verify-runtime:
     name: Runtime Verification
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
@@ -53,11 +53,11 @@ jobs:
       - name: Setup Node.js runtime
         uses: ./.github/actions/setup-node-runtime
         with:
-          node-version: "20"
+          node-version: "24"
           working-directory: "frontend"
 
-      - name: Run runtime verification
-        run: python runtime/verify.py runtime
+      - name: Run runtime verification (canonical check)
+        run: .venv/bin/python -m runtime.verify runtime
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
@@ -109,5 +109,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          python runtime/verify.py status >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
         shell: bash

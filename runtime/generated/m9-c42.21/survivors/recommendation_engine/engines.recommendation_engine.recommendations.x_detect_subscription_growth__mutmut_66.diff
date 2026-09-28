@@ -1,0 +1,13 @@
+# status: survived
+# engines.recommendation_engine.recommendations.x_detect_subscription_growth__mutmut_66: survived
+--- src/engines/recommendation_engine/recommendations.py
++++ src/engines/recommendation_engine/recommendations.py
+@@ -41,7 +41,7 @@
+             return Recommendation(
+                 title="Review Subscriptions",
+                 reason="New subscriptions detected",
+-                metric=f"{len(current_subscriptions)} new subscriptions adding ₹{total_current // 100}",
++                metric=f"{len(current_subscriptions)} new subscriptions adding ₹{total_current / 100}",
+                 severity="MEDIUM",
+                 suggested_action="Monitor new subscription services for usage value and consider canceling unused services",
+             )

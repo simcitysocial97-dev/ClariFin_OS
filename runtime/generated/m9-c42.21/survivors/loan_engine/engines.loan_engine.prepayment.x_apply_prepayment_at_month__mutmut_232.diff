@@ -1,0 +1,11 @@
+# status: survived
+# engines.loan_engine.prepayment.x_apply_prepayment_at_month__mutmut_232: survived
+--- src/engines/loan_engine/prepayment.py
++++ src/engines/loan_engine/prepayment.py
+@@ -160,6 +160,5 @@
+         months_saved=original_remaining_months - len(tail),
+         interest_saved_paise=interest_saved - penalty,
+         penalty_paise=penalty,
+-        loan_closed=False,
+         new_schedule=new_schedule,
+     )

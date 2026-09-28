@@ -1,16 +1,3 @@
-from runtime.foundation.verification.planner.planner import (
-    VerificationPlanner,
-    PlanningContext,
-    plan_verification,
-    CrossLayerImpactPlanner,
-    ImpactReport,
-)
-from runtime.foundation.verification.planner.plan_models import (
-    TestSuiteDecision,
-    MutationDecision,
-    VerificationImpact,
-    VerificationPlan,
-)
 from runtime.foundation.verification.planner.impact_rules import (
     ChangeClassification,
     classify_change,
@@ -22,6 +9,19 @@ from runtime.foundation.verification.planner.impact_rules import (
     router_changed,
     service_changed,
     test_changed,
+)
+from runtime.foundation.verification.planner.plan_models import (
+    MutationDecision,
+    TestSuiteDecision,
+    VerificationImpact,
+    VerificationPlan,
+)
+from runtime.foundation.verification.planner.planner import (
+    CrossLayerImpactPlanner,
+    ImpactReport,
+    PlanningContext,
+    VerificationPlanner,
+    plan_verification,
 )
 
 __all__ = [

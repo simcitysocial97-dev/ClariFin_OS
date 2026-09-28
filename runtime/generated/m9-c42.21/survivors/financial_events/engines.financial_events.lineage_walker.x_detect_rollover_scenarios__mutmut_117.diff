@@ -1,0 +1,13 @@
+# status: survived
+# engines.financial_events.lineage_walker.x_detect_rollover_scenarios__mutmut_117: survived
+--- src/engines/financial_events/lineage_walker.py
++++ src/engines/financial_events/lineage_walker.py
+@@ -59,7 +59,7 @@
+                 days_diff = _date_difference_days(source.get("date_iso", ""), date_iso)
+                 if 0 < days_diff <= lookback_days:
+                     # This advance appears to be rolling over from another
+-                    (event_id, source.get("id", 0), "rolls_over")
++                    (event_id, source.get("id", 0), "ROLLS_OVER")
+                     # In a real implementation, we'd add to processed_pairs
+                     proposed_links.append(
+                         {

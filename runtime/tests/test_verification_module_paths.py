@@ -16,7 +16,6 @@ import pytest
 
 from runtime.foundation.verification.registry import VerificationRegistry
 
-
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
@@ -28,13 +27,15 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
         ("ledger", "backend/src/engines/ledger_audit_engine.py"),
     ],
 )
-def test_capability_module_path_exists(capability_id: str, expected_module: str) -> None:
+def test_capability_module_path_exists(
+    capability_id: str, expected_module: str
+) -> None:
     registry = VerificationRegistry()
     cap = registry.get_capability(capability_id)
     assert cap is not None, f"capability {capability_id} missing"
-    assert expected_module in cap.modules, (
-        f"{capability_id} modules {cap.modules} no longer include {expected_module}"
-    )
+    assert (
+        expected_module in cap.modules
+    ), f"{capability_id} modules {cap.modules} no longer include {expected_module}"
     resolved = REPO_ROOT / expected_module
     assert resolved.exists(), (
         f"BL-005 regression: {expected_module} (capability {capability_id}) "
@@ -45,9 +46,13 @@ def test_capability_module_path_exists(capability_id: str, expected_module: str)
 def test_module_paths_use_engines_layout() -> None:
     """The drifted top-level backend/src/<engine> paths must be gone."""
     registry = VerificationRegistry()
-    stale = {"backend/src/loan_engine", "backend/src/reconciliation", "backend/src/ledger"}
+    stale = {
+        "backend/src/loan_engine",
+        "backend/src/reconciliation",
+        "backend/src/ledger",
+    }
     for cap in registry.get_all_capabilities():
         for module in cap.modules:
-            assert module not in stale, (
-                f"BL-005 regression: stale module path {module!r} in {cap.id}"
-            )
+            assert (
+                module not in stale
+            ), f"BL-005 regression: stale module path {module!r} in {cap.id}"

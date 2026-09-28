@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_loss_aversion_index__mutmut_180: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -71,7 +71,7 @@
+         avg_large = sum(
+             (t.get("amount_paise", 0) or 0) / 100.0 for t in large_expenses
+         ) / len(large_expenses)
+-        recovery_days = min(30, int(avg_large / max(median_debit, 1)))
++        recovery_days = min(31, int(avg_large / max(median_debit, 1)))
+ 
+     # Normalize to 0-1 score
+     # Higher velocity = higher loss aversion (spending gains quickly)

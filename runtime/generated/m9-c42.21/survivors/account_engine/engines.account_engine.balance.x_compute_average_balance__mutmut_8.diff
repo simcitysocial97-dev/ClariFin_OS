@@ -1,0 +1,13 @@
+# status: survived
+# engines.account_engine.balance.x_compute_average_balance__mutmut_8: survived
+--- src/engines/account_engine/balance.py
++++ src/engines/account_engine/balance.py
+@@ -19,7 +19,7 @@
+     count = len(daily_balances)
+ 
+     if count == 0:
+-        return 0
++        return 1
+ 
+     avg_decimal = Decimal(total) / Decimal(count)
+     return int(avg_decimal.quantize(Decimal(1), rounding=ROUND_HALF_UP))

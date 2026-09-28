@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 # --- Strategies ---
@@ -26,25 +26,25 @@ def portfolio_holding(draw):
 class TestInvestmentEngineProperties:
     """Property-based tests for investment engine invariants."""
 
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     @given(portfolio_holding())
     def test_portfolio_value_non_negative(self, holding):
         """Portfolio value must be non-negative."""
         assert holding["value_paise"] >= 0
 
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     @given(portfolio_holding())
     def test_quantity_positive(self, holding):
         """Quantity must be positive."""
         assert holding["quantity"] > 0
 
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     @given(portfolio_holding())
     def test_price_positive(self, holding):
         """Price must be positive."""
         assert holding["price_paise"] > 0
 
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     @given(portfolio_holding())
     def test_value_is_product(self, holding):
         """Value must equal quantity * price."""

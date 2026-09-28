@@ -22,7 +22,7 @@ export const panelVariants = cva('flex flex-col', {
       terminal: 'text-xs font-mono',
     },
     fill: {
-      true: 'flex-1 h-full',
+      true: 'flex-1',
       false: '',
     },
   },
@@ -206,7 +206,7 @@ export function PanelBody({
   return (
     <div
       className={cn(
-        'flex-1',
+        'flex-1 min-h-0',
         scrollable && 'overflow-auto',
         className
       )}

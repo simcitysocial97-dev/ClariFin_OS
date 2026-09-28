@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.core.x__compute_impulsivity_score__mutmut_111: survived
+--- src/engines/behaviour_engine/core.py
++++ src/engines/behaviour_engine/core.py
+@@ -52,7 +52,7 @@
+ 
+     # Category switching (discretionary categories)
+     discretionary_categories = [
+-        "Food & Dining",
++        "FOOD & DINING",
+         "Entertainment",
+         "Shopping",
+         "Travel",

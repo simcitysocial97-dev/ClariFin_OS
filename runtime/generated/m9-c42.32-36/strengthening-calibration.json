@@ -1,0 +1,86 @@
+{
+  "schema": "m9-c42.32-36-strengthening-calibration/v1",
+  "generated_at": "2026-08-26T07:19:00.000000+00:00",
+  "phase": "M9-C42.33 Phase 3",
+  "repository_sha": "084359346b3b14792c5bd38e159932f6c42922fd",
+  "baseline_reference": "runtime/generated/m9-c42.32-36/baseline.json",
+  "historical_data_assessment": {
+    "total_proposals_generated": 2,
+    "class_a_proposals": 2,
+    "class_b_refusals": 1,
+    "class_c_refusals": 1,
+    "class_d_refusals": 0,
+    "class_e_refusals": 0,
+    "human_accepted": 0,
+    "human_rejected": 0,
+    "tests_added": 0,
+    "revalidation_attempted": 1,
+    "revalidation_accepted": 1,
+    "revalidation_rejected": 0,
+    "false_positive_proposals": 0,
+    "false_negative_escapes": 0,
+    "regressions_introduced": 0,
+    "equivalent_misclassifications": 0,
+    "data_sufficiency": "INSUFFICIENT - only synthetic scenario data exists"
+  },
+  "measurement_contract": {
+    "proposal_generated": "strengthening.py:generate_proposal() -> StrengtheningProposal (schema: m9-strengthening-proposal/v1)",
+    "human_decision": "ApprovalDecision (schema: m9-strengthening-proposal/v1) - requires explicit human or controlled-loop approval",
+    "test_added": "Human authors test body in proposed_test_surface file",
+    "mutant_outcome": "targeted_revalidation() -> RevalidationOutcome with target_mutant_killed, kill_regressions",
+    "regression_outcome": "kill_regressions field in RevalidationOutcome",
+    "targeted_validation_result": "hypothesis_validated boolean + accepted boolean",
+    "final_disposition": "accepted | rejected (with rationale)"
+  },
+  "data_collection_mechanism": {
+    "proposal_log": "runtime/generated/m9-c42.31/strengthening-analysis.json (append-only)",
+    "approval_log": "runtime/generated/m9-c42.31/approvals.json (to be created)",
+    "revalidation_log": "runtime/generated/m9-c42.31/revalidation-<id>.json",
+    "survivor_registry": "backend/tests/generated/mutation/mutation-registry.json (persistent survivor identity)",
+    "correlation_key": "survivor_id + component + location + mutation_operator"
+  },
+  "calibration_metrics": {
+    "proposal_acceptance_rate": "N/A (0 human decisions recorded)",
+    "targeted_validation_success_rate": "100% (1/1 synthetic scenario)",
+    "false_positive_proposal_rate": "N/A",
+    "false_negative_gap_escape_rate": "N/A",
+    "regression_rate": "0% (0/1)",
+    "equivalent_survivor_misclassification_rate": "N/A"
+  },
+  "primary_objective_assessment": {
+    "diagnostic_usefulness": "MEASURED - Class B/C/D/E refusals explicitly recorded with reasons; Class A proposals carry behavioral hypothesis and acceptance criteria",
+    "score_increase_orientation": "REJECTED - NOT_TRIGGERS includes 'score_improvement_desire'; campaign gate rejects score-chasing",
+    "evidence_derivation": "ENFORCED - generate_proposal() only produces proposals from SurvivorEvidence; never invents"
+  },
+  "sufficiency_determination": {
+    "historical_data_sufficient": false,
+    "reason": "Only 2 synthetic Class-A proposals from master scenarios; no human approvals, no real test additions, no real revalidation against actual mutmut runs",
+    "recommendation": "Establish measurement contract and data collection mechanism; do not fabricate confidence model",
+    "next_step": "Create approvals.json log; run real strengthen-validate with human-authored tests; accumulate real data before any calibration model"
+  },
+  "classification_gates": {
+    "class_a": "genuine behavioral weakness -> proposal generated (eligible for controlled-loop validation after human review)",
+    "class_b": "equivalent/observable-equivalent -> explicit refusal (do not chase)",
+    "class_c": "defensive/unreachable -> explicit refusal (do not manufacture score)",
+    "class_d": "measurement problem -> explicit refusal (repair measurement first)",
+    "class_e": "ambiguous/design/production defect -> explicit refusal (human review required)"
+  },
+  "escalation_threshold": {
+    "definition": "CLASS-E ESCALATION when repeated survivor evidence meets threshold",
+    "evidence_required": [
+      "persistent survivor identity (canonical evidence, not just line numbers)",
+      "component, capability, mutation_operator, source_location",
+      "behavioral_hypothesis",
+      "classification_history",
+      "number_of_observations",
+      "independent_repository_changes",
+      "previous_strengthening_proposals",
+      "proposal_outcomes",
+      "regression_evidence"
+    ],
+    "threshold": "Not yet defined - requires historical data accumulation",
+    "output": "evidence_summary, repeated_observation_count, independent_change_count, previous_dispositions, why_test_strengthening_insufficient, suspected_production_behavior, recommended_human_investigation, certification_impact"
+  },
+  "status": "CONTRACT_ESTABLISHED - Data collection mechanism defined; insufficient historical data for calibration model",
+  "next_action": "Implement approvals.json logging; execute real strengthen-validate with human-authored tests to accumulate data"
+}

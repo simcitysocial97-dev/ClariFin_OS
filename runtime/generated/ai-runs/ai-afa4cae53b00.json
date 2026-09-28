@@ -1,0 +1,92 @@
+{
+  "id": "ai-afa4cae53b00",
+  "symptom": "trace test",
+  "mode": "ASSISTED",
+  "capability_id": null,
+  "status": "COMPLETED",
+  "steps": [
+    {
+      "step_number": 1,
+      "tool_name": "inspect_health",
+      "arguments": {},
+      "result": {
+        "kind": "platform.health_snapshot",
+        "version": "1.0.0",
+        "generated_at": "2026-09-06T05:05:27Z",
+        "id": "sha256:b99758f2af2b1dc19166f38bd4ff8f72e2a98a71dfdcf055ca4a4ff8d9cd9c4b",
+        "data": {
+          "platform": "UNHEALTHY",
+          "backend": "HEALTHY",
+          "frontend": "HEALTHY",
+          "database": "HEALTHY",
+          "architecture": "SAFE",
+          "verification": "CURRENT",
+          "evidence": "VALID",
+          "ai": "READY",
+          "domains": [
+            {
+              "name": "Verification",
+              "status": "UNHEALTHY",
+              "last_check": "2026-09-06T05:05:27Z",
+              "source": "/platform/v1/verification",
+              "detail": "runs=2 passed=0 failed=0"
+            },
+            {
+              "name": "EventStore",
+              "status": "HEALTHY",
+              "last_check": "2026-09-06T05:05:27Z",
+              "source": "EngineeringEventStore",
+              "detail": "events=4"
+            }
+          ]
+        }
+      },
+      "error": null,
+      "started_at": "2026-09-06T05:05:27.592679Z",
+      "completed_at": "2026-09-06T05:05:27.596449Z",
+      "evidence_id": "sha256:b99758f2af2b1dc19166f38bd4ff8f72e2a98a71dfdcf055ca4a4ff8d9cd9c4b",
+      "duration_ms": 3
+    }
+  ],
+  "created_at": "2026-09-06T05:05:27.563775Z",
+  "updated_at": "2026-09-06T05:05:27.625775Z",
+  "completed_at": "2026-09-06T05:05:27.625775Z",
+  "error": null,
+  "audit_trail": [
+    {
+      "event_id": "audit-e8f5d0c83f8d",
+      "event_type": "run_created",
+      "run_id": "ai-afa4cae53b00",
+      "timestamp": "2026-09-06T05:05:27.566291Z",
+      "payload": {
+        "symptom": "trace test",
+        "mode": "ASSISTED",
+        "capability_id": null
+      }
+    },
+    {
+      "event_id": "audit-f56be6768c39",
+      "event_type": "step_started",
+      "run_id": "ai-afa4cae53b00",
+      "timestamp": "2026-09-06T05:05:27.593591Z",
+      "payload": {
+        "step": 1,
+        "tool": "inspect_health",
+        "arguments": {}
+      }
+    },
+    {
+      "event_id": "audit-338422720a31",
+      "event_type": "step_completed",
+      "run_id": "ai-afa4cae53b00",
+      "timestamp": "2026-09-06T05:05:27.597120Z",
+      "payload": {
+        "step": 1,
+        "tool": "inspect_health",
+        "success": true,
+        "evidence_id": "sha256:b99758f2af2b1dc19166f38bd4ff8f72e2a98a71dfdcf055ca4a4ff8d9cd9c4b",
+        "duration_ms": 3
+      }
+    }
+  ]
+}

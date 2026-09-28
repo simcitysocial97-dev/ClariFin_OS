@@ -5,6 +5,14 @@
  * Enables decoupled communication between graph components.
  *
  * Architecture: Component → Event Bus → Subscribers
+ *
+ * NOTE: This is a SEPARATE event bus from the main RuntimeEventBus
+ * (lib/event-bus.ts). They serve different purposes:
+ * - GraphEventBus: Internal graph runtime events only
+ * - RuntimeEventBus: Application-level events (selection, timeline, etc.)
+ *
+ * No cross-consumers exist between these two buses. They are intentionally
+ * kept separate to maintain clean architectural boundaries (D13).
  */
 
 import type { GraphEventType, GraphEvent } from './types';

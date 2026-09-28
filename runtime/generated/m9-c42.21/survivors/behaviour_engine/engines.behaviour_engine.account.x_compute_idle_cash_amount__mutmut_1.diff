@@ -1,0 +1,13 @@
+# status: survived
+# engines.behaviour_engine.account.x_compute_idle_cash_amount__mutmut_1: survived
+--- src/engines/behaviour_engine/account.py
++++ src/engines/behaviour_engine/account.py
+@@ -2,7 +2,7 @@
+     cash_balance_paise: int,
+     loan_interest_rate_bps: int,
+     deposit_interest_rate_bps: int,
+-    threshold_bps: int = 300,
++    threshold_bps: int = 301,
+ ) -> Decimal:
+     """
+     Compute idle cash amount based on opportunity cost.

@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 
-describe('GET /api/analytics contract', () => {
+describe('GET /api/v1/analytics contract', () => {
   it('returns an object with required fields', async () => {
-    const response = await fetch('/api/analytics')
+    const response = await fetch('/api/v1/analytics')
     const data = await response.json()
 
     expect(data).toHaveProperty('highest_month')
@@ -15,14 +15,14 @@ describe('GET /api/analytics contract', () => {
   })
 
   it('highest_month_amount is a string with ₹ symbol', async () => {
-    const response = await fetch('/api/analytics')
+    const response = await fetch('/api/v1/analytics')
     const data = await response.json()
 
     expect(data.highest_month_amount).toMatch(/^₹/)
   })
 
   it('top_merchants array has correct structure', async () => {
-    const response = await fetch('/api/analytics')
+    const response = await fetch('/api/v1/analytics')
     const data = await response.json()
 
     if (data.top_merchants.length > 0) {
@@ -34,7 +34,7 @@ describe('GET /api/analytics contract', () => {
   })
 
   it('recurring_charges array has correct structure', async () => {
-    const response = await fetch('/api/analytics')
+    const response = await fetch('/api/v1/analytics')
     const data = await response.json()
 
     if (data.recurring_charges.length > 0) {
@@ -47,7 +47,7 @@ describe('GET /api/analytics contract', () => {
   })
 
   it('unique_merchants is a positive integer', async () => {
-    const response = await fetch('/api/analytics')
+    const response = await fetch('/api/v1/analytics')
     const data = await response.json()
 
     expect(Number.isInteger(data.unique_merchants)).toBe(true)

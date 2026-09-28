@@ -1,0 +1,26 @@
+[
+  {
+    "survivor_id": "mut-cc-real-0047",
+    "component": "credit_card_engine",
+    "capability": "credit-card-risk",
+    "location": "src/engines/credit_card_engine/interest.py:22",
+    "mutation_operator": "comparison",
+    "original_snippet": "if outstanding_paise == 0 or annual_rate_bps == 0:",
+    "mutated_snippet": "if outstanding_paise == 0 and annual_rate_bps == 0:",
+    "status": "survived",
+    "notes": "real_gap_comparison",
+    "covering_tests": []
+  },
+  {
+    "survivor_id": "mut-cc-real-0099",
+    "component": "credit_card_engine",
+    "capability": "credit-card-risk",
+    "location": "src/engines/credit_card_engine/utilization.py:19",
+    "mutation_operator": "exception_message_string_mutation",
+    "original_snippet": "raise ValueError(\"outstanding_paise must be non-negative\")",
+    "mutated_snippet": "raise ValueError(None)",
+    "status": "survived",
+    "notes": "equivalent_message",
+    "covering_tests": []
+  }
+]

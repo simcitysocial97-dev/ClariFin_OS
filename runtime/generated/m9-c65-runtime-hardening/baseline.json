@@ -1,0 +1,86 @@
+{
+  "schema": "m9-c65-runtime-hardening/baseline/v1",
+  "generated_at": "2026-09-20T11:45:00Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "c64_artifacts": {
+    "certification": "runtime/generated/m9-c64-final-runtime-command-ci-convergence/final-certification.md",
+    "command_inventory": "runtime/generated/m9-c64-final-runtime-command-ci-convergence/command-inventory.json",
+    "residual_findings": "runtime/generated/m9-c64-final-runtime-command-ci-convergence/residual-findings.json",
+    "ci_results": "runtime/generated/m9-c64-final-runtime-command-ci-convergence/ci-results.json",
+    "truth_reconciliation": "runtime/generated/m9-c64-final-runtime-command-ci-convergence/truth-reconciliation.json",
+    "artifact_audit": "runtime/generated/m9-c64-final-runtime-command-ci-convergence/artifact-audit.json",
+    "output_quality": "runtime/generated/m9-c64-final-runtime-command-ci-convergence/output-quality.json",
+    "repeatability": "runtime/generated/m9-c64-final-runtime-command-ci-convergence/repeatability.json"
+  },
+  "c64_findings": [
+    {
+      "id": "R001",
+      "issue": "Coverage measurement fails: `backend` dir not found / coverage report format error",
+      "classification": "ENVIRONMENT_BOUNDARY",
+      "priority": "P2",
+      "impact": "All 11 coverage measurements show INFRASTRUCTURE_FAILURE; 0 authoritative coverages"
+    },
+    {
+      "id": "R002",
+      "issue": "E2E IMPACT block printed twice (header + task-added notification)",
+      "classification": "FALSE_POSITIVE",
+      "priority": "P3",
+      "impact": "Cosmetic duplicate stderr output"
+    },
+    {
+      "id": "R003",
+      "issue": "`verify inspect workflows` delegates to capability resolver instead of enumerating .github/workflows/*.yml",
+      "classification": "DEFECT",
+      "priority": "P2",
+      "impact": "Cannot list CI workflows via inspect; returns capability discovery help text"
+    },
+    {
+      "id": "R004",
+      "issue": "Doctor shows 0% success rate from pre-convergence historical data",
+      "classification": "PROVEN_NON_DEFECT",
+      "priority": "P3",
+      "impact": "Misleading analytics; framework health is HEALTHY but historical runs are 0/17"
+    },
+    {
+      "id": "R005",
+      "issue": "check times out at external 120s boundary with 1,156 changed files",
+      "classification": "EXTERNAL_BOUNDARY",
+      "priority": "P2",
+      "impact": "Exit code 124 under external timeout; execution budget semantics absent"
+    }
+  ],
+  "c64_gates": {
+    "passed": 28,
+    "partial": 6,
+    "skipped": 2,
+    "failed": 0,
+    "total_enforced": 37
+  },
+  "working_tree_state": {
+    "modified_files": [
+      "backend/pyproject.toml",
+      "runtime/generated/git-fetch-events.jsonl",
+      "runtime/generated/m9-c48/api-schema-governance.json",
+      "runtime/generated/m9-c48/cli-classification.json",
+      "runtime/generated/vea5-reconciliation.pr.json"
+    ],
+    "untracked_c65_dir": "runtime/generated/m9-c65-runtime-hardening/"
+  },
+  "command_surface": {
+    "canonical_commands": 9,
+    "inspect_subqueries": 7,
+    "compatibility_aliases": 9,
+    "deprecated_tokens": 52,
+    "profile_aliases": 9,
+    "capabilities": 55
+  },
+  "ci_workflows": {
+    "total": 14,
+    "locally_executable": 1,
+    "github_only": 2,
+    "environment_boundary": 8,
+    "non_canonical": 3
+  },
+  "baseline_validated": true,
+  "c64_r2_intact": true
+}

@@ -98,9 +98,14 @@ class Settings:
 
     # Security Configuration
     @property
-    def allowed_file_extensions(self) -> list[str]:
-        """Allowed file extensions for upload."""
-        return os.getenv("ALLOWED_EXTENSIONS", ".pdf,.csv,.xlsx,.xls").split(",")
+    def pdf_upload_extensions(self) -> list[str]:
+        """Allowed file extensions for PDF statement upload."""
+        return os.getenv("PDF_UPLOAD_EXTENSIONS", ".pdf").split(",")
+
+    @property
+    def tabular_upload_extensions(self) -> list[str]:
+        """Allowed file extensions for tabular import detection."""
+        return os.getenv("TABULAR_UPLOAD_EXTENSIONS", ".csv,.xlsx,.xls").split(",")
 
     # Feature Flags
     @property

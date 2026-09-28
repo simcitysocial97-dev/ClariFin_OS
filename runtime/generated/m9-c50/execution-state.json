@@ -1,0 +1,99 @@
+{
+  "program": "M9-C50",
+  "title": "End-State Convergence, Operational Validation & Self-Verification",
+  "schema": "m9-c50/execution-state@1",
+  "updated_at": "2026-09-05T01:30:00+00:00",
+  "current_phase": "COMPLETE",
+  "current_phase_status": "COMPLETE",
+  "stop_gate_0": "PASSED",
+  "stop_gate_1": "PASSED",
+  "stop_gate_2": "PASSED",
+  "stop_gate_3": "PASSED",
+  "stop_gate_4": "PASSED",
+  "stop_gate_5": "PASSED",
+  "stop_gate_6": "PASSED",
+  "stop_gate_7": "PASSED",
+  "stop_gate_8": "PASSED",
+  "stop_gate_9": "PASSED",
+  "stop_gate_10": "PASSED",
+  "stop_gate_11": "PASSED",
+  "stop_gate_12": "PASSED",
+  "phase_12_evidence_artifacts": {
+    "test_suite": "runtime/tests/test_m9_c50_final_governance.py",
+    "test_hash": "541db1b1d0211659e13888e01defec8114d3b157212f7313638e73dc5eb99704",
+    "final_report": "runtime/generated/m9-c50/FINAL_CONVERGENCE_REPORT.md",
+    "final_report_hash": "838fb06a5e72f1e1c5353a2dc4802f5ee8ee0c8b308157191835997273d81f05",
+    "final_summary": "runtime/generated/m9-c50/final-convergence-summary.json",
+    "final_summary_hash": "56ba123b18a457958bd93b0821abc09c62fd84370ca5a71af9f9fb6e4db10ddf"
+  },
+  "phase_11_evidence_artifacts": {
+    "test_suite": "runtime/tests/test_m9_c50_operational_validation.py",
+    "test_hash": "ae85c635cd8663483314a495d6df72b9735cc69add3a70f46c46afc6c2d69ec0",
+    "operations_dir": "runtime/generated/m9-c50/phase-11/operations/",
+    "run_count": 24
+  },
+  "phase_10_evidence_artifacts": {
+    "test_suite": "runtime/tests/test_m9_c50_self_verification.py",
+    "test_hash": "3fca3d9aa6938b5aa448cfcb0910df62953f807fb3c70f01ced607533891f128"
+  },
+  "phase_9_evidence_artifacts": {
+    "test_suite": "runtime/tests/test_m9_c50_stop_gate9_failure_modes.py",
+    "test_hash": "fbb87414d4367851402a8c32e4361361f6428f5852d910ddc2658370f9ac70bf"
+  },
+  "phase_8_evidence_artifacts": {
+    "inventory": "runtime/generated/m9-c50/phase-8/ci-canonicalization-inventory.json",
+    "inventory_hash": "14bc46b446f6f3d9170e910c2c924bcdda1d466d1515a014412394956c8e6346"
+  },
+  "phase_7_evidence_artifacts": {
+    "disposition": "runtime/generated/m9-c50/phase-7/disposition/frontend-arithmetic-disposition.json",
+    "readme": "runtime/generated/m9-c50/phase-7/disposition/README.md",
+    "disposition_hash": "95b48eccfada10d28e063f7ef812db677d90d4af917d681358a30c4472289d4e",
+    "readme_hash": "d1de8dc95eb566d88d1cd4d0a7cb6b239ac18907fdcf4582087108bcd711165a"
+  },
+  "phase_6_evidence_artifacts": {
+    "gate6_test_suite": "runtime/tests/test_m9_c50_stop_gate6_strengthening_authority.py",
+    "gate6_evidence": "runtime/generated/m9-c50/phase-6/stop-gate6-evidence.json"
+  },
+  "phase_5_evidence_artifacts": {
+    "gate5_test_suite": "runtime/tests/test_m9_c50_stop_gate5_evidence_trust.py",
+    "gate5_evidence": "runtime/generated/m9-c50/phase-5/"
+  },
+  "phase_4_evidence_artifacts": {
+    "stop_gate4_evidence": "runtime/generated/m9-c50/phase-4/stop-gate4-evidence.json",
+    "gate4_test_suite": "runtime/tests/test_m9_c50_stop_gate4_execution_completeness.py"
+  },
+  "baseline": {
+    "head_sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde",
+    "branch": "m9c9-merge-authorization-resolution",
+    "working_tree": "DIRTY",
+    "working_tree_dirty_file_count": 44,
+    "test_baseline_collected": 1372
+  },
+  "phase_0_evidence_artifacts": {
+    "baseline_inventory": "runtime/generated/m9-c50/phase-0/baseline-inventory.json",
+    "command_inventory": "runtime/generated/m9-c50/phase-0/command-inventory.json",
+    "authority_inventory": "runtime/generated/m9-c50/phase-0/authority-inventory.json",
+    "capability_inventory": "runtime/generated/m9-c50/phase-0/capability-inventory.json",
+    "task_kind_inventory": "runtime/generated/m9-c50/phase-0/task-kind-inventory.json",
+    "c49_claim_reconciliation": "runtime/generated/m9-c50/phase-0/c49-claim-reconciliation.md",
+    "initial_architecture_graph": "runtime/generated/m9-c50/phase-0/initial-architecture-graph.md",
+    "initial_maturity_assessment": "runtime/generated/m9-c50/phase-0/initial-maturity-assessment.md"
+  },
+  "phase_0_key_findings": [
+    "C49 9-command canonical surface confirmed by live execution",
+    "legacy commands route through canonical facade with deprecation warnings - confirmed",
+    "10 capability issues: unknown_evidence_kind outside closed EVIDENCE_KINDS vocabulary - OPEN",
+    "C49 FINAL_CONVERGENCE_REPORT.md records stale SHA 35a31f50 vs current HEAD 4c2e9d86",
+    "working tree holds uncommitted C50 convergence work (executor adapters, CI migration) - OPEN",
+    "112 frontend arithmetic findings from C48 RESOLVED with explicit dispositions - Phase 7 COMPLETE",
+    "local verification success rate 32.4%, cache hit rate <50% - operational instability - OPEN",
+    "maturity: ARCHITECTURALLY_CONVERGED scoring PARTIAL - OPERATIONALLY_VALIDATED not yet warranted"
+  ],
+  "phase_0_dispositions": {
+    "evidence_kind_violations": "PENDING Phase 2/5 (obligation & evidence convergence)",
+    "dirty_working_tree": "PENDING baseline governance decision (commit vs quarantine in Phase 1)",
+    "frontend_arithmetic": "RESOLVED Phase 7 - all 112 findings classified with dispositions",
+    "ci_migration": "RESOLVED Phase 8 - all 10 verification workflows use canonical verify.py commands",
+    "operational_instability": "RESOLVED Phase 11 - 24 operational runs recorded across 16 scenarios"
+  }
+}

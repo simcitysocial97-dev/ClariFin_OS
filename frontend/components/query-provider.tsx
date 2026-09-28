@@ -1,6 +1,7 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { transientRetryPolicy } from '@/lib/api/gateway';
 import { useState } from 'react';
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
@@ -11,7 +12,7 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
         gcTime: 10 * 60 * 1000, // 10 minutes — keep in cache after component unmounts
         refetchOnWindowFocus: false, // do not refetch when user switches tabs
         refetchOnMount: true, // fetch when component first mounts
-        retry: 1, // retry once on failure, not 3 times (default)
+        retry: transientRetryPolicy, // semantic: only transient errors retry (M9-C37)
       },
     },
   }));

@@ -1,0 +1,13 @@
+# status: survived
+# engines.reconciliation_engine.x_find_matches_for_transaction__mutmut_34: survived
+--- src/engines/reconciliation_engine.py
++++ src/engines/reconciliation_engine.py
+@@ -43,7 +43,7 @@
+         match_condition = "credit = ?"
+     elif target_credit > 0:
+         amount_to_match = target_credit
+-        match_condition = "debit = ?"
++        match_condition = None
+     else:
+         conn.close()
+         return []

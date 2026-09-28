@@ -1,0 +1,16 @@
+{
+  "schema": "m9-c50/stabilization/lineage-integrity@1",
+  "generated_at": "2026-09-04T22:55:51.786961+00:00",
+  "proof_execution": {
+    "task_id": "exec::probe::lineage::money",
+    "execution_id": "runtime.verification::exec::41e2b45c4bf4ef4e",
+    "evidence_summary": "execution_id=runtime.verification::exec::41e2b45c4bf4ef4e; evidence_id=runtime.verification::ev::fea2665b18f76f1a; artif",
+    "artifact_paths": [
+      "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-invariant-money.xml"
+    ],
+    "exit_code": 0,
+    "failure_kind": null
+  },
+  "lineage_chain_present": true,
+  "completeness": "task -> execution -> evidence -> decision derivable"
+}

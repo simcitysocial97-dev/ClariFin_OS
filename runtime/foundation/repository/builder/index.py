@@ -14,7 +14,7 @@ directly.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 from runtime.foundation.repository.builder import RepositoryBuilder, ValidationSummary
 from runtime.foundation.repository.graph.schema import RepositoryGraph
@@ -38,7 +38,7 @@ class RepositoryIndexer:
         """
         return self._builder.build()
 
-    def to_index_dict(self) -> Dict[str, Any]:
+    def to_index_dict(self) -> dict[str, Any]:
         """Build the full index dictionary including metadata and gaps.
 
         This method provides backward compatibility with the old index.py API.
@@ -55,7 +55,7 @@ class RepositoryIndexer:
             self.build()
         return self._builder.write_index(output_path)
 
-    def get_metrics(self) -> Dict[str, Any]:
+    def get_metrics(self) -> dict[str, Any]:
         """Get summary statistics from the builder.
 
         Returns:
