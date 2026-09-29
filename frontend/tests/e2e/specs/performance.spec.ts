@@ -401,12 +401,18 @@ test.describe('Memory Usage', () => {
   // test finished, reporting a timeout rather than a leak verdict. The timeout
   // is raised to match the work the test does; the growth assertion
   // (`growth < 0.5`) is unchanged and still decides the result.
-  test('should not have memory leaks on navigation', async ({ page, captureErrors }) => {
+  test('should not have memory leaks on navigation', async ({ page, captureErrors, waitForPageReady }) => {
     test.setTimeout(180_000);
     captureErrors(page);
     
+    // Readiness uses the suite's waitForPageReady fixture (DOM content loaded +
+    // React hydrated) rather than `networkidle`. `networkidle` waits for 500 ms of
+    // network silence, so under a loaded mobile runner with a polling backend it
+    // expires and the test fails with a waitForLoadState timeout — reporting a
+    // readiness failure where the test means to report a memory verdict. The
+    // growth assertion below is unchanged and still decides the result.
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await waitForPageReady(page);
     
     // Get initial memory
     const initialMemory = await page.evaluate(() => {
@@ -416,9 +422,9 @@ test.describe('Memory Usage', () => {
     // Navigate multiple times
     for (let i = 0; i < 5; i++) {
       await page.goto('/transactions');
-      await page.waitForLoadState('networkidle');
+      await waitForPageReady(page);
       await page.goto('/dashboard');
-      await page.waitForLoadState('networkidle');
+      await waitForPageReady(page);
     }
     
     // Get final memory

@@ -32,6 +32,11 @@ baseline, it has produced a snapshot of a broken render.
 | Project | `chromium` |
 | Verification run after regeneration | 24 passed |
 
+The `mobile-chrome` project carries its own baseline set
+(`*-mobile-chrome-linux.png`) and was regenerated and verified separately, with
+the same renderer, the mobile project's device emulation and viewport, and the
+same provenance policy. 24 passed on its verification run.
+
 ## Why these were regenerated (2026-09-29)
 
 The committed baselines were stale relative to the M9-C71 console work that had
