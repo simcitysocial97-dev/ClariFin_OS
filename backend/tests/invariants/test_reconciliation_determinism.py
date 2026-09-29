@@ -12,8 +12,12 @@ Tests for:
 Run: python -m pytest tests/invariants/test_reconciliation_determinism.py -v
 """
 
+import os
+import shutil
 import sqlite3
+import tempfile
 from datetime import datetime
+from pathlib import Path
 
 import pytest
 from hypothesis import HealthCheck, given, settings
@@ -29,6 +33,36 @@ def reconciliation_db(temp_db: str) -> str:
     stmt_repo.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
     stmt_repo.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
     return temp_db
+
+
+def _fresh_reconciliation_db(template: Path) -> str:
+    """Create a new reconciliation database seeded with the two test statements.
+
+    Hypothesis runs every example of a property test against one function-scoped
+    fixture, so examples accumulate rows in a single database. That matters
+    here because the transactions table is append-only by design —
+    StatementRepository installs a trigger that refuses DELETE, which is correct
+    for a financial ledger and is not something a test should route around.
+    Isolation therefore has to come from a new database per example, not from
+    clearing the existing one.
+
+    Without it, a later example that generates a row colliding with an earlier
+    one fails on
+      UNIQUE (statement_id, date, description, amount_paise, sequence_num)
+    which is the schema constraint doing its job, not the property under test.
+
+    `template` is the session-scoped pristine schema, so this copies the same
+    fully-initialised database the temp_db fixture would have produced.
+    """
+
+    fd, path = tempfile.mkstemp(prefix="recon_prop_", suffix=".db")
+    os.close(fd)
+    os.unlink(path)
+    shutil.copy2(template, path)
+    stmt_repo = StatementRepository(path)
+    stmt_repo.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
+    stmt_repo.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
+    return path
 
 
 @pytest.fixture
@@ -97,8 +131,11 @@ def transactions_strategy():
     deadline=None,
     suppress_health_check=[HealthCheck.function_scoped_fixture],
 )
-def test_match_uniqueness_property(transactions, reconciliation_db: str):
+def test_match_uniqueness_property(
+    transactions, reconciliation_db: str, _pristine_db_template: Path
+):
     """Property: No duplicate matches for the same transaction pair."""
+    reconciliation_db = _fresh_reconciliation_db(_pristine_db_template)
     conn = sqlite3.connect(reconciliation_db)
     try:
         for txn in transactions:
@@ -137,8 +174,11 @@ def test_match_uniqueness_property(transactions, reconciliation_db: str):
     deadline=None,
     suppress_health_check=[HealthCheck.function_scoped_fixture],
 )
-def test_deterministic_matching_property(transactions, reconciliation_db: str):
+def test_deterministic_matching_property(
+    transactions, reconciliation_db: str, _pristine_db_template: Path
+):
     """Property: Same input must always produce the same matches."""
+    reconciliation_db = _fresh_reconciliation_db(_pristine_db_template)
     conn = sqlite3.connect(reconciliation_db)
     try:
         for txn in transactions:
@@ -187,8 +227,11 @@ def test_deterministic_matching_property(transactions, reconciliation_db: str):
     deadline=None,
     suppress_health_check=[HealthCheck.function_scoped_fixture],
 )
-def test_no_cycles_property(transactions, reconciliation_db: str):
+def test_no_cycles_property(
+    transactions, reconciliation_db: str, _pristine_db_template: Path
+):
     """Property: Matching must not create cycles in the transaction graph."""
+    reconciliation_db = _fresh_reconciliation_db(_pristine_db_template)
     conn = sqlite3.connect(reconciliation_db)
     try:
         for txn in transactions:
@@ -228,8 +271,11 @@ def test_no_cycles_property(transactions, reconciliation_db: str):
     deadline=None,
     suppress_health_check=[HealthCheck.function_scoped_fixture],
 )
-def test_bipartite_matching_property(transactions, reconciliation_db: str):
+def test_bipartite_matching_property(
+    transactions, reconciliation_db: str, _pristine_db_template: Path
+):
     """Property: Matches must be valid for bipartite graphs (debit ↔ credit)."""
+    reconciliation_db = _fresh_reconciliation_db(_pristine_db_template)
     conn = sqlite3.connect(reconciliation_db)
     try:
         for txn in transactions:
@@ -276,8 +322,11 @@ def test_bipartite_matching_property(transactions, reconciliation_db: str):
     deadline=None,
     suppress_health_check=[HealthCheck.function_scoped_fixture],
 )
-def test_edge_cases_property(transactions, reconciliation_db: str):
+def test_edge_cases_property(
+    transactions, reconciliation_db: str, _pristine_db_template: Path
+):
     """Property: Handle edge cases (zero or single transaction)."""
+    reconciliation_db = _fresh_reconciliation_db(_pristine_db_template)
     conn = sqlite3.connect(reconciliation_db)
     try:
         for txn in transactions:
