@@ -57,7 +57,10 @@ FINANCIAL_CONCEPTS: dict[str, FinancialConcept] = {
         description="Prepayment application reducing principal or tenure",
         depends_on=("schedule_generation", "emi_calculation"),
         affects=("closure_validation", "metrics_computation"),
-        invariants=("prepayment_reduces_principal_or_tenure", "total_payment_covers_principal"),
+        invariants=(
+            "prepayment_reduces_principal_or_tenure",
+            "total_payment_covers_principal",
+        ),
         implemented_in="backend/src/engines/loan_engine/prepayment.py",
     ),
     "closure_validation": FinancialConcept(

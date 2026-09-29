@@ -24,9 +24,8 @@ class SymbolTestSelector:
     """Select tests based on changed symbols using coverage mapping."""
 
     def __init__(self, symbol_test_map_path: Path = None):
-        self.map_path = (
-            symbol_test_map_path
-            or Path("runtime/generated/symbol-test-map.json")
+        self.map_path = symbol_test_map_path or Path(
+            "runtime/generated/symbol-test-map.json"
         )
         self.symbol_to_tests = self._load_map()
 
@@ -113,9 +112,7 @@ class SymbolTestSelector:
 
         mapper = CoverageSymbolMapper()
         symbol_to_tests = mapper.build_symbol_to_test_map(test_directory)
-        self.symbol_to_tests = {
-            k: v for k, v in symbol_to_tests.items()
-        }
+        self.symbol_to_tests = {k: v for k, v in symbol_to_tests.items()}
         self._save_map()
         return self.symbol_to_tests
 

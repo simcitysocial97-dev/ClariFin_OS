@@ -35,7 +35,9 @@ from runtime.system.observability.analytics import AnalyticsEngine
 from runtime.system.observability.event_store import EngineeringEventStore
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
-C66_ARTIFACT_DIR = REPO_ROOT / "runtime" / "generated" / "m9-c66-certification-forensics"
+C66_ARTIFACT_DIR = (
+    REPO_ROOT / "runtime" / "generated" / "m9-c66-certification-forensics"
+)
 VERSION_PATH = REPO_ROOT / "runtime" / "VERSION"
 
 

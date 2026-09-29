@@ -32,7 +32,9 @@ class TestInspectWorkflows:
         records = enumerate_workflows()
         wf_dir = Path(".github/workflows")
         expected = len(list(wf_dir.glob("*.yml")))
-        assert len(records) == expected, f"Expected {expected} workflows, got {len(records)}"
+        assert (
+            len(records) == expected
+        ), f"Expected {expected} workflows, got {len(records)}"
 
     def test_each_record_has_required_fields(self):
         """Every workflow record must have all required metadata fields."""
@@ -40,7 +42,9 @@ class TestInspectWorkflows:
         for w in records:
             assert w.workflow_id, "workflow_id must be non-empty"
             assert w.name, "name must be non-empty"
-            assert w.path.startswith(".github/workflows/"), f"path must be relative: {w.path}"
+            assert w.path.startswith(
+                ".github/workflows/"
+            ), f"path must be relative: {w.path}"
             assert isinstance(w.triggers, list)
             assert isinstance(w.jobs, list)
             assert isinstance(w.commands, list)
@@ -72,9 +76,10 @@ class TestInspectWorkflows:
                     "an expression-valued timeout must be coerced, not passed "
                     "through, or every downstream comparison breaks"
                 )
-                assert j.timeout_minutes >= 0, (
-                    f"{w.workflow_id}/{j.job_id} declares a negative timeout"
-                )
+                assert (
+                    j.timeout_minutes >= 0
+                ), f"{w.workflow_id}/{j.job_id} declares a negative timeout"
+
     def test_every_job_declares_a_timeout(self):
         """A job with no timeout runs for GitHub's 6-hour default.
 
@@ -120,28 +125,50 @@ class TestInspectWorkflows:
         by_id = {w.workflow_id: w for w in records}
 
         # These are known GitHub-only workflows
-        assert by_id["release"].boundary_classification == BoundaryClassification.GITHUB_ONLY
-        assert by_id["security-codeql"].boundary_classification == BoundaryClassification.GITHUB_ONLY
-        assert by_id["dependency-update"].boundary_classification == BoundaryClassification.GITHUB_ONLY
+        assert (
+            by_id["release"].boundary_classification
+            == BoundaryClassification.GITHUB_ONLY
+        )
+        assert (
+            by_id["security-codeql"].boundary_classification
+            == BoundaryClassification.GITHUB_ONLY
+        )
+        assert (
+            by_id["dependency-update"].boundary_classification
+            == BoundaryClassification.GITHUB_ONLY
+        )
 
         # Known browser-boundary
-        assert by_id["playwright"].boundary_classification == BoundaryClassification.BROWSER
+        assert (
+            by_id["playwright"].boundary_classification
+            == BoundaryClassification.BROWSER
+        )
 
         # Known local workflows
-        assert by_id["backend-verify"].boundary_classification == BoundaryClassification.LOCAL
-        assert by_id["verification-runtime"].boundary_classification == BoundaryClassification.LOCAL
+        assert (
+            by_id["backend-verify"].boundary_classification
+            == BoundaryClassification.LOCAL
+        )
+        assert (
+            by_id["verification-runtime"].boundary_classification
+            == BoundaryClassification.LOCAL
+        )
 
     def test_local_executable_matches_boundary(self):
         """local_executable must be True only for LOCAL boundary workflows."""
         records = enumerate_workflows()
         for w in records:
             if w.boundary_classification == BoundaryClassification.LOCAL:
-                assert w.local_executable is True, f"{w.workflow_id} should be local executable"
+                assert (
+                    w.local_executable is True
+                ), f"{w.workflow_id} should be local executable"
             elif w.boundary_classification in (
                 BoundaryClassification.BROWSER,
                 BoundaryClassification.ENVIRONMENT_BOUNDARY,
             ):
-                assert w.local_executable is False, f"{w.workflow_id} should not be local executable"
+                assert (
+                    w.local_executable is False
+                ), f"{w.workflow_id} should not be local executable"
 
     def test_output_not_empty(self):
         """Table output must contain workflow names and counts."""

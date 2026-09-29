@@ -173,7 +173,9 @@ def _coverage_run(
             )
             rc = report.returncode
         else:
-            raise RuntimeError(f"coverage json exited {report.returncode}: {report.stderr[:200]}")
+            raise RuntimeError(
+                f"coverage json exited {report.returncode}: {report.stderr[:200]}"
+            )
     except Exception as exc:  # pragma: no cover - defensive
         rc = 2 if rc == 0 else rc
         tail = tail or f"coverage report failed: {exc}"

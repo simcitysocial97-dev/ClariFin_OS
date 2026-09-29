@@ -55,9 +55,7 @@ class TestRunIdToEventId:
 class TestMigration:
     """End-to-end migration behaviour."""
 
-    def test_migrates_executed_runs(
-        self, tmp_path: Path
-    ) -> None:
+    def test_migrates_executed_runs(self, tmp_path: Path) -> None:
         """Only records with passed/failed status and duration>0 are imported."""
         history = tmp_path / "history.json"
         events = tmp_path / "events.jsonl"
@@ -161,12 +159,19 @@ class TestMigration:
             encoding="utf-8",
         )
 
-        with patch(
-            "runtime.foundation.verification.history_migration.HISTORY_PATH", history
-        ), patch(
-            "runtime.foundation.verification.history_migration.EVENT_STORE_PATH", events
-        ), patch(
-            "runtime.foundation.verification.history_migration.MANIFEST_PATH", manifest
+        with (
+            patch(
+                "runtime.foundation.verification.history_migration.HISTORY_PATH",
+                history,
+            ),
+            patch(
+                "runtime.foundation.verification.history_migration.EVENT_STORE_PATH",
+                events,
+            ),
+            patch(
+                "runtime.foundation.verification.history_migration.MANIFEST_PATH",
+                manifest,
+            ),
         ):
             result = migrate()
 
@@ -243,12 +248,19 @@ class TestMigration:
             encoding="utf-8",
         )
 
-        with patch(
-            "runtime.foundation.verification.history_migration.HISTORY_PATH", history
-        ), patch(
-            "runtime.foundation.verification.history_migration.EVENT_STORE_PATH", events
-        ), patch(
-            "runtime.foundation.verification.history_migration.MANIFEST_PATH", manifest
+        with (
+            patch(
+                "runtime.foundation.verification.history_migration.HISTORY_PATH",
+                history,
+            ),
+            patch(
+                "runtime.foundation.verification.history_migration.EVENT_STORE_PATH",
+                events,
+            ),
+            patch(
+                "runtime.foundation.verification.history_migration.MANIFEST_PATH",
+                manifest,
+            ),
         ):
             migrate()
 
@@ -296,12 +308,19 @@ class TestMigration:
             encoding="utf-8",
         )
 
-        with patch(
-            "runtime.foundation.verification.history_migration.HISTORY_PATH", history
-        ), patch(
-            "runtime.foundation.verification.history_migration.EVENT_STORE_PATH", events
-        ), patch(
-            "runtime.foundation.verification.history_migration.MANIFEST_PATH", manifest
+        with (
+            patch(
+                "runtime.foundation.verification.history_migration.HISTORY_PATH",
+                history,
+            ),
+            patch(
+                "runtime.foundation.verification.history_migration.EVENT_STORE_PATH",
+                events,
+            ),
+            patch(
+                "runtime.foundation.verification.history_migration.MANIFEST_PATH",
+                manifest,
+            ),
         ):
             result1 = migrate()
             result2 = migrate()
@@ -387,12 +406,19 @@ class TestMigration:
             encoding="utf-8",
         )
 
-        with patch(
-            "runtime.foundation.verification.history_migration.HISTORY_PATH", history
-        ), patch(
-            "runtime.foundation.verification.history_migration.EVENT_STORE_PATH", events
-        ), patch(
-            "runtime.foundation.verification.history_migration.MANIFEST_PATH", manifest
+        with (
+            patch(
+                "runtime.foundation.verification.history_migration.HISTORY_PATH",
+                history,
+            ),
+            patch(
+                "runtime.foundation.verification.history_migration.EVENT_STORE_PATH",
+                events,
+            ),
+            patch(
+                "runtime.foundation.verification.history_migration.MANIFEST_PATH",
+                manifest,
+            ),
         ):
             result = migrate()
 
@@ -438,12 +464,19 @@ class TestMigration:
             encoding="utf-8",
         )
 
-        with patch(
-            "runtime.foundation.verification.history_migration.HISTORY_PATH", history
-        ), patch(
-            "runtime.foundation.verification.history_migration.EVENT_STORE_PATH", events
-        ), patch(
-            "runtime.foundation.verification.history_migration.MANIFEST_PATH", manifest
+        with (
+            patch(
+                "runtime.foundation.verification.history_migration.HISTORY_PATH",
+                history,
+            ),
+            patch(
+                "runtime.foundation.verification.history_migration.EVENT_STORE_PATH",
+                events,
+            ),
+            patch(
+                "runtime.foundation.verification.history_migration.MANIFEST_PATH",
+                manifest,
+            ),
         ):
             migrate()
 
@@ -458,13 +491,19 @@ class TestMigration:
         events = tmp_path / "events.jsonl"
         manifest = tmp_path / "manifest.json"
 
-        with patch(
-            "runtime.foundation.verification.history_migration.HISTORY_PATH",
-            tmp_path / "nonexistent.json",
-        ), patch(
-            "runtime.foundation.verification.history_migration.EVENT_STORE_PATH", events
-        ), patch(
-            "runtime.foundation.verification.history_migration.MANIFEST_PATH", manifest
+        with (
+            patch(
+                "runtime.foundation.verification.history_migration.HISTORY_PATH",
+                tmp_path / "nonexistent.json",
+            ),
+            patch(
+                "runtime.foundation.verification.history_migration.EVENT_STORE_PATH",
+                events,
+            ),
+            patch(
+                "runtime.foundation.verification.history_migration.MANIFEST_PATH",
+                manifest,
+            ),
         ):
             result = migrate()
 

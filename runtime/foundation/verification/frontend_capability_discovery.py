@@ -133,6 +133,7 @@ class FrontendCapabilityDiscoverer:
             from runtime.foundation.verification.frontend_backend_map import (
                 FrontendBackendMapper,
             )
+
             self._frontend_backend_mapper = FrontendBackendMapper(self.repo_root)
         return self._frontend_backend_mapper
 
@@ -147,7 +148,11 @@ class FrontendCapabilityDiscoverer:
             if rel_path.startswith(prefix):
                 return kind
 
-        if rel_path.endswith(".test.ts") or rel_path.endswith(".test.tsx") or "__tests__" in rel_path:
+        if (
+            rel_path.endswith(".test.ts")
+            or rel_path.endswith(".test.tsx")
+            or "__tests__" in rel_path
+        ):
             return FrontendCapabilityKind.TEST
         if rel_path.startswith("frontend/tests/e2e/"):
             return FrontendCapabilityKind.E2E
@@ -185,7 +190,9 @@ class FrontendCapabilityDiscoverer:
 
         return "frontend-shared"
 
-    def _get_api_dependencies(self, symbols: list[TypeScriptSymbol], file_path: Path) -> list[dict]:
+    def _get_api_dependencies(
+        self, symbols: list[TypeScriptSymbol], file_path: Path
+    ) -> list[dict]:
         """Extract API dependencies from symbols and file content.
 
         Returns a list of dicts with 'endpoint' and 'method' keys.
@@ -195,16 +202,17 @@ class FrontendCapabilityDiscoverer:
         try:
             content = file_path.read_text(encoding="utf-8")
             import re
+
             # Pattern to match fetch calls with method option
             # apiFetch('/path', { method: 'POST' }) or fetch('/path', { method: 'POST' })
             fetch_with_method = re.compile(
                 r"""(?:apiFetch|apiFetchJson|fetch)\s*\(\s*['"`]([^'"`]+)['"`]\s*,\s*\{[^}]*method\s*:\s*['"]([A-Z]+)['"]""",
-                re.IGNORECASE
+                re.IGNORECASE,
             )
             # Pattern for simple fetch calls (default GET)
             fetch_simple = re.compile(
                 r"""(?:apiFetch|apiFetchJson|fetch)\s*\(\s*['"`]([^'"`]+)['"`]""",
-                re.IGNORECASE
+                re.IGNORECASE,
             )
 
             # First pass: find calls with explicit method
@@ -245,8 +253,13 @@ class FrontendCapabilityDiscoverer:
             normalized = endpoint
             if "${" in endpoint:
                 import re
+
                 normalized = re.sub(r"\$\{[^}]+\}", ":param", endpoint)
-            normalized = normalized.replace("{id}", ":param").replace("{", ":param").replace("}", "")
+            normalized = (
+                normalized.replace("{id}", ":param")
+                .replace("{", ":param")
+                .replace("}", "")
+            )
             normalized = normalized.split("?")[0]
 
             for consumer_endpoint in endpoint_to_capability:
@@ -264,6 +277,7 @@ class FrontendCapabilityDiscoverer:
         endpoint_map = {}
         try:
             import json
+
             api_map_path = self.repo_root / "backend/tests/generated/api-map.json"
             if api_map_path.exists():
                 api_map = json.loads(api_map_path.read_text())
@@ -311,11 +325,13 @@ class FrontendCapabilityDiscoverer:
     def _endpoints_match(self, endpoint1: str, endpoint2: str) -> bool:
         """Check if two endpoints match (handling :param wildcards and template vars)."""
         import re
+
         def normalize(ep: str) -> str:
             ep = re.sub(r"\$\{[^}]+\}", ":param", ep)
             ep = re.sub(r"\{[^}]+\}", ":param", ep)
             ep = ep.split("?")[0]
             return ep
+
         return normalize(endpoint1) == normalize(endpoint2)
 
     def _find_test_files(self, capabilities: dict[str, FrontendCapability]) -> None:
@@ -339,7 +355,9 @@ class FrontendCapabilityDiscoverer:
                         else:
                             cap.test_files.append(test_file)
 
-    def discover_capabilities(self, directory: Path = None) -> dict[str, FrontendCapability]:
+    def discover_capabilities(
+        self, directory: Path = None
+    ) -> dict[str, FrontendCapability]:
         """Discover all frontend capabilities in a directory."""
         target_dir = directory or self.frontend_root
 
@@ -359,7 +377,11 @@ class FrontendCapabilityDiscoverer:
                     rel_path = str(file_path.relative_to(self.frontend_root / "app"))
                 except ValueError:
                     rel_path = file_path.stem
-                route_name = rel_path.replace("/page.tsx", "").replace("/workspace-page.tsx", "").replace(".tsx", "")
+                route_name = (
+                    rel_path.replace("/page.tsx", "")
+                    .replace("/workspace-page.tsx", "")
+                    .replace(".tsx", "")
+                )
                 if not route_name:
                     route_name = "root"
                 capability_id = f"frontend:route:{domain}:{route_name}"
@@ -368,8 +390,12 @@ class FrontendCapabilityDiscoverer:
                 capability_id = f"frontend:hook:{domain}:{hook_name}"
             elif kind == FrontendCapabilityKind.COMPONENT:
                 try:
-                    rel_path = str(file_path.relative_to(self.frontend_root / "components"))
-                    comp_name = rel_path.split("/")[0] if "/" in rel_path else file_path.stem
+                    rel_path = str(
+                        file_path.relative_to(self.frontend_root / "components")
+                    )
+                    comp_name = (
+                        rel_path.split("/")[0] if "/" in rel_path else file_path.stem
+                    )
                 except ValueError:
                     comp_name = file_path.stem
                 capability_id = f"frontend:component:{domain}:{comp_name}"
@@ -411,7 +437,9 @@ class FrontendCapabilityDiscoverer:
 
         if capabilities:
             for cap in capabilities.values():
-                cap.backend_capabilities = self._get_backend_capabilities(cap.api_dependencies)
+                cap.backend_capabilities = self._get_backend_capabilities(
+                    cap.api_dependencies
+                )
 
         self._find_test_files(capabilities)
 

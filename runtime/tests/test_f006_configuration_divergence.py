@@ -1,4 +1,5 @@
 """F006 - Configuration divergence detection tests."""
+
 import pytest
 
 

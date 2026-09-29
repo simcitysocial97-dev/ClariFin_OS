@@ -26,22 +26,34 @@ class TestNormalizePath:
         assert _normalize_path("/api/loans/${id}") == "/api/loans/:param"
 
     def test_template_literal_with_multiple_vars(self):
-        assert _normalize_path("/api/loans/${loanId}/schedule") == "/api/loans/:param/schedule"
+        assert (
+            _normalize_path("/api/loans/${loanId}/schedule")
+            == "/api/loans/:param/schedule"
+        )
 
     def test_query_string_stripped(self):
-        assert _normalize_path("/api/cashflow/monthly?months=12") == "/api/cashflow/monthly"
+        assert (
+            _normalize_path("/api/cashflow/monthly?months=12")
+            == "/api/cashflow/monthly"
+        )
 
     def test_template_with_query_and_var(self):
-        assert _normalize_path("/api/cashflow/monthly?months=${months}") == "/api/cashflow/monthly"
+        assert (
+            _normalize_path("/api/cashflow/monthly?months=${months}")
+            == "/api/cashflow/monthly"
+        )
 
     def test_double_quoted_string(self):
-        assert _normalize_path('/api/analytics') == "/api/analytics"
+        assert _normalize_path("/api/analytics") == "/api/analytics"
 
     def test_platform_path(self):
         assert _normalize_path("/platform/v1/health") == "/platform/v1/health"
 
     def test_platform_path_with_var(self):
-        assert _normalize_path("/platform/v1/errors/${window}") == "/platform/v1/errors/:param"
+        assert (
+            _normalize_path("/platform/v1/errors/${window}")
+            == "/platform/v1/errors/:param"
+        )
 
     def test_trailing_slash_stripped(self):
         assert _normalize_path("/api/loans/") == "/api/loans"
@@ -65,92 +77,122 @@ class TestExtractPathsFromFile:
         return f
 
     def test_api_fetch_single_quote(self, tmp_path: Path):
-        f = self._make_file(tmp_path, """
+        f = self._make_file(
+            tmp_path,
+            """
 async function fetchAccounts() {
   const res = await apiFetch('/api/accounts/manage');
 }
-""")
+""",
+        )
         mapper = FrontendBackendMapper()
         paths = mapper._extract_paths_from_file(f)
         assert "/api/accounts/manage" in paths
 
     def test_api_fetch_double_quote(self, tmp_path: Path):
-        f = self._make_file(tmp_path, '''
+        f = self._make_file(
+            tmp_path,
+            """
 const res = await apiFetch("/api/analytics");
-''')
+""",
+        )
         mapper = FrontendBackendMapper()
         paths = mapper._extract_paths_from_file(f)
         assert "/api/analytics" in paths
 
     def test_api_fetch_template_literal(self, tmp_path: Path):
-        f = self._make_file(tmp_path, """
+        f = self._make_file(
+            tmp_path,
+            """
 const res = await apiFetch(`/api/loans/${id}`);
-""")
+""",
+        )
         mapper = FrontendBackendMapper()
         paths = mapper._extract_paths_from_file(f)
         assert "/api/loans/:param" in paths
 
     def test_api_fetch_json_string(self, tmp_path: Path):
-        f = self._make_file(tmp_path, """
+        f = self._make_file(
+            tmp_path,
+            """
 const raw = await apiFetchJson('/api/v1/accounts');
-""")
+""",
+        )
         mapper = FrontendBackendMapper()
         paths = mapper._extract_paths_from_file(f)
         assert "/api/v1/accounts" in paths
 
     def test_direct_fetch_call(self, tmp_path: Path):
-        f = self._make_file(tmp_path, """
+        f = self._make_file(
+            tmp_path,
+            """
 const res = await fetch('/platform/v1/health');
-""")
+""",
+        )
         mapper = FrontendBackendMapper()
         paths = mapper._extract_paths_from_file(f)
         assert "/platform/v1/health" in paths
 
     def test_usequery_inline_fetch(self, tmp_path: Path):
-        f = self._make_file(tmp_path, """
+        f = self._make_file(
+            tmp_path,
+            """
 return useQuery({
   queryFn: () => apiFetchJson('/api/cards'),
 });
-""")
+""",
+        )
         mapper = FrontendBackendMapper()
         paths = mapper._extract_paths_from_file(f)
         assert "/api/cards" in paths
 
     def test_comment_line_skipped(self, tmp_path: Path):
-        f = self._make_file(tmp_path, """
+        f = self._make_file(
+            tmp_path,
+            """
 // const res = await apiFetch('/api/should-not-appear');
 /* const x = '/api/also-skipped'; */
-""")
+""",
+        )
         mapper = FrontendBackendMapper()
         paths = mapper._extract_paths_from_file(f)
         assert "/api/should-not-appear" not in paths
         assert "/api/also-skipped" not in paths
 
     def test_import_line_skipped(self, tmp_path: Path):
-        f = self._make_file(tmp_path, """
+        f = self._make_file(
+            tmp_path,
+            """
 import { apiFetch } from '@/lib/api/gateway';
 import somePath from '/api/not-a-real-import';
-""")
+""",
+        )
         mapper = FrontendBackendMapper()
         paths = mapper._extract_paths_from_file(f)
         # Import lines should be skipped entirely.
         assert "/api/not-a-real-import" not in paths
 
     def test_indirect_variable_assignment(self, tmp_path: Path):
-        f = self._make_file(tmp_path, """
+        f = self._make_file(
+            tmp_path,
+            """
 const url = '/api/reconciliation/pending';
 const res = await apiFetch(url);
-""")
+""",
+        )
         mapper = FrontendBackendMapper()
         paths = mapper._extract_paths_from_file(f)
         assert "/api/reconciliation/pending" in paths
 
     def test_multiple_endpoints_in_one_file(self, tmp_path: Path):
-        f = self._make_file(tmp_path, """
+        f = self._make_file(
+            tmp_path,
+            """
 const a = await apiFetch('/api/accounts/manage');
 const b = await apiFetch('/api/loans');
 const c = await apiFetch('/api/cards');
-""")
+""",
+        )
         mapper = FrontendBackendMapper()
         paths = mapper._extract_paths_from_file(f)
         assert "/api/accounts/manage" in paths
@@ -207,7 +249,9 @@ class TestFrontendBackendMapper:
         mapper = FrontendBackendMapper(root=self._real_root())
         result = mapper.build_consumer_map()
         # Should round-trip through JSON without error.
-        raw = json.dumps(result, default=lambda o: o.to_dict() if hasattr(o, "to_dict") else str(o))
+        raw = json.dumps(
+            result, default=lambda o: o.to_dict() if hasattr(o, "to_dict") else str(o)
+        )
         parsed = json.loads(raw)
         assert isinstance(parsed, dict)
         assert len(parsed) > 0

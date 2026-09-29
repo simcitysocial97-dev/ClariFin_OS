@@ -102,7 +102,9 @@ def execute_task(
         _git_sha(),
         namespace="runtime.verification",
     )
-    started = __import__("datetime").datetime.now(__import__("datetime").UTC).isoformat()
+    started = (
+        __import__("datetime").datetime.now(__import__("datetime").UTC).isoformat()
+    )
     started_dt = __import__("datetime").datetime.now(__import__("datetime").UTC)
 
     # Use the provided executor or instantiate one with task timeout.

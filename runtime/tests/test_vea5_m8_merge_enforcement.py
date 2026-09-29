@@ -83,15 +83,15 @@ def test_m81_stale_workflows_use_verification_command_pattern():
                 "mutation must keep the smoke-first sharded campaign topology: "
                 f"{sorted(mutation_job_profiles)}"
             )
-            assert "mutation-smoke" in jobs["mutation"].get("needs", []), (
-                "authoritative mutation shards must need mutation-smoke"
-            )
-            assert "mutation-plan" in jobs["mutation"].get("needs", []), (
-                "shards must consume the canonical plan, not a duplicated list"
-            )
-            assert "mutation" in jobs["mutation-aggregate"].get("needs", []), (
-                "the aggregate gate must consume every shard"
-            )
+            assert "mutation-smoke" in jobs["mutation"].get(
+                "needs", []
+            ), "authoritative mutation shards must need mutation-smoke"
+            assert "mutation-plan" in jobs["mutation"].get(
+                "needs", []
+            ), "shards must consume the canonical plan, not a duplicated list"
+            assert "mutation" in jobs["mutation-aggregate"].get(
+                "needs", []
+            ), "the aggregate gate must consume every shard"
             expected = mutation_job_profiles
         else:
             # Single job, single command invoking verify.py <profile>.

@@ -72,9 +72,7 @@ def _make_vc_event(
 class TestPlanOnlyEventFiltering:
     """Plan-only events must not pollute analytics."""
 
-    def test_executed_false_excluded_from_metrics(
-        self, tmp_path: Path
-    ) -> None:
+    def test_executed_false_excluded_from_metrics(self, tmp_path: Path) -> None:
         """Events with executed=false are invisible to analytics."""
         event_path, _ = _make_stores(tmp_path)
         entries = [
@@ -96,9 +94,7 @@ class TestPlanOnlyEventFiltering:
         assert cache.get("total", 0) == 0
         assert cache.get("hit_rate", 0.0) == 0.0
 
-    def test_executed_false_does_not_deflate_success_rate(
-        self, tmp_path: Path
-    ) -> None:
+    def test_executed_false_does_not_deflate_success_rate(self, tmp_path: Path) -> None:
         """Mixed executed and plan-only: only executed runs count."""
         event_path, _ = _make_stores(tmp_path)
         entries = [

@@ -6,6 +6,7 @@ extracted into focused sub-modules under this package. Import from the
 package-level ``runtime.foundation.verification.workflow_convergence``
 instead.
 """
+
 from __future__ import annotations
 
 # Re-export everything so direct ``from ...core import ...`` still works.

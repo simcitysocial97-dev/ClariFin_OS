@@ -18,8 +18,9 @@ def test_frontend_backend_mapper_scans_all_routers():
     if router_dir.exists():
         router_files = list(router_dir.glob("*.py"))
         if len(router_files) > 1:
-            assert len(endpoints) > 5, \
-                f"Only found {len(endpoints)} endpoints from {len(router_files)} routers"
+            assert (
+                len(endpoints) > 5
+            ), f"Only found {len(endpoints)} endpoints from {len(router_files)} routers"
 
 
 def test_frontend_sync_gate_identifies_orphans():

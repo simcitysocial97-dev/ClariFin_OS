@@ -494,9 +494,7 @@ class BlastRadiusEngine:
 
         return contract
 
-    def compute_changed_symbols(
-        self, changed_files: list[Path]
-    ) -> dict[Path, set]:
+    def compute_changed_symbols(self, changed_files: list[Path]) -> dict[Path, set]:
         """Determine which symbols (functions/methods/classes) changed.
 
         Uses git diff to get changed line ranges per file, then maps
@@ -1106,9 +1104,7 @@ class BlastRadiusEngine:
                 workflows.add(v.profile)
         return sorted(workflows)
 
-    def compute_e2e_impact(
-        self, changed_files: list[Path]
-    ) -> dict[str, Any]:
+    def compute_e2e_impact(self, changed_files: list[Path]) -> dict[str, Any]:
         """Compute E2E test impact from changed frontend route files.
 
         Detects when frontend route files (app/**/page.tsx, layout.tsx)
@@ -1132,7 +1128,11 @@ class BlastRadiusEngine:
             # Match frontend/app/**/page.tsx or layout.tsx patterns
             if "frontend/app/" in fstr and fstr.endswith((".tsx",)):
                 # Extract route from path
-                rel = fstr.replace("frontend/app/", "").replace("/page.tsx", "").replace("/layout.tsx", "")
+                rel = (
+                    fstr.replace("frontend/app/", "")
+                    .replace("/page.tsx", "")
+                    .replace("/layout.tsx", "")
+                )
                 route = "/" + rel if rel else "/"
                 route = route.rstrip("/") or "/"
                 affected_routes.add(route)
@@ -1156,7 +1156,7 @@ class BlastRadiusEngine:
         for route in list(affected_routes):
             parts = route.strip("/").split("/")
             for i in range(len(parts)):
-                parent = "/" + "/".join(parts[:i + 1]) if i > 0 else "/"
+                parent = "/" + "/".join(parts[: i + 1]) if i > 0 else "/"
                 tests = mapper.get_tests_for_route(parent)
                 affected_tests.update(tests)
 

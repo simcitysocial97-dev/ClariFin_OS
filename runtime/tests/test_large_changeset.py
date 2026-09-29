@@ -57,7 +57,7 @@ def test_blast_radius_with_binary_files():
     from runtime.foundation.verification.blast_radius import BlastRadiusEngine
 
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as f:
-        f.write(b'\x89PNG\r\n\x1a\n')
+        f.write(b"\x89PNG\r\n\x1a\n")
         binary_file = f.name
 
     try:
@@ -66,12 +66,13 @@ def test_blast_radius_with_binary_files():
         assert result is not None
     finally:
         import os
+
         os.unlink(binary_file)
 
 
 def test_blast_radius_with_very_large_file():
     """Blast radius must handle large source files (>10K lines).
-    
+
     M9-C64-R2: Fixed O(n²) AST walk in symbol resolver.
     Symbol extraction now completes in ~1s for 15k-line files.
     Total blast radius with graph traversal: ~11s (documented boundary).
@@ -96,6 +97,7 @@ def test_blast_radius_with_very_large_file():
         assert result is not None
     finally:
         import os
+
         os.unlink(large_file)
 
 

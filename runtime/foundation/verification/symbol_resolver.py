@@ -58,10 +58,7 @@ class SymbolExtractor:
     """Extract symbols from Python source files via AST parsing."""
 
     def __init__(self, cache_path: Path = None):
-        self.cache_path = (
-            cache_path
-            or Path("runtime/generated/symbol-cache.json")
-        )
+        self.cache_path = cache_path or Path("runtime/generated/symbol-cache.json")
         self.cache = self._load_cache()
 
     def _load_cache(self) -> dict:
@@ -257,7 +254,9 @@ class CoverageSymbolMapper:
             cov_file = Path(tmpdir) / ".coverage"
 
             cmd = [
-                "python", "-m", "pytest",
+                "python",
+                "-m",
+                "pytest",
                 str(test_path),
                 "--cov=backend/src",
                 "--cov-report=",
@@ -355,9 +354,7 @@ class CoverageSymbolMapper:
             result[symbol_name] = {Path(tf) for tf in test_files}
         return result
 
-    def _save_symbol_test_map_from_result(
-        self, symbol_to_tests: dict[str, set[Path]]
-    ):
+    def _save_symbol_test_map_from_result(self, symbol_to_tests: dict[str, set[Path]]):
         """Save symbol-to-test map as JSON-serializable dict."""
         flat_map = {}
         for symbol_name, test_files in symbol_to_tests.items():
@@ -365,9 +362,7 @@ class CoverageSymbolMapper:
         self.symbol_test_map = flat_map
         self._save_symbol_test_map()
 
-    def get_coverage_for_symbol(
-        self, symbol_name: str
-    ) -> dict[str, set[str]]:
+    def get_coverage_for_symbol(self, symbol_name: str) -> dict[str, set[str]]:
         """Get which test files cover a specific symbol."""
         return self._reconstruct_symbol_to_test_map().get(symbol_name, set())
 

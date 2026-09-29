@@ -47,21 +47,25 @@ def build_framework_integrity() -> dict[str, Any]:
     # Build FrameworkIntegrityResult from combined findings
     result = FrameworkIntegrityResult.from_drift_report(
         drift_report,
-        artifact_summary={"detector": "authority_drift_detector + artifact_freshness_detector"},
+        artifact_summary={
+            "detector": "authority_drift_detector + artifact_freshness_detector"
+        },
     )
 
     # Convert to Platform API contract format
     findings_data = []
     for f in all_findings:
-        findings_data.append({
-            "check_name": f.check_name,
-            "detected_component": f.detected_component,
-            "expected_authority": f.expected_authority,
-            "actual_authority": f.actual_authority,
-            "classification": f.classification,
-            "source_evidence": f.source_evidence,
-            "severity": f.severity,
-        })
+        findings_data.append(
+            {
+                "check_name": f.check_name,
+                "detected_component": f.detected_component,
+                "expected_authority": f.expected_authority,
+                "actual_authority": f.actual_authority,
+                "classification": f.classification,
+                "source_evidence": f.source_evidence,
+                "severity": f.severity,
+            }
+        )
 
     data = {
         "schema_version": result.schema,
@@ -88,15 +92,20 @@ def build_framework_self_tests() -> dict[str, Any]:
 
     test_results = []
     for name, passed in result.diagnostic["self_tests"].items():
-        test_results.append({
-            "name": name,
-            "passed": passed,
-            "detail": "PASS" if passed else "FAIL",
-        })
+        test_results.append(
+            {
+                "name": name,
+                "passed": passed,
+                "detail": "PASS" if passed else "FAIL",
+            }
+        )
 
     data = {
         "results": test_results,
         "passed": result.diagnostic["passed"],
         "total": result.diagnostic["total"],
     }
-    return envelope(kind=fi_contract.FrameworkSelfTestsEnvelope.__fields__["kind"].default, data=data)
+    return envelope(
+        kind=fi_contract.FrameworkSelfTestsEnvelope.__fields__["kind"].default,
+        data=data,
+    )

@@ -5,6 +5,7 @@ Constructs the repository-wide workflow coverage matrix, mapping every
 workflow step to its verification capability, stage, and certification
 relevance.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

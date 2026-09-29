@@ -18,6 +18,7 @@ Module map::
     verification    — VerificationEvidence (artifact-level, from system/evidence)
     collection      — EvidenceCollectionResult
 """
+
 from __future__ import annotations
 
 import json

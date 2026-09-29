@@ -98,14 +98,14 @@ def test_real_frontend_failures_are_attributed_outside_blast_radius():
 def test_failure_inside_blast_radius_implicates_the_change():
     """The inverse case must still work, or attribution would be useless."""
     _, blast, plan = _specimen()
-    radius = attribute_failures(
-        blast, [], plan.selected
-    ).blast_radius_paths
+    radius = attribute_failures(blast, [], plan.selected).blast_radius_paths
     assert radius, "loan engine change must produce a non-empty blast radius"
 
     # Use a backend entity from the blast radius (the specimen only touches
     # backend source files, so no frontend/ paths are predicted).
-    backend_entity = next((p for p in radius if p.startswith("backend/src/engines/")), None)
+    backend_entity = next(
+        (p for p in radius if p.startswith("backend/src/engines/")), None
+    )
     assert backend_entity, "specimen must predict at least one backend entity"
 
     report = attribute_failures(

@@ -901,8 +901,8 @@ class ExecutionOrchestrator:
                             expected_evidence=("measurement_truth",),
                             measurement_required=("coverage",),
                             authorization_required=False,
-                                timeout_seconds=1800,
-                                estimated_duration_seconds=1800,
+                            timeout_seconds=1800,
+                            estimated_duration_seconds=1800,
                         )
                     )
                 next_id += 1

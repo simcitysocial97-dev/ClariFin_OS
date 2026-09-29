@@ -98,11 +98,21 @@ def test_synthetic_in_radius_failure_still_implicates():
     entity = next(p for p in radius if p.startswith("backend/src/engines/"))
 
     failures = build_observed_failures(
-        [{"unit_id": "unit-targeted", "layer": "backend", "phase": "test",
-          "path": entity, "diagnostic": "assertion failed",
-          "provenance": {"capabilities": ["loan-engine"], "impact_kinds": ["engine"],
-                         "source": "ownership"},
-          "contributing_units": ["unit-targeted"]}]
+        [
+            {
+                "unit_id": "unit-targeted",
+                "layer": "backend",
+                "phase": "test",
+                "path": entity,
+                "diagnostic": "assertion failed",
+                "provenance": {
+                    "capabilities": ["loan-engine"],
+                    "impact_kinds": ["engine"],
+                    "source": "ownership",
+                },
+                "contributing_units": ["unit-targeted"],
+            }
+        ]
     )
     report = attribute_failures(blast, failures, plan.selected)
     assert report.change_is_implicated is True

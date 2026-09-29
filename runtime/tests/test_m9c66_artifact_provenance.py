@@ -36,11 +36,13 @@ class ArtifactProvenanceScanner:
                 provenance = self._extract_provenance(data, path)
                 results.append(provenance)
             except (json.JSONDecodeError, OSError):
-                results.append({
-                    "path": str(path),
-                    "valid_json": False,
-                    "issues": ["invalid_json"],
-                })
+                results.append(
+                    {
+                        "path": str(path),
+                        "valid_json": False,
+                        "issues": ["invalid_json"],
+                    }
+                )
         return results
 
     def _extract_provenance(self, data: dict, path: Path) -> dict:
@@ -53,7 +55,13 @@ class ArtifactProvenanceScanner:
         }
 
         # Check for provenance fields
-        provenance_keys = ["commit_sha", "run_id", "generated_at", "schema", "milestone"]
+        provenance_keys = [
+            "commit_sha",
+            "run_id",
+            "generated_at",
+            "schema",
+            "milestone",
+        ]
         found = [k for k in provenance_keys if k in data]
 
         if len(found) >= 2:
@@ -125,7 +133,9 @@ class TestArtifactProvenance:
         # With empty known_runs, this is expected - just check structure
         assert isinstance(orphans, list)
 
-    def test_command_matrix_has_provenance(self, scanner: ArtifactProvenanceScanner) -> None:
+    def test_command_matrix_has_provenance(
+        self, scanner: ArtifactProvenanceScanner
+    ) -> None:
         """command-matrix.json should have provenance fields."""
         matrix = C66_DIR / "command-matrix.json"
         if not matrix.exists():
@@ -134,7 +144,9 @@ class TestArtifactProvenance:
         assert "commit_sha" in data, "command-matrix missing commit_sha"
         assert "schema" in data, "command-matrix missing schema"
 
-    def test_discrepancy_ledger_structure(self, scanner: ArtifactProvenanceScanner) -> None:
+    def test_discrepancy_ledger_structure(
+        self, scanner: ArtifactProvenanceScanner
+    ) -> None:
         """discrepancy-ledger.json should have correct structure."""
         ledger = C66_DIR / "discrepancy-ledger.json"
         if not ledger.exists():
@@ -168,7 +180,9 @@ class TestDeliberateProvenanceFailures:
         """Stale artifact (old commit) should be flaggable."""
         scanner = ArtifactProvenanceScanner()
         stale = tmp_path / "stale.json"
-        stale.write_text(json.dumps({"commit_sha": "0" * 40, "generated_at": "2020-01-01"}))
+        stale.write_text(
+            json.dumps({"commit_sha": "0" * 40, "generated_at": "2020-01-01"})
+        )
         results = scanner.scan_directory(tmp_path)
         assert len(results) >= 1
 

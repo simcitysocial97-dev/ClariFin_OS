@@ -37,6 +37,8 @@ from .models import (  # noqa: F401,F403
 )
 
 logger = logging.getLogger(__name__)
+
+
 class ExecutionOrchestrator:
     """Consumes the C48 control-plane plan and drives it to a final decision.
 
@@ -810,9 +812,7 @@ class ExecutionOrchestrator:
             ).hexdigest()[:12]
         )
         efficiency = self._compute_efficiency(plan, records)
-        regression_info = self._detect_and_report_regressions(
-            plan, records, live_fp
-        )
+        regression_info = self._detect_and_report_regressions(plan, records, live_fp)
         report = ExecutionReport(
             report_id=report_id,
             plan_id=plan.plan_id,
@@ -886,7 +886,11 @@ class ExecutionOrchestrator:
             run_id=run_id,
             timestamp=datetime.now(UTC).isoformat(),
             branch=branch,
-            commit_sha=live_fp.repository_sha[:12] if hasattr(live_fp, 'repository_sha') else "unknown",
+            commit_sha=(
+                live_fp.repository_sha[:12]
+                if hasattr(live_fp, "repository_sha")
+                else "unknown"
+            ),
             coverage_pct=coverage_pct,
             mutation_score=mutation_score,
             test_count=test_count,
@@ -915,7 +919,10 @@ class ExecutionOrchestrator:
                 level = logging.WARNING if "WARNING" in alert else logging.ERROR
                 logger.log(level, "Regression alert: %s", alert)
         else:
-            print(f"\n✅ No regressions detected (coverage delta: {report.coverage_delta:+.1f}%, mutation delta: {report.mutation_delta:+.1f}%)", file=sys.stderr)
+            print(
+                f"\n✅ No regressions detected (coverage delta: {report.coverage_delta:+.1f}%, mutation delta: {report.mutation_delta:+.1f}%)",
+                file=sys.stderr,
+            )
 
         return {
             "has_regression": report.has_regression,

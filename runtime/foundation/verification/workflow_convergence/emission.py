@@ -3,6 +3,7 @@ M9-C54 — Live CI emission assessment (Q6).
 
 Assesses whether live CI emission is possible from repository configuration.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

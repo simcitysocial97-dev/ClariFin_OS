@@ -89,7 +89,9 @@ class TestMutmutToolchainContract:
         assert state.satisfied is False
         assert len(state.unsatisfied_clauses) == 2
 
-    def test_both_clauses_are_required_not_just_the_module_one(self, monkeypatch, tmp_path):
+    def test_both_clauses_are_required_not_just_the_module_one(
+        self, monkeypatch, tmp_path
+    ):
         """A toolchain with only the src.* fix is still not in contract.
 
         Clause 2 is what makes class-scoped mutants measurable at all: without it
@@ -264,7 +266,9 @@ class TestShardPlan:
             for shard in shards:
                 assert shard.component == component
                 assert shard.tier == ENGINE_SELECTION[component].tier
-                assert shard.test_selection == ENGINE_SELECTION[component].test_selection
+                assert (
+                    shard.test_selection == ENGINE_SELECTION[component].test_selection
+                )
                 assert shard.also_copy == ENGINE_SELECTION[component].also_copy
                 files += list(shard.files)
             assert sorted(files) == ms.component_files(component)
@@ -273,7 +277,9 @@ class TestShardPlan:
     def test_shards_are_bounded(self):
         for shard in ms.shard_plan():
             oversized = [
-                f for f in shard.files if (ms.BACKEND_ROOT / f).stat().st_size > ms.SHARD_BYTE_CAP
+                f
+                for f in shard.files
+                if (ms.BACKEND_ROOT / f).stat().st_size > ms.SHARD_BYTE_CAP
             ]
             assert not oversized or len(shard.files) == 1, (
                 f"shard {shard.shard_id} packs {len(shard.files)} files with an "
@@ -624,9 +630,9 @@ class TestShardedWorkflowTopology:
         """
         condition = str(mutation_workflow["jobs"]["mutation"]["if"])
 
-        assert "replay" in condition, (
-            "the shard matrix must be explicitly skipped in replay mode"
-        )
+        assert (
+            "replay" in condition
+        ), "the shard matrix must be explicitly skipped in replay mode"
 
     def test_a_job_level_if_never_uses_the_env_context(self, mutation_workflow):
         """`env` is not available in a job-level `if:`.
@@ -675,9 +681,7 @@ class TestShardedWorkflowTopology:
 
     def test_every_shard_uploads_its_evidence_even_on_failure(self, mutation_workflow):
         shard_steps = mutation_workflow["jobs"]["mutation"]["steps"]
-        uploads = [
-            s for s in shard_steps if "upload-runtime" in str(s.get("uses", ""))
-        ]
+        uploads = [s for s in shard_steps if "upload-runtime" in str(s.get("uses", ""))]
         assert uploads, "shard evidence must be uploaded"
         # A shard that failed before writing its summary must still be visible to
         # the aggregate gate, otherwise the failure is reported as "missing".
@@ -693,4 +697,6 @@ class TestShardedWorkflowTopology:
         # dispatched, so it must be part of the shard evidence.
         assert any("mutation-logs/" in s["with"]["path"] for s in uploads)
         # The toolchain contract must travel with the measurement.
-        assert any("mutmut-toolchain-contract.json" in s["with"]["path"] for s in uploads)
+        assert any(
+            "mutmut-toolchain-contract.json" in s["with"]["path"] for s in uploads
+        )

@@ -3,6 +3,7 @@
 Verifies that evidence classes use the unified schema and round-trip
 through JSON without data loss.
 """
+
 from __future__ import annotations
 
 import json
@@ -57,7 +58,9 @@ class TestEvidenceIntegrity:
             branch="test-branch",
             timestamp="2024-01-01T00:00:00Z",
             status="pass",
-            coverage=CoverageEvidence(percentage=80.0, covered_lines=800, total_lines=1000),
+            coverage=CoverageEvidence(
+                percentage=80.0, covered_lines=800, total_lines=1000
+            ),
             mutation=MutationEvidence(score=85.0, killed=170, survived=30),
         )
         dumped = json.loads(original.to_json())
@@ -74,6 +77,7 @@ class TestEvidenceIntegrity:
             MutationEvidence as OldMutation,
             VerificationEvidence as OldVerification,
         )
+
         assert OldCoverage is CoverageEvidence
         assert OldMutation is MutationEvidence
         assert OldVerification is VerificationEvidence

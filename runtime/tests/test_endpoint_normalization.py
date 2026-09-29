@@ -53,7 +53,9 @@ class TestEndpointNormalization:
 
     def test_encode_uri_component_normalized_to_param(self):
         """encodeURIComponent(variable!) normalized to {param} in canonical form."""
-        result = normalize_endpoint("/api/capabilities/${encodeURIComponent(capabilityId!)}")
+        result = normalize_endpoint(
+            "/api/capabilities/${encodeURIComponent(capabilityId!)}"
+        )
         assert result.canonical_path == "/api/capabilities/{param}"
         assert "ENCODE_URI_COMPONENT" in result.normalization_rules
         # Original parameter name preserved in path_params
@@ -105,7 +107,7 @@ class TestEndpointNormalization:
         """Canonical key includes HTTP method."""
         get_result = normalize_endpoint("/api/items", "GET")
         post_result = normalize_endpoint("/api/items", "POST")
-        
+
         assert get_result.canonical_path == "GET:/api/items"
         assert post_result.canonical_path == "POST:/api/items"
         assert get_result != post_result
@@ -147,7 +149,7 @@ class TestEndpointsMatch:
         """Frontend ${encodeURIComponent(id!)} matches backend {id}."""
         assert endpoints_match(
             "/api/capabilities/${encodeURIComponent(capabilityId!)}",
-            "/api/capabilities/{capability_id}"
+            "/api/capabilities/{capability_id}",
         )
 
     def test_different_parameter_names_match(self):
@@ -178,7 +180,7 @@ class TestEndpointsMatch:
         """Different encodeURIComponent variants match same backend."""
         assert endpoints_match(
             "/api/capabilities/${encodeURIComponent(capabilityId!)}",
-            "/api/capabilities/${capabilityId}"
+            "/api/capabilities/${capabilityId}",
         )
 
 
@@ -188,21 +190,21 @@ class TestEndpointNormalizer:
     def test_cache_reuse(self):
         """Repeated normalization uses cache."""
         normalizer = EndpointNormalizer()
-        
+
         result1 = normalizer.normalize("/api/loans/${id}")
         result2 = normalizer.normalize("/api/loans/${id}")
-        
+
         assert result1 is result2
 
     def test_match_returns_normalized_objects(self):
         """match() returns both normalized objects."""
         normalizer = EndpointNormalizer()
-        
+
         matched, fe_norm, be_norm = normalizer.match(
             "/api/loans/${id}",
             "/api/loans/{loan_id}",
         )
-        
+
         assert matched is True
         assert isinstance(fe_norm, NormalizedEndpoint)
         assert isinstance(be_norm, NormalizedEndpoint)
@@ -210,12 +212,12 @@ class TestEndpointNormalizer:
     def test_match_false_for_different_endpoints(self):
         """match() returns False for different endpoints."""
         normalizer = EndpointNormalizer()
-        
+
         matched, fe_norm, be_norm = normalizer.match(
             "/api/loans/${id}",
             "/api/investments/${id}",
         )
-        
+
         assert matched is False
 
     def test_clear_cache(self):
@@ -223,7 +225,7 @@ class TestEndpointNormalizer:
         normalizer = EndpointNormalizer()
         normalizer.normalize("/api/loans/${id}")
         normalizer.clear_cache()
-        
+
         # After clear, new object created
         result1 = normalizer.normalize("/api/loans/${id}")
         result2 = normalizer.normalize("/api/loans/${id}")
@@ -297,42 +299,40 @@ class TestPlatformEndpointNormalization:
         """Platform capabilities with encodeURIComponent."""
         assert endpoints_match(
             "/platform/v1/capabilities/${encodeURIComponent(capabilityId!)}",
-            "/platform/v1/capabilities/{capability_id}"
+            "/platform/v1/capabilities/{capability_id}",
         )
 
     def test_capabilities_graph_encode_uri_component(self):
         """Platform capabilities graph with encodeURIComponent."""
         assert endpoints_match(
             "/platform/v1/capabilities/${encodeURIComponent(capabilityId!)}/graph",
-            "/platform/v1/capabilities/{capability_id}/graph"
+            "/platform/v1/capabilities/{capability_id}/graph",
         )
 
     def test_capabilities_simple_template(self):
         """Platform capabilities with simple template."""
         assert endpoints_match(
             "/platform/v1/capabilities/${capabilityId}",
-            "/platform/v1/capabilities/{capability_id}"
+            "/platform/v1/capabilities/{capability_id}",
         )
 
     def test_tasks_cancel(self):
         """Platform tasks cancel endpoint."""
         assert endpoints_match(
-            "/platform/v1/tasks/${taskId}/cancel",
-            "/platform/v1/tasks/{task_id}/cancel"
+            "/platform/v1/tasks/${taskId}/cancel", "/platform/v1/tasks/{task_id}/cancel"
         )
 
     def test_architecture_authority_encode_uri_component(self):
         """Platform architecture authority with encodeURIComponent."""
         assert endpoints_match(
             "/platform/v1/architecture/authority/${encodeURIComponent(name!)}",
-            "/platform/v1/architecture/authority/{name}"
+            "/platform/v1/architecture/authority/{name}",
         )
 
     def test_events_query_param(self):
         """Platform events with query param."""
         assert endpoints_match(
-            "/platform/v1/events?limit=${limit}",
-            "/platform/v1/events"
+            "/platform/v1/events?limit=${limit}", "/platform/v1/events"
         )
 
 
@@ -342,51 +342,41 @@ class TestNonPlatformEndpointNormalization:
     def test_accounts_manage(self):
         """Accounts manage endpoint."""
         assert endpoints_match(
-            "/api/accounts/manage/${id}",
-            "/api/accounts/manage/{account_id}"
+            "/api/accounts/manage/${id}", "/api/accounts/manage/{account_id}"
         )
 
     def test_cashflow_monthly_query(self):
         """Cashflow monthly with query param."""
         assert endpoints_match(
-            "/api/cashflow/monthly?months=${months}",
-            "/api/cashflow/monthly"
+            "/api/cashflow/monthly?months=${months}", "/api/cashflow/monthly"
         )
 
     def test_investments_id(self):
         """Investments by ID."""
         assert endpoints_match(
-            "/api/investments/${id}",
-            "/api/investments/{investment_id}"
+            "/api/investments/${id}", "/api/investments/{investment_id}"
         )
 
     def test_loans_schedule(self):
         """Loans schedule."""
         assert endpoints_match(
-            "/api/loans/${loanId}/schedule",
-            "/api/loans/{loan_id}/schedule"
+            "/api/loans/${loanId}/schedule", "/api/loans/{loan_id}/schedule"
         )
 
     def test_loans_prepayment_simulation(self):
         """Loans prepayment simulation."""
         assert endpoints_match(
             "/api/loans/${loanId}/prepayment-simulation",
-            "/api/loans/{loan_id}/prepayment-simulation"
+            "/api/loans/{loan_id}/prepayment-simulation",
         )
 
     def test_loans_id(self):
         """Loans by ID."""
-        assert endpoints_match(
-            "/api/loans/${id}",
-            "/api/loans/{loan_id}"
-        )
+        assert endpoints_match("/api/loans/${id}", "/api/loans/{loan_id}")
 
     def test_overview_query(self):
         """Overview with query."""
-        assert endpoints_match(
-            "/api/overview?${query}",
-            "/api/overview"
-        )
+        assert endpoints_match("/api/overview?${query}", "/api/overview")
 
 
 class TestDriftClassification:
@@ -394,86 +384,103 @@ class TestDriftClassification:
 
     def test_normalization_mismatch_resolved_to_zero(self):
         """After C61, normalization mismatches should be 0 (resolved as edges)."""
-        from runtime.foundation.verification.cross_layer_graph import CrossLayerGraphBuilder
+        from runtime.foundation.verification.cross_layer_graph import (
+            CrossLayerGraphBuilder,
+        )
         from pathlib import Path
-        
+
         builder = CrossLayerGraphBuilder(Path.cwd())
         graph = builder.build()
-        
+
         # Normalization mismatches should be resolved (0 drifts)
-        norm_drifts = [d for d in graph.contract_drifts if d.drift_type == "normalization_mismatch"]
-        assert len(norm_drifts) == 0, (
-            f"Expected 0 normalization_mismatch drifts after C61, got {len(norm_drifts)}"
-        )
-        
+        norm_drifts = [
+            d for d in graph.contract_drifts if d.drift_type == "normalization_mismatch"
+        ]
+        assert (
+            len(norm_drifts) == 0
+        ), f"Expected 0 normalization_mismatch drifts after C61, got {len(norm_drifts)}"
+
         # But edges should exist for previously mismatched endpoints
         edges = [e for e in graph.edges if e.target_type == "endpoint"]
         assert len(edges) > 0
 
     def test_missing_endpoint_classified_critical(self):
         """Truly missing endpoints classified as critical."""
-        from runtime.foundation.verification.cross_layer_graph import CrossLayerGraphBuilder
+        from runtime.foundation.verification.cross_layer_graph import (
+            CrossLayerGraphBuilder,
+        )
         from pathlib import Path
-        
+
         builder = CrossLayerGraphBuilder(Path.cwd())
         graph = builder.build()
-        
-        missing_drifts = [d for d in graph.contract_drifts if d.drift_type == "missing_endpoint"]
+
+        missing_drifts = [
+            d for d in graph.contract_drifts if d.drift_type == "missing_endpoint"
+        ]
         for drift in missing_drifts:
             assert drift.severity == "critical"
             assert drift.backend_endpoint is None
 
     def test_path_mismatch_classified_high(self):
         """Structural path differences classified as high."""
-        from runtime.foundation.verification.cross_layer_graph import CrossLayerGraphBuilder
+        from runtime.foundation.verification.cross_layer_graph import (
+            CrossLayerGraphBuilder,
+        )
         from pathlib import Path
-        
+
         builder = CrossLayerGraphBuilder(Path.cwd())
         graph = builder.build()
-        
-        path_drifts = [d for d in graph.contract_drifts if d.drift_type == "path_mismatch"]
+
+        path_drifts = [
+            d for d in graph.contract_drifts if d.drift_type == "path_mismatch"
+        ]
         for drift in path_drifts:
             assert drift.severity == "high"
             assert drift.backend_endpoint is None
 
     def test_five_platform_normalization_resolved_as_edges(self):
         """The 5 C61 target platform normalization mismatches are now resolved as edges.
-        
+
         Previously these were classified as normalization_mismatch drifts.
         After C61 normalization, they should be successfully matched as edges.
         """
-        from runtime.foundation.verification.cross_layer_graph import CrossLayerGraphBuilder
+        from runtime.foundation.verification.cross_layer_graph import (
+            CrossLayerGraphBuilder,
+        )
         from pathlib import Path
-        
+
         builder = CrossLayerGraphBuilder(Path.cwd())
         graph = builder.build()
-        
+
         # Check that edges exist for the 5 platform endpoints
         platform_edges = [
-            e for e in graph.edges 
+            e
+            for e in graph.edges
             if e.target_type == "endpoint" and e.target_id.startswith("/platform/v1/")
         ]
-        
+
         matched_endpoints = {e.target_id for e in platform_edges}
-        
+
         expected_matched = {
             "/platform/v1/capabilities/{capability_id}",
             "/platform/v1/capabilities/{capability_id}/graph",
             "/platform/v1/tasks/{task_id}/cancel",
             "/platform/v1/architecture/authority/{name}",
         }
-        
+
         # The events endpoint has query params which are handled differently
         # Verify the core 4 are matched
         for expected in expected_matched:
-            assert any(expected in matched for matched in matched_endpoints), (
-                f"Expected {expected} to be matched, got {matched_endpoints}"
-            )
-        
+            assert any(
+                expected in matched for matched in matched_endpoints
+            ), f"Expected {expected} to be matched, got {matched_endpoints}"
+
         # Verify no normalization_mismatch drifts for these endpoints
-        norm_drifts = [d for d in graph.contract_drifts if d.drift_type == "normalization_mismatch"]
+        norm_drifts = [
+            d for d in graph.contract_drifts if d.drift_type == "normalization_mismatch"
+        ]
         drift_frontend_endpoints = {d.frontend_endpoint for d in norm_drifts}
-        
+
         # These should NOT be in normalization_mismatch drifts (they're resolved)
         resolved_endpoints = {
             "/platform/v1/capabilities/${encodeURIComponent(capabilityId!)}",
@@ -482,8 +489,8 @@ class TestDriftClassification:
             "/platform/v1/tasks/${taskId}/cancel",
             "/platform/v1/architecture/authority/${encodeURIComponent(name!)}",
         }
-        
+
         for endpoint in resolved_endpoints:
-            assert endpoint not in drift_frontend_endpoints, (
-                f"{endpoint} should be resolved, not a drift"
-            )
+            assert (
+                endpoint not in drift_frontend_endpoints
+            ), f"{endpoint} should be resolved, not a drift"

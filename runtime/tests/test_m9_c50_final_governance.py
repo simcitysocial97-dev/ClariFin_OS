@@ -304,9 +304,9 @@ class TestFinalWorkflowGovernance:
             assert os.path.exists(wf_path), f"Missing workflow: {wf_path}"
             with open(wf_path) as f:
                 wf_content = f.read()
-                assert "runtime.verify" in wf_content or "verify-frontend.sh" in wf_content, (
-                    f"{wf} does not delegate to the canonical runtime verification entrypoint"
-                )
+                assert (
+                    "runtime.verify" in wf_content or "verify-frontend.sh" in wf_content
+                ), f"{wf} does not delegate to the canonical runtime verification entrypoint"
 
     def test_3_non_verification_workflows_correct(self):
         """3 non-verification workflows correctly don't use verify.py for verification."""

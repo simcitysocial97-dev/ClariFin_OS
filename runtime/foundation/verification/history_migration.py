@@ -43,7 +43,9 @@ def _run_id_to_event_id(run_id: str) -> str:
     return f"vm-{h}"
 
 
-def migrate(target_path: Path | None = None, manifest_path: Path | None = None) -> dict[str, Any]:
+def migrate(
+    target_path: Path | None = None, manifest_path: Path | None = None
+) -> dict[str, Any]:
     """Run the one-shot migration. Returns a summary dict."""
     target = target_path or EVENT_STORE_PATH
     manifest = manifest_path or MANIFEST_PATH

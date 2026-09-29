@@ -4,6 +4,7 @@ M9-C54 — Artifact generation utilities.
 Provides get_repository_sha() and generate_all_artifacts() which orchestrate
 the full C54 artifact pipeline by composing all analysis modules.
 """
+
 from __future__ import annotations
 
 import json

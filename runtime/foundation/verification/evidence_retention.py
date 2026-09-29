@@ -14,6 +14,7 @@ Retention categories (days):
     ai-runs     — ai-runs/                                      → 30
     evidence    — evidence/                                     → 60
 """
+
 from __future__ import annotations
 
 import json

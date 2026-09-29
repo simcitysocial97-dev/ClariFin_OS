@@ -2,6 +2,7 @@
 
 Verifies the blast radius engine computes correctly and edge cases don't crash.
 """
+
 from __future__ import annotations
 
 import tempfile
@@ -17,7 +18,9 @@ class TestBlastRadiusIntegration:
 
     def test_compute_returns_complete_contract(self):
         engine = BlastRadiusEngine()
-        result = engine.compute(explicit_files=["backend/src/engines/loan_engine/emi.py"])
+        result = engine.compute(
+            explicit_files=["backend/src/engines/loan_engine/emi.py"]
+        )
         d = result.to_dict()
 
         # Core fields must be present
@@ -66,7 +69,9 @@ class TestBlastRadiusIntegration:
 
     def test_verification_surfaces_populated(self):
         engine = BlastRadiusEngine()
-        result = engine.compute(explicit_files=["backend/src/engines/loan_engine/emi.py"])
+        result = engine.compute(
+            explicit_files=["backend/src/engines/loan_engine/emi.py"]
+        )
         d = result.to_dict()
         vsr = d.get("verification_surface_requirements", [])
         assert len(vsr) > 0, "Expected verification surfaces for backend engine change"

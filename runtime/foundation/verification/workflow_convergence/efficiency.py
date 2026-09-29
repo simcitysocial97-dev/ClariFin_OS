@@ -4,6 +4,7 @@ M9-C54 — Resource / duplication efficiency metrics (Q16).
 Measures CI execution efficiency including workflow counts, step counts,
 upload overhead, and evidence reuse potential.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

@@ -4,6 +4,7 @@ M9-C54 — Workflow greenness audit (Q3).
 Analyzes workflow execution semantics to classify each job's greenness
 status independent of CI pass/fail outcome.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

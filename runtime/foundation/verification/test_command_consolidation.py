@@ -202,7 +202,9 @@ class TestCommandDocumentation:
             cwd=REPO_ROOT,
         )
         output = result.stdout + result.stderr
-        assert "doctor" in output.lower() or "health" in output.lower(), "Status should route to doctor/health"
+        assert (
+            "doctor" in output.lower() or "health" in output.lower()
+        ), "Status should route to doctor/health"
 
     def test_verify_py_env_check_works(self) -> None:
         """verify.py env-check command works."""

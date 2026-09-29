@@ -33,12 +33,17 @@ class TestBroadenedFailureInjection:
         """An invalid command should not be classified as PASS."""
         r = run_verify("nonexistent-command-xyz")
         # Should fail, not pass silently
-        assert r.returncode != 0 or "not available" in r.stderr.lower() or "error" in r.stderr.lower()
+        assert (
+            r.returncode != 0
+            or "not available" in r.stderr.lower()
+            or "error" in r.stderr.lower()
+        )
 
     def test_timeout_classified_as_external_boundary(self) -> None:
         """Long-running commands should timeout with correct classification."""
         # certify without evidence takes a very long time
         import subprocess as _sub
+
         try:
             r = _sub.run(
                 [VENV_PYTHON, "-m", "runtime.verify", "certify"],
@@ -99,17 +104,30 @@ class TestBroadenedFailureInjection:
     def test_discrepancy_types_documented(self) -> None:
         """All discrepancy types from C66 spec should be recognized."""
         from runtime.foundation.verification.m9_c66_forensics import Discrepancy
+
         types = [
-            "DUPLICATE_OUTPUT", "CONTRADICTORY_OUTPUT", "STALE_RUN_ID",
-            "STALE_COMMIT", "STALE_ARTIFACT", "WRONG_CLASSIFICATION",
-            "EXIT_STATUS_MISMATCH", "PLAN_FINGERPRINT_MISMATCH",
-            "CAPABILITY_SET_MISMATCH", "AUTHORITY_DRIFT", "TRUTH_DRIFT",
-            "FALSE_PASS", "FALSE_CERTIFICATION",
+            "DUPLICATE_OUTPUT",
+            "CONTRADICTORY_OUTPUT",
+            "STALE_RUN_ID",
+            "STALE_COMMIT",
+            "STALE_ARTIFACT",
+            "WRONG_CLASSIFICATION",
+            "EXIT_STATUS_MISMATCH",
+            "PLAN_FINGERPRINT_MISMATCH",
+            "CAPABILITY_SET_MISMATCH",
+            "AUTHORITY_DRIFT",
+            "TRUTH_DRIFT",
+            "FALSE_PASS",
+            "FALSE_CERTIFICATION",
         ]
         for t in types:
             d = Discrepancy(
-                id=f"D-{t}", command="test", run_id="abc",
-                type=t, surface_a="stdout", surface_b="structured",
+                id=f"D-{t}",
+                command="test",
+                run_id="abc",
+                type=t,
+                surface_a="stdout",
+                surface_b="structured",
                 detail=f"Test {t}",
             )
             assert d.type == t
@@ -117,6 +135,7 @@ class TestBroadenedFailureInjection:
     def test_classification_vocabulary_closed(self) -> None:
         """Classification should use closed vocabulary."""
         from runtime.verify import _normalize_status
+
         assert _normalize_status("pass") == "passed"
         assert _normalize_status("fail") == "failed"
         assert _normalize_status("blocked") == "blocked"
@@ -126,6 +145,7 @@ class TestBroadenedFailureInjection:
     def test_decision_to_status_mapping(self) -> None:
         """Orchestrator decisions map correctly to status."""
         from runtime.verify import decision_to_status
+
         assert decision_to_status("certified") == "passed"
         assert decision_to_status("diagnostic") == "failed"
         assert decision_to_status("infrastructure_blocked") == "blocked"

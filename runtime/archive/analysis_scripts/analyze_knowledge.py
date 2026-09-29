@@ -36,7 +36,6 @@ def _repo_root() -> Path:
 REPO = _repo_root()
 
 
-
 def load(name):
     return json.loads((REPO / "runtime" / "generated" / name).read_text())
 

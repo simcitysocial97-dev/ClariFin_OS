@@ -20,6 +20,4 @@ def test_6bc2761eb77c_discriminates():
     Input derivation: exercise both sides of the comparison with values that make the comparison result decisive
     Assertion: the branch taken must match the original comparison semantics
     """
-    pytest.skip(
-        "candidate skeleton: authorized implementation must replace this skip"
-    )
+    pytest.skip("candidate skeleton: authorized implementation must replace this skip")

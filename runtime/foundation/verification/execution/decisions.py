@@ -57,6 +57,7 @@ def evaluate_cache(
     """
     from dataclasses import dataclass, field  # noqa: PLC0415
     from typing import Literal as _Lit  # noqa: PLC0415
+
     del dataclass, field, _Lit  # guard only
 
     if prior_evidence is None:

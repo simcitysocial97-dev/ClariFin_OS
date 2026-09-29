@@ -726,14 +726,24 @@ class TestProfileCacheWiring:
             "runtime.foundation.verification.cache.VerificationCache"
         ) as MockCache:
             MockCache.return_value.replay.return_value = type(
-                "ReplayResult", (), {"reusable": True, "overall_status": "fail", "exit_code": 1, "reason": "cached-fail"}
+                "ReplayResult",
+                (),
+                {
+                    "reusable": True,
+                    "overall_status": "fail",
+                    "exit_code": 1,
+                    "reason": "cached-fail",
+                },
             )()
             result = _run_profile_alias("quick")
             assert result == 1
 
     def test_profile_cache_save_on_success(self, tmp_path: Path) -> None:
         """Cache.save writes verdict after successful profile execution."""
-        from runtime.foundation.verification.cache import CachedVerdict, VerificationCache
+        from runtime.foundation.verification.cache import (
+            CachedVerdict,
+            VerificationCache,
+        )
         import json
 
         cache_path = tmp_path / "verification-cache.json"
@@ -758,7 +768,10 @@ class TestProfileCacheWiring:
 
     def test_profile_cache_invalidated_on_change(self, tmp_path: Path) -> None:
         """Changing a source file invalidates cache, forces re-execution."""
-        from runtime.foundation.verification.cache import CachedVerdict, VerificationCache
+        from runtime.foundation.verification.cache import (
+            CachedVerdict,
+            VerificationCache,
+        )
 
         cache = VerificationCache(tmp_path / "cache.json", root=tmp_path)
         verdict = CachedVerdict(overall_status="pass", passed=2, failed=0, skipped=0)

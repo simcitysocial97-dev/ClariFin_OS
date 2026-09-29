@@ -44,9 +44,9 @@ class TestHealthSemantics:
         idx_verification = output.index("## Verification Success")
 
         # Framework section must come before historical section
-        assert idx_framework < idx_historical < idx_verification, (
-            "Sections must be ordered: Framework Health → Historical Stats → Verification Success"
-        )
+        assert (
+            idx_framework < idx_historical < idx_verification
+        ), "Sections must be ordered: Framework Health → Historical Stats → Verification Success"
 
         # Framework section content must not contain run counts
         framework_block = output[idx_framework:idx_historical]

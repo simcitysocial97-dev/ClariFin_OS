@@ -20,6 +20,7 @@ Usage:
     logger = get_logger(__name__)
     logger.info("Verification started", extra={"profile": "backend"})
 """
+
 from __future__ import annotations
 
 import json
@@ -182,7 +183,9 @@ def setup_logging(
     # Clear existing handlers to avoid duplicates on reconfigure
     root.handlers.clear()
 
-    log_file = config["log_dir"] / f"verification-{datetime.now(UTC).strftime('%Y%m%d')}.log"
+    log_file = (
+        config["log_dir"] / f"verification-{datetime.now(UTC).strftime('%Y%m%d')}.log"
+    )
     config["log_file"] = str(log_file)
     config["configured_at"] = datetime.now(UTC).isoformat()
 

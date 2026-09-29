@@ -50,9 +50,9 @@ def client():
 
 def _assert_envelope_ok(resp, expected_kind_prefix=None):
     """Validate the canonical 5-key envelope shape on a response."""
-    assert resp.status_code == 200, (
-        f"Expected 200, got {resp.status_code}:\n{resp.text[:500]}"
-    )
+    assert (
+        resp.status_code == 200
+    ), f"Expected 200, got {resp.status_code}:\n{resp.text[:500]}"
     body = resp.json()
     assert set(body.keys()) == {
         "kind",
@@ -63,9 +63,7 @@ def _assert_envelope_ok(resp, expected_kind_prefix=None):
     }, f"Envelope keys: {sorted(body.keys())}"
     assert body["version"] == "1.0.0"
     assert re.fullmatch(r"sha256:[0-9a-f]{64}", body["id"])
-    assert re.fullmatch(
-        r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", body["generated_at"]
-    )
+    assert re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", body["generated_at"])
     if expected_kind_prefix and not body["kind"].startswith(expected_kind_prefix):
         pytest.fail(
             f"Expected kind prefix {expected_kind_prefix!r}, got {body['kind']!r}"
@@ -75,9 +73,9 @@ def _assert_envelope_ok(resp, expected_kind_prefix=None):
 
 def _assert_error_envelope(resp, status_code=404):
     """Validate the platform error envelope shape."""
-    assert resp.status_code == status_code, (
-        f"Expected {status_code}, got {resp.status_code}:\n{resp.text[:500]}"
-    )
+    assert (
+        resp.status_code == status_code
+    ), f"Expected {status_code}, got {resp.status_code}:\n{resp.text[:500]}"
     body = resp.json()
     assert body["kind"] == "platform.error"
     assert body["version"] == "1.0.0"
@@ -138,9 +136,7 @@ class TestStatus:
         assert r.status_code == 200
 
     def test_status_is_valid_envelope(self, client):
-        body = _assert_envelope_ok(
-            client.get("/platform/v1/status"), "platform.status"
-        )
+        body = _assert_envelope_ok(client.get("/platform/v1/status"), "platform.status")
         assert "repository" in body["data"]
         assert "commit_sha" in body["data"]
         assert "framework_health" in body["data"]
@@ -154,16 +150,13 @@ class TestStatus:
 
         # Resolve repo root from this test file's location.
         repo_root = Path(__file__).resolve().parents[2]
-        expected = (
-            subprocess.run(
-                ["git", "rev-parse", "HEAD"],
-                cwd=str(repo_root),
-                capture_output=True,
-                text=True,
-                timeout=5,
-            )
-            .stdout.strip()
-        )
+        expected = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(repo_root),
+            capture_output=True,
+            text=True,
+            timeout=5,
+        ).stdout.strip()
         body = _assert_envelope_ok(client.get("/platform/v1/status"))
         assert body["data"]["commit_sha"] == expected
 
@@ -424,16 +417,13 @@ class TestCrossSurfaceValidation:
         from pathlib import Path
 
         repo_root = Path(__file__).resolve().parents[2]
-        expected = (
-            subprocess.run(
-                ["git", "rev-parse", "HEAD"],
-                cwd=str(repo_root),
-                capture_output=True,
-                text=True,
-                timeout=5,
-            )
-            .stdout.strip()
-        )
+        expected = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(repo_root),
+            capture_output=True,
+            text=True,
+            timeout=5,
+        ).stdout.strip()
 
         status_body = _assert_envelope_ok(client.get("/platform/v1/status"))
         verif_body = _assert_envelope_ok(client.get("/platform/v1/verification"))

@@ -101,15 +101,21 @@ class FrameworkIntegrityResult:
             elif isinstance(f, dict):
                 findings.append(DriftFinding(**f))
             else:
-                findings.append(DriftFinding(
-                    check_name=str(getattr(f, "check_name", "unknown")),
-                    detected_component=str(getattr(f, "detected_component", "unknown")),
-                    expected_authority=str(getattr(f, "expected_authority", "unknown")),
-                    actual_authority=str(getattr(f, "actual_authority", "unknown")),
-                    classification=str(getattr(f, "classification", "UNKNOWN")),
-                    source_evidence=str(getattr(f, "source_evidence", "")),
-                    severity=str(getattr(f, "severity", "INFO")),
-                ))
+                findings.append(
+                    DriftFinding(
+                        check_name=str(getattr(f, "check_name", "unknown")),
+                        detected_component=str(
+                            getattr(f, "detected_component", "unknown")
+                        ),
+                        expected_authority=str(
+                            getattr(f, "expected_authority", "unknown")
+                        ),
+                        actual_authority=str(getattr(f, "actual_authority", "unknown")),
+                        classification=str(getattr(f, "classification", "UNKNOWN")),
+                        source_evidence=str(getattr(f, "source_evidence", "")),
+                        severity=str(getattr(f, "severity", "INFO")),
+                    )
+                )
         critical = sum(1 for f in findings if f.severity == "critical")
         high = sum(1 for f in findings if f.severity == "high")
         medium = sum(1 for f in findings if f.severity == "medium")
@@ -147,15 +153,17 @@ class ArtifactFreshnessDetector:
 
         generated_root = REPO_ROOT / "runtime" / "generated"
         if not generated_root.exists():
-            findings.append(DriftFinding(
-                check_name="artifact_freshness",
-                detected_component=str(generated_root),
-                expected_authority="runtime/generated/ exists",
-                actual_authority="runtime/generated/ MISSING",
-                classification="ARTIFACT_INTEGRITY_DEFECT",
-                source_evidence="Generated artifacts directory does not exist",
-                severity="MEDIUM",
-            ))
+            findings.append(
+                DriftFinding(
+                    check_name="artifact_freshness",
+                    detected_component=str(generated_root),
+                    expected_authority="runtime/generated/ exists",
+                    actual_authority="runtime/generated/ MISSING",
+                    classification="ARTIFACT_INTEGRITY_DEFECT",
+                    source_evidence="Generated artifacts directory does not exist",
+                    severity="MEDIUM",
+                )
+            )
             return findings
 
         now = datetime.now(UTC).timestamp()
@@ -190,44 +198,65 @@ class ArtifactFreshnessDetector:
                     pass
 
             path_parts = Path(rel).parts
-            if not any(p.startswith("m9-") or p.startswith("vea-") or p.startswith("ai-") for p in path_parts):
+            if not any(
+                p.startswith("m9-") or p.startswith("vea-") or p.startswith("ai-")
+                for p in path_parts
+            ):
                 generator_issues.append(f"{rel}: not in m9-/vea-/ai- generator path")
 
         if stale_artifacts:
-            findings.append(DriftFinding(
-                check_name="stale_artifacts",
-                detected_component=str(generated_root),
-                expected_authority=f"All artifacts < {self.MAX_AGE_SECONDS:.0f}s old",
-                actual_authority=f"{len(stale_artifacts)} stale artifacts",
-                classification="ARTIFACT_INTEGRITY_DEFECT",
-                source_evidence=f"Stale artifacts: {', '.join(stale_artifacts[:5])}"
-                + (f" (+{len(stale_artifacts)-5} more)" if len(stale_artifacts) > 5 else ""),
-                severity="MEDIUM",
-            ))
+            findings.append(
+                DriftFinding(
+                    check_name="stale_artifacts",
+                    detected_component=str(generated_root),
+                    expected_authority=f"All artifacts < {self.MAX_AGE_SECONDS:.0f}s old",
+                    actual_authority=f"{len(stale_artifacts)} stale artifacts",
+                    classification="ARTIFACT_INTEGRITY_DEFECT",
+                    source_evidence=f"Stale artifacts: {', '.join(stale_artifacts[:5])}"
+                    + (
+                        f" (+{len(stale_artifacts)-5} more)"
+                        if len(stale_artifacts) > 5
+                        else ""
+                    ),
+                    severity="MEDIUM",
+                )
+            )
 
         if identity_issues:
-            findings.append(DriftFinding(
-                check_name="artifact_identity",
-                detected_component=str(generated_root),
-                expected_authority="All JSON artifacts have run_id and timestamp",
-                actual_authority=f"{len(identity_issues)} identity issues",
-                classification="ARTIFACT_INTEGRITY_DEFECT",
-                source_evidence=f"Identity issues: {', '.join(identity_issues[:5])}"
-                + (f" (+{len(identity_issues)-5} more)" if len(identity_issues) > 5 else ""),
-                severity="MEDIUM",
-            ))
+            findings.append(
+                DriftFinding(
+                    check_name="artifact_identity",
+                    detected_component=str(generated_root),
+                    expected_authority="All JSON artifacts have run_id and timestamp",
+                    actual_authority=f"{len(identity_issues)} identity issues",
+                    classification="ARTIFACT_INTEGRITY_DEFECT",
+                    source_evidence=f"Identity issues: {', '.join(identity_issues[:5])}"
+                    + (
+                        f" (+{len(identity_issues)-5} more)"
+                        if len(identity_issues) > 5
+                        else ""
+                    ),
+                    severity="MEDIUM",
+                )
+            )
 
         if generator_issues:
-            findings.append(DriftFinding(
-                check_name="artifact_generator",
-                detected_component=str(generated_root),
-                expected_authority="Artifacts in m9-/vea-/ai- generator paths",
-                actual_authority=f"{len(generator_issues)} generator mismatches",
-                classification="ARTIFACT_INTEGRITY_DEFECT",
-                source_evidence=f"Generator issues: {', '.join(generator_issues[:5])}"
-                + (f" (+{len(generator_issues)-5} more)" if len(generator_issues) > 5 else ""),
-                severity="LOW",
-            ))
+            findings.append(
+                DriftFinding(
+                    check_name="artifact_generator",
+                    detected_component=str(generated_root),
+                    expected_authority="Artifacts in m9-/vea-/ai- generator paths",
+                    actual_authority=f"{len(generator_issues)} generator mismatches",
+                    classification="ARTIFACT_INTEGRITY_DEFECT",
+                    source_evidence=f"Generator issues: {', '.join(generator_issues[:5])}"
+                    + (
+                        f" (+{len(generator_issues)-5} more)"
+                        if len(generator_issues) > 5
+                        else ""
+                    ),
+                    severity="LOW",
+                )
+            )
 
         return findings
 
@@ -315,6 +344,7 @@ class FrameworkSelfTests:
         from runtime.foundation.verification.authority_drift_detector import (
             run_authority_drift_detection,
         )
+
         report = run_authority_drift_detection()
         return report.healthy
 
@@ -323,6 +353,7 @@ class FrameworkSelfTests:
         from runtime.foundation.verification.authority_drift_detector import (
             run_authority_drift_detection,
         )
+
         report = run_authority_drift_detection()
         return report.critical_count == 0 and report.high_count == 0
 
@@ -331,6 +362,7 @@ class FrameworkSelfTests:
         from runtime.foundation.verification.authority_drift_detector import (
             run_authority_drift_detection,
         )
+
         report = run_authority_drift_detection()
         data = report.to_dict()
         json.dumps(data)
@@ -360,11 +392,27 @@ class FrameworkSelfTests:
 
     def test_k6_canonical_commands_present(self) -> bool:
         """K6: All 9 canonical commands present in facade."""
-        facade_path = REPO_ROOT / "runtime" / "foundation" / "verification" / "control_plane_facade.py"
+        facade_path = (
+            REPO_ROOT
+            / "runtime"
+            / "foundation"
+            / "verification"
+            / "control_plane_facade.py"
+        )
         if not facade_path.exists():
             return False
         source = facade_path.read_text(encoding="utf-8")
-        canonical = ["check", "plan", "run", "diagnose", "strengthen", "inspect", "certify", "ci", "doctor"]
+        canonical = [
+            "check",
+            "plan",
+            "run",
+            "diagnose",
+            "strengthen",
+            "inspect",
+            "certify",
+            "ci",
+            "doctor",
+        ]
         return all(cmd in source for cmd in canonical)
 
     def test_k7_evidence_writer_resolvable(self) -> bool:
@@ -374,6 +422,7 @@ class FrameworkSelfTests:
             importlib = __import__("importlib")
             importlib.import_module("runtime.verify")
             from runtime.verify import record_execution_report
+
             return callable(record_execution_report)
         except Exception:
             return False
@@ -428,5 +477,9 @@ class FrameworkSelfTests:
             high_count=1,
             diagnostic={"test": "degraded state"},
         ).to_dict()
-        degraded_detected = degraded["health"] == "DEGRADED" and degraded["high_count"] == 1
-        return healthy and no_critical and no_high and structure_ok and degraded_detected
+        degraded_detected = (
+            degraded["health"] == "DEGRADED" and degraded["high_count"] == 1
+        )
+        return (
+            healthy and no_critical and no_high and structure_ok and degraded_detected
+        )

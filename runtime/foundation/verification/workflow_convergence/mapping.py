@@ -5,6 +5,7 @@ Maps every workflow step to its capability using the certified command-matcher
 table from ci_evidence.py, producing a structured mapping that can be used
 for coverage analysis and audit trails.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -26,7 +27,9 @@ class CapabilityMapping:
     verification_task: str | None
     evidence_kind: str | None
     execution_mode: str | None
-    mapping_status: str  # "mapped" | "unmapped_verification" | "non_verification" | "legacy"
+    mapping_status: (
+        str  # "mapped" | "unmapped_verification" | "non_verification" | "legacy"
+    )
 
     def to_dict(self) -> dict[str, Any]:
         return {

@@ -33,12 +33,17 @@ class TestE2EDeduplication:
         # Verify by inspection of the source that there is only ONE loop
         # over e2e_notice_lines.
         import inspect
+
         source = inspect.getsource(ControlPlanePlanner.plan)
         # Must collect notice lines into a list and iterate once
-        assert "e2e_notice_lines" in source, "E2E output must be collected into structured lines"
+        assert (
+            "e2e_notice_lines" in source
+        ), "E2E output must be collected into structured lines"
         # Count print calls inside the has_e2e_impact block
         # The old code had separate print() calls; the new code has a single loop
-        assert source.count("print(line, file=sys.stderr)") >= 1, "Must have single presentation boundary"
+        assert (
+            source.count("print(line, file=sys.stderr)") >= 1
+        ), "Must have single presentation boundary"
 
     def test_no_duplicate_header(self):
         """E2E IMPACT header must not appear more than once in any output."""
@@ -53,7 +58,9 @@ class TestE2EDeduplication:
         output = "\n".join(e2e_notice_lines)
         assert output.count("E2E IMPACT:") == 1, "Header must appear exactly once"
         assert output.count("E2E test") == 1, "Test count must appear exactly once"
-        assert output.count("Added E2E") == 1, "Added notification must appear exactly once"
+        assert (
+            output.count("Added E2E") == 1
+        ), "Added notification must appear exactly once"
 
     def test_consolidated_format_structure(self):
         """The E2E output must follow the structured format."""

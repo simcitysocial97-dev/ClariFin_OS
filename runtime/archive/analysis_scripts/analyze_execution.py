@@ -205,7 +205,9 @@ def build():
 
     # Platform routers: endpoints and services not tied to any capability/engine
     platform_routers = sorted(
-        r for r in all_routers if r not in {rr for e in topo["engines"].values() for rr in e["routers"]}
+        r
+        for r in all_routers
+        if r not in {rr for e in topo["engines"].values() for rr in e["routers"]}
     )
     for router_rel in platform_routers:
         rid = f"router:{router_rel}"
@@ -225,7 +227,12 @@ def build():
             svc_path = REPO / svc
             if svc_path.exists():
                 node(sid, "Service", svc)
-                edge(rid, sid, f"{router_rel} instantiates/calls {svc} service", "business")
+                edge(
+                    rid,
+                    sid,
+                    f"{router_rel} instantiates/calls {svc} service",
+                    "business",
+                )
 
     # Engine-owned routers without capabilities (account_engine, balance_engine, etc.)
     # These routers belong to engines but their engines have no capabilities,
@@ -235,7 +242,8 @@ def build():
         for ename in engines:
             capability_routers.update(topo["engines"][ename]["routers"])
     engine_only_routers = sorted(
-        r for r in all_routers
+        r
+        for r in all_routers
         if r not in platform_routers and r not in capability_routers
     )
     for router_rel in engine_only_routers:
@@ -255,7 +263,12 @@ def build():
             svc_path = REPO / svc
             if svc_path.exists():
                 node(sid, "Service", svc)
-                edge(rid, sid, f"{router_rel} instantiates/calls {svc} service", "business")
+                edge(
+                    rid,
+                    sid,
+                    f"{router_rel} instantiates/calls {svc} service",
+                    "business",
+                )
 
     out = {
         "generated_at": datetime.now().isoformat(),

@@ -1260,7 +1260,10 @@ def classify_survivors(
     evidence: dict[str, dict] = {**durable, **transient}
     for mutant, catalog in durable.items():
         current = evidence.get(mutant)
-        if current is not None and current["status"] in ("NOT_CHECKED", "INVALID_MUTANT"):
+        if current is not None and current["status"] in (
+            "NOT_CHECKED",
+            "INVALID_MUTANT",
+        ):
             evidence[mutant] = catalog
     armed = {r["mutant"] for r in collect_sentinel_records(root) if r.get("armed")}
     if not records:

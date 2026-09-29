@@ -4,6 +4,7 @@ M9-C54 — Workflow environment contract (Q12).
 Inventories environment assumptions across all workflows including
 Python version, Node version, OS, shell, and tooling.
 """
+
 from __future__ import annotations
 
 import re

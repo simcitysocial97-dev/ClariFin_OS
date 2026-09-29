@@ -5,6 +5,7 @@ Extracted from workflow_convergence.py. Contains WorkflowStep, WorkflowJob,
 WorkflowInventory dataclasses and the inventory_workflows() function plus
 all helper routines used by it.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

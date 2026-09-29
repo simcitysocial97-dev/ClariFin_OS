@@ -114,9 +114,7 @@ def bump_signature_occurrence(sid: str) -> None:
 # The diagnose() call traverses errors.build_errors_current() + change
 # intelligence which is relatively expensive; caching avoids repeated
 # full scans for the same symptom within a single process lifetime.
-_diagnose_cache: dict[tuple[str, str | None, str | None], dict[str, Any] | None] = (
-    {}
-)
+_diagnose_cache: dict[tuple[str, str | None, str | None], dict[str, Any] | None] = {}
 
 
 @functools.lru_cache(maxsize=64)
@@ -135,7 +133,9 @@ def _cache_result(
     capability_id_hash: str | None,
 ) -> dict[str, Any] | None:
     """Internal cached implementation of diagnose."""
-    return _do_diagnose(symptom=symptom, error_code=error_code_hash, capability_id=capability_id_hash)
+    return _do_diagnose(
+        symptom=symptom, error_code=error_code_hash, capability_id=capability_id_hash
+    )
 
 
 def diagnose(

@@ -202,9 +202,9 @@ class E2ERouteMapper:
                 "schema": "e2e-route-map/v1",
                 "routes": list(route_map.keys()),
                 "mapping": {k: v for k, v in sorted(route_map.items())},
-                "generated_at": __import__("datetime").datetime.now(
-                    __import__("datetime").timezone.utc
-                ).isoformat(),
+                "generated_at": __import__("datetime")
+                .datetime.now(__import__("datetime").timezone.utc)
+                .isoformat(),
             }
             self.cache_path.write_text(json.dumps(payload, indent=2) + "\n")
         except OSError:

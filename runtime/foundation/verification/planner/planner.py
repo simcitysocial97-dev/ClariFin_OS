@@ -899,15 +899,14 @@ class CrossLayerImpactPlanner:
         """Load cross-layer graph for frontend capability resolution."""
         try:
             import json
+
             graph_path = Path("runtime/generated/cross-layer-graph.json")
             if graph_path.exists():
                 self._cross_layer_graph = json.loads(graph_path.read_text())
         except Exception:
             pass
 
-    def _find_frontend_capability(
-        self, file_path: str
-    ) -> dict[str, Any] | None:
+    def _find_frontend_capability(self, file_path: str) -> dict[str, Any] | None:
         """Resolve a frontend file to its capability and related backend info.
 
         Returns a dict with:
@@ -969,9 +968,7 @@ class CrossLayerImpactPlanner:
 
         return None
 
-    def _resolve_capability_edges(
-        self, capability_id: str
-    ) -> dict[str, Any] | None:
+    def _resolve_capability_edges(self, capability_id: str) -> dict[str, Any] | None:
         """Resolve cross-layer edges for a frontend capability."""
         if not self._cross_layer_graph:
             return None
@@ -1064,7 +1061,8 @@ class CrossLayerImpactPlanner:
 
         # Second pass: for unresolved frontend files, use cross-layer graph
         unresolved_frontend = [
-            f for f in changed_files
+            f
+            for f in changed_files
             if f not in chain_resolved and self._is_frontend_path(f)
         ]
         if unresolved_frontend and self._cross_layer_graph:
@@ -1072,7 +1070,8 @@ class CrossLayerImpactPlanner:
 
         # Third pass: enrich unresolved non-frontend files via intelligence
         unresolved_backend = [
-            f for f in changed_files
+            f
+            for f in changed_files
             if f not in chain_resolved and not self._is_frontend_path(f)
         ]
         if self.map_path is None and unresolved_backend:
