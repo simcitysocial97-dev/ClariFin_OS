@@ -92,7 +92,7 @@ def _load(generated_dir: Path, name: str) -> dict[str, Any]:
     if not path.exists():
         raise ArchitectureNotDiscovered(
             f"Canonical architecture artifact missing: {path}. "
-            "Run `python runtime/verify.py architecture discover` "
+            "Run `python -m runtime.foundation.architecture.discovery` "
             "(the single architecture discovery pipeline)."
         )
     try:

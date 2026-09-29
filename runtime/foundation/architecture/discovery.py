@@ -206,3 +206,44 @@ def pipeline_manifest() -> dict[str, Any]:
             for p in PHASES
         ],
     }
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Run the discovery pipeline and report per-phase status.
+
+    This is the entry point a clean checkout needs: the architecture inventory
+    and the other discovery artifacts are generated output, so they have to be
+    produced before any consumer reads them. It is deliberately a module
+    entry point rather than a new `runtime verify` subcommand, because
+    architecture discovery is a pipeline, not a verification operation.
+    """
+
+    args = list(sys.argv[1:] if argv is None else argv)
+    if args and args[0] in ("-h", "--help"):
+        print(__doc__ or "", file=sys.stderr)
+        print("usage: python -m runtime.foundation.architecture.discovery", file=sys.stderr)
+        return 0
+
+    results = run_discovery()
+    failed = False
+    for r in results:
+        status = r["status"]
+        marker = "ok" if status == "ok" else "ERROR"
+        print(f"[{marker:5}] {r['phase']:15} -> {r['output']}")
+        if status != "ok":
+            failed = True
+            print(f"         {r['error']}", file=sys.stderr)
+    if failed:
+        print("Architecture discovery failed.", file=sys.stderr)
+        return 1
+    print(f"Architecture discovery complete ({len(results)} phases).")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
