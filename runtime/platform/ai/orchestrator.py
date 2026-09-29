@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
@@ -16,6 +17,35 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 __all__ = ["AIOrchestrator", "AI_ORCHESTRATOR_INSTANCE"]
+
+#: Run identifiers are minted by this module as ``ai-<12 hex>``. Callers reach
+#: ``get_run``/``finalize_run``/``cancel_run`` through HTTP routes
+#: (``/platform/v1/ai/runs/{run_id}``), so the value is externally controlled
+#: and is used to build a filesystem path. Matching the exact shape this module
+#: produces is what makes the path safe: no separator, no traversal, no
+#: absolute path, and no unbounded length.
+_RUN_ID_RE = re.compile(r"\Aai-[0-9a-f]{12}\Z")
+
+
+def _run_path(runs_dir: Path, run_id: str) -> Path | None:
+    """Return the run file for ``run_id``, or ``None`` if the id is not valid.
+
+    Returning ``None`` rather than raising keeps the existing "no such run"
+    behaviour of :meth:`get_run` and :meth:`cancel_run`, which already answer
+    not-found for an unknown id.
+    """
+
+    if not isinstance(run_id, str) or not _RUN_ID_RE.match(run_id):
+        return None
+    candidate = runs_dir / f"{run_id}.json"
+    # Belt and braces: the pattern already forbids traversal, but the runs
+    # directory is cwd-relative, so confirm containment after resolution too.
+    try:
+        if candidate.resolve().parent != runs_dir.resolve():
+            return None
+    except OSError:
+        return None
+    return candidate
 
 
 class AIOrchestrator:
@@ -64,8 +94,8 @@ class AIOrchestrator:
         if run_id in self._runs:
             return self._runs[run_id]
         # Try loading from disk
-        path = self._runs_dir / f"{run_id}.json"
-        if path.exists():
+        path = _run_path(self._runs_dir, run_id)
+        if path is not None and path.exists():
             run = json.loads(path.read_text())
             self._runs[run_id] = run
             return run
@@ -244,7 +274,12 @@ class AIOrchestrator:
     def _persist_run(self, run_id: str) -> None:
         run = self._runs.get(run_id)
         if run:
-            path = self._runs_dir / f"{run_id}.json"
+            path = _run_path(self._runs_dir, run_id)
+            if path is None:
+                # Refuse to write outside the runs directory rather than
+                # treating an unvalidated id as a path.
+                logger.warning("refusing to persist run with invalid id")
+                return
             path.write_text(json.dumps(run, indent=2, default=str))
 
     def _audit(self, run_id: str, event_type: str, payload: dict[str, Any]) -> None:

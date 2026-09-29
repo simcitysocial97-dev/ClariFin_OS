@@ -481,10 +481,23 @@ def _collect_changed_files(*, fetch_remote: bool = True) -> _ChangedFilesResult:
         Accepts bytes (the real contract, since no text decoding is requested)
         and str, so a caller or test double that returns decoded output still
         works rather than failing on an attribute error.
+
+        ``git -z`` delimits records with NUL. If the output contains no NUL at
+        all but does contain newlines, the producer did not honour ``-z`` and the
+        records are newline-delimited; fall back to that rather than returning
+        one record containing embedded newlines. The fallback is gated on the
+        complete absence of NULs, so a real NUL-delimited stream — where a
+        filename may legitimately contain a newline — is never re-split.
         """
 
         if isinstance(raw, bytes):
             raw = raw.decode("utf-8", "surrogateescape")
+        if "\0" not in raw:
+            return [
+                rec
+                for rec in raw.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+                if rec
+            ]
         return [rec for rec in raw.split("\0") if rec]
 
     def _run_name_only(args: list[str]) -> list[str]:
