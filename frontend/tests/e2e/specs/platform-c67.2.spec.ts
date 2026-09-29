@@ -140,30 +140,23 @@ test.describe('Platform Console C67.2 — Content Rendering', () => {
 
   test('Workflows page shows workflow list or empty state', async ({ page }) => {
     await gotoConsole(page, '/workflows');
-    // M9-C71: the bare `text=` list also matches the <option> elements of the
-    // boundary filter, and an <option> has no visible box, so `.first()` always
-    // resolved to an invisible node and the assertion read `false` on a page
-    // that was rendering 14 workflows correctly. `:visible` restricts the match
-    // to rendered content — the boundary summary chips, the inventory rows, or
-    // the explicit empty state.
-    const hasContent = await page
-      .locator('text=LOCAL:visible, text=GITHUB_ONLY:visible, text=No workflows:visible, text=Loading workflows:visible')
-      .first()
-      .isVisible()
-      .catch(() => false);
-    expect(hasContent).toBeTruthy();
+    // The page owns `data-testid="workflow-inventory"` on the inventory region,
+    // which renders for the list and for the empty state alike, so one
+    // assertion covers both. Earlier revisions matched on visible *text*
+    // ("LOCAL", "GITHUB_ONLY", "No workflows", "Loading workflows"), which
+    // coupled the test to copy, to localisation, and to which of those
+    // strings happened to be on screen — and, via a bare `text=` list matching
+    // the filter's <option> elements, to whether the first match was rendered
+    // at all. CONSOLE_RESOLVED already waits on this testid, so the page is
+    // known to have resolved by the time this runs.
+    await expect(page.getByTestId('workflow-inventory')).toBeVisible();
   });
 
   test('Runs page shows run list or empty state', async ({ page }) => {
     await gotoConsole(page, '/runs');
-    // See the workflows note above: `:visible` is required because the bare
-    // `text=` list also matches non-rendered nodes.
-    const hasContent = await page
-      .locator('text=No runs:visible, text=Loading runs:visible, .font-mono:visible')
-      .first()
-      .isVisible()
-      .catch(() => false);
-    expect(hasContent).toBeTruthy();
+    // Same reasoning as the workflows page: the run inventory region carries a
+    // stable testid and renders for the list and the empty state alike.
+    await expect(page.getByTestId('run-inventory')).toBeVisible();
   });
 
   test('Verification page shows capabilities table', async ({ page }) => {

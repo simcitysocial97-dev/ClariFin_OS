@@ -6,6 +6,8 @@ No new authority — delegates to runtime.foundation.verification.framework_inte
 
 from __future__ import annotations
 
+import threading
+import time
 from typing import Any
 
 from runtime.foundation.verification.framework_integrity import (
@@ -14,16 +16,58 @@ from runtime.foundation.verification.framework_integrity import (
     FrameworkSelfTests,
 )
 from runtime.platform.api.contracts import framework_integrity as fi_contract
-from runtime.platform.api.services._helpers import envelope, now_iso
+from runtime.platform.api.services._helpers import envelope
 
 __all__ = [
     "build_framework_integrity",
     "build_framework_self_tests",
 ]
 
+#: How long a self-test diagnostic is reused before it is recomputed.
+#:
+#: The K1-K9 self-tests measure 8.2 s of the 12.8 s a health snapshot costs, and
+#: the health read only needs two counters from them (`self_tests_passed`,
+#: `self_tests_total`). Re-running the framework's test suite inside a status
+#: endpoint is both the single largest cost on the console's data path and work
+#: that changes only when the code does. The dedicated
+#: `/platform/v1/framework/self-tests` endpoint still forces a fresh run, so
+#: nothing is hidden from an operator who asks for it directly.
+_SELF_TEST_TTL_SECONDS = 600
 
-def build_framework_integrity() -> dict[str, Any]:
-    """Build the ``platform.framework_integrity`` envelope from C62 detectors."""
+_self_test_cache: dict[str, Any] = {"at": 0.0, "diagnostic": None}
+_self_test_lock = threading.Lock()
+
+
+def _self_test_diagnostic(*, nocache: bool = False) -> dict[str, Any]:
+    """Return the K1-K9 diagnostic, reusing a recent run.
+
+    Single-flight via a module lock, because a cold console page resolves
+    health and framework integrity in parallel and would otherwise run the
+    suite once per caller.
+    """
+
+    global _self_test_cache
+
+    with _self_test_lock:
+        now = time.monotonic()
+        cached = _self_test_cache
+        if (
+            not nocache
+            and cached["diagnostic"] is not None
+            and (now - cached["at"]) < _SELF_TEST_TTL_SECONDS
+        ):
+            return cached["diagnostic"]
+        result = FrameworkSelfTests().run_all()
+        _self_test_cache = {"at": time.monotonic(), "diagnostic": result.diagnostic}
+        return result.diagnostic
+
+
+def build_framework_integrity(*, nocache: bool = False) -> dict[str, Any]:
+    """Build the ``platform.framework_integrity`` envelope from C62 detectors.
+
+    ``nocache=True`` forces the self-test suite to re-run rather than reuse a
+    recent diagnostic.
+    """
 
     # Run authority drift detector (same as C62 doctor)
     from runtime.foundation.verification.authority_drift_detector import (
@@ -39,10 +83,8 @@ def build_framework_integrity() -> dict[str, Any]:
     # Combine all findings
     all_findings = list(drift_report.findings) + artifact_findings
 
-    # Run self-tests (K1-K9)
-    st = FrameworkSelfTests()
-    self_test_result = st.run_all()
-    diagnostic = self_test_result.diagnostic
+    # Self-tests (K1-K9), memoized: see _self_test_diagnostic.
+    diagnostic = _self_test_diagnostic(nocache=nocache)
 
     # Build FrameworkIntegrityResult from combined findings
     result = FrameworkIntegrityResult.from_drift_report(
@@ -87,8 +129,10 @@ def build_framework_integrity() -> dict[str, Any]:
 def build_framework_self_tests() -> dict[str, Any]:
     """Build the ``platform.framework_self_tests`` envelope from C62 K1-K9."""
 
-    st = FrameworkSelfTests()
-    result = st.run_all()
+    # This endpoint exists to report the self-tests, so it always runs them
+    # fresh rather than reusing the health snapshot's memoized diagnostic.
+    diagnostic = _self_test_diagnostic(nocache=True)
+    result = type("R", (), {"diagnostic": diagnostic})()
 
     test_results = []
     for name, passed in result.diagnostic["self_tests"].items():

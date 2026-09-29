@@ -342,12 +342,6 @@ export default function PlatformDashboardPage() {
           </div>
         </div>
       </div>
-
-      {/* Footer bar */}
-      <div className="border-t border-[var(--border-subtle)] pt-3 flex items-center justify-between text-xs text-[var(--text-tertiary)] font-mono">
-        <span>Platform Console v1.0.0 · M9-C63 · Generated from live C50 authorities</span>
-        <span>No AI · No external providers · No second executor</span>
-      </div>
     </div>
   );
 }

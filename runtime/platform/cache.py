@@ -58,6 +58,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import os
 import threading
 import time
 from pathlib import Path
@@ -69,8 +70,25 @@ SNAPSHOT_PATH = Path("runtime/generated/platform/snapshot.json")
 
 #: Per-domain default TTL in seconds. Override with ``refresh_on_miss``
 #: if you want a specific domain to always recompute.
+#: Minimum ratio between a domain's TTL and its measured build cost. A TTL
+#: shorter than a few builds means the cache spends a large fraction of every
+#: window recomputing, and any request arriving just after an expiry pays the
+#: full build. `health` is the motivating case: its snapshot runs the full
+#: framework integrity scan (drift detection + artifact freshness + self-tests)
+#: and measures ~13 s, so the previous 60 s TTL put the cache in a ~22 % rebuild
+#: duty cycle and made the platform console's own data-readiness wait blow past
+#: its budget on a large fraction of page loads.
+_BUILD_COST_MULTIPLE = 20
+
+#: Upper bound on a TTL, so a very expensive build cannot pin a stale value for
+#: hours.
+_MAX_TTL_SECONDS = 900
+
 DEFAULT_TTL_SECONDS: dict[str, int] = {
-    "health": 60,
+    # health is the expensive one: ~13 s to build. 300 s amortises that to a
+    # ~4 % rebuild duty cycle, and a consumer arriving during a rebuild waits at
+    # most one build rather than a queue of them.
+    "health": 300,
     "capabilities": 60,
     "tasks": 60,
     "events": 30,
@@ -78,6 +96,10 @@ DEFAULT_TTL_SECONDS: dict[str, int] = {
     # Architecture, history, errors, application are cheap — no hard TTL
     # needed. They invalidate when the snapshot file changes.
 }
+
+#: Measured build cost per domain, in seconds. Populated on first write so the
+#: TTL can be sized from evidence rather than a guess.
+_BUILD_COST_SECONDS: dict[str, float] = {}
 
 # ---------------------------------------------------------------------------
 # Internal helpers
@@ -123,9 +145,42 @@ def _save_snapshot(snap: dict[str, Any]) -> None:
 
 
 def _effective_ttl(domain: str) -> int | None:
-    """Return the TTL in seconds for a domain, or None for 'never'."""
+    """Return the TTL in seconds for a domain, or None for 'never'.
 
-    return DEFAULT_TTL_SECONDS.get(domain)
+    An explicit ``SNAPSHOT_TTL_<DOMAIN>`` override wins. Otherwise the TTL is
+    the configured default, widened so it stays at least
+    ``_BUILD_COST_MULTIPLE`` times the domain's measured build cost (capped at
+    ``_MAX_TTL_SECONDS``). Sizing the TTL from the measured cost is what keeps
+    the cache serving: a TTL shorter than the work it is caching guarantees a
+    large rebuild duty cycle.
+    """
+
+    override = os.environ.get(f"SNAPSHOT_TTL_{domain.upper()}")
+    if override:
+        try:
+            value = int(override)
+        except ValueError:
+            logger.warning("Ignoring non-integer SNAPSHOT_TTL_%s=%r", domain, override)
+        else:
+            if value <= 0:
+                return None
+            return value
+
+    base = DEFAULT_TTL_SECONDS.get(domain)
+    if base is None:
+        return None
+
+    cost = _BUILD_COST_SECONDS.get(domain)
+    if cost is None:
+        return base
+    return min(_MAX_TTL_SECONDS, max(base, int(cost * _BUILD_COST_MULTIPLE)))
+
+
+def _record_build_cost(domain: str, seconds: float) -> None:
+    """Record how long a domain's build took, so its TTL can be sized from it."""
+
+    if seconds > 0:
+        _BUILD_COST_SECONDS[domain] = seconds
 
 
 # ---------------------------------------------------------------------------
@@ -250,7 +305,11 @@ class _SnapshotCache:
                 cached = self.get(domain)
                 if cached is not None:
                     return cached
+            started = time.monotonic()
             payload = builder()
+            # Record the cost so _effective_ttl can size this domain's TTL from
+            # measurement rather than from a guess that can be too short.
+            _record_build_cost(domain, time.monotonic() - started)
             self.put(domain, payload)
             return payload
 

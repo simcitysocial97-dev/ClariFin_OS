@@ -95,8 +95,19 @@ test('renders capabilities summary', async ({ page }) => {
   });
 
   test('renders footer bar', async ({ page }) => {
-    await expect(page.locator('text=M9-C57 Band A')).toBeVisible();
-    await expect(page.locator('text=No AI')).toBeVisible();
+    // The layout mounts PlatformFooterBar, which declares the console's runtime
+    // boundary and carries stable testids. Asserting on them instead of on the
+    // literal text matters: the dashboard page also had a superseded inline
+    // footer saying "No AI", so `text=No AI` matched two elements and failed on
+    // Playwright's strict mode. That inline footer has been removed; the
+    // shared component is the single footer.
+    await expect(page.getByTestId('platform-footer-bar')).toBeVisible();
+    await expect(page.getByTestId('platform-footer-band')).toHaveText('M9-C57 Band A');
+    await expect(page.getByTestId('platform-footer-ai')).toHaveText('No AI');
+    // The read-only guarantee is the point of the bar, so certify it is stated.
+    await expect(page.getByTestId('platform-footer-bar')).toContainText(
+      'no mutation, no LLM, no repository scan',
+    );
   });
 
   test('does not load mutation or LLM modules at runtime', async ({ page }) => {

@@ -291,3 +291,175 @@ class TestNoMutationNoLLM:
         new = {m.split(".")[0] for m in sys.modules} - {m.split(".")[0] for m in before}
         overlap = new & forbidden
         assert not overlap, f"Read path loaded forbidden modules: {overlap}"
+
+
+class TestSnapshotTtlSizing:
+    """The cache TTL must be sized against the cost of what it caches.
+
+    `health` runs the full framework integrity scan and measures ~13 s. Under a
+    60 s TTL the cache spent ~22 % of every window recomputing, and a console
+    page arriving just after an expiry paid the whole build — which is what
+    pushed the platform console's data-readiness wait past its budget on a large
+    fraction of page loads. A TTL shorter than the work it caches guarantees
+    that behaviour, so the TTL is now widened to a multiple of the measured
+    build cost, with an explicit override still available.
+    """
+
+    def test_ttl_is_at_least_a_multiple_of_the_measured_build_cost(self):
+        from runtime.platform.cache import (
+            _BUILD_COST_MULTIPLE,
+            _BUILD_COST_SECONDS,
+            _effective_ttl,
+        )
+
+        try:
+            _BUILD_COST_SECONDS["health"] = 13.0
+            ttl = _effective_ttl("health")
+            assert ttl is not None
+            assert ttl >= 13.0 * _BUILD_COST_MULTIPLE
+        finally:
+            _BUILD_COST_SECONDS.pop("health", None)
+
+    def test_health_ttl_duty_cycle_is_bounded(self):
+        """The cache must not spend a large fraction of a window rebuilding."""
+        from runtime.platform.cache import _effective_ttl
+
+        ttl = _effective_ttl("health")
+        assert ttl is not None
+        assert 13.0 / ttl <= 0.10, f"rebuild duty cycle too high for ttl={ttl}"
+
+    def test_unknown_domain_has_no_ttl(self):
+        from runtime.platform.cache import _effective_ttl
+
+        assert _effective_ttl("no_such_domain") is None
+
+    def test_explicit_override_wins(self, monkeypatch):
+        from runtime.platform.cache import _effective_ttl
+
+        monkeypatch.setenv("SNAPSHOT_TTL_HEALTH", "30")
+        assert _effective_ttl("health") == 30
+
+    def test_invalid_override_falls_back_rather_than_disabling(self, monkeypatch):
+        from runtime.platform.cache import _effective_ttl
+
+        monkeypatch.setenv("SNAPSHOT_TTL_HEALTH", "not-a-number")
+        assert _effective_ttl("health") is not None
+
+    def test_zero_override_means_never_expire(self, monkeypatch):
+        from runtime.platform.cache import _effective_ttl
+
+        monkeypatch.setenv("SNAPSHOT_TTL_HEALTH", "0")
+        assert _effective_ttl("health") is None
+
+    def test_build_cost_is_recorded_on_first_build(self, tmp_path):
+        from runtime.platform import cache as cache_mod
+
+        store = cache_mod._SnapshotCache.__new__(cache_mod._SnapshotCache)
+        store._snap = {"version": "1", "generated_at": "", "domains": {}}
+        store._last_refresh_ts = 0.0
+        store._domain_locks = {}
+        store._locks_guard = __import__("threading").Lock()
+
+        cache_mod._BUILD_COST_SECONDS.clear()
+        try:
+            store.get_or_build("health", lambda: {"kind": "t"}, nocache=True)
+            assert cache_mod._BUILD_COST_SECONDS.get("health") is not None
+        finally:
+            cache_mod._BUILD_COST_SECONDS.clear()
+            store._snap.pop("health", None)
+
+
+class TestSelfTestDiagnosticMemoization:
+    """Health must not re-run the framework's test suite to read two counters.
+
+    The K1-K9 self-tests measured 8.2 s of the 12.8 s a health snapshot cost,
+    and the health read only needs `self_tests_passed` / `self_tests_total`.
+    Running the suite inside a status endpoint was the largest single cost on the
+    console's data path. The diagnostic is now memoized; the dedicated
+    self-tests endpoint still forces a fresh run, so an operator who asks for it
+    directly always gets a real result.
+    """
+
+    @staticmethod
+    def _reset() -> None:
+        from runtime.platform.api.services import framework_integrity as fi
+
+        fi._self_test_cache = {"at": 0.0, "diagnostic": None}
+
+    def test_diagnostic_is_reused_within_the_ttl(self, monkeypatch):
+        from runtime.platform.api.services import framework_integrity as fi
+
+        self._reset()
+        calls = []
+
+        class _FakeResult:
+            diagnostic = {"passed": 9, "total": 9}
+
+        class _FakeTests:
+            def run_all(self):
+                calls.append(1)
+                return _FakeResult()
+
+        monkeypatch.setattr(fi, "FrameworkSelfTests", _FakeTests)
+        first = fi._self_test_diagnostic()
+        second = fi._self_test_diagnostic()
+        try:
+            assert first == second
+            assert len(calls) == 1, "second read must reuse the memoized diagnostic"
+        finally:
+            self._reset()
+
+    def test_nocache_forces_a_fresh_run(self, monkeypatch):
+        from runtime.platform.api.services import framework_integrity as fi
+
+        self._reset()
+        calls = []
+
+        class _FakeResult:
+            diagnostic = {"passed": 9, "total": 9}
+
+        class _FakeTests:
+            def run_all(self):
+                calls.append(1)
+                return _FakeResult()
+
+        monkeypatch.setattr(fi, "FrameworkSelfTests", _FakeTests)
+        fi._self_test_diagnostic()
+        fi._self_test_diagnostic(nocache=True)
+        try:
+            assert len(calls) == 2, "nocache must re-run the self-tests"
+        finally:
+            self._reset()
+
+    def test_expired_memo_is_recomputed(self, monkeypatch):
+        from runtime.platform.api.services import framework_integrity as fi
+
+        self._reset()
+        calls = []
+
+        class _FakeResult:
+            diagnostic = {"passed": 9, "total": 9}
+
+        class _FakeTests:
+            def run_all(self):
+                calls.append(1)
+                return _FakeResult()
+
+        monkeypatch.setattr(fi, "FrameworkSelfTests", _FakeTests)
+        monkeypatch.setattr(fi, "_SELF_TEST_TTL_SECONDS", 0)
+        fi._self_test_diagnostic()
+        fi._self_test_diagnostic()
+        try:
+            assert len(calls) == 2, "an expired memo must be recomputed"
+        finally:
+            self._reset()
+
+    def test_dedicated_endpoint_still_returns_the_diagnostic_shape(self):
+        from runtime.platform.api.services import framework_integrity as fi
+
+        env = fi.build_framework_self_tests()
+        data = env["data"]
+        assert "results" in data
+        assert "passed" in data
+        assert "total" in data
+        assert data["total"] >= len(data["results"])
