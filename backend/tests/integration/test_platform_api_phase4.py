@@ -351,22 +351,35 @@ class TestSnapshotTtlSizing:
         monkeypatch.setenv("SNAPSHOT_TTL_HEALTH", "0")
         assert _effective_ttl("health") is None
 
-    def test_build_cost_is_recorded_on_first_build(self, tmp_path):
+    def test_build_cost_is_recorded_on_first_build(self, tmp_path, monkeypatch):
+
         from runtime.platform import cache as cache_mod
 
-        store = cache_mod._SnapshotCache.__new__(cache_mod._SnapshotCache)
-        store._snap = {"version": "1", "generated_at": "", "domains": {}}
-        store._last_refresh_ts = 0.0
-        store._domain_locks = {}
-        store._locks_guard = __import__("threading").Lock()
-
+        # Point the module at a throwaway snapshot file. A _SnapshotCache writes
+        # through to SNAPSHOT_PATH on put(), so exercising one here without this
+        # would persist a partial payload over the real health entry and every
+        # later read of the cache would return it.
+        monkeypatch.setattr(cache_mod, "SNAPSHOT_PATH", tmp_path / "snapshot.json")
         cache_mod._BUILD_COST_SECONDS.clear()
         try:
+            store = cache_mod._SnapshotCache()
             store.get_or_build("health", lambda: {"kind": "t"}, nocache=True)
             assert cache_mod._BUILD_COST_SECONDS.get("health") is not None
         finally:
             cache_mod._BUILD_COST_SECONDS.clear()
-            store._snap.pop("health", None)
+
+    def test_persisted_health_payload_is_a_complete_envelope(self):
+        """A cached health entry must carry data, not just its kind.
+
+        Regression guard: a partial payload written by a test double once
+        poisoned the shared snapshot file, and because the cache serves from
+        disk every later read returned an envelope with no data.
+        """
+        from runtime.platform.api.services import health as health_service
+
+        env = health_service.build_health_snapshot()
+        assert env.get("data"), "health snapshot must carry a data payload"
+        assert set(env) >= {"kind", "data", "version", "id", "generated_at"}
 
 
 class TestSelfTestDiagnosticMemoization:

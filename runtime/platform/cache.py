@@ -93,6 +93,10 @@ DEFAULT_TTL_SECONDS: dict[str, int] = {
     "tasks": 60,
     "events": 30,
     "change": 60,
+    # errors_current costs ~6 s on a cold process (it scans the current error
+    # state), so it needs a real TTL. The widened builder is only ever reached
+    # through get_or_build, so the first caller pays and the rest are served.
+    "errors_current": 300,
     # Architecture, history, errors, application are cheap — no hard TTL
     # needed. They invalidate when the snapshot file changes.
 }

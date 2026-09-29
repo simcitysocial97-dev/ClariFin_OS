@@ -14,6 +14,14 @@ from runtime.platform.api.contracts._primitives import Identity, Timestamp
 
 FRAMEWORK_INTEGRITY_KIND: str = "platform.framework_integrity"
 
+#: Envelope kind for the dedicated self-tests surface. Declared here with the
+#: other kind constants rather than read back off the model: the service used
+#: `FrameworkSelfTestsEnvelope.__fields__["kind"].default`, which is Pydantic v1
+#: API, deprecated in v2 and removed in v3. It also raised
+#: PydanticDeprecatedSince20, which any suite running with warnings-as-errors
+#: turns into a failure.
+FRAMEWORK_SELF_TESTS_KIND: str = "platform.framework_self_tests"
+
 
 class FrameworkHealth(str, Enum):
     HEALTHY = "HEALTHY"

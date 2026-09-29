@@ -312,10 +312,8 @@ class ControlPlanePlanner:
                     is_escalation=False,
                     reason=(
                         f"{len(unmapped)} change(s) resolved to a capability with no "
-                        "verification-registry mapping; blocked pending review "
-                        "obligation: "
-                        + ", ".join(unmapped[:10])
-                        + (" ..." if len(unmapped) > 10 else "")
+                        "verification-registry mapping; blocked pending a single "
+                        "review obligation. The full list is in the task command."
                     ),
                 )
             )

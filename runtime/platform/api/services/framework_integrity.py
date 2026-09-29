@@ -149,7 +149,4 @@ def build_framework_self_tests() -> dict[str, Any]:
         "passed": result.diagnostic["passed"],
         "total": result.diagnostic["total"],
     }
-    return envelope(
-        kind=fi_contract.FrameworkSelfTestsEnvelope.__fields__["kind"].default,
-        data=data,
-    )
+    return envelope(kind=fi_contract.FRAMEWORK_SELF_TESTS_KIND, data=data)

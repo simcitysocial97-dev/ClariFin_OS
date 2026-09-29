@@ -763,8 +763,15 @@ async def post_history_compare(request: Request) -> JSONResponse:
 
 
 @router.get("/errors/current")
-async def get_errors_current() -> JSONResponse:
-    env = errors_service.build_errors_current()
+async def get_errors_current(request: Request) -> JSONResponse:
+    # Routed through the snapshot cache, like the other console data paths.
+    # build_errors_current() costs ~6 s on a cold process and the router called
+    # it directly, so every dashboard load paid it and concurrent loads each ran
+    # their own copy. get_or_build() collapses that to one computation.
+    nocache = _query_nocache(request)
+    env = snapshot.get_or_build(
+        "errors_current", errors_service.build_errors_current, nocache=nocache
+    )
     return _ok(env)
 
 
