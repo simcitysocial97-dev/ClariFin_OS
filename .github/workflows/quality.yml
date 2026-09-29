@@ -97,13 +97,16 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Frontend static checks (tsc + vitest)
-        working-directory: frontend
+      - name: Frontend static checks (eslint, tsc, vitest)
         shell: bash
         run: |
-          npm ci
-          npx tsc --noEmit
-          npx vitest run --reporter=dot
+          # Reuses the repository's existing frontend verification script, which
+          # already owns backend startup, phase isolation and evidence
+          # recording. Only the static phases are selected here; the production
+          # build stays with Frontend Verification so the two required workflows
+          # do not each pay for the other's work.
+          FRONTEND_VERIFICATION_PHASES="lint typecheck test" \
+            bash .github/scripts/run_frontend_verification.sh
 
       - name: Upload Frontend test output
         uses: ./.github/actions/upload-runtime
