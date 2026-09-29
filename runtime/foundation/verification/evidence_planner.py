@@ -35,8 +35,8 @@ from typing import Any, Literal
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
-import importlib.util
 
+from runtime.foundation.verification import graph_inventory as _graph_inventory
 from runtime.foundation.verification.evidence_reuse import (  # noqa: E402
     Change,
     ComponentMeasurement,
@@ -54,16 +54,12 @@ from runtime.foundation.verification.graph_model import (  # noqa: E402
     capability_id,
 )
 
-_graph_module_path = (
-    REPO_ROOT / "runtime" / "generated" / "m9-c42.27" / "m27_2_graph_inventory.py"
-)
-_spec = importlib.util.spec_from_file_location(
-    "m27_2_graph_inventory", _graph_module_path
-)
-_graph_inventory = importlib.util.module_from_spec(_spec)  # type: ignore[arg-type]
-assert _spec and _spec.loader
-sys.modules.setdefault("m27_2_graph_inventory", _graph_inventory)
-_spec.loader.exec_module(_graph_inventory)  # type: ignore[union-attr]
+# The graph inventory builder used to live at
+# runtime/generated/m9-c42.27/m27_2_graph_inventory.py and was loaded with
+# importlib.util.spec_from_file_location. That made a source module a
+# dependency of a generated directory, so excluding regenerable output from the
+# repository removed the planner itself. It is now a normal module in this
+# package; the artifacts it emits still go to runtime/generated/m9-c42.27/.
 ENGINE_TO_CAPABILITY = _graph_inventory.ENGINE_TO_CAPABILITY
 _classify_source = _graph_inventory._classify_source
 _src_fingerprint = _graph_inventory._fingerprint
@@ -623,19 +619,10 @@ class EvidenceAwarePlanner:
 def default_planner() -> EvidenceAwarePlanner:
     """Construct a planner with the C42.26 baseline + graph inventory.
 
-    Always re-reads the graph inventory file so test ordering and
-    module reload do not produce stale results.
+    The inventory builder is imported normally, so the module object is
+    resolved once by the import system rather than re-executed per call.
     """
-    import importlib.util
-
-    spec = importlib.util.spec_from_file_location(
-        "_graph_inv_fresh", _graph_module_path
-    )
-    if spec is None or spec.loader is None:
-        raise RuntimeError("could not load graph inventory module")
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)  # type: ignore[union-attr]
-    g, _manifest = mod.build_graph()
+    g, _manifest = _graph_inventory.build_graph()
     pop = c42_26_population()
     measurements = c42_24_b_measurements() + c42_25_measurements()
     return EvidenceAwarePlanner(g, pop, measurements)
