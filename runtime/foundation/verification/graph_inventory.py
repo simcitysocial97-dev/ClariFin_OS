@@ -153,6 +153,7 @@ def _fingerprint(path: Path) -> str:
 # Source walk
 # ---------------------------------------------------------------------------
 
+
 def _iter_python(root: Path) -> Iterable[Path]:
     if not root.exists():
         return
@@ -304,6 +305,7 @@ def _build_capabilities(components: list[str]) -> list[CapabilityNode]:
 # Workflows / tasks from verification.yaml
 # ---------------------------------------------------------------------------
 
+
 def _read_verification_config() -> dict:
     p = REPO_ROOT / "runtime" / "foundation" / "verification" / "verification.yaml"
     if not p.exists():
@@ -361,6 +363,7 @@ def _build_tasks() -> list[VerificationTaskNode]:
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def _read_c42_26_components() -> list[str]:
     matrix = (
@@ -455,9 +458,7 @@ def build_graph() -> tuple[VerificationGraph, dict]:
             cap = capability_id(cap_name)
             if cap in g.capabilities:
                 g.link_source_capability(src.id, cap)
-                manifest["auto_derived"][
-                    "source_to_capability_from_engine"
-                ] += 1
+                manifest["auto_derived"]["source_to_capability_from_engine"] += 1
 
     # 5. Link capability -> test surface (coarse: all unit + integration
     #    surfaces apply to every capability unless restricted). This is
@@ -502,9 +503,7 @@ def main() -> int:
             "edges_capability_to_surface": sum(
                 len(v) for v in g.capability_to_surface.values()
             ),
-            "edges_surface_to_task": sum(
-                len(v) for v in g.surface_to_task.values()
-            ),
+            "edges_surface_to_task": sum(len(v) for v in g.surface_to_task.values()),
         },
     }
     graph_path.write_text(json.dumps(payload, indent=2))

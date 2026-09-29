@@ -246,7 +246,9 @@ class TestRealGitPathParsing:
             (repo / rel).write_text("x = 99\n", encoding="utf-8")
         return repo
 
-    def test_newline_output_is_unparseable_for_hostile_paths(self, repo_with_hostile_paths):
+    def test_newline_output_is_unparseable_for_hostile_paths(
+        self, repo_with_hostile_paths
+    ):
         """Documents the defect: git quotes these records on one line each."""
 
         result = _git("diff", "--name-only", "HEAD", cwd=repo_with_hostile_paths)
@@ -256,13 +258,17 @@ class TestRealGitPathParsing:
 
     def test_nul_output_yields_exact_paths(self, repo_with_hostile_paths):
         result = _git("diff", "--name-only", "-z", "HEAD", cwd=repo_with_hostile_paths)
-        records = [r for r in result.stdout.decode("utf-8", "surrogateescape").split("\0") if r]
+        records = [
+            r for r in result.stdout.decode("utf-8", "surrogateescape").split("\0") if r
+        ]
         assert set(records) == set(self.HOSTILE)
         assert not any(r.startswith('"') for r in records)
 
     def test_normalization_recovers_every_hostile_path(self, repo_with_hostile_paths):
         result = _git("diff", "--name-only", "-z", "HEAD", cwd=repo_with_hostile_paths)
-        records = [r for r in result.stdout.decode("utf-8", "surrogateescape").split("\0") if r]
+        records = [
+            r for r in result.stdout.decode("utf-8", "surrogateescape").split("\0") if r
+        ]
         assert {normalize_repo_path(r) for r in records} == set(self.HOSTILE)
 
     def test_quoted_newline_records_recover_exact_paths(self, repo_with_hostile_paths):

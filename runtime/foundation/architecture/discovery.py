@@ -226,7 +226,10 @@ def main(argv: list[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
     if args and args[0] in ("-h", "--help"):
         print(__doc__ or "", file=sys.stderr)
-        print("usage: python -m runtime.foundation.architecture.discovery", file=sys.stderr)
+        print(
+            "usage: python -m runtime.foundation.architecture.discovery",
+            file=sys.stderr,
+        )
         return 0
 
     results = run_discovery()

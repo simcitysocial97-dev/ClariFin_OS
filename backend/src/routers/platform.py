@@ -163,7 +163,9 @@ def _query_nocache(request: Request) -> bool:
 @router.get("/health")
 async def get_health(request: Request) -> JSONResponse:
     nocache = _query_nocache(request)
-    return _ok(snapshot.get_or_build("health", health.build_health_snapshot, nocache=nocache))
+    return _ok(
+        snapshot.get_or_build("health", health.build_health_snapshot, nocache=nocache)
+    )
 
 
 # ---------------------------------------------------------------------------
