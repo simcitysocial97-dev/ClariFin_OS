@@ -289,3 +289,81 @@ class TestFallbackDisableIsLoud:
             boundary_size=1383, strategy=bp.Strategy.BOUNDED_FALLBACK
         )
         assert ev.fallback_disabled is False
+
+
+# ---------------------------------------------------------------------------
+# The evidence path must not crash on a real plan
+# ---------------------------------------------------------------------------
+
+
+class TestEvidenceAgainstRealPlanSpecs:
+    """Building evidence must work against the actual ExecutionTaskSpec.
+
+    The first version of this feature read ``task.capability_id``, which does
+    not exist on ExecutionTaskSpec (the field is ``capabilities`` /
+    ``primary_capability``). That only surfaced in CI, on a branch whose
+    boundary was small enough to take the incremental path, so unit tests over
+    the classifier alone could never have caught it. These tests build real
+    task specs and render real evidence from them.
+    """
+
+    def _specs(self, count: int = 3):
+        from runtime.foundation.verification.execution_orchestrator import (
+            ExecutionTaskSpec,
+        )
+
+        return [
+            ExecutionTaskSpec(
+                task_id=f"t{i}",
+                source_task_id=f"s{i}",
+                primary_capability=f"cap-{i}",
+                capabilities=(f"cap-{i}", f"cap-{i + 1}"),
+                verification_kind="capability",
+                command="true",
+                profile="test",
+                scope="test",
+                is_mandatory=True,
+                is_escalation=False,
+                reason="test",
+                origin="test",
+            )
+            for i in range(count)
+        ]
+
+    def test_evidence_renders_capabilities_from_real_task_specs(self):
+        tasks = self._specs()
+        covered = tuple(
+            sorted(
+                {
+                    cap
+                    for t in tasks
+                    for cap in (t.capabilities or (t.primary_capability,))
+                    if cap
+                }
+            )
+        )
+        ev = bp.build_evidence(
+            boundary_size=3,
+            strategy=bp.Strategy.INCREMENTAL,
+            capabilities_covered=covered,
+        )
+        text = ev.render()
+        assert "cap-0" in text and "cap-3" in text
+        assert "class=NORMAL" in text
+
+    def test_execution_task_spec_exposes_the_fields_evidence_reads(self):
+        for t in self._specs(1):
+            assert isinstance(t.capabilities, tuple)
+            assert isinstance(t.primary_capability, str)
+
+    def test_bounded_fallback_plan_renders_its_own_evidence(self):
+        from runtime.foundation.verification.control_plane_facade import ControlPlane
+
+        cp = ControlPlane()
+        cp._last_boundary_size = 10_000
+        plan = cp._build_bounded_fallback_plan()
+        assert plan.boundary_evidence is not None
+        text = plan.boundary_evidence.render()
+        assert "strategy=bounded-repository-fallback" in text
+        assert "intentionally bounded scope" in text
+        assert len(plan.tasks) > 0

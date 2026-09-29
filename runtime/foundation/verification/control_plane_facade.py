@@ -207,7 +207,14 @@ class ControlPlane:
                     boundary_size=len(changed_files),
                     strategy=strategy,
                     capabilities_covered=tuple(
-                        sorted({t.capability_id for t in execution_plan.tasks})
+                        sorted(
+                            {
+                                cap
+                                for t in execution_plan.tasks
+                                for cap in (t.capabilities or (t.primary_capability,))
+                                if cap
+                            }
+                        )
                     ),
                     incremental_task_count=len(execution_plan.tasks),
                 ).render()
