@@ -150,7 +150,11 @@ class TestCrossLayerAcceptance:
 
         updated_accounts = client.get("/api/v1/accounts")
         if updated_accounts.status_code == 200:
-            updated_count = len(updated_accounts.json()) if updated_accounts.status_code == 200 else 0
+            updated_count = (
+                len(updated_accounts.json())
+                if updated_accounts.status_code == 200
+                else 0
+            )
             assert (
                 updated_count >= initial_count
             ), f"Account count should not decrease: {initial_count} -> {updated_count}"
@@ -182,7 +186,10 @@ class TestAcceptanceInvariants:
 
         data = response.json()
         for account in data:
-            if account.get("status") == "active" and account.get("balance_paise", 0) < 0:
+            if (
+                account.get("status") == "active"
+                and account.get("balance_paise", 0) < 0
+            ):
                 pytest.warns(
                     UserWarning,
                     f"Active account {account.get('id')} has negative balance",

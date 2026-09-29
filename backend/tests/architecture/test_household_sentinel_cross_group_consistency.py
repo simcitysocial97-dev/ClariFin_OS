@@ -24,8 +24,7 @@ def test_household_sentinel_agrees_across_groups(temp_db: str) -> None:
     conn = sqlite3.connect(temp_db)
     try:
         conn.execute(
-            "INSERT INTO behaviour_snapshots (snapshot_date) "
-            "VALUES ('2025-01-15')"
+            "INSERT INTO behaviour_snapshots (snapshot_date) " "VALUES ('2025-01-15')"
         )
         conn.execute(
             "INSERT INTO financial_goals (goal_type, name, target_amount_paise) "

@@ -98,7 +98,9 @@ def foreign_writer_db(temp_db: str) -> str:
     )
     # A clean control row, so a reported violation can never be attributed to
     # fixture noise.
-    _seed_leg(conn, txn_id=1, description="Clean", debit=1000, credit=0, hash_signature="h0")
+    _seed_leg(
+        conn, txn_id=1, description="Clean", debit=1000, credit=0, hash_signature="h0"
+    )
     conn.commit()
     conn.close()
     return temp_db
@@ -166,7 +168,10 @@ class TestForeignWriterNegativeCredit:
         conn.commit()
         conn.close()
 
-        assert _of_type(validate_ledger_integrity(foreign_writer_db), "NEGATIVE_CREDIT") == []
+        assert (
+            _of_type(validate_ledger_integrity(foreign_writer_db), "NEGATIVE_CREDIT")
+            == []
+        )
 
 
 class TestForeignWriterDualEntry:
@@ -199,9 +204,13 @@ class TestForeignWriterDualEntry:
         conn.commit()
         conn.close()
 
-        assert _of_type(validate_ledger_integrity(foreign_writer_db), "DUAL_ENTRY") == []
+        assert (
+            _of_type(validate_ledger_integrity(foreign_writer_db), "DUAL_ENTRY") == []
+        )
 
-    def test_dual_entry_is_reported_alongside_the_other_violations(self, foreign_writer_db):
+    def test_dual_entry_is_reported_alongside_the_other_violations(
+        self, foreign_writer_db
+    ):
         """The six checks are independent and all findings must be reported in
         one pass — a reader must not have to re-run the audit per invariant."""
         from src.core.db.connection import get_connection
@@ -246,9 +255,15 @@ class TestForeignWriterDuplicateHash:
         from src.core.db.connection import get_connection
 
         conn = get_connection(foreign_writer_db)
-        _seed_leg(conn, txn_id=2, description="Copy A", debit=1000, hash_signature="dup")
-        _seed_leg(conn, txn_id=3, description="Copy B", debit=1000, hash_signature="dup")
-        _seed_leg(conn, txn_id=4, description="Unique", debit=1000, hash_signature="solo")
+        _seed_leg(
+            conn, txn_id=2, description="Copy A", debit=1000, hash_signature="dup"
+        )
+        _seed_leg(
+            conn, txn_id=3, description="Copy B", debit=1000, hash_signature="dup"
+        )
+        _seed_leg(
+            conn, txn_id=4, description="Unique", debit=1000, hash_signature="solo"
+        )
         conn.commit()
         conn.close()
 
@@ -275,9 +290,14 @@ class TestForeignWriterDuplicateHash:
         conn.commit()
         conn.close()
 
-        assert _of_type(validate_ledger_integrity(foreign_writer_db), "DUPLICATE_HASH") == []
+        assert (
+            _of_type(validate_ledger_integrity(foreign_writer_db), "DUPLICATE_HASH")
+            == []
+        )
 
-    def test_empty_and_null_hashes_do_not_collide_with_each_other(self, foreign_writer_db):
+    def test_empty_and_null_hashes_do_not_collide_with_each_other(
+        self, foreign_writer_db
+    ):
         """The uniqueness clause filters `hash_signature IS NOT NULL AND
         hash_signature != ''`, so two blank signatures must not be reported as
         a duplicate pair — they are a NULL_HASH finding, reported once each."""

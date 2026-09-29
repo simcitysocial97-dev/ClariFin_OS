@@ -37,18 +37,28 @@ def test_has_errors_false_on_full_success(tmp_path: Path) -> None:
     orch = _make_orchestrator(tmp_path, db_path)
 
     # Stub every stage so no real service call can raise.
-    with patch.object(orch, "_run_behaviour", return_value={"ok": True}), \
-         patch.object(orch, "_run_cashflow", return_value={"ok": True}), \
-         patch.object(orch, "_run_intelligence", return_value={"ok": True}), \
-         patch.object(orch, "_run_recommendations", return_value={"ok": True}), \
-         patch.object(orch, "_run_dashboard_refresh", return_value={"ok": True}), \
-         patch.object(orch, "_run_transaction_intelligence", return_value={"ok": True}):
+    with (
+        patch.object(orch, "_run_behaviour", return_value={"ok": True}),
+        patch.object(orch, "_run_cashflow", return_value={"ok": True}),
+        patch.object(orch, "_run_intelligence", return_value={"ok": True}),
+        patch.object(orch, "_run_recommendations", return_value={"ok": True}),
+        patch.object(orch, "_run_dashboard_refresh", return_value={"ok": True}),
+        patch.object(orch, "_run_transaction_intelligence", return_value={"ok": True}),
+    ):
         summary = orch.process_after_upload(statement_id=1)
 
     assert summary["has_errors"] is False
-    assert all(k in summary for k in ("behaviour", "cashflow", "intelligence",
-                                      "recommendations", "dashboard",
-                                      "transaction_intelligence"))
+    assert all(
+        k in summary
+        for k in (
+            "behaviour",
+            "cashflow",
+            "intelligence",
+            "recommendations",
+            "dashboard",
+            "transaction_intelligence",
+        )
+    )
     # Persistence: exactly one row for statement_id=1.
     conn = sqlite3.connect(db_path)
     try:
@@ -71,12 +81,14 @@ def test_has_errors_true_when_stage_fails(tmp_path: Path) -> None:
         raise RuntimeError("boom")
 
     # Stub successful stages, force behaviour to fail.
-    with patch.object(orch, "_run_behaviour", side_effect=_raise), \
-         patch.object(orch, "_run_cashflow", return_value={"ok": True}), \
-         patch.object(orch, "_run_intelligence", return_value={"ok": True}), \
-         patch.object(orch, "_run_recommendations", return_value={"ok": True}), \
-         patch.object(orch, "_run_dashboard_refresh", return_value={"ok": True}), \
-         patch.object(orch, "_run_transaction_intelligence", return_value={"ok": True}):
+    with (
+        patch.object(orch, "_run_behaviour", side_effect=_raise),
+        patch.object(orch, "_run_cashflow", return_value={"ok": True}),
+        patch.object(orch, "_run_intelligence", return_value={"ok": True}),
+        patch.object(orch, "_run_recommendations", return_value={"ok": True}),
+        patch.object(orch, "_run_dashboard_refresh", return_value={"ok": True}),
+        patch.object(orch, "_run_transaction_intelligence", return_value={"ok": True}),
+    ):
         summary = orch.process_after_upload(statement_id=2)
 
     assert summary["has_errors"] is True

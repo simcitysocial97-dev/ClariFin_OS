@@ -138,9 +138,7 @@ class TestLifecycleStateDefault:
 
         The default must not smuggle an advance into the settleable set.
         """
-        proposal = walk_lineage(
-            [_without(_advance(), "lifecycle_state"), _repayment()]
-        )
+        proposal = walk_lineage([_without(_advance(), "lifecycle_state"), _repayment()])
         assert _settles(proposal) == []
 
     def test_repayment_without_lifecycle_state_is_excluded(self):
@@ -149,24 +147,18 @@ class TestLifecycleStateDefault:
         proceeds; but its advance counterpart still has to satisfy the
         candidate filter, so an otherwise-valid pair does settle. This pins
         that the repayment-side default is the *permissive* one."""
-        proposal = walk_lineage(
-            [_advance(), _without(_repayment(), "lifecycle_state")]
-        )
+        proposal = walk_lineage([_advance(), _without(_repayment(), "lifecycle_state")])
         assert len(_settles(proposal)) == 1
 
     def test_advance_without_state_and_repayment_with_state_still_settles(self):
         """The asymmetry above is the contract: the candidate filter is strict
         about the advance, the main loop is permissive about the repayment."""
-        proposal = walk_lineage(
-            [_without(_advance(), "lifecycle_state"), _repayment()]
-        )
+        proposal = walk_lineage([_without(_advance(), "lifecycle_state"), _repayment()])
         assert _settles(proposal) == []
 
     def test_settled_state_still_excludes_the_advance(self):
         """Control: an explicit terminal state excludes the advance too."""
-        proposal = walk_lineage(
-            [_advance(lifecycle_state="settled"), _repayment()]
-        )
+        proposal = walk_lineage([_advance(lifecycle_state="settled"), _repayment()])
         assert _settles(proposal) == []
 
     def test_partially_settled_advance_remains_a_candidate(self):
@@ -194,7 +186,11 @@ class TestIdDefault:
         assert settles[0]["event_id"] == 5
         assert settles[0]["linked_event_id"] == 0
         assert proposal.lifecycle_updates == [
-            {"event_id": 0, "lifecycle_state": "partially_settled", "outstanding_paise": 60_000}
+            {
+                "event_id": 0,
+                "lifecycle_state": "partially_settled",
+                "outstanding_paise": 60_000,
+            }
         ]
 
     def test_repayment_without_id_is_not_a_settlement_candidate(self):
@@ -410,8 +406,12 @@ class TestRolloverSparseEvents:
         source = _without(source, "id")
         proposal = detect_rollover_scenarios([source, target])
 
-        rollovers = [x for x in proposal.proposed_links if x["link_type"] == "rolls_over"]
-        assert rollovers == [{"event_id": 2, "linked_event_id": 0, "link_type": "rolls_over"}]
+        rollovers = [
+            x for x in proposal.proposed_links if x["link_type"] == "rolls_over"
+        ]
+        assert rollovers == [
+            {"event_id": 2, "linked_event_id": 0, "link_type": "rolls_over"}
+        ]
 
     def test_advance_without_liability_change_is_not_a_source(self):
         """The source filter requires a positive `liability_change_paise`. A
@@ -420,7 +420,9 @@ class TestRolloverSparseEvents:
         source, target = _rollover_pair()
         source = _without(source, "liability_change_paise")
         proposal = detect_rollover_scenarios([source, target])
-        assert [x for x in proposal.proposed_links if x["link_type"] == "rolls_over"] == []
+        assert [
+            x for x in proposal.proposed_links if x["link_type"] == "rolls_over"
+        ] == []
 
     def test_advance_without_date_is_neither_source_nor_target(self):
         """No date_iso → `_parse_date_iso("")` returns None, so the advance is
@@ -428,13 +430,17 @@ class TestRolloverSparseEvents:
         source, target = _rollover_pair()
         target = _without(target, "date_iso")
         proposal = detect_rollover_scenarios([source, target])
-        assert [x for x in proposal.proposed_links if x["link_type"] == "rolls_over"] == []
+        assert [
+            x for x in proposal.proposed_links if x["link_type"] == "rolls_over"
+        ] == []
 
     def test_advance_without_type_is_not_a_rollover_candidate(self):
         source, target = _rollover_pair()
         target = _without(target, "event_type")
         proposal = detect_rollover_scenarios([source, target])
-        assert [x for x in proposal.proposed_links if x["link_type"] == "rolls_over"] == []
+        assert [
+            x for x in proposal.proposed_links if x["link_type"] == "rolls_over"
+        ] == []
 
 
 # ── sparse payloads must not crash ─────────────────────────────────────────
