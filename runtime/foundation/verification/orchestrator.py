@@ -59,18 +59,165 @@ def _find_repo_root() -> Path:
     return Path.cwd()
 
 
+#: Repository-relative path prefixes whose contents are regenerable runtime
+#: state and must never enter the verification boundary. Matching is done on
+#: normalized POSIX-style repository-relative paths, so a path is excluded
+#: regardless of whether it was read from a diff, from ``ls-files``, or from
+#: an untracked-file listing.
+#:
+#: Several tools in this repository write through cwd-relative paths, so a run
+#: started from a subdirectory materialises a *nested* copy of the tree (a run
+#: from ``backend/`` produced ``backend/runtime/generated/``). Those escaped
+#: roots are listed explicitly because a bare ``runtime/generated/`` prefix test
+#: cannot see them.
+GENERATED_PATH_PREFIXES: tuple[str, ...] = (
+    "runtime/generated/",
+    "runtime/runtime/generated/",
+    "backend/runtime/generated/",
+    "backend/tests/generated/",
+    "frontend/runtime/generated/",
+)
+
+#: Build, cache and binary artifacts that are never verification subjects.
+NON_VERIFIABLE_PATH_PREFIXES: tuple[str, ...] = (
+    "node_modules/",
+    ".pytest_cache/",
+    ".mypy_cache/",
+    ".ruff_cache/",
+    "__pycache__/",
+    "frontend/node_modules/",
+    "backend/tests/contract/generated/",
+    "backend/mutants/",
+    ".github/backend/",
+)
+
+#: Suffixes that mark a file as a build or cache artifact.
+NON_VERIFIABLE_SUFFIXES: tuple[str, ...] = (".pyc", ".pyo")
+
+
+def normalize_repo_path(path: str) -> str:
+    """Return ``path`` as a clean, repository-relative POSIX path.
+
+    This is the single canonical normalization layer for changed-file paths.
+    Capability matching, generated-artifact exclusion and plan fingerprinting
+    all consume the output of this function, so they cannot disagree about what
+    a path is.
+
+    Git quotes any path containing a space, quote, tab, backslash, non-ASCII
+    character, or control character, and C-style-escapes octal bytes inside the
+    quotes. Those are transport encodings, not path content. Callers that parse
+    ``git`` output should prefer NUL-delimited output (``-z``) and pass the raw
+    records here; this function additionally tolerates a still-quoted record so
+    a caller reading newline-delimited output degrades safely instead of
+    matching on a mangled string.
+    """
+
+    candidate = path.strip()
+
+    if len(candidate) >= 2 and candidate[0] == '"' and candidate[-1] == '"':
+        # A quoted record is git's byte-exact encoding of the path: the quotes
+        # are removed and the escapes resolved, but nothing else is rewritten.
+        return _tidy_path(_unquote_git_path(candidate[1:-1]))
+
+    # A backslash is an ordinary filename character in a git path record, not a
+    # separator, so it is never rewritten. Translating it would corrupt a real
+    # file named e.g. ``with\backslash.py`` into a path in a ``with/``
+    # directory, which is exactly the class of defect this module exists to
+    # prevent.
+    return _tidy_path(candidate)
+
+
+def _tidy_path(candidate: str) -> str:
+    """Collapse duplicate separators and drop any leading "./" or "/".
+
+    Only applied to non-quoted input. A quoted record's separators are
+    authoritative, so a leading "" is genuinely part of the filename.
+    """
+
+    while "//" in candidate:
+        candidate = candidate.replace("//", "/")
+    candidate = candidate.removeprefix("./").lstrip("/")
+    if candidate in ("", "."):
+        return ""
+    return candidate
+
+
+def _unquote_git_path(escaped: str) -> str:
+    """Decode git's C-style path quoting into the original path.
+
+    Git quotes a path as a *byte* string: every byte outside a conservative
+    ASCII subset becomes a C escape, and bytes that are not printable ASCII are
+    written in octal. A UTF-8 filename therefore appears as a run of octal
+    escapes for its individual bytes and must be reassembled as bytes before
+    being decoded, otherwise multi-byte characters become mojibake.
+    """
+
+    out = bytearray()
+    i = 0
+    n = len(escaped)
+    simple = {
+        "n": b"\n",
+        "t": b"\t",
+        "r": b"\r",
+        "b": b"\b",
+        "f": b"\f",
+        "v": b"\v",
+        "a": b"\a",
+        '"': b'"',
+        "\\": b"\\",
+    }
+    while i < n:
+        ch = escaped[i]
+        if ch != "\\" or i + 1 >= n:
+            out.extend(ch.encode("utf-8", "surrogateescape"))
+            i += 1
+            continue
+        nxt = escaped[i + 1]
+        if nxt in "01234567":
+            # Octal escape: up to three digits, one byte.
+            digits = ""
+            j = i + 1
+            while j < n and len(digits) < 3 and escaped[j] in "01234567":
+                digits += escaped[j]
+                j += 1
+            out.append(int(digits, 8) & 0xFF)
+            i = j
+            continue
+        out.extend(simple.get(nxt, nxt.encode("utf-8", "surrogateescape")))
+        i += 2
+    return out.decode("utf-8", "surrogateescape")
+
+
+def is_generated_or_artifact_path(normalized: str) -> bool:
+    """True when a normalized path is regenerable output, cache or a binary."""
+
+    if not normalized:
+        return True
+    if any(normalized.startswith(p) for p in GENERATED_PATH_PREFIXES):
+        return True
+    if any(normalized.startswith(p) for p in NON_VERIFIABLE_PATH_PREFIXES):
+        return True
+    # A generated subtree can appear at any depth when a tool runs from a
+    # subdirectory, so match the component anywhere in the path.
+    if "/runtime/generated/" in normalized:
+        return True
+    return normalized.endswith(NON_VERIFIABLE_SUFFIXES)
+
+
 def _filter_changed_files(files: list[str]) -> list[str]:
-    """Filter out generated, cache, and binary artifacts."""
-    return [
-        f
-        for f in files
-        if not f.startswith("runtime/generated/")
-        and not f.startswith("node_modules/")
-        and not f.startswith(".pytest_cache/")
-        and not f.startswith("__pycache__/")
-        and not f.startswith("frontend/node_modules/")
-        and not f.endswith(".pyc")
-    ]
+    """Normalize changed paths and drop generated, cache and binary artifacts.
+
+    The result is deduplicated and sorted so the plan fingerprint is stable
+    regardless of how git ordered or escaped the input records.
+    """
+
+    seen: set[str] = set()
+    for raw in files:
+        normalized = normalize_repo_path(raw)
+        if not normalized or is_generated_or_artifact_path(normalized):
+            continue
+        seen.add(normalized)
+    return sorted(seen)
 
 
 def _default_branch() -> str | None:
@@ -328,47 +475,51 @@ def _collect_changed_files(*, fetch_remote: bool = True) -> _ChangedFilesResult:
 
     repo_root = _find_repo_root()
 
-    def _run_diff(args: list[str]) -> str:
-        result = subprocess.run(
-            ["git", "diff", "--name-only", *args],
-            capture_output=True,
-            text=True,
-            cwd=str(repo_root),
-            timeout=10,
-        )
-        if result.returncode == 0:
-            return result.stdout
-        return ""
+    def _split_nul(raw: str | bytes) -> list[str]:
+        """Split NUL-delimited git output into path records.
 
-    def _run_diff_three_dot(base: str) -> str:
-        """Three-dot diff: changes on HEAD side since merge-base with base."""
-        result = subprocess.run(
-            ["git", "diff", "--name-only", f"{base}...HEAD"],
-            capture_output=True,
-            text=True,
-            cwd=str(repo_root),
-            timeout=10,
-        )
-        if result.returncode == 0:
-            return result.stdout
-        return ""
-
-    def _run_diff_two_dot(base: str, head: str) -> str:
-        """Two-dot diff: exactly the commits reachable from head but not base.
-
-        This is the true PR boundary: target-branch commits that landed between
-        the PR base and the current merge-base are NOT included (M9-C3).
+        Accepts bytes (the real contract, since no text decoding is requested)
+        and str, so a caller or test double that returns decoded output still
+        works rather than failing on an attribute error.
         """
+
+        if isinstance(raw, bytes):
+            raw = raw.decode("utf-8", "surrogateescape")
+        return [rec for rec in raw.split("\0") if rec]
+
+    def _run_name_only(args: list[str]) -> list[str]:
+        """Run a ``--name-only`` git query and return raw path records.
+
+        ``-z`` is mandatory. Without it git quotes and C-style-escapes any path
+        containing a space, quote, tab, backslash, non-ASCII character or
+        control character, so the caller receives a transport encoding rather
+        than a path. Newline-delimited output is unparseable for exactly the
+        paths that matter most, and stripping quotes after the fact cannot
+        recover a path that legitimately contains a quote.
+        """
+
         result = subprocess.run(
-            ["git", "diff", "--name-only", f"{base}..{head}"],
+            ["git", "diff", "--name-only", "-z", *args],
             capture_output=True,
-            text=True,
             cwd=str(repo_root),
-            timeout=10,
+            timeout=60,
         )
-        if result.returncode == 0:
-            return result.stdout
-        return ""
+        if result.returncode != 0:
+            return []
+        return _split_nul(result.stdout)
+
+    def _run_ls_other() -> list[str]:
+        """Return untracked, non-ignored path records (NUL-delimited)."""
+
+        result = subprocess.run(
+            ["git", "ls-files", "--others", "--exclude-standard", "-z"],
+            capture_output=True,
+            cwd=str(repo_root),
+            timeout=60,
+        )
+        if result.returncode != 0:
+            return []
+        return _split_nul(result.stdout)
 
     def _resolve_remote_ref(ref: str | None) -> str:
         """Resolve a ref to a form usable by git diff.
@@ -417,8 +568,7 @@ def _collect_changed_files(*, fetch_remote: bool = True) -> _ChangedFilesResult:
     if base_ref is not None and (pr_head is not None or ov_head is not None):
         resolved_base = _resolve_remote_ref(base_ref)
         resolved_head = _resolve_remote_ref(ov_head or pr_head)
-        combined = _run_diff_two_dot(resolved_base, resolved_head)
-        diff_files = [f.strip() for f in combined.splitlines() if f.strip()]
+        diff_files = _run_name_only([f"{resolved_base}..{resolved_head}"])
         result = _ChangedFilesResult(
             files=[],
             base=resolved_base,
@@ -430,8 +580,7 @@ def _collect_changed_files(*, fetch_remote: bool = True) -> _ChangedFilesResult:
         # GITHUB_BASE_REF, push merge-base, or locally-resolved merge-base all flow
         # through the canonical three-dot (``base...HEAD``) path.
         resolved = _resolve_remote_ref(base_ref)
-        combined = _run_diff_three_dot(resolved)
-        diff_files = [f.strip() for f in combined.splitlines() if f.strip()]
+        diff_files = _run_name_only([f"{resolved}...HEAD"])
         result = _ChangedFilesResult(
             files=[], base=resolved, head=None, source="base ref (three-dot)"
         )
@@ -444,16 +593,15 @@ def _collect_changed_files(*, fetch_remote: bool = True) -> _ChangedFilesResult:
         # (that is avoided by the two-dot base..head path above when SHAs exist).
         local_base = _merge_base_with_default(fetch_remote=fetch_remote)
         if local_base:
-            combined = _run_diff_three_dot(local_base)
+            diff_files = _run_name_only([f"{local_base}...HEAD"])
             result = _ChangedFilesResult(
                 files=[], base=local_base, head=None, source="local merge-base"
             )
         else:
-            combined = _run_diff(["HEAD"])
+            diff_files = _run_name_only(["HEAD"])
             result = _ChangedFilesResult(
                 files=[], base=None, head=None, source="local HEAD"
             )
-        diff_files = [f.strip() for f in combined.splitlines() if f.strip()]
     else:
         # P0-2: canonical three-dot semantics with a resolved local base
         # (merge-base of HEAD and the default branch) so the local path agrees
@@ -461,29 +609,17 @@ def _collect_changed_files(*, fetch_remote: bool = True) -> _ChangedFilesResult:
         # uncommitted working-tree state and therefore not parity-safe).
         local_base = _merge_base_with_default(fetch_remote=fetch_remote)
         if local_base:
-            combined = _run_diff_three_dot(local_base)
+            diff_files = _run_name_only([f"{local_base}...HEAD"])
             result = _ChangedFilesResult(
                 files=[], base=local_base, head=None, source="local merge-base"
             )
         else:
-            combined = _run_diff(["HEAD"])
+            diff_files = _run_name_only(["HEAD"])
             result = _ChangedFilesResult(
                 files=[], base=None, head=None, source="local HEAD"
             )
-        diff_files = [f.strip() for f in combined.splitlines() if f.strip()]
 
-    untracked_result = subprocess.run(
-        ["git", "ls-files", "--others", "--exclude-standard"],
-        capture_output=True,
-        text=True,
-        cwd=str(repo_root),
-        timeout=10,
-    )
-    untracked_files = (
-        [f.strip() for f in untracked_result.stdout.splitlines() if f.strip()]
-        if untracked_result.returncode == 0
-        else []
-    )
+    untracked_files = _run_ls_other()
 
     result.files = _filter_changed_files(diff_files + untracked_files)
     return result

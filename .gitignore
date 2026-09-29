@@ -122,74 +122,76 @@ mutants/
 # ═══════════════════════════════════════════════════════════
 # VERIFICATION PIPELINE GENERATED
 # ═══════════════════════════════════════════════════════════
-evidence-download/
-target/
-.coverage
-.memory-cache/
+# ═══════════════════════════════════════════════════════════
+# RUNTIME GENERATED — POLICY
+#
+# Policy: generated runtime output is ignored by default. Only the
+# explicitly identified canonical evidence and contract/reference
+# artifacts below remain version-controlled.
+#
+# Before this rule the ignore list enumerated individual files and
+# directories, and three `!runtime/generated/m9-c64*` negations were
+# scattered through it. That inverted the policy: ~4,400 regenerable
+# files were tracked while the handful of genuinely canonical
+# artifacts survived only because someone remembered to write an
+# exception. Ignoring the subtree and re-including the canonical set
+# makes an unlisted artifact ignored, which is the safe default.
+#
+# Anything added to the "canonical" list below must be justified as
+# committed provenance/evidence or as a contract baseline that CI
+# reads as an input. Regenerable output does not belong there.
+# ═══════════════════════════════════════════════════════════
+# The subtree is excluded by its immediate children rather than the directory
+# itself: git never descends into an excluded directory, so `runtime/generated/`
+# would make every `!` exception below unreachable for any *new* file. Matching
+# `/*` keeps the canonical set genuinely re-includable.
+/runtime/generated/*
+
+# ── Canonical committed evidence (C64 forensic convergence) ──
+# Forensic reconstruction evidence and provenance for the C64
+# runtime-framework convergence milestones.
+!/runtime/generated/m9-c64-r-runtime-pipeline-forensic-validation/
+!/runtime/generated/m9-c64-r2-runtime-pipeline-attribution-reconciliation/
+!/runtime/generated/m9-c64-runtime-framework-final-convergence/
+!/runtime/generated/m9-c64-final-runtime-command-ci-convergence/
+
+# ── Canonical committed evidence (M9-C71 mutation trust) ──
+# The mutation-measurement trust certification bundle. Self-describing
+# final certification and its supporting evidence. Written by
+# runtime/foundation/verification/mutation_trust.py, which reads it
+# back only to print it, so it is provenance rather than an input.
+!/runtime/generated/m9-c71-mutation-trust/
+
+# ── Canonical committed evidence (M9-C66 certification forensics) ──
+!/runtime/generated/m9-c66-certification-forensics/
+
+# ── Contract / reference artifacts ──
+# frontend/generated/openapi-current.json is the committed API contract
+# baseline that the API Contract Integrity gate diffs against
+# (runtime/foundation/verification/api_contracts/gate.py), and
+# toolchain-lock.json pins the frontend toolchain contract. These are
+# inputs, not output, and are therefore version-controlled.
+!frontend/generated/
 
 # ═══════════════════════════════════════════════════════════
-# RUNTIME GENERATED — THE BIG ONE
-# ONLY C64 FORENSIC EVIDENCE IS COMMITTED
+# GENERATED STATE THAT ESCAPED ITS ROOT
 # ═══════════════════════════════════════════════════════════
-
-# Symbol caches (regenerated on demand, very large)
-runtime/generated/symbol-cache.json
-runtime/generated/typescript-symbol-cache/
-runtime/generated/symbol-cache/
-
-# Runtime metrics (generated during verification runs)
-runtime/generated/metrics/
-
-# Execution logs (m9-c49, m9-c50, etc. — too large, not evidence)
-runtime/generated/m9-c49/logs/
-runtime/generated/m9-c50/phase-*/operations/
-runtime/generated/m9-c*/logs/
-runtime/generated/m9-c*/phase-*/
-!runtime/generated/m9-c64-r-runtime-pipeline-forensic-validation/
-!runtime/generated/m9-c64-r2-runtime-pipeline-attribution-reconciliation/
-!runtime/generated/m9-c64-runtime-framework-final-convergence/
-
-# Evidence and execution archives (not needed in repo)
-runtime/generated/evidence/
-runtime/generated/execution/
-runtime/generated/launcher/
-runtime/generated/financial/
-runtime/generated/timeline/
-runtime/generated/graph/
-runtime/generated/command/
-runtime/generated/intelligence/
-runtime/generated/verification/
-runtime/generated/repository/
-runtime/generated/platform/
-runtime/generated/test_milestone/
-
-# AI runtime state (large, regenerated)
-runtime/generated/ai-runs/
-runtime/generated/ai-context-packs/
-runtime/generated/ai-memory/
+# Several tools write through cwd-relative paths, so a run started from
+# a subdirectory materialises a nested copy of the tree (a run from
+# backend/ produced backend/runtime/generated/). These are runtime
+# state by definition and must never be committed.
+runtime/runtime/generated/
+backend/runtime/generated/
+frontend/runtime/generated/
+.github/backend/
 
 # ═══════════════════════════════════════════════════════════
 # GENERATED ARTIFACTS (keep only specific ones)
 # ═══════════════════════════════════════════════════════════
-# Large architecture inventories (regeneratable)
-runtime/generated/architecture-inventory.json
-runtime/generated/architecture-inventory-summary.json
-runtime/generated/artifact-ownership-v2.json
-runtime/generated/artifact-ownership-v3.json
-runtime/generated/knowledge-index.json
-runtime/generated/cross-layer-graph.json
-runtime/generated/engineering-platform-audit*.json
-runtime/generated/dependency-graph*.json
-runtime/generated/normalized-issues.json
-runtime/generated/workflow-validation.json
 
-# Event logs (too verbose)
-runtime/generated/engineering-events.jsonl
-runtime/generated/git-fetch-events.jsonl
-runtime/generated/frontend-backend-map.json
-runtime/generated/e2e-route-map.json
-
-# Backend test generated artifacts
+# Backend test generated artifacts — regenerated deterministically by
+# .github/scripts/run_fast_checks.sh (tools/development/check_coverage.py)
+# from tracked inputs on every run, including a clean checkout.
 backend/tests/generated/
 
 # M9-C71 — mutation-measurement trust.
